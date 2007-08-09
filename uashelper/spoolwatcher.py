@@ -11,20 +11,18 @@ from pyinotify import EventsCodes
 
 from benderjab.xsend import send
 
-copy_jid = "cellthumper@chaos.caltech.edu"
-runner_jid = "diane@ghic.org"
-copy_jid = runner_jid
 class Handler(pyinotify.ProcessEvent):
-    def __init__(self, watchmanager):
+    def __init__(self, watchmanager, runner_jid):
       self.last_event_time = None
       self.watchmanager = watchmanager
+      self.runner_jid = runner_jid
 
     def process_IN_CREATE(self, event):
       self.last_event_time = time.time()
       msg = "Create: %s" %  os.path.join(event.path, event.name)
-      if event.name == "Run.completed":
+      if event.name.lower() == "run.completed":
         print "Run is done!"
-        send(runner_jid, "a run finished, launch it, and swap the drive")
+        send(self.runner_jid, "a run finished, launch it, and swap the drive")
       print msg
 
     def process_IN_DELETE(self, event):
@@ -45,19 +43,22 @@ class TreeWriteDoneNotifier:
   this'll hopefully send out a message saying hey look theres data available
   """
 
-  def __init__(self, watchdir, write_timeout=10, notify_timeout=5):
-     self.watchdirs = []
+  def __init__(self, watchdir, 
+                     copy_jid, runner_jid, 
+                     write_timeout=10, notify_timeout=5):
+     self.watchdir = watchdir
+     self.copy_jid = copy_jid
+     self.runner_jid = runner_jid
      self.write_timeout = write_timeout
      self.notify_timeout = int(notify_timeout * 1000)
 
      self.wm = pyinotify.WatchManager()
-     self.handler = Handler(self.wm)
+     self.handler = Handler(self.wm, self.runner_jid)
      self.notifier = pyinotify.Notifier(self.wm, self.handler)
      
-     self.add_watch(watchdir)
+     self.add_watch(self.watchdir)
 
   def add_watch(self, watchdir):
-     self.watchdirs.append(watchdir)
      print "Watching:", watchdir
      mask = EventsCodes.IN_CREATE | EventsCodes.IN_UNMOUNT
      # rec traverses the tree and adds all the directories that are there 
@@ -89,11 +90,5 @@ class TreeWriteDoneNotifier:
 
   def copying_paused(self):
     print "more than 10 seconds have elapsed"
-    send(copy_jid, "start copy")
-
-
-if __name__ == "__main__":
-  #watcher = TreeWriteDoneNotifier("/tmp")
-  watcher = TreeWriteDoneNotifier("/gec/jumpgate/ext0")
-  watcher.event_loop()
+    send(self.copy_jid, "start copy")
 

@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+
+from uashelper.spoolwatcher import TreeWriteDoneNotifier
+
+if __name__ == "__main__":
+  copy_jid = "cellthumper@chaos.caltech.edu"
+  runner_jid = "diane@ghic.org"
+
+  watcher = TreeWriteDoneNotifier("/gec/jumpgate/ext0", copy_jid, runner_jid)
+  watcher.event_loop()
