@@ -22,7 +22,11 @@ class Handler(pyinotify.ProcessEvent):
       msg = "Create: %s" %  os.path.join(event.path, event.name)
       if event.name.lower() == "run.completed":
         print "Run is done!"
-        send(self.runner_jid, "a run finished, launch it, and swap the drive")
+        try:
+          send(self.runner_jid, "a run finished, launch it, and swap the drive")
+        except IOError, e:
+          print "ERROR: couldn't send message"
+          print str(e)
       print msg
 
     def process_IN_DELETE(self, event):
