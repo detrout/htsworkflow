@@ -1,3 +1,5 @@
+import os
+
 # Django settings for elandifier project.
 
 DEBUG = True
@@ -10,7 +12,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_NAME = '/home/king/proj/solexa/elandifier/ifier.db'             # Or path to database file if using sqlite3.
+DATABASE_NAME = '/home/king/proj/solexa/elandifier/elandifier.db'             # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -79,5 +81,13 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'elandifier.eland_config'
+    'elandifier.eland_config',
+    'elandifier.fctracker'
 )
+
+# Project specific settings
+UPLOADTO_HOME = '/home/king/proj/solexa/elandifier/uploads'
+UPLOADTO_CONFIG_FILE = os.path.join(UPLOADTO_HOME, 'eland_config')
+UPLOADTO_ELAND_RESULT_PACKS = os.path.join(UPLOADTO_HOME, 'eland_results')
+UPLOADTO_BED_PACKS = os.path.join(UPLOADTO_HOME, 'bed_packs')
+

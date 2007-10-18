@@ -1,8 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from elandifier.eland_config import forms
+from elandifier import settings
+from elandifier.fctracker import models
 
 import os
+import glob
 # Create your views here.
 
 
@@ -17,12 +20,136 @@ import os
 #    return
 
 
+
+def _saveConfigFile(form):
+  """
+  Given a valid form, save eland config to file based on flowcell number.
+  """
+  assert form.is_valid()
+  
+  clean_data = form.cleaned_data
+  flowcell = clean_data['flow_cell_number'].replace('/','_').replace('..', '__')
+  
+  file_path = os.path.join(settings.UPLOADTO_CONFIG_FILE, flowcell)
+  
+  f = open(file_path, 'w')
+  cfg = generateElandConfig(form)
+  f.write(cfg)
+  f.close()
+  
+
+def _saveToDb(form):
+  """
+  Save info to the database.
+  """
+  clean_data = form.cleaned_data
+  
+  fc_id = clean_data['flow_cell_number']
+  
+  try:
+    fc = models.FlowCell.objects.get(flowcell_id=fc_id)
+  except models.FlowCell.DoesNotExist:
+    fc = models.FlowCell()
+    
+  fc.flowcell_id = fc_id
+  fc.run_date = clean_data['run_date']
+  
+  #LANE 1
+  fc.lane1_sample = clean_data['lane1_description']
+  species_name = clean_data['lane1_species']
+  try:
+    specie = models.Specie.objects.get(scientific_name=species_name)
+  except models.Specie.DoesNotExist:
+    specie = models.Specie(scientific_name=species_name)
+    specie.save()
+  fc.lane1_species = specie
+  
+  #LANE 2
+  fc.lane2_sample = clean_data['lane2_description']
+  species_name = clean_data['lane2_species']
+  try:
+    specie = models.Specie.objects.get(scientific_name=species_name)
+  except models.Specie.DoesNotExist:
+    specie = models.Specie(scientific_name=species_name)
+    specie.save()
+  fc.lane2_species = specie
+  
+  #LANE 3
+  fc.lane3_sample = clean_data['lane3_description']
+  species_name = clean_data['lane3_species']
+  try:
+    specie = models.Specie.objects.get(scientific_name=species_name)
+  except models.Specie.DoesNotExist:
+    specie = models.Specie(scientific_name=species_name)
+    specie.save()
+  fc.lane3_species = specie
+  
+  #LANE 4
+  fc.lane4_sample = clean_data['lane4_description']
+  species_name = clean_data['lane4_species']
+  try:
+    specie = models.Specie.objects.get(scientific_name=species_name)
+  except models.Specie.DoesNotExist:
+    specie = models.Specie(scientific_name=species_name)
+    specie.save()
+  fc.lane4_species = specie
+  
+  #LANE 5
+  fc.lane5_sample = clean_data['lane5_description']
+  species_name = clean_data['lane5_species']
+  try:
+    specie = models.Specie.objects.get(scientific_name=species_name)
+  except models.Specie.DoesNotExist:
+    specie = models.Specie(scientific_name=species_name)
+    specie.save()
+  fc.lane5_species = specie
+  
+  #LANE 6
+  fc.lane6_sample = clean_data['lane6_description']
+  species_name = clean_data['lane6_species']
+  try:
+    specie = models.Specie.objects.get(scientific_name=species_name)
+  except models.Specie.DoesNotExist:
+    specie = models.Specie(scientific_name=species_name)
+    specie.save()
+  fc.lane6_species = specie
+  
+  #LANE 7
+  fc.lane7_sample = clean_data['lane7_description']
+  species_name = clean_data['lane7_species']
+  try:
+    specie = models.Specie.objects.get(scientific_name=species_name)
+  except models.Specie.DoesNotExist:
+    specie = models.Specie(scientific_name=species_name)
+    specie.save()
+  fc.lane7_species = specie
+  
+  #LANE 8
+  fc.lane8_sample = clean_data['lane8_description']
+  species_name = clean_data['lane8_species']
+  try:
+    specie = models.Specie.objects.get(scientific_name=species_name)
+  except models.Specie.DoesNotExist:
+    specie = models.Specie(scientific_name=species_name)
+    specie.save()
+  fc.lane8_species = specie
+  
+  fc.notes = clean_data['notes']
+  
+  fc.save()
+  
+  return fc
+  
+
 def generateElandConfig(form):
   data = []
   
   form = form.cleaned_data
   
   BASE_DIR = '/data-store01/compbio/genomes'
+  
+  data.append("# FLOWCELL: %s" % (form['flow_cell_number']))
+  data.append("#")
   
   notes = form['notes'].replace('\r\n', '\n').replace('\r', '\n')
   notes = notes.replace('\n', '\n#  ')
@@ -100,15 +227,46 @@ def generateElandConfig(form):
   
   return '\n'.join(data)
 
+def config(request, flowcell=None):
+  """
+  Returns eland config file for a given flowcell number,
+  or returns a list of available flowcell numbers.
+  """
+  
+  # Provide INDEX of available Flowcell config files.
+  if flowcell is None:
+    #Find all FC* config files and report an index html file
+    fc_list = [ os.path.split(file_path)[1] for file_path in glob.glob(os.path.join(settings.UPLOADTO_CONFIG_FILE, 'FC*')) ]
+    #Convert FC* list to html links
+    fc_html = [ '<a href="/elandifier/config/%s/">%s</a>' % (fc_name, fc_name) for fc_name in fc_list ]
+    return HttpResponse('<br />'.join(fc_html))
+  
+  #FIXME: Should validate flowcell input before using.
+  file_path = os.path.join(settings.UPLOADTO_CONFIG_FILE, flowcell)
+  
+  if not os.path.isfile(file_path):
+    return HttpResponse("Hmm, config file for %s does not seem to exist. Maybe I don't exist either?" % (flowcell))
+  
+  f = open(file_path, 'r')
+  cfg = f.read()
+  f.close()
+  
+  return HttpResponse(cfg, mimetype="text/plain")
+
+
+
 
 def index(request):
   """
+  Return a form for filling out information about the flowcell
   """
   if request.method == 'POST':
     form = forms.ConfigForm(request.POST, error_class=forms.DivErrorList)
     if form.is_valid():
-      cfg = generateElandConfig(form)
-      return HttpResponse(cfg, mimetype="text/plain")
+      #cfg = generateElandConfig(form)
+      _saveConfigFile(form)
+      _saveToDb(form)
+      return HttpResponse("Eland Config Saved!", mimetype="text/plain")
     else:
       return render_to_response('config_form.html', {'form': form })
   
