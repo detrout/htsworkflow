@@ -16,6 +16,21 @@ class Specie(models.Model):
 
 #class BedFilePack(models.Model):
 
+class Library(models.Model):
+  class Admin: pass
+  
+  library_id = models.IntegerField(unique=True, db_index=True)
+  library_name = models.CharField(maxlength=100, unique=True)
+  library_species = models.ForeignKey(Specie)
+  
+  made_from_sample = models.ForeignKey('self', blank=True)
+  
+  made_by = models.CharField(maxlength=50, blank=True)
+  creation_date = models.DateField(blank=True, null=True)
+  notes = models.TextField(blank=True)
+  
+  def __str__(self):
+    return self.library_name
 
 
 class FlowCell(models.Model):
