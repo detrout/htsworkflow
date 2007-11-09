@@ -12,7 +12,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_NAME = '/home/king/proj/solexa/elandifier/elandifier.db'             # Or path to database file if using sqlite3.
+DATABASE_NAME = '/home/lorian/Djangoproject/sequencer/elandifier/elandifier.db'             # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -82,7 +82,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'elandifier.eland_config',
-    'elandifier.fctracker'
+    'elandifier.fctracker',
+    'django.contrib.databrowse',
 )
 
 # Project specific settings
