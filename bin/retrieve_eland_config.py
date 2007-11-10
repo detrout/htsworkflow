@@ -92,9 +92,11 @@ def getCombinedOptions():
     if conf_parser.has_option('server_info', 'base_host_url'):
       options.url = conf_parser.get('server_info', 'base_host_url')
   
-  print 'URL:', options.url
-  print 'OUT:', options.output_filepath
-  print ' FC:', options.flowcell
+  print 'USING OPTIONS:'
+  print ' URL:', options.url
+  print ' OUT:', options.output_filepath
+  print '  FC:', options.flowcell
+  print ''
   
   return options
 
@@ -107,7 +109,16 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
   url = base_host_url + '/elandifier/config/%s/' % (flowcell)
   
   f = open(output_filepath, 'w')
-  web = urllib.urlopen(url)
+  try:
+    web = urllib.urlopen(url)
+  except IOError, msg:
+    if str(msg).find("Connection refused") >= 0:
+      print 'Error: Could not connect to: %s' % (url)
+      f.close()
+      sys.exit(1)
+    else:
+      raise IOError, msg
+    
   f.write(web.read())
   web.close()
   f.close()
