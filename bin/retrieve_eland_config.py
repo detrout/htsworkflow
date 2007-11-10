@@ -1,16 +1,58 @@
 #!/usr/bin/env python
 
-from optparse import OptionParser
+from optparse import OptionParser, IndentedHelpFormatter
 from ConfigParser import SafeConfigParser
 
 import os
 import sys
 import urllib
 
+CONFIG_SYSTEM = '/etc/ga_frontend/ga_frontend.conf'
+CONFIG_USER = os.path.expanduser('~/.ga_frontend.conf')
+
+class PreformattedDescriptionFormatter(IndentedHelpFormatter):
+  
+  #def format_description(self, description):
+  #  
+  #  if description:
+  #      return description + "\n"
+  #  else:
+  #     return ""
+      
+  def format_epilog(self, epilog):
+    """
+    It was removing my preformated epilog, so this should override
+    that behavior! Muhahaha!
+    """
+    if epilog:
+        return "\n" + epilog + "\n"
+    else:
+        return ""
+
 
 def constructOptionParser():
-  parser = OptionParser()
+  """
+  returns a pre-setup optparser
+  """
+  parser = OptionParser(formatter=PreformattedDescriptionFormatter())
+
+  parser.set_description('Retrieves eland config file from ga_frontend web frontend.')
   
+  parser.epilog = """
+Config File:
+  * %s (System wide)
+  * %s (User specific; overrides system)
+  * command line overrides all config file options
+  
+  Example Config File:
+  
+    [server_info]
+    base_host_url=http://somewhere.domain:port
+""" % (CONFIG_SYSTEM, CONFIG_USER)
+  
+  #Special formatter for allowing preformatted description.
+  ##parser.format_epilog(PreformattedDescriptionFormatter())
+
   parser.add_option("-u", "--url",
                     action="store", type="string", dest="url")
   
@@ -25,9 +67,11 @@ def constructOptionParser():
   return parser
 
 def constructConfigParser():
+  """
+  returns a pre-setup config parser
+  """
   parser = SafeConfigParser()
-  parser.read(['/etc/elandifier/elandifier.conf',
-               os.path.expanduser('~/.elandifier.conf')])
+  parser.read([CONFIG_SYSTEM, CONFIG_USER])
   if not parser.has_section('server_info'):
     parser.add_section('server_info')
   
@@ -35,6 +79,10 @@ def constructConfigParser():
 
 
 def getCombinedOptions():
+  """
+  Returns optparse options after it has be updated with ConfigParser
+  config files and merged with parsed commandline options.
+  """
   cl_parser = constructOptionParser()
   conf_parser = constructConfigParser()
   
@@ -65,6 +113,10 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
   f.close()
 
 if __name__ == '__main__':
+  #Display help if no args are presented
+  if len(sys.argv) == 1:
+    sys.argv.append('-h')
+    
   options = getCombinedOptions()
   msg_list = ['ERROR MESSAGES:']
   if options.output_filepath is None:
