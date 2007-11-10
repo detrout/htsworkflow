@@ -113,15 +113,20 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
     web = urllib.urlopen(url)
   except IOError, msg:
     if str(msg).find("Connection refused") >= 0:
-      print 'Error: Could not connect to: %s' % (url)
+      print 'Error: Connection refused for: %s' % (url)
       f.close()
       sys.exit(1)
+    elif str(msg).find("Name or service not known") >= 0:
+      print 'Error: Invalid domain or ip address for: %s' % (url)
+      f.close()
+      sys.exit(2)
     else:
       raise IOError, msg
     
   f.write(web.read())
   web.close()
   f.close()
+  print 'Wrote config file to %s' % (output_filepath)
 
 if __name__ == '__main__':
   #Display help if no args are presented
