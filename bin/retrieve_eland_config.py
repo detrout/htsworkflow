@@ -106,7 +106,7 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
   retrieves the flowcell eland config file, give the base_host_url
   (i.e. http://sub.domain.edu:port)
   """
-  url = base_host_url + '/elandifier/config/%s/' % (flowcell)
+  url = base_host_url + '/eland_config/config/%s/' % (flowcell)
   
   f = open(output_filepath, 'w')
   try:
