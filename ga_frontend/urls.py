@@ -8,7 +8,7 @@ databrowse.site.register(FlowCell)
 
 urlpatterns = patterns('',
     # Base:
-    (r'^elandifier/', include('elandifier.eland_config.urls')),
+    (r'^ga_frontend/', include('ga_frontend.eland_config.urls')),
     # Admin:
      (r'^admin/', include('django.contrib.admin.urls')),
     # Databrowser:

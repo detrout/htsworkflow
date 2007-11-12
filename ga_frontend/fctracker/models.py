@@ -1,5 +1,5 @@
 from django.db import models
-from elandifier import settings
+from ga_frontend import settings
 
 # Create your models here.
 
