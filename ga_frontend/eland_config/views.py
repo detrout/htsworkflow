@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
-from elandifier.eland_config import forms
-from elandifier import settings
-from elandifier.fctracker import models
+from ga_frontend.eland_config import forms
+from ga_frontend import settings
+from ga_frontend.fctracker import models
 
 import os
 import glob
