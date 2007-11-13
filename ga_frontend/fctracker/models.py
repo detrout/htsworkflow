@@ -78,6 +78,8 @@ class FlowCell(models.Model):
   
   flowcell_id = models.CharField(max_length=20, unique=True, db_index=True, core=True)
   run_date = models.DateTimeField(core=True)
+  advanced_run = models.BooleanField(default=False)
+  read_length = models.IntegerField(default=32)
   
   lane_1_library = models.ForeignKey(Library, related_name="lane_1_library")
   lane_2_library = models.ForeignKey(Library, related_name="lane_2_library")
@@ -121,7 +123,7 @@ class FlowCell(models.Model):
     list_display = ('flowcell_id', 'run_date', 'lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library')
     fields = (
         (None, {
-            'fields': ('run_date', 'flowcell_id',)
+            'fields': ('run_date', 'flowcell_id', ('read_length', 'advanced_run'),)
         }),
         ('Lanes:', {
             'fields' : (('lane_1_library', 'lane_1_pM', 'lane_1_cluster_estimate'), ('lane_2_library', 'lane_2_pM', 'lane_2_cluster_estimate'), ('lane_3_library', 'lane_3_pM', 'lane_3_cluster_estimate'), ('lane_4_library', 'lane_4_pM', 'lane_4_cluster_estimate'), ('lane_5_library', 'lane_5_pM', 'lane_5_cluster_estimate'), ('lane_6_library', 'lane_6_pM', 'lane_6_cluster_estimate'), ('lane_7_library', 'lane_7_pM', 'lane_7_cluster_estimate'), ('lane_8_library', 'lane_8_pM', 'lane_8_cluster_estimate'),)
