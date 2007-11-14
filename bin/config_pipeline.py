@@ -17,19 +17,24 @@ class ConfigInfo:
     self.bustard_path = None
     self.config_filepath = None
 
+#FLAGS
+RUN_ABORT = 'abort'
+
 #Info
 s_start = re.compile('Starting Genome Analyzer Pipeline')
 s_gerald = re.compile("[\S\s]+--GERALD[\S\s]+--make[\S\s]+")
 s_generating = re.compile('Generating journals, Makefiles and parameter files')
 s_seq_folder = re.compile('^Sequence folder: ')
+s_stderr_taskcomplete = re.compile('^Task complete, exiting')
 
 #Errors
 s_invalid_cmdline = re.compile('Usage:[\S\s]*goat_pipeline.py')
+s_species_dir_err = re.compile('Error: Lane [1-8]:')
 
 #Ignore
 s_skip = re.compile('s_[0-8]_[0-9]+')
 
-def handler(line, conf_info):
+def config_stdout_handler(line, conf_info):
   """
   Processes each line of output from GOAT
   and stores useful information using the logging module
@@ -62,6 +67,48 @@ def handler(line, conf_info):
   return False
 
 
+
+def config_stderr_handler(line, conf_info):
+  """
+  Processes each line of output from GOAT
+  and stores useful information using the logging module
+
+  Loads useful information into conf_info as well, for future
+  use outside the function.
+
+  returns RUN_ABORT upon detecting failure; True on success message
+  """
+
+  if s_species_dir_err.search(line):
+    logging.error(line)
+    return RUN_ABORT
+  elif s_stderr_taskcomplete.search(line):
+    logging.info('Configure step successful (from: stderr)')
+    return True
+  else:
+    logging.debug('STDERR: How to handle: %s' % (line))
+
+  return False
+
+#FIXME: Temperary hack
+f = open('pipeline_run.log', 'w')
+
+def pipeline_handler(line, conf_info):
+  """
+  Processes each line of output from running the pipeline
+  and stores useful information using the logging module
+
+  Loads useful information into conf_info as well, for future
+  use outside the function.
+
+  returns True if found condition that signifies success.
+  """
+
+  f.write(line + '\n')
+
+  return True
+
+
 def configure(conf_info):
   """
   Attempts to configure the GA pipeline using goat.
@@ -85,14 +132,17 @@ def configure(conf_info):
                            '.'],
                           stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE)
-  
-  line = pipe.stdout.readline()
+
+  #Process stdout
+  stdout_line = pipe.stdout.readline()
 
   complete = False
-  while line != '':
-    if handler(line, conf_info):
+  while stdout_line != '':
+    # Handle stdout
+    if config_stdout_handler(stdout_line, conf_info):
       complete = True
-    line = pipe.stdout.readline()
+    stdout_line = pipe.stdout.readline()
+
 
   error_code = pipe.wait()
   if error_code:
@@ -100,9 +150,30 @@ def configure(conf_info):
   else:
     logging.info ('We are go for launch!')
 
-  #If log says complete and we don't have an
-  # error code (i.e. error_code == False)
-  status = complete is True and bool(error_code) is False
+  #Process stderr
+  stderr_line = pipe.stderr.readline()
+
+  abort = 'NO!'
+  stderr_success = False
+  while stderr_line != '':
+    stderr_status = config_stderr_handler(stderr_line, conf_info)
+    if stderr_status == RUN_ABORT:
+      abort = RUN_ABORT
+    elif stderr_status is True:
+      stderr_success = True
+    stderr_line = pipe.stderr.readline()
+
+
+  #Success requirements:
+  # 1) The stdout completed without error
+  # 2) The program exited with status 0
+  # 3) No errors found in stdout
+  print '#Expect: True, False, True, True'
+  print complete, bool(error_code), abort != RUN_ABORT, stderr_success is True
+  status = complete is True and \
+           bool(error_code) is False and \
+           abort != RUN_ABORT and \
+           stderr_success is True
 
   # If everything was successful, but for some reason
   #  we didn't retrieve the path info, log it.
@@ -112,6 +183,35 @@ def configure(conf_info):
       return False
   
   return status
+
+
+def run_pipeline(conf_info):
+
+  # Fail if the run_path doesn't actually exist
+  if not os.path.exists(conf_info.run_path):
+    logging.error('Run path does not exist: %s' \
+              % (conf_info.run_path))
+    return False
+
+  # Change cwd to run_path
+  os.chdir(conf_info.run_path)
+
+  # Start the pipeline (and hide!)
+  pipe = subprocess.Popen(['make',
+                           '-j8',
+                           'recursive'],
+                          stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE)
+
+  line = pipe.stdout.readline()
+
+  complete = False
+  while line != '':
+    if pipeline_handler(line, conf_info):
+      complete = True
+    line = pipe.stdout.readline()
+
+
 
 
 if __name__ == '__main__':
@@ -124,5 +224,11 @@ if __name__ == '__main__':
   else:
     print "Configure failed"
 
-  print 'Run Dir:', ci.run_path
-  print 'Bustard Dir:', ci.bustard_path
+  #print 'Run Dir:', ci.run_path
+  #print 'Bustard Dir:', ci.bustard_path
+
+  #if status:
+  #  run_pipeline(ci)
+
+  #FIXME: Temperary hack
+  f.close()
