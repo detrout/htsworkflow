@@ -30,6 +30,8 @@ s_stderr_taskcomplete = re.compile('^Task complete, exiting')
 #Errors
 s_invalid_cmdline = re.compile('Usage:[\S\s]*goat_pipeline.py')
 s_species_dir_err = re.compile('Error: Lane [1-8]:')
+s_goat_traceb = re.compile("^Traceback \(most recent call last\):")
+
 
 #Ignore
 s_skip = re.compile('s_[0-8]_[0-9]+')
@@ -82,6 +84,9 @@ def config_stderr_handler(line, conf_info):
   if s_species_dir_err.search(line):
     logging.error(line)
     return RUN_ABORT
+  elif s_goat_traceb.search(line):
+    logging.error("Goat config script died, traceback in debug output")
+    return RUN_ABORT
   elif s_stderr_taskcomplete.search(line):
     logging.info('Configure step successful (from: stderr)')
     return True
@@ -92,6 +97,7 @@ def config_stderr_handler(line, conf_info):
 
 #FIXME: Temperary hack
 f = open('pipeline_run.log', 'w')
+ferr = open('pipeline_err.log', 'w')
 
 def pipeline_handler(line, conf_info):
   """
@@ -125,6 +131,15 @@ def configure(conf_info):
   #                        stdout=subprocess.PIPE,
   #                        stderr=subprocess.PIPE)
 
+  #ERROR Test (2), causes goat_pipeline.py traceback
+  #pipe = subprocess.Popen(['goat_pipeline.py',
+  #                  '--GERALD=%s' % (conf_info.config_filepath),
+  #                         '--tiles=s_4_100,s_4_101,s_4_102,s_4_103,s_4_104',
+  #                         '--make',
+  #                         '.'],
+  #                        stdout=subprocess.PIPE,
+  #                        stderr=subprocess.PIPE)
+
   #Not a test; actual run attempt.
   pipe = subprocess.Popen(['goat_pipeline.py',
                     '--GERALD=%s' % (conf_info.config_filepath),
@@ -132,6 +147,16 @@ def configure(conf_info):
                            '.'],
                           stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE)
+
+  # CONTINUE HERE
+  #FIXME: this only does a run on 5 tiles on lane 4
+  #pipe = subprocess.Popen(['goat_pipeline.py',
+  #                  '--GERALD=%s' % (conf_info.config_filepath),
+  #                         '--tiles=s_4_0100,s_4_0101,s_4_0102,s_4_103,s_4_104',
+  #                         '--make',
+  #                         '.'],
+  #                        stdout=subprocess.PIPE,
+  #                        stderr=subprocess.PIPE)
 
   #Process stdout
   stdout_line = pipe.stdout.readline()
@@ -211,7 +236,10 @@ def run_pipeline(conf_info):
       complete = True
     line = pipe.stdout.readline()
 
+  error_code = pipe.wait()
 
+  ferr.write(pipe.stderr.read())
+  ferr.close()
 
 
 if __name__ == '__main__':
@@ -224,11 +252,12 @@ if __name__ == '__main__':
   else:
     print "Configure failed"
 
-  #print 'Run Dir:', ci.run_path
-  #print 'Bustard Dir:', ci.bustard_path
+  print 'Run Dir:', ci.run_path
+  print 'Bustard Dir:', ci.bustard_path
 
-  #if status:
-  #  run_pipeline(ci)
+  if status:
+    print 'Running pipeline now!'
+    run_pipeline(ci)
 
   #FIXME: Temperary hack
   f.close()
