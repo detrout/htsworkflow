@@ -9,7 +9,7 @@ import os
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S',
-                    filename='config_pipeline.log',
+                    filename='pipeline_main.log',
                     filemode='w')
 
 class ConfigInfo:
@@ -40,8 +40,12 @@ s_species_dir_err = re.compile('Error: Lane [1-8]:')
 s_goat_traceb = re.compile("^Traceback \(most recent call last\):")
 
 
-#Ignore
+##Ignore - Example of out above each ignore regex.
+#NOTE: Commenting out an ignore will cause it to be
+# logged as DEBUG with the logging module.
+#CF_STDERR_IGNORE_LIST = []
 s_skip = re.compile('s_[0-8]_[0-9]+')
+
 
 ##########################################
 # Pipeline Run Step (make -j8 recursive)
@@ -53,8 +57,12 @@ s_skip = re.compile('s_[0-8]_[0-9]+')
 s_make_error = re.compile('^make[\S\s]+Error')
 s_no_gnuplot = re.compile('gnuplot: command not found')
 s_no_convert = re.compile('^Can\'t exec "convert"')
+s_no_ghostscript = re.compile('gs: command not found')
 
-##Ignore
+##Ignore - Example of out above each ignore regex.
+#NOTE: Commenting out an ignore will cause it to be
+# logged as DEBUG with the logging module.
+#
 PL_STDERR_IGNORE_LIST = []
 # Info: PF 11802
 PL_STDERR_IGNORE_LIST.append( re.compile('^Info: PF') )
@@ -72,6 +80,8 @@ PL_STDERR_IGNORE_LIST.append( re.compile('^Quality criterion translated to') )
 #  AND
 # opened s_4_0103_qhg.txt
 PL_STDERR_IGNORE_LIST.append( re.compile('^opened[\S\s]+qhg.txt') )
+# 81129 sequences out of 157651 passed filter criteria
+PL_STDERR_IGNORE_LIST.append( re.compile('^[0-9]+ sequences out of [0-9]+ passed filter criteria') )
 
 
 def pl_stderr_ignore(line):
@@ -184,8 +194,8 @@ def config_stderr_handler(line, conf_info):
 
 
 #FIXME: Temperary hack
-f = open('pipeline_run.log.1', 'w')
-#ferr = open('pipeline_err.log.1', 'w')
+f = open('pipeline_run.log', 'w')
+#ferr = open('pipeline_err.log', 'w')
 
 
 
@@ -220,6 +230,9 @@ def pipeline_stderr_handler(line, conf_info):
     return RUN_FAILED
   elif s_no_convert.search(line):
     logging.error("imagemagick's convert command not found")
+    return RUN_FAILED
+  elif s_no_ghostscript.search(line):
+    logging.error("ghostscript not found")
     return RUN_FAILED
   else:
     logging.debug('PIPE:STDERR:?: %s' % (line))
@@ -400,10 +413,14 @@ if __name__ == '__main__':
 
   print 'Run Dir:', ci.run_path
   print 'Bustard Dir:', ci.bustard_path
-
+  
   if status:
     print 'Running pipeline now!'
-    run_pipeline(ci)
+    run_status = run_pipeline(ci)
+    if run_status is True:
+      print 'Pipeline ran successfully.'
+    else:
+      print 'Pipeline run failed.'
 
   #FIXME: Temperary hack
   f.close()
