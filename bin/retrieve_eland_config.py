@@ -10,6 +10,11 @@ import urllib
 CONFIG_SYSTEM = '/etc/ga_frontend/ga_frontend.conf'
 CONFIG_USER = os.path.expanduser('~/.ga_frontend.conf')
 
+
+class FlowCellNotFound(Exception): pass
+class WebError404(Exception): pass
+
+
 class PreformattedDescriptionFormatter(IndentedHelpFormatter):
   
   #def format_description(self, description):
@@ -122,11 +127,23 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
       sys.exit(2)
     else:
       raise IOError, msg
-    
-  f.write(web.read())
+
+  data = web.read()
+
+  if data.find('Hmm, config file for') >= 0:
+    msg = "Flowcell (%s) not found in DB; full url(%s)" % (flowcell, url)
+    raise FlowCellNotFound, msg
+
+  if data.find('404 - Not Found') >= 0:
+    msg = "404 - Not Found: Flowcell (%s); base_host_url (%s);\n full url(%s)\n " \
+          "Did you get right port #?" % (flowcell, base_host_url, url)
+    raise FlowCellNotFound, msg
+  
+  f.write(data)
   web.close()
   f.close()
   print 'Wrote config file to %s' % (output_filepath)
+
 
 if __name__ == '__main__':
   #Display help if no args are presented
