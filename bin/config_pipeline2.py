@@ -232,12 +232,6 @@ def config_stderr_handler(line, conf_info):
   return False
 
 
-#FIXME: Temperary hack
-#f = open('pipeline_run.log', 'w')
-#ferr = open('pipeline_err.log', 'w')
-
-
-
 #def pipeline_stdout_handler(line, conf_info):
 #  """
 #  Processes each line of output from running the pipeline
@@ -249,7 +243,7 @@ def config_stderr_handler(line, conf_info):
 #  returns True if found condition that signifies success.
 #  """
 #
-#  f.write(line + '\n')
+#  #f.write(line + '\n')
 #
 #  return True
 
@@ -488,5 +482,3 @@ if __name__ == '__main__':
     else:
       print 'Pipeline run failed.'
 
-  #FIXME: Temperary hack
-  #f.close()
