@@ -316,21 +316,29 @@ def getElandConfig(flowcell, regenerate=False):
   genome_dict = {}
   
   #l1s = form['lane1_species']
-  l1s = fcObj.lane_1_library.library_species.scientific_name
+  l1s = fcObj.lane_1_library.library_species.scientific_name + '|' + \
+        fcObj.lane_1_library.library_species.use_genome_build
   genome_dict.setdefault(l1s, []).append('1')
-  l2s = fcObj.lane_2_library.library_species.scientific_name
+  l2s = fcObj.lane_2_library.library_species.scientific_name + '|' + \
+        fcObj.lane_2_library.library_species.use_genome_build
   genome_dict.setdefault(l2s, []).append('2')
-  l3s = fcObj.lane_3_library.library_species.scientific_name
+  l3s = fcObj.lane_3_library.library_species.scientific_name + '|' + \
+        fcObj.lane_3_library.library_species.use_genome_build
   genome_dict.setdefault(l3s, []).append('3')
-  l4s = fcObj.lane_4_library.library_species.scientific_name
+  l4s = fcObj.lane_4_library.library_species.scientific_name + '|' + \
+        fcObj.lane_4_library.library_species.use_genome_build
   genome_dict.setdefault(l4s, []).append('4')
-  l5s = fcObj.lane_5_library.library_species.scientific_name
+  l5s = fcObj.lane_5_library.library_species.scientific_name + '|' + \
+        fcObj.lane_5_library.library_species.use_genome_build
   genome_dict.setdefault(l5s, []).append('5')
-  l6s = fcObj.lane_6_library.library_species.scientific_name
+  l6s = fcObj.lane_6_library.library_species.scientific_name + '|' + \
+        fcObj.lane_6_library.library_species.use_genome_build
   genome_dict.setdefault(l6s, []).append('6')
-  l7s = fcObj.lane_7_library.library_species.scientific_name
+  l7s = fcObj.lane_7_library.library_species.scientific_name + '|' + \
+        fcObj.lane_7_library.library_species.use_genome_build
   genome_dict.setdefault(l7s, []).append('7')
-  l8s = fcObj.lane_8_library.library_species.scientific_name
+  l8s = fcObj.lane_8_library.library_species.scientific_name + '|' + \
+        fcObj.lane_8_library.library_species.use_genome_build
   genome_dict.setdefault(l8s, []).append('8')
   
   genome_list = genome_dict.keys()
@@ -341,7 +349,7 @@ def getElandConfig(flowcell, regenerate=False):
     lanes = ''.join(genome_dict[genome])
     data.append('%s:ANALYSIS eland' % (lanes))
     data.append('%s:READ_LENGTH %s' % (lanes, read_length))
-    data.append('%s:ELAND_GENOME %s' % (lanes, os.path.join(BASE_DIR, genome)))
+    data.append('%s:ELAND_GENOME %s' % (lanes, '%%(%s)s' % (genome)))
     data.append('%s:USE_BASES %s' % (lanes, 'Y'*int(read_length)))
     
   data.append('SEQUENCE_FORMAT --scarf')

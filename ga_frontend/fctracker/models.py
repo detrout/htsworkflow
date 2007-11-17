@@ -7,9 +7,10 @@ class Species(models.Model):
   
   scientific_name = models.CharField(max_length=256, unique=True, db_index=True, core=True)
   common_name = models.CharField(max_length=256, blank=True)
+  use_genome_build = models.CharField(max_length=100, blank=False, null=False)
 
   def __str__(self):
-    return '%s (%s)' % (self.scientific_name, self.common_name)
+    return '%s (%s)|%s' % (self.scientific_name, self.common_name, self.use_genome_build)
   
   class Meta:
     verbose_name_plural = "species"
@@ -18,7 +19,7 @@ class Species(models.Model):
   class Admin:
       fields = (
         (None, {
-            'fields': (('scientific_name', 'common_name'),)
+            'fields': (('scientific_name', 'common_name'), ('use_genome_build'))
         }),
       )
 
@@ -27,6 +28,7 @@ class Library(models.Model):
   library_id = models.IntegerField(primary_key=True, db_index=True, core=True)
   library_name = models.CharField(max_length=100, unique=True, core=True)
   library_species = models.ForeignKey(Species, core=True)
+  #use_genome_build = models.CharField(max_length=100, blank=False, null=False)
   RNAseq = models.BooleanField()
   
   made_by = models.CharField(max_length=50, blank=True, default="Lorian")
