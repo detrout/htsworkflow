@@ -5,6 +5,10 @@ import time
 import re
 import os
 
+from retrieve_eland_config import getCombinedOptions, saveConfigFile
+from retrieve_eland_config import FlowCellNotFound, WebError404
+from genome_mapper import DuplicateGenome, getAvailableGenomes, constructMapperDict
+
 from pyinotify import WatchManager, ThreadedNotifier
 from pyinotify import EventsCodes, ProcessEvent
 
@@ -284,6 +288,58 @@ def pipeline_stderr_handler(line, conf_info):
   return False
 
 
+def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir):
+  """
+  Gets the config file from server...
+  requires config file in:
+    /etc/ga_frontend/ga_frontend.conf
+   or
+    ~/.ga_frontend.conf
+
+  with:
+  [server_info]
+  base_host_url: http://host:port
+
+  return True if successful, False is failure
+  """
+  options = getCombinedOptions()
+
+  if options.url is None:
+    logging.error("~/.ga_frontend.conf or /etc/ga_frontend/ga_frontend.conf" \
+                  " missing base_host_url option")
+    return False
+
+  try:
+    saveConfigFile(flowcell, options.url, cfg_filepath)
+    conf_info.config_filepath = cfg_filepath
+  except FlowCellNotFound, e:
+    logging.error(e)
+    return False
+  except WebError404, e:
+    logging.error(e)
+    return False
+  except IOError, e:
+    logging.error(e)
+    return False
+  except Exception, e:
+    logging.error(e)
+    return False
+
+  f = open(cfg_filepath, 'r')
+  data = f.read()
+  f.close()
+
+  genome_dict = getAvailableGenomes(genome_dir)
+  mapper_dict = constructMapperDict(genome_dict)
+
+  f = open(cfg_filepath, 'w')
+  f.write(data % (mapper_dict))
+  f.close()
+  
+  return True  
+  
+
+
 def configure(conf_info):
   """
   Attempts to configure the GA pipeline using goat.
@@ -463,22 +519,33 @@ def run_pipeline(conf_info):
 
 if __name__ == '__main__':
   ci = ConfigInfo()
-  ci.config_filepath = 'config32bk.txt'
-  
-  status = configure(ci)
-  if status:
-    print "Configure success"
-  else:
-    print "Configure failed"
 
-  print 'Run Dir:', ci.run_path
-  print 'Bustard Dir:', ci.bustard_path
-  
-  if status:
-    print 'Running pipeline now!'
-    run_status = run_pipeline(ci)
-    if run_status is True:
-      print 'Pipeline ran successfully.'
+  flowcell = 'FC12150'
+  cfg_filepath = 'config32auto.txt'
+  genome_dir = '/home/king/trog_drive/'
+
+  status_retrieve_cfg = retrieve_config(ci, flowcell, cfg_filepath, genome_dir)
+  if status_retrieve_cfg:
+    print "Retrieve config file successful"
+  else:
+    print "Failed to retrieve config file"
+  #ci.config_filepath = 'config32bk.txt'
+
+  if status_retrieve_cfg:
+    status = configure(ci)
+    if status:
+      print "Configure success"
     else:
-      print 'Pipeline run failed.'
+      print "Configure failed"
+    
+    print 'Run Dir:', ci.run_path
+    print 'Bustard Dir:', ci.bustard_path
+    
+    if status:
+      print 'Running pipeline now!'
+      run_status = run_pipeline(ci)
+      if run_status is True:
+        print 'Pipeline ran successfully.'
+      else:
+        print 'Pipeline run failed.'
 

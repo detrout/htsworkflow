@@ -114,19 +114,19 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
   url = base_host_url + '/eland_config/%s/' % (flowcell)
   
   f = open(output_filepath, 'w')
-  try:
-    web = urllib.urlopen(url)
-  except IOError, msg:
-    if str(msg).find("Connection refused") >= 0:
-      print 'Error: Connection refused for: %s' % (url)
-      f.close()
-      sys.exit(1)
-    elif str(msg).find("Name or service not known") >= 0:
-      print 'Error: Invalid domain or ip address for: %s' % (url)
-      f.close()
-      sys.exit(2)
-    else:
-      raise IOError, msg
+  #try:
+  web = urllib.urlopen(url)
+  #except IOError, msg:
+  #  if str(msg).find("Connection refused") >= 0:
+  #    print 'Error: Connection refused for: %s' % (url)
+  #    f.close()
+  #    sys.exit(1)
+  #  elif str(msg).find("Name or service not known") >= 0:
+  #    print 'Error: Invalid domain or ip address for: %s' % (url)
+  #    f.close()
+  #    sys.exit(2)
+  #  else:
+  #    raise IOError, msg
 
   data = web.read()
 
