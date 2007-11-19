@@ -77,8 +77,8 @@ def constructConfigParser():
   """
   parser = SafeConfigParser()
   parser.read([CONFIG_SYSTEM, CONFIG_USER])
-  if not parser.has_section('server_info'):
-    parser.add_section('server_info')
+  if not parser.has_section('config_file_server'):
+    parser.add_section('config_file_server')
   
   return parser
 
@@ -94,8 +94,8 @@ def getCombinedOptions():
   options, args = cl_parser.parse_args()
   
   if options.url is None:
-    if conf_parser.has_option('server_info', 'base_host_url'):
-      options.url = conf_parser.get('server_info', 'base_host_url')
+    if conf_parser.has_option('config_file_server', 'base_host_url'):
+      options.url = conf_parser.get('config_file_server', 'base_host_url')
   
   print 'USING OPTIONS:'
   print ' URL:', options.url

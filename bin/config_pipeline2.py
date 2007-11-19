@@ -297,7 +297,7 @@ def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir):
     ~/.ga_frontend.conf
 
   with:
-  [server_info]
+  [config_file_server]
   base_host_url: http://host:port
 
   return True if successful, False is failure
