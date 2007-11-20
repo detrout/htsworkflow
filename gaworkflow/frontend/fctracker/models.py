@@ -1,5 +1,5 @@
 from django.db import models
-from ga_frontend import settings
+from gaworkflow.frontend import settings
 
 # Create your models here.
 
