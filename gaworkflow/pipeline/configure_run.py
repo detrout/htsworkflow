@@ -5,9 +5,9 @@ import time
 import re
 import os
 
-from retrieve_eland_config import getCombinedOptions, saveConfigFile
-from retrieve_eland_config import FlowCellNotFound, WebError404
-from genome_mapper import DuplicateGenome, getAvailableGenomes, constructMapperDict
+from gaworkflow.pipeline.retrieve_config import getCombinedOptions, saveConfigFile
+from gaworkflow.pipeline.retrieve_config import FlowCellNotFound, WebError404
+from gaworkflow.pipeline.genome_mapper import DuplicateGenome, getAvailableGenomes, constructMapperDict
 
 from pyinotify import WatchManager, ThreadedNotifier
 from pyinotify import EventsCodes, ProcessEvent
@@ -515,37 +515,4 @@ def run_pipeline(conf_info):
 
   return status
 
-
-
-if __name__ == '__main__':
-  ci = ConfigInfo()
-
-  flowcell = 'FC12150'
-  cfg_filepath = 'config32auto.txt'
-  genome_dir = '/home/king/trog_drive/'
-
-  status_retrieve_cfg = retrieve_config(ci, flowcell, cfg_filepath, genome_dir)
-  if status_retrieve_cfg:
-    print "Retrieve config file successful"
-  else:
-    print "Failed to retrieve config file"
-  #ci.config_filepath = 'config32bk.txt'
-
-  if status_retrieve_cfg:
-    status = configure(ci)
-    if status:
-      print "Configure success"
-    else:
-      print "Configure failed"
-    
-    print 'Run Dir:', ci.run_path
-    print 'Bustard Dir:', ci.bustard_path
-    
-    if status:
-      print 'Running pipeline now!'
-      run_status = run_pipeline(ci)
-      if run_status is True:
-        print 'Pipeline ran successfully.'
-      else:
-        print 'Pipeline run failed.'
 

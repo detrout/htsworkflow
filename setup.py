@@ -6,5 +6,8 @@ setup(
   author="Diane Trout",
   author_email="diane@caltech.edu",
   packages=["uashelper"],
-  scripts=['scripts/spoolwatcher', 'scripts/copier'],
+  scripts=['scripts/spoolwatcher', 
+           'scripts/copier',
+           'scripts/retreive_config',
+           'scripts/configure_pipeline'],
 )

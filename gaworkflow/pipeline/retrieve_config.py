@@ -144,27 +144,4 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
   f.close()
   print 'Wrote config file to %s' % (output_filepath)
 
-
-if __name__ == '__main__':
-  #Display help if no args are presented
-  if len(sys.argv) == 1:
-    sys.argv.append('-h')
-    
-  options = getCombinedOptions()
-  msg_list = ['ERROR MESSAGES:']
-  if options.output_filepath is None:
-    msg_list.append("  Output filepath argument required. -o <filepath> or --output=<filepath>")
-    
-  if options.flowcell is None:
-    msg_list.append("  Flow cell argument required. -f <flowcell> or --flowcell=<flowcell>")
-    
-  if options.url is None:
-    msg_list.append("  URL argument required (-u <url> or --url=<url>), or entry\n" \
-                    "    in /etc/elandifier/elandifer.conf or ~/.elandifier.conf")
-    
-  if len(msg_list) > 1:
-    print '\n'.join(msg_list)
-    sys.exit(0)
-  
-  saveConfigFile(options.flowcell, options.url, options.output_filepath)
   
