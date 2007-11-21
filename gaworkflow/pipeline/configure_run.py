@@ -8,6 +8,7 @@ import os
 from gaworkflow.pipeline.retrieve_config import getCombinedOptions, saveConfigFile
 from gaworkflow.pipeline.retrieve_config import FlowCellNotFound, WebError404
 from gaworkflow.pipeline.genome_mapper import DuplicateGenome, getAvailableGenomes, constructMapperDict
+from gaworkflow.pipeline.run_status import GARunStatus
 
 from pyinotify import WatchManager, ThreadedNotifier
 from pyinotify import EventsCodes, ProcessEvent
@@ -24,6 +25,23 @@ class ConfigInfo:
     self.run_path = None
     self.bustard_path = None
     self.config_filepath = None
+    self.status = None
+
+
+  def createStatusObject(self):
+    """
+    Creates a status object which can be queried for
+    status of running the pipeline
+
+    returns True if object created
+    returns False if object cannot be created
+    """
+    if self.config_filepath is None:
+      return False
+
+    self.status = GARunStatus(self.config_filepath)
+    return True
+
 
 
 ####################################
@@ -33,15 +51,22 @@ s_firecrest_finished = re.compile('Firecrest[0-9\._\-A-Za-z]+/finished.txt')
 s_bustard_finished = re.compile('Bustard[0-9\._\-A-Za-z]+/finished.txt')
 s_gerald_finished = re.compile('GERALD[0-9\._\-A-Za-z]+/finished.txt')
 
+s_gerald_all = re.compile('Firecrest[0-9\._\-A-Za-z]+/Bustard[0-9\._\-A-Za-z]+/GERALD[0-9\._\-A-Za-z]+/')
+s_bustard_all = re.compile('Firecrest[0-9\._\-A-Za-z]+/Bustard[0-9\._\-A-Za-z]+/')
+s_firecrest_all = re.compile('Firecrest[0-9\._\-A-Za-z]+/')
+
 class RunEvent(ProcessEvent):
 
-  def __init__(self):
+  def __init__(self, conf_info):
 
     self.run_status_dict = {'firecrest': False,
                             'bustard': False,
                             'gerald': False}
 
+    self._ci = conf_info
+
     ProcessEvent.__init__(self)
+    
 
   def process_IN_CREATE(self, event):
     fullpath = os.path.join(event.path, event.name)
@@ -50,15 +75,35 @@ class RunEvent(ProcessEvent):
 
       if s_firecrest_finished.search(fullpath):
         self.run_status_dict['firecrest'] = True
+        self._ci.status.updateFirecrest(event.name)
       elif s_bustard_finished.search(fullpath):
         self.run_status_dict['bustard'] = True
+        self._ci.status.updateBustard(event.name)
       elif s_gerald_finished.search(fullpath):
         self.run_status_dict['gerald'] = True
+        self._ci.status.updateGerald(event.name)
+
+    #WARNING: The following order is important!!
+    # Firecrest regex will catch all gerald, bustard, and firecrest
+    # Bustard regex will catch all gerald and bustard
+    # Gerald regex will catch all gerald
+    # So, order needs to be Gerald, Bustard, Firecrest, or this
+    #  won't work properly.
+    elif s_gerald_all.search(fullpath):
+      self._ci.status.updateGerald(event.name)
+    elif s_bustard_all.search(fullpath):
+      self._ci.status.updateBustard(event.name)
+    elif s_firecrest_all.search(fullpath):
+      self._ci.status.updateFirecrest(event.name)
       
-    print "Create: %s" % (os.path.join(event.path, event.name))
+    #print "Create: %s" % (os.path.join(event.path, event.name))
 
   def process_IN_DELETE(self, event):
-    print "Remove %s" % (os.path.join(event.path, event.name))
+    #print "Remove %s" % (os.path.join(event.path, event.name))
+    pass
+
+
+
 
 #FLAGS
 # Config Step Error
@@ -452,10 +497,13 @@ def run_pipeline(conf_info):
   stdout_filepath = os.path.join(conf_info.run_path, 'pipeline_run_stdout.txt')
   stderr_filepath = os.path.join(conf_info.run_path, 'pipeline_run_stderr.txt')
 
+  # Create status object
+  conf_info.createStatusObject()
+
   # Monitor file creation
   wm = WatchManager()
   mask = EventsCodes.IN_DELETE | EventsCodes.IN_CREATE
-  event = RunEvent()
+  event = RunEvent(conf_info)
   notifier = ThreadedNotifier(wm, event)
   notifier.start()
   wdd = wm.add_watch(conf_info.run_path, mask, rec=True)

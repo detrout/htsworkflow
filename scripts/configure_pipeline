@@ -1,21 +1,35 @@
 #!/usr/bin/env python
+import os
 import sys
 from gaworkflow.pipeline.configure_run import *
+from gaworkflow.pipeline.monitors import startCmdLineStatusMonitor
+
 
 def main(args=None):
   ci = ConfigInfo()
 
+  #FIXME: make a better command line tool
+  skip_retrieve_config = False
+  if len(args) == 1:
+    cfg_filepath = os.path.abspath(args[0])
+    skip_retrieve_config = True
+  else:
+    cfg_filepath = os.path.abspath('config32auto.txt')
+
   flowcell = 'FC12150'
-  cfg_filepath = 'config32auto.txt'
   genome_dir = '/home/king/trog_drive/'
 
-  status_retrieve_cfg = retrieve_config(ci, flowcell, cfg_filepath, genome_dir)
-  if status_retrieve_cfg:
-    print "Retrieve config file successful"
+  if not skip_retrieve_config:
+    status_retrieve_cfg = retrieve_config(ci, flowcell, cfg_filepath, genome_dir)
+    if status_retrieve_cfg:
+      print "Retrieve config file successful"
+    else:
+      print "Failed to retrieve config file"
   else:
-    print "Failed to retrieve config file"
-  #ci.config_filepath = 'config32bk.txt'
-
+    print "Config file %s provided from command-line" % (cfg_filepath)
+    ci.config_filepath = cfg_filepath
+    status_retrieve_cfg = True
+  
   if status_retrieve_cfg:
     status = configure(ci)
     if status:
@@ -27,6 +41,9 @@ def main(args=None):
     print 'Bustard Dir:', ci.bustard_path
     
     if status:
+      # Setup status cmdline status monitor
+      startCmdLineStatusMonitor(ci)
+      
       print 'Running pipeline now!'
       run_status = run_pipeline(ci)
       if run_status is True:
