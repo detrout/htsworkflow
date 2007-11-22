@@ -117,7 +117,7 @@ RUN_FAILED = 'failed'
 #Info
 s_start = re.compile('Starting Genome Analyzer Pipeline')
 s_gerald = re.compile("[\S\s]+--GERALD[\S\s]+--make[\S\s]+")
-s_generating = re.compile('Generating journals, Makefiles and parameter files')
+s_generating = re.compile('^Generating journals, Makefiles')
 s_seq_folder = re.compile('^Sequence folder: ')
 s_seq_folder_sub = re.compile('want to make ')
 s_stderr_taskcomplete = re.compile('^Task complete, exiting')
