@@ -424,7 +424,7 @@ def configure(conf_info):
   #FIXME: this only does a run on 5 tiles on lane 4
   pipe = subprocess.Popen(['goat_pipeline.py',
                     '--GERALD=%s' % (conf_info.config_filepath),
-                           '--tiles=s_4_0100,s_4_0101,s_4_0102,s_4_0103,s_4_0104',
+                           #'--tiles=s_4_0100,s_4_0101,s_4_0102,s_4_0103,s_4_0104',
                            '--make',
                            '.'],
                           stdout=subprocess.PIPE,
