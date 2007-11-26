@@ -37,17 +37,17 @@ def _two_digit_num_in_string(num):
 
 # FIRECREST PATTERNS
 # _p2f(<pattern>, lane, tile, cycle)
-PATTERN_FIRECREST_INT = 's_%s_%s_%s_int.txt'
 PATTERN_FIRECREST_QCM = 's_%s_%s_%s_qcm.xml'
-PATTERN_FIRECREST_CLU1 = 's_%s_%s_%s_1_clu.txt'
-PATTERN_FIRECREST_CLU2 = 's_%s_%s_%s_2_clu.txt'
-PATTERN_FIRECREST_CLU3 = 's_%s_%s_%s_3_clu.txt'
-PATTERN_FIRECREST_CLU4 = 's_%s_%s_%s_4_clu.txt'
 
 # _p2f(<pattern>, lane, tile)
+PATTERN_FIRECREST_INT = 's_%s_%s_02_int.txt'
 PATTERN_FIRECREST_NSE = 's_%s_%s_nse.txt.gz'
 PATTERN_FIRECREST_POS = 's_%s_%s_pos.txt'
 PATTERN_FIRECREST_IDX = 's_%s_%s_idx.txt'
+PATTERN_FIRECREST_CLU1 = 's_%s_%s_01_1_clu.txt'
+PATTERN_FIRECREST_CLU2 = 's_%s_%s_01_2_clu.txt'
+PATTERN_FIRECREST_CLU3 = 's_%s_%s_01_3_clu.txt'
+PATTERN_FIRECREST_CLU4 = 's_%s_%s_01_4_clu.txt'
 
 
 # BUSTARD PATTERNS
@@ -230,23 +230,21 @@ class GARunStatus(object):
           # LANE, TILE, CYCLE LAYER
 
           # FIRECREST
-          firecrest[_p2f(PATTERN_FIRECREST_INT, lane, tile, cycle)] = False
-                         
           firecrest[_p2f(PATTERN_FIRECREST_QCM, lane, tile, cycle)] = False
 
-          firecrest[_p2f(PATTERN_FIRECREST_CLU1, lane, tile, cycle)] = False
-          firecrest[_p2f(PATTERN_FIRECREST_CLU2, lane, tile, cycle)] = False
-          firecrest[_p2f(PATTERN_FIRECREST_CLU3, lane, tile, cycle)] = False
-          firecrest[_p2f(PATTERN_FIRECREST_CLU4, lane, tile, cycle)] = False
 
         ###################
         # LANE, TILE LAYER
 
         # FIRECREST
-        
+        firecrest[_p2f(PATTERN_FIRECREST_INT, lane, tile)] = False
         firecrest[_p2f(PATTERN_FIRECREST_NSE, lane, tile)] = False
         firecrest[_p2f(PATTERN_FIRECREST_POS, lane, tile)] = False
         firecrest[_p2f(PATTERN_FIRECREST_IDX, lane, tile)] = False
+        firecrest[_p2f(PATTERN_FIRECREST_CLU1, lane, tile)] = False
+        firecrest[_p2f(PATTERN_FIRECREST_CLU2, lane, tile)] = False
+        firecrest[_p2f(PATTERN_FIRECREST_CLU3, lane, tile)] = False
+        firecrest[_p2f(PATTERN_FIRECREST_CLU4, lane, tile)] = False
 
 
         # BUSTARD
