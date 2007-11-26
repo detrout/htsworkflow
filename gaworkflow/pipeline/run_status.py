@@ -59,8 +59,8 @@ PATTERN_BUSTARD_PRB = 's_%s_%s_prb.txt'
 
 # GERALD PATTERNS
 # _p2f(<pattern>, lane, tile)
-PATTERN_GERALD_ALL = 's_%s_%s_all.txt.tmp'
-PATTERN_GERALD_QRAW = 's_%s_%s_qraw.txt.tmp'
+PATTERN_GERALD_ALLTMP = 's_%s_%s_all.txt.tmp'
+PATTERN_GERALD_QRAWTMP = 's_%s_%s_qraw.txt.tmp'
 PATTERN_GERALD_ALLPNGTMP = 's_%s_%s_all.tmp.png'
 PATTERN_GERALD_ALIGNTMP = 's_%s_%s_align.txt.tmp'
 PATTERN_GERALD_QVALTMP = 's_%s_%s_qval.txt.tmp'
@@ -74,9 +74,9 @@ PATTERN_GERALD_QCALTMP = 's_%s_%s_qcal.txt.tmp'
 PATTERN_GERALD_QVAL = 's_%s_%s_qval.txt'
 
 # _p2f(<pattern>, lane)
-PATTERN_GERALD_SEQPRE = 's_%s_seqpre.txt.tmp'
+PATTERN_GERALD_SEQPRETMP = 's_%s_seqpre.txt.tmp'
 PATTERN_GERALD_RESULTTMP = 's_%s_eland_result.txt.tmp'
-PATTERN_GERALD_SIGMEANS = 's_%s_Signal_Means.txt.tmp'
+PATTERN_GERALD_SIGMEANSTMP = 's_%s_Signal_Means.txt.tmp'
 PATTERN_GERALD_CALLPNG = 's_%s_call.png'
 PATTERN_GERALD_ALLPNG = 's_%s_all.png'
 PATTERN_GERALD_PERCENTALLPNG = 's_%s_percent_all.png'
@@ -253,38 +253,38 @@ class GARunStatus(object):
 
 
         # GERALD
-        gerald[_p2f(PATTERN_GERALD_ALL, lane, tile)] = False
-        gerald[_p2f(PATTERN_GERALD_QRAW, lane, tile)] = False
-        gerald[_p2f(PATTERN_GERALD_ALLPNGTMP, lane, tile)] = False
-        gerald[_p2f(PATTERN_GERALD_ALIGNTMP, lane, tile)] = False
-        gerald[_p2f(PATTERN_GERALD_QVALTMP, lane, tile)] = False
-        gerald[_p2f(PATTERN_GERALD_SCORETMP, lane, tile)] = False
-        gerald[_p2f(PATTERN_GERALD_PREALIGNTMP, lane, tile)] = False
-        gerald[_p2f(PATTERN_GERALD_REALIGNTMP, lane, tile)] = False
-        gerald[_p2f(PATTERN_GERALD_RESCORETMP, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_ALLTMP, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_QRAWTMP, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_ALLPNGTMP, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_ALIGNTMP, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_QVALTMP, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_SCORETMP, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_PREALIGNTMP, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_REALIGNTMP, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_RESCORETMP, lane, tile)] = False
         gerald[_p2f(PATTERN_GERALD_RESCOREPNG, lane, tile)] = False
-        gerald[_p2f(PATTERN_GERALD_ERRORSTMPPNG, lane, tile)] = False
-        gerald[_p2f(PATTERN_GERALD_QCALTMP, lane, tile)] = False
-        gerald[_p2f(PATTERN_GERALD_QVAL, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_ERRORSTMPPNG, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_QCALTMP, lane, tile)] = False
+        #gerald[_p2f(PATTERN_GERALD_QVAL, lane, tile)] = False
 
       ###################
       # LANE LAYER
 
       # GERALD
-      gerald[_p2f(PATTERN_GERALD_SEQPRE, lane)] = False
-      gerald[_p2f(PATTERN_GERALD_RESULTTMP, lane)] = False
-      gerald[_p2f(PATTERN_GERALD_SIGMEANS, lane)] = False
+      #gerald[_p2f(PATTERN_GERALD_SEQPRETMP, lane)] = False
+      #gerald[_p2f(PATTERN_GERALD_RESULTTMP, lane)] = False
+      #gerald[_p2f(PATTERN_GERALD_SIGMEANSTMP, lane)] = False
       gerald[_p2f(PATTERN_GERALD_CALLPNG, lane)] = False
       gerald[_p2f(PATTERN_GERALD_ALLPNG, lane)] = False
       gerald[_p2f(PATTERN_GERALD_PERCENTALLPNG, lane)] = False
       gerald[_p2f(PATTERN_GERALD_PERCENTCALLPNG, lane)] = False
       gerald[_p2f(PATTERN_GERALD_PERCENTBASEPNG, lane)] = False
-      gerald[_p2f(PATTERN_GERALD_FILTTMP, lane)] = False
-      gerald[_p2f(PATTERN_GERALD_FRAGTMP, lane)] = False
-      gerald[_p2f(PATTERN_GERALD_QREPORTTMP, lane)] = False
-      gerald[_p2f(PATTERN_GERALD_QTABLETMP, lane)] = False
-      gerald[_p2f(PATTERN_GERALD_QCALREPORTTMP, lane)] = False
-      gerald[_p2f(PATTERN_GERALD_SEQUENCETMP, lane)] = False
+      #gerald[_p2f(PATTERN_GERALD_FILTTMP, lane)] = False
+      #gerald[_p2f(PATTERN_GERALD_FRAGTMP, lane)] = False
+      #gerald[_p2f(PATTERN_GERALD_QREPORTTMP, lane)] = False
+      #gerald[_p2f(PATTERN_GERALD_QTABLETMP, lane)] = False
+      #gerald[_p2f(PATTERN_GERALD_QCALREPORTTMP, lane)] = False
+      #gerald[_p2f(PATTERN_GERALD_SEQUENCETMP, lane)] = False
       gerald[_p2f(PATTERN_GERALD_LANEFINISHED, lane)] = False
       
       
@@ -302,16 +302,16 @@ class GARunStatus(object):
     # GERALD
     gerald['tiles.txt'] = False
     gerald['FullAll.htm'] = False
-    gerald['All.htm.tmp'] = False
-    gerald['Signal_Means.txt.tmp'] = False
-    gerald['plotIntensity_for_IVC'] = False
-    gerald['IVC.htm.tmp'] = False
+    #gerald['All.htm.tmp'] = False
+    #gerald['Signal_Means.txt.tmp'] = False
+    #gerald['plotIntensity_for_IVC'] = False
+    #gerald['IVC.htm.tmp'] = False
     gerald['FullError.htm'] = False
     gerald['FullPerfect.htm'] = False
-    gerald['Error.htm.tmp'] = False
-    gerald['Perfect.htm.tmp'] = False
-    gerald['Summary.htm.tmp'] = False
-    gerald['Tile.htm.tmp'] = False
+    #gerald['Error.htm.tmp'] = False
+    #gerald['Perfect.htm.tmp'] = False
+    #gerald['Summary.htm.tmp'] = False
+    #gerald['Tile.htm.tmp'] = False
     gerald['finished.txt'] = False
     
     
