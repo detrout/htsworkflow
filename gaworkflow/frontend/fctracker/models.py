@@ -5,7 +5,7 @@ from gaworkflow.frontend import settings
 
 class Species(models.Model):
   
-  scientific_name = models.CharField(max_length=256, unique=True, db_index=True, core=True)
+  scientific_name = models.CharField(max_length=256, unique=False, db_index=True, core=True)
   common_name = models.CharField(max_length=256, blank=True)
   use_genome_build = models.CharField(max_length=100, blank=False, null=False)
 
