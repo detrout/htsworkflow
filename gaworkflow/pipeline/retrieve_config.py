@@ -51,7 +51,7 @@ Config File:
   
   Example Config File:
   
-    [server_info]
+    [config_file_server]
     base_host_url=http://somewhere.domain:port
 """ % (CONFIG_SYSTEM, CONFIG_USER)
   

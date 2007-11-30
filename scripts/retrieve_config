@@ -17,7 +17,7 @@ def main(args=None):
     
   if options.url is None:
     msg_list.append("  URL argument required (-u <url> or --url=<url>), or entry\n" \
-                    "    in /etc/elandifier/elandifer.conf or ~/.elandifier.conf")
+                    "    in /etc/ga_frontend/ga_frontend.conf or ~/.ga_frontend.conf")
     
   if len(msg_list) > 1:
     print '\n'.join(msg_list)
