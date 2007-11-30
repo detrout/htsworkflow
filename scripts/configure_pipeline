@@ -1,8 +1,15 @@
 #!/usr/bin/env python
 import os
 import sys
+import re
 from gaworkflow.pipeline.configure_run import *
 from gaworkflow.pipeline.monitors import startCmdLineStatusMonitor
+
+s_fc = re.compile('FC[0-9]+')
+
+
+GENOME_DIR = '/data-store01/compbio/genomes/'
+
 
 
 def main(args=None):
@@ -11,13 +18,24 @@ def main(args=None):
   #FIXME: make a better command line tool
   skip_retrieve_config = False
   if len(args) == 1:
-    cfg_filepath = os.path.abspath(args[0])
-    skip_retrieve_config = True
-  else:
-    cfg_filepath = os.path.abspath('config32auto.txt')
+    arg = args[0]
 
-  flowcell = 'FC12150'
-  genome_dir = '/home/king/trog_drive/'
+    #If FC##### found
+    if s_fc.search(arg):
+      cfg_filepath = os.path.abspath('config32auto.txt')
+      flowcell = arg
+    #else, config file provide
+    else:
+      cfg_filepath = os.path.abspath(args[0])
+      skip_retrieve_config = True
+  else:
+    print "usage:\n" \
+          "       configure_pipeline FC#####\n" \
+          " or:\n" \
+          "       configure_pipeline <conf_filepath>\n"
+    return 3
+
+  genome_dir = GENOME_DIR
 
   if not skip_retrieve_config:
     status_retrieve_cfg = retrieve_config(ci, flowcell, cfg_filepath, genome_dir)
