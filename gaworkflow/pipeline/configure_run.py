@@ -126,6 +126,9 @@ s_stderr_taskcomplete = re.compile('^Task complete, exiting')
 s_invalid_cmdline = re.compile('Usage:[\S\s]*goat_pipeline.py')
 s_species_dir_err = re.compile('Error: Lane [1-8]:')
 s_goat_traceb = re.compile("^Traceback \(most recent call last\):")
+s_missing_cycles = re.compile('^Error: Tile s_[1-8]_[0-9]+: Different number of cycles: [0-9]+ instead of [0-9]+')
+
+SUPPRESS_MISSING_CYCLES = False
 
 
 ##Ignore - Example of out above each ignore regex.
@@ -260,6 +263,7 @@ def config_stderr_handler(line, conf_info):
           False if neutral message
             (i.e. doesn't signify failure or success)
   """
+  global SUPPRESS_MISSING_CYCLES
 
   # Detect invalid species directory error
   if s_species_dir_err.search(line):
@@ -273,6 +277,16 @@ def config_stderr_handler(line, conf_info):
   elif s_stderr_taskcomplete.search(line):
     logging.info('Configure step successful (from: stderr)')
     return True
+  # Detect missing cycles
+  elif s_missing_cycles.search(line):
+
+    # Only display error once
+    if not SUPPRESS_MISSING_CYCLES:
+      logging.error("Missing cycles detected; Not all cycles copied?")
+      logging.debug("CONF:STDERR:MISSING_CYCLES: %s" % (line))
+      SUPPRESS_MISSING_CYCLES = True
+    return RUN_ABORT
+  
   # Log all other output as debug output
   else:
     logging.debug('CONF:STDERR:?: %s' % (line))
