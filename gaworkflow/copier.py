@@ -145,17 +145,9 @@ class CopierBot(rpc.XmlRpcBot):
         """
         super(CopierBot, self).read_config(section, configfile)
         
-        def check_option(name):
-            if self.cfg[name] is None:
-                errmsg="Please specify %s in the configfile" % (name)
-                logging.fatal(errmsg)
-                raise RuntimeError(errmsg)
-            else:
-                return self.cfg[name]
-            
-        password = check_option('rsync_password_file')
-        source = check_option('rsync_source')
-        destination = check_option('rsync_destination')
+        password = self._check_required_option('rsync_password_file')
+        source = self._check_required_option('rsync_source')
+        destination = self._check_required_option('rsync_destination')
         self.rsync = rsync(source, destination, password)
         
         self.notify_users = self._parse_user_list(self.cfg['notify_users'])
