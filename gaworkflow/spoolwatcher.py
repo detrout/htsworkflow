@@ -23,9 +23,9 @@ class Handler(pyinotify.ProcessEvent):
         msg = "Create: %s" %  os.path.join(event.path, event.name)
         if event.name.lower() == "run.completed":
             try:
-                self.bot.runFinished(event.path)
+                self.bot.sequencingFinished(event.path)
             except IOError, e:
-                logging.error("Couldn't send runFinished")
+                logging.error("Couldn't send sequencingFinished")
         logging.debug(msg)
 
     def process_IN_DELETE(self, event):
@@ -151,7 +151,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
             for r in self.notify_runner:
                 self.rpc_send(r, tuple(), 'startCopy')
         
-    def runFinished(self, run_dir):
+    def sequencingFinished(self, run_dir):
         # need to strip off self.watch_dir from rundir I suspect.
         logging.info("run.completed in " + str(run_dir))
         pattern = self.watch_dir
@@ -164,7 +164,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
                 self.send(u, 'Sequencing run %s finished' % (stripped_run_dir))
         if self.notify_runner is not None:
             for r in self.notify_runner:
-                self.rpc_send(r, (stripped_run_dir,), 'runFinished')
+                self.rpc_send(r, (stripped_run_dir,), 'sequencingFinished')
         
 def main(args=None):
     bot = SpoolWatcher()

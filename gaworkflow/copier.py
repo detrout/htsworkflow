@@ -136,7 +136,7 @@ class CopierBot(rpc.XmlRpcBot):
         self.notify_runner = None
         
         self.register_function(self.startCopy)
-        self.register_function(self.runFinished)
+        self.register_function(self.sequencingFinished)
         self.eventTasks.append(self.update)
         
     def read_config(self, section=None, configfile=None):
@@ -169,7 +169,7 @@ class CopierBot(rpc.XmlRpcBot):
         logging.info("copying:" + " ".join(started)+".")
         return started
         
-    def runFinished(self, runDir, *args):
+    def sequencingFinished(self, runDir, *args):
         """
         The run was finished, if we're done copying, pass the message on        
         """
@@ -181,12 +181,12 @@ class CopierBot(rpc.XmlRpcBot):
             if runDir in self.rsync.keys():
                 # still copying
                 self.pending.append(runDir)
-                logging.info("%s finished, but still copying" % (runDir))
+                logging.info("finished sequencing, but still copying" % (runDir))
                 return "PENDING"
             else:
                 # we're done
-                self.reportRunFinished(runDir)
-                logging.info("%s finished" % (runDir))
+                self.reportSequencingFinished(runDir)
+                logging.info("finished sequencing %s" % (runDir))
                 return "DONE"
         else:
             errmsg = "received bad runfolder name (%s)" % (runDir)
@@ -194,17 +194,17 @@ class CopierBot(rpc.XmlRpcBot):
             # maybe I should use a different error message
             raise RuntimeError(errmsg)
     
-    def reportRunFinished(self, runDir):
+    def reportSequencingFinished(self, runDir):
         """
-        Send the runFinished message to the interested parties
+        Send the sequencingFinished message to the interested parties
         """
         if self.notify_users is not None:
             for u in self.notify_users:
-                self.send(u, 'run %s finished' % (runDir))
+                self.send(u, 'Sequencing run %s finished' % (runDir))
         if self.notify_runner is not None:
             for r in self.notify_runner:
-                self.rpc_send(self.runner, (runDir,), 'runFinished')
-        logging.info("forwarding runFinshed message for %s" % (runDir))
+                self.rpc_send(self.runner, (runDir,), 'sequencingFinished')
+        logging.info("forwarding sequencingFinshed message for %s" % (runDir))
         
     def update(self, *args):
         """
@@ -214,7 +214,7 @@ class CopierBot(rpc.XmlRpcBot):
         self.rsync.poll()
         for p in self.pending:
             if p not in self.rsync.keys():
-                self.reportRunFinished(p)
+                self.reportSequencingFinished(p)
                 self.pending.remove(p)
         
     def _parser(self, msg, who):
