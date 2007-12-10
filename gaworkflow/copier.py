@@ -151,7 +151,14 @@ class CopierBot(rpc.XmlRpcBot):
         self.rsync = rsync(source, destination, password)
         
         self.notify_users = self._parse_user_list(self.cfg['notify_users'])
-        self.notify_runner = self._parse_user_list(self.cfg['notify_runner'])
+        try:
+          self.notify_runner = \
+             self._parse_user_list(self.cfg['notify_runner'],
+                                   require_resource=True)
+        except bot.JIDMissingResource:
+            msg = 'need a full jabber ID + resource for xml-rpc destinations'
+            logging.FATAL(msg)
+            raise bot.JIDMissingResource(msg)
 
     def startCopy(self, *args):
         """
