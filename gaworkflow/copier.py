@@ -203,7 +203,7 @@ class CopierBot(rpc.XmlRpcBot):
                 self.send(u, 'Sequencing run %s finished' % (runDir))
         if self.notify_runner is not None:
             for r in self.notify_runner:
-                self.rpc_send(self.runner, (runDir,), 'sequencingFinished')
+                self.rpc_send(r, (runDir,), 'sequencingFinished')
         logging.info("forwarding sequencingFinshed message for %s" % (runDir))
         
     def update(self, *args):
