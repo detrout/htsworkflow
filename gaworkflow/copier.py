@@ -233,7 +233,7 @@ class CopierBot(rpc.XmlRpcBot):
               msg.append(u"  " + d)
             reply = os.linesep.join(msg)
         else:
-            reply = u"I didn't understand '%s'"+os.linesep+help % (unicode(msg))
+            reply = u"I didn't understand '%s'" % (unicode(msg))
         return reply
 
 def main(args=None):

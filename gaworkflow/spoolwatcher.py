@@ -130,6 +130,27 @@ class SpoolWatcher(rpc.XmlRpcBot):
                 self.startCopy()
                 self.handler.last_event_time = None
     
+    def _parser(self, msg, who):
+        """
+        Parse xmpp chat messages
+        """
+        help = u"I can send [copy] message, or squencer [finished]"
+        if re.match(u"help", msg):
+            reply = help
+        elif re.match("copy", msg):            
+            self.startCopy()
+            reply = u"sent copy message"
+        elif re.match(u"finished", msg):
+            words = msg.split()
+            if len(words) == 2:
+                self.sequencingFinished(words[1])
+                reply = u"sending sequencing finished for %s" % (words[1])
+            else:
+                reply = u"need runfolder name"
+        else:
+            reply = u"I didn't understand '%s'" %(msg)            
+        return reply
+        
     def start(self, daemonize):
         """
         Start application
