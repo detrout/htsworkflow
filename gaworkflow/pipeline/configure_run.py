@@ -436,33 +436,54 @@ def configure(conf_info):
 
   # CONTINUE HERE
   #FIXME: this only does a run on 5 tiles on lane 4
+
+  stdout_filepath = "pipeline_configure_stdout.txt"
+  stderr_filepath = "pipeline_configure_stderr.txt"
+
+  fout = open(stdout_filepath, 'w')
+  ferr = open(stderr_filepath, 'w')
+  
   pipe = subprocess.Popen(['goat_pipeline.py',
                     '--GERALD=%s' % (conf_info.config_filepath),
                            #'--tiles=s_4_0100,s_4_0101,s_4_0102,s_4_0103,s_4_0104',
                            '--make',
                            '.'],
-                          stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE)
+                          stdout=fout,
+                          stderr=ferr)
+
+  print "Configuring pipeline: %s" % (time.ctime())
+  error_code = pipe.wait()
+
+  # Clean up
+  fout.close()
+  ferr.close()
+  
+  
   ##################
   # Process stdout
-  stdout_line = pipe.stdout.readline()
+  fout = open(stdout_filepath, 'r')
+  
+  stdout_line = fout.readline()
 
   complete = False
   while stdout_line != '':
     # Handle stdout
     if config_stdout_handler(stdout_line, conf_info):
       complete = True
-    stdout_line = pipe.stdout.readline()
+    stdout_line = fout.readline()
+
+  fout.close()
 
 
-  error_code = pipe.wait()
+  #error_code = pipe.wait()
   if error_code:
     logging.error('Recieved error_code: %s' % (error_code))
   else:
     logging.info('We are go for launch!')
 
   #Process stderr
-  stderr_line = pipe.stderr.readline()
+  ferr = open(stderr_filepath, 'r')
+  stderr_line = ferr.readline()
 
   abort = 'NO!'
   stderr_success = False
@@ -472,7 +493,9 @@ def configure(conf_info):
       abort = RUN_ABORT
     elif stderr_status is True:
       stderr_success = True
-    stderr_line = pipe.stderr.readline()
+    stderr_line = ferr.readline()
+
+  ferr.close()
 
 
   #Success requirements:
