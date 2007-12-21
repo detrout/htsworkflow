@@ -28,8 +28,6 @@ def _get_flowcell_from_rundir(run_dir):
     return dirname[mo.start():]
     
 
-def _runner():
-
 
 class Runner(rpc.XmlRpcBot):
     """
@@ -46,7 +44,8 @@ class Runner(rpc.XmlRpcBot):
         self.conf_info_dict = {}
         
         self.register_function(self.sequencingFinished)
-        self.eventTasks.append(self.update)
+        #self.eventTasks.append(self.update)
+
     
     def read_config(self, section=None, configfile=None):
         super(Runner, self).read_config(section, configfile)
@@ -71,20 +70,25 @@ class Runner(rpc.XmlRpcBot):
             else:
                 reply = u"need runfolder name"
         else:
-            reply = u"I didn't understand '%s'" %(msg)            
+            reply = u"I didn't understand '%s'" %(msg)
+
+        logging.debug("reply: " + str(reply))
         return reply
+
         
     def start(self, daemonize):
         """
         Start application
         """
         super(Runner, self).start(daemonize)
+
         
     def stop(self):
         """
         shutdown application
         """
         super(Runner, self).stop()
+
             
     def sequencingFinished(self, run_dir):
         """
@@ -106,7 +110,6 @@ class Runner(rpc.XmlRpcBot):
         # Launch the job in it's own thread and turn.
         self.launchJob(run_dir, flowcell, ci)
         
-
         
     def pipelineFinished(self, run_dir):
         # need to strip off self.watch_dir from rundir I suspect.
@@ -127,7 +130,7 @@ class Runner(rpc.XmlRpcBot):
     def _runner(self, run_dir, flowcell, conf_info):
         # retrieve config step
         cfg_filepath = os.path.abspath('config32auto.txt')
-        status_retrieve_cfg = retrieve_config(ci,
+        status_retrieve_cfg = retrieve_config(conf_info,
                                           flowcell,
                                           cfg_filepath,
                                           self.genome_dir)
@@ -173,6 +176,7 @@ class Runner(rpc.XmlRpcBot):
         
 def main(args=None):
     bot = Runner()
+    bot.cfg['loglevel'] = 'DEBUG'
     return bot.main(args)
     
 if __name__ == "__main__":
