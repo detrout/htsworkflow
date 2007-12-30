@@ -42,6 +42,21 @@ notify_users: user3@example.fake
         self.failUnlessEqual(len(c.notify_users), 1)
         self.failUnlessEqual(c.notify_users[0], 'user3@example.fake')
 
+    def test_dirlist_filter(self):
+       """
+       test our dir listing parser
+       """
+       # everyone should have a root dir, and since we're not
+       # currently writing files... it should all be good
+       r = copier.rsync('/', '/', '/')
+
+       listing = [
+         '-rwxrw-r--      123268 2007/12/29 17:39:31 2038EAAXX.rtf',
+         '-rwxrw-r--           6 2007/12/29 15:10:29 New Text Document.txt',
+       ]
+
+       result = r.list_filter(listing)
+
 def suite():
     return unittest.makeSuite(testCopier,'test')
 

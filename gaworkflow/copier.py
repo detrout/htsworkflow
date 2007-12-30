@@ -32,13 +32,19 @@ class rsync(object):
 
   def list(self):
     """Get a directory listing"""
-    dirs_to_copy = []
     args = copy.copy(self.cmd)
     args.append(self.source_base)
 
     logging.debug("Rsync cmd:" + " ".join(args))
     short_process = subprocess.Popen(args, stdout=subprocess.PIPE)
-    direntries = [ x.split() for x in short_process.stdout ]
+    return self.list_parser(short_process.stdout)
+
+  def list_filter(self, lines):
+    """
+    parse rsync directory listing
+    """
+    dirs_to_copy = []
+    direntries = [ x[0:42].split() + [x[43:]] for x in lines ]
     for permissions, size, filedate, filetime, filename in direntries:
       if permissions[0] == 'd':
         # hey its a directory, the first step to being something we want to 
