@@ -37,7 +37,7 @@ class rsync(object):
 
     logging.debug("Rsync cmd:" + " ".join(args))
     short_process = subprocess.Popen(args, stdout=subprocess.PIPE)
-    return self.list_parser(short_process.stdout)
+    return self.list_filter(short_process.stdout)
 
   def list_filter(self, lines):
     """
