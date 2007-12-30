@@ -51,11 +51,14 @@ notify_users: user3@example.fake
        r = copier.rsync('/', '/', '/')
 
        listing = [
-         '-rwxrw-r--      123268 2007/12/29 17:39:31 2038EAAXX.rtf',
-         '-rwxrw-r--           6 2007/12/29 15:10:29 New Text Document.txt',
+         'drwxrwxr-x           0 2007/12/29 12:34:56 071229_USI-EAS229_001_FC1234\n',
+         '-rwxrw-r--      123268 2007/12/29 17:39:31 2038EAAXX.rtf\n',
+         '-rwxrw-r--           6 2007/12/29 15:10:29 New Text Document.txt\n',
        ]
 
        result = r.list_filter(listing)
+       self.failUnlessEqual(len(result), 1)
+       self.failUnlessEqual(result[0][-1], '4')
 
 def suite():
     return unittest.makeSuite(testCopier,'test')

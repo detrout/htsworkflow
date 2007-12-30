@@ -44,7 +44,7 @@ class rsync(object):
     parse rsync directory listing
     """
     dirs_to_copy = []
-    direntries = [ x[0:42].split() + [x[43:]] for x in lines ]
+    direntries = [ x[0:42].split() + [x[43:-1]] for x in lines ]
     for permissions, size, filedate, filetime, filename in direntries:
       if permissions[0] == 'd':
         # hey its a directory, the first step to being something we want to 
