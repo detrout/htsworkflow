@@ -11,7 +11,8 @@ from benderjab import rpc
 from gaworkflow.pipeline.configure_run import *
 from gaworkflow.pipeline.monitors import startCmdLineStatusMonitor
 
-s_fc = re.compile('FC[0-9]+')
+#s_fc = re.compile('FC[0-9]+')
+s_fc = re.compile('_[0-9a-zA-Z]*$')
 
 
 def _get_flowcell_from_rundir(run_dir):
@@ -25,7 +26,7 @@ def _get_flowcell_from_rundir(run_dir):
         logging.error('RunDir 2 FlowCell error: %s' % (run_dir))
         return None
 
-    return dirname[mo.start():]
+    return dirname[mo.start()+1:]
     
 
 
