@@ -10,10 +10,18 @@ import urllib
 CONFIG_SYSTEM = '/etc/ga_frontend/ga_frontend.conf'
 CONFIG_USER = os.path.expanduser('~/.ga_frontend.conf')
 
+#Disable or enable commandline arg parsing; disabled by default.
+DISABLE_CMDLINE = True
 
 class FlowCellNotFound(Exception): pass
 class WebError404(Exception): pass
 
+class DummyOptions:
+  """
+  Used when command line parsing is disabled; default
+  """
+  def __init__(self):
+    self.url = None
 
 class PreformattedDescriptionFormatter(IndentedHelpFormatter):
   
@@ -39,6 +47,11 @@ def constructOptionParser():
   """
   returns a pre-setup optparser
   """
+  global DISABLE_CMDLINE
+  
+  if DISABLE_CMDLINE:
+    return None
+  
   parser = OptionParser(formatter=PreformattedDescriptionFormatter())
 
   parser.set_description('Retrieves eland config file from ga_frontend web frontend.')
@@ -91,7 +104,10 @@ def getCombinedOptions():
   cl_parser = constructOptionParser()
   conf_parser = constructConfigParser()
   
-  options, args = cl_parser.parse_args()
+  if cl_parser is None:
+    options = DummyOptions()
+  else:
+    options, args = cl_parser.parse_args()
   
   if options.url is None:
     if conf_parser.has_option('config_file_server', 'base_host_url'):

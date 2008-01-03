@@ -3,10 +3,13 @@ import os
 import sys
 import re
 from gaworkflow.pipeline.configure_run import *
+from gaworkflow.pipeline import retrieve_config
 from gaworkflow.pipeline.monitors import startCmdLineStatusMonitor
 
 s_fc = re.compile('FC[0-9]+')
 
+#Turn on built-in command-line parsing.
+retrieve_config.DISABLE_CMDLINE = False
 
 GENOME_DIR = '/data-store01/compbio/genomes/'
 
