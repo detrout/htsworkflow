@@ -9,7 +9,7 @@ import threading
 from benderjab import rpc
 
 from gaworkflow.pipeline.configure_run import *
-from gaworkflow.pipeline.monitors import startCmdLineStatusMonitor
+from gaworkflow.pipeline.monitors import _percentCompleted
 
 #s_fc = re.compile('FC[0-9]+')
 s_fc = re.compile('_[0-9a-zA-Z]*$')
@@ -69,8 +69,13 @@ class Runner(rpc.XmlRpcBot):
         help = u"I can send [start] a run, or report [status]"
         if re.match(u"help", msg):
             reply = help
-        elif re.match("status", msg):            
-            reply = u"not implemented"
+        elif re.match("status", msg):
+            words = msg.split()
+            if len(words) == 2:
+                reply = self.getStatusReport(words[1])
+            else:
+                reply = u"Status available for: %s" \
+                        % (', '.join([k for k in self.conf_info_dict.keys()]))
         elif re.match(u"start", msg):
             words = msg.split()
             if len(words) == 2:
@@ -98,6 +103,41 @@ class Runner(rpc.XmlRpcBot):
         """
         super(Runner, self).stop()
 
+
+    def getStatusReport(self, fc_num):
+        """
+        Returns text status report for flow cell number 
+        """
+        if fc_num not in self.conf_info_dict:
+            return "No record of a %s run." % (fc_num)
+
+        status = self.conf_info_dict[fc_num].status
+
+        if status is None:
+            return "No status information for %s yet." \
+                   " Probably still in configure step. Try again later." % (fc_num)
+
+        fc,ft = status.statusFirecrest()
+        bc,bt = status.statusBustard()
+        gc,gt = status.statusGerald()
+
+        tc,tt = status.statusTotal()
+
+        fp = _percentCompleted(fc, ft)
+        bp = _percentCompleted(bc, bt)
+        gp = _percentCompleted(gc, gt)
+        tp = _percentCompleted(tc, tt)
+
+        output = []
+
+        output.append(u'Firecrest: %s%% (%s/%s)' % (fp, fc, ft))
+        output.append(u'  Bustard: %s%% (%s/%s)' % (bp, bc, bt))
+        output.append(u'   Gerald: %s%% (%s/%s)' % (gp, gc, gt))
+        output.append(u'-----------------------')
+        output.append(u'    Total: %s%% (%s/%s)' % (tp, tc, tt))
+
+        return '\n'.join(output)
+    
             
     def sequencingFinished(self, run_dir):
         """
