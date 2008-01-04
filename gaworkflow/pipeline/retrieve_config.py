@@ -22,6 +22,7 @@ class DummyOptions:
   """
   def __init__(self):
     self.url = None
+    self.output_filepath = None
 
 class PreformattedDescriptionFormatter(IndentedHelpFormatter):
   
