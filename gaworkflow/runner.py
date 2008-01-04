@@ -129,6 +129,7 @@ class Runner(rpc.XmlRpcBot):
 
 
     def _runner(self, run_dir, flowcell, conf_info):
+
         # retrieve config step
         cfg_filepath = os.path.abspath('config32auto.txt')
         status_retrieve_cfg = retrieve_config(conf_info,
@@ -143,7 +144,7 @@ class Runner(rpc.XmlRpcBot):
         
         # configure step
         if status_retrieve_cfg:
-            status = configure(ci)
+            status = configure(conf_info)
             if status:
                 logging.info("Runner: Configure: success")
             else:
@@ -156,7 +157,7 @@ class Runner(rpc.XmlRpcBot):
                 
                 # running step
                 print 'Running pipeline now!'
-                run_status = run_pipeline(ci)
+                run_status = run_pipeline(conf_info)
                 if run_status is True:
                     logging.info('Runner: Pipeline: success')
                     self.piplineFinished(run_dir)
@@ -176,7 +177,7 @@ class Runner(rpc.XmlRpcBot):
 
         
 def main(args=None):
-    bot = Runner()
+    bot = Runner('demobot')
     bot.cfg['loglevel'] = 'DEBUG'
     return bot.main(args)
     
