@@ -127,7 +127,7 @@ class GARunStatus(object):
     during a run and provides methods for retrieving
     (completed, total) for each step or entire run.
     """
-
+    #print 'self._conf_filepath = %s' % (conf_filepath)
     self._conf_filepath = conf_filepath
     self._base_dir, junk = os.path.split(conf_filepath)
     self._image_dir = os.path.join(self._base_dir, 'Images')
@@ -201,7 +201,9 @@ class GARunStatus(object):
     """
     Figures out the number of cycles that are available
     """
+    #print 'self._image_dir = %s' % (self._image_dir)
     cycle_dirs = glob.glob(os.path.join(self._image_dir, 'L001', 'C*.1'))
+    #print 'cycle_dirs = %s' % (cycle_dirs)
     cycle_list = []
     for cycle_dir in cycle_dirs:
       junk, c = os.path.split(cycle_dir)

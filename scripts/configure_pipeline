@@ -17,6 +17,8 @@ GENOME_DIR = '/data-store01/compbio/genomes/'
 
 def main(args=None):
   ci = ConfigInfo()
+  ci.analysis_dir = os.getcwd()
+  ci.base_analysis_dir, junk = os.path.split(ci.analysis_dir)
 
   #FIXME: make a better command line tool
   skip_retrieve_config = False

@@ -22,10 +22,17 @@ logging.basicConfig(level=logging.DEBUG,
 class ConfigInfo:
   
   def __init__(self):
+    #run_path = firecrest analysis directory to run analysis from
     self.run_path = None
     self.bustard_path = None
     self.config_filepath = None
     self.status = None
+
+    #top level directory where all analyses are placed
+    self.base_analysis_dir = None
+    #analysis_dir, top level analysis dir...
+    # base_analysis_dir + '/070924_USI-EAS44_0022_FC12150'
+    self.analysis_dir = None
 
 
   def createStatusObject(self):
@@ -434,11 +441,11 @@ def configure(conf_info):
   #                        stdout=subprocess.PIPE,
   #                        stderr=subprocess.PIPE)
 
-  # CONTINUE HERE
-  #FIXME: this only does a run on 5 tiles on lane 4
 
-  stdout_filepath = "pipeline_configure_stdout.txt"
-  stderr_filepath = "pipeline_configure_stderr.txt"
+  stdout_filepath = os.path.join(conf_info.analysis_dir,
+                                 "pipeline_configure_stdout.txt")
+  stderr_filepath = os.path.join(conf_info.analysis_dir,
+                                 "pipeline_configure_stderr.txt")
 
   fout = open(stdout_filepath, 'w')
   ferr = open(stderr_filepath, 'w')
@@ -447,7 +454,7 @@ def configure(conf_info):
                     '--GERALD=%s' % (conf_info.config_filepath),
                            #'--tiles=s_4_0100,s_4_0101,s_4_0102,s_4_0103,s_4_0104',
                            '--make',
-                           '.'],
+                           conf_info.analysis_dir],
                           stdout=fout,
                           stderr=ferr)
 
@@ -530,9 +537,8 @@ def run_pipeline(conf_info):
     return False
 
   # Change cwd to run_path
-  os.chdir(conf_info.run_path)
-  stdout_filepath = os.path.join(conf_info.run_path, 'pipeline_run_stdout.txt')
-  stderr_filepath = os.path.join(conf_info.run_path, 'pipeline_run_stderr.txt')
+  stdout_filepath = os.path.join(conf_info.analysis_dir, 'pipeline_run_stdout.txt')
+  stderr_filepath = os.path.join(conf_info.analysis_dir, 'pipeline_run_stderr.txt')
 
   # Create status object
   conf_info.createStatusObject()
@@ -559,11 +565,12 @@ def run_pipeline(conf_info):
   ferr = open(stderr_filepath, 'w')
 
   pipe = subprocess.Popen(['make',
-                             '-j8',
-                             'recursive'],
-                             stdout=fout,
-                             stderr=ferr)
-                             #shell=True)
+                           '--directory=%s' % (conf_info.run_path),
+                           '-j8',
+                           'recursive'],
+                           stdout=fout,
+                           stderr=ferr)
+                           #shell=True)
   # Wait for run to finish
   retcode = pipe.wait()
 

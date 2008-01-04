@@ -41,6 +41,7 @@ class Runner(rpc.XmlRpcBot):
         
         self.cfg['notify_users'] = None
         self.cfg['genome_dir'] = None
+        self.cfg['base_analysis_dir'] = None
 
         self.conf_info_dict = {}
         
@@ -52,6 +53,7 @@ class Runner(rpc.XmlRpcBot):
         super(Runner, self).read_config(section, configfile)
 
         self.genome_dir = self._check_required_option('genome_dir')
+        self.base_analysis_dir = self._check_required_option('base_analysis_dir')
         
     
     def _parser(self, msg, who):
@@ -99,7 +101,8 @@ class Runner(rpc.XmlRpcBot):
 
         # Setup config info object
         ci = ConfigInfo()
-        ci.run_path = run_dir
+        ci.base_analysis_dir = self.base_analysis_dir
+        ci.analysis_dir = os.path.join(self.base_analysis_dir, run_dir)        
 
         # get flowcell from run_dir name
         flowcell = _get_flowcell_from_rundir(run_dir)
@@ -131,7 +134,8 @@ class Runner(rpc.XmlRpcBot):
     def _runner(self, run_dir, flowcell, conf_info):
 
         # retrieve config step
-        cfg_filepath = os.path.abspath('config32auto.txt')
+        cfg_filepath = os.path.join(conf_info.analysis_dir,
+                                    'config32auto.txt')
         status_retrieve_cfg = retrieve_config(conf_info,
                                           flowcell,
                                           cfg_filepath,
