@@ -13,6 +13,7 @@ setup(
              ],
   scripts=['scripts/spoolwatcher', 
            'scripts/copier',
+           'scripts/runner',
            'scripts/retrieve_config',
            'scripts/configure_pipeline'],
 )
