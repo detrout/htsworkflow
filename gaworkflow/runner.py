@@ -89,20 +89,6 @@ class Runner(rpc.XmlRpcBot):
         logging.debug("reply: " + str(reply))
         return reply
 
-        
-    def start(self, daemonize):
-        """
-        Start application
-        """
-        super(Runner, self).start(daemonize)
-
-        
-    def stop(self):
-        """
-        shutdown application
-        """
-        super(Runner, self).stop()
-
 
     def getStatusReport(self, fc_num):
         """
@@ -241,8 +227,7 @@ class Runner(rpc.XmlRpcBot):
 
         
 def main(args=None):
-    bot = Runner('demobot')
-    bot.cfg['loglevel'] = 'DEBUG'
+    bot = Runner()
     return bot.main(args)
     
 if __name__ == "__main__":
