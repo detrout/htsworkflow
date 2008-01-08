@@ -145,6 +145,7 @@ class Runner(rpc.XmlRpcBot):
 
         # Launch the job in it's own thread and turn.
         self.launchJob(run_dir, flowcell, ci)
+        return "started"
         
         
     def pipelineFinished(self, run_dir):
