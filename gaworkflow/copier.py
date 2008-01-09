@@ -184,16 +184,10 @@ class CopierBot(rpc.XmlRpcBot):
         
         # see if we're still copying
         if runfolder_validate(runDir):
-            if runDir in self.rsync.keys():
-                # still copying
-                self.pending.append(runDir)
-                logging.info("finished sequencing, but still copying" % (runDir))
-                return "PENDING"
-            else:
-                # we're done
-                self.reportSequencingFinished(runDir)
-                logging.info("finished sequencing %s" % (runDir))
-                return "DONE"
+            logging.info("recevied sequencing finshed for %s" % (runDir))
+            self.pending.append(runDir)
+            self.startCopy()
+            return "PENDING"
         else:
             errmsg = "received bad runfolder name (%s)" % (runDir)
             logging.warning(errmsg)
