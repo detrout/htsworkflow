@@ -11,6 +11,16 @@ from pyinotify import EventsCodes
 
 from benderjab import rpc
 
+class WatcherEvents(object):
+    # two events need to be tracked
+    # one to send startCopy
+    # one to send OMG its broken
+    # OMG its broken needs to stop when we've seen enough
+    #  cycles
+    # this should be per runfolder. 
+    # read the xml files 
+    def __init__(self):
+        
 
 class Handler(pyinotify.ProcessEvent):
     def __init__(self, watchmanager, bot):
@@ -112,7 +122,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         if self.wdd is not None:
             logging.debug("disabling watch")
             logging.debug(str(self.wdd))
-            self.wm.rm_watch(self.wdd)
+            self.wm.rm_watch(self.wdd.values())
             self.wdd = None
             
     def process_notify(self, *args):
