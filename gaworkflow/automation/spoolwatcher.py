@@ -20,6 +20,7 @@ class WatcherEvents(object):
     # this should be per runfolder. 
     # read the xml files 
     def __init__(self):
+        pass
         
 
 class Handler(pyinotify.ProcessEvent):
