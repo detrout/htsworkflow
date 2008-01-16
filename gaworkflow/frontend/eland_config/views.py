@@ -248,7 +248,7 @@ def getElandConfig(flowcell, regenerate=False):
     return data
   
   try:
-    fcObj = models.FlowCell.objects.get(flowcell_id=flowcell)
+    fcObj = models.FlowCell.objects.get(flowcell_id__iexact=flowcell)
   except ObjectDoesNotExist:
     return None
   
