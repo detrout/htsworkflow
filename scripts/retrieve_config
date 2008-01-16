@@ -2,6 +2,8 @@
 import sys
 from gaworkflow.pipeline.retrieve_config import *
 from gaworkflow.pipeline import retrieve_config
+from gaworkflow.pipeline.genome_mapper import getAvailableGenomes
+from gaworkflow.pipeline.genome_mapper import constructMapperDict
 
 #Turn on built-in command-line parsing.
 retrieve_config.DISABLE_CMDLINE = False
@@ -22,12 +24,28 @@ def main(args=None):
   if options.url is None:
     msg_list.append("  URL argument required (-u <url> or --url=<url>), or entry\n" \
                     "    in /etc/ga_frontend/ga_frontend.conf or ~/.ga_frontend.conf")
+  if options.genome_dir is None:
+    msg_list.append("  genome_dir argument required (-g <genome_dir> or \n" \
+                    "    --genome_dir=<genome_dir>, or entry in \n" \
+                    "    /etc/ga_frontend/ga_frontend.conf or ~/.ga_frontend.conf")
     
   if len(msg_list) > 1:
     print '\n'.join(msg_list)
     return 1
   
   saveConfigFile(options.flowcell, options.url, options.output_filepath)
+
+  f = open(options.output_filepath, 'r')
+  data = f.read()
+  f.close()
+
+  genome_dict = getAvailableGenomes(options.genome_dir)
+  mapper_dict = constructMapperDict(genome_dict)
+
+  f = open(options.output_filepath, 'w')
+  f.write(data % (mapper_dict))
+  f.close()
+  
   return 0
   
 if __name__ == "__main__":

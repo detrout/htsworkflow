@@ -81,6 +81,9 @@ Config File:
   
   parser.add_option("-f", "--flowcell",
                     action="store", type="string", dest="flowcell")
+
+  parser.add_option("-g", "--genome_dir",
+                    action="store", type="string", dest="genome_dir")
   
   #parser.set_default("url", "default")
   
@@ -94,6 +97,8 @@ def constructConfigParser():
   parser.read([CONFIG_SYSTEM, CONFIG_USER])
   if not parser.has_section('config_file_server'):
     parser.add_section('config_file_server')
+  if not parser.has_section('local_setup'):
+    parser.add_section('local_setup')
   
   return parser
 
@@ -114,11 +119,16 @@ def getCombinedOptions():
   if options.url is None:
     if conf_parser.has_option('config_file_server', 'base_host_url'):
       options.url = conf_parser.get('config_file_server', 'base_host_url')
+
+  if options.genome_dir is None:
+    if conf_parser.has_option('local_setup', 'genome_dir'):
+      options.genome_dir = conf_parser.get('local_setup', 'genome_dir')
   
   print 'USING OPTIONS:'
   print ' URL:', options.url
   print ' OUT:', options.output_filepath
   print '  FC:', options.flowcell
+  print 'GDIR:', options.genome_dir
   print ''
   
   return options
