@@ -4,50 +4,15 @@ import os
 import re
 import sys
 import time
-import glob
+#import glob
 
-
+#from gaworkflow.pipeline.recipe_parser import get_cycles
 
 # this uses pyinotify
 import pyinotify
 from pyinotify import EventsCodes
 
 from benderjab import rpc
-
-
-s_cycles = re.compile('No. Cycles: (?P<cycles>[0-9]+)')
-
-def get_cycles(run_dir="."):
-  """
-  Find the number of cycles from the Recipe*.xml file found in run_dir.
-  """
-  
-  file_path_list = glob.glob(os.path.join(run_dir, "Recipe*.xml"))
-
-  # Error handling
-  if len(file_path_list) == 0:
-    msg = "Recipe xml file not found."
-    raise IOError, msg
-
-  elif len(file_path_list) > 1:
-    msg = "%s Recipe files found, expected 1." % (len(file_path_list))
-    raise ValueError, msg
-
-  f = open(file_path_list[0], 'r')
-
-  #Find the line of the file with the cycle number in it.
-  for line in f:
-    mo = s_cycles.search(line)
-    if mo:
-      break
-
-  f.close()
-
-  # Process the line with the cycle number in it.
-  cycle_num = int(mo.group('cycles'))
-
-  return cycle_num
-
 
 
 class WatcherEvents(object):
