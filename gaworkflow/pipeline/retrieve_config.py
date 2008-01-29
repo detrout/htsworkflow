@@ -24,6 +24,7 @@ class DummyOptions:
     self.url = None
     self.output_filepath = None
     self.flowcell = None
+    self.genome_dir = None
 
 class PreformattedDescriptionFormatter(IndentedHelpFormatter):
   
