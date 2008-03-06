@@ -1,0 +1,92 @@
+#!/usr/bin/python
+import optparse
+import sys
+import os
+
+def make_bed(instream, outstream, name, description, chromosome_prefix='chr'):
+  """
+  read an eland result file from instream and write a bedfile to outstream
+  """
+  # indexes into fields in eland_result.txt file
+  SEQ = 1
+  CHR = 6
+  START = 7
+  SENSE = 8
+  # map eland_result.txt sense 
+  sense_map = { 'F': '+', 'R': '-'}
+  sense_color = { 'F': '0,0,255', 'R': '255,255,0' }
+  # provide default track names
+  if name is None: name = "track"
+  if description is None: description = "eland result file"
+  bed_header = 'track name="%s" description="%s" visibility=4 itemRgb="ON"'
+  bed_header += os.linesep
+  outstream.write(bed_header % (name, description))
+
+  for line in instream:
+    fields = line.split()
+    # we need more than the CHR field, and it needs to match a chromosome
+    if len(fields) <= CHR or fields[CHR][:3] != chromosome_prefix:
+      continue
+    start = fields[START]
+    stop = int(start) + len(fields[SEQ])
+    chromosome, extension = fields[CHR].split('.')
+    assert extension == "fa"
+    outstream.write('%s %s %d read 0 %s - - %s%s' % (
+      chromosome,
+      start,
+      stop,
+      sense_map[fields[SENSE]], 
+      sense_color[fields[SENSE]],
+      os.linesep  
+    ))
+
+def make_parser():
+  parser = optparse.OptionParser()
+  parser.add_option('-e', '--eland', dest='inname',
+                    help='specify input eland filename')
+  parser.add_option('-b', '--bed', dest='outname',
+                    help='specify output befilename')
+  parser.add_option('-n', '--name', dest='name',
+                    help='specify the track (short) name.',
+                    default=None)
+  parser.add_option('-d', '--description', dest='description',
+                    help='specify the track description',
+                    default=None)
+  parser.add_option('--chromosome', dest='prefix',
+                    help='Set the chromosome prefix name. defaults to "chr"',
+                    default='chr')
+  return parser
+
+def main(command_line=None):
+  if command_line is None:
+    command_line = sys.argv[1:]
+
+  parser = make_parser()
+  (options, args) = parser.parse_args(command_line)
+
+  if options.inname is None:
+    parser.error("Need eland input file name")
+    return 1
+
+  if options.outname is None:
+    options.outname = os.path.splitext(options.inname)[0]+'.bed'
+    print >>sys.stderr, "defaulting to outputname", options.outname
+
+  if os.path.exists(options.inname):
+    instream = open(options.inname, 'r')
+  else:
+    parser.error('%s was not found' % (options.inname))
+    return 1
+
+  if os.path.exists(options.outname):
+      parser.error("not overwriting %s" % (options.outname))
+      return 1
+  else:
+    outstream = open(options.outname, 'w')
+
+  make_bed(instream, outstream, options.name, options.description, options.prefix)
+  return 0
+
+if __name__ == "__main__":
+  sys.exit(main(sys.argv[1:]))
+
