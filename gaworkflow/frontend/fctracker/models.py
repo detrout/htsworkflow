@@ -25,7 +25,7 @@ class Species(models.Model):
 
 class Library(models.Model):
   
-  library_id = models.IntegerField(primary_key=True, db_index=True, core=True)
+  library_id = models.CharField(max_length=25, primary_key=True, db_index=True, core=True)
   library_name = models.CharField(max_length=100, unique=True, core=True)
   library_species = models.ForeignKey(Species, core=True)
   #use_genome_build = models.CharField(max_length=100, blank=False, null=False)
@@ -41,14 +41,20 @@ class Library(models.Model):
       ('Gel', 'Ran gel'),
       ('1A', 'Gel purification'),
       ('2A', '2nd PCR'),
+      ('Done', 'Completed'),
       ('Progress', 'In progress'),
     )
   stopping_point = models.CharField(max_length=50, choices=PROTOCOL_END_POINTS)
   amplified_from_sample = models.ForeignKey('self', blank=True, null=True)
+  library_size = models.IntegerField(default=225, blank=True, null=True)
   
   undiluted_concentration = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-  ten_nM_dilution = models.BooleanField()
-  successful_pM = models.IntegerField(blank=True, null=True)
+  successful_pM = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+  
+  kit_1000148 = models.IntegerField(blank=True, null=True)
+  kit_1000147 = models.IntegerField(blank=True, null=True)
+  kit_1000183 = models.IntegerField(blank=True, null=True)
+  kit_1001625 = models.IntegerField(blank=True, null=True)  
   
   notes = models.TextField(blank=True)
   
@@ -63,17 +69,20 @@ class Library(models.Model):
     date_hierarchy = "creation_date"
     save_as = True
     save_on_top = True
-    search_fields = ['library_name']
-    list_display = ('library_id', 'library_name', 'made_for', 'creation_date', 'ten_nM_dilution', 'stopping_point', 'successful_pM')
+    search_fields = ['library_name', 'library_id']
+    list_display = ('library_id', 'library_name', 'made_for', 'library_species', 'creation_date')
     list_display_links = ('library_id', 'library_name')
-    list_filter = ('stopping_point', 'ten_nM_dilution', 'library_species', 'made_for', 'made_by')
+    list_filter = ('stopping_point', 'library_species', 'made_for', 'made_by')
     fields = (
         (None, {
             'fields': (('library_id', 'library_name'), ('library_species', 'RNAseq'),)
         }),
         ('Creation Information:', {
-            'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('undiluted_concentration', 'ten_nM_dilution', 'successful_pM'), 'notes',)
+            'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('undiluted_concentration', 'library_size'), ('kit_1000148', 'kit_1000147', 'kit_1000183', 'kit_1001625'), 'notes',)
         }),
+	('Run Information:', {
+	    'fields' : (('successful_pM'),)
+	}),
     )
 
 class FlowCell(models.Model):
