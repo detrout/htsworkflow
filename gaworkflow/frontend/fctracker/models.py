@@ -48,13 +48,8 @@ class Library(models.Model):
   amplified_from_sample = models.ForeignKey('self', blank=True, null=True)
   library_size = models.IntegerField(default=225, blank=True, null=True)
   
-  undiluted_concentration = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+  undiluted_concentration = models.DecimalField("Undiluted concentration (ng/ul)", max_digits=5, decimal_places=2, blank=True, null=True)
   successful_pM = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-  
-  kit_1000148 = models.IntegerField(blank=True, null=True)
-  kit_1000147 = models.IntegerField(blank=True, null=True)
-  kit_1000183 = models.IntegerField(blank=True, null=True)
-  kit_1001625 = models.IntegerField(blank=True, null=True)  
   
   notes = models.TextField(blank=True)
   
@@ -78,7 +73,7 @@ class Library(models.Model):
             'fields': (('library_id', 'library_name'), ('library_species', 'RNAseq'),)
         }),
         ('Creation Information:', {
-            'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('undiluted_concentration', 'library_size'), ('kit_1000148', 'kit_1000147', 'kit_1000183', 'kit_1001625'), 'notes',)
+            'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('undiluted_concentration', 'library_size'), 'notes',)
         }),
 	('Run Information:', {
 	    'fields' : (('successful_pM'),)
