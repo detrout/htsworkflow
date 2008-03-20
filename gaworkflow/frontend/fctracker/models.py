@@ -23,6 +23,28 @@ class Species(models.Model):
         }),
       )
 
+class Person(models.Model):
+
+  name = models.CharField(max_length=100, primary_key=True, db_index=True)
+  lab = models.CharField(max_length=100)
+  email = models.CharField(max_length=50, blank=True, null=True)
+  
+  def __str__(self):
+    return '%s (%s lab)' % (self.name, self.lab)
+
+  
+  class Meta:
+    verbose_name_plural = "people"
+    ordering = ["lab"]
+    
+  class Admin:
+    fields = (
+      (None, {
+          'fields': (('name', 'lab'), ('email'))
+      }),
+    )
+
+
 class Library(models.Model):
   
   library_id = models.CharField(max_length=25, primary_key=True, db_index=True, core=True)
@@ -33,7 +55,7 @@ class Library(models.Model):
   
   made_by = models.CharField(max_length=50, blank=True, default="Lorian")
   creation_date = models.DateField(blank=True, null=True)
-  made_for = models.CharField(max_length=50, blank=True)
+  made_for = models.ForeignKey(Person)
   
   PROTOCOL_END_POINTS = (
       ('?', 'Unknown'),
