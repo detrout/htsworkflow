@@ -96,23 +96,31 @@ class FlowCell(models.Model):
   lane_7_library = models.ForeignKey(Library, related_name="lane_7_library")
   lane_8_library = models.ForeignKey(Library, related_name="lane_8_library")
 
-  lane_1_pM = models.IntegerField(default=4)
-  lane_2_pM = models.IntegerField(default=4)
-  lane_3_pM = models.IntegerField(default=4)
-  lane_4_pM = models.IntegerField(default=4)
-  lane_5_pM = models.IntegerField(default=4)
-  lane_6_pM = models.IntegerField(default=4)
-  lane_7_pM = models.IntegerField(default=4)
-  lane_8_pM = models.IntegerField(default=4)
+  lane_1_pM = models.DecimalField(max_digits=5, decimal_places=2, default=4)
+  lane_2_pM = models.DecimalField(max_digits=5, decimal_places=2, default=4)
+  lane_3_pM = models.DecimalField(max_digits=5, decimal_places=2, default=4)
+  lane_4_pM = models.DecimalField(max_digits=5, decimal_places=2, default=4)
+  lane_5_pM = models.DecimalField(max_digits=5, decimal_places=2, default=4)
+  lane_6_pM = models.DecimalField(max_digits=5, decimal_places=2, default=4)
+  lane_7_pM = models.DecimalField(max_digits=5, decimal_places=2, default=4)
+  lane_8_pM = models.DecimalField(max_digits=5, decimal_places=2, default=4)
   
-  lane_1_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_2_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_3_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_4_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_5_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_6_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_7_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_8_cluster_estimate = models.IntegerField(blank=True, null=True)
+  lane_1_cluster_estimate = models.CharField(max_length=25, blank=True, null=True)
+  lane_2_cluster_estimate = models.CharField(max_length=25, blank=True, null=True)
+  lane_3_cluster_estimate = models.CharField(max_length=25, blank=True, null=True)
+  lane_4_cluster_estimate = models.CharField(max_length=25, blank=True, null=True)
+  lane_5_cluster_estimate = models.CharField(max_length=25, blank=True, null=True)
+  lane_6_cluster_estimate = models.CharField(max_length=25, blank=True, null=True)
+  lane_7_cluster_estimate = models.CharField(max_length=25, blank=True, null=True)
+  lane_8_cluster_estimate = models.CharField(max_length=25, blank=True, null=True)
+  
+  kit_1000148 = models.IntegerField(blank=True, null=True)
+  kit_1000147 = models.IntegerField(blank=True, null=True)
+  kit_1000183 = models.IntegerField(blank=True, null=True)
+  kit_1001625 = models.IntegerField(blank=True, null=True)
+  
+  cluster_station_id = models.CharField(max_length=50, blank=True, null=True)
+  sequencer_id = models.CharField(max_length=50, blank=True, null=True)
   
   notes = models.TextField(blank=True)
 
@@ -120,22 +128,28 @@ class FlowCell(models.Model):
     return '%s (%s)' % (self.flowcell_id, self.run_date) 
   
   class Meta:
-    ordering = ["run_date"]
+    ordering = ["-run_date"]
   
   class Admin:
     date_hierarchy = "run_date"
+    save_as = True
     save_on_top = True
-    search_fields = ['lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library']
-    list_display = ('flowcell_id', 'run_date', 'lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library')
+    search_fields = ['flowcell_id', 'lane_1_library__library_id', 'lane_1_library__library_name', 'lane_2_library__library_id', 'lane_2_library__library_name', 'lane_3_library__library_id', 'lane_3_library__library_name', 'lane_4_library__library_id', 'lane_4_library__library_name', 'lane_5_library__library_id', 'lane_5_library__library_name', 'lane_6_library__library_id', 'lane_6_library__library_name', 'lane_7_library__library_id', 'lane_7_library__library_name', 'lane_8_library__library_id', 'lane_8_library__library_name']
+    list_display = ('run_date', 'flowcell_id', 'lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library')
+    list_display_links = ('run_date', 'flowcell_id', 'lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library')
     fields = (
         (None, {
             'fields': ('run_date', 'flowcell_id', ('read_length', 'advanced_run'),)
         }),
         ('Lanes:', {
-            'fields' : (('lane_1_library', 'lane_1_pM', 'lane_1_cluster_estimate'), ('lane_2_library', 'lane_2_pM', 'lane_2_cluster_estimate'), ('lane_3_library', 'lane_3_pM', 'lane_3_cluster_estimate'), ('lane_4_library', 'lane_4_pM', 'lane_4_cluster_estimate'), ('lane_5_library', 'lane_5_pM', 'lane_5_cluster_estimate'), ('lane_6_library', 'lane_6_pM', 'lane_6_cluster_estimate'), ('lane_7_library', 'lane_7_pM', 'lane_7_cluster_estimate'), ('lane_8_library', 'lane_8_pM', 'lane_8_cluster_estimate'),)
+            'fields' : (('lane_1_library', 'lane_1_pM'), ('lane_2_library', 'lane_2_pM'), ('lane_3_library', 'lane_3_pM'), ('lane_4_library', 'lane_4_pM'), ('lane_5_library', 'lane_5_pM'), ('lane_6_library', 'lane_6_pM'), ('lane_7_library', 'lane_7_pM'), ('lane_8_library', 'lane_8_pM'),)
         }),
 	(None, {
 	    'fields' : ('notes',)
+	}),
+	('Kits & Machines:', {
+	    'classes': 'collapse',
+	    'fields' : (('kit_1000148', 'kit_1000147', 'kit_1000183', 'kit_1001625'), ('cluster_station_id', 'sequencer_id'),)
 	}),
     )
 
