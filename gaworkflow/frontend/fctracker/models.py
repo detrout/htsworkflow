@@ -31,7 +31,6 @@ class Person(models.Model):
   
   def __str__(self):
     return '%s (%s lab)' % (self.name, self.lab)
-
   
   class Meta:
     verbose_name_plural = "people"
@@ -70,7 +69,7 @@ class Library(models.Model):
   amplified_from_sample = models.ForeignKey('self', blank=True, null=True)
   library_size = models.IntegerField(default=225, blank=True, null=True)
   
-  undiluted_concentration = models.DecimalField("Undiluted concentration (ng/ul)", max_digits=5, decimal_places=2, blank=True, null=True)
+  undiluted_concentration = models.DecimalField("Undiluted concentration (ng/ul)", max_digits=5, decimal_places=2, default=0)
   successful_pM = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
   
   notes = models.TextField(blank=True)
@@ -108,6 +107,16 @@ class FlowCell(models.Model):
   run_date = models.DateTimeField(core=True)
   advanced_run = models.BooleanField(default=False)
   read_length = models.IntegerField(default=32)
+  
+  
+  FLOWCELL_STATUSES = (
+      ('No', 'Not run'),
+      ('F', 'Failed'),
+      ('Del', 'Data deleted'),
+      ('A', 'Data available'),
+      ('In', 'In progress'),
+    )
+  flowcell_status = models.CharField(max_length=10, choices=FLOWCELL_STATUSES)
   
   lane_1_library = models.ForeignKey(Library, related_name="lane_1_library")
   lane_2_library = models.ForeignKey(Library, related_name="lane_2_library")
@@ -157,11 +166,11 @@ class FlowCell(models.Model):
     save_as = True
     save_on_top = True
     search_fields = ['flowcell_id', 'lane_1_library__library_id', 'lane_1_library__library_name', 'lane_2_library__library_id', 'lane_2_library__library_name', 'lane_3_library__library_id', 'lane_3_library__library_name', 'lane_4_library__library_id', 'lane_4_library__library_name', 'lane_5_library__library_id', 'lane_5_library__library_name', 'lane_6_library__library_id', 'lane_6_library__library_name', 'lane_7_library__library_id', 'lane_7_library__library_name', 'lane_8_library__library_id', 'lane_8_library__library_name']
-    list_display = ('run_date', 'flowcell_id', 'lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library')
+    list_display = ('run_date', 'flowcell_status', 'flowcell_id', 'lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library')
     list_display_links = ('run_date', 'flowcell_id', 'lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library')
     fields = (
         (None, {
-            'fields': ('run_date', 'flowcell_id', ('read_length', 'advanced_run'),)
+            'fields': ('run_date', ('flowcell_id', 'flowcell_status'), ('read_length', 'advanced_run'),)
         }),
         ('Lanes:', {
             'fields' : (('lane_1_library', 'lane_1_pM'), ('lane_2_library', 'lane_2_pM'), ('lane_3_library', 'lane_3_pM'), ('lane_4_library', 'lane_4_pM'), ('lane_5_library', 'lane_5_pM'), ('lane_6_library', 'lane_6_pM'), ('lane_7_library', 'lane_7_pM'), ('lane_8_library', 'lane_8_pM'),)
