@@ -13,8 +13,4 @@ urlpatterns = patterns('',
      (r'^admin/', include('django.contrib.admin.urls')),
     # Databrowser:
      (r'^databrowse/(.*)', databrowse.site.root),
-    # List of labs with read-only access:
-     (r'^lab/$', 'gaworkflow.frontend.fctracker.views.labindex'),
-    # Lab-specific access:
-     (r'^lab/(\w+)/$', 'gaworkflow.frontend.fctracker.views.labdetail'),
 )
