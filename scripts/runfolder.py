@@ -423,7 +423,73 @@ class ELAND(object):
             eland_result = ELAND.ElandResult(gerald, f)
             self.results[eland_result.sample_name] = eland_result
 
+class PipelineRun(object):
+    """
+    Capture "interesting" information about a pipeline run
+    """
+    def __init__(self, pathname, firecrest, bustard, gerald):
+        self.pathname = pathname
+        self._name = None
+        self._flowcell_id = None
+        self.firecrest = firecrest
+        self.bustard = bustard
+        self.gerald = gerald
+    
+    def _get_flowcell_id(self):
+        # extract flowcell ID
+        if self._flowcell_id is None:
+          config_dir = os.path.join(self.pathname, 'Config')
+          flowcell_id_path = os.path.join(config_dir, 'FlowcellId.xml')
+          flowcell_id_tree = ElementTree.parse(flowcell_id_path)
+          self._flowcell_id = flowcell_id_tree.findtext('Text')
+        return self._flowcell_id
+    flowcell_id = property(_get_flowcell_id)
+
+    def _get_xml(self):
+        """
+        make one master xml file from all of our sub-components.
+        """
+        root = ElementTree.Element('PipelineRun')
+        flowcell = ElementTree.SubElement(root, 'FlowcellID')
+        flowcell.text = self.flowcell_id
+        root.append(self.firecrest.elements)
+        root.append(self.bustard.elements)
+        root.append(self.gerald.elements)
+        return root
+
+    def _get_pretty_xml(self):
+        """
+        Generate indented xml file
+        """
+        root = self._get_xml()
+        indent(root)
+        return root
+    xml = property(_get_pretty_xml)
+
+    def _get_run_name(self):
+        """
+        Given a run tuple, find the latest date and use that as our name
+        """
+        if self._name is None:
+          tmax = max(self.firecrest.time, self.bustard.time, self.gerald.time)
+          timestamp = time.strftime('%Y-%m-%d', time.localtime(tmax))
+          self._name = 'run_'+self.flowcell_id+"_"+timestamp+'.xml'
+        return self._name
+    name = property(_get_run_name)
+
+    def save(self):
+        logging.info("Saving run report "+ self.name)
+        ElementTree.ElementTree(self.xml).write(self.name)
+
 def get_runs(runfolder):
+    """
+    Search through a run folder for all the various sub component runs
+    and then return a PipelineRun for each different combination.
+
+    For example if there are two different GERALD runs, this will
+    generate two different PipelineRun objects, that differ
+    in there gerald component.
+    """
     datadir = os.path.join(runfolder, 'Data')
 
     logging.info('Searching for runs in ' + datadir)
@@ -436,40 +502,16 @@ def get_runs(runfolder):
             gerald_glob = os.path.join(bustard_pathname, 'GERALD*')
             for gerald_pathname in glob(gerald_glob):
                 g = GERALD(gerald_pathname)
-                runs.append((f, b, g))
+                runs.append(PipelineRun(runfolder, f, b, g))
     return runs
                 
-def format_run(run):
-    """
-    Given a run tuple making a single formatted xml file
-    """
-    firecrest, bustard, gerald = run
-    root = ElementTree.Element('Run')
-    root.append(firecrest.elements)
-    root.append(bustard.elements)
-    root.append(gerald.elements)
-    indent(root)
-    return root
-       
-def make_run_name(run):
-    """
-    Given a run tuple, find the latest date and use that as our name
-    """
-    firecrest, bustard, gerald = run
-    tmax = max(firecrest.time, bustard.time, gerald.time)
-    timestamp = time.strftime('%Y-%m-%d', time.localtime(tmax))
-    name = 'run-'+timestamp+'.xml'
-    return name
     
 def extract_run_parameters(runs):
     """
     Search through runfolder_path for various runs and grab their parameters
     """
     for run in runs:
-        tree = format_run(run)
-        name = make_run_name(run)
-        logging.info("Saving run report "+ name)
-        ElementTree.ElementTree(tree).write(name)
+      run.save()
 
 def summary(runs):
     def summarize_mapped_reads(mapped_reads):
@@ -486,13 +528,12 @@ def summary(runs):
 
     for run in runs:
         # print a run name?
-        logging.info('Summarizing ' + str(run))
-        gerald = run[2]
-        for lane in gerald.summary.lane_results:
+        logging.info('Summarizing ' + run.name)
+        for lane in run.gerald.summary.lane_results:
             print 'lane', lane.lane, 'clusters', lane.cluster[0], '+/-',
             print lane.cluster[1]
         print ""
-        for sample, result in gerald.eland_results.results.items():
+        for sample, result in run.gerald.eland_results.results.items():
             print '---'
             print "Sample name", sample
             print "Total Reads", result.reads
