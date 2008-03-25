@@ -71,6 +71,7 @@ class Library(models.Model):
   
   undiluted_concentration = models.DecimalField("Undiluted concentration (ng/ul)", max_digits=5, decimal_places=2, default=0)
   successful_pM = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+  ten_nM_dilution = models.BooleanField(default=False)
   
   notes = models.TextField(blank=True)
   
@@ -97,7 +98,7 @@ class Library(models.Model):
             'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('undiluted_concentration', 'library_size'), 'notes',)
         }),
 	('Run Information:', {
-	    'fields' : (('successful_pM'),)
+	    'fields' : (('ten_nM_dilution','successful_pM'),)
 	}),
     )
 
@@ -181,6 +182,10 @@ class FlowCell(models.Model):
 	('Kits & Machines:', {
 	    'classes': 'collapse',
 	    'fields' : (('kit_1000148', 'kit_1000147', 'kit_1000183', 'kit_1001625'), ('cluster_station_id', 'sequencer_id'),)
+	}),
+	('Cluster Estimates:', {
+	    'classes': 'collapse',
+	    'fields' : (('lane_1_cluster_estimate', 'lane_2_cluster_estimate'), ('lane_3_cluster_estimate', 'lane_4_cluster_estimate'), ('lane_5_cluster_estimate', 'lane_6_cluster_estimate'), ('lane_7_cluster_estimate', 'lane_8_cluster_estimate',),)
 	}),
     )
 
