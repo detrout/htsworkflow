@@ -1,4 +1,32 @@
 #!/usr/bin/env python
+"""
+Runfolder.py can generate a xml file capturing all the 'interesting' parameters from a finished pipeline run. (using the -a option). The information currently being captured includes:
+
+  * Flowcell ID
+  * run dates
+  * start/stop cycle numbers
+  * Firecrest, bustard, gerald version numbers
+  * Eland analysis types, and everything in the eland configuration file.
+  * cluster numbers and other values from the Summary.htm 
+    LaneSpecificParameters table. 
+  * How many reads mapped to a genome from an eland file
+
+The ELAND "mapped reads" counter will also check for eland squashed file
+that were symlinked from another directory. This is so I can track how 
+many reads landed on the genome of interest and on the spike ins. 
+
+Basically my subdirectories something like:
+
+genomes/hg18
+genomes/hg18/chr*.2bpb <- files for hg18 genome
+genomes/hg18/chr*.vld  
+genomes/hg18/VATG.fa.2bp <- symlink to genomes/spikeins
+genomes/spikein 
+
+runfolder.py can also spit out a simple summary report (-s option) 
+that contains the per lane post filter cluster numbers and the mapped 
+read counts. (The report isn't currently very pretty)
+"""
 import time
 import logging
 import os
