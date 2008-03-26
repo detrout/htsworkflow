@@ -42,6 +42,7 @@ try:
 except ImportError, e:
   from elementtree import ElementTree
 
+from gaworkflow.util.alphanum import alphanum
 EUROPEAN_STRPTIME = "%d-%m-%Y"
 EUROPEAN_DATE_RE = "([0-9]{1,2}-[0-9]{1,2}-[0-9]{4,4})"
 VERSION_RE = "([0-9\.]+)"
@@ -426,7 +427,7 @@ class ELAND(object):
                 # ignore lines that don't have a fasta filename
                 if len(fields) < 7:
                     continue
-                fasta = self._fasta_map[fields[6]]
+                fasta = self._fasta_map.get(fields[6], fields[6])
                 mapped_reads[fasta] = mapped_reads.setdefault(fasta, 0) + 1
             self._mapped_reads = mapped_reads
             self._reads = reads
@@ -561,8 +562,12 @@ def summary(runs):
             print 'lane', lane.lane, 'clusters', lane.cluster[0], '+/-',
             print lane.cluster[1]
         print ""
-        for sample, result in run.gerald.eland_results.results.items():
+	# sort the report
+	sample_keys = run.gerald.eland_results.results.keys()
+	sample_keys.sort(alphanum)
+	for sample in sample_keys:
             print '---'
+	    result = run.gerald.eland_results.results[sample]
             print "Sample name", sample
             print "Total Reads", result.reads
             print "Mapped Reads"
