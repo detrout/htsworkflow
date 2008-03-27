@@ -15,5 +15,6 @@ setup(
            'scripts/copier',
            'scripts/runner',
            'scripts/retrieve_config',
-           'scripts/configure_pipeline'],
+           'scripts/configure_pipeline',
+           'scripts/runfolder.py'],
 )
