@@ -529,8 +529,11 @@ def get_runs(runfolder):
             b = Bustard(bustard_pathname)
             gerald_glob = os.path.join(bustard_pathname, 'GERALD*')
             for gerald_pathname in glob(gerald_glob):
-                g = GERALD(gerald_pathname)
-                runs.append(PipelineRun(runfolder, f, b, g))
+                try:
+                    g = GERALD(gerald_pathname)
+                    runs.append(PipelineRun(runfolder, f, b, g))
+                except IOError, e:
+                    print "Ignoring", str(e)
     return runs
                 
     
@@ -565,7 +568,7 @@ def summary_report(runs):
     """
     for run in runs:
         # print a run name?
-        logging.info('Summarizing ' + run.name)
+        print 'Summary for', run.name
         for lane in run.gerald.summary.lane_results:
             print 'lane', lane.lane, 'clusters', lane.cluster[0], '+/-',
             print lane.cluster[1]
