@@ -274,6 +274,9 @@ def parse_mean_range(value):
     """
     Parse values like 123 +/- 4.5
     """
+    if value.strip() == 'unknown':
+	return 0, 0
+
     average, pm, deviation = value.split()
     if pm != '+/-':
         raise RuntimeError("Summary.htm file format changed")
@@ -390,23 +393,19 @@ class ELAND(object):
 
         def _build_fasta_map(self, genome_dir):
             # build fasta to fasta file map
+            genome = genome_dir.split(os.path.sep)[-1]
             fasta_map = {}
             for vld_file in glob(os.path.join(genome_dir, '*.vld')):
+                is_link = False
                 if os.path.islink(vld_file):
-                    vld_file = os.path.realpath(vld_file)
-                path, vld_name = os.path.split(vld_file)
+                    is_link = True
+                vld_file = os.path.realpath(vld_file)
+		path, vld_name = os.path.split(vld_file)
                 name, ext = os.path.splitext(vld_name)
-                fasta_map[name] = (path, name)
-            # strip the common path prefix
-            paths = [ x[0] for x in fasta_map.values() ]
-            common_path = os.path.commonprefix(paths)
-            # FIXME:
-            # don't do this
-            # In [161]: gerald.eland_results.results['s_1'].mapped_reads
-            # Out[161]: {'5.fa': 98417, '3.fa': 90226, '4.fa': 66373, '1.fa': 105589, '2.fa': 77904}
-
-            for k, (path, name) in fasta_map.items():
-                fasta_map[k] = os.path.join(path.replace(common_path, ''), name)
+                if is_link:
+                    fasta_map[name] = name
+                else:
+                    fasta_map[name] = os.path.join(genome, name)
             self._fasta_map = fasta_map
 
         def _update(self):
@@ -546,10 +545,12 @@ def summary(runs):
     def summarize_mapped_reads(mapped_reads):
         summarized_reads = {}
         genome_reads = 0
+	genome = 'unknown'
         for k, v in mapped_reads.items():
-            if 'chr' in k:
+            path, k = os.path.split(k)
+            if len(path) > 0:
+	        genome = path
                 genome_reads += v
-                genome = os.path.split(k)[0]
             else:
                 summarized_reads[k] = summarized_reads.setdefault(k, 0) + v
         summarized_reads[genome] = genome_reads
