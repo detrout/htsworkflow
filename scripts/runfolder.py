@@ -541,21 +541,28 @@ def extract_run_parameters(runs):
     for run in runs:
       run.save()
 
-def summary(runs):
-    def summarize_mapped_reads(mapped_reads):
-        summarized_reads = {}
-        genome_reads = 0
-	genome = 'unknown'
-        for k, v in mapped_reads.items():
-            path, k = os.path.split(k)
-            if len(path) > 0:
-	        genome = path
-                genome_reads += v
-            else:
-                summarized_reads[k] = summarized_reads.setdefault(k, 0) + v
-        summarized_reads[genome] = genome_reads
-        return summarized_reads
+def summarize_mapped_reads(mapped_reads):
+    """
+    Summarize per chromosome reads into a genome count
+    But handle spike-in/contamination symlinks seperately.
+    """
+    summarized_reads = {}
+    genome_reads = 0
+    genome = 'unknown'
+    for k, v in mapped_reads.items():
+        path, k = os.path.split(k)
+        if len(path) > 0:
+            genome = path
+            genome_reads += v
+        else:
+            summarized_reads[k] = summarized_reads.setdefault(k, 0) + v
+    summarized_reads[genome] = genome_reads
+    return summarized_reads
 
+def summary_report(runs):
+    """
+    Summarize cluster numbers and mapped read counts for a runfolder
+    """
     for run in runs:
         # print a run name?
         logging.info('Summarizing ' + run.name)
@@ -603,7 +610,7 @@ def main(cmdlist=None):
     for runfolder in args:
         runs = get_runs(runfolder)
         if opt.summary:
-            summary(runs)
+            summary_report(runs)
         if opt.archive:
             extract_run_parameters(runs)
 
