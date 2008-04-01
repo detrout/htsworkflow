@@ -476,8 +476,14 @@ class PipelineRun(object):
         if self._flowcell_id is None:
           config_dir = os.path.join(self.pathname, 'Config')
           flowcell_id_path = os.path.join(config_dir, 'FlowcellId.xml')
-          flowcell_id_tree = ElementTree.parse(flowcell_id_path)
-          self._flowcell_id = flowcell_id_tree.findtext('Text')
+	  if os.path.exists(flowcell_id_path):
+            flowcell_id_tree = ElementTree.parse(flowcell_id_path)
+            self._flowcell_id = flowcell_id_tree.findtext('Text')
+	  else:
+	    logging.warning(
+	      "Unable to determine flowcell id as %s was not found" % (
+	         flowcell_id_path))
+	    self._flowcell_id = "unknown"
         return self._flowcell_id
     flowcell_id = property(_get_flowcell_id)
 
