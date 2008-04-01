@@ -419,15 +419,23 @@ class ELAND(object):
             mapped_reads = {}
             genome_dir = self.gerald.lanes[self.sample_name].eland_genome
             self._build_fasta_map(genome_dir)
-
+            match_codes = {'NM':0, 'QC':0, 'RM':0, 
+                           'U0':0, 'U1':0, 'U2':0,
+                           'R0':0, 'R1':0, 'R2':0,
+                          }
             for line in open(self.pathname):
                 reads += 1
                 fields = line.split()
+		# code = fields[2]
+                # match_codes[code] = match_codes.setdefault(code, 0) + 1
+	        # the QC/NM etc codes are in the 3rd field and always present
+                match_codes[fields[2]] += 1
                 # ignore lines that don't have a fasta filename
                 if len(fields) < 7:
                     continue
                 fasta = self._fasta_map.get(fields[6], fields[6])
                 mapped_reads[fasta] = mapped_reads.setdefault(fasta, 0) + 1
+            self._match_codes = match_codes
             self._mapped_reads = mapped_reads
             self._reads = reads
         
@@ -581,6 +589,11 @@ def summary_report(runs):
 	    result = run.gerald.eland_results.results[sample]
             print "Sample name", sample
             print "Total Reads", result.reads
+            mc = result._match_codes
+	    print "No Match", mc['NM']
+	    print "QC Failed", mc['QC']
+            print 'Unique (0,1,2 mismatches)', mc['U0'], mc['U1'], mc['U2']
+            print 'Repeat (0,1,2 mismatches)', mc['R0'], mc['R1'], mc['R2']
             print "Mapped Reads"
             pprint(summarize_mapped_reads(result.mapped_reads))
 
