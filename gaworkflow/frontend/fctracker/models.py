@@ -38,10 +38,14 @@ class Library(models.Model):
   PROTOCOL_END_POINTS = (
       ('?', 'Unknown'),
       ('Sample', 'Raw sample'),
-      ('Gel', 'Ran gel'),
-      ('1A', 'Gel purification'),
-      ('2A', '2nd PCR'),
       ('Progress', 'In progress'),
+      ('Gel', 'Unpurified gel'),
+      ('1A', 'Purified gel'),
+      ('PCR', 'Ligation, then PCR'),
+      ('1Ab', 'Ligation, PCR, then gel'),
+      ('1Aa', 'Ligation, gel, then PCR'),
+      ('2A', 'Ligation, PCR, gel, PCR'),
+      ('Done', 'Completed'),
     )
   stopping_point = models.CharField(max_length=50, choices=PROTOCOL_END_POINTS)
   amplified_from_sample = models.ForeignKey('self', blank=True, null=True)
@@ -63,17 +67,20 @@ class Library(models.Model):
     date_hierarchy = "creation_date"
     save_as = True
     save_on_top = True
-    search_fields = ['library_name']
-    list_display = ('library_id', 'library_name', 'made_for', 'creation_date', 'ten_nM_dilution', 'stopping_point', 'successful_pM')
+    search_fields = ['library_name', 'library_id']
+    list_display = ('library_id', 'library_name', 'made_for', 'library_species', 'creation_date', 'stopping_point')
     list_display_links = ('library_id', 'library_name')
-    list_filter = ('stopping_point', 'ten_nM_dilution', 'library_species', 'made_for', 'made_by')
+    list_filter = ('stopping_point', 'library_species', 'made_for', 'made_by')
     fields = (
         (None, {
             'fields': (('library_id', 'library_name'), ('library_species', 'RNAseq'),)
         }),
         ('Creation Information:', {
-            'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('undiluted_concentration', 'ten_nM_dilution', 'successful_pM'), 'notes',)
+            'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('undiluted_concentration'), 'notes',)
         }),
+	('Run Information:', {
+	    'fields' : (('ten_nM_dilution','successful_pM'),)
+	}),
     )
 
 class FlowCell(models.Model):
@@ -116,13 +123,14 @@ class FlowCell(models.Model):
     return '%s (%s)' % (self.flowcell_id, self.run_date) 
   
   class Meta:
-    ordering = ["run_date"]
+    ordering = ["-run_date"]
   
   class Admin:
     date_hierarchy = "run_date"
     save_on_top = True
-    search_fields = ['lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library']
-    list_display = ('flowcell_id', 'run_date', 'lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library')
+    search_fields = ['flowcell_id', 'lane_1_library__library_id', 'lane_1_library__library_name', 'lane_2_library__library_id', 'lane_2_library__library_name', 'lane_3_library__library_id', 'lane_3_library__library_name', 'lane_4_library__library_id', 'lane_4_library__library_name', 'lane_5_library__library_id', 'lane_5_library__library_name', 'lane_6_library__library_id', 'lane_6_library__library_name', 'lane_7_library__library_id', 'lane_7_library__library_name', 'lane_8_library__library_id', 'lane_8_library__library_name']
+    list_display = ('run_date', 'flowcell_id', 'lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library')
+    list_display_links = ('run_date', 'flowcell_id', 'lane_1_library', 'lane_2_library', 'lane_3_library', 'lane_4_library', 'lane_5_library', 'lane_6_library', 'lane_7_library', 'lane_8_library')
     fields = (
         (None, {
             'fields': ('run_date', 'flowcell_id', ('read_length', 'advanced_run'),)
