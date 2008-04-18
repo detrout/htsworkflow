@@ -39,8 +39,7 @@ class Library(models.Model):
       ('?', 'Unknown'),
       ('Sample', 'Raw sample'),
       ('Progress', 'In progress'),
-      ('Gel', 'Unpurified gel'),
-      ('1A', 'Purified gel'),
+      ('1A', 'Ligation, then gel'),
       ('PCR', 'Ligation, then PCR'),
       ('1Ab', 'Ligation, PCR, then gel'),
       ('1Aa', 'Ligation, gel, then PCR'),
@@ -68,9 +67,9 @@ class Library(models.Model):
     save_as = True
     save_on_top = True
     search_fields = ['library_name', 'library_id']
-    list_display = ('library_id', 'library_name', 'made_for', 'library_species', 'creation_date', 'stopping_point')
+    list_display = ('library_id', 'library_name', 'made_for', 'creation_date', 'stopping_point')
     list_display_links = ('library_id', 'library_name')
-    list_filter = ('stopping_point', 'library_species', 'made_for', 'made_by')
+    list_filter = ('library_species', 'made_for', 'stopping_point', 'made_by')
     fields = (
         (None, {
             'fields': (('library_id', 'library_name'), ('library_species', 'RNAseq'),)
