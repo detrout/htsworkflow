@@ -67,7 +67,7 @@ class Library(models.Model):
     save_as = True
     save_on_top = True
     search_fields = ['library_name', 'library_id']
-    list_display = ('library_id', 'library_name', 'made_for', 'creation_date', 'stopping_point')
+    list_display = ('library_id', 'library_name', 'made_for', 'creation_date', 'stopping_point', 'successful_pM')
     list_display_links = ('library_id', 'library_name')
     list_filter = ('library_species', 'made_for', 'stopping_point', 'made_by', 'RNAseq')
     fields = (
