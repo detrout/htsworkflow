@@ -69,7 +69,7 @@ class Library(models.Model):
     search_fields = ['library_name', 'library_id']
     list_display = ('library_id', 'library_name', 'made_for', 'creation_date', 'stopping_point')
     list_display_links = ('library_id', 'library_name')
-    list_filter = ('library_species', 'made_for', 'stopping_point', 'made_by')
+    list_filter = ('library_species', 'made_for', 'stopping_point', 'made_by', 'RNAseq')
     fields = (
         (None, {
             'fields': (('library_id', 'library_name'), ('library_species', 'RNAseq'),)
