@@ -59,13 +59,15 @@ class Library(models.Model):
   PROTOCOL_END_POINTS = (
       ('?', 'Unknown'),
       ('Sample', 'Raw sample'),
-      ('Gel', 'Ran gel'),
-      ('1A', 'Gel purification'),
-      ('2A', '2nd PCR'),
-      ('Done', 'Completed'),
       ('Progress', 'In progress'),
+      ('1A', 'Ligation, then gel'),
+      ('PCR', 'Ligation, then PCR'),
+      ('1Ab', 'Ligation, PCR, then gel'),
+      ('1Aa', 'Ligation, gel, then PCR'),
+      ('2A', 'Ligation, PCR, gel, PCR'),
+      ('Done', 'Completed'),
     )
-  stopping_point = models.CharField(max_length=50, choices=PROTOCOL_END_POINTS)
+  stopping_point = models.CharField(max_length=25, choices=PROTOCOL_END_POINTS)
   amplified_from_sample = models.ForeignKey('self', blank=True, null=True)
   library_size = models.IntegerField(default=225, blank=True, null=True)
   
@@ -87,9 +89,9 @@ class Library(models.Model):
     save_as = True
     save_on_top = True
     search_fields = ['library_name', 'library_id']
-    list_display = ('library_id', 'library_name', 'made_for', 'library_species', 'creation_date')
+    list_display = ('library_id', 'library_name', 'made_for', 'creation_date', 'stopping_point')
     list_display_links = ('library_id', 'library_name')
-    list_filter = ('stopping_point', 'library_species', 'made_for', 'made_by')
+    list_filter = ('stopping_point', 'library_species', 'made_for', 'made_by', 'RNAseq')
     fields = (
         (None, {
             'fields': (('library_id', 'library_name'), ('library_species', 'RNAseq'),)
