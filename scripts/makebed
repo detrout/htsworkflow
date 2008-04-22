@@ -67,8 +67,7 @@ def main(command_line=None):
     name = options.name
     description = options.description
 
-  print name, description
-  #make_bed_from_eland_stream(instream, outstream, name, description, options.prefix)
+  make_bed_from_eland_stream(instream, outstream, name, description, options.prefix)
   return 0
 
 if __name__ == "__main__":
