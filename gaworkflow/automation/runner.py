@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from glob import glob
 import logging
 import os
 import re
@@ -196,6 +197,9 @@ class Runner(rpc.XmlRpcBot):
             if status:
                 logging.info("Runner: Configure: success")
                 self.reportMsg("Configure (%s): success" % (run_dir))
+                self.reportMsg(
+                    os.linesep.join(glob(os.path.join(run_dir,'Data','C*')))
+                )
             else:
                 logging.error("Runner: Configure: failed")
                 self.reportMsg("Configure (%s): FAILED" % (run_dir))
@@ -210,7 +214,7 @@ class Runner(rpc.XmlRpcBot):
                 run_status = run_pipeline(conf_info)
                 if run_status is True:
                     logging.info('Runner: Pipeline: success')
-                    self.piplineFinished(run_dir)
+                    self.reportMsg("Pipeline run (%s): Finished" % (run_dir,))
                 else:
                     logging.info('Runner: Pipeline: failed')
                     self.reportMsg("Pipeline run (%s): FAILED" % (run_dir))
