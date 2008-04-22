@@ -3,42 +3,7 @@ import optparse
 import sys
 import os
 
-def make_bed(instream, outstream, name, description, chromosome_prefix='chr'):
-  """
-  read an eland result file from instream and write a bedfile to outstream
-  """
-  # indexes into fields in eland_result.txt file
-  SEQ = 1
-  CHR = 6
-  START = 7
-  SENSE = 8
-  # map eland_result.txt sense 
-  sense_map = { 'F': '+', 'R': '-'}
-  sense_color = { 'F': '0,0,255', 'R': '255,255,0' }
-  # provide default track names
-  if name is None: name = "track"
-  if description is None: description = "eland result file"
-  bed_header = 'track name="%s" description="%s" visibility=4 itemRgb="ON"'
-  bed_header += os.linesep
-  outstream.write(bed_header % (name, description))
-
-  for line in instream:
-    fields = line.split()
-    # we need more than the CHR field, and it needs to match a chromosome
-    if len(fields) <= CHR or fields[CHR][:3] != chromosome_prefix:
-      continue
-    start = fields[START]
-    stop = int(start) + len(fields[SEQ])
-    chromosome, extension = fields[CHR].split('.')
-    assert extension == "fa"
-    outstream.write('%s %s %d read 0 %s - - %s%s' % (
-      chromosome,
-      start,
-      stop,
-      sense_map[fields[SENSE]], 
-      sense_color[fields[SENSE]],
-      os.linesep  
-    ))
+from gaworkflow.util.makebed import make_bed_from_eland_stream, make_description
 
 def make_parser():
   parser = optparse.OptionParser()
@@ -55,6 +20,15 @@ def make_parser():
   parser.add_option('--chromosome', dest='prefix',
                     help='Set the chromosome prefix name. defaults to "chr"',
                     default='chr')
+  parser.add_option("--database", dest='database',
+                    help="specify location of fctracker database",
+                    default=None)
+  parser.add_option("--flowcell", dest='flowcell',
+                    help="compute name and description from database using flowcell id",
+                    default=None)
+  parser.add_option("--lane", dest='lane',
+                    help='specify which lane to use when retrieving description from database',
+                    default=None)
   return parser
 
 def main(command_line=None):
@@ -84,7 +58,17 @@ def main(command_line=None):
   else:
     outstream = open(options.outname, 'w')
 
-  make_bed(instream, outstream, options.name, options.description, options.prefix)
+  if options.flowcell is not None and options.lane is not None:
+    # get our name/description out of the database
+    name, description = make_description(
+                           options.database, options.flowcell, options.lane
+                        )
+  else:
+    name = options.name
+    description = options.description
+
+  print name, description
+  #make_bed_from_eland_stream(instream, outstream, name, description, options.prefix)
   return 0
 
 if __name__ == "__main__":
