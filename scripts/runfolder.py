@@ -188,7 +188,10 @@ class GERALD(object):
             if container is None or \
                len(container.getchildren()) != LANES_PER_FLOWCELL:
                 raise RuntimeError('GERALD config.xml file changed')
-            element = container.find(self._key)
+            lanes = [x.tag.split('_')[1] for x in container.getchildren()]
+            index = lanes.index(self._key)
+            #element = container.find(self._key)
+            element = container[index]
             return element.text
         def _get_analysis(self):
             return self.__get_attribute('ANALYSIS')
@@ -218,7 +221,11 @@ class GERALD(object):
         def keys(self):
             if self._keys is None:
                 analysis = self._tree.find('LaneSpecificRunParameters/ANALYSIS')
-                self._keys = [ x.tag for x in analysis]
+                # according to the pipeline specs I think their fields 
+                # are sampleName_laneID, with sampleName defaulting to s
+                # since laneIDs are constant lets just try using 
+                # those consistently.
+                self._keys = [ x.tag.split('_')[1] for x in analysis]
             return self._keys
         def values(self):
             return [ self[x] for x in self.keys() ]
@@ -339,7 +346,7 @@ class Summary(object):
     def __init__(self, pathname):
         self.pathname = pathname
         self.tree = ElementTree.parse(pathname).getroot()
-        self.lane_results = []
+        self.lane_results = {}
 
         self._extract_lane_results()
 
@@ -350,18 +357,22 @@ class Summary(object):
         if flatten(self.tree.findall('*//h2')[3]) != 'Lane Results Summary':
             raise RuntimeError("Summary.htm file format changed")
 
-        table = self.tree.findall('*//table')[2]
-        rows = table.getchildren()
+        tables = self.tree.findall('*//table')
+
+        # parse lane result summary
+        lane_summary = tables[2]
+        rows = lane_summary.getchildren()
         headers = rows[0].getchildren()
         if flatten(headers[2]) != 'Av 1st Cycle Int ':
             raise RuntimeError("Summary.htm file format changed")
 
         for r in rows[1:]:
-            self.lane_results.append(LaneResultSummary(r))
+            lrs = LaneResultSummary(r)
+            self.lane_results[lrs.lane] = lrs
 
     def _get_elements(self):
         summary = ElementTree.Element('Summary')
-        for lane in self.lane_results:
+        for lane in self.lane_results.values():
             summary.append(lane.elements)
         return summary
     elements = property(_get_elements)
@@ -386,7 +397,9 @@ class ELAND(object):
             self.pathname = pathname
             # extract the sample name
             path, name = os.path.split(self.pathname)
-            self.sample_name = name.replace("_eland_result.txt","")
+            split_name = name.split('_')
+            self.sample_name = split_name[0]
+            self.lane_id = split_name[1]
             self._reads = None
             self._mapped_reads = None
             self._fasta_map = {}
@@ -417,7 +430,7 @@ class ELAND(object):
             
             reads = 0
             mapped_reads = {}
-            genome_dir = self.gerald.lanes[self.sample_name].eland_genome
+            genome_dir = self.gerald.lanes[self.lane_id].eland_genome
             self._build_fasta_map(genome_dir)
             match_codes = {'NM':0, 'QC':0, 'RM':0, 
                            'U0':0, 'U1':0, 'U2':0,
@@ -457,7 +470,7 @@ class ELAND(object):
         self.results = {}
         for f in glob(os.path.join(basedir, "*_eland_result.txt")):
             eland_result = ELAND.ElandResult(gerald, f)
-            self.results[eland_result.sample_name] = eland_result
+            self.results[eland_result.lane_id] = eland_result
 
 class PipelineRun(object):
     """
@@ -580,28 +593,36 @@ def summary_report(runs):
     """
     Summarize cluster numbers and mapped read counts for a runfolder
     """
+    report = []
     for run in runs:
         # print a run name?
-        print 'Summary for', run.name
-        for lane in run.gerald.summary.lane_results:
-            print 'lane', lane.lane, 'clusters', lane.cluster[0], '+/-',
-            print lane.cluster[1]
-        print ""
+        report.append('Summary for %s' % (run.name,))
 	# sort the report
-	sample_keys = run.gerald.eland_results.results.keys()
-	sample_keys.sort(alphanum)
-	for sample in sample_keys:
-            print '---'
-	    result = run.gerald.eland_results.results[sample]
-            print "Sample name", sample
-            print "Total Reads", result.reads
+	eland_keys = run.gerald.eland_results.results.keys()
+	eland_keys.sort(alphanum)
+
+        lane_results = run.gerald.summary.lane_results
+	for lane_id in eland_keys:
+	    result = run.gerald.eland_results.results[lane_id]
+            report.append("Sample name %s" % (result.sample_name))
+            report.append("Lane id %s" % (result.lane_id,))
+            cluster = lane_results[result.lane_id].cluster
+            report.append("Clusters %d +/- %d" % (cluster[0], cluster[1]))
+            report.append("Total Reads: %d" % (result.reads))
             mc = result._match_codes
-	    print "No Match", mc['NM']
-	    print "QC Failed", mc['QC']
-            print 'Unique (0,1,2 mismatches)', mc['U0'], mc['U1'], mc['U2']
-            print 'Repeat (0,1,2 mismatches)', mc['R0'], mc['R1'], mc['R2']
-            print "Mapped Reads"
-            pprint(summarize_mapped_reads(result.mapped_reads))
+	    report.append("No Match: %d" % (mc['NM']))
+	    report.append("QC Failed: %d" % (mc['QC']))
+            report.append('Unique (0,1,2 mismatches) %d %d %d' % \
+                          (mc['U0'], mc['U1'], mc['U2']))
+            report.append('Repeat (0,1,2 mismatches) %d %d %d' % \
+                          (mc['R0'], mc['R1'], mc['R2']))
+            report.append("Mapped Reads")
+            mapped_reads = summarize_mapped_reads(result.mapped_reads)
+            for name, counts in mapped_reads.items():
+              report.append("  %s: %d" % (name, counts))
+            report.append('---')
+            report.append('')
+        return os.linesep.join(report)
 
 def make_parser():
     usage = 'usage: %prog [options] runfolder_root_dir'
@@ -632,7 +653,7 @@ def main(cmdlist=None):
     for runfolder in args:
         runs = get_runs(runfolder)
         if opt.summary:
-            summary_report(runs)
+            print summary_report(runs)
         if opt.archive:
             extract_run_parameters(runs)
 
