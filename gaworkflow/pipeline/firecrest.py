@@ -7,7 +7,7 @@ fromxml - Firecrest factory function initalized from an xml dump from
           the Firecrest object.
 """
 
-from datetime import datetime
+from datetime import date
 import os
 import re
 import time
@@ -33,7 +33,7 @@ class Firecrest(object):
         self.start = None
         self.stop = None
         self.version = None
-        self.date = datetime.now()
+        self.date = date.today()
         self.user = None
         self.matrix = None
 
@@ -82,7 +82,7 @@ class Firecrest(object):
             elif element.tag == Firecrest.STOP:
                 self.stop = int(element.text)
             elif element.tag == Firecrest.DATE:
-                self.date = datetime.fromtimestamp(float(element.text))
+                self.date = date.fromtimestamp(float(element.text))
             elif element.tag == Firecrest.USER:
                 self.user = element.text
             elif element.tag == Firecrest.MATRIX:
@@ -107,7 +107,8 @@ def firecrest(pathname):
     version = re.search(VERSION_RE, groups[1])
     f.version = (version.group(1))
     # datetime
-    f.date = datetime.strptime(groups[2], EUROPEAN_STRPTIME)
+    t = time.strptime(groups[2], EUROPEAN_STRPTIME)
+    f.date = date(*t[0:3])
     # username
     f.user = groups[3]
 

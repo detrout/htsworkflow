@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from datetime import datetime
+from datetime import datetime, date
 import os
 import tempfile
 import shutil
@@ -408,7 +408,7 @@ class RunfolderTests(unittest.TestCase):
         self.failUnlessEqual(f.start, 1)
         self.failUnlessEqual(f.stop, 33)
         self.failUnlessEqual(f.user, 'diane')
-        self.failUnlessEqual(f.date, datetime(2008,4,12))
+        self.failUnlessEqual(f.date, date(2008,4,12))
 
         xml = f.get_elements()
         # just make sure that element tree can serialize the tree
@@ -427,7 +427,7 @@ class RunfolderTests(unittest.TestCase):
         """
         b = bustard.bustard(self.bustard_dir)
         self.failUnlessEqual(b.version, '1.8.28')
-        self.failUnlessEqual(b.date,    datetime(2008,4,12))
+        self.failUnlessEqual(b.date,    date(2008,4,12))
         self.failUnlessEqual(b.user,    'diane')
         self.failUnlessEqual(len(b.phasing), 8)
         self.failUnlessAlmostEqual(b.phasing[8].phasing, 0.0099)

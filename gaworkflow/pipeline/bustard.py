@@ -1,5 +1,5 @@
 
-from datetime import datetime
+from datetime import date
 from glob import glob
 import logging
 import os
@@ -66,7 +66,7 @@ class Bustard(object):
 
     def __init__(self, xml=None):
         self.version = None
-        self.date = datetime.now()
+        self.date = date.today()
         self.user = None
         self.phasing = {}
 
@@ -109,7 +109,7 @@ class Bustard(object):
             if element.tag == Bustard.SOFTWARE_VERSION:
                 self.version = element.text
             elif element.tag == Bustard.DATE:
-                self.date = datetime.fromtimestamp(float(element.text))
+                self.date = date.fromtimestamp(float(element.text))
             elif element.tag == Bustard.USER:
                 self.user = element.text
             elif element.tag == Bustard.PARAMETERS:
@@ -130,7 +130,8 @@ def bustard(pathname):
     groups = name.split("_")
     version = re.search(VERSION_RE, groups[0])
     b.version = version.group(1)
-    b.date = datetime.strptime(groups[1], EUROPEAN_STRPTIME)
+    t = time.strptime(groups[1], EUROPEAN_STRPTIME)
+    b.date = date(*t[0:3])
     b.user = groups[2]
     paramfiles = glob(os.path.join(pathname, "params?.xml"))
     for paramfile in paramfiles:

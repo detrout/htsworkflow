@@ -102,7 +102,8 @@ class Gerald(object):
         if self.tree is None:
             return datetime.today()
         timestamp = self.tree.findtext('ChipWideRunParameters/TIME_STAMP')
-        return datetime.strptime(timestamp, '%c')
+        epochstamp = time.mktime(time.strptime(timestamp, '%c'))
+        return datetime.fromtimestamp(epochstamp)
     date = property(_get_date)
 
     def _get_time(self):

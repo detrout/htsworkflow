@@ -1,7 +1,11 @@
 import os
 import unittest
 
-from xml.etree import ElementTree
+try:
+  from xml.etree import ElementTree
+except ImportError, e:
+  from elementtree import ElementTree
+
 from gaworkflow.util.ethelp import indent, flatten
 
 class testETHelper(unittest.TestCase):
