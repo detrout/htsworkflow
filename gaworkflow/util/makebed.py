@@ -25,7 +25,9 @@ def make_bed_from_eland_stream(instream, outstream, name, description, chromosom
   for line in instream:
     fields = line.split()
     # we need more than the CHR field, and it needs to match a chromosome
-    if len(fields) <= CHR or fields[CHR][:3] != chromosome_prefix:
+    if len(fields) <= CHR or \
+          (chromosome_prefix is not None and \
+             fields[CHR][:3] != chromosome_prefix):
       continue
     start = fields[START]
     stop = int(start) + len(fields[SEQ])
