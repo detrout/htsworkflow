@@ -538,6 +538,8 @@ class RunfolderTests(unittest.TestCase):
         for i in range(1,9):
             lane = eland[str(i)]
             self.failUnlessEqual(lane.reads, 4)
+            self.failUnlessEqual(lane.sample_name, "s")
+            self.failUnlessEqual(lane.lane_id, unicode(i))
             self.failUnlessEqual(len(lane.mapped_reads), 3)
             self.failUnlessEqual(lane.mapped_reads['Lambda.fa'], 1)
             self.failUnlessEqual(lane.mapped_reads['dm3/chr2L.fa'], 1)
@@ -553,6 +555,8 @@ class RunfolderTests(unittest.TestCase):
             l1 = eland[str(i)]
             l2 = e2[str(i)]
             self.failUnlessEqual(l1.reads, l2.reads)
+            self.failUnlessEqual(l1.sample_name, l2.sample_name)
+            self.failUnlessEqual(l1.lane_id, l2.lane_id)
             self.failUnlessEqual(len(l1.mapped_reads), len(l2.mapped_reads))
             self.failUnlessEqual(len(l1.mapped_reads), 3)
             for k in l1.mapped_reads.keys():

@@ -377,6 +377,8 @@ class ElandLane(object):
     """
     XML_VERSION = 1
     LANE = 'ElandLane'
+    SAMPLE_NAME = 'SampleName'
+    LANE_ID = 'LaneID'
     GENOME_MAP = 'GenomeMap'
     GENOME_ITEM = 'GenomeItem'
     MAPPED_READS = 'MappedReads'
@@ -387,6 +389,8 @@ class ElandLane(object):
 
     def __init__(self, pathname=None, genome_map=None, xml=None):
         self.pathname = pathname
+        self.sample_name = None
+        self.lane_id = None
         self._reads = None
         self._mapped_reads = {}
         self._match_codes = {}
@@ -406,6 +410,12 @@ class ElandLane(object):
         # can't do anything if we don't have a file to process
         if self.pathname is None:
             return
+
+        # extract the sample name
+        path, name = os.path.split(self.pathname)
+        split_name = name.split('_')
+        self.sample_name = split_name[0]
+        self.lane_id = split_name[1]
 
         if os.stat(self.pathname)[stat.ST_SIZE] == 0:
             raise RuntimeError("Eland isn't done, try again later.")
@@ -455,6 +465,10 @@ class ElandLane(object):
         lane = ElementTree.Element(ElandLane.LANE, 
                                    {'version': 
                                     unicode(ElandLane.XML_VERSION)})
+        sample_tag = ElementTree.SubElement(lane, ElandLane.SAMPLE_NAME)
+        sample_tag.text = self.sample_name
+        lane_tag = ElementTree.SubElement(lane, ElandLane.LANE_ID)
+        lane_tag.text = self.lane_id
         genome_map = ElementTree.SubElement(lane, ElandLane.GENOME_MAP)
         for k, v in self.genome_map.items():
             item = ElementTree.SubElement(
@@ -480,7 +494,11 @@ class ElandLane(object):
             raise ValueError('Exptecting %s' % (ElandLane.LANE,))
         for element in tree:
             tag = element.tag.lower()
-            if tag == ElandLane.GENOME_MAP.lower():
+            if tag == ElandLane.SAMPLE_NAME.lower():
+                self.sample_name = element.text
+            elif tag == ElandLane.LANE_ID.lower():
+                self.lane_id = element.text
+            elif tag == ElandLane.GENOME_MAP.lower():
                 for child in element:
                     name = child.attrib['name']
                     value = child.attrib['value']
@@ -553,10 +571,12 @@ class ELAND(object):
 def eland(basedir, gerald=None, genome_maps=None):
     e = ELAND()
     for pathname in glob(os.path.join(basedir, "*_eland_result.txt")):
-        # extract the sample name
+        # yes the lane_id is also being computed in ElandLane._update
+        # I didn't want to clutter up my constructor
+        # but I needed to persist the sample_name/lane_id for
+        # runfolder summary_report
         path, name = os.path.split(pathname)
         split_name = name.split('_')
-        sample_name = split_name[0]
         lane_id = split_name[1]
 
         if genome_maps is not None:
