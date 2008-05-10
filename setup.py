@@ -16,5 +16,6 @@ setup(
            'scripts/runner',
            'scripts/retrieve_config',
            'scripts/configure_pipeline',
-           'scripts/runfolder'],
+           'scripts/runfolder',
+           'scripts/makebed'],
 )
