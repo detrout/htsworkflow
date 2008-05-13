@@ -392,11 +392,13 @@ def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir):
   genome_dict = getAvailableGenomes(genome_dir)
   mapper_dict = constructMapperDict(genome_dict)
 
+  logging.debug(data)
+
   f = open(cfg_filepath, 'w')
   f.write(data % (mapper_dict))
   f.close()
   
-  return True  
+  return True
   
 
 

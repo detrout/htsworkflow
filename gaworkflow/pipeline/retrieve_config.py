@@ -3,9 +3,10 @@
 from optparse import OptionParser, IndentedHelpFormatter
 from ConfigParser import SafeConfigParser
 
+import logging
 import os
 import sys
-import urllib
+import urllib2
 
 CONFIG_SYSTEM = '/etc/ga_frontend/ga_frontend.conf'
 CONFIG_USER = os.path.expanduser('~/.ga_frontend.conf')
@@ -144,7 +145,15 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
   
   f = open(output_filepath, 'w')
   #try:
-  web = urllib.urlopen(url)
+  try:
+    web = urllib2.urlopen(url)
+  except urllib2.URLError, e:
+    errmsg = 'URLError: %d' % (e.code,)
+    logging.error(errmsg)
+    logging.error('opened %s' % (url,))
+    logging.error('%s' % ( e.read(),))
+    raise IOError(errmsg)
+
   #except IOError, msg:
   #  if str(msg).find("Connection refused") >= 0:
   #    print 'Error: Connection refused for: %s' % (url)
@@ -171,6 +180,6 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
   f.write(data)
   web.close()
   f.close()
-  print 'Wrote config file to %s' % (output_filepath)
+  logging.info('Wrote config file to %s' % (output_filepath,))
 
   
