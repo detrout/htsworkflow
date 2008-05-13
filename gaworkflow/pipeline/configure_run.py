@@ -13,12 +13,6 @@ from gaworkflow.pipeline.run_status import GARunStatus
 from pyinotify import WatchManager, ThreadedNotifier
 from pyinotify import EventsCodes, ProcessEvent
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)-8s %(message)s',
-                    datefmt='%a, %d %b %Y %H:%M:%S',
-                    filename='pipeline_main.log',
-                    filemode='w')
-
 class ConfigInfo:
   
   def __init__(self):
