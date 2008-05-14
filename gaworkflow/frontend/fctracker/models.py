@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from gaworkflow.frontend import settings
 
 # Create your models here.
@@ -23,25 +24,39 @@ class Species(models.Model):
         }),
       )
 
-class Person(models.Model):
-
-  name = models.CharField(max_length=100, primary_key=True, db_index=True)
-  lab = models.CharField(max_length=100)
-  email = models.CharField(max_length=50, blank=True, null=True)
+class Lab(models.Model):
+  
+  name = models.CharField(max_length=100, blank=False, unique=True)
   
   def __str__(self):
-    return '%s (%s lab)' % (self.name, self.lab)
+    return self.name
+  
+  class Admin:
+    pass
+
+class UserProfile(models.Model):
+  
+  # This allows you to use user.get_profile() to get this object
+  user = models.ForeignKey(User, unique=True)
+
+  lab = models.ForeignKey(Lab)
+  #email = models.CharField(max_length=50, blank=True, null=True)
+  
+  def __str__(self):
+    return '%s (%s lab)' % (self.user, self.lab)
   
   class Meta:
-    verbose_name_plural = "people"
-    ordering = ["lab"]
+    #verbose_name_plural = "people"
+    #ordering = ["lab"]
+    pass
     
   class Admin:
-    fields = (
-      (None, {
-          'fields': (('name', 'lab'), ('email'))
-      }),
-    )
+    #fields = (
+    #  (None, {
+    #      'fields': (('email', 'lab'), ('email'))
+    #  }),
+    #)
+    pass
 
 
 class Library(models.Model):
@@ -54,7 +69,7 @@ class Library(models.Model):
   
   made_by = models.CharField(max_length=50, blank=True, default="Lorian")
   creation_date = models.DateField(blank=True, null=True)
-  made_for = models.ForeignKey(Person)
+  made_for = models.ForeignKey(User)
   
   PROTOCOL_END_POINTS = (
       ('?', 'Unknown'),
@@ -191,13 +206,14 @@ class FlowCell(models.Model):
 	}),
     )
 
-class ElandResult(models.Model):
-  
-  class Admin: pass
-  
-  flow_cell = models.ForeignKey(FlowCell)
-  config_file = models.FileField(upload_to=settings.UPLOADTO_CONFIG_FILE)
-  eland_result_pack = models.FileField(upload_to=settings.UPLOADTO_ELAND_RESULT_PACKS)
-  bed_file_pack = models.FileField(upload_to=settings.UPLOADTO_BED_PACKS)
-  
-  notes = models.TextField(blank=True)
+# Did not finish implementing, removing to avoid further confusion.
+#class ElandResult(models.Model):
+#  
+#  class Admin: pass
+#  
+#  flow_cell = models.ForeignKey(FlowCell)
+#  config_file = models.FileField(upload_to=settings.UPLOADTO_CONFIG_FILE)
+#  eland_result_pack = models.FileField(upload_to=settings.UPLOADTO_ELAND_RESULT_PACKS)
+#  bed_file_pack = models.FileField(upload_to=settings.UPLOADTO_BED_PACKS)
+#  
+#  notes = models.TextField(blank=True)
