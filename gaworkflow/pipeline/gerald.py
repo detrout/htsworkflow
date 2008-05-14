@@ -389,17 +389,15 @@ class ElandLane(object):
 
     def __init__(self, pathname=None, genome_map=None, xml=None):
         self.pathname = pathname
-        self.sample_name = None
-        self.lane_id = None
+        self._sample_name = None
+        self._lane_id = None
         self._reads = None
-        self._mapped_reads = {}
-        self._match_codes = {}
+        self._mapped_reads = None
+        self._match_codes = None
         if genome_map is None:
             genome_map = {}
         self.genome_map = genome_map
         
-        if pathname is not None:
-            self._update()
         if xml is not None:
             self.set_elements(xml)
 
@@ -410,12 +408,6 @@ class ElandLane(object):
         # can't do anything if we don't have a file to process
         if self.pathname is None:
             return
-
-        # extract the sample name
-        path, name = os.path.split(self.pathname)
-        split_name = name.split('_')
-        self.sample_name = split_name[0]
-        self.lane_id = split_name[1]
 
         if os.stat(self.pathname)[stat.ST_SIZE] == 0:
             raise RuntimeError("Eland isn't done, try again later.")
@@ -442,6 +434,28 @@ class ElandLane(object):
         self._match_codes = match_codes
         self._mapped_reads = mapped_reads
         self._reads = reads
+
+    def _update_name(self):
+        # extract the sample name
+        if self.pathname is None:
+            return
+
+        path, name = os.path.split(self.pathname)
+        split_name = name.split('_')
+        self._sample_name = split_name[0]
+        self._lane_id = split_name[1]
+
+    def _get_sample_name(self):
+        if self._sample_name is None:
+            self._update_name()
+        return self._sample_name
+    sample_name = property(_get_sample_name)
+
+    def _get_lane_id(self):
+        if self._lane_id is None:
+            self._update_name()
+        return self._lane_id
+    lane_id = property(_get_lane_id)
 
     def _get_reads(self):
         if self._reads is None:
@@ -492,12 +506,17 @@ class ElandLane(object):
     def set_elements(self, tree):
         if tree.tag != ElandLane.LANE:
             raise ValueError('Exptecting %s' % (ElandLane.LANE,))
+
+        # reset dictionaries
+        self._mapped_reads = {}
+        self._match_codes = {}
+        
         for element in tree:
             tag = element.tag.lower()
             if tag == ElandLane.SAMPLE_NAME.lower():
-                self.sample_name = element.text
+                self._sample_name = element.text
             elif tag == ElandLane.LANE_ID.lower():
-                self.lane_id = element.text
+                self._lane_id = element.text
             elif tag == ElandLane.GENOME_MAP.lower():
                 for child in element:
                     name = child.attrib['name']
