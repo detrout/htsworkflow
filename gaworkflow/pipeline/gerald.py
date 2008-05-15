@@ -537,6 +537,18 @@ class ElandLane(object):
             else:
                 logging.warn("ElandLane unrecognized tag %s" % (element.tag,))
 
+def extract_eland_sequence(instream, outstream, start, end):
+    """
+    Extract a chunk of sequence out of an eland file
+    """
+    for line in instream:
+        record = line.split()
+        if len(record) > 1:
+            result = [record[0], record[1][start:end]]
+        else:
+            result = [record[0][start:end]]
+        outstream.write("\t".join(result))
+        outstream.write(os.linesep)
 
 class ELAND(object):
     """

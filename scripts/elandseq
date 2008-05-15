@@ -3,16 +3,7 @@ import optparse
 import os
 import sys
 
-def extract_sequence(instream, outstream, start, end):
-  for line in instream:
-    record = line.split()
-    if len(record) > 1:
-      result = [record[0], record[1][start:end]]
-    else:
-      result = [record[0][start:end]]
-    outstream.write("\t".join(result))
-    outstream.write(os.linesep)
-      
+from gaworkflow.pipeline.gerald import extract_eland_sequence
 
 def make_parser():
   usage = "usage: %prog [options] infile [outfile]"
@@ -53,7 +44,7 @@ def main(argv):
   else:
     outstream = sys.stdout
 
-  extract_sequence(instream, outstream, start, end)
+  extract_eland_sequence(instream, outstream, start, end)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
