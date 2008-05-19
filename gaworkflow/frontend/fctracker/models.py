@@ -4,6 +4,59 @@ from gaworkflow.frontend import settings
 
 # Create your models here.
 
+class Antibody(models.Model):
+  antigene = models.CharField(max_length=500, db_index=True)
+  catalog = models.CharField(max_length=50, unique=True, db_index=True)
+  antibodies = models.CharField(max_length=500, db_index=True)
+  source = models.CharField(max_length=500, blank=True, db_index=True)
+  biology = models.TextField(blank=True)
+  notes = models.TextField(blank=True)
+  def __str__(self):
+    return '%s - %s (%s)' % (self.antigene, self.antibodies, self.catalog)
+  class Meta:
+    verbose_name_plural = "antibodies"
+    ordering = ["antigene"]
+  class Admin:
+      list_display = ('antigene','antibodies','catalog','source','biology','notes')
+      list_filter = ('antibodies','source')
+      fields = (
+        (None, {
+            'fields': (('antigene','antibodies'),('catalog','source'),('biology'),('notes'))
+        }),
+       )
+
+class Cellline(models.Model):
+  cellline_name = models.CharField(max_length=100, unique=True, db_index=True)
+  notes = models.TextField(blank=True)
+  def __str__(self):
+    return '%s' % (self.cellline_name)
+
+  class Meta:
+    ordering = ["cellline_name"]
+
+  class Admin:
+      fields = (
+        (None, {
+            'fields': (('cellline_name'),('notes'),)
+        }),
+       )
+
+class Condition(models.Model):
+  condition_name = models.CharField(max_length=2000, unique=True, db_index=True)
+  notes = models.TextField(blank=True)
+  def __str__(self):
+    return '%s' % (self.condition_name)
+
+  class Meta:
+    ordering = ["condition_name"]
+
+  class Admin:
+      fields = (
+        (None, {
+            'fields': (('condition_name'),('notes'),)
+        }),
+       )
+
 class Species(models.Model):
   
   scientific_name = models.CharField(max_length=256, unique=False, db_index=True, core=True)
@@ -61,15 +114,27 @@ class UserProfile(models.Model):
 
 class Library(models.Model):
   
-  library_id = models.CharField(max_length=25, primary_key=True, db_index=True, core=True)
+  library_id = models.CharField(max_length=30, primary_key=True, db_index=True, core=True)
   library_name = models.CharField(max_length=100, unique=True, core=True)
   library_species = models.ForeignKey(Species, core=True)
-  #use_genome_build = models.CharField(max_length=100, blank=False, null=False)
-  RNAseq = models.BooleanField()
+  cell_line = models.ForeignKey(Cellline,core=True)
+  condition = models.ForeignKey(Condition,core=True)
+  antibody = models.ForeignKey(Antibody,blank=True,null=True,core=True)
   
-  made_by = models.CharField(max_length=50, blank=True, default="Lorian")
+  EXPERIMENT_TYPES = (
+      ('INPUT_RXLCh','INPUT_RXLCh'),
+      ('ChIP-seq', 'ChIP-seq'),
+      ('Sheared', 'Sheared'),
+      ('RNA-seq', 'RNA-seq'),
+      ('Methyl-seq', 'Methyl-seq'),
+      ('DIP-seq', 'DIP-seq'),
+    ) 
+  experiment_type = models.CharField(max_length=50, choices=EXPERIMENT_TYPES,
+                                     default='RNA-seq')
+  
   creation_date = models.DateField(blank=True, null=True)
   made_for = models.ForeignKey(User)
+  made_by = models.CharField(max_length=50, blank=True, default="Lorian")
   
   PROTOCOL_END_POINTS = (
       ('?', 'Unknown'),
@@ -82,14 +147,13 @@ class Library(models.Model):
       ('2A', 'Ligation, PCR, gel, PCR'),
       ('Done', 'Completed'),
     )
-  stopping_point = models.CharField(max_length=25, choices=PROTOCOL_END_POINTS)
-  amplified_from_sample = models.ForeignKey('self', blank=True, null=True)
-  library_size = models.IntegerField(default=225, blank=True, null=True)
+  stopping_point = models.CharField(max_length=25, choices=PROTOCOL_END_POINTS, default='Done')
+  amplified_from_sample = models.ForeignKey('self', blank=True, null=True)  
   
-  undiluted_concentration = models.DecimalField("Undiluted concentration (ng/ul)", max_digits=5, decimal_places=2, default=0)
+  undiluted_concentration = models.DecimalField("Undiluted concentration (ng/ul)", max_digits=5, decimal_places=2, default=0, blank=True, null=True)
   successful_pM = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-  ten_nM_dilution = models.BooleanField(default=False)
-  
+  ten_nM_dilution = models.BooleanField()
+  avg_lib_size = models.IntegerField(default=225, blank=True, null=True)
   notes = models.TextField(blank=True)
   
   def __str__(self):
@@ -106,10 +170,10 @@ class Library(models.Model):
     search_fields = ['library_name', 'library_id']
     list_display = ('library_id', 'library_name', 'made_for', 'creation_date', 'stopping_point')
     list_display_links = ('library_id', 'library_name')
-    list_filter = ('stopping_point', 'library_species', 'made_for', 'made_by', 'RNAseq')
+    list_filter = ('stopping_point', 'library_species', 'made_for', 'made_by', 'experiment_type')
     fields = (
         (None, {
-            'fields': (('library_id', 'library_name'), ('library_species', 'RNAseq'),)
+            'fields': (('library_id', 'library_name'), ('library_species', 'experiment_type'),)
         }),
         ('Creation Information:', {
             'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('undiluted_concentration', 'library_size'), 'notes',)
