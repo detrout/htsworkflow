@@ -13,4 +13,6 @@ urlpatterns = patterns('',
      (r'^admin/', include('django.contrib.admin.urls')),
     # Databrowser:
      (r'^databrowse/(.*)', databrowse.site.root),
+     (r'^library/$', 'gaworkflow.frontend.fctracker.views.library'),
+     (r'^library/(?P<lib_id>\w+)/$', 'gaworkflow.frontend.fctracker.views.library_to_flowcells')
 )
