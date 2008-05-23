@@ -14,6 +14,7 @@ from gaworkflow.pipeline.runfolder import \
    LANES_PER_FLOWCELL, \
    VERSION_RE
 from gaworkflow.util.ethelp import indent, flatten
+from gaworkflow.util.opener import autoopen
 
 class Gerald(object):
     """
@@ -419,7 +420,7 @@ class ElandLane(object):
                        'U0':0, 'U1':0, 'U2':0,
                        'R0':0, 'R1':0, 'R2':0,
                       }
-        for line in open(self.pathname):
+        for line in autoopen(self.pathname,'r'):
             reads += 1
             fields = line.split()
             # code = fields[2]
@@ -601,7 +602,13 @@ class ELAND(object):
 
 def eland(basedir, gerald=None, genome_maps=None):
     e = ELAND()
-    for pathname in glob(os.path.join(basedir, "*_eland_result.txt")):
+
+    file_list = glob(os.path.join(basedir, "*_eland_result.txt"))
+    if len(file_list) == 0:
+        # lets handle compressed eland files too
+        file_list = glob(os.path.join(basedir, "*_eland_result.txt.bz2"))
+
+    for pathname in file_list:
         # yes the lane_id is also being computed in ElandLane._update
         # I didn't want to clutter up my constructor
         # but I needed to persist the sample_name/lane_id for
