@@ -32,6 +32,7 @@ import optparse
 import sys
 
 from gaworkflow.pipeline import runfolder
+from gaworkflow.pipeline.runfolder import ElementTree
         
 def make_parser():
     usage = 'usage: %prog [options] runfolder_root_dir'
@@ -45,22 +46,29 @@ def make_parser():
     parser.add_option('-a', '--archive', dest='archive', action='store_true',
                       default=False,
                       help='generate run configuration archive')
+    parser.add_option('--run-xml', dest='run_xml',
+           default=None,
+           help='specify a run_<FlowCell>.xml file for summary reports')
+
     return parser
 
 def main(cmdlist=None):
     parser = make_parser()
     opt, args = parser.parse_args(cmdlist)
 
-    if len(args) == 0:
-        parser.error('need path to a runfolder')
-    
     logging.basicConfig()
     if opt.verbose:
         root_log = logging.getLogger()
         root_log.setLevel(logging.INFO)
 
+    runs = []
+    if opt.run_xml:
+        tree = ElementTree.parse(opt.run_xml).getroot()
+        runs.append(runfolder.PipelineRun(xml=tree))
     for run_dir in args:
-        runs = runfolder.get_runs(run_dir)
+        runs.extend(runfolder.get_runs(run_dir))
+
+    if len(runs) > 0:
         if opt.summary:
             print runfolder.summary_report(runs)
         if opt.archive:

@@ -11,11 +11,16 @@ setup(
             "gaworkflow.frontend.fctracker",
             "gaworkflow.frontend.eland_config"           
              ],
-  scripts=['scripts/spoolwatcher', 
-           'scripts/copier',
-           'scripts/runner',
-           'scripts/retrieve_config',
-           'scripts/configure_pipeline',
-           'scripts/runfolder',
-           'scripts/makebed'],
+  scripts=[
+        'scripts/configure_pipeline',
+        'scripts/copier',
+        'scripts/gerald2bed.py',
+        'scripts/library.py',
+        'scripts/makebed',
+        'scripts/spoolwatcher', 
+        'scripts/rerun_eland.py',
+        'scripts/retrieve_config',
+        'scripts/runfolder',
+        'scripts/runner',
+        ],
 )
