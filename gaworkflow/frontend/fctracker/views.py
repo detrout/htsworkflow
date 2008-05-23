@@ -23,6 +23,13 @@ def library_to_flowcells(request, lib_id):
     
     output = []
     
+    output.append('<b>Library ID:</b> %s' % (lib.library_id))
+    output.append('<b>Name:</b> %s' % (lib.library_name))
+    output.append('<b>Species:</b> %s' % (lib.library_species.scientific_name))
+    output.append('')
+    
+    output.append('<b>FLOWCELL - LANE:</b>')
+    
     output.extend([ '%s - Lane 1' % (fc.flowcell_id) for fc in lib.lane_1_library.all() ])
     output.extend([ '%s - Lane 2' % (fc.flowcell_id) for fc in lib.lane_2_library.all() ])
     output.extend([ '%s - Lane 3' % (fc.flowcell_id) for fc in lib.lane_3_library.all() ])
@@ -31,5 +38,17 @@ def library_to_flowcells(request, lib_id):
     output.extend([ '%s - Lane 6' % (fc.flowcell_id) for fc in lib.lane_6_library.all() ])
     output.extend([ '%s - Lane 7' % (fc.flowcell_id) for fc in lib.lane_7_library.all() ])
     output.extend([ '%s - Lane 8' % (fc.flowcell_id) for fc in lib.lane_8_library.all() ])
+    
+    record_count = lib.lane_1_library.count() + \
+                    lib.lane_2_library.count() + \
+                    lib.lane_3_library.count() + \
+                    lib.lane_4_library.count() + \
+                    lib.lane_5_library.count() + \
+                    lib.lane_6_library.count() + \
+                    lib.lane_7_library.count() + \
+                    lib.lane_8_library.count()
+    
+    if record_count == 0:
+        output.append("None Found")
     
     return HttpResponse('<br />\n'.join(output))
