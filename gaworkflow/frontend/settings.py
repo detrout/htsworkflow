@@ -92,3 +92,4 @@ UPLOADTO_CONFIG_FILE = os.path.join(UPLOADTO_HOME, 'eland_config')
 UPLOADTO_ELAND_RESULT_PACKS = os.path.join(UPLOADTO_HOME, 'eland_results')
 UPLOADTO_BED_PACKS = os.path.join(UPLOADTO_HOME, 'bed_packs')
 
+RESULT_HOME_DIR = os.path.abspath('../../results')
