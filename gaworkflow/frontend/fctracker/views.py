@@ -86,7 +86,14 @@ def result_fc_cnm_eland_lane(request, fc_id, cnm, lane):
     return HttpResponse(f, mimetype="application/x-elandresult")
 
 
-def bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane):
+def bedfile_fc_cnm_eland_lane_ucsc(request, fc_id, cnm, lane):
+    """
+    returns a bed file for a given flowcell, CN-M (i.e. C1-33), and lane (ucsc compatible)
+    """
+    return bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane, ucsc_compatible=True)
+
+
+def bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane, ucsc_compatible=False):
     """
     returns a bed file for a given flowcell, CN-M (i.e. C1-33), and lane
     """
@@ -108,7 +115,7 @@ def bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane):
     filepath = erd[lane]
     
     # Eland result file
-    fi = open(filepath, 'r')
+    fi = opener.autoopen(filepath, 'r')
     # output memory file
     
     
@@ -118,7 +125,10 @@ def bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane):
     
     bedgen = makebed.make_bed_from_eland_stream_generator(fi, name, description)
     
-    return HttpResponse(bedgen, mimetype="application/x-bedfile")
+    if ucsc_compatible:
+        return HttpResponse(bedgen)
+    else:
+        return HttpResponse(bedgen, mimetype="application/x-bedfile")
 
     
 def _files(flowcell_id, lane):
