@@ -7,6 +7,7 @@ import subprocess
 import sys
 
 from gaworkflow.pipeline import gerald
+from gaworkflow.pipeline import runfolder
 
 def make_query_filename(eland_obj, output_dir):
     query_name = '%s_%s_eland_query.txt' 
@@ -43,7 +44,7 @@ def extract_sequence(inpathname, query_pathname, length, dry_run=False):
         finally:
             outstream.close()
             instream.close()
-
+    
 def run_eland(length, query_name, genome, result_name, multi=False, dry_run=False):
     cmdline = ['eland_%d' % (length,), query_name, genome, result_name]
     if multi:
@@ -62,6 +63,11 @@ def rerun(gerald_dir, output_dir, length=25, dry_run=False):
     """
     logging.info("Extracting %d bp from files in %s" % (length, gerald_dir))
     g = gerald.gerald(gerald_dir)
+
+    # this will only work if we're only missing the last dir in output_dir
+    if not os.path.exists(output_dir):
+        logging.info("Making %s" %(output_dir,))
+        if not dry_run: os.mkdir(output_dir)
 
     processes = []
     for lane_id, lane_param in g.lanes.items():
@@ -85,7 +91,7 @@ def rerun(gerald_dir, output_dir, length=25, dry_run=False):
         p.wait()
         
 def make_parser():
-    usage = '%prog: --gerald <gerald dir> -o <new dir>'
+    usage = '%prog: [options] runfolder'
 
     parser = OptionParser(usage)
     
@@ -115,14 +121,29 @@ def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
 
-    if opts.gerald is None:
+    if opts.length < 16 or opts.length > 32:
+        parser.error("eland can only process reads in the range 16-32")
+
+    if len(args) > 1:
+        parser.error("Can only process one runfolder directory")
+    elif len(args) == 1:
+        runs = runfolder.get_runs(args[0])
+        if len(runs) != 1:
+            parser.error("Not a runfolder")
+        opts.gerald = runs[0].gerald.pathname
+        if opts.output is None:
+            opts.output = os.path.join(
+                runs[0].pathname, 
+                'Data', 
+                # pythons 0..n ==> elands 1..n+1
+                'C1-%d' % (opts.length+1,) 
+            )
+
+    elif opts.gerald is None:
         parser.error("need gerald directory")
     
     if opts.output is None:
         parser.error("specify location for the new eland files")
-
-    if opts.length < 16 or opts.length > 32:
-        parser.error("eland can only process reads in the range 16-32")
 
     if opts.verbose:
         root_logger = logging.getLogger()
