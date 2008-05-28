@@ -83,7 +83,7 @@ def result_fc_cnm_eland_lane(request, fc_id, cnm, lane):
     
     f = opener.autoopen(filepath, 'r')
     
-    return HttpResponse(f)
+    return HttpResponse(f, mimetype="application/x-elandresult")
 
 
 def bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane):
@@ -118,7 +118,7 @@ def bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane):
     
     bedgen = makebed.make_bed_from_eland_stream_generator(fi, name, description)
     
-    return HttpResponse(bedgen)
+    return HttpResponse(bedgen, mimetype="application/x-bedfile")
 
     
 def _files(flowcell_id, lane):
