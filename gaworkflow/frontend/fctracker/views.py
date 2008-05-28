@@ -1,8 +1,12 @@
 # Create your views here.
 from gaworkflow.frontend.fctracker.models import Library
 from gaworkflow.frontend.fctracker.results import get_flowcell_result_dict, flowcellIdStrip
+from gaworkflow.frontend import settings
+from gaworkflow.util import makebed
 from gaworkflow.util import opener
 from django.http import HttpResponse
+
+import StringIO
 
 #from django.db.models import base 
 
@@ -80,8 +84,43 @@ def result_fc_cnm_eland_lane(request, fc_id, cnm, lane):
     f = opener.autoopen(filepath, 'r')
     
     return HttpResponse(f)
-    
 
+
+def bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane):
+    """
+    returns a bed file for a given flowcell, CN-M (i.e. C1-33), and lane
+    """
+    fc_id = flowcellIdStrip(fc_id)
+    d = get_flowcell_result_dict(fc_id)
+    
+    if d is None:
+        return HttpResponse('<b>Results for Flowcell %s not found.' % (fc_id))
+    
+    if cnm not in d:
+        return HttpResponse('<b>Results for Flowcell %s; %s not found.' % (fc_id, cnm))
+    
+    erd = d[cnm]['eland_results']
+    lane = int(lane)
+    
+    if lane not in erd:
+        return HttpResponse('<b>Results for Flowcell %s; %s; lane %s not found.' % (fc_id, cnm, lane))
+    
+    filepath = erd[lane]
+    
+    # Eland result file
+    fi = open(filepath, 'r')
+    # output memory file
+    
+    
+    name, description = makebed.make_description(settings.DATABASE_NAME,
+                                                 fc_id,
+                                                 lane)
+    
+    bedgen = makebed.make_bed_from_eland_stream_generator(fi, name, description)
+    
+    return HttpResponse(bedgen)
+
+    
 def _files(flowcell_id, lane):
     """
     Sets up available files for download
@@ -100,6 +139,7 @@ def _files(flowcell_id, lane):
         
         if int(lane) in erd:
             output.append('<a href="/results/%s/%s/eland_result/%s">eland_result(%s)</a>' % (flowcell_id, c_name, lane, c_name))
+            output.append('<a href="/results/%s/%s/bedfile/%s">bedfile(%s)</a>' % (flowcell_id, c_name, lane, c_name))
     
     if len(output) == 0:
         return ''
