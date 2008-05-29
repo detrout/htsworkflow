@@ -36,12 +36,12 @@ class Gerald(object):
         def __get_attribute(self, xml_tag):
             subtree = self._gerald.tree.find('LaneSpecificRunParameters')
             container = subtree.find(xml_tag)
-            if container is None or \
-               len(container.getchildren()) != LANES_PER_FLOWCELL:
+            if container is None:
+                return None
+            if len(container.getchildren()) != LANES_PER_FLOWCELL:
                 raise RuntimeError('GERALD config.xml file changed')
             lanes = [x.tag.split('_')[1] for x in container.getchildren()]
             index = lanes.index(self._key)
-            #element = container.find(self._key)
             element = container[index]
             return element.text
         def _get_analysis(self):
@@ -49,7 +49,14 @@ class Gerald(object):
         analysis = property(_get_analysis)
 
         def _get_eland_genome(self):
-            return self.__get_attribute('ELAND_GENOME')
+            genome = self.__get_attribute('ELAND_GENOME')
+            # default to the chipwide parameters if there isn't an
+            # entry in the lane specific paramaters
+            if genome is None:
+                subtree = self._gerald.tree.find('ChipWideRunParameters')
+                container = subtree.find('ELAND_GENOME')
+                genome = container.text
+            return genome
         eland_genome = property(_get_eland_genome)
 
         def _get_read_length(self):

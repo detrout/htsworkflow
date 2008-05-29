@@ -33,7 +33,7 @@ class PipelineRun(object):
     FLOWCELL_ID = 'FlowcellID'
 
     def __init__(self, pathname=None, firecrest=None, bustard=None, gerald=None, xml=None):
-        self.pathname = pathname
+        self.pathname = os.path.normpath(pathname)
         self._name = None
         self._flowcell_id = None
         self.firecrest = firecrest
@@ -60,7 +60,7 @@ class PipelineRun(object):
               flowcell_id = 'unknown'
               
 	    logging.warning(
-	      "Flowcell idwas not found, guessing %s" % (
+	      "Flowcell id was not found, guessing %s" % (
 	         flowcell_id))
 	    self._flowcell_id = flowcell_id
         return self._flowcell_id
