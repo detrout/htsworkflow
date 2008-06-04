@@ -60,6 +60,29 @@ def library_to_flowcells(request, lib_id):
     return HttpResponse('<br />\n'.join(output))
 
 
+def summaryhtm_fc_cnm(request, fc_id, cnm):
+    """
+    returns a Summary.htm file if it exists.
+    """
+    fc_id = flowcellIdStrip(fc_id)
+    d = get_flowcell_result_dict(fc_id)
+    
+    if d is None:
+        return HttpResponse('<b>Results for Flowcell %s not found.' % (fc_id))
+    
+    if cnm not in d:
+        return HttpResponse('<b>Results for Flowcell %s; %s not found.' % (fc_id, cnm))
+    
+    summary_filepath = d[cnm]['summary']
+    
+    if summary_filepath is None:
+        return HttpResponse('<b>Summary.htm for Flowcell %s; %s not found.' % (fc_id, cnm))
+    
+    f = open(summary_filepath, 'r')
+    
+    return HttpResponse(f)
+
+
 def result_fc_cnm_eland_lane(request, fc_id, cnm, lane):
     """
     returns an eland_file upon calling.
@@ -145,6 +168,11 @@ def _files(flowcell_id, lane):
     
     # c_name == 'CN-M' (i.e. C1-33)
     for c_name in d:
+        
+        if d[c_name]['summary'] is not None:
+            output.append('<a href="/results/%s/%s/summary/">summary(%s)</a>' \
+                          % (flowcell_id, c_name, c_name))
+        
         erd = d[c_name]['eland_results']
         
         if int(lane) in erd:
