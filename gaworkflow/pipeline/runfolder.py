@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import stat
+import subprocess
 import sys
 import time
 
@@ -114,11 +115,14 @@ class PipelineRun(object):
         return self._name
     name = property(_get_run_name)
 
-    def save(self):
+    def save(self, destdir=None):
+        if destdir is None:
+            destdir = ''
         logging.info("Saving run report "+ self.name)
         xml = self.get_elements()
         indent(xml)
-        ElementTree.ElementTree(xml).write(self.name)
+        dest_pathname = os.path.join(destdir, self.name)
+        ElementTree.ElementTree(xml).write(dest_pathname)
 
     def load(self, filename):
         logging.info("Loading run report from " + filename)
@@ -216,3 +220,63 @@ def summary_report(runs):
             report.append('---')
             report.append('')
         return os.linesep.join(report)
+
+def extract_results(runs, output_base_dir=None):
+    if output_base_dir is None:
+        output_base_dir = os.getcwd()
+
+    for r in runs:
+      result_dir = os.path.join(output_base_dir, r.flowcell_id)
+      logging.info("Using %s as result directory" % (result_dir,))
+      if not os.path.exists(result_dir):
+        os.mkdir(result_dir)
+      
+      # create cycle_dir
+      cycle = "C%d-%d" % (r.firecrest.start, r.firecrest.stop)
+      logging.info("Filling in %s" % (cycle,))
+      cycle_dir = os.path.join(result_dir, cycle)
+      if os.path.exists(cycle_dir):
+        logging.error("%s already exists, not overwriting" % (cycle_dir,))
+        continue
+      else:
+        os.mkdir(cycle_dir)
+
+      # copy stuff out of the main run
+      g = r.gerald
+
+      # save run file
+      r.save(cycle_dir)
+
+      # tar score files
+      score_files = []
+      for f in os.listdir(g.pathname):
+          if re.match('.*_score.txt', f):
+              score_files.append(f)
+
+      tar_cmd = ['/bin/tar', 'c'] + score_files
+      bzip_cmd = [ 'bzip2', '-9', '-c' ]
+      tar_dest_name =os.path.join(cycle_dir, 'scores.tar.bz2')
+      tar_dest = open(tar_dest_name, 'w')
+      logging.info("Compressing score files in %s" % (g.pathname,))
+      logging.info("Running tar: " + " ".join(tar_cmd[:10]))
+      logging.info("Running bzip2: " + " ".join(bzip_cmd))
+      logging.info("Writing to %s" %(tar_dest_name))
+      
+      tar = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, shell=False, cwd=g.pathname)
+      bzip = subprocess.Popen(bzip_cmd, stdin=tar.stdout, stdout=tar_dest)
+      tar.wait()
+
+      # copy & bzip eland files
+      for eland_lane in g.eland_results.values():
+          source_name = eland_lane.pathname
+          path, name = os.path.split(eland_lane.pathname)
+          dest_name = os.path.join(cycle_dir, name+'.bz2')
+
+          args = ['bzip2', '-9', '-c', source_name]
+          logging.info('Running: %s' % ( " ".join(args) ))
+          bzip_dest = open(dest_name, 'w')
+          bzip = subprocess.Popen(args, stdout=bzip_dest)
+          logging.info('Saving to %s' % (dest_name, ))
+          bzip.wait()
+
+      
