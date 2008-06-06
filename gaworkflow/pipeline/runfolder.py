@@ -34,7 +34,10 @@ class PipelineRun(object):
     FLOWCELL_ID = 'FlowcellID'
 
     def __init__(self, pathname=None, firecrest=None, bustard=None, gerald=None, xml=None):
-        self.pathname = os.path.normpath(pathname)
+        if pathname is not None:
+          self.pathname = os.path.normpath(pathname)
+        else:
+          self.pathname = None
         self._name = None
         self._flowcell_id = None
         self.firecrest = firecrest
