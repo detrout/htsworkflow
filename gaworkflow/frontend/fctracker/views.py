@@ -1,10 +1,15 @@
 # Create your views here.
 from gaworkflow.frontend.fctracker.models import Library
 from gaworkflow.frontend.fctracker.results import get_flowcell_result_dict, flowcellIdStrip
+from gaworkflow.pipeline.runfolder import ElementTree
+from gaworkflow.pipeline import runfolder
 from gaworkflow.frontend import settings
 from gaworkflow.util import makebed
 from gaworkflow.util import opener
+
 from django.http import HttpResponse
+from django.template.loader import get_template
+from django.template import Context
 
 import StringIO
 
@@ -21,6 +26,10 @@ def library(request):
     return HttpResponse(output)
 
 def library_to_flowcells(request, lib_id):
+    """
+    Display information about all the flowcells a library has been run on.
+    """
+    t = get_template("summary_stats.html")
     
     try:
       lib = Library.objects.get(library_id=lib_id)
@@ -54,6 +63,35 @@ def library_to_flowcells(request, lib_id):
                     lib.lane_7_library.count() + \
                     lib.lane_8_library.count()
     
+    flowcell_list = []
+    flowcell_list.extend([ (fc.flowcell_id, 1) for fc in lib.lane_1_library.all() ])
+    flowcell_list.extend([ (fc.flowcell_id, 2) for fc in lib.lane_2_library.all() ])
+    flowcell_list.extend([ (fc.flowcell_id, 3) for fc in lib.lane_3_library.all() ])
+    flowcell_list.extend([ (fc.flowcell_id, 4) for fc in lib.lane_4_library.all() ])
+    flowcell_list.extend([ (fc.flowcell_id, 5) for fc in lib.lane_5_library.all() ])
+    flowcell_list.extend([ (fc.flowcell_id, 6) for fc in lib.lane_6_library.all() ])
+    flowcell_list.extend([ (fc.flowcell_id, 7) for fc in lib.lane_7_library.all() ])
+    flowcell_list.extend([ (fc.flowcell_id, 8) for fc in lib.lane_8_library.all() ])
+    flowcell_list.sort()
+    
+    output.append('<br />')
+    
+    data_dict_list = []
+    for fc, lane in flowcell_list:
+        dicts, err_list = _summary_stats(fc, lane)
+        
+        data_dict_list.extend(dicts)
+    
+        for err in err_list:    
+            output.append(err)
+    
+    html = t.render(Context({'data_dict_list': data_dict_list}))
+    output.append('<br />')
+    output.append('<br />')
+    output.append(html)
+    output.append('<br />')
+    output.append('<br />')
+    
     if record_count == 0:
         output.append("None Found")
     
@@ -68,15 +106,15 @@ def summaryhtm_fc_cnm(request, fc_id, cnm):
     d = get_flowcell_result_dict(fc_id)
     
     if d is None:
-        return HttpResponse('<b>Results for Flowcell %s not found.' % (fc_id))
+        return HttpResponse('<b>Results for Flowcell %s not found.</b>' % (fc_id))
     
     if cnm not in d:
-        return HttpResponse('<b>Results for Flowcell %s; %s not found.' % (fc_id, cnm))
+        return HttpResponse('<b>Results for Flowcell %s; %s not found.</b>' % (fc_id, cnm))
     
     summary_filepath = d[cnm]['summary']
     
     if summary_filepath is None:
-        return HttpResponse('<b>Summary.htm for Flowcell %s; %s not found.' % (fc_id, cnm))
+        return HttpResponse('<b>Summary.htm for Flowcell %s; %s not found.</b>' % (fc_id, cnm))
     
     f = open(summary_filepath, 'r')
     
@@ -91,16 +129,16 @@ def result_fc_cnm_eland_lane(request, fc_id, cnm, lane):
     d = get_flowcell_result_dict(fc_id)
     
     if d is None:
-        return HttpResponse('<b>Results for Flowcell %s not found.' % (fc_id))
+        return HttpResponse('<b>Results for Flowcell %s not found.</b>' % (fc_id))
     
     if cnm not in d:
-        return HttpResponse('<b>Results for Flowcell %s; %s not found.' % (fc_id, cnm))
+        return HttpResponse('<b>Results for Flowcell %s; %s not found.</b>' % (fc_id, cnm))
     
     erd = d[cnm]['eland_results']
     lane = int(lane)
     
     if lane not in erd:
-        return HttpResponse('<b>Results for Flowcell %s; %s; lane %s not found.' % (fc_id, cnm, lane))
+        return HttpResponse('<b>Results for Flowcell %s; %s; lane %s not found.</b>' % (fc_id, cnm, lane))
     
     filepath = erd[lane]
     
@@ -124,16 +162,16 @@ def bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane, ucsc_compatible=False):
     d = get_flowcell_result_dict(fc_id)
     
     if d is None:
-        return HttpResponse('<b>Results for Flowcell %s not found.' % (fc_id))
+        return HttpResponse('<b>Results for Flowcell %s not found.</b>' % (fc_id))
     
     if cnm not in d:
-        return HttpResponse('<b>Results for Flowcell %s; %s not found.' % (fc_id, cnm))
+        return HttpResponse('<b>Results for Flowcell %s; %s not found.</b>' % (fc_id, cnm))
     
     erd = d[cnm]['eland_results']
     lane = int(lane)
     
     if lane not in erd:
-        return HttpResponse('<b>Results for Flowcell %s; %s; lane %s not found.' % (fc_id, cnm, lane))
+        return HttpResponse('<b>Results for Flowcell %s; %s; lane %s not found.</b>' % (fc_id, cnm, lane))
     
     filepath = erd[lane]
     
@@ -152,6 +190,57 @@ def bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane, ucsc_compatible=False):
         return HttpResponse(bedgen)
     else:
         return HttpResponse(bedgen, mimetype="application/x-bedfile")
+
+
+def _summary_stats(flowcell_id, lane):
+    """
+    return a dictionary of summary stats for a given flowcell_id & lane.
+    """
+    fc_id = flowcellIdStrip(flowcell_id)
+    d = get_flowcell_result_dict(fc_id)
+    
+    dict_list = []
+    err_list = []
+    
+    if d is None:
+        err_list.append('Results for Flowcell %s not found.' % (fc_id))
+        return (dict_list, err_list)
+    
+    for cnm in d:
+    
+        xmlpath = d[cnm]['run_xml']
+        
+        if xmlpath is None:
+            err_list.append('Run xml for Flowcell %s(%s) not found.' % (fc_id, cnm))
+            continue
+        
+        tree = ElementTree.parse(xmlpath).getroot()
+        results = runfolder.PipelineRun(pathname='', xml=tree)
+        
+        lane_results = results.gerald.summary[str(lane)]
+        lrs = lane_results
+        
+        d = {}
+        
+        d['average_alignment_score'] = lrs.average_alignment_score
+        d['average_first_cycle_intensity'] = lrs.average_first_cycle_intensity
+        d['cluster'] = lrs.cluster
+        d['lane'] = lrs.lane
+        d['flowcell'] = flowcell_id
+        d['percent_error_rate'] = lrs.percent_error_rate
+        d['percent_intensity_after_20_cycles'] = lrs.percent_intensity_after_20_cycles
+        d['percent_pass_filter_align'] = lrs.percent_pass_filter_align
+        d['percent_pass_filter_clusters'] = lrs.percent_pass_filter_clusters
+        
+        #FIXME: function finished, but need to take advantage of
+        #   may need to take in a list of lanes so we only have to
+        #   load the xml file once per flowcell rather than once
+        #   per lane.
+        dict_list.append(d)
+    
+    return (dict_list, err_list)
+    
+    
 
     
 def _files(flowcell_id, lane):

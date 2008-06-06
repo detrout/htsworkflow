@@ -13,7 +13,7 @@ urlpatterns = patterns('',
      (r'^admin/', include('django.contrib.admin.urls')),
     # Databrowser:
      #(r'^databrowse/(.*)', databrowse.site.root),
-     (r'^library/$', 'gaworkflow.frontend.fctracker.views.library'),
+     (r'^library/$', 'gaworkflow.frontend.fctracker.views.library'), 
      (r'^library/(?P<lib_id>\w+)/$', 'gaworkflow.frontend.fctracker.views.library_to_flowcells'),
      (r'^results/(?P<fc_id>\w+)/(?P<cnm>C[1-9]-[0-9]+)/summary/','gaworkflow.frontend.fctracker.views.summaryhtm_fc_cnm'),
      (r'^results/(?P<fc_id>\w+)/(?P<cnm>C[1-9]-[0-9]+)/eland_result/(?P<lane>[1-8])','gaworkflow.frontend.fctracker.views.result_fc_cnm_eland_lane'),

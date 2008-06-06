@@ -1,0 +1,23 @@
+
+{% block summary_stats %}
+
+<table border="1">
+{% for d in data_dict_list %}
+    {# Header row for table #}
+    {% if forloop.first %}
+        <tr>
+        {% for key, value in d.items %}
+            <td><b>{{ key }}</b></td>
+        {% endfor %}
+        </tr>
+    {% endif %}
+    {# Main contents of table #}
+    <tr>
+    {% for key, value in d.items %}
+        <td>{{ value }}</td>
+    {% endfor %}
+    </tr>
+{% endfor %}
+</table>
+
+{% endblock %}

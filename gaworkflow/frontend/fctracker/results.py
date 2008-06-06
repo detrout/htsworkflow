@@ -12,8 +12,10 @@ def get_flowcell_result_dict(flowcell_id):
     a given flowcell_id:
     
      
-    d['C1-33']['summary'] = #Summary.htm file path
-    d['C1-33']['eland_results'][5] # C1-33 lane 5 file eland results file path
+    d['C1-33']['summary']           # Summary.htm file path
+    d['C1-33']['eland_results'][5]  # C1-33 lane 5 file eland results file path
+    d['C1-33']['run_xml']           # run_*.xml file path
+    d['C1-33']['scores']            # scores.tar.gz file path
     """
     
     flowcell_id = flowcell_id.strip()
