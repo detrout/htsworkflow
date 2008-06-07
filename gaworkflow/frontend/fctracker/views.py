@@ -197,16 +197,16 @@ def _summary_stats(flowcell_id, lane):
     return a dictionary of summary stats for a given flowcell_id & lane.
     """
     fc_id = flowcellIdStrip(flowcell_id)
-    d = get_flowcell_result_dict(fc_id)
+    fc_result_dict = get_flowcell_result_dict(fc_id)
     
     dict_list = []
     err_list = []
     
-    if d is None:
+    if fc_result_dict is None:
         err_list.append('Results for Flowcell %s not found.' % (fc_id))
         return (dict_list, err_list)
     
-    for cnm in d:
+    for cnm in fc_result_dict:
     
         xmlpath = d[cnm]['run_xml']
         
