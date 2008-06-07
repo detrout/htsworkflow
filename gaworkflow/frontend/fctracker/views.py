@@ -78,13 +78,15 @@ def library_to_flowcells(request, lib_id):
     
     data_dict_list = []
     for fc, lane in flowcell_list:
-        dicts, err_list = _summary_stats(fc, lane)
+        dicts, err_list, summary_list = _summary_stats(fc, lane)
         
         data_dict_list.extend(dicts)
     
         for err in err_list:    
             output.append(err)
     
+        for summary in summary_list:
+            output.append(summary.replace('\n', '<br />\n'))
     html = t.render(Context({'data_dict_list': data_dict_list}))
     output.append('<br />')
     output.append('<br />')
@@ -201,10 +203,11 @@ def _summary_stats(flowcell_id, lane):
     
     dict_list = []
     err_list = []
+    summary_list = []
     
     if fc_result_dict is None:
         err_list.append('Results for Flowcell %s not found.' % (fc_id))
-        return (dict_list, err_list)
+        return (dict_list, err_list, summary_list)
     
     for cnm in fc_result_dict:
     
@@ -216,6 +219,10 @@ def _summary_stats(flowcell_id, lane):
         
         tree = ElementTree.parse(xmlpath).getroot()
         results = runfolder.PipelineRun(pathname='', xml=tree)
+        try:
+            summary_list.append(runfolder.summary_report([results]))
+        except:
+            summary_list.append("Summary report needs to be updated.")
         
         lane_results = results.gerald.summary[str(lane)]
         lrs = lane_results
@@ -227,6 +234,7 @@ def _summary_stats(flowcell_id, lane):
         d['cluster'] = lrs.cluster
         d['lane'] = lrs.lane
         d['flowcell'] = flowcell_id
+        d['cnm'] = cnm
         d['percent_error_rate'] = lrs.percent_error_rate
         d['percent_intensity_after_20_cycles'] = lrs.percent_intensity_after_20_cycles
         d['percent_pass_filter_align'] = lrs.percent_pass_filter_align
@@ -238,7 +246,7 @@ def _summary_stats(flowcell_id, lane):
         #   per lane.
         dict_list.append(d)
     
-    return (dict_list, err_list)
+    return (dict_list, err_list, summary_list)
     
     
 
