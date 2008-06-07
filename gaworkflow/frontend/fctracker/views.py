@@ -208,7 +208,7 @@ def _summary_stats(flowcell_id, lane):
     
     for cnm in fc_result_dict:
     
-        xmlpath = d[cnm]['run_xml']
+        xmlpath = fc_result_dict[cnm]['runx_xml']
         
         if xmlpath is None:
             err_list.append('Run xml for Flowcell %s(%s) not found.' % (fc_id, cnm))
