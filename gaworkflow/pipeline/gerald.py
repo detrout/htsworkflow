@@ -253,19 +253,29 @@ class Summary(object):
             if xml is not None:
                 self.set_elements(xml)
 
-        def set_elements_from_html(self, row_element):
-            data = [ flatten(x) for x in row_element ]
-            if len(data) != 8:
+        def set_elements_from_html(self, data):
+            if not len(data) in (8,10):
                 raise RuntimeError("Summary.htm file format changed")
 
+            # same in pre-0.3.0 Summary file and 0.3 summary file
             self.lane = data[0]
-            self.cluster = parse_mean_range(data[1])
-            self.average_first_cycle_intensity = parse_mean_range(data[2])
-            self.percent_intensity_after_20_cycles = parse_mean_range(data[3])
-            self.percent_pass_filter_clusters = parse_mean_range(data[4])
-            self.percent_pass_filter_align = parse_mean_range(data[5])
-            self.average_alignment_score = parse_mean_range(data[6])
-            self.percent_error_rate = parse_mean_range(data[7])
+
+            if len(data) == 8:
+                # this is the < 0.3 Pipeline version
+                self.cluster = parse_mean_range(data[1])
+                self.average_first_cycle_intensity = parse_mean_range(data[2])
+                self.percent_intensity_after_20_cycles = \
+                    parse_mean_range(data[3])
+                self.percent_pass_filter_clusters = parse_mean_range(data[4])
+                self.percent_pass_filter_align = parse_mean_range(data[5])
+                self.average_alignment_score = parse_mean_range(data[6])
+                self.percent_error_rate = parse_mean_range(data[7])
+            elif len(data) == 10:
+                # this is the >= 0.3 summary file
+                self.cluster_raw = data[1]
+                self.cluster = parse_mean_range(data[2])
+                # FIXME: think of generic way to capture the variable data
+                
 
         def get_elements(self):
             lane_result = ElementTree.Element(
@@ -316,24 +326,68 @@ class Summary(object):
     def items(self):
         return self.lane_results.items()
 
+    def _flattened_row(self, row):
+        """
+        flatten the children of a <tr>...</tr>
+        """
+        return [flatten(x) for x in row.getchildren() ]
+    
+    def _parse_table(self, table):
+        """
+        assumes the first line is the header of a table, 
+        and that the remaining rows are data
+        """
+        rows = table.getchildren()
+        data = []
+        for r in rows:
+            data.append(self._flattened_row(r))
+        return data
+    
+    def _extract_named_tables(self, pathname):
+        """
+        extract all the 'named' tables from a Summary.htm file
+        and return as a dictionary
+        
+        Named tables are <h2>...</h2><table>...</table> pairs
+        The contents of the h2 tag is considered to the name
+        of the table.
+        """
+        tree = ElementTree.parse(pathname).getroot()
+        body = tree.find('body')
+        tables = {}
+        for i in range(len(body)):
+            if body[i].tag == 'h2' and body[i+1].tag == 'table':
+                # we have an interesting table
+                name = flatten(body[i])
+                table = body[i+1]
+                data = self._parse_table(table)
+                tables[name] = data
+        return tables
+
     def _extract_lane_results(self, pathname):
         """
         extract the Lane Results Summary table
         """
-        tree = ElementTree.parse(pathname).getroot()
-        if flatten(tree.findall('*//h2')[3]) != 'Lane Results Summary':
-            raise RuntimeError("Summary.htm file format changed")
 
-        tables = tree.findall('*//table')
+        tables = self._extract_named_tables(pathname)
 
         # parse lane result summary
-        lane_summary = tables[2]
-        rows = lane_summary.getchildren()
-        headers = rows[0].getchildren()
-        if flatten(headers[2]) != 'Av 1st Cycle Int ':
-            raise RuntimeError("Summary.htm file format changed")
+        lane_summary = tables['Lane Results Summary']
+        # this is version 1 of the summary file
+        if len(lane_summary[-1]) == 8:
+            # strip header
+            headers = lane_summary[0]
+            # grab the lane by lane data
+            lane_summary = lane_summary[1:]
 
-        for r in rows[1:]:
+        # this is version 2 of the summary file
+        if len(lane_summary[-1]) == 10:
+            # lane_summary[0] is a different less specific header row
+            headers = lane_summary[1]
+            lane_summary = lane_summary[2:10]
+            # after the last lane, there's a set of chip wide averages
+
+        for r in lane_summary:
             lrs = Summary.LaneResultSummary(html=r)
             self.lane_results[lrs.lane] = lrs
 
