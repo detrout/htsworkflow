@@ -7,6 +7,7 @@ import logging
 import os
 import stat
 import time
+import types
 
 from gaworkflow.pipeline.runfolder import \
    ElementTree, \
@@ -215,11 +216,20 @@ def parse_mean_range_element(element):
     return (tonumber(element.attrib['mean']), 
             tonumber(element.attrib['deviation']))
 
+def parse_summary_element(element):
+    """
+    Determine if we have a simple element or a mean/deviation element
+    """
+    if len(element.attrib) > 0:
+        return parse_mean_range_element(element)
+    else:
+        return element.text
+
 class Summary(object):
     """
     Extract some useful information from the Summary.htm file
     """
-    XML_VERSION = 1
+    XML_VERSION = 2
     SUMMARY = 'Summary'
 
     class LaneResultSummary(object):
@@ -229,7 +239,9 @@ class Summary(object):
         """
         LANE_RESULT_SUMMARY = 'LaneResultSummary'
         TAGS = { 
-          'Cluster': 'cluster',
+          'LaneYield': 'lane_yield',
+          'Cluster': 'cluster', # Raw
+          'ClusterPF': 'cluster_pass_filter',
           'AverageFirstCycleIntensity': 'average_first_cycle_intensity',
           'PercentIntensityAfter20Cycles': 'percent_intensity_after_20_cycles',
           'PercentPassFilterClusters': 'percent_pass_filter_clusters',
@@ -240,7 +252,9 @@ class Summary(object):
                  
         def __init__(self, html=None, xml=None):
             self.lane = None
+            self.lane_yield = None
             self.cluster = None
+            self.cluster_pass_filter = None
             self.average_first_cycle_intensity = None
             self.percent_intensity_after_20_cycles = None
             self.percent_pass_filter_clusters = None
@@ -261,32 +275,46 @@ class Summary(object):
             self.lane = data[0]
 
             if len(data) == 8:
+                parsed_data = [ parse_mean_range(x) for x in data[1:] ]
                 # this is the < 0.3 Pipeline version
-                self.cluster = parse_mean_range(data[1])
-                self.average_first_cycle_intensity = parse_mean_range(data[2])
-                self.percent_intensity_after_20_cycles = \
-                    parse_mean_range(data[3])
-                self.percent_pass_filter_clusters = parse_mean_range(data[4])
-                self.percent_pass_filter_align = parse_mean_range(data[5])
-                self.average_alignment_score = parse_mean_range(data[6])
-                self.percent_error_rate = parse_mean_range(data[7])
+                self.cluster = parsed_data[0]
+                self.average_first_cycle_intensity = parsed_data[1]
+                self.percent_intensity_after_20_cycles = parsed_data[2]
+                self.percent_pass_filter_clusters = parsed_data[3]
+                self.percent_pass_filter_align = parsed_data[4]
+                self.average_alignment_score = parsed_data[5]
+                self.percent_error_rate = parsed_data[6]
             elif len(data) == 10:
+                parsed_data = [ parse_mean_range(x) for x in data[2:] ]
                 # this is the >= 0.3 summary file
-                self.cluster_raw = data[1]
-                self.cluster = parse_mean_range(data[2])
-                # FIXME: think of generic way to capture the variable data
-                
+                self.lane_yield = data[1]
+                self.cluster = parsed_data[0]
+                self.cluster_pass_filter = parsed_data[1]
+                self.average_first_cycle_intensity = parsed_data[2]
+                self.percent_intensity_after_20_cycles = parsed_data[3]
+                self.percent_pass_filter_clusters = parsed_data[4]
+                self.percent_pass_filter_align = parsed_data[5]
+                self.average_alignment_score = parsed_data[6]
+                self.percent_error_rate = parsed_data[7]
 
         def get_elements(self):
             lane_result = ElementTree.Element(
                             Summary.LaneResultSummary.LANE_RESULT_SUMMARY, 
                             {'lane': self.lane})
             for tag, variable_name in Summary.LaneResultSummary.TAGS.items():
-                element = make_mean_range_element(
-                    lane_result,
-                    tag,
-                    *getattr(self, variable_name)
-                )
+                value = getattr(self, variable_name)
+                if value is None:
+                    continue
+                # it looks like a sequence
+                elif type(value) in (types.TupleType, types.ListType):
+                    element = make_mean_range_element(
+                      lane_result,
+                      tag,
+                      *value
+                    )
+                else:
+                    element = ElementTree.SubElement(lane_result, tag)
+                    element.text = value
             return lane_result
 
         def set_elements(self, tree):
@@ -299,7 +327,7 @@ class Summary(object):
                 try:
                     variable_name = tags[element.tag]
                     setattr(self, variable_name, 
-                            parse_mean_range_element(element))
+                            parse_summary_element(element))
                 except KeyError, e:
                     logging.warn('Unrecognized tag %s' % (element.tag,))
 
