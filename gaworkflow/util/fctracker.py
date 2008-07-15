@@ -6,6 +6,7 @@ installed, so it can run on machines other than the webserver.
 """
 import datetime
 import os
+import re
 import sys
 import time
 
@@ -61,6 +62,20 @@ class fctracker:
         c.close()
         return table
 
+    def _add_lanes_to_libraries(self):
+        """
+        add flowcell/lane ids to new attribute 'lanes' in the library dictionary
+        """
+        library_id_re = re.compile('lane_\d_library_id')
+
+        for fc_id, fc in self.flowcells.items():
+            lane_library = [ (x[0][5], x[1]) for x in fc.items() 
+                                             if library_id_re.match(x[0]) ]
+            for lane, library_id in lane_library:
+                if not self.library[library_id].has_key('lanes'):
+                    self.library[library_id]['lanes'] = []
+                self.library[library_id]['lanes'].append((fc_id, lane))
+
     def _get_library(self):
         """
         attach the library dictionary to the instance
@@ -106,6 +121,8 @@ class fctracker:
             run_date = datetime.datetime(*run_date[:6])
             row_dict['run_date'] = run_date
             self.flowcells[row_dict['flowcell_id']] = row_dict
+
+        self._add_lanes_to_libraries()
         return self.flowcells
 
 def recoverable_drive_report(flowcells):
@@ -152,3 +169,4 @@ def recoverable_drive_report(flowcells):
             }
             report.append(line % (fields))
     return os.linesep.join(report)
+
