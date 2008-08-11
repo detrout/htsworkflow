@@ -10,7 +10,6 @@ import threading
 from benderjab import rpc
 
 from gaworkflow.pipeline.configure_run import *
-from gaworkflow.pipeline.monitors import _percentCompleted
 
 #s_fc = re.compile('FC[0-9]+')
 s_fc = re.compile('_[0-9a-zA-Z]*$')
@@ -104,24 +103,7 @@ class Runner(rpc.XmlRpcBot):
             return "No status information for %s yet." \
                    " Probably still in configure step. Try again later." % (fc_num)
 
-        fc,ft = status.statusFirecrest()
-        bc,bt = status.statusBustard()
-        gc,gt = status.statusGerald()
-
-        tc,tt = status.statusTotal()
-
-        fp = _percentCompleted(fc, ft)
-        bp = _percentCompleted(bc, bt)
-        gp = _percentCompleted(gc, gt)
-        tp = _percentCompleted(tc, tt)
-
-        output = []
-
-        output.append(u'Firecrest: %s%% (%s/%s)' % (fp, fc, ft))
-        output.append(u'  Bustard: %s%% (%s/%s)' % (bp, bc, bt))
-        output.append(u'   Gerald: %s%% (%s/%s)' % (gp, gc, gt))
-        output.append(u'-----------------------')
-        output.append(u'    Total: %s%% (%s/%s)' % (tp, tc, tt))
+        output = status.statusReport()
 
         return '\n'.join(output)
     

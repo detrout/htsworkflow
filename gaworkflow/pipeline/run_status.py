@@ -1,6 +1,9 @@
 import glob
 import re
 import os
+import sys
+import time
+import threading
 
 s_comment = re.compile('^#')
 s_general_read_len = re.compile('^READ_LENGTH ')
@@ -116,7 +119,6 @@ def _p2f(pattern, lane, tile=None, cycle=None):
   else:
     return pattern % (lane)
     
-
 
 class GARunStatus(object):
 
@@ -316,9 +318,6 @@ class GARunStatus(object):
     #gerald['Tile.htm.tmp'] = False
     gerald['finished.txt'] = False
     
-    
-
-
   def statusFirecrest(self):
     """
     returns (<completed>, <total>)
@@ -366,6 +365,34 @@ class GARunStatus(object):
     return (fc+bc+gc, ft+bt+gt)
 
 
+  def statusReport(self):
+    """
+    Generate the basic percent complete report
+    """
+    def _percentCompleted(completed, total):
+      """
+      Returns precent completed as float
+      """
+      return (completed / float(total)) * 100
+
+    fc, ft = self.statusFirecrest()
+    bc, bt = self.statusBustard()
+    gc, gt = self.statusGerald()
+    tc, tt = self.statusTotal()
+    
+    fp = _percentCompleted(fc, ft)
+    bp = _percentCompleted(bc, bt)
+    gp = _percentCompleted(gc, gt)
+    tp = _percentCompleted(tc, tt)
+    
+    report = ['Firecrest: %s%% (%s/%s)' % (fp, fc, ft),
+              '  Bustard: %s%% (%s/%s)' % (bp, bc, bt),
+              '   Gerald: %s%% (%s/%s)' % (gp, gc, gt),
+              '-----------------------',
+              '    Total: %s%% (%s/%s)' % (tp, tc, tt),
+             ]
+    return report
+
   def updateFirecrest(self, filename):
     """
     Marks firecrest filename as being completed.
@@ -385,3 +412,67 @@ class GARunStatus(object):
     Marks gerald filename as being completed.
     """
     self.status['gerald'][filename] = True
+
+
+
+##################################################
+# Functions to be called by Thread(target=<func>)
+def _cmdLineStatusMonitorFunc(conf_info):
+  """
+  Given a ConfigInfo object, provides status to stdout.
+
+  You should probably use startCmdLineStatusMonitor()
+  instead of ths function.
+
+  Use with:
+    t = threading.Thread(target=_cmdLineStatusMonitorFunc,
+                         args=[conf_info])
+    t.setDaemon(True)
+    t.start()
+  """
+  SLEEP_AMOUNT = 30
+
+  while 1:
+    if conf_info.status is None:
+      print "No status object yet."
+      time.sleep(SLEEP_AMOUNT)
+      continue
+
+    report = conf_info.status.statusReport()
+    print os.linesep.join(report)
+    print
+
+    time.sleep(SLEEP_AMOUNT)
+
+
+#############################################
+# Start monitor thread convenience functions
+def startCmdLineStatusMonitor(conf_info):
+  """
+  Starts a command line status monitor given a conf_info object.
+  """
+  t = threading.Thread(target=_cmdLineStatusMonitorFunc, args=[conf_info])
+  t.setDaemon(True)
+  t.start()
+
+from optparse import OptionParser
+def make_parser():
+  usage = "%prog: config file"
+
+  parser = OptionParser()
+  return parser
+  
+def main(cmdline=None):
+  parser = make_parser()
+  opt, args = parser.parse_args(cmdline)
+
+  if len(args) != 1:
+    parser.error("need name of configuration file")
+    
+  status = GARunStatus(args[0])
+  print os.linesep.join(status.statusReport())
+  return 0
+
+if __name__ == "__main__":
+  sys.exit(main(sys.argv[1:]))
+                   
