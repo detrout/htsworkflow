@@ -5,6 +5,7 @@ from glob import glob
 import logging
 import os
 import re
+import shutil
 import stat
 import subprocess
 import sys
@@ -210,8 +211,13 @@ def summary_report(runs):
             report.append("Clusters %d +/- %d" % (cluster[0], cluster[1]))
             report.append("Total Reads: %d" % (result.reads))
             mc = result._match_codes
-	    report.append("No Match: %d" % (mc['NM']))
-	    report.append("QC Failed: %d" % (mc['QC']))
+            nm = mc['NM']
+            nm_percent = float(nm)/result.reads  * 100
+            qc = mc['QC']
+            qc_percent = float(qc)/result.reads * 100
+
+	    report.append("No Match: %d (%2.2g %%)" % (nm, nm_percent))
+	    report.append("QC Failed: %d (%2.2g %%)" % (qc, qc_percent))
             report.append('Unique (0,1,2 mismatches) %d %d %d' % \
                           (mc['U0'], mc['U1'], mc['U2']))
             report.append('Repeat (0,1,2 mismatches) %d %d %d' % \
@@ -249,6 +255,14 @@ def extract_results(runs, output_base_dir=None):
 
       # save run file
       r.save(cycle_dir)
+
+      # Copy Summary.htm
+      summary_path = os.path.join(r.gerald.pathname, 'Summary.htm')
+      if os.path.exists(summary_path):
+          logging.info('Copying %s to %s' % (summary_path, cycle_dir))
+          shutil.copy(summary_path, cycle_dir)
+      else:
+          logging.info('Summary file %s was not found' % (summary_path,))
 
       # tar score files
       score_files = []
