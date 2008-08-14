@@ -1,0 +1,157 @@
+#!/usr/bin/python
+
+from glob import glob
+import logging
+import optparse
+import os
+import subprocess
+import sys
+
+from gaworkflow.util import queuecommands
+
+def make_commands(run_name, lanes, site_name, destdir):
+  """
+  make a subprocess-friendly list of command line arguments to run solexa2srf
+  generates files like: 
+  woldlab:080514_HWI-EAS229_0029_20768AAXX:8.srf
+   site        run name                    lane
+             
+  run_name - most of the file name (run folder name is a good choice)
+  lanes - list of integers corresponding to which lanes to process
+  site_name - name of your "sequencing site" or "Individual"
+  destdir - where to write all the srf files
+  """
+  cmd_list = []
+  for lane in lanes:
+    name_prefix = '%s_%%l_%%t_' % (run_name,)
+    destname = '%s:%s-%d.srf' % (site_name, run_name, lane)
+    destdir = os.path.normpath(destdir)
+    dest_path = os.path.join(destdir, destname)
+    seq_pattern = 's_%d_*_seq.txt' % (lane,)
+
+    cmd = ['solexa2srf', 
+           '-N', name_prefix,
+           '-n', '%3x:%3y', 
+           '-o', dest_path, 
+	   seq_pattern]
+
+    cmd_list.append(" ".join(cmd))
+  return cmd_list
+
+def pathname_to_run_name(pathname):
+  """
+  Convert a pathname to a base runfolder name
+  handle the case with a trailing /
+  """
+  name = None
+  while name is None:
+    base, name = os.path.split(pathname)
+    if len(base) == 0:
+      return None
+  return name
+
+def find_bustard_dir(pathname):
+  # fixme: for don't repeat yourself this should some how be related 
+  # fixme: to pipeline.runfolder
+
+  datadir = os.path.join(pathname, 'Data')
+  logging.info("searching in %s" % (datadir,))
+  
+  bustard_dirs = []
+  for firecrest_pathname in glob(os.path.join(datadir,"*Firecrest*")):
+    bustard_glob = os.path.join(firecrest_pathname, "Bustard*")
+    for bustard_pathname in glob(bustard_glob):
+      bustard_dirs.append(bustard_pathname)
+  return bustard_dirs
+    
+
+
+def make_parser():
+  usage = '%prog: [options] runfolder -l 1,2,3 [runfolder -l 5,6 ...]'
+
+  parser = optparse.OptionParser(usage)
+  parser.add_option('--dry-run', action='store_true',
+                    help='print what would be done',
+                    default=False)
+
+  parser.add_option('-d', '--dest-dir', dest='dest_dir',
+                    help='location to write srf files to',
+                    default='.')
+  parser.add_option('-s', '--site',
+                    help='site name',
+                    default='Individual')
+  parser.add_option('-l', '--lanes', dest='lanes', action="append",
+         default=[],
+         help='comma seperated list of lanes to add to srf'
+  )
+  parser.add_option('-j', '--jobs', default=1, type='int',
+                    help='how many jobs to run simultaneously')
+                     
+
+  return parser
+
+def parse_lane_arg(lane_arg):
+    """
+    Convert comma sperated list of lane ids to a list of integers
+    """
+    lanes = []
+    for lane in lane_arg.split(','):
+        try:
+            lane = int(lane)
+            if lane < 1 or lane > 8:
+                parser.error('Lanes must be in range [1..8]')
+            lanes.append(lane)
+        except ValueError:
+            parser.error('Lane selections must be integers')
+    return lanes
+
+def main(cmdline=None):
+    parser = make_parser()
+    opts, args = parser.parse_args(cmdline)
+  
+    if len(args) == 0:
+        parser.error('need runfolder arguments')
+
+    # parse lane arguemnts
+    lanes_list = []
+    if len(opts.lanes) == 0:
+        lanes_list = [[1,2,3,4,5,6,7,8]] * len(args)
+    elif len(opts.lanes) == len(args):
+        for lane_arg in opts.lanes:
+            lanes_list.append(parse_lane_arg(lane_arg))
+    else:
+        parser.error(
+          "Number of lane arguments must match number of runfolders"
+        )
+    
+    # build list of commands
+    cmds = {}
+    for runfolder_path, lanes in zip(args, lanes_list):
+        name = pathname_to_run_name(runfolder_path)
+        bustard_dir = find_bustard_dir(runfolder_path)
+        if len(bustard_dir) == 1:
+          bustard_dir = bustard_dir[0]
+          cmds[bustard_dir] = make_commands(name, lanes, opts.site, opts.dest_dir)
+        else:
+          print 'ERROR: Too many bustard directories'
+          print "\n ".join(bustard_dir)
+          return 1
+
+    if not opts.dry_run:
+      for cwd, cmd_list in cmds.items():
+        curdir = os.getcwd()
+        os.chdir(cwd)
+        q = queuecommands.QueueCommands(cmd_list, opts.jobs)
+        q.start_jobs()
+        os.chdir(curdir)
+    else:
+      for cwd, cmd_list in cmds.items():
+        print cwd
+        print cmd_list
+        print 'jobs: ', opts.jobs
+
+    return 0
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    sys.exit(main(sys.argv[1:]))

@@ -14,7 +14,7 @@ class QueueCommands(object):
     finish.
     """
 
-    def __init__(self, cmd_list, N=0):
+    def __init__(self, cmd_list, N=0, cwd=None):
         """
         cmd_list is a list of elements suitable for subprocess
         N is the  number of simultanious processes to run. 
@@ -27,6 +27,7 @@ class QueueCommands(object):
         self.to_run = cmd_list[:]
         self.running = {}
         self.N = N
+        self.cwd = cwd
 
     def under_process_limit(self):
         """
@@ -46,10 +47,11 @@ class QueueCommands(object):
         (or have run out of jobs)
         """
         queue_log = logging.getLogger('queue')
+        queue_log.info('using %s as cwd' % (self.cwd,))
 
         while (len(self.to_run) > 0) and self.under_process_limit():
             cmd = self.to_run.pop(0)
-            p = subprocess.Popen(cmd, stdout=PIPE)
+            p = subprocess.Popen(cmd, stdout=PIPE, cwd=self.cwd, shell=True)
             self.running[p.stdout] = p
             queue_log.info("Created process %d from %s" % (p.pid, str(cmd)))
 
