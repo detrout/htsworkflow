@@ -17,9 +17,9 @@ class testQueueCommands(unittest.TestCase):
         """
         Run everything at once
         """
-        cmds = [['/bin/sleep', '0'],
-                ['/bin/sleep', '1'],
-                ['/bin/sleep', '2'],]
+        cmds = ['/bin/sleep 0',
+                '/bin/sleep 1',
+                '/bin/sleep 2',]
 
         q = QueueCommands(cmds)
         start = time.time()
@@ -33,9 +33,9 @@ class testQueueCommands(unittest.TestCase):
         """
         Run a limited number of jobs
         """
-        cmds = [['/bin/sleep', '1'],
-                ['/bin/sleep', '2'],
-                ['/bin/sleep', '3'],]
+        cmds = ['/bin/sleep 1',
+                '/bin/sleep 2',
+                '/bin/sleep 3',]
 
         q = QueueCommands(cmds, 2)
 
