@@ -763,6 +763,50 @@ def make_eland_results(gerald_dir):
         f = open(pathname, 'w')
         f.write(eland_result)
         f.close()
+
+def make_runfolder(obj=None):
+    """
+    Make a fake runfolder, attach all the directories to obj if defined
+    """
+    # make a fake runfolder directory
+    temp_dir = tempfile.mkdtemp(prefix='tmp_runfolder_')
+
+    runfolder_dir = os.path.join(temp_dir, 
+                                 '080102_HWI-EAS229_0010_207BTAAXX')
+    os.mkdir(runfolder_dir)
+
+    data_dir = os.path.join(runfolder_dir, 'Data')
+    os.mkdir(data_dir)
+
+    firecrest_dir = os.path.join(data_dir, 
+                                 'C1-33_Firecrest1.8.28_12-04-2008_diane'
+                                 )
+    os.mkdir(firecrest_dir)
+    matrix_dir = os.path.join(firecrest_dir, 'Matrix')
+    os.mkdir(matrix_dir)
+    make_matrix(matrix_dir)
+
+    bustard_dir = os.path.join(firecrest_dir, 
+                               'Bustard1.8.28_12-04-2008_diane')
+    os.mkdir(bustard_dir)
+    make_phasing_params(bustard_dir)
+
+    gerald_dir = os.path.join(bustard_dir,
+                              'GERALD_12-04-2008_diane')
+    os.mkdir(gerald_dir)
+    make_gerald_config(gerald_dir)
+    make_summary_htm(gerald_dir)
+    make_eland_results(gerald_dir)
+
+    if obj is not None:
+        obj.temp_dir = temp_dir
+        obj.runfolder_dir = runfolder_dir
+        obj.data_dir = data_dir
+        obj.firecrest_dir = firecrest_dir
+        obj.matrix_dir = matrix_dir
+        obj.bustard_dir = bustard_dir
+        obj.gerald_dir = gerald_dir
+        
                      
 class RunfolderTests(unittest.TestCase):
     """
@@ -770,35 +814,8 @@ class RunfolderTests(unittest.TestCase):
     which includes firecrest, bustard, and gerald
     """
     def setUp(self):
-        # make a fake runfolder directory
-        self.temp_dir = tempfile.mkdtemp(prefix='tmp_runfolder_')
-
-        self.runfolder_dir = os.path.join(self.temp_dir, 
-                                          '080102_HWI-EAS229_0010_207BTAAXX')
-        os.mkdir(self.runfolder_dir)
-
-        self.data_dir = os.path.join(self.runfolder_dir, 'Data')
-        os.mkdir(self.data_dir)
-
-        self.firecrest_dir = os.path.join(self.data_dir, 
-                               'C1-33_Firecrest1.8.28_12-04-2008_diane'
-                             )
-        os.mkdir(self.firecrest_dir)
-        self.matrix_dir = os.path.join(self.firecrest_dir, 'Matrix')
-        os.mkdir(self.matrix_dir)
-        make_matrix(self.matrix_dir)
-
-        self.bustard_dir = os.path.join(self.firecrest_dir, 
-                                        'Bustard1.8.28_12-04-2008_diane')
-        os.mkdir(self.bustard_dir)
-        make_phasing_params(self.bustard_dir)
-        
-        self.gerald_dir = os.path.join(self.bustard_dir,
-                                       'GERALD_12-04-2008_diane')
-        os.mkdir(self.gerald_dir)
-        make_gerald_config(self.gerald_dir)
-        make_summary_htm(self.gerald_dir)
-        make_eland_results(self.gerald_dir)
+        # attaches all the directories to the object passed in
+        make_runfolder(self)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
