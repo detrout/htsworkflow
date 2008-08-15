@@ -38,14 +38,14 @@ def make_commands(run_name, lanes, site_name, destdir):
     cmd_list.append(" ".join(cmd))
   return cmd_list
 
-def pathname_to_run_name(pathname):
+def pathname_to_run_name(base):
   """
   Convert a pathname to a base runfolder name
   handle the case with a trailing /
   """
-  name = None
-  while name is None:
-    base, name = os.path.split(pathname)
+  name = ""
+  while len(name) == 0:
+    base, name = os.path.split(base)
     if len(base) == 0:
       return None
   return name
@@ -127,14 +127,23 @@ def main(cmdline=None):
     # build list of commands
     cmds = {}
     for runfolder_path, lanes in zip(args, lanes_list):
+        # normalize paths, either relative to home dirs or current dir
+        runfolder_path = os.path.abspath(runfolder_path)
+        # the last part of the path should be a runfolder name
         name = pathname_to_run_name(runfolder_path)
+        # so any bustard directories?
         bustard_dir = find_bustard_dir(runfolder_path)
-        if len(bustard_dir) == 1:
+        # give up if there are anything other than 1 bustard dir
+        if len(bustard_dir) > 1:
+          print 'ERROR: Too many bustard directories',
+          print "\n ".join(bustard_dir)
+          return 1
+
+        elif len(bustard_dir) == 1:
           bustard_dir = bustard_dir[0]
           cmds[bustard_dir] = make_commands(name, lanes, opts.site, opts.dest_dir)
         else:
-          print 'ERROR: Too many bustard directories'
-          print "\n ".join(bustard_dir)
+          print "ERROR: Couldn't find a bustard directory in", runfolder_path
           return 1
 
     if not opts.dry_run:
