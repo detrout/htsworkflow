@@ -3,7 +3,7 @@ import optparse
 import sys
 import os
 
-from gaworkflow.util.makebed import make_bed_from_eland_stream, make_description
+from gaworkflow.util.makebed import make_bed_from_eland_stream, make_bed_from_multi_eland_stream, make_description
 
 def make_parser():
   parser = optparse.OptionParser()
@@ -29,6 +29,19 @@ def make_parser():
   parser.add_option("--lane", dest='lane',
                     help='specify which lane to use when retrieving description from database',
                     default=None)
+
+  multi = optparse.OptionGroup(parser, 'Multi-read ELAND support')
+
+  multi.add_option('-m', '--multi', action='store_true',
+                    help='Enable parsing multi-read eland files',
+                    default=False)
+  multi.add_option('--reads', type='int',
+                   help='limit reporting multi reads to this many reads'
+                        '(most usefully --reads=1 will turn a multi-read '
+                        'file into a single read file)',
+                   default=255)
+  parser.add_option_group(multi)
+
   return parser
 
 def main(command_line=None):
@@ -42,17 +55,26 @@ def main(command_line=None):
     parser.error("Need eland input file name")
     return 1
 
-  if options.outname is None:
-    options.outname = os.path.splitext(options.inname)[0]+'.bed'
-    print >>sys.stderr, "defaulting to outputname", options.outname
-
-  if os.path.exists(options.inname):
+  if options.inname == '-':
+    instream = sys.stdin
+  elif os.path.exists(options.inname):
     instream = open(options.inname, 'r')
   else:
     parser.error('%s was not found' % (options.inname))
     return 1
 
-  if os.path.exists(options.outname):
+  if options.outname is None:
+      # if outname wasn't defined, and we're reading from stdout
+      if instream is sys.stdin:
+          # write to stdout
+          outstream = sys.stdout
+      else:
+          # if there's a name write to name.bde
+          options.outname = os.path.splitext(options.inname)[0]+'.bed'
+          print >>sys.stderr, "defaulting to outputname", options.outname
+  elif options.outname == '-':
+      outstream = sys.stdout
+  elif os.path.exists(options.outname):
       parser.error("not overwriting %s" % (options.outname))
       return 1
   else:
@@ -67,7 +89,16 @@ def main(command_line=None):
     name = options.name
     description = options.description
 
-  make_bed_from_eland_stream(instream, outstream, name, description, options.prefix)
+  if options.multi:
+    make_bed_from_multi_eland_stream(instream, outstream, 
+                                     name, description, 
+                                     options.prefix,
+                                     options.reads)
+
+  else:
+    make_bed_from_eland_stream(instream, outstream, 
+                               name, description, 
+                               options.prefix)
   return 0
 
 if __name__ == "__main__":
