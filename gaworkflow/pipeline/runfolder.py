@@ -296,4 +296,18 @@ def extract_results(runs, output_base_dir=None):
           logging.info('Saving to %s' % (dest_name, ))
           bzip.wait()
 
-      
+def clean_runs(runs):
+    """
+    Clean up run folders to optimize for compression.
+    """
+    # TODO: implement this.
+    # rm RunLog*.xml
+    # rm pipeline_*.txt
+    # rm gclog.txt
+    # rm NetCopy.log
+    # rm nfn.log
+    # rm Images/L*
+    # cd Data/C1-*_Firecrest*
+    # make clean_intermediate
+
+    pass
