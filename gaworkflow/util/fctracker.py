@@ -111,6 +111,10 @@ class fctracker:
         description = [ f[0] for f in c.description ]
         for row in c:
             row_dict = dict(zip(description, row))
+            fcid, status = self._parse_flowcell_id(row_dict)
+            row_dict['flowcell_id'] = fcid
+            row_dict['flowcell_status'] = status
+
             for lane in [ 'lane_%d_library' % (i) for i in range(1,9) ]:
                 lane_library = self.library[row_dict[lane+"_id"]]
                 species_id = lane_library['library_species_id']
@@ -125,23 +129,47 @@ class fctracker:
         self._add_lanes_to_libraries()
         return self.flowcells
 
+    def _parse_flowcell_id(self, flowcell_row):
+      """
+      Return flowcell id and status
+      
+      We stored the status information in the flowcell id name.
+      this was dumb, but database schemas are hard to update.
+      """
+      fields = flowcell_row['flowcell_id'].split()
+      fcid = None
+      status = None
+      if len(fields) > 0:
+        fcid = fields[0]
+      if len(fields) > 1:
+        status = fields[1]
+      return fcid, status
+      
+
+def flowcell_gone(cell):
+    """
+    Use a variety of heuristics to determine if the flowcell drive
+    has been deleted.
+    """
+    status = cell['flowcell_status']
+    if status is None:
+        return False
+    failures = ['failed', 'deleted', 'not run']
+    for f in failures:
+      if re.search(f, status):
+        return True
+    else:
+      return False
+
 def recoverable_drive_report(flowcells):
     """
     Attempt to report what flowcells are still on a hard drive
     """
-    def flowcell_gone(cell):
-        """
-        Use a variety of heuristics to determine if the flowcell drive
-        has been deleted.
-        """
-        name = cell['flowcell_id']
-        if 'failed' in name:
-            return True
-        if 'deleted' in name:
-            return True
-        if 'not run' in name:
-            return True
-        return False
+    def format_status(status):
+      if status is None:
+        return ""
+      else:
+        return status+" "
 
     # sort flowcells by run date
     flowcell_list = []
@@ -150,7 +178,7 @@ def recoverable_drive_report(flowcells):
     flowcell_list.sort()
 
     report = []
-    line = "%(date)s %(id)s %(lane)s %(library_name)s (%(library_id)s) "
+    line = "%(date)s %(id)s %(status)s%(lane)s %(library_name)s (%(library_id)s) "
     line += "%(species)s"
     for run_date, flowcell_id in flowcell_list:
         cell = flowcells[flowcell_id]
@@ -166,6 +194,7 @@ def recoverable_drive_report(flowcells):
               'library_name': cell_library['library_name'],
               'library_id': cell['%s_library_id'%(lane)],
               'species': cell_library['library_species']['scientific_name'],
+              'status': format_status(cell['flowcell_status']),
             }
             report.append(line % (fields))
     return os.linesep.join(report)
