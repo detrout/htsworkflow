@@ -50,6 +50,7 @@ class QueueCommands(object):
         queue_log.info('using %s as cwd' % (self.cwd,))
 
         while (len(self.to_run) > 0) and self.under_process_limit():
+            queue_log.info('%d left to run', len(self.to_run))
             cmd = self.to_run.pop(0)
             p = subprocess.Popen(cmd, stdout=PIPE, cwd=self.cwd, shell=True)
             self.running[p.stdout] = p
@@ -79,6 +80,7 @@ class QueueCommands(object):
                 pending = self.running[pending_fd]
                 # if it really did finish, remove it from running jobs
                 if pending.poll() is not None:
-                    queue_log.info("Process %d finished" % (pending.pid,))
+                    queue_log.info("Process %d finished [%d]",
+                                   pending.pid, pending.returncode)
                     del self.running[pending_fd]
 
