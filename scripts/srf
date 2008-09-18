@@ -151,7 +151,7 @@ def main(cmdline=None):
         curdir = os.getcwd()
         os.chdir(cwd)
         q = queuecommands.QueueCommands(cmd_list, opts.jobs)
-        q.start_jobs()
+        q.run()
         os.chdir(curdir)
     else:
       for cwd, cmd_list in cmds.items():
