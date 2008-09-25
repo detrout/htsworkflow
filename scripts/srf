@@ -24,7 +24,7 @@ def make_commands(run_name, lanes, site_name, destdir):
   cmd_list = []
   for lane in lanes:
     name_prefix = '%s_%%l_%%t_' % (run_name,)
-    destname = '%s:%s-%d.srf' % (site_name, run_name, lane)
+    destname = '%s_%s_%d.srf' % (site_name, run_name, lane)
     destdir = os.path.normpath(destdir)
     dest_path = os.path.join(destdir, destname)
     seq_pattern = 's_%d_*_seq.txt' % (lane,)
