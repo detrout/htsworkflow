@@ -7,6 +7,7 @@ from subprocess import PIPE
 import subprocess
 import select
 import sys
+import time
 
 class QueueCommands(object):
     """
@@ -83,4 +84,4 @@ class QueueCommands(object):
                     queue_log.info("Process %d finished [%d]",
                                    pending.pid, pending.returncode)
                     del self.running[pending_fd]
-
+            time.sleep(1)
