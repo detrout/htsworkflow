@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from gaworkflow.frontend import settings
+from htsworkflow.frontend import settings
 
 # Create your models here.
 

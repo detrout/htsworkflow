@@ -9,7 +9,7 @@ import threading
 
 from benderjab import rpc
 
-from gaworkflow.pipeline.configure_run import *
+from htsworkflow.pipeline.configure_run import *
 
 #s_fc = re.compile('FC[0-9]+')
 s_fc = re.compile('_[0-9a-zA-Z]*$')
@@ -36,7 +36,7 @@ class Runner(rpc.XmlRpcBot):
     """    
     def __init__(self, section=None, configfile=None):
         #if configfile is None:
-        #    self.configfile = "~/.gaworkflow"
+        #    self.configfile = "~/.htsworkflow"
         super(Runner, self).__init__(section, configfile)
         
         self.cfg['notify_users'] = None

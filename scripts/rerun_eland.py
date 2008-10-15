@@ -6,8 +6,8 @@ import os
 import subprocess
 import sys
 
-from gaworkflow.pipeline import gerald
-from gaworkflow.pipeline import runfolder
+from htsworkflow.pipeline import gerald
+from htsworkflow.pipeline import runfolder
 
 def make_query_filename(eland_obj, output_dir):
     query_name = '%s_%s_eland_query.txt' 

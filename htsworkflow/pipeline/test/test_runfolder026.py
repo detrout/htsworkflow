@@ -6,11 +6,11 @@ import tempfile
 import shutil
 import unittest
 
-from gaworkflow.pipeline import firecrest
-from gaworkflow.pipeline import bustard
-from gaworkflow.pipeline import gerald
-from gaworkflow.pipeline import runfolder
-from gaworkflow.pipeline.runfolder import ElementTree
+from htsworkflow.pipeline import firecrest
+from htsworkflow.pipeline import bustard
+from htsworkflow.pipeline import gerald
+from htsworkflow.pipeline import runfolder
+from htsworkflow.pipeline.runfolder import ElementTree
 
 
 def make_flowcell_id(runfolder_dir, flowcell_id=None):
@@ -146,31 +146,20 @@ def make_gerald_config(gerald_dir):
     f.write(config_xml)
     f.close()
     
+
 def make_summary_htm(gerald_dir):
-    summary_htm="""<!--RUN_TIME Wed Jul  2 06:47:44 2008 -->
-<!--SOFTWARE_VERSION @(#) $Id: jerboa.pl,v 1.94 2007/12/04 09:59:07 rshaw Exp $-->
+    summary_htm = """<!--RUN_TIME Mon Apr 21 11:52:25 2008 -->
+<!--SOFTWARE_VERSION @(#) $Id: jerboa.pl,v 1.31 2007/03/05 17:52:15 km Exp $-->
 <html>
 <body>
 
-<a name="Top"><h2><title>080627_HWI-EAS229_0036_3055HAXX Summary</title></h2></a>
-<h1>Summary Information For Experiment 080627_HWI-EAS229_0036_3055HAXX on Machine HWI-EAS229</h1>
+<a name="Top"><h2><title>080416_HWI-EAS229_0024_207BTAAXX Summary</title></h2></a>
+<h1>Summary Information For Experiment 080416_HWI-EAS229_0024_207BTAAXX on Machine HWI-EAS229</h1>
 <h2><br></br>Chip Summary<br></br></h2>
 <table border="1" cellpadding="5">
 <tr><td>Machine</td><td>HWI-EAS229</td></tr>
-<tr><td>Run Folder</td><td>080627_HWI-EAS229_0036_3055HAXX</td></tr>
+<tr><td>Run Folder</td><td>080416_HWI-EAS229_0024_207BTAAXX</td></tr>
 <tr><td>Chip ID</td><td>unknown</td></tr>
-</table>
-<h2><br></br>Chip Results Summary<br></br></h2>
-<table border="1" cellpadding="5">
-<tr>
-<td>Clusters</td>
-<td>Clusters (PF)</td>
-<td>Yield (kbases)</td>
-</tr>
-<tr><td>80933224</td>
-<td>43577803</td>
-<td>1133022</td>
-</tr>
 </table>
 <h2><br></br>Lane Parameter Summary<br></br></h2>
 <table border="1" cellpadding="5">
@@ -181,568 +170,175 @@ def make_summary_htm(gerald_dir):
 <td>Sample Type</td>
 <td>Length</td>
 <td>Filter</td>
-<td>Num Tiles</td>
 <td>Tiles</td>
 </tr>
 <tr>
 <td>1</td>
 <td>unknown</td>
-<td>mm9</td>
+<td>dm3</td>
 <td>ELAND</td>
-<td>26</td>
+<td>32</td>
 <td>'((CHASTITY>=0.6))'</td>
-<td>100</td>
 <td><a href="#Lane1">Lane 1</a></td>
 </tr>
 <tr>
 <td>2</td>
 <td>unknown</td>
-<td>mm9</td>
+<td>equcab1</td>
 <td>ELAND</td>
-<td>26</td>
+<td>32</td>
 <td>'((CHASTITY>=0.6))'</td>
-<td>100</td>
 <td><a href="#Lane2">Lane 2</a></td>
 </tr>
 <tr>
 <td>3</td>
 <td>unknown</td>
-<td>mm9</td>
+<td>equcab1</td>
 <td>ELAND</td>
-<td>26</td>
+<td>32</td>
 <td>'((CHASTITY>=0.6))'</td>
-<td>100</td>
 <td><a href="#Lane3">Lane 3</a></td>
 </tr>
 <tr>
 <td>4</td>
 <td>unknown</td>
-<td>elegans170</td>
+<td>canfam2</td>
 <td>ELAND</td>
-<td>26</td>
+<td>32</td>
 <td>'((CHASTITY>=0.6))'</td>
-<td>100</td>
 <td><a href="#Lane4">Lane 4</a></td>
 </tr>
 <tr>
 <td>5</td>
 <td>unknown</td>
-<td>elegans170</td>
+<td>hg18</td>
 <td>ELAND</td>
-<td>26</td>
+<td>32</td>
 <td>'((CHASTITY>=0.6))'</td>
-<td>100</td>
 <td><a href="#Lane5">Lane 5</a></td>
 </tr>
 <tr>
 <td>6</td>
 <td>unknown</td>
-<td>elegans170</td>
+<td>hg18</td>
 <td>ELAND</td>
-<td>26</td>
+<td>32</td>
 <td>'((CHASTITY>=0.6))'</td>
-<td>100</td>
 <td><a href="#Lane6">Lane 6</a></td>
 </tr>
 <tr>
 <td>7</td>
 <td>unknown</td>
-<td>elegans170</td>
+<td>hg18</td>
 <td>ELAND</td>
-<td>26</td>
+<td>32</td>
 <td>'((CHASTITY>=0.6))'</td>
-<td>100</td>
 <td><a href="#Lane7">Lane 7</a></td>
 </tr>
 <tr>
 <td>8</td>
 <td>unknown</td>
-<td>elegans170</td>
+<td>hg18</td>
 <td>ELAND</td>
-<td>26</td>
+<td>32</td>
 <td>'((CHASTITY>=0.6))'</td>
-<td>100</td>
 <td><a href="#Lane8">Lane 8</a></td>
 </tr>
 </table>
 <h2><br></br>Lane Results Summary<br></br></h2>
 <table border="1" cellpadding="5">
 <tr>
-<td colspan="2">Lane Info</td>
-<td colspan="8">Tile Mean +/- SD for Lane</td>
-</tr>
-<tr>
+
 <td>Lane </td>
-<td>Lane Yield (kbases) </td>
-<td>Clusters (raw)</td>
-<td>Clusters (PF) </td>
-<td>1st Cycle Int (PF) </td>
-<td>% intensity after 20 cycles (PF) </td>
+<td>Clusters </td>
+<td>Av 1st Cycle Int </td>
+<td>% intensity after 20 cycles </td>
 <td>% PF Clusters </td>
 <td>% Align (PF) </td>
-<td>Alignment Score (PF) </td>
+<td>Av Alignment Score (PF) </td>
 <td> % Error Rate (PF) </td>
 </tr>
 <tr>
 <td>1</td>
-<td>158046</td>
-<td>96483 +/- 9074</td>
-<td>60787 +/- 4240</td>
-<td>329 +/- 35</td>
-<td>101.88 +/- 6.03</td>
-<td>63.21 +/- 3.29</td>
-<td>70.33 +/- 0.24</td>
-<td>9054.08 +/- 59.16</td>
-<td>0.46 +/- 0.18</td>
+<td>17421 +/- 2139</td>
+<td>7230 +/- 801</td>
+<td>23.73 +/- 10.79</td>
+<td>13.00 +/- 22.91</td>
+<td>32.03 +/- 18.45</td>
+<td>6703.57 +/- 3753.85</td>
+<td>4.55 +/- 4.81</td>
 </tr>
 <tr>
 <td>2</td>
-<td>156564</td>
-<td>133738 +/- 7938</td>
-<td>60217 +/- 1926</td>
-<td>444 +/- 39</td>
-<td>92.62 +/- 7.58</td>
-<td>45.20 +/- 3.31</td>
-<td>51.98 +/- 0.74</td>
-<td>6692.04 +/- 92.49</td>
-<td>0.46 +/- 0.09</td>
+<td>20311 +/- 2402</td>
+<td>7660 +/- 678</td>
+<td>17.03 +/- 4.40</td>
+<td>40.74 +/- 30.33</td>
+<td>29.54 +/- 9.03</td>
+<td>5184.02 +/- 1631.54</td>
+<td>3.27 +/- 3.94</td>
 </tr>
 <tr>
 <td>3</td>
-<td>185818</td>
-<td>152142 +/- 10002</td>
-<td>71468 +/- 2827</td>
-<td>366 +/- 36</td>
-<td>91.53 +/- 8.66</td>
-<td>47.19 +/- 3.80</td>
-<td>82.24 +/- 0.44</td>
-<td>10598.68 +/- 64.13</td>
-<td>0.41 +/- 0.04</td>
+<td>20193 +/- 2399</td>
+<td>7700 +/- 797</td>
+<td>15.75 +/- 3.30</td>
+<td>56.56 +/- 17.16</td>
+<td>27.33 +/- 7.48</td>
+<td>4803.49 +/- 1313.31</td>
+<td>3.07 +/- 2.86</td>
 </tr>
 <tr>
 <td>4</td>
-<td>34953</td>
-<td>15784 +/- 2162</td>
-<td>13443 +/- 1728</td>
-<td>328 +/- 40</td>
-<td>97.53 +/- 9.87</td>
-<td>85.29 +/- 1.91</td>
-<td>80.02 +/- 0.53</td>
-<td>10368.82 +/- 71.08</td>
-<td>0.15 +/- 0.05</td>
+<td>15537 +/- 2531</td>
+<td>7620 +/- 1392</td>
+<td>15.37 +/- 3.79</td>
+<td>63.05 +/- 18.30</td>
+<td>15.88 +/- 4.99</td>
+<td>3162.13 +/- 962.59</td>
+<td>3.11 +/- 2.22</td>
 </tr>
 <tr>
 <td>5</td>
-<td>167936</td>
-<td>119735 +/- 8465</td>
-<td>64590 +/- 2529</td>
-<td>417 +/- 37</td>
-<td>88.69 +/- 14.79</td>
-<td>54.10 +/- 2.59</td>
-<td>76.95 +/- 0.32</td>
-<td>9936.47 +/- 65.75</td>
-<td>0.28 +/- 0.02</td>
+<td>32047 +/- 3356</td>
+<td>8093 +/- 831</td>
+<td>23.79 +/- 6.18</td>
+<td>53.36 +/- 18.06</td>
+<td>48.04 +/- 13.77</td>
+<td>9866.23 +/- 2877.30</td>
+<td>2.26 +/- 1.16</td>
 </tr>
 <tr>
 <td>6</td>
-<td>173463</td>
-<td>152177 +/- 8146</td>
-<td>66716 +/- 2493</td>
-<td>372 +/- 39</td>
-<td>87.06 +/- 9.86</td>
-<td>43.98 +/- 3.12</td>
-<td>78.80 +/- 0.43</td>
-<td>10162.28 +/- 49.65</td>
-<td>0.38 +/- 0.03</td>
+<td>32946 +/- 4753</td>
+<td>8227 +/- 736</td>
+<td>24.07 +/- 4.69</td>
+<td>54.65 +/- 12.57</td>
+<td>50.98 +/- 10.54</td>
+<td>10468.86 +/- 2228.53</td>
+<td>2.21 +/- 2.33</td>
 </tr>
 <tr>
 <td>7</td>
-<td>149287</td>
-<td>84649 +/- 7325</td>
-<td>57418 +/- 3617</td>
-<td>295 +/- 28</td>
-<td>89.40 +/- 8.23</td>
-<td>67.97 +/- 1.82</td>
-<td>33.38 +/- 0.25</td>
-<td>4247.92 +/- 32.37</td>
-<td>1.00 +/- 0.03</td>
+<td>39504 +/- 4171</td>
+<td>8401 +/- 785</td>
+<td>22.55 +/- 4.56</td>
+<td>45.22 +/- 10.34</td>
+<td>48.41 +/- 9.67</td>
+<td>9829.40 +/- 1993.20</td>
+<td>2.26 +/- 1.11</td>
 </tr>
 <tr>
 <td>8</td>
-<td>106953</td>
-<td>54622 +/- 4812</td>
-<td>41136 +/- 3309</td>
-<td>284 +/- 37</td>
-<td>90.21 +/- 9.10</td>
-<td>75.39 +/- 2.27</td>
-<td>48.33 +/- 0.29</td>
-<td>6169.21 +/- 169.50</td>
-<td>0.86 +/- 1.22</td>
-</tr>
-<tr><td colspan="13">Tile mean across chip</td></tr>
-<tr>
-<td>Av.</td>
-<td></td>
-<td>101166</td>
-<td>54472</td>
-<td>354</td>
-<td>92.36</td>
-<td>60.29</td>
-<td>65.25</td>
-<td>8403.69</td>
-<td>0.50</td>
+<td>37998 +/- 3792</td>
+<td>8443 +/- 1211</td>
+<td>39.03 +/- 7.52</td>
+<td>42.16 +/- 12.35</td>
+<td>40.98 +/- 14.89</td>
+<td>8128.87 +/- 3055.34</td>
+<td>3.57 +/- 2.77</td>
 </tr>
 </table>
-<h2><br></br>Expanded Lane Summary<br></br></h2>
-<table border="1" cellpadding="5">
-<tr>
-
-<tr><td colspan="2">Lane Info</td>
-<td colspan="2">Phasing Info</td>
-<td colspan="2">Raw Data (tile mean)</td>
-<td colspan="7">Filtered Data (tile mean)</td></tr>
-<td>Lane </td>
-<td>Clusters (tile mean) (raw)</td>
-<td>% Phasing </td>
-<td>% Prephasing </td>
-<td>% Error Rate (raw) </td>
-<td> Equiv Perfect Clusters (raw) </td>
-<td>% retained </td>
-<td>Cycle 2-4 Av Int (PF) </td>
-<td>Cycle 2-10 Av % Loss (PF) </td>
-<td>Cycle 10-20 Av % Loss (PF) </td>
-<td>% Align (PF) </td>
-<td>% Error Rate (PF) </td>
-<td> Equiv Perfect Clusters (PF) </td>
-</tr>
-<tr>
-<td>1</td>
-<td>96483</td>
-<td>0.7700</td>
-<td>0.3100</td>
-<td>1.00</td>
-<td>49676</td>
-<td>63.21</td>
-<td>317 +/- 32</td>
-<td>0.13 +/- 0.44</td>
-<td>-1.14 +/- 0.34</td>
-<td>70.33</td>
-<td>0.46</td>
-<td>41758</td>
-</tr>
-<tr>
-<td>2</td>
-<td>133738</td>
-<td>0.7700</td>
-<td>0.3100</td>
-<td>1.22</td>
-<td>40467</td>
-<td>45.20</td>
-<td>415 +/- 33</td>
-<td>0.29 +/- 0.40</td>
-<td>-0.79 +/- 0.35</td>
-<td>51.98</td>
-<td>0.46</td>
-<td>30615</td>
-</tr>
-<tr>
-<td>3</td>
-<td>152142</td>
-<td>0.7700</td>
-<td>0.3100</td>
-<td>1.30</td>
-<td>78588</td>
-<td>47.19</td>
-<td>344 +/- 26</td>
-<td>0.68 +/- 0.51</td>
-<td>-0.77 +/- 0.42</td>
-<td>82.24</td>
-<td>0.41</td>
-<td>57552</td>
-</tr>
-<tr>
-<td>4</td>
-<td>15784</td>
-<td>0.7700</td>
-<td>0.3100</td>
-<td>0.29</td>
-<td>11095</td>
-<td>85.29</td>
-<td>306 +/- 34</td>
-<td>0.20 +/- 0.69</td>
-<td>-1.28 +/- 0.66</td>
-<td>80.02</td>
-<td>0.15</td>
-<td>10671</td>
-</tr>
-<tr>
-<td>5</td>
-<td>119735</td>
-<td>0.7700</td>
-<td>0.3100</td>
-<td>0.85</td>
-<td>60335</td>
-<td>54.10</td>
-<td>380 +/- 32</td>
-<td>0.34 +/- 0.49</td>
-<td>-1.55 +/- 4.69</td>
-<td>76.95</td>
-<td>0.28</td>
-<td>49015</td>
-</tr>
-<tr>
-<td>6</td>
-<td>152177</td>
-<td>0.7700</td>
-<td>0.3100</td>
-<td>1.21</td>
-<td>70905</td>
-<td>43.98</td>
-<td>333 +/- 27</td>
-<td>0.57 +/- 0.50</td>
-<td>-0.91 +/- 0.39</td>
-<td>78.80</td>
-<td>0.38</td>
-<td>51663</td>
-</tr>
-<tr>
-<td>7</td>
-<td>84649</td>
-<td>0.7700</td>
-<td>0.3100</td>
-<td>1.38</td>
-<td>21069</td>
-<td>67.97</td>
-<td>272 +/- 20</td>
-<td>1.15 +/- 0.52</td>
-<td>-0.84 +/- 0.58</td>
-<td>33.38</td>
-<td>1.00</td>
-<td>18265</td>
-</tr>
-<tr>
-<td>8</td>
-<td>54622</td>
-<td>0.7700</td>
-<td>0.3100</td>
-<td>1.17</td>
-<td>21335</td>
-<td>75.39</td>
-<td>262 +/- 31</td>
-<td>1.10 +/- 0.59</td>
-<td>-1.01 +/- 0.47</td>
-<td>48.33</td>
-<td>0.86</td>
-<td>19104</td>
-</tr>
-</table>
-<b><br></br>IVC Plots</b>
-<p> <a href='IVC.htm' target="_blank"> IVC.htm
- </a></p>
-<b><br></br>All Intensity Plots</b>
-<p> <a href='All.htm' target="_blank"> All.htm
- </a></p>
-<b><br></br>Error graphs: </b>
-<p> <a href='Error.htm' target="_blank"> Error.htm
- </a></p>
-<td><a href="#Top">Back to top</a></td>
-<a name="Lane1"><h2><br></br>Lane 1<br></br></h2></a>
-<table border="1" cellpadding="5">
-<tr>
-<td>Lane </td>
-<td>Tile </td>
-<td>Clusters (raw)</td>
-<td>Av 1st Cycle Int (PF) </td>
-<td>Av % intensity after 20 cycles (PF) </td>
-<td>% PF Clusters </td>
-<td>% Align (PF) </td>
-<td>Av Alignment Score (PF) </td>
-<td>% Error Rate (PF) </td>
-</tr>
-<tr>
-<td>1</td>
-<td>0001</td>
-<td>114972</td>
-<td>326.48</td>
-<td>94.39</td>
-<td>57.44</td>
-<td>70.2</td>
-<td>9038.6</td>
-<td>0.44</td>
-</tr>
-</table>
-<td><a href="#Top">Back to top</a></td>
-<a name="Lane2"><h2><br></br>Lane 2<br></br></h2></a>
-<table border="1" cellpadding="5">
-<tr>
-<td>Lane </td>
-<td>Tile </td>
-<td>Clusters (raw)</td>
-<td>Av 1st Cycle Int (PF) </td>
-<td>Av % intensity after 20 cycles (PF) </td>
-<td>% PF Clusters </td>
-<td>% Align (PF) </td>
-<td>Av Alignment Score (PF) </td>
-<td>% Error Rate (PF) </td>
-</tr>
-<tr>
-<td>2</td>
-<td>0001</td>
-<td>147793</td>
-<td>448.12</td>
-<td>83.68</td>
-<td>38.57</td>
-<td>53.7</td>
-<td>6905.4</td>
-<td>0.54</td>
-</tr>
-</table>
-<td><a href="#Top">Back to top</a></td>
-<a name="Lane3"><h2><br></br>Lane 3<br></br></h2></a>
-<table border="1" cellpadding="5">
-<tr>
-<td>Lane </td>
-<td>Tile </td>
-<td>Clusters (raw)</td>
-<td>Av 1st Cycle Int (PF) </td>
-<td>Av % intensity after 20 cycles (PF) </td>
-<td>% PF Clusters </td>
-<td>% Align (PF) </td>
-<td>Av Alignment Score (PF) </td>
-<td>% Error Rate (PF) </td>
-</tr>
-<tr>
-<td>3</td>
-<td>0001</td>
-<td>167904</td>
-<td>374.05</td>
-<td>86.91</td>
-<td>40.36</td>
-<td>81.3</td>
-<td>10465.0</td>
-<td>0.47</td>
-</tr>
-</table>
-<td><a href="#Top">Back to top</a></td>
-<a name="Lane4"><h2><br></br>Lane 4<br></br></h2></a>
-<table border="1" cellpadding="5">
-<tr>
-<td>Lane </td>
-<td>Tile </td>
-<td>Clusters (raw)</td>
-<td>Av 1st Cycle Int (PF) </td>
-<td>Av % intensity after 20 cycles (PF) </td>
-<td>% PF Clusters </td>
-<td>% Align (PF) </td>
-<td>Av Alignment Score (PF) </td>
-<td>% Error Rate (PF) </td>
-</tr>
-<tr>
-<td>4</td>
-<td>0001</td>
-<td>20308</td>
-<td>276.85</td>
-<td>92.87</td>
-<td>84.26</td>
-<td>80.4</td>
-<td>10413.8</td>
-<td>0.16</td>
-</tr>
-</table>
-<td><a href="#Top">Back to top</a></td>
-<a name="Lane5"><h2><br></br>Lane 5<br></br></h2></a>
-<table border="1" cellpadding="5">
-<tr>
-<td>Lane </td>
-<td>Tile </td>
-<td>Clusters (raw)</td>
-<td>Av 1st Cycle Int (PF) </td>
-<td>Av % intensity after 20 cycles (PF) </td>
-<td>% PF Clusters </td>
-<td>% Align (PF) </td>
-<td>Av Alignment Score (PF) </td>
-<td>% Error Rate (PF) </td>
-</tr>
-</table>
-<td><a href="#Top">Back to top</a></td>
-<a name="Lane6"><h2><br></br>Lane 6<br></br></h2></a>
-<table border="1" cellpadding="5">
-<tr>
-<td>Lane </td>
-<td>Tile </td>
-<td>Clusters (raw)</td>
-<td>Av 1st Cycle Int (PF) </td>
-<td>Av % intensity after 20 cycles (PF) </td>
-<td>% PF Clusters </td>
-<td>% Align (PF) </td>
-<td>Av Alignment Score (PF) </td>
-<td>% Error Rate (PF) </td>
-</tr>
-<tr>
-<td>6</td>
-<td>0001</td>
-<td>166844</td>
-<td>348.12</td>
-<td>77.59</td>
-<td>38.13</td>
-<td>79.7</td>
-<td>10264.4</td>
-<td>0.44</td>
-</tr>
-</table>
-<td><a href="#Top">Back to top</a></td>
-<a name="Lane7"><h2><br></br>Lane 7<br></br></h2></a>
-<table border="1" cellpadding="5">
-<tr>
-<td>Lane </td>
-<td>Tile </td>
-<td>Clusters (raw)</td>
-<td>Av 1st Cycle Int (PF) </td>
-<td>Av % intensity after 20 cycles (PF) </td>
-<td>% PF Clusters </td>
-<td>% Align (PF) </td>
-<td>Av Alignment Score (PF) </td>
-<td>% Error Rate (PF) </td>
-</tr>
-<tr>
-<td>7</td>
-<td>0001</td>
-<td>98913</td>
-<td>269.90</td>
-<td>86.66</td>
-<td>64.55</td>
-<td>33.2</td>
-<td>4217.5</td>
-<td>1.02</td>
-</tr>
-</table>
-<td><a href="#Top">Back to top</a></td>
-<a name="Lane8"><h2><br></br>Lane 8<br></br></h2></a>
-<table border="1" cellpadding="5">
-<tr>
-<td>Lane </td>
-<td>Tile </td>
-<td>Clusters (raw)</td>
-<td>Av 1st Cycle Int (PF) </td>
-<td>Av % intensity after 20 cycles (PF) </td>
-<td>% PF Clusters </td>
-<td>% Align (PF) </td>
-<td>Av Alignment Score (PF) </td>
-<td>% Error Rate (PF) </td>
-</tr>
-<tr>
-<td>8</td>
-<td>0001</td>
-<td>64972</td>
-<td>243.60</td>
-<td>89.40</td>
-<td>73.17</td>
-<td>48.3</td>
-<td>6182.8</td>
-<td>0.71</td>
-</tr>
-</table>
-<td><a href="#Top">Back to top</a></td>
 </body>
 </html>
 """
@@ -763,50 +359,6 @@ def make_eland_results(gerald_dir):
         f = open(pathname, 'w')
         f.write(eland_result)
         f.close()
-
-def make_runfolder(obj=None):
-    """
-    Make a fake runfolder, attach all the directories to obj if defined
-    """
-    # make a fake runfolder directory
-    temp_dir = tempfile.mkdtemp(prefix='tmp_runfolder_')
-
-    runfolder_dir = os.path.join(temp_dir, 
-                                 '080102_HWI-EAS229_0010_207BTAAXX')
-    os.mkdir(runfolder_dir)
-
-    data_dir = os.path.join(runfolder_dir, 'Data')
-    os.mkdir(data_dir)
-
-    firecrest_dir = os.path.join(data_dir, 
-                                 'C1-33_Firecrest1.8.28_12-04-2008_diane'
-                                 )
-    os.mkdir(firecrest_dir)
-    matrix_dir = os.path.join(firecrest_dir, 'Matrix')
-    os.mkdir(matrix_dir)
-    make_matrix(matrix_dir)
-
-    bustard_dir = os.path.join(firecrest_dir, 
-                               'Bustard1.8.28_12-04-2008_diane')
-    os.mkdir(bustard_dir)
-    make_phasing_params(bustard_dir)
-
-    gerald_dir = os.path.join(bustard_dir,
-                              'GERALD_12-04-2008_diane')
-    os.mkdir(gerald_dir)
-    make_gerald_config(gerald_dir)
-    make_summary_htm(gerald_dir)
-    make_eland_results(gerald_dir)
-
-    if obj is not None:
-        obj.temp_dir = temp_dir
-        obj.runfolder_dir = runfolder_dir
-        obj.data_dir = data_dir
-        obj.firecrest_dir = firecrest_dir
-        obj.matrix_dir = matrix_dir
-        obj.bustard_dir = bustard_dir
-        obj.gerald_dir = gerald_dir
-        
                      
 class RunfolderTests(unittest.TestCase):
     """
@@ -814,8 +366,35 @@ class RunfolderTests(unittest.TestCase):
     which includes firecrest, bustard, and gerald
     """
     def setUp(self):
-        # attaches all the directories to the object passed in
-        make_runfolder(self)
+        # make a fake runfolder directory
+        self.temp_dir = tempfile.mkdtemp(prefix='tmp_runfolder_')
+
+        self.runfolder_dir = os.path.join(self.temp_dir, 
+                                          '080102_HWI-EAS229_0010_207BTAAXX')
+        os.mkdir(self.runfolder_dir)
+
+        self.data_dir = os.path.join(self.runfolder_dir, 'Data')
+        os.mkdir(self.data_dir)
+
+        self.firecrest_dir = os.path.join(self.data_dir, 
+                               'C1-33_Firecrest1.8.28_12-04-2008_diane'
+                             )
+        os.mkdir(self.firecrest_dir)
+        self.matrix_dir = os.path.join(self.firecrest_dir, 'Matrix')
+        os.mkdir(self.matrix_dir)
+        make_matrix(self.matrix_dir)
+
+        self.bustard_dir = os.path.join(self.firecrest_dir, 
+                                        'Bustard1.8.28_12-04-2008_diane')
+        os.mkdir(self.bustard_dir)
+        make_phasing_params(self.bustard_dir)
+        
+        self.gerald_dir = os.path.join(self.bustard_dir,
+                                       'GERALD_12-04-2008_diane')
+        os.mkdir(self.gerald_dir)
+        make_gerald_config(self.gerald_dir)
+        make_summary_htm(self.gerald_dir)
+        make_eland_results(self.gerald_dir)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
@@ -895,10 +474,8 @@ class RunfolderTests(unittest.TestCase):
 
         # test data extracted from summary file
         clusters = [None, 
-                    (96483, 9074), (133738, 7938), 
-                    (152142, 10002), (15784, 2162), 
-                    (119735, 8465), (152177, 8146),
-                    (84649, 7325), (54622, 4812),]
+                    (17421, 2139), (20311, 2402), (20193, 2399), (15537, 2531),
+                    (32047, 3356), (32946, 4753), (39504, 4171), (37998, 3792)]
 
         for i in range(1,9):
             summary_lane = g.summary[str(i)]

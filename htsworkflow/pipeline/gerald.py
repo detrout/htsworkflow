@@ -9,13 +9,13 @@ import stat
 import time
 import types
 
-from gaworkflow.pipeline.runfolder import \
+from htsworkflow.pipeline.runfolder import \
    ElementTree, \
    EUROPEAN_STRPTIME, \
    LANES_PER_FLOWCELL, \
    VERSION_RE
-from gaworkflow.util.ethelp import indent, flatten
-from gaworkflow.util.opener import autoopen
+from htsworkflow.util.ethelp import indent, flatten
+from htsworkflow.util.opener import autoopen
 
 class Gerald(object):
     """

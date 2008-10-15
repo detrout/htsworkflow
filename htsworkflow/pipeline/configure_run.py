@@ -5,10 +5,10 @@ import time
 import re
 import os
 
-from gaworkflow.pipeline.retrieve_config import getCombinedOptions, saveConfigFile
-from gaworkflow.pipeline.retrieve_config import FlowCellNotFound, WebError404
-from gaworkflow.pipeline.genome_mapper import DuplicateGenome, getAvailableGenomes, constructMapperDict
-from gaworkflow.pipeline.run_status import GARunStatus
+from htsworkflow.pipeline.retrieve_config import getCombinedOptions, saveConfigFile
+from htsworkflow.pipeline.retrieve_config import FlowCellNotFound, WebError404
+from htsworkflow.pipeline.genome_mapper import DuplicateGenome, getAvailableGenomes, constructMapperDict
+from htsworkflow.pipeline.run_status import GARunStatus
 
 from pyinotify import WatchManager, ThreadedNotifier
 from pyinotify import EventsCodes, ProcessEvent

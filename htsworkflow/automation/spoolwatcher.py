@@ -6,7 +6,7 @@ import sys
 import time
 #import glob
 
-from gaworkflow.util import mount
+from htsworkflow.util import mount
 
 # this uses pyinotify
 import pyinotify
@@ -67,14 +67,14 @@ class SpoolWatcher(rpc.XmlRpcBot):
     # I wonder where I should put the documentation
     #:Parameters:
     #    `watchdir` - which directory tree to monitor for modifications
-    #    `profile` - specify which .gaworkflow profile to use
+    #    `profile` - specify which .htsworkflow profile to use
     #    `write_timeout` - how many seconds to wait for writes to finish to
     #                      the spool
     #    `notify_timeout` - how often to timeout from notify
     
     def __init__(self, section=None, configfile=None):
         #if configfile is None:
-        #    self.configfile = "~/.gaworkflow"
+        #    self.configfile = "~/.htsworkflow"
         super(SpoolWatcher, self).__init__(section, configfile)
         
         self.cfg['watchdir'] = None

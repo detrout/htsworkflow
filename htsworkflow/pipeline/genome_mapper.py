@@ -6,7 +6,7 @@ import re
 
 import logging
 
-from gaworkflow.util.alphanum import alphanum
+from htsworkflow.util.alphanum import alphanum
 
 class DuplicateGenome(Exception): pass
 

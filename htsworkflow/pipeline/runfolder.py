@@ -22,8 +22,8 @@ VERSION_RE = "([0-9\.]+)"
 USER_RE = "([a-zA-Z0-9]+)"
 LANES_PER_FLOWCELL = 8
 
-from gaworkflow.util.alphanum import alphanum
-from gaworkflow.util.ethelp import indent, flatten
+from htsworkflow.util.alphanum import alphanum
+from htsworkflow.util.ethelp import indent, flatten
 
 
 class PipelineRun(object):
@@ -86,9 +86,9 @@ class PipelineRun(object):
     def set_elements(self, tree):
         # this file gets imported by all the others,
         # so we need to hide the imports to avoid a cyclic imports
-        from gaworkflow.pipeline import firecrest
-        from gaworkflow.pipeline import bustard
-        from gaworkflow.pipeline import gerald
+        from htsworkflow.pipeline import firecrest
+        from htsworkflow.pipeline import bustard
+        from htsworkflow.pipeline import gerald
 
         tag = tree.tag.lower()
         if tag != PipelineRun.PIPELINE_RUN.lower():
@@ -142,9 +142,9 @@ def get_runs(runfolder):
     generate two different PipelineRun objects, that differ
     in there gerald component.
     """
-    from gaworkflow.pipeline import firecrest
-    from gaworkflow.pipeline import bustard
-    from gaworkflow.pipeline import gerald
+    from htsworkflow.pipeline import firecrest
+    from htsworkflow.pipeline import bustard
+    from htsworkflow.pipeline import gerald
 
     datadir = os.path.join(runfolder, 'Data')
 

@@ -121,7 +121,7 @@ def make_description(database, flowcell_id, lane):
     """
     compute a bedfile name and description from the fctracker database
     """
-    from gaworkflow.util.fctracker import fctracker
+    from htsworkflow.util.fctracker import fctracker
 
     fc = fctracker(database)
     cells = fc._get_flowcells("where flowcell_id='%s'" % (flowcell_id))

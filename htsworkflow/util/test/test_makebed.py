@@ -2,7 +2,7 @@ import os
 from StringIO import StringIO
 import unittest
 
-from gaworkflow.util import makebed
+from htsworkflow.util import makebed
 
 class testMakeBed(unittest.TestCase):
     def test_multi_1_0_0_limit_1(self):

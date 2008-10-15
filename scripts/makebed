@@ -3,7 +3,7 @@ import optparse
 import sys
 import os
 
-from gaworkflow.util.makebed import make_bed_from_eland_stream, make_bed_from_multi_eland_stream, make_description
+from htsworkflow.util.makebed import make_bed_from_eland_stream, make_bed_from_multi_eland_stream, make_description
 
 def make_parser():
   parser = optparse.OptionParser()

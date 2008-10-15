@@ -3,7 +3,7 @@ import optparse
 import os
 import sys
 
-from gaworkflow.pipeline.gerald import extract_eland_sequence
+from htsworkflow.pipeline.gerald import extract_eland_sequence
 
 def make_parser():
   usage = "usage: %prog [options] infile [outfile]"

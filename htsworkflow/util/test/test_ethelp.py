@@ -6,7 +6,7 @@ try:
 except ImportError, e:
   from elementtree import ElementTree
 
-from gaworkflow.util.ethelp import indent, flatten
+from htsworkflow.util.ethelp import indent, flatten
 
 class testETHelper(unittest.TestCase):
     def setUp(self):

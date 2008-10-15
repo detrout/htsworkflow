@@ -6,7 +6,7 @@ import os
 import time
 import re
 
-from gaworkflow.pipeline.runfolder import \
+from htsworkflow.pipeline.runfolder import \
    ElementTree, \
    VERSION_RE, \
    EUROPEAN_STRPTIME

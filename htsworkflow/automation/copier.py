@@ -123,7 +123,7 @@ class rsync(object):
 class CopierBot(rpc.XmlRpcBot):
     def __init__(self, section=None, configfile=None):
         #if configfile is None:
-        #    configfile = '~/.gaworkflow'
+        #    configfile = '~/.htsworkflow'
             
         super(CopierBot, self).__init__(section, configfile)
         

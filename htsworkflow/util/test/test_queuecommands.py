@@ -4,7 +4,7 @@ import time
 import unittest
 
 
-from gaworkflow.util.queuecommands import QueueCommands
+from htsworkflow.util.queuecommands import QueueCommands
 
 class testQueueCommands(unittest.TestCase):
     def setUp(self):
@@ -26,8 +26,9 @@ class testQueueCommands(unittest.TestCase):
         q.run()
         end = time.time()-start
         # we should only take the length of the longest sleep
-        self.failUnless( end > 1.9 and end < 2.1,
-                         "took %s seconds, exected ~5" % (end,))
+        # pity I had to add a 1 second sleep
+        self.failUnless( end > 2.9 and end < 3.1,
+                         "took %s seconds, exected ~3" % (end,))
 
     def test_limited_run(self):
         """
@@ -42,7 +43,8 @@ class testQueueCommands(unittest.TestCase):
         start = time.time()
         q.run()
         end = time.time()-start
-        self.failUnless( end > 3.9 and end < 4.1,
+        # pity I had to add a 1 second sleep
+        self.failUnless( end > 5.9 and end < 6.1,
                          "took %s seconds, expected ~6" % (end,)) 
 
 def suite():

@@ -31,8 +31,8 @@ import logging
 import optparse
 import sys
 
-from gaworkflow.pipeline import runfolder
-from gaworkflow.pipeline.runfolder import ElementTree
+from htsworkflow.pipeline import runfolder
+from htsworkflow.pipeline.runfolder import ElementTree
         
 def make_parser():
     usage = 'usage: %prog [options] runfolder_root_dir'

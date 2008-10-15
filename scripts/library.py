@@ -7,7 +7,7 @@ installed, so it can run on machines other than the webserver.
 from optparse import OptionParser
 import sys
 
-from gaworkflow.util import fctracker
+from htsworkflow.util import fctracker
 
 def make_parser():
     """

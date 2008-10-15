@@ -1,7 +1,7 @@
 import unittest
 
 from StringIO import StringIO
-from gaworkflow.automation import copier
+from htsworkflow.automation import copier
 
 class testCopier(unittest.TestCase):
     def test_runfolder_validate(self):

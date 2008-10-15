@@ -8,7 +8,7 @@ import optparse
 import sys
 import os
 
-from gaworkflow.util.makebed import make_bed_from_eland_stream, make_description
+from htsworkflow.util.makebed import make_bed_from_eland_stream, make_description
 
 def make_bed_for_gerald(eland_dir, output_dir, prefix, database, flowcell):
     """

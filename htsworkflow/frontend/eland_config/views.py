@@ -2,9 +2,9 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
 
-from gaworkflow.frontend.eland_config import forms
-from gaworkflow.frontend import settings
-from gaworkflow.frontend.fctracker import models
+from htsworkflow.frontend.eland_config import forms
+from htsworkflow.frontend import settings
+from htsworkflow.frontend.fctracker import models
 
 import os
 import glob
