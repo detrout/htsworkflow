@@ -86,9 +86,9 @@ class PipelineRun(object):
     def set_elements(self, tree):
         # this file gets imported by all the others,
         # so we need to hide the imports to avoid a cyclic imports
-        from htsworkflow.pipeline import firecrest
-        from htsworkflow.pipeline import bustard
-        from htsworkflow.pipeline import gerald
+        from htsworkflow.pipelines import firecrest
+        from htsworkflow.pipelines import bustard
+        from htsworkflow.pipelines import gerald
 
         tag = tree.tag.lower()
         if tag != PipelineRun.PIPELINE_RUN.lower():
@@ -142,9 +142,9 @@ def get_runs(runfolder):
     generate two different PipelineRun objects, that differ
     in there gerald component.
     """
-    from htsworkflow.pipeline import firecrest
-    from htsworkflow.pipeline import bustard
-    from htsworkflow.pipeline import gerald
+    from htsworkflow.pipelines import firecrest
+    from htsworkflow.pipelines import bustard
+    from htsworkflow.pipelines import gerald
 
     datadir = os.path.join(runfolder, 'Data')
 

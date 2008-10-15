@@ -8,8 +8,8 @@ import os
 import sys
 import urllib2
 
-CONFIG_SYSTEM = '/etc/ga_frontend/ga_frontend.conf'
-CONFIG_USER = os.path.expanduser('~/.ga_frontend.conf')
+CONFIG_SYSTEM = '/etc/hts_frontend/hts_frontend.conf'
+CONFIG_USER = os.path.expanduser('~/.hts_frontend.conf')
 
 #Disable or enable commandline arg parsing; disabled by default.
 DISABLE_CMDLINE = True
@@ -58,7 +58,7 @@ def constructOptionParser():
   
   parser = OptionParser(formatter=PreformattedDescriptionFormatter())
 
-  parser.set_description('Retrieves eland config file from ga_frontend web frontend.')
+  parser.set_description('Retrieves eland config file from hts_frontend web frontend.')
   
   parser.epilog = """
 Config File:

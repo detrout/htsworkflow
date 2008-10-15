@@ -6,7 +6,7 @@ import os
 import time
 import re
 
-from htsworkflow.pipeline.runfolder import \
+from htsworkflow.pipelines.runfolder import \
    ElementTree, \
    VERSION_RE, \
    EUROPEAN_STRPTIME

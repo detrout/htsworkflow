@@ -6,11 +6,11 @@ import tempfile
 import shutil
 import unittest
 
-from htsworkflow.pipeline import firecrest
-from htsworkflow.pipeline import bustard
-from htsworkflow.pipeline import gerald
-from htsworkflow.pipeline import runfolder
-from htsworkflow.pipeline.runfolder import ElementTree
+from htsworkflow.pipelines import firecrest
+from htsworkflow.pipelines import bustard
+from htsworkflow.pipelines import gerald
+from htsworkflow.pipelines import runfolder
+from htsworkflow.pipelines.runfolder import ElementTree
 
 
 def make_flowcell_id(runfolder_dir, flowcell_id=None):

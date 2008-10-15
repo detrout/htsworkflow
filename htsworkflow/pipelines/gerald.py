@@ -9,7 +9,7 @@ import stat
 import time
 import types
 
-from htsworkflow.pipeline.runfolder import \
+from htsworkflow.pipelines.runfolder import \
    ElementTree, \
    EUROPEAN_STRPTIME, \
    LANES_PER_FLOWCELL, \

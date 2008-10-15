@@ -5,10 +5,10 @@ import time
 import re
 import os
 
-from htsworkflow.pipeline.retrieve_config import getCombinedOptions, saveConfigFile
-from htsworkflow.pipeline.retrieve_config import FlowCellNotFound, WebError404
-from htsworkflow.pipeline.genome_mapper import DuplicateGenome, getAvailableGenomes, constructMapperDict
-from htsworkflow.pipeline.run_status import GARunStatus
+from htsworkflow.pipelines.retrieve_config import getCombinedOptions, saveConfigFile
+from htsworkflow.pipelines.retrieve_config import FlowCellNotFound, WebError404
+from htsworkflow.pipelines.genome_mapper import DuplicateGenome, getAvailableGenomes, constructMapperDict
+from htsworkflow.pipelines.run_status import GARunStatus
 
 from pyinotify import WatchManager, ThreadedNotifier
 from pyinotify import EventsCodes, ProcessEvent

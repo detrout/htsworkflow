@@ -1,7 +1,7 @@
 import unittest
 
 from StringIO import StringIO
-from htsworkflow.pipeline import genome_mapper
+from htsworkflow.pipelines import genome_mapper
 
 class testGenomeMapper(unittest.TestCase):
     def test_construct_mapper(self):
