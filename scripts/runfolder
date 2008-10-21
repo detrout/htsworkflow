@@ -31,8 +31,8 @@ import logging
 import optparse
 import sys
 
-from htsworkflow.pipeline import runfolder
-from htsworkflow.pipeline.runfolder import ElementTree
+from htsworkflow.pipelines import runfolder
+from htsworkflow.pipelines.runfolder import ElementTree
         
 def make_parser():
     usage = 'usage: %prog [options] runfolder_root_dir'

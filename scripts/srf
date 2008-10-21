@@ -52,7 +52,7 @@ def pathname_to_run_name(base):
 
 def find_bustard_dir(pathname):
   # fixme: for don't repeat yourself this should some how be related 
-  # fixme: to pipeline.runfolder
+  # fixme: to pipelines.runfolder
 
   datadir = os.path.join(pathname, 'Data')
   logging.info("searching in %s" % (datadir,))

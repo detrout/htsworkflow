@@ -2,9 +2,9 @@
 import os
 import sys
 import re
-from htsworkflow.pipeline.configure_run import *
-from htsworkflow.pipeline import retrieve_config as _rc
-from htsworkflow.pipeline.run_status import startCmdLineStatusMonitor
+from htsworkflow.pipelines.configure_run import *
+from htsworkflow.pipelines import retrieve_config as _rc
+from htsworkflow.pipelines.run_status import startCmdLineStatusMonitor
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)-8s %(message)s',
