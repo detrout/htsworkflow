@@ -11,6 +11,10 @@ urlpatterns = patterns('',
     (r'^eland_config/', include('htsworkflow.frontend.eland_config.urls')),
     # Admin:
      (r'^admin/', include('django.contrib.admin.urls')),
-    # Databrowser:
-     (r'^databrowse/(.*)', databrowse.site.root),
+    # ExpTrack:
+     (r'^experiments/', include('htswfrontend.experiments.et_urls')),
+    # AnalysTrack:
+     (r'^analysis/', include('htswfrontend.analysis.an_urls')),
+    # Report Views:
+    # (r'^reports/', include('gaworkflow.frontend....urls')),
 )

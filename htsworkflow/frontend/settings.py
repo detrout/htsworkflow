@@ -1,18 +1,79 @@
+"""
+Generate settings for the Django Application.
+
+To make it easier to customize the application the settings can be 
+defined in a configuration file read by ConfigParser.
+
+The options understood by this module are (with their defaults):
+
+  [frontend]
+  email_host=localhost
+  email_port=25
+  database_engine=sqlite3
+  database_name=/path/to/db
+
+  [admins]
+  #name1=email1
+
+  [allowed_hosts]
+  #name1=ip
+  localhost=127.0.0.1
+  
+  [allowed_analysis_hosts]
+  #name1=ip
+  localhost=127.0.0.1
+
+"""
+import ConfigParser
 import os
+
+def options_to_list(dest, section_name):
+  """
+  Load a options from section_name and store in a dictionary
+  """
+  if options.has_section(section_name):
+    for name in options.options(section_name):
+      dest.append( options.get(section_name, name) )
+      
+def options_to_dict(dest, section_name):
+  """
+  Load a options from section_name and store in a dictionary
+  """
+  if options.has_section(section_name):
+    for name in options.options(section_name):
+      dest[name] = options.get(section_name, name)
+
+# define your defaults here
+options = ConfigParser.SafeConfigParser(
+           { 'email_host': 'localhost',
+             'email_port': '25', 
+             'database_engine': 'sqlite3',
+             'database_name': 
+               os.path.abspath('/htsworkflow/htswfrontend/dev_fctracker.db'),
+             'time_zone': 'America/Los_Angeles',
+           })
+
+options.read([os.path.expanduser("~/.htsworkflow.ini"),
+              '/etc/htsworkflow.ini',])
 
 # Django settings for elandifier project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
-)
+ADMINS = []
+options_to_list(ADMINS, 'admins')
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_NAME = os.path.abspath('../../fctracker.db')             # Or path to database file if using sqlite3.
+EMAIL_HOST = options.get('frontend', 'email_host')
+EMAIL_PORT = int(options.get('frontend', 'email_port'))
+
+# 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
+DATABASE_ENGINE = options.get('frontend', 'database_engine')
+
+# Or path to database file if using sqlite3.
+DATABASE_NAME = options.get('frontend', 'database_name' )
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -23,7 +84,7 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 # although not all variations may be possible on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = options.get('frontend', 'time_zone')
 
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
@@ -72,7 +133,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.abspath("../../templates"),
+    os.path.abspath("../templates"),
 )
 
 INSTALLED_APPS = (
@@ -83,12 +144,21 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'htsworkflow.frontend.eland_config',
     'htsworkflow.frontend.fctracker',
+    # modules from htsworkflow branch
+    #'htswfrontend.exp_track',
+    #'htswfrontend.analys_track', 
+    #'htswfrontend.htsw_reports',
     'django.contrib.databrowse',
 )
 
 # Project specific settings
-UPLOADTO_HOME = os.path.abspath('../../uploads')
-UPLOADTO_CONFIG_FILE = os.path.join(UPLOADTO_HOME, 'eland_config')
-UPLOADTO_ELAND_RESULT_PACKS = os.path.join(UPLOADTO_HOME, 'eland_results')
-UPLOADTO_BED_PACKS = os.path.join(UPLOADTO_HOME, 'bed_packs')
 
+ALLOWED_IPS={'localhost': '127.0.0.1'}
+options_to_dict(ALLOWED_IPS, 'allowed_hosts')
+
+ALLOWED_ANALYS_IPS = {'localhost': '127.0.0.1'}
+options_to_dict(ALLOWED_ANALYS_IPS, 'allowed_analysis_hosts')
+#UPLOADTO_HOME = os.path.abspath('../../uploads')
+#UPLOADTO_CONFIG_FILE = os.path.join(UPLOADTO_HOME, 'eland_config')
+#UPLOADTO_ELAND_RESULT_PACKS = os.path.join(UPLOADTO_HOME, 'eland_results')
+#UPLOADTO_BED_PACKS = os.path.join(UPLOADTO_HOME, 'bed_packs')
