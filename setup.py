@@ -6,9 +6,9 @@ setup(
   author="Diane Trout & Brandon King",
   author_email="diane@caltech.edu",
   packages=["htsworkflow", 
-            "htsworkflow.pipeline",
+            "htsworkflow.pipelines",
             "htsworkflow.frontend",
-            "htsworkflow.frontend.fctracker",
+            "htsworkflow.frontend.samples",
             "htsworkflow.frontend.eland_config"           
              ],
   scripts=[
@@ -17,10 +17,11 @@ setup(
         'scripts/gerald2bed.py',
         'scripts/library.py',
         'scripts/makebed',
-        'scripts/spoolwatcher', 
         'scripts/rerun_eland.py',
         'scripts/retrieve_config',
         'scripts/runfolder',
         'scripts/runner',
+        'scripts/spoolwatcher', 
+        'scripts/srf',
         ],
 )
