@@ -12,140 +12,8 @@ from htsworkflow.pipelines import gerald
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.runfolder import ElementTree
 
+from htsworkflow.pipelines.test.simulate_runfolder import *
 
-def make_flowcell_id(runfolder_dir, flowcell_id=None):
-    if flowcell_id is None:
-        flowcell_id = '207BTAAXY'
-
-    config = """<?xml version="1.0"?>
-<FlowcellId>
-  <Text>%s</Text>
-</FlowcellId>""" % (flowcell_id,)
-    config_dir = os.path.join(runfolder_dir, 'Config')
-    
-    if not os.path.exists(config_dir):
-        os.mkdir(config_dir)
-    pathname = os.path.join(config_dir, 'FlowcellId.xml')
-    f = open(pathname,'w')
-    f.write(config)
-    f.close()
-
-def make_matrix(matrix_dir):
-    contents = """# Auto-generated frequency response matrix
-> A
-> C
-> G
-> T
-0.77 0.15 -0.04 -0.04 
-0.76 1.02 -0.05 -0.06 
--0.10 -0.10 1.17 -0.03 
--0.13 -0.12 0.80 1.27 
-"""
-    s_matrix = os.path.join(matrix_dir, 's_matrix.txt')
-    f = open(s_matrix, 'w')
-    f.write(contents)
-    f.close()
-    
-def make_phasing_params(bustard_dir):
-    for lane in range(1,9):
-        pathname = os.path.join(bustard_dir, 'params%d.xml' % (lane))
-        f = open(pathname, 'w')
-        f.write("""<Parameters>
-  <Phasing>0.009900</Phasing>
-  <Prephasing>0.003500</Prephasing>
-</Parameters>
-""")
-        f.close()
-
-def make_gerald_config(gerald_dir):
-    config_xml = """<RunParameters>
-<ChipWideRunParameters>
-  <ANALYSIS>default</ANALYSIS>
-  <BAD_LANES></BAD_LANES>
-  <BAD_TILES></BAD_TILES>
-  <CONTAM_DIR></CONTAM_DIR>
-  <CONTAM_FILE></CONTAM_FILE>
-  <ELAND_GENOME>Need_to_specify_ELAND_genome_directory</ELAND_GENOME>
-  <ELAND_MULTIPLE_INSTANCES>8</ELAND_MULTIPLE_INSTANCES>
-  <ELAND_REPEAT></ELAND_REPEAT>
-  <EMAIL_DOMAIN>domain.com</EMAIL_DOMAIN>
-  <EMAIL_LIST>diane</EMAIL_LIST>
-  <EMAIL_SERVER>localhost:25</EMAIL_SERVER>
-  <EXPT_DIR>/home/diane/gec/080416_HWI-EAS229_0024_207BTAAXX/Data/C1-33_Firecrest1.8.28_19-04-2008_diane/Bustard1.8.28_19-04-2008_diane</EXPT_DIR>
-  <EXPT_DIR_ROOT>/home/diane/gec</EXPT_DIR_ROOT>
-  <FORCE>1</FORCE>
-  <GENOME_DIR>/home/diane/proj/SolexaPipeline-0.2.2.6/Goat/../Gerald/../../Genomes</GENOME_DIR>
-  <GENOME_FILE>Need_to_specify_genome_file_name</GENOME_FILE>
-  <HAMSTER_FLAG>genome</HAMSTER_FLAG>
-  <OUT_DIR>/home/diane/gec/080416_HWI-EAS229_0024_207BTAAXX/Data/C1-33_Firecrest1.8.28_19-04-2008_diane/Bustard1.8.28_19-04-2008_diane/GERALD_19-04-2008_diane</OUT_DIR>
-  <POST_RUN_COMMAND></POST_RUN_COMMAND>
-  <PRB_FILE_SUFFIX>_prb.txt</PRB_FILE_SUFFIX>
-  <PURE_BASES>12</PURE_BASES>
-  <QF_PARAMS>'((CHASTITY&gt;=0.6))'</QF_PARAMS>
-  <QHG_FILE_SUFFIX>_qhg.txt</QHG_FILE_SUFFIX>
-  <QUALITY_FORMAT>--symbolic</QUALITY_FORMAT>
-  <READ_LENGTH>32</READ_LENGTH>
-  <SEQUENCE_FORMAT>--scarf</SEQUENCE_FORMAT>
-  <SEQ_FILE_SUFFIX>_seq.txt</SEQ_FILE_SUFFIX>
-  <SIG_FILE_SUFFIX_DEPHASED>_sig2.txt</SIG_FILE_SUFFIX_DEPHASED>
-  <SIG_FILE_SUFFIX_NOT_DEPHASED>_sig.txt</SIG_FILE_SUFFIX_NOT_DEPHASED>
-  <SOFTWARE_VERSION>@(#) Id: GERALD.pl,v 1.68.2.2 2007/06/13 11:08:49 km Exp</SOFTWARE_VERSION>
-  <TILE_REGEX>s_[1-8]_[0-9][0-9][0-9][0-9]</TILE_REGEX>
-  <TILE_ROOT>s</TILE_ROOT>
-  <TIME_STAMP>Sat Apr 19 19:08:30 2008</TIME_STAMP>
-  <TOOLS_DIR>/home/diane/proj/SolexaPipeline-0.2.2.6/Goat/../Gerald</TOOLS_DIR>
-  <USE_BASES>all</USE_BASES>
-  <WEB_DIR_ROOT>http://host.domain.com/yourshare/</WEB_DIR_ROOT>
-</ChipWideRunParameters>
-<LaneSpecificRunParameters>
-  <ANALYSIS>
-    <s_1>eland</s_1>
-    <s_2>eland</s_2>
-    <s_3>eland</s_3>
-    <s_4>eland</s_4>
-    <s_5>eland</s_5>
-    <s_6>eland</s_6>
-    <s_7>eland</s_7>
-    <s_8>eland</s_8>
-  </ANALYSIS>
-  <ELAND_GENOME>
-    <s_1>/g/dm3</s_1>
-    <s_2>/g/equcab1</s_2>
-    <s_3>/g/equcab1</s_3>
-    <s_4>/g/canfam2</s_4>
-    <s_5>/g/hg18</s_5>
-    <s_6>/g/hg18</s_6>
-    <s_7>/g/hg18</s_7>
-    <s_8>/g/hg18</s_8>
-  </ELAND_GENOME>
-  <READ_LENGTH>
-    <s_1>32</s_1>
-    <s_2>32</s_2>
-    <s_3>32</s_3>
-    <s_4>32</s_4>
-    <s_5>32</s_5>
-    <s_6>32</s_6>
-    <s_7>32</s_7>
-    <s_8>32</s_8>
-  </READ_LENGTH>
-  <USE_BASES>
-    <s_1>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_1>
-    <s_2>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_2>
-    <s_3>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_3>
-    <s_4>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_4>
-    <s_5>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_5>
-    <s_6>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_6>
-    <s_7>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_7>
-    <s_8>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_8>
-  </USE_BASES>
-</LaneSpecificRunParameters>
-</RunParameters>
-"""
-    pathname = os.path.join(gerald_dir, 'config.xml')
-    f = open(pathname,'w')
-    f.write(config_xml)
-    f.close()
-    
 
 def make_summary_htm(gerald_dir):
     summary_htm = """<!--RUN_TIME Mon Apr 21 11:52:25 2008 -->
@@ -588,7 +456,7 @@ class RunfolderTests(unittest.TestCase):
 
         r2 = runfolder.PipelineRun(xml=xml)
         self.failUnlessEqual(r1.name, r2.name)
-        self.failIfEqual(r2.firecrest, None)
+        self.failIfEqual(r2.image_analysis, None)
         self.failIfEqual(r2.bustard, None)
         self.failIfEqual(r2.gerald, None)
         

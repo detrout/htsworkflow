@@ -33,7 +33,7 @@ class Gerald(object):
         def __init__(self, gerald, key):
             self._gerald = gerald
             self._key = key
-        
+
         def __get_attribute(self, xml_tag):
             subtree = self._gerald.tree.find('LaneSpecificRunParameters')
             container = subtree.find(xml_tag)
@@ -81,9 +81,9 @@ class Gerald(object):
             if self._keys is None:
                 tree = self._gerald.tree
                 analysis = tree.find('LaneSpecificRunParameters/ANALYSIS')
-                # according to the pipeline specs I think their fields 
+                # according to the pipeline specs I think their fields
                 # are sampleName_laneID, with sampleName defaulting to s
-                # since laneIDs are constant lets just try using 
+                # since laneIDs are constant lets just try using
                 # those consistently.
                 self._keys = [ x.tag.split('_')[1] for x in analysis]
             return self._keys
@@ -138,7 +138,7 @@ class Gerald(object):
         if self.tree is None or self.summary is None:
             return None
 
-        gerald = ElementTree.Element(Gerald.GERALD, 
+        gerald = ElementTree.Element(Gerald.GERALD,
                                      {'version': unicode(Gerald.XML_VERSION)})
         gerald.append(self.tree)
         gerald.append(self.summary.get_elements())
@@ -162,16 +162,18 @@ class Gerald(object):
                 self.eland_results = ELAND(xml=element)
             else:
                 logging.warn("Unrecognized tag %s" % (element.tag,))
-        
+
 
 def gerald(pathname):
     g = Gerald()
     g.pathname = pathname
     path, name = os.path.split(pathname)
+    logging.info("Parsing gerald config.xml")
     config_pathname = os.path.join(pathname, 'config.xml')
     g.tree = ElementTree.parse(config_pathname).getroot()
 
     # parse Summary.htm file
+    logging.info("Parsing Summary.htm")
     summary_pathname = os.path.join(pathname, 'Summary.htm')
     g.summary = Summary(summary_pathname)
     # parse eland files
@@ -213,7 +215,7 @@ def parse_mean_range_element(element):
     """
     Grab mean/deviation out of element
     """
-    return (tonumber(element.attrib['mean']), 
+    return (tonumber(element.attrib['mean']),
             tonumber(element.attrib['deviation']))
 
 def parse_summary_element(element):
@@ -238,7 +240,7 @@ class Summary(object):
         Mostly for the cluster number
         """
         LANE_RESULT_SUMMARY = 'LaneResultSummary'
-        TAGS = { 
+        TAGS = {
           'LaneYield': 'lane_yield',
           'Cluster': 'cluster', # Raw
           'ClusterPF': 'cluster_pass_filter',
@@ -249,7 +251,7 @@ class Summary(object):
           'AverageAlignmentScore': 'average_alignment_score',
           'PercentErrorRate': 'percent_error_rate'
         }
-                 
+
         def __init__(self, html=None, xml=None):
             self.lane = None
             self.lane_yield = None
@@ -299,7 +301,7 @@ class Summary(object):
 
         def get_elements(self):
             lane_result = ElementTree.Element(
-                            Summary.LaneResultSummary.LANE_RESULT_SUMMARY, 
+                            Summary.LaneResultSummary.LANE_RESULT_SUMMARY,
                             {'lane': self.lane})
             for tag, variable_name in Summary.LaneResultSummary.TAGS.items():
                 value = getattr(self, variable_name)
@@ -326,7 +328,7 @@ class Summary(object):
             for element in list(tree):
                 try:
                     variable_name = tags[element.tag]
-                    setattr(self, variable_name, 
+                    setattr(self, variable_name,
                             parse_summary_element(element))
                 except KeyError, e:
                     logging.warn('Unrecognized tag %s' % (element.tag,))
@@ -359,10 +361,10 @@ class Summary(object):
         flatten the children of a <tr>...</tr>
         """
         return [flatten(x) for x in row.getchildren() ]
-    
+
     def _parse_table(self, table):
         """
-        assumes the first line is the header of a table, 
+        assumes the first line is the header of a table,
         and that the remaining rows are data
         """
         rows = table.getchildren()
@@ -370,12 +372,12 @@ class Summary(object):
         for r in rows:
             data.append(self._flattened_row(r))
         return data
-    
+
     def _extract_named_tables(self, pathname):
         """
         extract all the 'named' tables from a Summary.htm file
         and return as a dictionary
-        
+
         Named tables are <h2>...</h2><table>...</table> pairs
         The contents of the h2 tag is considered to the name
         of the table.
@@ -420,7 +422,7 @@ class Summary(object):
             self.lane_results[lrs.lane] = lrs
 
     def get_elements(self):
-        summary = ElementTree.Element(Summary.SUMMARY, 
+        summary = ElementTree.Element(Summary.SUMMARY,
                                       {'version': unicode(Summary.XML_VERSION)})
         for lane in self.lane_results.values():
             summary.append(lane.get_elements())
@@ -446,6 +448,7 @@ class Summary(object):
 
 def build_genome_fasta_map(genome_dir):
     # build fasta to fasta file map
+    logging.info("Building genome map")
     genome = genome_dir.split(os.path.sep)[-1]
     fasta_map = {}
     for vld_file in glob(os.path.join(genome_dir, '*.vld')):
@@ -460,7 +463,7 @@ def build_genome_fasta_map(genome_dir):
         else:
             fasta_map[name] = os.path.join(genome, name)
     return fasta_map
-    
+
 class ElandLane(object):
     """
     Process an eland result file
@@ -487,7 +490,7 @@ class ElandLane(object):
         if genome_map is None:
             genome_map = {}
         self.genome_map = genome_map
-        
+
         if xml is not None:
             self.set_elements(xml)
 
@@ -502,10 +505,11 @@ class ElandLane(object):
         if os.stat(self.pathname)[stat.ST_SIZE] == 0:
             raise RuntimeError("Eland isn't done, try again later.")
 
+        logging.info("summarizing results for %s" % (self.pathname))
         reads = 0
         mapped_reads = {}
 
-        match_codes = {'NM':0, 'QC':0, 'RM':0, 
+        match_codes = {'NM':0, 'QC':0, 'RM':0,
                        'U0':0, 'U1':0, 'U2':0,
                        'R0':0, 'R1':0, 'R2':0,
                       }
@@ -566,8 +570,8 @@ class ElandLane(object):
     match_codes = property(_get_match_codes)
 
     def get_elements(self):
-        lane = ElementTree.Element(ElandLane.LANE, 
-                                   {'version': 
+        lane = ElementTree.Element(ElandLane.LANE,
+                                   {'version':
                                     unicode(ElandLane.XML_VERSION)})
         sample_tag = ElementTree.SubElement(lane, ElandLane.SAMPLE_NAME)
         sample_tag.text = self.sample_name
@@ -576,17 +580,17 @@ class ElandLane(object):
         genome_map = ElementTree.SubElement(lane, ElandLane.GENOME_MAP)
         for k, v in self.genome_map.items():
             item = ElementTree.SubElement(
-                genome_map, ElandLane.GENOME_ITEM, 
+                genome_map, ElandLane.GENOME_ITEM,
                 {'name':k, 'value':unicode(v)})
         mapped_reads = ElementTree.SubElement(lane, ElandLane.MAPPED_READS)
         for k, v in self.mapped_reads.items():
             item = ElementTree.SubElement(
-                mapped_reads, ElandLane.MAPPED_ITEM, 
+                mapped_reads, ElandLane.MAPPED_ITEM,
                 {'name':k, 'value':unicode(v)})
         match_codes = ElementTree.SubElement(lane, ElandLane.MATCH_CODES)
         for k, v in self.match_codes.items():
             item = ElementTree.SubElement(
-                match_codes, ElandLane.MATCH_ITEM, 
+                match_codes, ElandLane.MATCH_ITEM,
                 {'name':k, 'value':unicode(v)})
         reads = ElementTree.SubElement(lane, ElandLane.READS)
         reads.text = unicode(self.reads)
@@ -600,7 +604,7 @@ class ElandLane(object):
         # reset dictionaries
         self._mapped_reads = {}
         self._match_codes = {}
-        
+
         for element in tree:
             tag = element.tag.lower()
             if tag == ElandLane.SAMPLE_NAME.lower():
@@ -653,7 +657,7 @@ class ELAND(object):
     def __init__(self, xml=None):
         # we need information from the gerald config.xml
         self.results = {}
-        
+
         if xml is not None:
             self.set_elements(xml)
 
@@ -662,7 +666,7 @@ class ELAND(object):
 
     def keys(self):
         return self.results.keys()
-    
+
     def values(self):
         return self.results.values()
 
@@ -673,7 +677,7 @@ class ELAND(object):
         return self.results[key]
 
     def get_elements(self):
-        root = ElementTree.Element(ELAND.ELAND, 
+        root = ElementTree.Element(ELAND.ELAND,
                                    {'version': unicode(ELAND.XML_VERSION)})
         for lane_id, lane in self.results.items():
             eland_lane = lane.get_elements()
@@ -703,6 +707,7 @@ def eland(basedir, gerald=None, genome_maps=None):
         # but I needed to persist the sample_name/lane_id for
         # runfolder summary_report
         path, name = os.path.split(pathname)
+        logging.info("Adding eland file %s" %(name,))
         split_name = name.split('_')
         lane_id = split_name[1]
 
