@@ -13,7 +13,7 @@ class testQueueCommands(unittest.TestCase):
 
        
 
-    def test_unlimited_run(self):
+    def test_unlimited_run_slow(self):
         """
         Run everything at once
         """
@@ -30,7 +30,7 @@ class testQueueCommands(unittest.TestCase):
         self.failUnless( end > 2.9 and end < 3.1,
                          "took %s seconds, exected ~3" % (end,))
 
-    def test_limited_run(self):
+    def test_limited_run_slow(self):
         """
         Run a limited number of jobs
         """
