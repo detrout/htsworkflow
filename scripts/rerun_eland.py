@@ -7,6 +7,7 @@ import subprocess
 import sys
 
 from htsworkflow.pipelines import gerald
+from htsworkflow.pipelines.eland import extract_eland_sequence
 from htsworkflow.pipelines import runfolder
 
 def make_query_filename(eland_obj, output_dir):
@@ -40,7 +41,7 @@ def extract_sequence(inpathname, query_pathname, length, dry_run=False):
         try:
             instream = open(inpathname, 'r')
             outstream = open(query_pathname, 'w')
-            gerald.extract_eland_sequence(instream, outstream, 0, length)
+            extract_eland_sequence(instream, outstream, 0, length)
         finally:
             outstream.close()
             instream.close()
