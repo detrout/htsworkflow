@@ -45,7 +45,7 @@ def make_runfolder(obj=None):
     os.mkdir(gerald_dir)
     make_gerald_config(gerald_dir)
     make_summary100_htm(gerald_dir)
-    make_eland_results(gerald_dir)
+    make_eland_multi(gerald_dir)
 
     if obj is not None:
         obj.temp_dir = temp_dir
@@ -140,6 +140,12 @@ class RunfolderTests(unittest.TestCase):
             self.failUnlessEqual(cur_lane.read_length, '32')
             self.failUnlessEqual(cur_lane.use_bases, 'Y'*32)
 
+        # I want to be able to use a simple iterator
+        for l in g.lanes.values():
+          self.failUnlessEqual(l.analysis, 'eland')
+          self.failUnlessEqual(l.read_length, '32')
+          self.failUnlessEqual(l.use_bases, 'Y'*32)
+
         # test data extracted from summary file
         clusters = [None,
                     (96483, 9074), (133738, 7938),
@@ -198,11 +204,14 @@ class RunfolderTests(unittest.TestCase):
 
 
     def test_eland(self):
-        dm3_map = { 'chrUextra.fa' : 'dm3/chrUextra.fa',
-                    'chr2L.fa': 'dm3/chr2L.fa',
-                    'Lambda.fa': 'Lambda.fa'}
-        genome_maps = { '1':dm3_map, '2':dm3_map, '3':dm3_map, '4':dm3_map,
-                        '5':dm3_map, '6':dm3_map, '7':dm3_map, '8':dm3_map }
+        hg_map = {'Lambda.fa': 'Lambda.fa'}
+        for i in range(1,22):
+          short_name = 'chr%d.fa' % (i,)
+          long_name = 'hg18/chr%d.fa' % (i,)
+          hg_map[short_name] = long_name
+
+        genome_maps = { '1':hg_map, '2':hg_map, '3':hg_map, '4':hg_map,
+                        '5':hg_map, '6':hg_map, '7':hg_map, '8':hg_map }
         eland = gerald.eland(self.gerald_dir, genome_maps=genome_maps)
 
         for i in range(1,9):
@@ -210,11 +219,11 @@ class RunfolderTests(unittest.TestCase):
             self.failUnlessEqual(lane.reads, 4)
             self.failUnlessEqual(lane.sample_name, "s")
             self.failUnlessEqual(lane.lane_id, unicode(i))
-            self.failUnlessEqual(len(lane.mapped_reads), 3)
-            self.failUnlessEqual(lane.mapped_reads['Lambda.fa'], 1)
-            self.failUnlessEqual(lane.mapped_reads['dm3/chr2L.fa'], 1)
-            self.failUnlessEqual(lane.match_codes['U1'], 2)
+            self.failUnlessEqual(len(lane.mapped_reads), 15)
+            self.failUnlessEqual(lane.mapped_reads['hg18/chr5.fa'], 4)
+            self.failUnlessEqual(lane.match_codes['U1'], 10)
             self.failUnlessEqual(lane.match_codes['NM'], 1)
+            self.failUnlessEqual(lane.match_codes['QC'], 0)
 
         xml = eland.get_elements()
         # just make sure that element tree can serialize the tree
@@ -228,7 +237,7 @@ class RunfolderTests(unittest.TestCase):
             self.failUnlessEqual(l1.sample_name, l2.sample_name)
             self.failUnlessEqual(l1.lane_id, l2.lane_id)
             self.failUnlessEqual(len(l1.mapped_reads), len(l2.mapped_reads))
-            self.failUnlessEqual(len(l1.mapped_reads), 3)
+            self.failUnlessEqual(len(l1.mapped_reads), 15)
             for k in l1.mapped_reads.keys():
                 self.failUnlessEqual(l1.mapped_reads[k],
                                      l2.mapped_reads[k])
@@ -244,13 +253,15 @@ class RunfolderTests(unittest.TestCase):
 
         # do we get the flowcell id from the filename?
         self.failUnlessEqual(len(runs), 1)
-        self.failUnlessEqual(runs[0].name, 'run_207BTAAXX_2008-10-30.xml')
+        name = 'run_207BTAAXX_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
+        self.failUnlessEqual(runs[0].name, name)
 
         # do we get the flowcell id from the FlowcellId.xml file
         make_flowcell_id(self.runfolder_dir, '207BTAAXY')
         runs = runfolder.get_runs(self.runfolder_dir)
         self.failUnlessEqual(len(runs), 1)
-        self.failUnlessEqual(runs[0].name, 'run_207BTAAXY_2008-10-30.xml')
+        name = 'run_207BTAAXY_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
+        self.failUnlessEqual(runs[0].name, name)
 
         r1 = runs[0]
         xml = r1.get_elements()

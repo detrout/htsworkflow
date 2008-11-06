@@ -258,6 +258,14 @@ def summary_report(runs):
             report.append('')
         return os.linesep.join(report)
 
+def is_compressed(filename):
+    if os.path.splitext(filename)[1] == ".gz":
+        return True
+    elif os.path.splitext(filename)[1] == '.bz2':
+        return True
+    else:
+        return False
+
 def extract_results(runs, output_base_dir=None):
     if output_base_dir is None:
         output_base_dir = os.getcwd()
@@ -315,14 +323,19 @@ def extract_results(runs, output_base_dir=None):
       for eland_lane in g.eland_results.values():
           source_name = eland_lane.pathname
           path, name = os.path.split(eland_lane.pathname)
-          dest_name = os.path.join(cycle_dir, name+'.bz2')
-
-          args = ['bzip2', '-9', '-c', source_name]
-          logging.info('Running: %s' % ( " ".join(args) ))
-          bzip_dest = open(dest_name, 'w')
-          bzip = subprocess.Popen(args, stdout=bzip_dest)
-          logging.info('Saving to %s' % (dest_name, ))
-          bzip.wait()
+          dest_name = os.path.join(cycle_dir, name)
+          if is_compressed(name):
+            logging.info('Already compressed, Saving to %s' % (dest_name, ))
+            shutil.copy(source_name, dest_name)
+          else:
+            # not compressed
+            dest_name += '.bz2'
+            args = ['bzip2', '-9', '-c', source_name]
+            logging.info('Running: %s' % ( " ".join(args) ))
+            bzip_dest = open(dest_name, 'w')
+            bzip = subprocess.Popen(args, stdout=bzip_dest)
+            logging.info('Saving to %s' % (dest_name, ))
+            bzip.wait()
 
 def clean_runs(runs):
     """

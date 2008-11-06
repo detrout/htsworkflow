@@ -5,6 +5,7 @@ Analyze ELAND files
 from glob import glob
 import logging
 import os
+import re
 import stat
 
 from htsworkflow.pipelines.runfolder import ElementTree
@@ -27,7 +28,12 @@ class ElandLane(object):
     MATCH_ITEM = 'Code'
     READS = 'Reads'
 
-    def __init__(self, pathname=None, genome_map=None, xml=None):
+    ELAND_SINGLE = 0
+    ELAND_MULTI = 1
+    ELAND_EXTENDED = 2
+    ELAND_EXPORT = 3
+
+    def __init__(self, pathname=None, genome_map=None, eland_type=None, xml=None):
         self.pathname = pathname
         self._sample_name = None
         self._lane_id = None
@@ -37,9 +43,25 @@ class ElandLane(object):
         if genome_map is None:
             genome_map = {}
         self.genome_map = genome_map
+        self.eland_type = None
 
         if xml is not None:
             self.set_elements(xml)
+
+    def _guess_eland_type(self, pathname):
+        if self.eland_type is None:
+          # attempt autodetect eland file type
+          pathn, name = os.path.split(pathname)
+          if re.search('result', name):
+            self.eland_type = ElandLane.ELAND_SINGLE
+          elif re.search('multi', name):
+            self.eland_type = ElandLane.ELAND_MULTI
+          elif re.search('extended', name):
+            self.eland_type = ElandLane.ELAND_EXTENDED
+          elif re.search('export', name):
+            self.eland_type = ElandLane.ELAND_EXPORT
+          else:
+            self.eland_type = ElandLane.ELAND_SINGLE
 
     def _update(self):
         """
@@ -48,11 +70,23 @@ class ElandLane(object):
         # can't do anything if we don't have a file to process
         if self.pathname is None:
             return
+        self._guess_eland_type(self.pathname)
 
         if os.stat(self.pathname)[stat.ST_SIZE] == 0:
             raise RuntimeError("Eland isn't done, try again later.")
 
         logging.info("summarizing results for %s" % (self.pathname))
+
+        if self.eland_type == ElandLane.ELAND_SINGLE:
+          result = self._update_eland_result(self.pathname)
+        elif self.eland_type == ElandLane.ELAND_MULTI or \
+             self.eland_type == ElandLane.ELAND_EXTENDED:
+          result = self._update_eland_multi(self.pathname)
+        else:
+          raise NotImplementedError("Only support single/multi/extended eland files")
+        self._match_codes, self._mapped_reads, self._reads = result
+
+    def _update_eland_result(self, pathname):
         reads = 0
         mapped_reads = {}
 
@@ -60,7 +94,7 @@ class ElandLane(object):
                        'U0':0, 'U1':0, 'U2':0,
                        'R0':0, 'R1':0, 'R2':0,
                       }
-        for line in autoopen(self.pathname,'r'):
+        for line in autoopen(pathname,'r'):
             reads += 1
             fields = line.split()
             # code = fields[2]
@@ -72,9 +106,58 @@ class ElandLane(object):
                 continue
             fasta = self.genome_map.get(fields[6], fields[6])
             mapped_reads[fasta] = mapped_reads.setdefault(fasta, 0) + 1
-        self._match_codes = match_codes
-        self._mapped_reads = mapped_reads
-        self._reads = reads
+        return match_codes, mapped_reads, reads
+
+    def _update_eland_multi(self, pathname):
+        reads = 0
+        mapped_reads = {}
+
+        match_codes = {'NM':0, 'QC':0, 'RM':0,
+                       'U0':0, 'U1':0, 'U2':0,
+                       'R0':0, 'R1':0, 'R2':0,
+                      }
+        match_counts_re = re.compile("([\d]+):([\d]+):([\d]+)")
+        for line in autoopen(pathname,'r'):
+            reads += 1
+            fields = line.split()
+            # fields[2] = QC/NM/or number of matches
+            groups = match_counts_re.match(fields[2])
+            if groups is None:
+                match_codes[fields[2]] += 1
+            else:
+                # when there are too many hit, eland writes a - where
+                # it would have put the list of hits
+                if fields[3] == '-':
+                  continue
+                zero_mismatches = int(groups.group(1))
+                if zero_mismatches == 1:
+                  match_codes['U0'] += 1
+                elif zero_mismatches < 255:
+                  match_codes['R0'] += zero_mismatches
+
+                one_mismatches = int(groups.group(2))
+                if one_mismatches == 1:
+                  match_codes['U1'] += 1
+                elif one_mismatches < 255:
+                  match_codes['R1'] += one_mismatches
+
+                two_mismatches = int(groups.group(3))
+                if two_mismatches == 1:
+                  match_codes['U2'] += 1
+                elif two_mismatches < 255:
+                  match_codes['R2'] += two_mismatches
+
+                chromo = None
+                for match in fields[3].split(','):
+                  match_fragment = match.split(':')
+                  if len(match_fragment) == 2:
+                      chromo = match_fragment[0]
+                      pos = match_fragment[1]
+
+                  fasta = self.genome_map.get(chromo, chromo)
+                  assert fasta is not None
+                  mapped_reads[fasta] = mapped_reads.setdefault(fasta, 0) + 1
+        return match_codes, mapped_reads, reads
 
     def _update_name(self):
         # extract the sample name
@@ -227,6 +310,14 @@ class ELAND(object):
             lane = ElandLane(xml=element)
             self.results[lane_id] = lane
 
+def check_for_eland_file(basedir, lane_id, pattern):
+   basename = pattern % (lane_id,)
+   pathname = os.path.join(basedir, basename)
+   if os.path.exists(pathname):
+       return pathname
+   else:
+       return None
+
 def eland(basedir, gerald=None, genome_maps=None):
     e = ELAND()
 
@@ -235,7 +326,26 @@ def eland(basedir, gerald=None, genome_maps=None):
         # lets handle compressed eland files too
         file_list = glob(os.path.join(basedir, "*_eland_result.txt.bz2"))
 
-    for pathname in file_list:
+    lane_ids = ['1','2','3','4','5','6','7','8']
+    # the order in patterns determines the preference for what
+    # will be found.
+    patterns = ['s_%s_eland_result.txt',
+                's_%s_eland_result.txt.bz2',
+                's_%s_eland_result.txt.gz',
+                's_%s_eland_extended.txt',
+                's_%s_eland_extended.txt.bz2',
+                's_%s_eland_extended.txt.gz',
+                's_%s_eland_multi.txt',
+                's_%s_eland_multi.txt.bz2',
+                's_%s_eland_multi.txt.gz',]
+
+    for lane_id in lane_ids:
+        for p in patterns:
+            pathname = check_for_eland_file(basedir, lane_id, p)
+            if pathname is not None:
+              break
+        else:
+            continue
         # yes the lane_id is also being computed in ElandLane._update
         # I didn't want to clutter up my constructor
         # but I needed to persist the sample_name/lane_id for
@@ -288,4 +398,3 @@ def extract_eland_sequence(instream, outstream, start, end):
             result = [record[0][start:end]]
         outstream.write("\t".join(result))
         outstream.write(os.linesep)
-

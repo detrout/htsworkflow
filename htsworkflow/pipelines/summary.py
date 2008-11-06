@@ -1,7 +1,7 @@
 """
 Analyze the Summary.htm file produced by GERALD
 """
-
+import types
 
 from htsworkflow.pipelines.runfolder import ElementTree
 from htsworkflow.util.ethelp import indent, flatten

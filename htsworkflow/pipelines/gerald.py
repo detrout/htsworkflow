@@ -7,7 +7,7 @@ import os
 import time
 
 from htsworkflow.pipelines.summary import Summary
-from htsworkflow.pipelines.eland import eland
+from htsworkflow.pipelines.eland import eland, ELAND
 
 from htsworkflow.pipelines.runfolder import \
    ElementTree, \
@@ -29,9 +29,9 @@ class Gerald(object):
         """
         Make it easy to access elements of LaneSpecificRunParameters from python
         """
-        def __init__(self, gerald, key):
+        def __init__(self, gerald, lane_id):
             self._gerald = gerald
-            self._key = key
+            self._lane_id = lane_id
 
         def __get_attribute(self, xml_tag):
             subtree = self._gerald.tree.find('LaneSpecificRunParameters')
@@ -41,7 +41,7 @@ class Gerald(object):
             if len(container.getchildren()) > LANES_PER_FLOWCELL:
                 raise RuntimeError('GERALD config.xml file changed')
             lanes = [x.tag.split('_')[1] for x in container.getchildren()]
-            index = lanes.index(self._key)
+            index = lanes.index(self._lane_id)
             element = container[index]
             return element.text
         def _get_analysis(self):
@@ -73,25 +73,43 @@ class Gerald(object):
         """
         def __init__(self, gerald):
             self._gerald = gerald
-            self._keys = None
+            self._lane = None
+
+        def _initalize_lanes(self):
+            """
+            build dictionary of LaneParameters
+            """
+            self._lanes = {}
+            tree = self._gerald.tree
+            analysis = tree.find('LaneSpecificRunParameters/ANALYSIS')
+            # according to the pipeline specs I think their fields
+            # are sampleName_laneID, with sampleName defaulting to s
+            # since laneIDs are constant lets just try using
+            # those consistently.
+            for element in analysis:
+                sample, lane_id = element.tag.split('_')
+                self._lanes[lane_id] = Gerald.LaneParameters(self._gerald, lane_id)
+
         def __getitem__(self, key):
-            return Gerald.LaneParameters(self._gerald, key)
+            if self._lane is None:
+                self._initalize_lanes()
+            return self._lanes[key]
         def keys(self):
-            if self._keys is None:
-                tree = self._gerald.tree
-                analysis = tree.find('LaneSpecificRunParameters/ANALYSIS')
-                # according to the pipeline specs I think their fields
-                # are sampleName_laneID, with sampleName defaulting to s
-                # since laneIDs are constant lets just try using
-                # those consistently.
-                self._keys = [ x.tag.split('_')[1] for x in analysis]
-            return self._keys
+            if self._lane is None:
+                self._initalize_lanes()
+            return self._lanes.keys()
         def values(self):
-            return [ self[x] for x in self.keys() ]
+            if self._lane is None:
+                self._initalize_lanes()
+            return self._lanes.values()
         def items(self):
-            return zip(self.keys(), self.values())
+            if self._lane is None:
+                self._initalize_lanes()
+            return self._lanes.items()
         def __len__(self):
-            return len(self.keys())
+            if self._lane is None:
+                self._initalize_lanes()
+            return len(self._lanes)
 
     def __init__(self, xml=None):
         self.pathname = None
@@ -179,3 +197,8 @@ def gerald(pathname):
     g.eland_results = eland(g.pathname, g)
     return g
 
+if __name__ == "__main__":
+  # quick test code
+  import sys
+  g = gerald(sys.argv[1])
+  #ElementTree.dump(g.get_elements())
