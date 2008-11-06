@@ -221,7 +221,12 @@ class RunfolderTests(unittest.TestCase):
             self.failUnlessEqual(lane.lane_id, unicode(i))
             self.failUnlessEqual(len(lane.mapped_reads), 15)
             self.failUnlessEqual(lane.mapped_reads['hg18/chr5.fa'], 4)
-            self.failUnlessEqual(lane.match_codes['U1'], 10)
+            self.failUnlessEqual(lane.match_codes['U0'], 1)
+            self.failUnlessEqual(lane.match_codes['R0'], 2)
+            self.failUnlessEqual(lane.match_codes['U1'], 1)
+            self.failUnlessEqual(lane.match_codes['R1'], 9)
+            self.failUnlessEqual(lane.match_codes['U2'], 0)
+            self.failUnlessEqual(lane.match_codes['R2'], 12)
             self.failUnlessEqual(lane.match_codes['NM'], 1)
             self.failUnlessEqual(lane.match_codes['QC'], 0)
 
