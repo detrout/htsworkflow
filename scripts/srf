@@ -8,6 +8,7 @@ import subprocess
 import sys
 
 from htsworkflow.util import queuecommands
+from htsworkflow.pipelines import runfolder
 
 def make_commands(run_name, lanes, site_name, destdir):
   """
@@ -49,22 +50,6 @@ def pathname_to_run_name(base):
     if len(base) == 0:
       return None
   return name
-
-def find_bustard_dir(pathname):
-  # fixme: for don't repeat yourself this should some how be related 
-  # fixme: to pipelines.runfolder
-
-  datadir = os.path.join(pathname, 'Data')
-  logging.info("searching in %s" % (datadir,))
-  
-  bustard_dirs = []
-  for firecrest_pathname in glob(os.path.join(datadir,"*Firecrest*")):
-    bustard_glob = os.path.join(firecrest_pathname, "Bustard*")
-    for bustard_pathname in glob(bustard_glob):
-      bustard_dirs.append(bustard_pathname)
-  return bustard_dirs
-    
-
 
 def make_parser():
   usage = '%prog: [options] runfolder -l 1,2,3 [runfolder -l 5,6 ...]'
@@ -132,15 +117,13 @@ def main(cmdline=None):
         # the last part of the path should be a runfolder name
         name = pathname_to_run_name(runfolder_path)
         # so any bustard directories?
-        bustard_dir = find_bustard_dir(runfolder_path)
-        # give up if there are anything other than 1 bustard dir
-        if len(bustard_dir) > 1:
-          print 'ERROR: Too many bustard directories',
-          print "\n ".join(bustard_dir)
+        runs = runfolder.get_runs(runfolder_path)
+        # give up if there are anything other than 1 run
+        if len(runs) > 1:
+          print 'ERROR: Too many run directories in %s' %(runfolder_path,)
           return 1
-
-        elif len(bustard_dir) == 1:
-          bustard_dir = bustard_dir[0]
+        elif len(runs) == 1:
+          bustard_dir = runs[0].bustard.pathname
           cmds[bustard_dir] = make_commands(name, lanes, opts.site, opts.dest_dir)
         else:
           print "ERROR: Couldn't find a bustard directory in", runfolder_path
