@@ -1,0 +1,185 @@
+"""
+Make a tree of symlinks organized by library id.
+"""
+from glob import glob
+import logging
+from optparse import OptionParser
+import os
+import stat
+import sys
+
+from gaworkflow.util import fctracker
+
+
+def find_lanes(flowcell_dir, flowcell_id, lane):
+    lane_name = "s_%s_eland_result*" %(lane)
+    pattern = os.path.join(flowcell_dir, flowcell_id, "*", lane_name)
+    lanes = glob(pattern)
+    return lanes
+
+def make_long_lane_name(flowcell_dir, lane_pathname):
+    """
+    make a name from the eland result file name
+    """
+    if flowcell_dir == lane_pathname[0:len(flowcell_dir)]:
+        subpath = lane_pathname[len(flowcell_dir):]
+        long_name = subpath.replace(os.path.sep, "_")
+        return long_name
+    else:
+        return None
+    
+def parse_srf_directory(srf_dir):
+    """
+    search srf_dir for *.srf files
+
+    builds a dictionary indexed by flowcell name.
+    """
+    flowcells = {}
+    srfs = glob(os.path.join(srf_dir,'*.srf'))
+    for pathname in srfs:
+        path, filename = os.path.split(pathname)
+        basename, ext = os.path.splitext(filename)
+        record = basename.split('_')
+        assert len(record) == 6
+
+        site = record[0]
+        date = record[1]
+        machine = record[2]
+        runid = record[3]
+        flowcellid = record[4]
+        laneid = record[5]
+
+        desc = "_".join([site,date,machine,runid,flowcellid])
+        flowcells[flowcellid] = desc
+    return flowcells
+
+
+def carefully_make_hardlink(source, destination, dry_run=False):
+    """
+    Make a hard link, failing if a different link already exists
+
+    Checking to see if the link already exists and is
+    the same as the link we want to make.
+    If the link already exists and is different, throw an error.
+    """
+    logging.debug("%s -> %s", source, destination)
+
+    if not os.path.exists(source):
+        logging.warning("%s doesn't exist", source)
+        return
+
+    if os.path.exists(destination):
+        if os.path.samefile(source, destination):
+            return
+        else:
+            raise IOError('%s and %s are different files' % \
+                           (source, destination))
+
+    if dry_run: return 
+
+    os.link(source, destination)
+    os.chmod(destination,
+             stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH )
+
+def link_all_eland_lanes(library_path, flowcell_dir, flowcell_id, lane, dry_run):
+    """
+    find eland files at different alignment lengths
+    and put each of those in the file 
+    """
+    lanes = find_lanes(flowcell_dir, flowcell_id, lane)
+    for lane_pathname in lanes:
+        long_name = make_long_lane_name(flowcell_dir, 
+                                        lane_pathname)
+        long_pathname = os.path.join(library_path, long_name)
+        carefully_make_hardlink(lane_pathname,
+                                long_pathname,
+                                dry_run)
+
+def link_srf_lanes(srf_names, library_path, srf_dir, flowcell_id, lane, dry_run):
+    """
+    Link srf files into our library directories.
+
+    the srf files must be named:
+    <site>_<date>_<machine>_<run>_<flowcellid>_<lane>.srf
+    """
+    srf_basename = srf_names.get(flowcell_id, None)
+    if srf_basename is None:
+        logging.info("srf file for %s was not found", flowcell_id)
+    else:
+        srf_filename = "%s_%s.srf" % (srf_basename, lane)
+        source = os.path.join(srf_dir, srf_filename)
+        destination = os.path.join(library_path, srf_filename)
+        carefully_make_hardlink(source, destination, dry_run)
+    
+
+def make_library_tree(fcdb, library_dir, flowcell_dir, srfs_dir,
+                      dry_run=False):
+    """
+    Iterate over the library 
+    """
+    library_dir = os.path.normpath(library_dir) + os.path.sep
+    flowcell_dir = os.path.normpath(flowcell_dir) + os.path.sep
+    srfs_dir = os.path.normpath(srfs_dir) + os.path.sep
+
+    srf_names = parse_srf_directory(srfs_dir)
+
+    for lib_id, lib in fcdb.library.items():
+        library_path = os.path.join(library_dir, str(lib_id))
+        if not os.path.exists(library_path):
+            os.mkdir(library_path)
+
+        for flowcell_id, lane in lib.get('lanes', []):
+            link_all_eland_lanes(library_path, 
+                                 flowcell_dir, 
+                                 flowcell_id, 
+                                 lane, 
+                                 dry_run)
+
+            link_srf_lanes(srf_names, 
+                           library_path, 
+                           srfs_dir,
+                           flowcell_id,
+                           lane,
+                           dry_run)
+
+def make_parser():
+    """
+    Make parser
+    """
+    parser = OptionParser()
+    parser.add_option("-d", "--database", dest="database",
+                      help="path to the fctracker.db",
+                      default=None)
+    parser.add_option("-w", "--where", dest="where",
+                      help="add a where clause",
+                      default=None)
+    parser.add_option("--dry-run", dest="dry_run", action="store_true",
+                      default=False,
+                      help="Don't modify the filesystem")
+    return parser
+
+def main(argv=None):
+    logging.basicConfig(level=logging.INFO)
+
+    if argv is None:
+        argv = []
+    parser = make_parser()
+
+    opt, args = parser.parse_args(argv)
+    
+    fcdb = fctracker.fctracker(opt.database)
+    cells = fcdb._get_flowcells(opt.where)
+
+    root_dir = '/woldlab/mus/solexa-sequence'
+    library_dir = os.path.join(root_dir, 'libraries')
+    flowcell_dir = os.path.join(root_dir, 'flowcells')
+    srfs_dir = os.path.join(root_dir, 'srfs')
+    make_library_tree(fcdb, 
+                      library_dir, flowcell_dir, srfs_dir, 
+                      opt.dry_run)
+
+    return 0
+
+if __name__ == "__main__":
+    rv = main(sys.argv[1:])
+    # sys.exit(rv)
