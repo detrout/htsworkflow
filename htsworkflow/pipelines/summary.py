@@ -161,7 +161,11 @@ class Summary(object):
         The contents of the h2 tag is considered to the name
         of the table.
         """
-        tree = ElementTree.parse(pathname).getroot()
+        # tree = ElementTree.parse(pathname).getroot()
+        # hack for 1.1rc1, this should be removed when possible.
+        file_body = open(pathname).read()
+        file_body = file_body.replace('CHASTITY<=', 'CHASTITY&lt;=')
+        tree = ElementTree.fromstring(file_body)
         body = tree.find('body')
         tables = {}
         for i in range(len(body)):
