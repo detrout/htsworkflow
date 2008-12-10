@@ -167,7 +167,7 @@ class ElandLane(object):
         path, name = os.path.split(self.pathname)
         split_name = name.split('_')
         self._sample_name = split_name[0]
-        self._lane_id = split_name[1]
+        self._lane_id = int(split_name[1])
 
     def _get_sample_name(self):
         if self._sample_name is None:
@@ -206,7 +206,7 @@ class ElandLane(object):
         sample_tag = ElementTree.SubElement(lane, ElandLane.SAMPLE_NAME)
         sample_tag.text = self.sample_name
         lane_tag = ElementTree.SubElement(lane, ElandLane.LANE_ID)
-        lane_tag.text = self.lane_id
+        lane_tag.text = str(self.lane_id)
         genome_map = ElementTree.SubElement(lane, ElandLane.GENOME_MAP)
         for k, v in self.genome_map.items():
             item = ElementTree.SubElement(
@@ -240,7 +240,7 @@ class ElandLane(object):
             if tag == ElandLane.SAMPLE_NAME.lower():
                 self._sample_name = element.text
             elif tag == ElandLane.LANE_ID.lower():
-                self._lane_id = element.text
+                self._lane_id = int(element.text)
             elif tag == ElandLane.GENOME_MAP.lower():
                 for child in element:
                     name = child.attrib['name']
@@ -306,7 +306,7 @@ class ELAND(object):
         if tree.tag.lower() != ELAND.ELAND.lower():
             raise ValueError('Expecting %s', ELAND.ELAND)
         for element in list(tree):
-            lane_id = element.attrib[ELAND.LANE_ID]
+            lane_id = int(element.attrib[ELAND.LANE_ID])
             lane = ElandLane(xml=element)
             self.results[lane_id] = lane
 
@@ -326,18 +326,18 @@ def eland(basedir, gerald=None, genome_maps=None):
         # lets handle compressed eland files too
         file_list = glob(os.path.join(basedir, "*_eland_result.txt.bz2"))
 
-    lane_ids = ['1','2','3','4','5','6','7','8']
+    lane_ids = range(1,9)
     # the order in patterns determines the preference for what
     # will be found.
-    patterns = ['s_%s_eland_result.txt',
-                's_%s_eland_result.txt.bz2',
-                's_%s_eland_result.txt.gz',
-                's_%s_eland_extended.txt',
-                's_%s_eland_extended.txt.bz2',
-                's_%s_eland_extended.txt.gz',
-                's_%s_eland_multi.txt',
-                's_%s_eland_multi.txt.bz2',
-                's_%s_eland_multi.txt.gz',]
+    patterns = ['s_%d_eland_result.txt',
+                's_%d_eland_result.txt.bz2',
+                's_%d_eland_result.txt.gz',
+                's_%d_eland_extended.txt',
+                's_%d_eland_extended.txt.bz2',
+                's_%d_eland_extended.txt.gz',
+                's_%d_eland_multi.txt',
+                's_%d_eland_multi.txt.bz2',
+                's_%d_eland_multi.txt.gz',]
 
     for lane_id in lane_ids:
         for p in patterns:
@@ -353,7 +353,7 @@ def eland(basedir, gerald=None, genome_maps=None):
         path, name = os.path.split(pathname)
         logging.info("Adding eland file %s" %(name,))
         split_name = name.split('_')
-        lane_id = split_name[1]
+        lane_id = int(split_name[1])
 
         if genome_maps is not None:
             genome_map = genome_maps[lane_id]

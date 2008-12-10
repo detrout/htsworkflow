@@ -10,7 +10,7 @@ class Summary(object):
     """
     Extract some useful information from the Summary.htm file
     """
-    XML_VERSION = 2
+    XML_VERSION = 3
     SUMMARY = 'Summary'
 
     class LaneResultSummary(object):
@@ -33,6 +33,7 @@ class Summary(object):
 
         def __init__(self, html=None, xml=None):
             self.lane = None
+            self.end = 0
             self.lane_yield = None
             self.cluster = None
             self.cluster_pass_filter = None
@@ -53,7 +54,7 @@ class Summary(object):
                 raise RuntimeError("Summary.htm file format changed")
 
             # same in pre-0.3.0 Summary file and 0.3 summary file
-            self.lane = data[0]
+            self.lane = int(data[0])
 
             if len(data) == 8:
                 parsed_data = [ parse_mean_range(x) for x in data[1:] ]
@@ -81,7 +82,7 @@ class Summary(object):
         def get_elements(self):
             lane_result = ElementTree.Element(
                             Summary.LaneResultSummary.LANE_RESULT_SUMMARY,
-                            {'lane': self.lane})
+                            {'lane': str(self.lane), 'end': str(self.end)})
             for tag, variable_name in Summary.LaneResultSummary.TAGS.items():
                 value = getattr(self, variable_name)
                 if value is None:
@@ -102,7 +103,10 @@ class Summary(object):
             if tree.tag != Summary.LaneResultSummary.LANE_RESULT_SUMMARY:
                 raise ValueError('Expected %s' % (
                         Summary.LaneResultSummary.LANE_RESULT_SUMMARY))
-            self.lane = tree.attrib['lane']
+            self.lane = int(tree.attrib['lane'])
+            # default to the first end, for the older summary files
+            # that are single ended
+            self.end = int(tree.attrib.get('end', 0))
             tags = Summary.LaneResultSummary.TAGS
             for element in list(tree):
                 try:
@@ -113,7 +117,10 @@ class Summary(object):
                     logging.warn('Unrecognized tag %s' % (element.tag,))
 
     def __init__(self, filename=None, xml=None):
-        self.lane_results = {}
+        # lane results is a list of 1 or 2 ends containing
+        # a dictionary of all the lanes reported in this
+        # summary file
+        self.lane_results = [{}]
 
         if filename is not None:
             self._extract_lane_results(filename)
@@ -125,15 +132,6 @@ class Summary(object):
 
     def __len__(self):
         return len(self.lane_results)
-
-    def keys(self):
-        return self.lane_results.keys()
-
-    def values(self):
-        return self.lane_results.values()
-
-    def items(self):
-        return self.lane_results.items()
 
     def _flattened_row(self, row):
         """
@@ -178,14 +176,20 @@ class Summary(object):
         return tables
 
     def _extract_lane_results(self, pathname):
+        tables = self._extract_named_tables(pathname)
+        table_names = [ ('Lane Results Summary', 0),
+                        ('Lane Results Summary : Read 1', 0),
+                        ('Lane Results Summary : Read 2', 1),]
+        for name, end in table_names:
+          if tables.has_key(name):
+            self._extract_lane_results_for_end(tables, name, end)
+
+    def _extract_lane_results_for_end(self, tables, table_name, end):
         """
         extract the Lane Results Summary table
         """
-
-        tables = self._extract_named_tables(pathname)
-
         # parse lane result summary
-        lane_summary = tables['Lane Results Summary']
+        lane_summary = tables[table_name]
         # this is version 1 of the summary file
         if len(lane_summary[-1]) == 8:
             # strip header
@@ -200,15 +204,21 @@ class Summary(object):
             lane_summary = lane_summary[2:10]
             # after the last lane, there's a set of chip wide averages
 
+        # append an extra dictionary if needed
+        if len(self.lane_results) < (end + 1):
+          self.lane_results.append({})
+
         for r in lane_summary:
             lrs = Summary.LaneResultSummary(html=r)
-            self.lane_results[lrs.lane] = lrs
+            lrs.end = end
+            self.lane_results[lrs.end][lrs.lane] = lrs
 
     def get_elements(self):
         summary = ElementTree.Element(Summary.SUMMARY,
                                       {'version': unicode(Summary.XML_VERSION)})
-        for lane in self.lane_results.values():
-            summary.append(lane.get_elements())
+        for end in self.lane_results:
+            for lane in end.values():
+                summary.append(lane.get_elements())
         return summary
 
     def set_elements(self, tree):
@@ -220,7 +230,13 @@ class Summary(object):
         for element in list(tree):
             lrs = Summary.LaneResultSummary()
             lrs.set_elements(element)
-            self.lane_results[lrs.lane] = lrs
+            print lrs.end, lrs.lane
+            if len(self.lane_results) < (lrs.end + 1):
+              self.lane_results.append({})
+            self.lane_results[lrs.end][lrs.lane] = lrs
+
+    def is_paired_end(self):
+      return len(self.lane_results) == 2
 
     def dump(self):
         """

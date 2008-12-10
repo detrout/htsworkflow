@@ -1499,7 +1499,7 @@ def make_summary_paired_htm(gerald_dir):
 <tr>
 <td>1</td>
 <td>277083</td>
-<td>103646 +/- 4515</td>
+<td>103647 +/- 4516</td>
 <td>74887 +/- 6080</td>
 <td>277 +/- 17</td>
 <td>94.42 +/- 5.68</td>
@@ -1511,7 +1511,7 @@ def make_summary_paired_htm(gerald_dir):
 <tr>
 <td>2</td>
 <td>289563</td>
-<td>106678 +/- 4652</td>
+<td>106679 +/- 4653</td>
 <td>78260 +/- 2539</td>
 <td>259 +/- 13</td>
 <td>93.57 +/- 2.55</td>
@@ -1523,7 +1523,7 @@ def make_summary_paired_htm(gerald_dir):
 <tr>
 <td>3</td>
 <td>259242</td>
-<td>84583 +/- 5963</td>
+<td>84584 +/- 5964</td>
 <td>70065 +/- 4194</td>
 <td>252 +/- 12</td>
 <td>94.23 +/- 2.19</td>
@@ -1535,7 +1535,7 @@ def make_summary_paired_htm(gerald_dir):
 <tr>
 <td>4</td>
 <td>210549</td>
-<td>68813 +/- 4782</td>
+<td>68814 +/- 4783</td>
 <td>56905 +/- 4145</td>
 <td>226 +/- 16</td>
 <td>96.82 +/- 7.12</td>
@@ -1547,7 +1547,7 @@ def make_summary_paired_htm(gerald_dir):
 <tr>
 <td>5</td>
 <td>295555</td>
-<td>104854 +/- 4664</td>
+<td>104855 +/- 4665</td>
 <td>79879 +/- 6270</td>
 <td>200 +/- 24</td>
 <td>103.56 +/- 15.45</td>
@@ -1559,7 +1559,7 @@ def make_summary_paired_htm(gerald_dir):
 <tr>
 <td>6</td>
 <td>140401</td>
-<td>43555 +/- 1632</td>
+<td>43556 +/- 1633</td>
 <td>37946 +/- 2140</td>
 <td>179 +/- 10</td>
 <td>100.82 +/- 5.47</td>
@@ -1571,7 +1571,7 @@ def make_summary_paired_htm(gerald_dir):
 <tr>
 <td>7</td>
 <td>154217</td>
-<td>54265 +/- 1588</td>
+<td>54266 +/- 1589</td>
 <td>41680 +/- 5319</td>
 <td>184 +/- 5</td>
 <td>103.42 +/- 3.47</td>
@@ -1583,7 +1583,7 @@ def make_summary_paired_htm(gerald_dir):
 <tr>
 <td>8</td>
 <td>147969</td>
-<td>64363 +/- 2697</td>
+<td>64364 +/- 2698</td>
 <td>39991 +/- 6785</td>
 <td>206 +/- 31</td>
 <td>99.48 +/- 3.23</td>

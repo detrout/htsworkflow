@@ -137,7 +137,7 @@ class RunfolderTests(unittest.TestCase):
 
         # test lane specific parameters from gerald config file
         for i in range(1,9):
-            cur_lane = g.lanes[str(i)]
+            cur_lane = g.lanes[i]
             self.failUnlessEqual(cur_lane.analysis, 'eland')
             self.failUnlessEqual(cur_lane.eland_genome, genomes[i])
             self.failUnlessEqual(cur_lane.read_length, '32')
@@ -150,16 +150,22 @@ class RunfolderTests(unittest.TestCase):
           self.failUnlessEqual(l.use_bases, 'Y'*32)
 
         # test data extracted from summary file
-        clusters = [None,
-                    (96483, 9074), (133738, 7938),
-                    (152142, 10002), (15784, 2162),
-                    (119735, 8465), (152177, 8146),
-                    (84649, 7325), (54622, 4812),]
+        clusters = [[None,
+                    (103646, 4515), (106678, 4652),
+                    (84583, 5963), (68813, 4782),
+                    (104854, 4664), (43555, 1632),
+                    (54265, 1588), (64363, 2697),],
+                    [None,
+                    (103647, 4516), (106679, 4653),
+                    (84584, 5964), (68814, 4783),
+                    (104855, 4665), (43556, 1633),
+                    (54266, 1589), (64364, 2698),],]
 
-        for i in range(1,9):
-            summary_lane = g.summary[str(i)]
-            self.failUnlessEqual(summary_lane.cluster, clusters[i])
-            self.failUnlessEqual(summary_lane.lane, str(i))
+        for end in [0,1]:
+            for lane in range(1,9):
+                summary_lane = g.summary[end][lane]
+                self.failUnlessEqual(summary_lane.cluster, clusters[end][lane])
+                self.failUnlessEqual(summary_lane.lane, lane)
 
         xml = g.get_elements()
         # just make sure that element tree can serialize the tree
@@ -174,36 +180,37 @@ class RunfolderTests(unittest.TestCase):
 
         # test lane specific parameters from gerald config file
         for i in range(1,9):
-            g_lane = g.lanes[str(i)]
-            g2_lane = g2.lanes[str(i)]
+            g_lane = g.lanes[i]
+            g2_lane = g2.lanes[i]
             self.failUnlessEqual(g_lane.analysis, g2_lane.analysis)
             self.failUnlessEqual(g_lane.eland_genome, g2_lane.eland_genome)
             self.failUnlessEqual(g_lane.read_length, g2_lane.read_length)
             self.failUnlessEqual(g_lane.use_bases, g2_lane.use_bases)
 
         # test (some) summary elements
-        for i in range(1,9):
-            g_summary = g.summary[str(i)]
-            g2_summary = g2.summary[str(i)]
-            self.failUnlessEqual(g_summary.cluster, g2_summary.cluster)
-            self.failUnlessEqual(g_summary.lane, g2_summary.lane)
+        for end in [0,1]:
+            for i in range(1,9):
+                g_summary = g.summary[end][i]
+                g2_summary = g2.summary[end][i]
+                self.failUnlessEqual(g_summary.cluster, g2_summary.cluster)
+                self.failUnlessEqual(g_summary.lane, g2_summary.lane)
 
-            g_eland = g.eland_results
-            g2_eland = g2.eland_results
-            for lane in g_eland.keys():
-                self.failUnlessEqual(g_eland[lane].reads,
-                                     g2_eland[lane].reads)
-                self.failUnlessEqual(len(g_eland[lane].mapped_reads),
-                                     len(g2_eland[lane].mapped_reads))
-                for k in g_eland[lane].mapped_reads.keys():
-                    self.failUnlessEqual(g_eland[lane].mapped_reads[k],
-                                         g2_eland[lane].mapped_reads[k])
+                g_eland = g.eland_results
+                g2_eland = g2.eland_results
+                for lane in g_eland.keys():
+                    self.failUnlessEqual(g_eland[lane].reads,
+                                         g2_eland[lane].reads)
+                    self.failUnlessEqual(len(g_eland[lane].mapped_reads),
+                                         len(g2_eland[lane].mapped_reads))
+                    for k in g_eland[lane].mapped_reads.keys():
+                        self.failUnlessEqual(g_eland[lane].mapped_reads[k],
+                                             g2_eland[lane].mapped_reads[k])
 
-                self.failUnlessEqual(len(g_eland[lane].match_codes),
-                                     len(g2_eland[lane].match_codes))
-                for k in g_eland[lane].match_codes.keys():
-                    self.failUnlessEqual(g_eland[lane].match_codes[k],
-                                         g2_eland[lane].match_codes[k])
+                    self.failUnlessEqual(len(g_eland[lane].match_codes),
+                                         len(g2_eland[lane].match_codes))
+                    for k in g_eland[lane].match_codes.keys():
+                        self.failUnlessEqual(g_eland[lane].match_codes[k],
+                                             g2_eland[lane].match_codes[k])
 
 
     def test_eland(self):
@@ -213,15 +220,15 @@ class RunfolderTests(unittest.TestCase):
           long_name = 'hg18/chr%d.fa' % (i,)
           hg_map[short_name] = long_name
 
-        genome_maps = { '1':hg_map, '2':hg_map, '3':hg_map, '4':hg_map,
-                        '5':hg_map, '6':hg_map, '7':hg_map, '8':hg_map }
+        genome_maps = { 1:hg_map, 2:hg_map, 3:hg_map, 4:hg_map,
+                        5:hg_map, 6:hg_map, 7:hg_map, 8:hg_map }
         eland = gerald.eland(self.gerald_dir, genome_maps=genome_maps)
 
         for i in range(1,9):
-            lane = eland[str(i)]
+            lane = eland[i]
             self.failUnlessEqual(lane.reads, 4)
             self.failUnlessEqual(lane.sample_name, "s")
-            self.failUnlessEqual(lane.lane_id, unicode(i))
+            self.failUnlessEqual(lane.lane_id, i)
             self.failUnlessEqual(len(lane.mapped_reads), 15)
             self.failUnlessEqual(lane.mapped_reads['hg18/chr5.fa'], 4)
             self.failUnlessEqual(lane.match_codes['U0'], 1)
@@ -239,8 +246,8 @@ class RunfolderTests(unittest.TestCase):
         e2 = gerald.ELAND(xml=xml)
 
         for i in range(1,9):
-            l1 = eland[str(i)]
-            l2 = e2[str(i)]
+            l1 = eland[i]
+            l2 = e2[i]
             self.failUnlessEqual(l1.reads, l2.reads)
             self.failUnlessEqual(l1.sample_name, l2.sample_name)
             self.failUnlessEqual(l1.lane_id, l2.lane_id)
@@ -261,14 +268,15 @@ class RunfolderTests(unittest.TestCase):
 
         # do we get the flowcell id from the filename?
         self.failUnlessEqual(len(runs), 1)
-        name = 'run_207BTAAXX_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
+        # firecrest's date depends on filename not the create time.
+        name = 'run_207BTAAXX_2008-04-19.xml'
         self.failUnlessEqual(runs[0].name, name)
 
         # do we get the flowcell id from the FlowcellId.xml file
         make_flowcell_id(self.runfolder_dir, '207BTAAXY')
         runs = runfolder.get_runs(self.runfolder_dir)
         self.failUnlessEqual(len(runs), 1)
-        name = 'run_207BTAAXY_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
+        name = 'run_207BTAAXY_2008-04-19.xml'
         self.failUnlessEqual(runs[0].name, name)
 
         r1 = runs[0]

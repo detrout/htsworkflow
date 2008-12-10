@@ -88,7 +88,8 @@ class Gerald(object):
             # those consistently.
             for element in analysis:
                 sample, lane_id = element.tag.split('_')
-                self._lanes[lane_id] = Gerald.LaneParameters(self._gerald, lane_id)
+                self._lanes[int(lane_id)] = Gerald.LaneParameters(
+                                              self._gerald, lane_id)
 
         def __getitem__(self, key):
             if self._lane is None:
