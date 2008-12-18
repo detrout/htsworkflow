@@ -447,12 +447,11 @@ def configure(conf_info):
   ferr = open(stderr_filepath, 'w')
   
   pipe = subprocess.Popen(['goat_pipeline.py',
-                    '--GERALD=%s' % (conf_info.config_filepath),
-                           #'--tiles=s_4_0100,s_4_0101,s_4_0102,s_4_0103,s_4_0104',
+                           '--GERALD=%s' % (conf_info.config_filepath),
                            '--make',
                            conf_info.analysis_dir],
-                          stdout=fout,
-                          stderr=ferr)
+                           stdout=fout,
+                           stderr=ferr)
 
   print "Configuring pipeline: %s" % (time.ctime())
   error_code = pipe.wait()

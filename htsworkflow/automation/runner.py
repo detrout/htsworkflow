@@ -160,7 +160,7 @@ class Runner(rpc.XmlRpcBot):
 
         # retrieve config step
         cfg_filepath = os.path.join(conf_info.analysis_dir,
-                                    'config32auto.txt')
+                                    'config-auto.txt')
         status_retrieve_cfg = retrieve_config(conf_info,
                                           flowcell,
                                           cfg_filepath,
