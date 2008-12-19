@@ -83,6 +83,8 @@ class Runner(rpc.XmlRpcBot):
                 reply = u"starting run for %s" % (words[1])
             else:
                 reply = u"need runfolder name"
+        elif re.match(u"path", msg):
+	    reply = u"My path is: " + unicode(os.environ['PATH'])
         else:
             reply = u"I didn't understand '%s'" %(msg)
 
