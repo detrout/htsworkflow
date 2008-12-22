@@ -30,18 +30,18 @@ def make_bed_from_eland_stream(instream, outstream, name, description, chromosom
   SENSE = 8
 
   write_bed_header(outstream, name, description)
+  prefix_len = len(chromosome_prefix)
 
   for line in instream:
     fields = line.split()
     # we need more than the CHR field, and it needs to match a chromosome
-    if len(fields) <= CHR or \
-          (chromosome_prefix is not None and \
-             fields[CHR][:3] != chromosome_prefix):
+    if len(fields) <= CHR or fields[CHR][:prefix_len] != chromosome_prefix:
       continue
     start = fields[START]
     stop = int(start) + len(fields[SEQ])
-    chromosome, extension = fields[CHR].split('.')
-    assert extension == "fa"
+    # strip off filename extension
+    chromosome = fields[CHR].split('.')[0]
+
     outstream.write('%s %s %d read 0 %s - - %s%s' % (
       chromosome,
       start,
@@ -85,7 +85,9 @@ def parse_multi_eland(instream, outstream, chr_prefix, max_reads=255):
 
       for token in split_re.finditer(compressed_reads):
         if token.group('chr') is not None:
-          cur_chr =  token.group('chr')[:-3] # strip off .fa
+          cur_chr =  token.group('chr')
+	  # strip off extension if present
+	  cur_chr = os.path.splitext(cur_chr)[0] 
         elif token.group('fullloc') is not None:
           matches = int(token.group('count'))
           # only emit a bed line if 
