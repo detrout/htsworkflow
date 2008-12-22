@@ -8,7 +8,7 @@ import os
 import stat
 import sys
 
-from gaworkflow.util import fctracker
+from htsworkflow.util import fctracker
 
 
 def find_lanes(flowcell_dir, flowcell_id, lane):
@@ -170,7 +170,7 @@ def main(argv=None):
     fcdb = fctracker.fctracker(opt.database)
     cells = fcdb._get_flowcells(opt.where)
 
-    root_dir = '/woldlab/mus/solexa-sequence'
+    root_dir = '/woldlab/loxcyc/data00/solexa-sequence'
     library_dir = os.path.join(root_dir, 'libraries')
     flowcell_dir = os.path.join(root_dir, 'flowcells')
     srfs_dir = os.path.join(root_dir, 'srfs')
