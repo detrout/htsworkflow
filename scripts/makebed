@@ -45,6 +45,9 @@ def make_parser():
   return parser
 
 def main(command_line=None):
+  instream = None
+  outstream = None
+
   if command_line is None:
     command_line = sys.argv[1:]
 
@@ -63,22 +66,25 @@ def main(command_line=None):
     parser.error('%s was not found' % (options.inname))
     return 1
 
+  # figure out name for output file
   if options.outname is None:
       # if outname wasn't defined, and we're reading from stdout
       if instream is sys.stdin:
           # write to stdout
           outstream = sys.stdout
       else:
-          # if there's a name write to name.bde
+          # if there's a name write to name.bed
           options.outname = os.path.splitext(options.inname)[0]+'.bed'
           print >>sys.stderr, "defaulting to outputname", options.outname
   elif options.outname == '-':
       outstream = sys.stdout
-  elif os.path.exists(options.outname):
-      parser.error("not overwriting %s" % (options.outname))
-      return 1
-  else:
-    outstream = open(options.outname, 'w')
+
+  if outstream is None:
+      if os.path.exists(options.outname):
+          parser.error("not overwriting %s" % (options.outname))
+          return 1
+      else:
+          outstream = open(options.outname, 'w')
 
   if options.flowcell is not None and options.lane is not None:
     # get our name/description out of the database
