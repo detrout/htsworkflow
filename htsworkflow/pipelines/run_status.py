@@ -11,33 +11,6 @@ s_read_len = re.compile('^[1-8]+:READ_LENGTH ')
 
 s_firecrest = None
 
-def _four_digit_num_in_string(num):
-  if num < 0:
-    pass
-  elif num < 10:
-    return '000' + str(num)
-  elif num < 100:
-    return '00' + str(num)
-  elif num < 1000:
-    return '0' + str(num)
-  elif num < 10000:
-    return str(num)
-
-  msg = 'Invalid number: %s' % (num)
-  raise ValueError, msg
-
-def _two_digit_num_in_string(num):
-  if num < 0:
-    pass
-  elif num < 10:
-    return '0' + str(num)
-  elif num < 100:
-    return str(num)
-
-  msg = 'Invalid number: %s' % (num)
-  raise ValueError, msg
-
-
 # FIRECREST PATTERNS
 # _p2f(<pattern>, lane, tile, cycle)
 PATTERN_FIRECREST_QCM = 's_%s_%s_%s_qcm.xml'
@@ -108,12 +81,12 @@ def _p2f(pattern, lane, tile=None, cycle=None):
   # lane, tile, cycle provided
   elif cycle:
     return pattern % (lane,
-                      _four_digit_num_in_string(tile),
-                      _two_digit_num_in_string(cycle))
+                      "%04d" % (tile,),
+		      "%02d" % (cycle,))
   
   # lane, tile provided
   elif tile:
-    return pattern % (lane, _four_digit_num_in_string(tile))
+    return pattern % (lane, "%04d" % (tile,))
 
   # lane provided
   else:
