@@ -148,10 +148,9 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
   try:
     web = urllib2.urlopen(url)
   except urllib2.URLError, e:
-    errmsg = 'URLError: %d' % (e.code,)
+    errmsg = 'URLError: %s' % (e.reason,)
     logging.error(errmsg)
     logging.error('opened %s' % (url,))
-    logging.error('%s' % ( e.read(),))
     raise IOError(errmsg)
 
   #except IOError, msg:
