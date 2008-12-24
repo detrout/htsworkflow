@@ -16,10 +16,11 @@ class ElandLane(object):
     """
     Process an eland result file
     """
-    XML_VERSION = 1
+    XML_VERSION = 2
     LANE = 'ElandLane'
     SAMPLE_NAME = 'SampleName'
     LANE_ID = 'LaneID'
+    END = 'End'
     GENOME_MAP = 'GenomeMap'
     GENOME_ITEM = 'GenomeItem'
     MAPPED_READS = 'MappedReads'
@@ -33,10 +34,11 @@ class ElandLane(object):
     ELAND_EXTENDED = 2
     ELAND_EXPORT = 3
 
-    def __init__(self, pathname=None, genome_map=None, eland_type=None, xml=None):
+    def __init__(self, pathname=None, lane_id=None, end=None, genome_map=None, eland_type=None, xml=None):
         self.pathname = pathname
         self._sample_name = None
-        self._lane_id = None
+        self.lane_id = lane_id
+        self.end = end
         self._reads = None
         self._mapped_reads = None
         self._match_codes = None
@@ -167,19 +169,12 @@ class ElandLane(object):
         path, name = os.path.split(self.pathname)
         split_name = name.split('_')
         self._sample_name = split_name[0]
-        self._lane_id = int(split_name[1])
 
     def _get_sample_name(self):
         if self._sample_name is None:
             self._update_name()
         return self._sample_name
     sample_name = property(_get_sample_name)
-
-    def _get_lane_id(self):
-        if self._lane_id is None:
-            self._update_name()
-        return self._lane_id
-    lane_id = property(_get_lane_id)
 
     def _get_reads(self):
         if self._reads is None:
@@ -207,6 +202,9 @@ class ElandLane(object):
         sample_tag.text = self.sample_name
         lane_tag = ElementTree.SubElement(lane, ElandLane.LANE_ID)
         lane_tag.text = str(self.lane_id)
+        if self.end is not None:
+            end_tag = ElementTree.SubElement(lane, ElandLane.END)
+            end_tag.text = str(self.end)
         genome_map = ElementTree.SubElement(lane, ElandLane.GENOME_MAP)
         for k, v in self.genome_map.items():
             item = ElementTree.SubElement(
@@ -240,7 +238,9 @@ class ElandLane(object):
             if tag == ElandLane.SAMPLE_NAME.lower():
                 self._sample_name = element.text
             elif tag == ElandLane.LANE_ID.lower():
-                self._lane_id = int(element.text)
+                self.lane_id = int(element.text)
+            elif tag == ElandLane.END.lower():
+                self.end = int(element.text)
             elif tag == ElandLane.GENOME_MAP.lower():
                 for child in element:
                     name = child.attrib['name']
@@ -265,41 +265,30 @@ class ELAND(object):
     """
     Summarize information from eland files
     """
-    XML_VERSION = 1
+    XML_VERSION = 2
 
     ELAND = 'ElandCollection'
     LANE = 'Lane'
     LANE_ID = 'id'
+    END = 'end'
 
     def __init__(self, xml=None):
         # we need information from the gerald config.xml
-        self.results = {}
+        self.results = [{},{}]
 
         if xml is not None:
             self.set_elements(xml)
 
-    def __len__(self):
-        return len(self.results)
-
-    def keys(self):
-        return self.results.keys()
-
-    def values(self):
-        return self.results.values()
-
-    def items(self):
-        return self.results.items()
-
-    def __getitem__(self, key):
-        return self.results[key]
-
     def get_elements(self):
         root = ElementTree.Element(ELAND.ELAND,
                                    {'version': unicode(ELAND.XML_VERSION)})
-        for lane_id, lane in self.results.items():
-            eland_lane = lane.get_elements()
-            eland_lane.attrib[ELAND.LANE_ID] = unicode(lane_id)
-            root.append(eland_lane)
+        for end in range(len(self.results)):
+           end_results = self.results[end]
+           for lane_id, lane in end_results.items():
+                eland_lane = lane.get_elements()
+                eland_lane.attrib[ELAND.END] = unicode (end)
+                eland_lane.attrib[ELAND.LANE_ID] = unicode(lane_id)
+                root.append(eland_lane)
         return root
 
     def set_elements(self, tree):
@@ -307,11 +296,17 @@ class ELAND(object):
             raise ValueError('Expecting %s', ELAND.ELAND)
         for element in list(tree):
             lane_id = int(element.attrib[ELAND.LANE_ID])
+            end = int(element.attrib.get(ELAND.END, 0)) 
             lane = ElandLane(xml=element)
-            self.results[lane_id] = lane
+            self.results[end][lane_id] = lane
 
-def check_for_eland_file(basedir, lane_id, pattern):
-   basename = pattern % (lane_id,)
+def check_for_eland_file(basedir, pattern, lane_id, end):
+   if end is None:
+      full_lane_id = lane_id
+   else:
+      full_lane_id = "%d_%d" % ( lane_id, end )
+
+   basename = pattern % (full_lane_id,)
    pathname = os.path.join(basedir, basename)
    if os.path.exists(pathname):
        return pathname
@@ -321,50 +316,57 @@ def check_for_eland_file(basedir, lane_id, pattern):
 def eland(basedir, gerald=None, genome_maps=None):
     e = ELAND()
 
-    file_list = glob(os.path.join(basedir, "*_eland_result.txt"))
-    if len(file_list) == 0:
-        # lets handle compressed eland files too
-        file_list = glob(os.path.join(basedir, "*_eland_result.txt.bz2"))
+    #file_list = glob(os.path.join(basedir, "*_eland_result.txt"))
+    #if len(file_list) == 0:
+    #    # lets handle compressed eland files too
+    #    file_list = glob(os.path.join(basedir, "*_eland_result.txt.bz2"))
 
     lane_ids = range(1,9)
+    ends = [None, 1, 2]
+    
     # the order in patterns determines the preference for what
     # will be found.
-    patterns = ['s_%d_eland_result.txt',
-                's_%d_eland_result.txt.bz2',
-                's_%d_eland_result.txt.gz',
-                's_%d_eland_extended.txt',
-                's_%d_eland_extended.txt.bz2',
-                's_%d_eland_extended.txt.gz',
-                's_%d_eland_multi.txt',
-                's_%d_eland_multi.txt.bz2',
-                's_%d_eland_multi.txt.gz',]
+    patterns = ['s_%s_eland_result.txt',
+                's_%s_eland_result.txt.bz2',
+                's_%s_eland_result.txt.gz',
+                's_%s_eland_extended.txt',
+                's_%s_eland_extended.txt.bz2',
+                's_%s_eland_extended.txt.gz',
+                's_%s_eland_multi.txt',
+                's_%s_eland_multi.txt.bz2',
+                's_%s_eland_multi.txt.gz',]
 
-    for lane_id in lane_ids:
-        for p in patterns:
-            pathname = check_for_eland_file(basedir, lane_id, p)
-            if pathname is not None:
-              break
-        else:
-            continue
-        # yes the lane_id is also being computed in ElandLane._update
-        # I didn't want to clutter up my constructor
-        # but I needed to persist the sample_name/lane_id for
-        # runfolder summary_report
-        path, name = os.path.split(pathname)
-        logging.info("Adding eland file %s" %(name,))
-        split_name = name.split('_')
-        lane_id = int(split_name[1])
+    for end in ends:
+        for lane_id in lane_ids:
+            for p in patterns:
+                pathname = check_for_eland_file(basedir, p, lane_id, end)
+                if pathname is not None:
+                  break
+            else:
+                continue
+            # yes the lane_id is also being computed in ElandLane._update
+            # I didn't want to clutter up my constructor
+            # but I needed to persist the sample_name/lane_id for
+            # runfolder summary_report
+            path, name = os.path.split(pathname)
+            logging.info("Adding eland file %s" %(name,))
+            # split_name = name.split('_')
+            # lane_id = int(split_name[1])
 
-        if genome_maps is not None:
-            genome_map = genome_maps[lane_id]
-        elif gerald is not None:
-            genome_dir = gerald.lanes[lane_id].eland_genome
-            genome_map = build_genome_fasta_map(genome_dir)
-        else:
-            genome_map = {}
+            if genome_maps is not None:
+                genome_map = genome_maps[lane_id]
+            elif gerald is not None:
+                genome_dir = gerald.lanes[lane_id].eland_genome
+                genome_map = build_genome_fasta_map(genome_dir)
+            else:
+                genome_map = {}
 
-        eland_result = ElandLane(pathname, genome_map)
-        e.results[lane_id] = eland_result
+            eland_result = ElandLane(pathname, lane_id, end, genome_map)
+            if end is None:
+                effective_end =  0
+            else:
+                effective_end = end - 1
+            e.results[effective_end][lane_id] = eland_result
     return e
 
 def build_genome_fasta_map(genome_dir):

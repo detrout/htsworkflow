@@ -189,20 +189,22 @@ class RunfolderTests(unittest.TestCase):
 
             g_eland = g.eland_results
             g2_eland = g2.eland_results
-            for lane in g_eland.keys():
-                self.failUnlessEqual(g_eland[lane].reads,
-                                     g2_eland[lane].reads)
-                self.failUnlessEqual(len(g_eland[lane].mapped_reads),
-                                     len(g2_eland[lane].mapped_reads))
-                for k in g_eland[lane].mapped_reads.keys():
-                    self.failUnlessEqual(g_eland[lane].mapped_reads[k],
-                                         g2_eland[lane].mapped_reads[k])
+            for lane in g_eland.results[0].keys():
+                g_results = g_eland.results[0][lane]
+                g2_results = g2_eland.results[0][lane]
+                self.failUnlessEqual(g_results.reads,
+                                     g2_results.reads)
+                self.failUnlessEqual(len(g_results.mapped_reads),
+                                     len(g2_results.mapped_reads))
+                for k in g_results.mapped_reads.keys():
+                    self.failUnlessEqual(g_results.mapped_reads[k],
+                                         g2_results.mapped_reads[k])
 
-                self.failUnlessEqual(len(g_eland[lane].match_codes),
-                                     len(g2_eland[lane].match_codes))
-                for k in g_eland[lane].match_codes.keys():
-                    self.failUnlessEqual(g_eland[lane].match_codes[k],
-                                         g2_eland[lane].match_codes[k])
+                self.failUnlessEqual(len(g_results.match_codes),
+                                     len(g2_results.match_codes))
+                for k in g_results.match_codes.keys():
+                    self.failUnlessEqual(g_results.match_codes[k],
+                                         g2_results.match_codes[k])
 
 
     def test_eland(self):
@@ -217,7 +219,7 @@ class RunfolderTests(unittest.TestCase):
         eland = gerald.eland(self.gerald_dir, genome_maps=genome_maps)
 
         for i in range(1,9):
-            lane = eland[i]
+            lane = eland.results[0][i]
             self.failUnlessEqual(lane.reads, 4)
             self.failUnlessEqual(lane.sample_name, "s")
             self.failUnlessEqual(lane.lane_id, i)
@@ -238,8 +240,8 @@ class RunfolderTests(unittest.TestCase):
         e2 = gerald.ELAND(xml=xml)
 
         for i in range(1,9):
-            l1 = eland[i]
-            l2 = e2[i]
+            l1 = eland.results[0][i]
+            l2 = e2.results[0][i]
             self.failUnlessEqual(l1.reads, l2.reads)
             self.failUnlessEqual(l1.sample_name, l2.sample_name)
             self.failUnlessEqual(l1.lane_id, l2.lane_id)

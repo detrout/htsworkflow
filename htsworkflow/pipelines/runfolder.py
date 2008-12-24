@@ -216,28 +216,30 @@ def summarize_mapped_reads(mapped_reads):
 def summarize_lane(gerald, lane_id):
     report = []
     summary_results = gerald.summary.lane_results
-    eland_result = gerald.eland_results.results[lane_id]
-    report.append("Sample name %s" % (eland_result.sample_name))
-    report.append("Lane id %s" % (eland_result.lane_id,))
-    cluster = summary_results[eland_result.lane_id].cluster
-    report.append("Clusters %d +/- %d" % (cluster[0], cluster[1]))
-    report.append("Total Reads: %d" % (eland_result.reads))
-    mc = eland_result._match_codes
-    nm = mc['NM']
-    nm_percent = float(nm)/eland_result.reads  * 100
-    qc = mc['QC']
-    qc_percent = float(qc)/eland_result.reads * 100
+    for end in range(len(summary_results)):  
+      eland_result = gerald.eland_results.results[end][lane_id]
+      report.append("Sample name %s" % (eland_result.sample_name))
+      report.append("Lane id %s end %s" % (eland_result.lane_id, end))
+      cluster = summary_results[end][eland_result.lane_id].cluster
+      report.append("Clusters %d +/- %d" % (cluster[0], cluster[1]))
+      report.append("Total Reads: %d" % (eland_result.reads))
+      mc = eland_result._match_codes
+      nm = mc['NM']
+      nm_percent = float(nm)/eland_result.reads  * 100
+      qc = mc['QC']
+      qc_percent = float(qc)/eland_result.reads * 100
 
-    report.append("No Match: %d (%2.2g %%)" % (nm, nm_percent))
-    report.append("QC Failed: %d (%2.2g %%)" % (qc, qc_percent))
-    report.append('Unique (0,1,2 mismatches) %d %d %d' % \
-                  (mc['U0'], mc['U1'], mc['U2']))
-    report.append('Repeat (0,1,2 mismatches) %d %d %d' % \
-                  (mc['R0'], mc['R1'], mc['R2']))
-    report.append("Mapped Reads")
-    mapped_reads = summarize_mapped_reads(eland_result.mapped_reads)
-    for name, counts in mapped_reads.items():
-      report.append("  %s: %d" % (name, counts))
+      report.append("No Match: %d (%2.2g %%)" % (nm, nm_percent))
+      report.append("QC Failed: %d (%2.2g %%)" % (qc, qc_percent))
+      report.append('Unique (0,1,2 mismatches) %d %d %d' % \
+                    (mc['U0'], mc['U1'], mc['U2']))
+      report.append('Repeat (0,1,2 mismatches) %d %d %d' % \
+                    (mc['R0'], mc['R1'], mc['R2']))
+      report.append("Mapped Reads")
+      mapped_reads = summarize_mapped_reads(eland_result.mapped_reads)
+      for name, counts in mapped_reads.items():
+        report.append("  %s: %d" % (name, counts))
+      report.append('')
     return report
 
 def summary_report(runs):
@@ -249,7 +251,7 @@ def summary_report(runs):
         # print a run name?
         report.append('Summary for %s' % (run.name,))
 	# sort the report
-	eland_keys = run.gerald.eland_results.results.keys()
+	eland_keys = run.gerald.eland_results.results[0].keys()
 	eland_keys.sort(alphanum)
 
 	for lane_id in eland_keys:
@@ -320,22 +322,23 @@ def extract_results(runs, output_base_dir=None):
       tar.wait()
 
       # copy & bzip eland files
-      for eland_lane in g.eland_results.values():
-          source_name = eland_lane.pathname
-          path, name = os.path.split(eland_lane.pathname)
-          dest_name = os.path.join(cycle_dir, name)
-          if is_compressed(name):
-            logging.info('Already compressed, Saving to %s' % (dest_name, ))
-            shutil.copy(source_name, dest_name)
-          else:
-            # not compressed
-            dest_name += '.bz2'
-            args = ['bzip2', '-9', '-c', source_name]
-            logging.info('Running: %s' % ( " ".join(args) ))
-            bzip_dest = open(dest_name, 'w')
-            bzip = subprocess.Popen(args, stdout=bzip_dest)
-            logging.info('Saving to %s' % (dest_name, ))
-            bzip.wait()
+      for lanes_dictionary in g.eland_results.results:
+          for eland_lane in lanes_dictionary.values():
+              source_name = eland_lane.pathname
+              path, name = os.path.split(eland_lane.pathname)
+              dest_name = os.path.join(cycle_dir, name)
+              if is_compressed(name):
+                logging.info('Already compressed, Saving to %s' % (dest_name, ))
+                shutil.copy(source_name, dest_name)
+              else:
+                # not compressed
+                dest_name += '.bz2'
+                args = ['bzip2', '-9', '-c', source_name]
+                logging.info('Running: %s' % ( " ".join(args) ))
+                bzip_dest = open(dest_name, 'w')
+                bzip = subprocess.Popen(args, stdout=bzip_dest)
+                logging.info('Saving to %s' % (dest_name, ))
+                bzip.wait()
 
 def clean_runs(runs):
     """

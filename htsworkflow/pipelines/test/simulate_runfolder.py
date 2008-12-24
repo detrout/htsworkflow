@@ -1912,15 +1912,28 @@ def make_eland_results(gerald_dir):
         f.write(eland_result)
         f.close()
 
-def make_eland_multi(gerald_dir):
-    eland_multi = """>HWI-EAS229_60_30DP9AAXX:1:1:1221:788   AAGATATCTACGACGTGGTATGGCGGTGTCTGGTCGT      NM
+def make_eland_multi(gerald_dir, paired=False):
+    eland_multi = [""">HWI-EAS229_60_30DP9AAXX:1:1:1221:788   AAGATATCTACGACGTGGTATGGCGGTGTCTGGTCGT      NM
 >HWI-EAS229_60_30DP9AAXX:1:1:931:747    AAAAAAGCAAATTTCATTCACATGTTCTGTGTTCATA   1:0:2   chr5.fa:55269838R0
 >HWI-EAS229_60_30DP9AAXX:1:1:1121:379   AGAAGAGACATTAAGAGTTCCTGAAATTTATATCTGG   2:1:0   chr16.fa:46189180R1,chr7.fa:122968519R0,chr8.fa:48197174F0
 >HWI-EAS229_60_30DP9AAXX:1:1:892:1155   ACATTCTCCTTTCCTTCTGAAGTTTTTACGATTCTTT   0:9:10  chr10.fa:114298201F1,chr12.fa:8125072F1,19500297F2,42341293R2,chr13.fa:27688155R2,95069772R1,chr15.fa:51016475F2,chr16.fa:27052155F2,chr1.fa:192426217R2,chr21.fa:23685310R2,chr2.fa:106680068F1,chr3.fa:185226695F2,chr4.fa:106626808R2,chr5.fa:14704894F1,43530779F1,126543189F2,chr6.fa:74284101F1,chr7.fa:22516603F1,chr9.fa:134886204R
-"""
-    for i in range(1,9):
-        pathname = os.path.join(gerald_dir,
-                                's_%d_eland_multi.txt' % (i,))
-        f = open(pathname, 'w')
-        f.write(eland_multi)
-        f.close()
+""", """>HWI-EAS229_60_30DP9AAXX:1:1:1221:788   AAGATATCTACGACGTGGTATGGCGGTGTCTGGTCGT      NM
+>HWI-EAS229_60_30DP9AAXX:1:1:1221:788   NNNNNNNNNNNNNNGTGGTATGGCGGTGTCTGGTCGT     QC 
+>HWI-EAS229_60_30DP9AAXX:1:1:931:747    AAAAAAGCAAATTTCATTCACATGTTCTGTGTTCATA   1:0:2   chr5.fa:55269838R0
+>HWI-EAS229_60_30DP9AAXX:1:1:1121:379   AGAAGAGACATTAAGAGTTCCTGAAATTTATATCTGG   2:1:0   chr16.fa:46189180R1,chr7.fa:122968519R0,chr8.fa:48197174F0,chr7.fa:22516603F1,chr9.fa:134886204R
+>HWI-EAS229_60_30DP9AAXX:1:1:892:1155   ACATTCTCCTTTCCTTCTGAAGTTTTTACGATTCTTT   0:9:10  chr10.fa:114298201F1,chr12.fa:8125072F1,19500297F2,42341293R2,chr13.fa:27688155R2,95069772R1,chr15.fa:51016475F2,chr16.fa:27052155F2,chr1.fa:192426217R2,chr21.fa:23685310R2,chr2.fa:106680068F1,chr3.fa:185226695F2,chr4.fa:106626808R2,chr5.fa:14704894F1,43530779F1,126543189F2,chr6.fa:74284101F1"""]
+    if paired:
+        for e in [1,2]:
+            for i in range(1,9):
+                pathname = os.path.join(gerald_dir,
+                                        's_%d_%d_eland_multi.txt' % (i,e))
+                f = open(pathname, 'w')
+                f.write(eland_multi[e-1])
+                f.close()
+    else:
+        for i in range(1,9):
+            pathname = os.path.join(gerald_dir,
+                                    's_%d_eland_multi.txt' % (i,))
+            f = open(pathname, 'w')
+            f.write(eland_multi[0])
+            f.close()
