@@ -230,7 +230,6 @@ class Summary(object):
         for element in list(tree):
             lrs = Summary.LaneResultSummary()
             lrs.set_elements(element)
-            print lrs.end, lrs.lane
             if len(self.lane_results) < (lrs.end + 1):
               self.lane_results.append({})
             self.lane_results[lrs.end][lrs.lane] = lrs
