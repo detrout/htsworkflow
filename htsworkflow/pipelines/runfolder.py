@@ -304,7 +304,15 @@ def extract_results(runs, output_base_dir=None):
 
       # tar score files
       score_files = []
-      for f in os.listdir(g.pathname):
+
+      # check for g.pathname/Temp a new feature of 1.1rc1
+      scores_path = g.pathname
+      scores_path_temp = os.path.join(scores_path, 'Temp')
+      if os.path.isdir(scores_path_temp):
+          scores_path = scores_path_temp
+
+      # hopefully we have a directory that contains s_*_score files
+      for f in os.listdir(scores_path):
           if re.match('.*_score.txt', f):
               score_files.append(f)
 
@@ -312,12 +320,13 @@ def extract_results(runs, output_base_dir=None):
       bzip_cmd = [ 'bzip2', '-9', '-c' ]
       tar_dest_name =os.path.join(cycle_dir, 'scores.tar.bz2')
       tar_dest = open(tar_dest_name, 'w')
-      logging.info("Compressing score files in %s" % (g.pathname,))
+      logging.info("Compressing score files from %s" % (scores_path,))
       logging.info("Running tar: " + " ".join(tar_cmd[:10]))
       logging.info("Running bzip2: " + " ".join(bzip_cmd))
       logging.info("Writing to %s" %(tar_dest_name))
 
-      tar = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, shell=False, cwd=g.pathname)
+      tar = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, shell=False, 
+                             cwd=scores_path)
       bzip = subprocess.Popen(bzip_cmd, stdin=tar.stdout, stdout=tar_dest)
       tar.wait()
 
@@ -327,6 +336,9 @@ def extract_results(runs, output_base_dir=None):
               source_name = eland_lane.pathname
               path, name = os.path.split(eland_lane.pathname)
               dest_name = os.path.join(cycle_dir, name)
+	      logging.info("Saving eland file %s to %s" % \
+	                   (source_name, dest_name))
+
               if is_compressed(name):
                 logging.info('Already compressed, Saving to %s' % (dest_name, ))
                 shutil.copy(source_name, dest_name)

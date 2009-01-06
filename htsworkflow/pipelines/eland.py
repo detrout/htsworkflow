@@ -316,10 +316,13 @@ def check_for_eland_file(basedir, pattern, lane_id, end):
 def eland(basedir, gerald=None, genome_maps=None):
     e = ELAND()
 
-    #file_list = glob(os.path.join(basedir, "*_eland_result.txt"))
-    #if len(file_list) == 0:
-    #    # lets handle compressed eland files too
-    #    file_list = glob(os.path.join(basedir, "*_eland_result.txt.bz2"))
+    # if there is a basedir/Temp change basedir to point to the temp
+    # directory, as 1.1rc1 moves most of the files we've historically
+    # cared about to that subdirectory.
+    # we should look into what the official 'result' files are.
+    basedir_temp = os.path.join(basedir, 'Temp')
+    if os.path.isdir(basedir_temp):
+        basedir = basedir_temp
 
     lane_ids = range(1,9)
     ends = [None, 1, 2]
