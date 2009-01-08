@@ -1,9 +1,9 @@
 from django.db import models
-from htswfrontend.fctracker.models import *
+from htsworkflow.frontend.samples.models import *
 
 class FlowCell(models.Model):
   
-  flowcell_id = models.CharField(max_length=20, unique=True, db_index=True, core=True)
+  flowcell_id = models.CharField(max_length=20, unique=True, db_index=True)
   run_date = models.DateTimeField(core=True)
   advanced_run = models.BooleanField(default=False)
   read_length = models.IntegerField(default=32) #Stanford is currenlty 25

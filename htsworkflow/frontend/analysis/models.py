@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import datetime
-from htswfrontend.fctracker.models import Library 
+from htsworkflow.frontend.samples.models import Library 
 from string import *
 
 class Task(models.Model):
@@ -20,7 +20,7 @@ class Task(models.Model):
   ## userid = # logged in user
   task_status = models.CharField(max_length=500,blank=True,null=True,default='defined')
   results_location = models.CharField(max_length=2000,blank=True,null=True) 
-  submitted_on = models.DateTimeField(core=True,default=datetime.now())
+  submitted_on = models.DateTimeField(default=datetime.now())
   run_note = models.CharField(max_length=500,blank=True,null=True)
   
   def __str__(self):

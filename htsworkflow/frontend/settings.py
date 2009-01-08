@@ -143,11 +143,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'htsworkflow.frontend.eland_config',
-    'htsworkflow.frontend.fctracker',
+    'htsworkflow.frontend.samples',
     # modules from htsworkflow branch
-    #'htswfrontend.exp_track',
-    #'htswfrontend.analys_track', 
-    #'htswfrontend.htsw_reports',
+    'htsworkflow.frontend.experiments',
+    'htsworkflow.frontend.analysis', 
+    'htsworkflow.frontend.reports',
     'django.contrib.databrowse',
 )
 

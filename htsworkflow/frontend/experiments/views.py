@@ -3,7 +3,7 @@
 #shortcut to the above modules
 from django.shortcuts import render_to_response, get_object_or_404
 #from htswfrontend.fctracker.models import *
-from htswfrontend.exp_track.models import *
+from htsworkflow.frontend.experiments.models import *
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 

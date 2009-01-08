@@ -2,9 +2,9 @@ from django.conf.urls.defaults import *
 
 # Databrowser:
 from django.contrib import databrowse
-from fctracker.models import Library, FlowCell
+from htsworkflow.frontend.samples.models import Library
 databrowse.site.register(Library)
-databrowse.site.register(FlowCell)
+#databrowse.site.register(FlowCell)
 
 urlpatterns = patterns('',
     # Base:
@@ -12,9 +12,12 @@ urlpatterns = patterns('',
     # Admin:
      (r'^admin/', include('django.contrib.admin.urls')),
     # ExpTrack:
-     (r'^experiments/', include('htswfrontend.experiments.et_urls')),
+     (r'^experiments/', include('htsworkflow.frontend.experiments.urls')),
     # AnalysTrack:
-     (r'^analysis/', include('htswfrontend.analysis.an_urls')),
+     (r'^analysis/', include('htsworkflow.frontend.analysis.urls')),
     # Report Views:
     # (r'^reports/', include('gaworkflow.frontend....urls')),
+    
+    # databrowser
+    (r'^databrowse/(.*)', databrowse.site.root)
 )

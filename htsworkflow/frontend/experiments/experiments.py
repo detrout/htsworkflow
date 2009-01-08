@@ -3,9 +3,9 @@ from django.http import HttpResponse
 from datetime import datetime
 from string import *
 import re
-from htswfrontend import settings
-from htswfrontend.exp_track.models import FlowCell, DataRun
-from htswfrontend.fctracker.models import Library
+from htsworkflow.frontend import settings
+from htsworkflow.frontend.experiments.models import FlowCell, DataRun
+from htsworkflow.frontend.samples.models import Library
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail, mail_admins
 

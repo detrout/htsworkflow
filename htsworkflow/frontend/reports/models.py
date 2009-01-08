@@ -2,11 +2,11 @@ from django.db import models
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from datetime import datetime
-from htswfrontend.fctracker.models import * 
-from htswfrontend.analys_track.models import *
-from htswfrontend.exp_track.models import *
+from htsworkflow.frontend.samples.models import * 
+from htsworkflow.frontend.analysis.models import *
+from htsworkflow.frontend.experiments.models import *
 from string import *
-from htswfrontend.htsw_reports.utils import *
+from htsworkflow.frontend.reports.utils import *
 import re
 ##from p1 import LibInfo
 from libinfopar import *
@@ -218,8 +218,8 @@ class ProgressReport(models.Model):
     return 'coming up ..'
 
   QPCR = models.CharField(max_length=500,blank=True,null=True)    
-  submitted_to_DCC = models.DateTimeField(core=True,blank=True,null=True)
-  submitted_to_NCBI = models.DateTimeField(core=True,blank=True,null=True)
+  submitted_to_DCC = models.DateTimeField(blank=True,null=True)
+  submitted_to_NCBI = models.DateTimeField(blank=True,null=True)
   note_about_DCC =  models.TextField(blank=True)
   note_about_NCBI = models.TextField(blank=True)
   

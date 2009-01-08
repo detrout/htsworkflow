@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from htsworkflow.frontend import settings
-from htsworkflow.reports.libinfopar import *
+#from htsworkflow.reports.libinfopar import *
 
 # Create your models here.
 
@@ -63,7 +63,7 @@ class Condition(models.Model):
 
 class Species(models.Model):
   
-  scientific_name = models.CharField(max_length=256, unique=False, db_index=True, core=True)
+  scientific_name = models.CharField(max_length=256, unique=False, db_index=True)
   common_name = models.CharField(max_length=256, blank=True)
   use_genome_build = models.CharField(max_length=100, blank=False, null=False)
 
@@ -82,7 +82,7 @@ class Species(models.Model):
       )
 
 class Affiliation(models.Model):
-  name = models.CharField(max_length=256, db_index=True, core=True,verbose_name='Group Name')
+  name = models.CharField(max_length=256, db_index=True, verbose_name='Group Name')
   contact = models.CharField(max_length=256, null=True, blank=True,verbose_name='Contact Name')  
   email = models.EmailField(null=True,blank=True)
   
@@ -106,12 +106,12 @@ class Affiliation(models.Model):
 
 class Library(models.Model):
   
-  library_id = models.CharField(max_length=30, primary_key=True, db_index=True, core=True)
-  library_name = models.CharField(max_length=100, unique=True, core=True)
-  library_species = models.ForeignKey(Species, core=True)
-  cell_line = models.ForeignKey(Cellline,core=True)
-  condition = models.ForeignKey(Condition,core=True)
-  antibody = models.ForeignKey(Antibody,blank=True,null=True,core=True)
+  library_id = models.CharField(max_length=30, primary_key=True, db_index=True)
+  library_name = models.CharField(max_length=100, unique=True)
+  library_species = models.ForeignKey(Species)
+  cell_line = models.ForeignKey(Cellline)
+  condition = models.ForeignKey(Condition)
+  antibody = models.ForeignKey(Antibody,blank=True,null=True)
   # New field Aug/25/08. SQL: alter table fctracker_library add column "lib_affiliation" varchar(256)  NULL;
   affiliations = models.ManyToManyField(Affiliation,related_name='library_affiliations',null=True,filter_interface=models.HORIZONTAL)
   # New field Aug/19/08
@@ -131,7 +131,7 @@ class Library(models.Model):
                                      default='RNA-seq')
   
   creation_date = models.DateField(blank=True, null=True)
-  made_for = models.ForeignKey(User)
+  made_for = models.ForeignKey(User, edit_inline=models.TABULAR)
   made_by = models.CharField(max_length=50, blank=True, default="Lorian")
   
   PROTOCOL_END_POINTS = (
@@ -207,13 +207,14 @@ class Library(models.Model):
     save_on_top = True
     ##search_fields = ['library_id','library_name','affiliations__name','affiliations__contact','made_by','made_for','antibody__antigene','antibody__catalog','antibody__antibodies','antibody__source','cell_line__cellline_name','library_species__scientific_name','library_species__common_name','library_species__use_genome_build']
     search_fields = ['library_id','library_name','cell_line__cellline_name','library_species__scientific_name','library_species__common_name','library_species__use_genome_build']
-    list_display = ('affiliation','library_id','aligned_reads','library_name','experiment_type','org','replicate','antibody_name','cell_line','made_by','creation_date')
-    list_display_links = ('library_id', 'library_name')
+    #list_display = ('affiliation','library_id','aligned_reads','library_name','experiment_type','org','replicate','antibody_name','cell_line','made_by','creation_date')
+    list_display = ('library_id','library_name','experiment_type','replicate','antibody_name','made_by','creation_date')
+    #list_display_links = ('library_id', 'library_name')
 
-    list_filter = ('experiment_type','affiliations','library_species','made_for', 'made_by','replicate')
+    list_filter = ('experiment_type','affiliations','library_species', 'made_by','replicate')
     fields = (
         (None, {
-            'fields': (('replicate','library_id','library_name'),('library_species'),('experiment_type'),('cell_line','condition','antibody'),)
+        'fields': (('replicate','library_id','library_name'),('library_species'),('experiment_type'),('cell_line','condition','antibody'),)
         }),
         ('Creation Information:', {
             'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('undiluted_concentration', 'library_size'), 'notes',)

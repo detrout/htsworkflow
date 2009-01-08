@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from htsworkflow.frontend.eland_config import forms
 from htsworkflow.frontend import settings
-from htsworkflow.frontend.fctracker import models
+from htsworkflow.frontend.samples import models
 
 import os
 import glob

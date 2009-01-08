@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from datetime import datetime
 from string import *
 import re
-from htswfrontend import settings
-from htswfrontend.analys_track.models import Task, Project
+from htsworkflow.frontend import settings
+from htsworkflow.frontend.analysis.models import Task, Project
 from django.core.exceptions import ObjectDoesNotExist
 
 def updStatus(request):
