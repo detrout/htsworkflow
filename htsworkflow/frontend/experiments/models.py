@@ -4,7 +4,7 @@ from htsworkflow.frontend.samples.models import *
 class FlowCell(models.Model):
   
   flowcell_id = models.CharField(max_length=20, unique=True, db_index=True)
-  run_date = models.DateTimeField(core=True)
+  run_date = models.DateTimeField()
   advanced_run = models.BooleanField(default=False)
   read_length = models.IntegerField(default=32) #Stanford is currenlty 25
   
@@ -64,13 +64,12 @@ class FlowCell(models.Model):
   
   notes = models.TextField(blank=True)
 
-  def __str__(self):
-    #return '%s (%s)' % (self.flowcell_id, self.run_date) 
-    return '%s' % (self.flowcell_id) 
+  def __unicode__(self):
+      return unicode(self.flowcell_id) 
 
   def Create_LOG(self):
     str = '' #<span style="color:red;font-size:80%;margin-right:3px">New!</span>'
-    str +='<a target=_balnk href="/exp_track/'+self.flowcell_id+'" title="Create XLS like sheet for this Flowcell ..." ">Create LOG</a>'
+    str +='<a target=_balnk href="/experiments/'+self.flowcell_id+'" title="Create XLS like sheet for this Flowcell ..." ">Create LOG</a>'
     return str
   Create_LOG.allow_tags = True 
 
@@ -78,28 +77,6 @@ class FlowCell(models.Model):
     return '<div><span style="margin-right:10px">1)%s</span><span style="margin-right:10px">2)%s</span><span style="margin-right:10px">3)%s</span><span style="margin-right:10px">4)%s</span><span style="margin-right:10px">5)%s</span><span style="margin-right:10px">6)%s</span><span style="margin-right:10px">7)%s</span><span style="margin-right:10px">8)%s</span></div>' % (self.lane_1_library,self.lane_2_library,self.lane_3_library,self.lane_4_library,self.lane_5_library,self.lane_6_library,self.lane_7_library,self.lane_8_library)
   Lanes.allow_tags = True
  
-  class Meta:
-    ordering = ["-run_date"]
-  
-  class Admin:
-    save_on_top = True
-    date_hierarchy = "run_date"
-    save_on_top = True
-    search_fields = ['flowcell_id','seq_mac_id','cluster_mac_id','=lane_1_library__library_id','=lane_2_library__library_id','=lane_3_library__library_id','=lane_4_library__library_id','=lane_5_library__library_id','=lane_6_library__library_id','=lane_7_library__library_id','=lane_8_library__library_id']
-    list_display = ('flowcell_id','seq_mac_id','run_date', 'Create_LOG','Lanes')
-    list_filter = ('seq_mac_id','cluster_mac_id')
-    fields = (
-        (None, {
-            'fields': ('run_date', ('flowcell_id','cluster_mac_id','seq_mac_id'), ('read_length'),)
-        }),
-        ('Lanes:', {
-            ##'fields' : (('lane_1_library', 'lane_1_pM', 'lane_1_cluster_estimate', 'lane_1_primer'), ('lane_2_library', 'lane_2_pM', 'lane_2_cluster_estimate', 'lane_2_primer'), ('lane_3_library', 'lane_3_pM', 'lane_3_cluster_estimate', 'lane_3_primer'), ('lane_4_library', 'lane_4_pM', 'lane_4_cluster_estimate', 'lane_4_primer'), ('lane_5_library', 'lane_5_pM', 'lane_5_cluster_estimate', 'lane_5_primer'), ('lane_6_library', 'lane_6_pM', 'lane_6_cluster_estimate', 'lane_6_primer'), ('lane_7_library', 'lane_7_pM', 'lane_7_cluster_estimate', 'lane_7_primer'), ('lane_8_library', 'lane_8_pM', 'lane_8_cluster_estimate', 'lane_8_primer'),)
-           'fields' : (('lane_1_library', 'lane_1_pM', 'lane_1_cluster_estimate'), ('lane_2_library', 'lane_2_pM', 'lane_2_cluster_estimate'), ('lane_3_library', 'lane_3_pM', 'lane_3_cluster_estimate'), ('lane_4_library', 'lane_4_pM', 'lane_4_cluster_estimate'), ('lane_5_library', 'lane_5_pM', 'lane_5_cluster_estimate'), ('lane_6_library', 'lane_6_pM', 'lane_6_cluster_estimate'), ('lane_7_library', 'lane_7_pM', 'lane_7_cluster_estimate'), ('lane_8_library', 'lane_8_pM', 'lane_8_cluster_estimate'),)
-        }),
-	(None, {
-	    'fields' : ('notes',)
-	}),
-    )
 
 
 ### -----------------------
@@ -108,7 +85,7 @@ class DataRun(models.Model):
   run_folder = models.CharField(max_length=50,unique=True, db_index=True)
   fcid = models.ForeignKey(FlowCell,verbose_name="Flowcell Id")
   config_params = models.TextField(default=ConfTemplate)
-  run_start_time = models.DateTimeField(core=True)
+  run_start_time = models.DateTimeField()
   RUN_STATUS_CHOICES = (
       (0, 'Sequencer running'), ##Solexa Data Pipeline Not Yet Started'),
       (1, 'Data Pipeline Started'),
@@ -156,8 +133,3 @@ class DataRun(models.Model):
     return str
   Flowcell_Info.allow_tags = True
 
-  class Admin:
-    search_fields = ['run_folder','run_note','config_params','=fcid__lane_1_library__library_id','=fcid__lane_2_library__library_id','=fcid__lane_3_library__library_id','=fcid__lane_4_library__library_id','=fcid__lane_5_library__library_id','=fcid__lane_6_library__library_id','=fcid__lane_7_library__library_id','=fcid__lane_8_library__library_id']
-
-    list_display = ('run_folder','Flowcell_Info','run_start_time','main_status','run_note')
-    list_filter = ('run_status','run_start_time')

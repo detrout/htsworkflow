@@ -1,3 +1,4 @@
+from htsworkflow.frontend import settings
 from django.http import HttpResponse
 from datetime import datetime
 from string import *
@@ -22,16 +23,19 @@ class LibInfoHandler(ContentHandler):
     self.searchTerm= searchTerm
     self.currlibid = ''
     self.LanesCount, self.ReadsCount = 0, 0
-    self.Msg = ''
+    self.Msg = 'OK'
        
   def startElement(self, name, attrs):
-    if name == 'Library':     
-      self.currlibid = attrs.get('Name',"")      
-    elif name == 'Track' and self.searchTerm == self.currlibid:
-      self.LanesCount += len(attrs.get('Lane',""))
-      self.ReadsCount += int(attrs.get('Count',""))
-    else:
-      self.Msg += ' | name = '+name+', currlibid = '+ self.currlibid
+    try:
+      if name == 'Library':     
+        self.currlibid = attrs.get('Name',"")      
+      elif name == 'Track' and self.searchTerm == self.currlibid:
+        self.LanesCount += len(attrs.get('Lane',""))
+        self.ReadsCount += int(attrs.get('Count',""))
+      #else:
+      #  self.Msg += ' | name = '+name+', currlibid = '+ self.currlibid
+    except: 
+      self.Msg = 'failed parsing xml file'
     return
 
   #def characters (self, ch):
@@ -48,10 +52,14 @@ def getLibReads(libid):
   parser = make_parser()   
   curHandler = LibInfoHandler(searchTerm)
   parser.setContentHandler(curHandler)
-  parser.parse(open('/htsworkflow/htswfrontend/htswfrontend/htsw_reports/LibInfo/LibraryInfo.xml'))
+  reports_dir = os.path.split(__file__)[0]
+  library_info = os.path.join(reports_dir, 'LibraryInfo.xml')
+  parser.parse(open(library_info))
   arRes = []
   arRes.append(curHandler.LanesCount) 
   arRes.append(curHandler.ReadsCount)
+  arRes.append(curHandler.Msg)
+
   return arRes
 
 def getWebPage(url,params):
@@ -64,7 +72,7 @@ def getWebPage(url,params):
 
 def refreshLibInfoFile(request): 
  varStatus = 'getting conf file from exp trac server'
- url = 'http://m304-apple-server.stanford.edu/ENCODE/LibraryInfo.xml'
+ url = settings.TASKS_PROJS_SERVER+'/LibraryInfo.xml'
  params = {}
  readw = getWebPage(url,params)
  # make sure file content starts as xml
@@ -80,7 +88,9 @@ def refreshLibInfoFile(request):
    if day < 10: day = "0"+day.__str__()
    else: day = day.__str__()
    mydate = year+month+day
-   folder = '/htsworkflow/htswfrontend/htswfrontend/htsw_reports/LibInfo/'
+   folder_loc = '/htsworkflow/htswfrontend/htswfrontend'  # DEV                                                                                                                          
+   #folder_loc = '/Library/WebServer/gaworkflow/gaworkflow/frontend'  # PROD
+   folder = folder_loc+'/htsw_reports/LibInfo/'
    os.rename(folder+'LibraryInfo.xml',folder+mydate+'_LibraryInfo.xml')
    # create file in curret folder
    file_path = os.path.join(folder,'LibraryInfo.xml')

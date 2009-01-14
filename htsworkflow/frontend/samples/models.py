@@ -1,108 +1,110 @@
 from django.db import models
 from django.contrib.auth.models import User
 from htsworkflow.frontend import settings
-#from htsworkflow.reports.libinfopar import *
+from htsworkflow.frontend.reports.libinfopar import *
 
 # Create your models here.
 
 class Antibody(models.Model):
-  antigene = models.CharField(max_length=500, db_index=True)
-  # New field Aug/20/08                                                                                                                                                            
-  # SQL to add column: alter table fctracker_antibody add column "nickname" varchar(20) NULL;
-  nickname = models.CharField(max_length=20,blank=True,null=True, db_index=True,verbose_name = 'Short Name')
-  catalog = models.CharField(max_length=50, unique=True, db_index=True)
-  antibodies = models.CharField(max_length=500, db_index=True)
-  source = models.CharField(max_length=500, blank=True, db_index=True)
-  biology = models.TextField(blank=True)
-  notes = models.TextField(blank=True)
-  def __str__(self):
-    return '%s - %s (%s)' % (self.antigene, self.antibodies, self.catalog)
-  class Meta:
-    verbose_name_plural = "antibodies"
-    ordering = ["antigene"]
-  class Admin:
-      list_display = ('antigene','nickname','antibodies','catalog','source','biology','notes')
-      list_filter = ('antibodies','source')
-      fields = (
-        (None, {
-            'fields': (('antigene','nickname','antibodies'),('catalog','source'),('biology'),('notes'))
-        }),
-       )
+    antigene = models.CharField(max_length=500, db_index=True)
+    # New field Aug/20/08
+    # SQL to add column: 
+    # alter table fctracker_antibody add column "nickname" varchar(20) NULL;
+    nickname = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True, 
+        db_index=True,
+        verbose_name = 'Short Name'
+    )
+    catalog = models.CharField(max_length=50, unique=True, db_index=True)
+    antibodies = models.CharField(max_length=500, db_index=True)
+    source = models.CharField(max_length=500, blank=True, db_index=True)
+    biology = models.TextField(blank=True)
+    notes = models.TextField(blank=True)
+    def __unicode__(self):
+        return u'%s - %s (%s)' % (self.antigene, self.antibodies, self.catalog)
+    class Meta:
+        verbose_name_plural = "antibodies"
+        ordering = ["antigene"]
 
 class Cellline(models.Model):
-  cellline_name = models.CharField(max_length=100, unique=True, db_index=True)
-  notes = models.TextField(blank=True)
-  def __str__(self):
-    return '%s' % (self.cellline_name)
+    cellline_name = models.CharField(max_length=100, unique=True, db_index=True)
+    nickname = models.CharField(max_length=20,
+        blank=True,
+        null=True, 
+        db_index=True,
+        verbose_name = 'Short Name')
+    notes = models.TextField(blank=True)
+    def __unicode__(self):
+        return unicode(self.cellline_name)
 
-  class Meta:
-    ordering = ["cellline_name"]
-
-  class Admin:
-      fields = (
-        (None, {
-            'fields': (('cellline_name'),('notes'),)
-        }),
-       )
+    class Meta:
+        ordering = ["cellline_name"]
 
 class Condition(models.Model):
-  condition_name = models.CharField(max_length=2000, unique=True, db_index=True)
-  notes = models.TextField(blank=True)
-  def __str__(self):
-    return '%s' % (self.condition_name)
+    condition_name = models.CharField(
+        max_length=2000, unique=True, db_index=True)
+    nickname = models.CharField(max_length=20,
+        blank=True,
+        null=True, 
+        db_index=True,
+        verbose_name = 'Short Name')
+    notes = models.TextField(blank=True)
 
-  class Meta:
-    ordering = ["condition_name"]
+    def __unicode__(self):
+        return unicode(self.condition_name)
 
-  class Admin:
-      fields = (
-        (None, {
-            'fields': (('condition_name'),('notes'),)
-        }),
-       )
+    class Meta:
+        ordering = ["condition_name"]
 
+class Tag(models.Model): 
+  tag_name = models.CharField(max_length=100, db_index=True,blank=False,null=False) 
+  TAG_CONTEXT = ( 
+      #('Antibody','Antibody'), 
+      #('Cellline', 'Cellline'), 
+      #('Condition', 'Condition'), 
+      ('Library', 'Library'), 
+      ('ANY','ANY'), 
+  ) 
+  context = models.CharField(max_length=50, 
+      choices=TAG_CONTEXT, default='Library') 
+ 
+  def __unicode__(self): 
+    return u'%s' % (self.tag_name) 
+ 
+  class Meta: 
+    ordering = ["context","tag_name"] 
+ 
 class Species(models.Model):
-  
-  scientific_name = models.CharField(max_length=256, unique=False, db_index=True)
+  scientific_name = models.CharField(max_length=256, 
+      unique=False, 
+      db_index=True
+  )
   common_name = models.CharField(max_length=256, blank=True)
-  use_genome_build = models.CharField(max_length=100, blank=False, null=False)
+  #use_genome_build = models.CharField(max_length=100, blank=False, null=False)
 
-  def __str__(self):
-    return '%s (%s)|%s' % (self.scientific_name, self.common_name, self.use_genome_build)
+  def __unicode__(self):
+    return u'%s (%s)' % (self.scientific_name, self.common_name)
   
   class Meta:
     verbose_name_plural = "species"
     ordering = ["scientific_name"]
   
-  class Admin:
-      fields = (
-        (None, {
-            'fields': (('scientific_name', 'common_name'), ('use_genome_build'))
-        }),
-      )
-
 class Affiliation(models.Model):
   name = models.CharField(max_length=256, db_index=True, verbose_name='Group Name')
   contact = models.CharField(max_length=256, null=True, blank=True,verbose_name='Contact Name')  
   email = models.EmailField(null=True,blank=True)
   
-  def __str__(self):
-    str = self.name
-    if self.contact != '':
-      str += ' ('+self.contact+')' 
+  def __unicode__(self):
+    str = unicode(self.name)
+    if len(self.contact) != 0:
+      str += u' ('+self.contact+u')' 
     return str
 
   class Meta:
     ordering = ["name","contact"]
     unique_together = (("name", "contact"),)
-
-  class Admin:
-      list_display = ('name','contact','email')
-      fields = (
-        (None, {
-            'fields': (('name','contact','email'))
-        }),
-      )
 
 class Library(models.Model):
   
@@ -113,7 +115,9 @@ class Library(models.Model):
   condition = models.ForeignKey(Condition)
   antibody = models.ForeignKey(Antibody,blank=True,null=True)
   # New field Aug/25/08. SQL: alter table fctracker_library add column "lib_affiliation" varchar(256)  NULL;
-  affiliations = models.ManyToManyField(Affiliation,related_name='library_affiliations',null=True,filter_interface=models.HORIZONTAL)
+  affiliations = models.ManyToManyField(Affiliation,related_name='library_affiliations',null=True)
+  # new field Nov/14/08
+  tags = models.ManyToManyField(Tag,related_name='library_tags',blank=True,null=True)
   # New field Aug/19/08
   # SQL to add column: alter table fctracker_library add column "replicate" smallint unsigned NULL;
   REPLICATE_NUM = ((1,1),(2,2),(3,3),(4,4))
@@ -131,7 +135,7 @@ class Library(models.Model):
                                      default='RNA-seq')
   
   creation_date = models.DateField(blank=True, null=True)
-  made_for = models.ForeignKey(User, edit_inline=models.TABULAR)
+  made_for = models.ForeignKey(User)
   made_by = models.CharField(max_length=50, blank=True, default="Lorian")
   
   PROTOCOL_END_POINTS = (
@@ -154,17 +158,19 @@ class Library(models.Model):
   avg_lib_size = models.IntegerField(default=225, blank=True, null=True)
   notes = models.TextField(blank=True)
   
-  def __str__(self):
-    return '#%s: %s' % (self.library_id, self.library_name)
+  def __unicode__(self):
+    return u'#%s: %s' % (self.library_id, self.library_name)
   
   class Meta:
     verbose_name_plural = "libraries"
     ordering = ["-creation_date"] #["-library_id"]
   
   def antibody_name(self):
-    return self.antibody.nickname
+    str ='<a target=_self href="/admin/samples/antibody/'+self.antibody.id.__str__()+'/" title="'+self.antibody.__str__()+'">'+self.antibody.nickname+'</a>' 
+    return str
+  antibody_name.allow_tags = True
 
-  def org(self):
+  def organism(self):
     return self.library_species.common_name
 
   def affiliation(self):
@@ -172,12 +178,31 @@ class Library(models.Model):
     tstr = ''
     ar = []
     for t in affs:
-        ar.append(t.__str__())
+        ar.append(t.__unicode__())
     return '%s' % (", ".join(ar))
 
+  def libtags(self):
+    affs = self.tags.all().order_by('tag_name')
+    ar = []
+    for t in affs:
+      ar.append(t.__unicode__())
+    return u'%s' % ( ", ".join(ar))
+
+  def DataRun(self):
+    str ='<a target=_self href="/admin/experiments/datarun/?q='+self.library_id+'" title="Check All Data Runs for This Specific Library ..." ">Data Run</a>' 
+    return str
+  DataRun.allow_tags = True
+
+  def aligned_m_reads(self):
+    return getLibReads(self.library_id)
 
   def aligned_reads(self):
     res = getLibReads(self.library_id)
+
+    # Check data sanity
+    if res[2] != "OK":
+      return u'<div style="border:solid red 2px">'+res[2]+'</div>'
+
     rc = "%1.2f" % (res[1]/1000000.0)
     # Color Scheme: green is more than 10M, blue is more than 5M, orange is more than 3M and red is less. For RNAseq, all those thresholds should be doubled
     if res[0] > 0:
@@ -195,32 +220,9 @@ class Library(models.Model):
            if res[1] > rc_thr[2]: 
              bgcolor ='#ffcc33'  # Orange
       tstr = '<div style="background-color:'+bgcolor+';color:black">'
-      tstr += res[0].__str__()+' Lanes, '+rc+' M Reads'
+      tstr += res[0].__unicode__()+' Lanes, '+rc+' M Reads'
       tstr += '</div>'
     else: tstr = 'not processed yet' 
     return tstr
   aligned_reads.allow_tags = True
-
-  class Admin:
-    date_hierarchy = "creation_date"
-    save_as = True
-    save_on_top = True
-    ##search_fields = ['library_id','library_name','affiliations__name','affiliations__contact','made_by','made_for','antibody__antigene','antibody__catalog','antibody__antibodies','antibody__source','cell_line__cellline_name','library_species__scientific_name','library_species__common_name','library_species__use_genome_build']
-    search_fields = ['library_id','library_name','cell_line__cellline_name','library_species__scientific_name','library_species__common_name','library_species__use_genome_build']
-    #list_display = ('affiliation','library_id','aligned_reads','library_name','experiment_type','org','replicate','antibody_name','cell_line','made_by','creation_date')
-    list_display = ('library_id','library_name','experiment_type','replicate','antibody_name','made_by','creation_date')
-    #list_display_links = ('library_id', 'library_name')
-
-    list_filter = ('experiment_type','affiliations','library_species', 'made_by','replicate')
-    fields = (
-        (None, {
-        'fields': (('replicate','library_id','library_name'),('library_species'),('experiment_type'),('cell_line','condition','antibody'),)
-        }),
-        ('Creation Information:', {
-            'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('undiluted_concentration', 'library_size'), 'notes',)
-        }),
-        ('Library/Project Affiliation:', {
-            'fields' : (('affiliations'),)
-        }),
-        )
 

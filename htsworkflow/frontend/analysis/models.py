@@ -18,6 +18,7 @@ class Task(models.Model):
     )
   apply_calc = models.CharField(max_length=50,choices=CALCS,verbose_name='Applied Calculation')
   ## userid = # logged in user
+  task_params = models.CharField(max_length=200,blank=True,null=True,default="")
   task_status = models.CharField(max_length=500,blank=True,null=True,default='defined')
   results_location = models.CharField(max_length=2000,blank=True,null=True) 
   submitted_on = models.DateTimeField(default=datetime.now())
@@ -35,24 +36,10 @@ class Task(models.Model):
         pstr += '%s, ' % (p.project_name) 
       return pstr
 
-  class Admin:
-    list_display = ('task_name','apply_calc','subject1','subject2','InProjects','submitted_on','task_status')
-    list_filter = ('apply_calc',)
-    search_fields = ['task_name','id','=subject1__library_id','=subject2__library_id']
-    fields = (
-        (None, {
-          'fields': (('task_name'),('apply_calc'),('subject1'),('subject2'))
-           }),
-          ('system fields', {
-             'classes': 'collapse',
-           'fields': (('submitted_on'),('task_status','run_note'))
-          }),
-        )
-    
     
 class Project(models.Model):
     project_name = models.CharField(max_length=50,unique=True, db_index=True)
-    tasks = models.ManyToManyField(Task,related_name='project_tasks',null=True,filter_interface=models.HORIZONTAL)
+    tasks = models.ManyToManyField(Task,related_name='project_tasks',null=True)
     project_notes = models.CharField(max_length=500,blank=True,null=True)
     
     def __str__(self):
@@ -60,7 +47,7 @@ class Project(models.Model):
 
     def ProjectTasks(self):
       ptasks = self.tasks.all().order_by('id')
-      surl = 'http://m304-apple-server.stanford.edu/projects/' 
+      surl = settings.ANALYSIS_SERVER+'/projects/' 
       tstr = '<script>'
       tstr += 'function togView(eid){'
       tstr += 'f=document.getElementById(eid);'
@@ -79,7 +66,12 @@ class Project(models.Model):
       tstr += '<table><tr><th>Tasks</th><th>Job Status</th>'
       isregistered = False
       for t in ptasks:
-        tstr += '<tr><td width=250>%s</td><td>%s</td></tr>'  % (t.task_name,replace(t.task_status,'Complete','<span style="color:green;font-weight:bolder">Complete</span>'))
+        taskdesc = t.task_name+'<div style="font-size:80%">Details: '+t.apply_calc+' on '+t.subject1.library_id
+        if t.subject2 is not None:
+          taskdesc += ' and '+t.subject2.library_id
+        taskdesc += ' (TaskId:'+t.id.__str__()+')'
+        tstr += '<tr><td width=250>%s</td><td>%s</td></tr>'  % (taskdesc,replace(t.task_status,'Complete','<span style="color:green;font-weight:bolder">Complete</span>'))
+
         if t.task_status != 'defined': isregistered = True
 
       tstr += '</table>'
@@ -107,11 +99,3 @@ class Project(models.Model):
 
     ProjTitle.allow_tags = True
 
-    class Admin:
-      list_display = ('ProjTitle','ProjectTasks')
-      list_filter = ()
-      search_fields = ['project_name','=tasks__subject1__library_id','=tasks__subject2__library_id','tasks__subject1__library_name','tasks__subject2__library_name','project_notes']
-      fields = (
-        (None, {
-          'fields': (('project_name'),('tasks'),('project_notes'))}),
-        )

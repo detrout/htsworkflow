@@ -1,5 +1,5 @@
-from django import newforms as forms
-from django.newforms.util import ErrorList
+from django import forms
+from django.forms.util import ErrorList
 
 
 SPECIES_LIST = [#('--choose--', '--Choose--'),
