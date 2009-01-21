@@ -1,199 +1,117 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title>{{ fc.flowcell_id }} - GA SEQUENCING (SOLEXA) LOG</title>
-
+<html><head><title>{{ fc.flowcell_id }} - GA SEQUENCING (SOLEXA) LOG</title>
 <style type="text/css">
-  table, td 
+<!--
+TD
   {
-    border-color: #600;
-    border-style: solid;
+  color:black;
+  font-size:9pt;
+  font-face:Arial;
   }
-  table
-  {
-    border-width: 0 0 1px 1px;
-    border-spacing: 0;
-    border-collapse: collapse;
-  }
-  td
-  {
-    margin:0 ;
-    padding: 4px;
-    border-width: 1px 1px 0 0;
-  }
+-->
 </style>
-</head>
-<body>
-  <p>{% if fc %}</p>
-<table>
-<thead>
-  <td colspan="3"><b>GA SEQUENCING (SOLEXA) LOG</b></td>
-</thead>
-<tbody>
-<tr>
-<td>Date Run Started</td>
-<td colspan="2">{{ fc.run_date }}</td>
+</head><body>
+{% if fc %}
+<table border="1" cellspacing="1">
+<tr><td colspan=2 nowrap><b>GA SEQUENCING (SOLEXA) LOG</b></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>Date Run Started</td><td colspan=2>{{ fc.run_date }}</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>Cluster station used</td><td colspan=2 nowrap>{{ fc.cluster_mac_id }}</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>GA used</td><td colspan=2 nowrap>{{ fc.seq_mac_id }}</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>Flowcell number</td><td colspan=2 nowrap>{{ fc.flowcell_id }}</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>Number of Tiles per Lane</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>Number of Cycles</td><td>{{ fc.read_length  }}</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td><font point-size="9" face="Arial"><b>SAMPLE INFORMATION</b><font></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>FC#</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td colspan=2 nowrap>FC bar code</td></tr>
+
+<tr><td valign=middle nowrap>Lane</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+<tr><td valign=middle nowrap>Solexa Library Number</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_1_library.library_id }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_2_library.library_id }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_3_library.library_id }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_4_library.library_id }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_5_library.library_id }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_6_library.library_id }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_7_library.library_id }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_8_library.library_id }}</td></tr>
+
+<tr><td valign=middle nowrap>Sample Name</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_1_library.library_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_2_library.library_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_3_library.library_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_4_library.library_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_5_library.library_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_6_library.library_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_7_library.library_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_8_library.library_name }}</td>
 </tr>
-<tr>
-<td>Cluster station used</td>
-<td colspan="2" nowrap>{{ fc.cluster_mac_id }}</td>
+
+<tr><td valign=middle nowrap>Organism</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_1_library.library_species.common_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_2_library.library_species.common_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_3_library.library_species.common_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_4_library.library_species.common_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_5_library.library_species.common_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_6_library.library_species.common_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_7_library.library_species.common_name }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_8_library.library_species.common_name }}</td>
 </tr>
-<tr>
-<td>GA used</td>
-<td colspan="2" nowrap>{{ fc.seq_mac_id }}</td>
+
+<tr><td valign=middle nowrap>Submitter</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_1_library.made_by }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_2_library.made_by }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_3_library.made_by }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_4_library.made_by }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_5_library.made_by }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_6_library.made_by }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_7_library.made_by }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_8_library.made_by }}</td>
 </tr>
-<tr>
-<td>Flowcell number</td>
-<td colspan="2" nowrap>{{ fc.flowcell_id }}</td>
+
+
+<tr><td valign=middle nowrap>First time run?</td><td bgcolor=#CCFFCC></td><td bgcolor=#CCFFCC></td><td bgcolor=#CCFFCC></td><td bgcolor=#CCFFCC></td><td bgcolor=#CCFFCC></td><td bgcolor=#CCFFCC></td><td bgcolor=#CCFFCC></td><td bgcolor=#CCFFCC></td></tr>
+
+<tr><td valign=middle nowrap>Average Library Size (bp)</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_1_library.avg_lib_size }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_2_library.avg_lib_size }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_3_library.avg_lib_size }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_4_library.avg_lib_size }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_5_library.avg_lib_size }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_6_library.avg_lib_size }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_7_library.avg_lib_size }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_8_library.avg_lib_size }}</td>
+</tr>	
+
+<tr><td valign=middle nowrap>Template Concentration (ng/ul)</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_1_library.undiluted_concentration }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_2_library.undiluted_concentration }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_3_library.undiluted_concentration }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_4_library.undiluted_concentration }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_5_library.undiluted_concentration }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_6_library.undiluted_concentration }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_7_library.undiluted_concentration }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_8_library.undiluted_concentration }}</td>
 </tr>
-<tr>
-<td>Number of Tiles per Lane</td>
-<td>100</td>
+
+<tr><td valign=middle nowrap>Run Concentration (pM)</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_1_pM }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_2_pM }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_3_pM }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_4_pM }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_5_pM }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_6_pM }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_7_pM }}</td>
+<td bgcolor=#CCFFCC>{{ fc.lane_8_pM }}</td>
 </tr>
-<tr>
-<td>Number of Cycles</td>
-<td>{{ fc.read_length }}</td>
-</tr>
-</tbody>
+
 </table>
-<br/>
-<table>
-<thead>
-  <td>
-    <font point-size="9" face="Arial">
-      <b>SAMPLE INFORMATION</b>
-  </font>
-</thead>
-<tbody>
-<tr>
-<td>&nbsp;</td>
-<td>FC#</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td colspan="2" nowrap>FC bar code</td>
-</tr>
-<tr>
-<td valign="middle" nowrap>Lane</td>
-<td>1</td>
-<td>2</td>
-<td>3</td>
-<td>4</td>
-<td>5</td>
-<td>6</td>
-<td>7</td>
-<td>8</td>
-</tr>
-<tr>
-<td valign="middle" nowrap>Solexa Library Number</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_1_library.library_id }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_2_library.library_id }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_3_library.library_id }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_4_library.library_id }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_5_library.library_id }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_6_library.library_id }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_7_library.library_id }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_8_library.library_id }}</td>
-</tr>
-<tr>
-<td valign="middle" nowrap>Sample Name</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_1_library.library_name }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_2_library.library_name }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_3_library.library_name }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_4_library.library_name }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_5_library.library_name }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_6_library.library_name }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_7_library.library_name }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_8_library.library_name }}</td>
-</tr>
-<tr>
-<td valign="middle" nowrap>Organism</td>
-<td bgcolor="#CCFFCC">{{
-fc.lane_1_library.library_species.common_name }}</td>
-<td bgcolor="#CCFFCC">{{
-fc.lane_2_library.library_species.common_name }}</td>
-<td bgcolor="#CCFFCC">{{
-fc.lane_3_library.library_species.common_name }}</td>
-<td bgcolor="#CCFFCC">{{
-fc.lane_4_library.library_species.common_name }}</td>
-<td bgcolor="#CCFFCC">{{
-fc.lane_5_library.library_species.common_name }}</td>
-<td bgcolor="#CCFFCC">{{
-fc.lane_6_library.library_species.common_name }}</td>
-<td bgcolor="#CCFFCC">{{
-fc.lane_7_library.library_species.common_name }}</td>
-<td bgcolor="#CCFFCC">{{
-fc.lane_8_library.library_species.common_name }}</td>
-</tr>
-<tr>
-<td valign="middle" nowrap>Submitter</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_1_library.made_by }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_2_library.made_by }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_3_library.made_by }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_4_library.made_by }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_5_library.made_by }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_6_library.made_by }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_7_library.made_by }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_8_library.made_by }}</td>
-</tr>
-<tr>
-<td valign="middle" nowrap>First time run?</td>
-<td bgcolor="#CCFFCC"></td>
-<td bgcolor="#CCFFCC"></td>
-<td bgcolor="#CCFFCC"></td>
-<td bgcolor="#CCFFCC"></td>
-<td bgcolor="#CCFFCC"></td>
-<td bgcolor="#CCFFCC"></td>
-<td bgcolor="#CCFFCC"></td>
-<td bgcolor="#CCFFCC"></td>
-</tr>
-<tr>
-<td valign="middle" nowrap>Average Library Size (bp)</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_1_library.avg_lib_size }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_2_library.avg_lib_size }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_3_library.avg_lib_size }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_4_library.avg_lib_size }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_5_library.avg_lib_size }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_6_library.avg_lib_size }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_7_library.avg_lib_size }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_8_library.avg_lib_size }}</td>
-</tr>
-<tr>
-<td valign="middle" nowrap>Template Concentration (ng/ul)</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_1_library.undiluted_concentration
-}}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_2_library.undiluted_concentration
-}}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_3_library.undiluted_concentration
-}}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_4_library.undiluted_concentration
-}}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_5_library.undiluted_concentration
-}}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_6_library.undiluted_concentration
-}}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_7_library.undiluted_concentration
-}}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_8_library.undiluted_concentration
-}}</td>
-</tr>
-<tr>
-<td valign="middle" nowrap>Run Concentration (pM)</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_1_pM }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_2_pM }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_3_pM }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_4_pM }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_5_pM }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_6_pM }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_7_pM }}</td>
-<td bgcolor="#CCFFCC">{{ fc.lane_8_pM }}</td>
-</tr>
-</tbody>
-</table>
+
 {% else %}
-<p>Flowcell object missing. Can't create sheet.</p>
+    <p>Flowcell object missing. Can't create sheet.</p>
 {% endif %}
-</body>
-</html>
+
+</body></html

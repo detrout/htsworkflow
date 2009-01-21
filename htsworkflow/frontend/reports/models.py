@@ -204,12 +204,12 @@ class ProgressReport(models.Model):
       rc = "%1.2f" % (res[1]/1000000.0)
       tstr += '<tr><td><b>'+l+'</b></td><td>'+res[0].__str__()+'</td></td><td>'+rc+'</td></tr>'
     tstr += '</table>'
-    #tstr += '<a target=_blank href="http://m304-apple-server.stanford.edu/projects/'+self.st_sbj.id.__str__()+'">Project results page</a>'
+    #tstr += '<a target=_blank href="'+settings.TASKS_PROJS_SERVER+'/projects/'+self.st_sbj.id.__str__()+'">Project results page</a>'
     tstr += '</div>'
     myNum = (ReadsCnt/1000000.0)
     myNum  = "%1.2f" % (myNum) 
     tstr += '<div>Total: <b>'+LanesCnt.__str__()+'</b> lanes and <b>'+myNum+'</b> M Reads</div>'
-    tstr += '<a target=_blank href="http://m304-apple-server.stanford.edu/projects/'+self.st_sbj.id.__str__()+'">Project results page</a>'
+    tstr += '<a target=_blank href="'+settings.TASKS_PROJS_SERVER+'/projects/'+self.st_sbj.id.__str__()+'">Project results page</a>'
     return tstr
   aligned_reads.allow_tags = True
 

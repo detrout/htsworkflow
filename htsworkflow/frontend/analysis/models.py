@@ -1,12 +1,13 @@
 from django.db import models
 from datetime import datetime
+from htsworkflow.frontend import settings
 from htsworkflow.frontend.samples.models import Library 
 from string import *
 
 class Task(models.Model):
   task_name = models.CharField(max_length=50,unique=True, db_index=True)
-  subject1 = models.ForeignKey(Library,related_name='sbj1_library',verbose_name="Subject")
-  subject2 = models.ForeignKey(Library,related_name='sbj2_library',verbose_name="Subject 2 / Control",blank=True,null=True)
+  subject1 = models.ForeignKey(Library,related_name='sbj1_library',verbose_name="Subject1 (Signal/Hpa2)")
+  subject2 = models.ForeignKey(Library,related_name='sbj2_library',verbose_name="Subject2 (Control/Msp1)",blank=True,null=True)
   CALCS = (
       ('QuEST', 'QuEST Peak Calling'),
       ('WingPeaks', 'Wing Peak Calling'),
@@ -14,7 +15,8 @@ class Task(models.Model):
       ('qPCR', 'In Silico qPCR'),
       ('CompareLibs', 'Compare Libaraies'),
       ('ComparePeakCalls','Compare Peak Calls'),
-      ('ProfileReads','Profile Reads')
+      ('ProfileReads','Profile Reads'),
+      ('Methylseq','Methylseq'),
     )
   apply_calc = models.CharField(max_length=50,choices=CALCS,verbose_name='Applied Calculation')
   ## userid = # logged in user
@@ -36,10 +38,9 @@ class Task(models.Model):
         pstr += '%s, ' % (p.project_name) 
       return pstr
 
-    
 class Project(models.Model):
     project_name = models.CharField(max_length=50,unique=True, db_index=True)
-    tasks = models.ManyToManyField(Task,related_name='project_tasks',null=True)
+    tasks = models.ManyToManyField(Task,related_name='project_tasks',null=True) 
     project_notes = models.CharField(max_length=500,blank=True,null=True)
     
     def __str__(self):
@@ -47,7 +48,7 @@ class Project(models.Model):
 
     def ProjectTasks(self):
       ptasks = self.tasks.all().order_by('id')
-      surl = settings.ANALYSIS_SERVER+'/projects/' 
+      surl = settings.TASKS_PROJS_SERVER+'/projects/'
       tstr = '<script>'
       tstr += 'function togView(eid){'
       tstr += 'f=document.getElementById(eid);'
@@ -71,7 +72,6 @@ class Project(models.Model):
           taskdesc += ' and '+t.subject2.library_id
         taskdesc += ' (TaskId:'+t.id.__str__()+')'
         tstr += '<tr><td width=250>%s</td><td>%s</td></tr>'  % (taskdesc,replace(t.task_status,'Complete','<span style="color:green;font-weight:bolder">Complete</span>'))
-
         if t.task_status != 'defined': isregistered = True
 
       tstr += '</table>'

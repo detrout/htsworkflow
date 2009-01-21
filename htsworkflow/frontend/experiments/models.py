@@ -1,5 +1,6 @@
 from django.db import models
 from htsworkflow.frontend.samples.models import *
+from django.core.exceptions import ObjectDoesNotExist
 
 class FlowCell(models.Model):
   
@@ -68,16 +69,23 @@ class FlowCell(models.Model):
       return unicode(self.flowcell_id) 
 
   def Create_LOG(self):
-    str = '' #<span style="color:red;font-size:80%;margin-right:3px">New!</span>'
+    str = ''
     str +='<a target=_balnk href="/experiments/'+self.flowcell_id+'" title="Create XLS like sheet for this Flowcell ..." ">Create LOG</a>'
+    try:
+      t = DataRun.objects.get(fcid=self.id)
+      str +='<br/><a target=_self href="/admin/experiments/datarun/?q='+self.flowcell_id+'" title="Check Data Runs ..." ">DataRun ..</a>'
+    except ObjectDoesNotExist:
+      str += '<br/><span style="color:red">not sequenced</span>'
     return str
   Create_LOG.allow_tags = True 
 
   def Lanes(self):
     return '<div><span style="margin-right:10px">1)%s</span><span style="margin-right:10px">2)%s</span><span style="margin-right:10px">3)%s</span><span style="margin-right:10px">4)%s</span><span style="margin-right:10px">5)%s</span><span style="margin-right:10px">6)%s</span><span style="margin-right:10px">7)%s</span><span style="margin-right:10px">8)%s</span></div>' % (self.lane_1_library,self.lane_2_library,self.lane_3_library,self.lane_4_library,self.lane_5_library,self.lane_6_library,self.lane_7_library,self.lane_8_library)
   Lanes.allow_tags = True
- 
 
+  class Meta:
+    ordering = ["-run_date"]
+  
 
 ### -----------------------
 class DataRun(models.Model):
@@ -106,7 +114,7 @@ class DataRun(models.Model):
       str += ' style="color:green">'
       str += '<b>'+self.RUN_STATUS_CHOICES[self.run_status][1]+'</b>'
       str += '<br/><br/>' #<span style="color:red;font-size:80%;">New!</span>'
-      str +='<br/><a target=_balnk href="http://m304-apple-server.stanford.edu/'+self.fcid.flowcell_id+'_QC/'+self.fcid.flowcell_id+'_'+self.run_folder+'_QC_Summary.html" title="View QC Summaries of this run ..." ">View QC Page</a>'
+      str +='<br/><a target=_balnk href="'+settings.TASKS_PROJS_SERVER+'/Flowcells/'+self.fcid.flowcell_id+'/'+self.fcid.flowcell_id+'_QC_Summary.html" title="View QC Summaries of this run ..." ">View QC Page</a>'
     else:
       str += '>'+self.RUN_STATUS_CHOICES[self.run_status][1]
 
@@ -132,4 +140,3 @@ class DataRun(models.Model):
     str += '</div>'    
     return str
   Flowcell_Info.allow_tags = True
-

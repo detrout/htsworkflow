@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     # AnalysTrack:
     #(r'^analysis/', include('htsworkflow.frontend.analysis.urls')),
     # Report Views:
-    # (r'^reports/', include('gaworkflow.frontend....urls')),
+    (r'^reports/', include('htsworkflow.frontend.reports.urls')),
     
     # databrowser
     #(r'^databrowse/(.*)', databrowse.site.root)

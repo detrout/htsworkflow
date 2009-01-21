@@ -1,1024 +1,1214 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" ?>
 <Libraries>
 <Library Name="SL3">
-<Track Flowcell="FC11862" Lane="2" Filename="Flowcells/FC11862/070919_FC11862_s2_NRSF_monoclonal_Jurkat_rep2_SL3.align_25.hg18.txt" Count=" 1423565" Date="070919"/>
+<Track Flowcell="FC11862" Lane="2" Filename="Flowcells/FC11862/070919_FC11862_s2_NRSF_monoclonal_Jurkat_rep2_SL3.align_25.hg18.txt" Count=" 1423565" Date="070919" />
 </Library>
 <Library Name="SL4">
-<Track Flowcell="FC10073" Lane="3" Filename="Flowcells/FC10073/070821_FC10073_s3_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 2132972" Date="070821"/>
-<Track Flowcell="FC10182" Lane="18" Filename="Flowcells/FC10182/070925_FC10182_s18_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 4061515" Date="070925"/>
-<Track Flowcell="FC11862" Lane="6" Filename="Flowcells/FC11862/070919_FC11862_s6_Mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 2397558" Date="070919"/>
-<Track Flowcell="FC11977" Lane="8" Filename="Flowcells/FC11977/070928_FC11977_s8_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 1088135" Date="070928"/>
-<Track Flowcell="FC8053" Lane="78" Filename="Flowcells/FC8053/070724_FC8053_s78_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 3583766" Date="070724"/>
-<Track Flowcell="FC8883" Lane="78" Filename="Flowcells/FC8883/070720_FC8883_s78_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 5491316" Date="070720"/>
-<Track Flowcell="FC8886" Lane="7" Filename="Flowcells/FC8886/070802_FC8886_s7_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 2417786" Date="070802"/>
+<Track Flowcell="FC10073" Lane="3" Filename="Flowcells/FC10073/070821_FC10073_s3_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 2132972" Date="070821" />
+<Track Flowcell="FC10182" Lane="18" Filename="Flowcells/FC10182/070925_FC10182_s18_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 4061515" Date="070925" />
+<Track Flowcell="FC11862" Lane="6" Filename="Flowcells/FC11862/070919_FC11862_s6_Mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 2397558" Date="070919" />
+<Track Flowcell="FC11977" Lane="8" Filename="Flowcells/FC11977/070928_FC11977_s8_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 1088135" Date="070928" />
+<Track Flowcell="FC8053" Lane="78" Filename="Flowcells/FC8053/070724_FC8053_s78_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 3583766" Date="070724" />
+<Track Flowcell="FC8883" Lane="78" Filename="Flowcells/FC8883/070720_FC8883_s78_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 5491316" Date="070720" />
+<Track Flowcell="FC8886" Lane="7" Filename="Flowcells/FC8886/070802_FC8886_s7_mock_IP_Jurkat_rep1_SL4.align_25.hg18.txt" Count=" 2417786" Date="070802" />
 </Library>
 <Library Name="SL10">
-<Track Flowcell="FC11977" Lane="7" Filename="Flowcells/FC11977/070928_FC11977_s7_hct_1_msp_SL10.align_25.hg18.txt" Count=" 1801596" Date="070928"/>
-<Track Flowcell="FC13593" Lane="678" Filename="Flowcells/FC13593/071002_FC13593_s678_hct_1_msp_SL10.align_25.hg18.txt" Count=" 7978981" Date="071002"/>
+<Track Flowcell="FC11977" Lane="7" Filename="Flowcells/FC11977/070928_FC11977_s7_hct_1_msp_SL10.align_25.hg18.txt" Count=" 1801596" Date="070928" />
+<Track Flowcell="FC13593" Lane="678" Filename="Flowcells/FC13593/071002_FC13593_s678_hct_1_msp_SL10.align_25.hg18.txt" Count=" 7978981" Date="071002" />
 </Library>
 <Library Name="SL11">
-<Track Flowcell="FCOLD1" Lane="1" Filename="Flowcells/FCOLD1/070000_FCOLD1_s1_SRF_ChIP_Jurkat_Rep1_SL11.align_25.hg18.txt" Count=" 8721730" Date="070000"/>
+<Track Flowcell="FCOLD1" Lane="1" Filename="Flowcells/FCOLD1/070000_FCOLD1_s1_SRF_ChIP_Jurkat_Rep1_SL11.align_25.hg18.txt" Count=" 8721730" Date="070000" />
+</Library>
+<Library Name="SL13">
+<Track Flowcell="FC7225" Lane="67" Filename="Flowcells/FCSL13/070629_FC7225_s67_FoxP2_PFSK1_SL13.align_25.hg18.txt" Count=" 3830788" Date="070629" />
+<Track Flowcell="FC5507" Lane="67" Filename="Flowcells/FCSL13/070703_FC5507_s67_FoxP2_PFSK1_SL13.align_25.hg18.txt" Count=" 2694525" Date="070703" />
+<Track Flowcell="FC8053" Lane="56" Filename="Flowcells/FCSL13/070724_FC8053_s56_FoxP2_PFSK1_SL13.align_25.hg18.txt" Count=" 2214065" Date="070724" />
+<Track Flowcell="FC7857" Lane="8" Filename="Flowcells/FCSL13/070807_FC7857_s8_FoxP2_PFSK1_SL13.align_25.hg18.txt" Count=" 1273565" Date="070807" />
 </Library>
 <Library Name="SL14">
-<Track Flowcell="FC10135" Lane="4" Filename="Flowcells/FC10135/071005_FC10135_s4_FoxP2_polyclonal_pfsk1_SL14.align_25.hg18.txt" Count=" 2438679" Date="071005"/>
-<Track Flowcell="FC11977" Lane="6" Filename="Flowcells/FC11977/070928_FC11977_s6_FoxP2_polyclonal_pfsk1_SL14.align_25.hg18.txt" Count=" 2007880" Date="070928"/>
-<Track Flowcell="FC13593" Lane="5" Filename="Flowcells/FC13593/071002_FC13593_s5_FoxP2_polyclonal_pfsk1_SL14.align_25.hg18.txt" Count=" 2533720" Date="071002"/>
+<Track Flowcell="FC10135" Lane="4" Filename="Flowcells/FC10135/071005_FC10135_s4_FoxP2_polyclonal_pfsk1_SL14.align_25.hg18.txt" Count=" 2438679" Date="071005" />
+<Track Flowcell="FC11977" Lane="6" Filename="Flowcells/FC11977/070928_FC11977_s6_FoxP2_polyclonal_pfsk1_SL14.align_25.hg18.txt" Count=" 2007880" Date="070928" />
+<Track Flowcell="FC13593" Lane="5" Filename="Flowcells/FC13593/071002_FC13593_s5_FoxP2_polyclonal_pfsk1_SL14.align_25.hg18.txt" Count=" 2533720" Date="071002" />
 </Library>
 <Library Name="SL16">
-<Track Flowcell="FC201U7" Lane="12345678" Filename="Flowcells/FC201U7/071205_FC201U7_s12345678_mock_IP_PFSK1_SL16.align_25.hg.txt" Count=" 23476737" Date="071205"/>
+<Track Flowcell="FC201U7" Lane="12345678" Filename="Flowcells/FC201U7/071205_FC201U7_s12345678_mock_IP_PFSK1_SL16.align_25.hg.txt" Count=" 23476737" Date="071205" />
 </Library>
 <Library Name="SL24">
-<Track Flowcell="FC5512" Lane="123" Filename="Flowcells/FC5512/070609_FC5512_s123_d5_C_hpa_SL24.align_25.hg18.txt" Count=" 1534145" Date="070609"/>
-<Track Flowcell="FC5738" Lane="12" Filename="Flowcells/FC5738/070605_FC5738_s12_d5_C_hpa_SL24.align_25.hg18.txt" Count="  267543" Date="070605"/>
-<Track Flowcell="FC6058" Lane="6" Filename="Flowcells/FC6058/070608_FC6058_s6_d5_C_hpa_SL24.align_25.hg18.txt" Count=" 2174107" Date="070608"/>
+<Track Flowcell="FC5512" Lane="123" Filename="Flowcells/FC5512/070609_FC5512_s123_d5_C_hpa_SL24.align_25.hg18.txt" Count=" 1534145" Date="070609" />
+<Track Flowcell="FC5738" Lane="12" Filename="Flowcells/FC5738/070605_FC5738_s12_d5_C_hpa_SL24.align_25.hg18.txt" Count="  267543" Date="070605" />
+<Track Flowcell="FC6058" Lane="6" Filename="Flowcells/FC6058/070608_FC6058_s6_d5_C_hpa_SL24.align_25.hg18.txt" Count=" 2174107" Date="070608" />
 </Library>
 <Library Name="SL26">
-<Track Flowcell="FC5512" Lane="45" Filename="Flowcells/FC5512/070609_FC5512_s45_ES_E_hpa_SL26.align_25.hg18.txt" Count="  833887" Date="070609"/>
-<Track Flowcell="FC5738" Lane="4" Filename="Flowcells/FC5738/070605_FC5738_s4_d0_ES_E_hpa_SL26.align_25.hg18.txt" Count="  324128" Date="070605"/>
-<Track Flowcell="FC6058" Lane="3" Filename="Flowcells/FC6058/070608_FC6058_s3_ES_E_hpa_SL26.align_25.hg18.txt" Count=" 2385605" Date="070608"/>
-<Track Flowcell="FC8880" Lane="78" Filename="Flowcells/FC8880/070810_FC8880_s78_d0_ES_E_hpa_SL26.align_25.hg18.txt" Count="   29965" Date="070810"/>
+<Track Flowcell="FC5512" Lane="45" Filename="Flowcells/FC5512/070609_FC5512_s45_ES_E_hpa_SL26.align_25.hg18.txt" Count="  833887" Date="070609" />
+<Track Flowcell="FC5738" Lane="4" Filename="Flowcells/FC5738/070605_FC5738_s4_d0_ES_E_hpa_SL26.align_25.hg18.txt" Count="  324128" Date="070605" />
+<Track Flowcell="FC6058" Lane="3" Filename="Flowcells/FC6058/070608_FC6058_s3_ES_E_hpa_SL26.align_25.hg18.txt" Count=" 2385605" Date="070608" />
+<Track Flowcell="FC8880" Lane="78" Filename="Flowcells/FC8880/070810_FC8880_s78_d0_ES_E_hpa_SL26.align_25.hg18.txt" Count="   29965" Date="070810" />
 </Library>
 <Library Name="SL28">
-<Track Flowcell="FC6058" Lane="78" Filename="Flowcells/FC6058/070608_FC6058_s78_d5_D_hpa_SL28.align_25.hg18.txt" Count=" 4785632" Date="070608"/>
+<Track Flowcell="FC6058" Lane="78" Filename="Flowcells/FC6058/070608_FC6058_s78_d5_D_hpa_SL28.align_25.hg18.txt" Count=" 4785632" Date="070608" />
 </Library>
 <Library Name="SL30">
-<Track Flowcell="FC6058" Lane="4" Filename="Flowcells/FC6058/070608_FC6058_s4_ES_F_hpa_SL30.align_25.hg18.txt" Count=" 2383276" Date="070608"/>
+<Track Flowcell="FC6058" Lane="4" Filename="Flowcells/FC6058/070608_FC6058_s4_ES_F_hpa_SL30.align_25.hg18.txt" Count=" 2383276" Date="070608" />
 </Library>
 <Library Name="SL33">
-<Track Flowcell="FC10182" Lane="3" Filename="Flowcells/FC10182/070925_FC10182_s3_hct_2_hpa_SL33.align_25.hg18.txt" Count="  740316" Date="070925"/>
-<Track Flowcell="FC5399" Lane="3" Filename="Flowcells/FC5399/070713_FC5399_s3_hct_2_hpa_SL33.align_25.hg18.txt" Count="  554691" Date="070713"/>
-<Track Flowcell="FC7853" Lane="3" Filename="Flowcells/FC7853/070709_FC7853_s3_hct_2_hpa_SL33.align_25.hg18.txt" Count="  734854" Date="070709"/>
-<Track Flowcell="FC8880" Lane="34" Filename="Flowcells/FC8880/070810_FC8880_s34_hct_2_hpa_SL33.align_25.hg18.txt" Count=" 1360438" Date="070810"/>
+<Track Flowcell="FC10182" Lane="3" Filename="Flowcells/FC10182/070925_FC10182_s3_hct_2_hpa_SL33.align_25.hg18.txt" Count="  740316" Date="070925" />
+<Track Flowcell="FC5399" Lane="3" Filename="Flowcells/FC5399/070713_FC5399_s3_hct_2_hpa_SL33.align_25.hg18.txt" Count="  554691" Date="070713" />
+<Track Flowcell="FC7853" Lane="3" Filename="Flowcells/FC7853/070709_FC7853_s3_hct_2_hpa_SL33.align_25.hg18.txt" Count="  734854" Date="070709" />
+<Track Flowcell="FC8880" Lane="34" Filename="Flowcells/FC8880/070810_FC8880_s34_hct_2_hpa_SL33.align_25.hg18.txt" Count=" 1360438" Date="070810" />
 </Library>
 <Library Name="SL37">
-<Track Flowcell="FC5399" Lane="2" Filename="Flowcells/FC5399/070713_FC5399_s2_liver_2_hpa_SL37.align_25.hg18.txt" Count="  374553" Date="070713"/>
-<Track Flowcell="FC7853" Lane="2" Filename="Flowcells/FC7853/070709_FC7853_s2_liver_2_hpa_SL37.align_25.hg18.txt" Count=" 1100144" Date="070709"/>
-<Track Flowcell="FC8883" Lane="3" Filename="Flowcells/FC8883/070720_FC8883_s3_liver_2_hpa_SL37.align_25.hg18.txt" Count=" 1276813" Date="070720"/>
+<Track Flowcell="FC5399" Lane="2" Filename="Flowcells/FC5399/070713_FC5399_s2_liver_2_hpa_SL37.align_25.hg18.txt" Count="  374553" Date="070713" />
+<Track Flowcell="FC7853" Lane="2" Filename="Flowcells/FC7853/070709_FC7853_s2_liver_2_hpa_SL37.align_25.hg18.txt" Count=" 1100144" Date="070709" />
+<Track Flowcell="FC8883" Lane="3" Filename="Flowcells/FC8883/070720_FC8883_s3_liver_2_hpa_SL37.align_25.hg18.txt" Count=" 1276813" Date="070720" />
 </Library>
 <Library Name="SL38">
-<Track Flowcell="FC10182" Lane="7" Filename="Flowcells/FC10182/070925_FC10182_s7_liver_1_msp_SL38.align_25.hg18.txt" Count=" 1039338" Date="070925"/>
-<Track Flowcell="FC11977" Lane="34" Filename="Flowcells/FC11977/070928_FC11977_s34_liver_1_msp_SL38.align_25.hg18.txt" Count=" 2094254" Date="070928"/>
-<Track Flowcell="FC7857" Lane="5" Filename="Flowcells/FC7857/070807_FC7857_s5_liver_1_msp_SL38.align_25.hg18.txt" Count=" 1075706" Date="070807"/>
+<Track Flowcell="FC10182" Lane="7" Filename="Flowcells/FC10182/070925_FC10182_s7_liver_1_msp_SL38.align_25.hg18.txt" Count=" 1039338" Date="070925" />
+<Track Flowcell="FC11977" Lane="34" Filename="Flowcells/FC11977/070928_FC11977_s34_liver_1_msp_SL38.align_25.hg18.txt" Count=" 2094254" Date="070928" />
+<Track Flowcell="FC7857" Lane="5" Filename="Flowcells/FC7857/070807_FC7857_s5_liver_1_msp_SL38.align_25.hg18.txt" Count=" 1075706" Date="070807" />
 </Library>
 <Library Name="SL39">
-<Track Flowcell="FC5399" Lane="1" Filename="Flowcells/FC5399/070713_FC5399_s1_liver_1_hpa_SL39.align_25.hg18.txt" Count="  336859" Date="070713"/>
-<Track Flowcell="FC7853" Lane="1" Filename="Flowcells/FC7853/070709_FC7853_s1_liver_1_hpa_SL39.align_25.hg18.txt" Count="  973571" Date="070709"/>
-<Track Flowcell="FC8880" Lane="56" Filename="Flowcells/FC8880/070810_FC8880_s56_liver_1_hpa_SL39.align_25.hg18.txt" Count="  876351" Date="070810"/>
-<Track Flowcell="FC8883" Lane="4" Filename="Flowcells/FC8883/070720_FC8883_s4_liver_1_hpa_SL39.align_25.hg18.txt" Count=" 1316822" Date="070720"/>
+<Track Flowcell="FC5399" Lane="1" Filename="Flowcells/FC5399/070713_FC5399_s1_liver_1_hpa_SL39.align_25.hg18.txt" Count="  336859" Date="070713" />
+<Track Flowcell="FC7853" Lane="1" Filename="Flowcells/FC7853/070709_FC7853_s1_liver_1_hpa_SL39.align_25.hg18.txt" Count="  973571" Date="070709" />
+<Track Flowcell="FC8880" Lane="56" Filename="Flowcells/FC8880/070810_FC8880_s56_liver_1_hpa_SL39.align_25.hg18.txt" Count="  876351" Date="070810" />
+<Track Flowcell="FC8883" Lane="4" Filename="Flowcells/FC8883/070720_FC8883_s4_liver_1_hpa_SL39.align_25.hg18.txt" Count=" 1316822" Date="070720" />
 </Library>
 <Library Name="SL40">
-<Track Flowcell="FC11862" Lane="7" Filename="Flowcells/FC11862/070919_FC11862_s7_RNAseq_skeletal_muscle_human_rep1_SL40.align_25.hg18.txt" Count=" 1613090" Date="070919"/>
+<Track Flowcell="FC11862" Lane="7" Filename="Flowcells/FC11862/070919_FC11862_s7_RNAseq_skeletal_muscle_human_rep1_SL40.align_25.hg18.txt" Count=" 1613090" Date="070919" />
 </Library>
 <Library Name="SL41">
-<Track Flowcell="FC11862" Lane="8" Filename="Flowcells/FC11862/070919_FC11862_s8_RNAseq_skeletal_muscle_human_rep2_SL41.align_25.hg18.txt" Count=" 1036954" Date="070919"/>
+<Track Flowcell="FC11862" Lane="8" Filename="Flowcells/FC11862/070919_FC11862_s8_RNAseq_skeletal_muscle_human_rep2_SL41.align_25.hg18.txt" Count=" 1036954" Date="070919" />
 </Library>
 <Library Name="SL42">
-<Track Flowcell="FC5507" Lane="12" Filename="Flowcells/FC5507/070703_FC5507_s12_AFP+_1_hpa_SL42.align_25.hg18.txt" Count=" 2297609" Date="070703"/>
-<Track Flowcell="FC7225" Lane="1" Filename="Flowcells/FC7225/070629_FC7225_s1_AFP+_1_hpa_SL42.align_25.hg18.txt" Count="  921537" Date="070629"/>
-<Track Flowcell="FC7225" Lane="2" Filename="Flowcells/FC7225/070629_FC7225_s2_AFP+_1_hpa_SL42.align_25.hg18.txt" Count=" 1042305" Date="070629"/>
+<Track Flowcell="FC5507" Lane="12" Filename="Flowcells/FC5507/070703_FC5507_s12_AFP+_1_hpa_SL42.align_25.hg18.txt" Count=" 2297609" Date="070703" />
+<Track Flowcell="FC7225" Lane="1" Filename="Flowcells/FC7225/070629_FC7225_s1_AFP+_1_hpa_SL42.align_25.hg18.txt" Count="  921537" Date="070629" />
+<Track Flowcell="FC7225" Lane="2" Filename="Flowcells/FC7225/070629_FC7225_s2_AFP+_1_hpa_SL42.align_25.hg18.txt" Count=" 1042305" Date="070629" />
 </Library>
 <Library Name="SL43">
-<Track Flowcell="FC5507" Lane="3" Filename="Flowcells/FC5507/070703_FC5507_s3_AFP-_1_hpa_SL43.align_25.hg18.txt" Count=" 1351625" Date="070703"/>
+<Track Flowcell="FC5507" Lane="3" Filename="Flowcells/FC5507/070703_FC5507_s3_AFP-_1_hpa_SL43.align_25.hg18.txt" Count=" 1351625" Date="070703" />
 </Library>
 <Library Name="SL44">
-<Track Flowcell="FC5507" Lane="4" Filename="Flowcells/FC5507/070703_FC5507_s4_EB_1_hpa_SL44.align_25.hg18.txt" Count=" 1269627" Date="070703"/>
-<Track Flowcell="FC7225" Lane="4" Filename="Flowcells/FC7225/070629_FC7225_s4_EB_1_hpa_SL44.align_25.hg18.txt" Count=" 1681253" Date="070629"/>
+<Track Flowcell="FC5507" Lane="4" Filename="Flowcells/FC5507/070703_FC5507_s4_EB_1_hpa_SL44.align_25.hg18.txt" Count=" 1269627" Date="070703" />
+<Track Flowcell="FC7225" Lane="4" Filename="Flowcells/FC7225/070629_FC7225_s4_EB_1_hpa_SL44.align_25.hg18.txt" Count=" 1681253" Date="070629" />
 </Library>
 <Library Name="SL46">
-<Track Flowcell="FC5507" Lane="5" Filename="Flowcells/FC5507/070703_FC5507_s5_CM_1_hpa_SL46.align_25.hg18.txt" Count=" 1473405" Date="070703"/>
-<Track Flowcell="FC7225" Lane="5" Filename="Flowcells/FC7225/070629_FC7225_s5_CM_1_hpa_SL46.align_25.hg18.txt" Count=" 1875969" Date="070629"/>
+<Track Flowcell="FC5507" Lane="5" Filename="Flowcells/FC5507/070703_FC5507_s5_CM_1_hpa_SL46.align_25.hg18.txt" Count=" 1473405" Date="070703" />
+<Track Flowcell="FC7225" Lane="5" Filename="Flowcells/FC7225/070629_FC7225_s5_CM_1_hpa_SL46.align_25.hg18.txt" Count=" 1875969" Date="070629" />
 </Library>
 <Library Name="SL48">
-<Track Flowcell="FC8053" Lane="3" Filename="Flowcells/FC8053/070724_FC8053_s3_sperm_A_hpa_SL48.align_25.hg18.txt" Count="  364972" Date="070724"/>
-<Track Flowcell="FC8883" Lane="1" Filename="Flowcells/FC8883/070720_FC8883_s1_sperm_A_hpa_SL48.align_25.hg18.txt" Count="  642474" Date="070720"/>
-<Track Flowcell="FC8886" Lane="12" Filename="Flowcells/FC8886/070802_FC8886_s12_sperm_A_hpa_SL48.align_25.hg18.txt" Count=" 1589274" Date="070802"/>
+<Track Flowcell="FC8053" Lane="3" Filename="Flowcells/FC8053/070724_FC8053_s3_sperm_A_hpa_SL48.align_25.hg18.txt" Count="  364972" Date="070724" />
+<Track Flowcell="FC8883" Lane="1" Filename="Flowcells/FC8883/070720_FC8883_s1_sperm_A_hpa_SL48.align_25.hg18.txt" Count="  642474" Date="070720" />
+<Track Flowcell="FC8886" Lane="12" Filename="Flowcells/FC8886/070802_FC8886_s12_sperm_A_hpa_SL48.align_25.hg18.txt" Count=" 1589274" Date="070802" />
 </Library>
 <Library Name="SL49">
-<Track Flowcell="FC8053" Lane="4" Filename="Flowcells/FC8053/070724_FC8053_s4_sperm_B_hpa_SL49.align_25.hg18.txt" Count="  426192" Date="070724"/>
-<Track Flowcell="FC8883" Lane="2" Filename="Flowcells/FC8883/070720_FC8883_s2_sperm_B_hpa_SL49.align_25.hg18.txt" Count="  956543" Date="070720"/>
-<Track Flowcell="FC8886" Lane="34" Filename="Flowcells/FC8886/070802_FC8886_s34_sperm_B_hpa_SL49.align_25.hg18.txt" Count=" 1697031" Date="070802"/>
+<Track Flowcell="FC8053" Lane="4" Filename="Flowcells/FC8053/070724_FC8053_s4_sperm_B_hpa_SL49.align_25.hg18.txt" Count="  426192" Date="070724" />
+<Track Flowcell="FC8883" Lane="2" Filename="Flowcells/FC8883/070720_FC8883_s2_sperm_B_hpa_SL49.align_25.hg18.txt" Count="  956543" Date="070720" />
+<Track Flowcell="FC8886" Lane="34" Filename="Flowcells/FC8886/070802_FC8886_s34_sperm_B_hpa_SL49.align_25.hg18.txt" Count=" 1697031" Date="070802" />
 </Library>
 <Library Name="SL50">
-<Track Flowcell="FC8879" Lane="3" Filename="Flowcells/FC8879/070717_FC8879_s3_sperm_A_msp_SL50.align_25.hg18.txt" Count="  249065" Date="070717"/>
+<Track Flowcell="FC8879" Lane="3" Filename="Flowcells/FC8879/070717_FC8879_s3_sperm_A_msp_SL50.align_25.hg18.txt" Count="  249065" Date="070717" />
 </Library>
 <Library Name="SL53">
-<Track Flowcell="FC10073" Lane="2" Filename="Flowcells/FC10073/070821_FC10073_s2_d0_ES_C_msp_SL53.align_25.hg18.txt" Count="  459147" Date="070821"/>
-<Track Flowcell="FC10182" Lane="2" Filename="Flowcells/FC10182/070925_FC10182_s2_d0_ES_C_msp_SL53.align_25.hg18.txt" Count="  513510" Date="070925"/>
-<Track Flowcell="FC11862" Lane="345" Filename="Flowcells/FC11862/070919_FC11862_s345_d0_ES_C_msp_SL53.align_25.hg18.txt" Count=" 1650605" Date="070919"/>
+<Track Flowcell="FC10073" Lane="2" Filename="Flowcells/FC10073/070821_FC10073_s2_d0_ES_C_msp_SL53.align_25.hg18.txt" Count="  459147" Date="070821" />
+<Track Flowcell="FC10182" Lane="2" Filename="Flowcells/FC10182/070925_FC10182_s2_d0_ES_C_msp_SL53.align_25.hg18.txt" Count="  513510" Date="070925" />
+<Track Flowcell="FC11862" Lane="345" Filename="Flowcells/FC11862/070919_FC11862_s345_d0_ES_C_msp_SL53.align_25.hg18.txt" Count=" 1650605" Date="070919" />
 </Library>
 <Library Name="SL54">
-<Track Flowcell="FC10073" Lane="456" Filename="Flowcells/FC10073/070821_FC10073_s456_pancreas_1_hpa_SL54.align_25.hg18.txt" Count=" 4352582" Date="070821"/>
-<Track Flowcell="FC10182" Lane="4" Filename="Flowcells/FC10182/070925_FC10182_s4_pancreas_1_hpa_SL54.align_25.hg18.txt" Count=" 1136630" Date="070925"/>
+<Track Flowcell="FC10073" Lane="456" Filename="Flowcells/FC10073/070821_FC10073_s456_pancreas_1_hpa_SL54.align_25.hg18.txt" Count=" 4352582" Date="070821" />
+<Track Flowcell="FC10182" Lane="4" Filename="Flowcells/FC10182/070925_FC10182_s4_pancreas_1_hpa_SL54.align_25.hg18.txt" Count=" 1136630" Date="070925" />
 </Library>
 <Library Name="SL56">
-<Track Flowcell="FC11862" Lane="1" Filename="Flowcells/FC11862/070919_FC11862_s1_pancreas_2_hpa_SL56.align_25.hg18.txt" Count=" 1359802" Date="070919"/>
-<Track Flowcell="FC11977" Lane="2" Filename="Flowcells/FC11977/070928_FC11977_s2_pancreas_2_hpa_SL56.align_25.hg18.txt" Count=" 1120271" Date="070928"/>
+<Track Flowcell="FC11862" Lane="1" Filename="Flowcells/FC11862/070919_FC11862_s1_pancreas_2_hpa_SL56.align_25.hg18.txt" Count=" 1359802" Date="070919" />
+<Track Flowcell="FC11977" Lane="2" Filename="Flowcells/FC11977/070928_FC11977_s2_pancreas_2_hpa_SL56.align_25.hg18.txt" Count=" 1120271" Date="070928" />
 </Library>
 <Library Name="SL58">
-<Track Flowcell="FC10073" Lane="78" Filename="Flowcells/FC10073/070821_FC10073_s78_jurkat_1_hpa_SL58.align_25.hg18.txt" Count="  276664" Date="070821"/>
-<Track Flowcell="FC10132" Lane="4" Filename="Flowcells/FC10132/070817_FC10132_s4_jurkat_1_hpa_SL58.align_25.hg18.txt" Count=" 1326942" Date="070817"/>
-<Track Flowcell="FC10182" Lane="6" Filename="Flowcells/FC10182/070925_FC10182_s6_jurkat_1_hpa_SL58.align_25.hg18.txt" Count=" 1162424" Date="070925"/>
-<Track Flowcell="FC11977" Lane="5" Filename="Flowcells/FC11977/070928_FC11977_s5_jurkat_1_hpa_SL58.align_25.hg18.txt" Count="  904205" Date="070928"/>
+<Track Flowcell="FC10073" Lane="78" Filename="Flowcells/FC10073/070821_FC10073_s78_jurkat_1_hpa_SL58.align_25.hg18.txt" Count="  276664" Date="070821" />
+<Track Flowcell="FC10132" Lane="4" Filename="Flowcells/FC10132/070817_FC10132_s4_jurkat_1_hpa_SL58.align_25.hg18.txt" Count=" 1326942" Date="070817" />
+<Track Flowcell="FC10182" Lane="6" Filename="Flowcells/FC10182/070925_FC10182_s6_jurkat_1_hpa_SL58.align_25.hg18.txt" Count=" 1162424" Date="070925" />
+<Track Flowcell="FC11977" Lane="5" Filename="Flowcells/FC11977/070928_FC11977_s5_jurkat_1_hpa_SL58.align_25.hg18.txt" Count="  904205" Date="070928" />
 </Library>
 <Library Name="SL80">
-<Track Flowcell="FC10170" Lane="3" Filename="Flowcells/FC10170/071010_FC10170_s3_WOL3_cervical_RNA_human_SL80.align_25.hg18.txt" Count="  189349" Date="071010"/>
+<Track Flowcell="FC10170" Lane="3" Filename="Flowcells/FC10170/071010_FC10170_s3_WOL3_cervical_RNA_human_SL80.align_25.hg18.txt" Count="  189349" Date="071010" />
 </Library>
 <Library Name="SL81">
-<Track Flowcell="FC10170" Lane="4" Filename="Flowcells/FC10170/071010_FC10170_s4_WOL4_cervical_RNA_human_SL81.align_25.hg18.txt" Count="  208690" Date="071010"/>
+<Track Flowcell="FC10170" Lane="4" Filename="Flowcells/FC10170/071010_FC10170_s4_WOL4_cervical_RNA_human_SL81.align_25.hg18.txt" Count="  208690" Date="071010" />
 </Library>
 <Library Name="SL82">
-<Track Flowcell="FC12673" Lane="4" Filename="Flowcells/FC12673/071023_FC12673_s4_WOL6_cervical_RNA_human_SL82.align_25.hg18.txt" Count="    8190" Date="071023"/>
+<Track Flowcell="FC12673" Lane="4" Filename="Flowcells/FC12673/071023_FC12673_s4_WOL6_cervical_RNA_human_SL82.align_25.hg18.txt" Count="    8190" Date="071023" />
 </Library>
 <Library Name="SL83">
-<Track Flowcell="FC10182" Lane="5" Filename="Flowcells/FC10182/070925_FC10182_s5_NRSF_monoclonal_HTB11_SL83.align_25.hg18.txt" Count="  918491" Date="070925"/>
-<Track Flowcell="FC11977" Lane="1" Filename="Flowcells/FC11977/070928_FC11977_s1_NRSF_monoclonal_HTB11_SL83.align_25.hg18.txt" Count="  932151" Date="070928"/>
-<Track Flowcell="FC14428" Lane="3" Filename="Flowcells/FC14428/071102_FC14428_s3_NRSF_monoclonal_HTB11_SL83.align_25.hgt18.txt" Count="  987885" Date="071102"/>
-<Track Flowcell="FC14432" Lane="2" Filename="Flowcells/FC14432/071026_FC14432_s2_NRSF_monoclonal_HTB11_SL83.align_25.hg18.txt" Count=" 1052331" Date="071026"/>
-<Track Flowcell="FC6420" Lane="678" Filename="Flowcells/FC6420/080212_FC6420_s678_NRSF_ChIP_HTB-11_SL83.align_25.hg18.txt" Count=" 3489053" Date="080212"/>
+<Track Flowcell="30DAGAAXX" Lane="1" Filename="Flowcells/30DAGAAXX/080826_30DAGAAXX_s1_HTB-11_NRSF_ChIP_Rep1_SL83.align_25.hg18.txt" Count=" 3016467" Date="080826" />
+<Track Flowcell="FC10182" Lane="5" Filename="Flowcells/FC10182/070925_FC10182_s5_NRSF_monoclonal_HTB11_SL83.align_25.hg18.txt" Count="  918491" Date="070925" />
+<Track Flowcell="FC11977" Lane="1" Filename="Flowcells/FC11977/070928_FC11977_s1_NRSF_monoclonal_HTB11_SL83.align_25.hg18.txt" Count="  932151" Date="070928" />
+<Track Flowcell="FC14428" Lane="3" Filename="Flowcells/FC14428/071102_FC14428_s3_NRSF_monoclonal_HTB11_SL83.align_25.hgt18.txt" Count="  987885" Date="071102" />
+<Track Flowcell="FC14432" Lane="2" Filename="Flowcells/FC14432/071026_FC14432_s2_NRSF_monoclonal_HTB11_SL83.align_25.hg18.txt" Count=" 1052331" Date="071026" />
+<Track Flowcell="FC6420" Lane="678" Filename="Flowcells/FC6420/080212_FC6420_s678_NRSF_ChIP_HTB-11_SL83.align_25.hg18.txt" Count=" 3489053" Date="080212" />
 </Library>
 <Library Name="SL84">
-<Track Flowcell="FC10135" Lane="1" Filename="Flowcells/FC10135/071005_FC10135_s1_BG02_ES_A_hpa_SL84.align_25.hg18.txt" Count=" 1908138" Date="071005"/>
-<Track Flowcell="FC12563" Lane="1" Filename="Flowcells/FC12563/071016_FC12563_s1_BG02_ES_A_hpa_SL84.align_25.hg18.txt" Count=" 1319454" Date="071016"/>
+<Track Flowcell="FC10135" Lane="1" Filename="Flowcells/FC10135/071005_FC10135_s1_BG02_ES_A_hpa_SL84.align_25.hg18.txt" Count=" 1908138" Date="071005" />
+<Track Flowcell="FC12563" Lane="1" Filename="Flowcells/FC12563/071016_FC12563_s1_BG02_ES_A_hpa_SL84.align_25.hg18.txt" Count=" 1319454" Date="071016" />
 </Library>
 <Library Name="SL85">
-<Track Flowcell="FC10135" Lane="2" Filename="Flowcells/FC10135/071005_FC10135_s2_BG02_ES_B_hpa_SL85.align_25.hg18.txt" Count=" 2046898" Date="071005"/>
-<Track Flowcell="FC12563" Lane="2" Filename="Flowcells/FC12563/071016_FC12563_s2_BG02_ES_B_hpa_SL85.align_25.hg18.txt" Count=" 1576213" Date="071016"/>
+<Track Flowcell="FC10135" Lane="2" Filename="Flowcells/FC10135/071005_FC10135_s2_BG02_ES_B_hpa_SL85.align_25.hg18.txt" Count=" 2046898" Date="071005" />
+<Track Flowcell="FC12563" Lane="2" Filename="Flowcells/FC12563/071016_FC12563_s2_BG02_ES_B_hpa_SL85.align_25.hg18.txt" Count=" 1576213" Date="071016" />
 </Library>
 <Library Name="SL86">
-<Track Flowcell="FC10135" Lane="7" Filename="Flowcells/FC10135/071005_FC10135_s7_H9_hepato_B_hpa_SL86.align_25.hg18.txt" Count=" 1645814" Date="071005"/>
-<Track Flowcell="FC12673" Lane="6" Filename="Flowcells/FC12673/071023_FC12673_s6_H9_hepato_B_hpa_SL86.align_25.hg18.txt" Count="  581257" Date="071023"/>
+<Track Flowcell="FC10135" Lane="7" Filename="Flowcells/FC10135/071005_FC10135_s7_H9_hepato_B_hpa_SL86.align_25.hg18.txt" Count=" 1645814" Date="071005" />
+<Track Flowcell="FC12673" Lane="6" Filename="Flowcells/FC12673/071023_FC12673_s6_H9_hepato_B_hpa_SL86.align_25.hg18.txt" Count="  581257" Date="071023" />
 </Library>
 <Library Name="SL87">
-<Track Flowcell="FC10135" Lane="8" Filename="Flowcells/FC10135/071005_FC10135_s8_H9_hepato_D_hpa_SL87.align_25.hg18.txt" Count="  894069" Date="071005"/>
-<Track Flowcell="FC12673" Lane="7" Filename="Flowcells/FC12673/071023_FC12673_s7_H9_hepato_D_hpa_SL87.align_25.hg18.txt" Count="  410824" Date="071023"/>
+<Track Flowcell="FC10135" Lane="8" Filename="Flowcells/FC10135/071005_FC10135_s8_H9_hepato_D_hpa_SL87.align_25.hg18.txt" Count="  894069" Date="071005" />
+<Track Flowcell="FC12673" Lane="7" Filename="Flowcells/FC12673/071023_FC12673_s7_H9_hepato_D_hpa_SL87.align_25.hg18.txt" Count="  410824" Date="071023" />
 </Library>
 <Library Name="SL88">
-<Track Flowcell="FC10135" Lane="3" Filename="Flowcells/FC10135/071005_FC10135_s3_NRSF_monoclonal_U87_SL88.align_25.hg18.txt" Count=" 1240914" Date="071005"/>
-<Track Flowcell="FC12565" Lane="5" Filename="Flowcells/FC12565/071019_FC12565_s5_NRSF_monoclonal_U87_SL88.align_25.hg18.txt" Count="  571952" Date="071019"/>
-<Track Flowcell="FC14428" Lane="4" Filename="Flowcells/FC14428/071102_FC14428_s4_NRSF_monoclonal_U87_SL88.align_25.hg18.txt" Count=" 1114155" Date="071102"/>
-<Track Flowcell="FC14432" Lane="4" Filename="Flowcells/FC14432/071026_FC14432_s4_NRSF_monoclonal_U87_SL88.align_25.hg18.txt" Count="  914576" Date="071026"/>
-<Track Flowcell="FC2057R" Lane="6" Filename="Flowcells/FC2057R/071211_FC2057R_s6_U87_monoclonal_NRSF_ChIP_SL88.align_25.hg18.txt" Count="  172579" Date="071211"/>
-<Track Flowcell="FC6192" Lane="345" Filename="Flowcells/FC6192/080212_FC6192_s345_NRSF_ChIP_UB7_SL88.align_25.hg18.txt" Count=" 3307816" Date="080212"/>
+<Track Flowcell="30DAGAAXX" Lane="3" Filename="Flowcells/30DAGAAXX/080826_30DAGAAXX_s3_U87_monoclonal_NRSF_ChIP_Rep1_SL88.align_25.hg18.txt" Count=" 2910545" Date="080826" />
+<Track Flowcell="FC10135" Lane="3" Filename="Flowcells/FC10135/071005_FC10135_s3_NRSF_monoclonal_U87_SL88.align_25.hg18.txt" Count=" 1240914" Date="071005" />
+<Track Flowcell="FC12565" Lane="5" Filename="Flowcells/FC12565/071019_FC12565_s5_NRSF_monoclonal_U87_SL88.align_25.hg18.txt" Count="  571952" Date="071019" />
+<Track Flowcell="FC14428" Lane="4" Filename="Flowcells/FC14428/071102_FC14428_s4_NRSF_monoclonal_U87_SL88.align_25.hg18.txt" Count=" 1114155" Date="071102" />
+<Track Flowcell="FC14432" Lane="4" Filename="Flowcells/FC14432/071026_FC14432_s4_NRSF_monoclonal_U87_SL88.align_25.hg18.txt" Count="  914576" Date="071026" />
+<Track Flowcell="FC2057R" Lane="6" Filename="Flowcells/FC2057R/071211_FC2057R_s6_U87_monoclonal_NRSF_ChIP_SL88.align_25.hg18.txt" Count="  172579" Date="071211" />
+<Track Flowcell="FC6192" Lane="345" Filename="Flowcells/FC6192/080212_FC6192_s345_NRSF_ChIP_UB7_SL88.align_25.hg18.txt" Count=" 3307816" Date="080212" />
 </Library>
 <Library Name="SL89">
-<Track Flowcell="FC10135" Lane="5" Filename="Flowcells/FC10135/071005_FC10135_s5_FoxP2_polyclonal_pfsk1_SL89.align_25.hg18.txt" Count=" 1992055" Date="071005"/>
-<Track Flowcell="FC10170" Lane="56" Filename="Flowcells/FC10170/071010_FC10170_s56_FoxP2_polyclonal_pfsk1_SL89.align_25.hg18.txt" Count=" 2332472" Date="071010"/>
-<Track Flowcell="FC12673" Lane="5" Filename="Flowcells/FC12673/071023_FC12673_s5_FoxP2_polyclonal_pfsk1_SL89.align_25.hg18.txt" Count="  754441" Date="071023"/>
-<Track Flowcell="FC14432" Lane="5678" Filename="Flowcells/FC14432/071026_FC14432_s5678_FoxP2_polyclonal_pfsk1_SL89.align_25.hg18.txt" Count=" 4136620" Date="071026"/>
+<Track Flowcell="FC10135" Lane="5" Filename="Flowcells/FC10135/071005_FC10135_s5_FoxP2_polyclonal_pfsk1_SL89.align_25.hg18.txt" Count=" 1992055" Date="071005" />
+<Track Flowcell="FC10170" Lane="56" Filename="Flowcells/FC10170/071010_FC10170_s56_FoxP2_polyclonal_pfsk1_SL89.align_25.hg18.txt" Count=" 2332472" Date="071010" />
+<Track Flowcell="FC12673" Lane="5" Filename="Flowcells/FC12673/071023_FC12673_s5_FoxP2_polyclonal_pfsk1_SL89.align_25.hg18.txt" Count="  754441" Date="071023" />
+<Track Flowcell="FC14432" Lane="5678" Filename="Flowcells/FC14432/071026_FC14432_s5678_FoxP2_polyclonal_pfsk1_SL89.align_25.hg18.txt" Count=" 4136620" Date="071026" />
 </Library>
 <Library Name="SL90">
-<Track Flowcell="FC10135" Lane="6" Filename="Flowcells/FC10135/071005_FC10135_s6_NlaIII_18_mouse_SL90.align_25.hg18.txt" Count="  925114" Date="071005"/>
+<Track Flowcell="FC10135" Lane="6" Filename="Flowcells/FC10135/071005_FC10135_s6_NlaIII_18_mouse_SL90.align_25.hg18.txt" Count="  925114" Date="071005" />
 </Library>
 <Library Name="SL91">
-<Track Flowcell="FC10170" Lane="1" Filename="Flowcells/FC10170/071010_FC10170_s1_BG02_hepato_B_hpa_SL91.align_25.hg18.txt" Count="   53593" Date="071010"/>
-<Track Flowcell="FC12673" Lane="3" Filename="Flowcells/FC12673/071023_FC12673_s3_BG02_hepato_B_hpa_SL91.align_25.hg18.txt" Count="   34104" Date="071023"/>
+<Track Flowcell="FC10170" Lane="1" Filename="Flowcells/FC10170/071010_FC10170_s1_BG02_hepato_B_hpa_SL91.align_25.hg18.txt" Count="   53593" Date="071010" />
+<Track Flowcell="FC12673" Lane="3" Filename="Flowcells/FC12673/071023_FC12673_s3_BG02_hepato_B_hpa_SL91.align_25.hg18.txt" Count="   34104" Date="071023" />
 </Library>
 <Library Name="SL92">
-<Track Flowcell="FC10170" Lane="2" Filename="Flowcells/FC10170/071010_FC10170_s2_BG02_hepato_C_hpa_SL92.align_25.hg18.txt" Count="  101462" Date="071010"/>
+<Track Flowcell="FC10170" Lane="2" Filename="Flowcells/FC10170/071010_FC10170_s2_BG02_hepato_C_hpa_SL92.align_25.hg18.txt" Count="  101462" Date="071010" />
 </Library>
 <Library Name="SL93">
-<Track Flowcell="FC10170" Lane="7" Filename="Flowcells/FC10170/071010_FC10170_s7_HCT_mCIP_1_SL93.align_25.hg18.txt" Count=" 1110620" Date="071010"/>
-<Track Flowcell="FC12673" Lane="8" Filename="Flowcells/FC12673/071023_FC12673_s8_HCT_mCIP_1_SL93.align_25.hg18.txt" Count="  348238" Date="071023"/>
-<Track Flowcell="FC14430" Lane="78" Filename="Flowcells/FC14430/071030_FC14430_s78_HCT_mCIP_1_SL93.align_25.hg18.txt" Count=" 1271501" Date="071030"/>
+<Track Flowcell="FC10170" Lane="7" Filename="Flowcells/FC10170/071010_FC10170_s7_HCT_mCIP_1_SL93.align_25.hg18.txt" Count=" 1110620" Date="071010" />
+<Track Flowcell="FC12673" Lane="8" Filename="Flowcells/FC12673/071023_FC12673_s8_HCT_mCIP_1_SL93.align_25.hg18.txt" Count="  348238" Date="071023" />
+<Track Flowcell="FC14430" Lane="78" Filename="Flowcells/FC14430/071030_FC14430_s78_HCT_mCIP_1_SL93.align_25.hg18.txt" Count=" 1271501" Date="071030" />
 </Library>
 <Library Name="SL94">
-<Track Flowcell="FC10170" Lane="8" Filename="Flowcells/FC10170/071010_FC10170_s8_HCT_unbound_mCIP_1_SL94.align_25.hg18.txt" Count="  926056" Date="071010"/>
+<Track Flowcell="FC10170" Lane="8" Filename="Flowcells/FC10170/071010_FC10170_s8_HCT_unbound_mCIP_1_SL94.align_25.hg18.txt" Count="  926056" Date="071010" />
 </Library>
 <Library Name="SL98">
-<Track Flowcell="FC12563" Lane="3" Filename="Flowcells/FC12563/071016_FC12563_s3_fetal_liver_11weeks_1_hpa_SL98.align_25.hg18.txt" Count="  199565" Date="071016"/>
-<Track Flowcell="FC12565" Lane="12" Filename="Flowcells/FC12565/071019_FC12565_s12_fetal_liver_11weeks_1_hpa_SL98.align_25.hg18.txt" Count="  764623" Date="071019"/>
-<Track Flowcell="FC12673" Lane="1" Filename="Flowcells/FC12673/071023_FC12673_s1_fetal_liver_11weeks_1_hpa_SL98.align_25.hg18.txt" Count="   97009" Date="071023"/>
+<Track Flowcell="FC12563" Lane="3" Filename="Flowcells/FC12563/071016_FC12563_s3_fetal_liver_11weeks_1_hpa_SL98.align_25.hg18.txt" Count="  199565" Date="071016" />
+<Track Flowcell="FC12565" Lane="12" Filename="Flowcells/FC12565/071019_FC12565_s12_fetal_liver_11weeks_1_hpa_SL98.align_25.hg18.txt" Count="  764623" Date="071019" />
+<Track Flowcell="FC12673" Lane="1" Filename="Flowcells/FC12673/071023_FC12673_s1_fetal_liver_11weeks_1_hpa_SL98.align_25.hg18.txt" Count="   97009" Date="071023" />
 </Library>
 <Library Name="SL99">
-<Track Flowcell="FC12563" Lane="4" Filename="Flowcells/FC12563/071016_FC12563_s4_fetal_liver_24weeks_1_hpa_SL99.align_25.hg18.txt" Count="  101572" Date="071016"/>
-<Track Flowcell="FC12565" Lane="34" Filename="Flowcells/FC12565/071019_FC12565_s34_fetal_liver_24weeks_1_hpa_SL99.align_25.hg18.txt" Count="  315747" Date="071019"/>
-<Track Flowcell="FC12673" Lane="2" Filename="Flowcells/FC12673/071023_FC12673_s2_fetal_liver_24weeks_1_hpa_SL99.align_25.hg18.txt" Count="   64593" Date="071023"/>
+<Track Flowcell="FC12563" Lane="4" Filename="Flowcells/FC12563/071016_FC12563_s4_fetal_liver_24weeks_1_hpa_SL99.align_25.hg18.txt" Count="  101572" Date="071016" />
+<Track Flowcell="FC12565" Lane="34" Filename="Flowcells/FC12565/071019_FC12565_s34_fetal_liver_24weeks_1_hpa_SL99.align_25.hg18.txt" Count="  315747" Date="071019" />
+<Track Flowcell="FC12673" Lane="2" Filename="Flowcells/FC12673/071023_FC12673_s2_fetal_liver_24weeks_1_hpa_SL99.align_25.hg18.txt" Count="   64593" Date="071023" />
 </Library>
 <Library Name="SL100">
-<Track Flowcell="FC12563" Lane="5" Filename="Flowcells/FC12563/071016_FC12563_s5_Y157SL_genomic_yeast_SL100.align_25.hg18.txt" Count="  316612" Date="071016"/>
+<Track Flowcell="FC12563" Lane="5" Filename="Flowcells/FC12563/071016_FC12563_s5_Y157SL_genomic_yeast_SL100.align_25.hg18.txt" Count="  316612" Date="071016" />
 </Library>
 <Library Name="SL101">
-<Track Flowcell="FC12565" Lane="78" Filename="Flowcells/FC12565/071019_FC12565_s78_FoxP2_polyclonal_SK_N_MC_SL101.align_25.hg18.txt" Count=" 2344547" Date="071019"/>
+<Track Flowcell="FC12565" Lane="78" Filename="Flowcells/FC12565/071019_FC12565_s78_FoxP2_polyclonal_SK_N_MC_SL101.align_25.hg18.txt" Count=" 2344547" Date="071019" />
 </Library>
 <Library Name="SL102">
-<Track Flowcell="FC20162" Lane="4" Filename="Flowcells/FC20162/080111_FC20162_s4_SK-N-MC_TotalChromatin_SL102.align_25.hg18.txt" Count=" 3103385" Date="080111"/>
-<Track Flowcell="FC202W1" Lane="1234" Filename="Flowcells/FC202W1/080116_FC202W1_s1234_SK-N-MC_total_chromatin_SL102.align_25.hg18.txt" Count=" 6381095" Date="080116"/>
-<Track Flowcell="FC2057R" Lane="4" Filename="Flowcells/FC2057R/071211_FC2057R_s4_SK_N_MC_control_SL102.align_25.hg18.txt" Count="  247103" Date="071211"/>
-<Track Flowcell="FC2057R" Lane="5" Filename="Flowcells/FC2057R/071211_FC2057R_s5_SK_N_MC_control_SL102.align_25.hg18.txt" Count="  285363" Date="071211"/>
+<Track Flowcell="FC20162" Lane="4" Filename="Flowcells/FC20162/080111_FC20162_s4_SK-N-MC_TotalChromatin_SL102.align_25.hg18.txt" Count=" 3103385" Date="080111" />
+<Track Flowcell="FC202W1" Lane="1234" Filename="Flowcells/FC202W1/080116_FC202W1_s1234_SK-N-MC_total_chromatin_SL102.align_25.hg18.txt" Count=" 6381095" Date="080116" />
+<Track Flowcell="FC2057R" Lane="4" Filename="Flowcells/FC2057R/071211_FC2057R_s4_SK_N_MC_control_SL102.align_25.hg18.txt" Count="  247103" Date="071211" />
+<Track Flowcell="FC2057R" Lane="5" Filename="Flowcells/FC2057R/071211_FC2057R_s5_SK_N_MC_control_SL102.align_25.hg18.txt" Count="  285363" Date="071211" />
 </Library>
 <Library Name="SL103">
-<Track Flowcell="FC12565" Lane="6" Filename="Flowcells/FC12565/071019_FC12565_s6_mock_IP_U87_SL103.align_25.hg18.txt" Count=" 1642558" Date="071019"/>
-<Track Flowcell="FC14428" Lane="5" Filename="Flowcells/FC14428/071102_FC14428_s5_mock_IP_U87_SL103.align_25.hg18.txt" Count="   44271" Date="071102"/>
-<Track Flowcell="FC14432" Lane="3" Filename="Flowcells/FC14432/071026_FC14432_s3_mock_IP_U87_SL103.align_25.hg18.txt" Count=" 2246689" Date="071026"/>
-<Track Flowcell="FC6420" Lane="45" Filename="Flowcells/FC6420/080212_FC6420_s45_UB7_Control_SL103.align_25.hg18.txt" Count=" 7268724" Date="080212"/>
+<Track Flowcell="30DAGAAXX" Lane="4" Filename="Flowcells/30DAGAAXX/080826_30DAGAAXX_s4_U87_Control_SL103.align_25.hg18.txt" Count=" 5805925" Date="080826" />
+<Track Flowcell="FC12565" Lane="6" Filename="Flowcells/FC12565/071019_FC12565_s6_mock_IP_U87_SL103.align_25.hg18.txt" Count=" 1642558" Date="071019" />
+<Track Flowcell="FC14428" Lane="5" Filename="Flowcells/FC14428/071102_FC14428_s5_mock_IP_U87_SL103.align_25.hg18.txt" Count="   44271" Date="071102" />
+<Track Flowcell="FC14432" Lane="3" Filename="Flowcells/FC14432/071026_FC14432_s3_mock_IP_U87_SL103.align_25.hg18.txt" Count=" 2246689" Date="071026" />
+<Track Flowcell="FC6420" Lane="45" Filename="Flowcells/FC6420/080212_FC6420_s45_UB7_Control_SL103.align_25.hg18.txt" Count=" 7268724" Date="080212" />
 </Library>
 <Library Name="SL104">
-<Track Flowcell="FC14426" Lane="3" Filename="Flowcells/FC14426/071106_FC14426_s3_WOL9_small_RNA_human_SL104.align_25.hg18.txt" Count="  104372" Date="071106"/>
+<Track Flowcell="FC14426" Lane="3" Filename="Flowcells/FC14426/071106_FC14426_s3_WOL9_small_RNA_human_SL104.align_25.hg18.txt" Count="  104372" Date="071106" />
 </Library>
 <Library Name="SL105">
-<Track Flowcell="FC14426" Lane="4" Filename="Flowcells/FC14426/071106_FC14426_s4_WOL8_small_RNA_human_SL105.align_25.hg18.txt" Count="  433070" Date="071106"/>
+<Track Flowcell="FC14426" Lane="4" Filename="Flowcells/FC14426/071106_FC14426_s4_WOL8_small_RNA_human_SL105.align_25.hg18.txt" Count="  433070" Date="071106" />
 </Library>
 <Library Name="SL108">
-<Track Flowcell="FC14428" Lane="6" Filename="Flowcells/FC14428/071102_FC14428_s6_mock_IP_HTB11_SL108.align_25.hg18.txt" Count="  201318" Date="071102"/>
-<Track Flowcell="FC14432" Lane="1" Filename="Flowcells/FC14432/071026_FC14432_s1_mock_IP_HTB11_SL108.align_25.hg18.txt" Count=" 2525735" Date="071026"/>
-<Track Flowcell="FC6420" Lane="123" Filename="Flowcells/FC6420/080212_FC6420_s123_HTB-11_Control_SL108.align_25.hg18.txt" Count=" 9532996" Date="080212"/>
+<Track Flowcell="30DAGAAXX" Lane="2" Filename="Flowcells/30DAGAAXX/080826_30DAGAAXX_s2_HTB-11_Control_SL108.align_25.hg18.txt" Count=" 6550943" Date="080826" />
+<Track Flowcell="FC14428" Lane="6" Filename="Flowcells/FC14428/071102_FC14428_s6_mock_IP_HTB11_SL108.align_25.hg18.txt" Count="  201318" Date="071102" />
+<Track Flowcell="FC14432" Lane="1" Filename="Flowcells/FC14432/071026_FC14432_s1_mock_IP_HTB11_SL108.align_25.hg18.txt" Count=" 2525735" Date="071026" />
+<Track Flowcell="FC6420" Lane="123" Filename="Flowcells/FC6420/080212_FC6420_s123_HTB-11_Control_SL108.align_25.hg18.txt" Count=" 9532996" Date="080212" />
 </Library>
 <Library Name="SL109">
-<Track Flowcell="FC14428" Lane="7" Filename="Flowcells/FC14428/071102_FC14428_s7_RNAseq_liver_human_rep1_SL109.align_25.hg18.txt" Count="  755566" Date="071102"/>
+<Track Flowcell="FC14428" Lane="7" Filename="Flowcells/FC14428/071102_FC14428_s7_RNAseq_liver_human_rep1_SL109.align_25.hg18.txt" Count="  755566" Date="071102" />
 </Library>
 <Library Name="SL110">
-<Track Flowcell="FC14428" Lane="8" Filename="Flowcells/FC14428/071102_FC14428_s8_RNAseq_liver_human_rep2_SL110.align_25.hg18.txt" Count="  515935" Date="071102"/>
-<Track Flowcell="FC14763" Lane="4" Filename="Flowcells/FC14763/071129_FC14763_s4_RNAseq_liver_human_rep2_SL110.align_25.hg18.txt" Count="  501659" Date="071129"/>
+<Track Flowcell="FC14428" Lane="8" Filename="Flowcells/FC14428/071102_FC14428_s8_RNAseq_liver_human_rep2_SL110.align_25.hg18.txt" Count="  515935" Date="071102" />
+<Track Flowcell="FC14763" Lane="4" Filename="Flowcells/FC14763/071129_FC14763_s4_RNAseq_liver_human_rep2_SL110.align_25.hg18.txt" Count="  501659" Date="071129" />
 </Library>
 <Library Name="SL111">
-<Track Flowcell="FC14426" Lane="1" Filename="Flowcells/FC14426/071106_FC14426_s1_BG02_hepato_B2_hpa_SL111.align_25.hg18.txt" Count=" 1878793" Date="071106"/>
-<Track Flowcell="FC14430" Lane="1" Filename="Flowcells/FC14430/071030_FC14430_s1_BG02_hepato_B2_hpa_SL111.align_25.hg18.txt" Count=" 1172349" Date="071030"/>
+<Track Flowcell="FC14426" Lane="1" Filename="Flowcells/FC14426/071106_FC14426_s1_BG02_hepato_B2_hpa_SL111.align_25.hg18.txt" Count=" 1878793" Date="071106" />
+<Track Flowcell="FC14430" Lane="1" Filename="Flowcells/FC14430/071030_FC14430_s1_BG02_hepato_B2_hpa_SL111.align_25.hg18.txt" Count=" 1172349" Date="071030" />
 </Library>
 <Library Name="SL112">
-<Track Flowcell="FC14426" Lane="2" Filename="Flowcells/FC14426/071106_FC14426_s2_BG02_hepato_C2_hpa_SL112.align_25.hg18.txt" Count=" 2107429" Date="071106"/>
-<Track Flowcell="FC14430" Lane="2" Filename="Flowcells/FC14430/071030_FC14430_s2_BG02_hepato_C2_hpa_SL112.align_25.hg18.txt" Count=" 1447587" Date="071030"/>
+<Track Flowcell="FC14426" Lane="2" Filename="Flowcells/FC14426/071106_FC14426_s2_BG02_hepato_C2_hpa_SL112.align_25.hg18.txt" Count=" 2107429" Date="071106" />
+<Track Flowcell="FC14430" Lane="2" Filename="Flowcells/FC14430/071030_FC14430_s2_BG02_hepato_C2_hpa_SL112.align_25.hg18.txt" Count=" 1447587" Date="071030" />
 </Library>
 <Library Name="SL113">
-<Track Flowcell="FC14420" Lane="1" Filename="Flowcells/FC14420/071113_FC14420_s1_fetal_liver_11weeks2_hpa_SL113.align_25.hg18.txt" Count=" 1250091" Date="071113"/>
-<Track Flowcell="FC14428" Lane="1" Filename="Flowcells/FC14428/071102_FC14428_s1_fetal_liver_11weeks2_hpa_SL113.align_25.hgt18.txt" Count=" 1172349" Date="071102"/>
-<Track Flowcell="FC14430" Lane="3" Filename="Flowcells/FC14430/071030_FC14430_s3_fetal_liver_11weeks2_hpa_SL113.align_25.hg18.txt" Count="  987885" Date="071030"/>
+<Track Flowcell="FC14420" Lane="1" Filename="Flowcells/FC14420/071113_FC14420_s1_fetal_liver_11weeks2_hpa_SL113.align_25.hg18.txt" Count=" 1250091" Date="071113" />
+<Track Flowcell="FC14428" Lane="1" Filename="Flowcells/FC14428/071102_FC14428_s1_fetal_liver_11weeks2_hpa_SL113.align_25.hgt18.txt" Count=" 1172349" Date="071102" />
+<Track Flowcell="FC14430" Lane="3" Filename="Flowcells/FC14430/071030_FC14430_s3_fetal_liver_11weeks2_hpa_SL113.align_25.hg18.txt" Count="  987885" Date="071030" />
 </Library>
 <Library Name="SL114">
-<Track Flowcell="FC14420" Lane="2" Filename="Flowcells/FC14420/071113_FC14420_s2_fetal_liver_24weeks2_hpa_SL114.align_25.hg18.txt" Count=" 1805836" Date="071113"/>
-<Track Flowcell="FC14428" Lane="2" Filename="Flowcells/FC14428/071102_FC14428_s2_fetal_liver_24weeks2_hpa_SL114.align_25.hgt18.txt" Count=" 1447587" Date="071102"/>
-<Track Flowcell="FC14430" Lane="4" Filename="Flowcells/FC14430/071030_FC14430_s4_fetal_liver_24weeks2_hpa_SL114.align_25.hg18.txt" Count=" 1114155" Date="071030"/>
+<Track Flowcell="FC14420" Lane="2" Filename="Flowcells/FC14420/071113_FC14420_s2_fetal_liver_24weeks2_hpa_SL114.align_25.hg18.txt" Count=" 1805836" Date="071113" />
+<Track Flowcell="FC14428" Lane="2" Filename="Flowcells/FC14428/071102_FC14428_s2_fetal_liver_24weeks2_hpa_SL114.align_25.hgt18.txt" Count=" 1447587" Date="071102" />
+<Track Flowcell="FC14430" Lane="4" Filename="Flowcells/FC14430/071030_FC14430_s4_fetal_liver_24weeks2_hpa_SL114.align_25.hg18.txt" Count=" 1114155" Date="071030" />
 </Library>
 <Library Name="SL115">
-<Track Flowcell="FC202VW" Lane="1234" Filename="Flowcells/FC202VW/071218_FC202VW_s1234_cat_x_chromosome_SL115.align_25.catGar12.txt" Count=" 5488573" Date="071218"/>
+<Track Flowcell="FC202VW" Lane="1234" Filename="Flowcells/FC202VW/071218_FC202VW_s1234_cat_x_chromosome_SL115.align_25.catGar12.txt" Count=" 5488573" Date="071218" />
 </Library>
 <Library Name="SL116">
-<Track Flowcell="FC12472" Lane="12" Filename="Flowcells/FC12472/071116_FC12472_s12_NRSF_monoclonal_PANC1_SL116.align_25.hg18.txt" Count=" 1924940" Date="071116"/>
-<Track Flowcell="FC14420" Lane="5" Filename="Flowcells/FC14420/071113_FC14420_s5_NRSF_monoclonal_PANC1_SL116.align_25.hg18.txt" Count=" 1037723" Date="071113"/>
-<Track Flowcell="FC14426" Lane="5" Filename="Flowcells/FC14426/071106_FC14426_s5_NRSF_monoclonal_PANC1_SL116.align_25.hg18.txt" Count="  961751" Date="071106"/>
-<Track Flowcell="FC6192" Lane="678" Filename="Flowcells/FC6192/080212_FC6192_s678_NRSF_ChIP_PANC1_SL116.align_25.hg18.txt" Count=" 4075003" Date="080212"/>
+<Track Flowcell="FC12472" Lane="12" Filename="Flowcells/FC12472/071116_FC12472_s12_NRSF_monoclonal_PANC1_SL116.align_25.hg18.txt" Count=" 1924940" Date="071116" />
+<Track Flowcell="FC14420" Lane="5" Filename="Flowcells/FC14420/071113_FC14420_s5_NRSF_monoclonal_PANC1_SL116.align_25.hg18.txt" Count=" 1037723" Date="071113" />
+<Track Flowcell="FC14426" Lane="5" Filename="Flowcells/FC14426/071106_FC14426_s5_NRSF_monoclonal_PANC1_SL116.align_25.hg18.txt" Count="  961751" Date="071106" />
+<Track Flowcell="FC6192" Lane="678" Filename="Flowcells/FC6192/080212_FC6192_s678_NRSF_ChIP_PANC1_SL116.align_25.hg18.txt" Count=" 4075003" Date="080212" />
 </Library>
 <Library Name="SL117">
-<Track Flowcell="FC14420" Lane="6" Filename="Flowcells/FC14420/071113_FC14420_s6_mock_IP_PANC1_SL117.align_25.hg18.txt" Count=" 2462518" Date="071113"/>
-<Track Flowcell="FC14426" Lane="6" Filename="Flowcells/FC14426/071106_FC14426_s6_mock_IP_PANC1_SL117.align_25.hg18.txt" Count=" 2214338" Date="071106"/>
-<Track Flowcell="FC6192" Lane="12" Filename="Flowcells/FC6192/080212_FC6192_s12_PANC1_Control_SL117.align_25.hg18.txt" Count=" 6046619" Date="080212"/>
+<Track Flowcell="FC14420" Lane="6" Filename="Flowcells/FC14420/071113_FC14420_s6_mock_IP_PANC1_SL117.align_25.hg18.txt" Count=" 2462518" Date="071113" />
+<Track Flowcell="FC14426" Lane="6" Filename="Flowcells/FC14426/071106_FC14426_s6_mock_IP_PANC1_SL117.align_25.hg18.txt" Count=" 2214338" Date="071106" />
+<Track Flowcell="FC6192" Lane="12" Filename="Flowcells/FC6192/080212_FC6192_s12_PANC1_Control_SL117.align_25.hg18.txt" Count=" 6046619" Date="080212" />
 </Library>
 <Library Name="SL118">
-<Track Flowcell="FC12472" Lane="34" Filename="Flowcells/FC12472/071116_FC12472_s34_NRSF_monoclonal_HTB187_SL118.align_25.hg18.txt" Count=" 2520211" Date="071116"/>
-<Track Flowcell="FC14420" Lane="7" Filename="Flowcells/FC14420/071113_FC14420_s7_NRSF_monoclonal_HTB187_SL118.align_25.hg18.txt" Count=" 1183349" Date="071113"/>
-<Track Flowcell="FC14426" Lane="7" Filename="Flowcells/FC14426/071106_FC14426_s7_NRSF_monoclonal_HTB187_SL118.align_25.hg18.txt" Count="  998104" Date="071106"/>
+<Track Flowcell="FC12472" Lane="34" Filename="Flowcells/FC12472/071116_FC12472_s34_NRSF_monoclonal_HTB187_SL118.align_25.hg18.txt" Count=" 2520211" Date="071116" />
+<Track Flowcell="FC14420" Lane="7" Filename="Flowcells/FC14420/071113_FC14420_s7_NRSF_monoclonal_HTB187_SL118.align_25.hg18.txt" Count=" 1183349" Date="071113" />
+<Track Flowcell="FC14426" Lane="7" Filename="Flowcells/FC14426/071106_FC14426_s7_NRSF_monoclonal_HTB187_SL118.align_25.hg18.txt" Count="  998104" Date="071106" />
 </Library>
 <Library Name="SL119">
-<Track Flowcell="FC14420" Lane="8" Filename="Flowcells/FC14420/071113_FC14420_s8_mock_IP_HTB187_SL119.align_25.hg18.txt" Count=" 2376268" Date="071113"/>
-<Track Flowcell="FC14426" Lane="8" Filename="Flowcells/FC14426/071106_FC14426_s8_mock_IP_HTB187_SL119.align_25.hg18.txt" Count=" 1606271" Date="071106"/>
+<Track Flowcell="FC14420" Lane="8" Filename="Flowcells/FC14420/071113_FC14420_s8_mock_IP_HTB187_SL119.align_25.hg18.txt" Count=" 2376268" Date="071113" />
+<Track Flowcell="FC14426" Lane="8" Filename="Flowcells/FC14426/071106_FC14426_s8_mock_IP_HTB187_SL119.align_25.hg18.txt" Count=" 1606271" Date="071106" />
 </Library>
 <Library Name="SL120">
-<Track Flowcell="FC13512" Lane="1" Filename="Flowcells/FC13512/071109_FC13512_s1_NRSF_monoclonal_Jurkat_SL120.align_25.hg18.txt" Count=" 1285225" Date="071109"/>
-<Track Flowcell="FC14420" Lane="3" Filename="Flowcells/FC14420/071113_FC14420_s3_NRSF_monoclonal_Jurkat_SL120.align_25.hg18.txt" Count=" 2130283" Date="071113"/>
+<Track Flowcell="FC13512" Lane="1" Filename="Flowcells/FC13512/071109_FC13512_s1_NRSF_monoclonal_Jurkat_SL120.align_25.hg18.txt" Count=" 1285225" Date="071109" />
+<Track Flowcell="FC14420" Lane="3" Filename="Flowcells/FC14420/071113_FC14420_s3_NRSF_monoclonal_Jurkat_SL120.align_25.hg18.txt" Count=" 2130283" Date="071113" />
 </Library>
 <Library Name="SL121">
-<Track Flowcell="FC13512" Lane="2" Filename="Flowcells/FC13512/071109_FC13512_s2_GAPB_monoclonal_Jurkat_SL121.align_25.hg18.txt" Count=" 1512986" Date="071109"/>
-<Track Flowcell="FC14420" Lane="4" Filename="Flowcells/FC14420/071113_FC14420_s4_GAPB_monoclonal_Jurkat_SL121.align_25.hg18.txt" Count=" 2069705" Date="071113"/>
-<Track Flowcell="FC207CF" Lane="4" Filename="Flowcells/FC207CF/080207_FC207CF_s4_Jurkat_GABP_ChIP_SL121.align_25.hg18.txt" Count=" 11127549" Date="080207"/>
-<Track Flowcell="FC20AJ4" Lane="2" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s2_Jurkat_GABP_ChIP_SL121.align_25.hg18.txt" Count=" 3288504" Date="080312"/>
+<Track Flowcell="FC13512" Lane="2" Filename="Flowcells/FC13512/071109_FC13512_s2_GAPB_monoclonal_Jurkat_SL121.align_25.hg18.txt" Count=" 1512986" Date="071109" />
+<Track Flowcell="FC14420" Lane="4" Filename="Flowcells/FC14420/071113_FC14420_s4_GAPB_monoclonal_Jurkat_SL121.align_25.hg18.txt" Count=" 2069705" Date="071113" />
+<Track Flowcell="FC207CF" Lane="4" Filename="Flowcells/FC207CF/080207_FC207CF_s4_Jurkat_GABP_ChIP_SL121.align_25.hg18.txt" Count=" 11127549" Date="080207" />
+<Track Flowcell="FC20AJ4" Lane="2" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s2_Jurkat_GABP_ChIP_SL121.align_25.hg18.txt" Count=" 3288504" Date="080312" />
 </Library>
 <Library Name="SL127">
-<Track Flowcell="FC12472" Lane="7" Filename="Flowcells/FC12472/071116_FC12472_s7_RNA_Pol_Jurkat_SL127.align_25.hg18.txt" Count=" 1744821" Date="071116"/>
-<Track Flowcell="FC2057R" Lane="7" Filename="Flowcells/FC2057R/071211_FC2057R_s7_RNA_PoI_II_ChIP_Jurkat_SL127.align_25.hg18.txt" Count="  245677" Date="071211"/>
-<Track Flowcell="FC2057R" Lane="8" Filename="Flowcells/FC2057R/071211_FC2057R_s8_RNA_PoI_II_ChIP_Jurkat_SL127.align_25.hg18.txt" Count="  124585" Date="071211"/>
-<Track Flowcell="FC2057R" Lane="4" Filename="Flowcells/FC2057R/080118_FC2057R_s4_RNApol2_ChIP_Jurkat_SL127.align_25.hg18.txt" Count=" 2876921" Date="080118"/>
-<Track Flowcell="FC20686" Lane="4" Filename="Flowcells/FC20686/080221_FC20686_s4_RNApol2_ChIP_Jurkat_SL127.align_25.hg18.txt" Count="   15232" Date="080221"/>
-<Track Flowcell="FC207CF" Lane="5" Filename="Flowcells/FC207CF/080207_FC207CF_s5_RNApol2_ChIP_Jurkat_SL127.align_25.hg18.txt" Count=" 14282376" Date="080207"/>
-<Track Flowcell="FC20AN8" Lane="4" Filename="Flowcells/FC20AN8/080310_FC20AN8_s4_RNApol2_ChIP_Jurkat_SL127.align_25.hg18.txt" Count="  804871" Date="080310"/>
+<Track Flowcell="FC12472" Lane="7" Filename="Flowcells/FC12472/071116_FC12472_s7_RNA_Pol_Jurkat_SL127.align_25.hg18.txt" Count=" 1744821" Date="071116" />
+<Track Flowcell="FC2057R" Lane="7" Filename="Flowcells/FC2057R/071211_FC2057R_s7_RNA_PoI_II_ChIP_Jurkat_SL127.align_25.hg18.txt" Count="  245677" Date="071211" />
+<Track Flowcell="FC2057R" Lane="8" Filename="Flowcells/FC2057R/071211_FC2057R_s8_RNA_PoI_II_ChIP_Jurkat_SL127.align_25.hg18.txt" Count="  124585" Date="071211" />
+<Track Flowcell="FC2057R" Lane="4" Filename="Flowcells/FC2057R/080118_FC2057R_s4_RNApol2_ChIP_Jurkat_SL127.align_25.hg18.txt" Count=" 2876921" Date="080118" />
+<Track Flowcell="FC20686" Lane="4" Filename="Flowcells/FC20686/080221_FC20686_s4_RNApol2_ChIP_Jurkat_SL127.align_25.hg18.txt" Count="   15232" Date="080221" />
+<Track Flowcell="FC207CF" Lane="5" Filename="Flowcells/FC207CF/080207_FC207CF_s5_RNApol2_ChIP_Jurkat_SL127.align_25.hg18.txt" Count=" 14282376" Date="080207" />
+<Track Flowcell="FC20AN8" Lane="4" Filename="Flowcells/FC20AN8/080310_FC20AN8_s4_RNApol2_ChIP_Jurkat_SL127.align_25.hg18.txt" Count="  804871" Date="080310" />
 </Library>
 <Library Name="SL128">
-<Track Flowcell="FC12472" Lane="8" Filename="Flowcells/FC12472/071116_FC12472_s8_MsMeCP2_Jurkat_SL128.align_25.hg18.txt" Count=" 1441721" Date="071116"/>
-<Track Flowcell="FC204PR" Lane="8" Filename="Flowcells/FC204PR/080520_FC204PR_s8_MeCP2_ChIP_Jurkat_SL128.align_25.hg18.txt" Count=" 3300096" Date="080520"/>
-<Track Flowcell="FC2057R" Lane="5" Filename="Flowcells/FC2057R/080118_FC2057R_s5_MeCP2_ChIP_Jurkat_SL128.align_25.hg18.txt" Count=" 2246279" Date="080118"/>
+<Track Flowcell="FC12472" Lane="8" Filename="Flowcells/FC12472/071116_FC12472_s8_MsMeCP2_Jurkat_SL128.align_25.hg18.txt" Count=" 1441721" Date="071116" />
+<Track Flowcell="FC204PR" Lane="8" Filename="Flowcells/FC204PR/080520_FC204PR_s8_MeCP2_ChIP_Jurkat_SL128.align_25.hg18.txt" Count=" 3300096" Date="080520" />
+<Track Flowcell="FC2057R" Lane="5" Filename="Flowcells/FC2057R/080118_FC2057R_s5_MeCP2_ChIP_Jurkat_SL128.align_25.hg18.txt" Count=" 2246279" Date="080118" />
 </Library>
 <Library Name="SL129">
-<Track Flowcell="FC14763" Lane="1" Filename="Flowcells/FC14763/071129_FC14763_s1_dko_1_hpa_SL129.align_25.hg18.txt" Count=" 1039877" Date="071129"/>
-<Track Flowcell="FC20162" Lane="16" Filename="Flowcells/FC20162/080111_FC20162_s16_dko_1_hpa_SL129.align_25.hg18.txt" Count=" 3270592" Date="080111"/>
-<Track Flowcell="FC2057R" Lane="1" Filename="Flowcells/FC2057R/071211_FC2057R_s1_dko_1_hpa_SL129.align_25.hg18.txt" Count="  246639" Date="071211"/>
-<Track Flowcell="FC2057R" Lane="12" Filename="Flowcells/FC2057R/080118_FC2057R_s12_dko_1_hpa_SL129.align_25.hg18.txt" Count=" 5238922" Date="080118"/>
+<Track Flowcell="FC14763" Lane="1" Filename="Flowcells/FC14763/071129_FC14763_s1_dko_1_hpa_SL129.align_25.hg18.txt" Count=" 1039877" Date="071129" />
+<Track Flowcell="FC20162" Lane="16" Filename="Flowcells/FC20162/080111_FC20162_s16_dko_1_hpa_SL129.align_25.hg18.txt" Count=" 3270592" Date="080111" />
+<Track Flowcell="FC2057R" Lane="1" Filename="Flowcells/FC2057R/071211_FC2057R_s1_dko_1_hpa_SL129.align_25.hg18.txt" Count="  246639" Date="071211" />
+<Track Flowcell="FC2057R" Lane="12" Filename="Flowcells/FC2057R/080118_FC2057R_s12_dko_1_hpa_SL129.align_25.hg18.txt" Count=" 5238922" Date="080118" />
 </Library>
 <Library Name="SL130">
-<Track Flowcell="FC14763" Lane="2" Filename="Flowcells/FC14763/071129_FC14763_s2_dnmt1_1_hpa_SL130.align_25.hg18.txt" Count=" 1224247" Date="071129"/>
-<Track Flowcell="FC20162" Lane="27" Filename="Flowcells/FC20162/080111_FC20162_s27_dnmt1_1_hpa_SL130.align_25.hg18.txt" Count=" 3592097" Date="080111"/>
-<Track Flowcell="FC2057R" Lane="2" Filename="Flowcells/FC2057R/071211_FC2057R_s2_dnmt1_1_hpa_SL130.align_25.hg18.txt" Count="  417799" Date="071211"/>
+<Track Flowcell="FC14763" Lane="2" Filename="Flowcells/FC14763/071129_FC14763_s2_dnmt1_1_hpa_SL130.align_25.hg18.txt" Count=" 1224247" Date="071129" />
+<Track Flowcell="FC20162" Lane="27" Filename="Flowcells/FC20162/080111_FC20162_s27_dnmt1_1_hpa_SL130.align_25.hg18.txt" Count=" 3592097" Date="080111" />
+<Track Flowcell="FC2057R" Lane="2" Filename="Flowcells/FC2057R/071211_FC2057R_s2_dnmt1_1_hpa_SL130.align_25.hg18.txt" Count="  417799" Date="071211" />
 </Library>
 <Library Name="SL131">
-<Track Flowcell="FC14763" Lane="3" Filename="Flowcells/FC14763/071129_FC14763_s3_dnmt3b_1_hpa_SL131.align_25.hg18.txt" Count=" 1328448" Date="071129"/>
-<Track Flowcell="FC20162" Lane="38" Filename="Flowcells/FC20162/080111_FC20162_s38_dmnt3b_1_hpa_SL131.align_25.hg18.txt" Count=" 3486008" Date="080111"/>
-<Track Flowcell="FC2057R" Lane="3" Filename="Flowcells/FC2057R/071211_FC2057R_s3_dnmt3b_1_hpa_SL131.align_25.hg18.txt" Count="  501842" Date="071211"/>
+<Track Flowcell="FC14763" Lane="3" Filename="Flowcells/FC14763/071129_FC14763_s3_dnmt3b_1_hpa_SL131.align_25.hg18.txt" Count=" 1328448" Date="071129" />
+<Track Flowcell="FC20162" Lane="38" Filename="Flowcells/FC20162/080111_FC20162_s38_dmnt3b_1_hpa_SL131.align_25.hg18.txt" Count=" 3486008" Date="080111" />
+<Track Flowcell="FC2057R" Lane="3" Filename="Flowcells/FC2057R/071211_FC2057R_s3_dnmt3b_1_hpa_SL131.align_25.hg18.txt" Count="  501842" Date="071211" />
 </Library>
 <Library Name="SL138">
-<Track Flowcell="FC2057U" Lane="1" Filename="Flowcells/FC2057U/080220_FC2057U_s1_e_7_75_Embryo_hpa_1_SL138.align_25.hg18.txt" Count=" 3235636" Date="080220"/>
-<Track Flowcell="FC205DP" Lane="3" Filename="Flowcells/FC205DP/080118_FC205DP_s3_e_7_75_Embryo_hpa_SL138.align_25.mm9.txt" Count=" 3251998" Date="080118"/>
+<Track Flowcell="FC2057U" Lane="1" Filename="Flowcells/FC2057U/080220_FC2057U_s1_e_7_75_Embryo_hpa_1_SL138.align_25.hg18.txt" Count=" 3235636" Date="080220" />
+<Track Flowcell="FC205DP" Lane="3" Filename="Flowcells/FC205DP/080118_FC205DP_s3_e_7_75_Embryo_hpa_SL138.align_25.mm9.txt" Count=" 3251998" Date="080118" />
 </Library>
 <Library Name="SL139">
-<Track Flowcell="FC2057U" Lane="2" Filename="Flowcells/FC2057U/080220_FC2057U_s2_e_7_75_Extra_Em_hpa_1_SL139.align_25.hg18.txt" Count=" 3408585" Date="080220"/>
-<Track Flowcell="FC205DP" Lane="6" Filename="Flowcells/FC205DP/080118_FC205DP_s6_e_7_75_Extra_Em_hpa_1_SL139.align_25.mm9.txt" Count=" 3017471" Date="080118"/>
+<Track Flowcell="FC2057U" Lane="2" Filename="Flowcells/FC2057U/080220_FC2057U_s2_e_7_75_Extra_Em_hpa_1_SL139.align_25.hg18.txt" Count=" 3408585" Date="080220" />
+<Track Flowcell="FC205DP" Lane="6" Filename="Flowcells/FC205DP/080118_FC205DP_s6_e_7_75_Extra_Em_hpa_1_SL139.align_25.mm9.txt" Count=" 3017471" Date="080118" />
 </Library>
 <Library Name="SL140">
-<Track Flowcell="FC2057U" Lane="7" Filename="Flowcells/FC2057U/080220_FC2057U_s7_e_8_5_Unturned_hpa_1_SL140.align_25.hg18.txt" Count=" 4152706" Date="080220"/>
-<Track Flowcell="FC205DP" Lane="7" Filename="Flowcells/FC205DP/080118_FC205DP_s7_e_8_5_Unturned_hpa_SL140.align_25.mm9.txt" Count=" 2924215" Date="080118"/>
+<Track Flowcell="FC2057U" Lane="7" Filename="Flowcells/FC2057U/080220_FC2057U_s7_e_8_5_Unturned_hpa_1_SL140.align_25.hg18.txt" Count=" 4152706" Date="080220" />
+<Track Flowcell="FC205DP" Lane="7" Filename="Flowcells/FC205DP/080118_FC205DP_s7_e_8_5_Unturned_hpa_SL140.align_25.mm9.txt" Count=" 2924215" Date="080118" />
 </Library>
 <Library Name="SL141">
-<Track Flowcell="FC20678" Lane="1" Filename="Flowcells/FC20678/080214_FC20678_s1_e11_5_SL141.align_25.hg18.txt" Count="  288210" Date="080214"/>
-<Track Flowcell="FC20AJ6" Lane="7" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s7_e11.5_Fet-Plac_hpa_SL141.align_25.mm9.txt" Count=" 3531295" Date="080318"/>
+<Track Flowcell="FC20678" Lane="1" Filename="Flowcells/FC20678/080214_FC20678_s1_e11_5_SL141.align_25.hg18.txt" Count="  288210" Date="080214" />
+<Track Flowcell="FC20AJ6" Lane="7" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s7_e11.5_Fet-Plac_hpa_SL141.align_25.mm9.txt" Count=" 3531295" Date="080318" />
 </Library>
 <Library Name="SL142">
-<Track Flowcell="FC20678" Lane="2" Filename="Flowcells/FC20678/080214_FC20678_s2_e15_5_SL142.align_25.hg18.txt" Count="  610226" Date="080214"/>
-<Track Flowcell="FC20AJ6" Lane="8" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s8_e1.5_Fet-Plac_hpa_SL142.align_25.mm9.txt" Count=" 3896266" Date="080318"/>
+<Track Flowcell="FC20678" Lane="2" Filename="Flowcells/FC20678/080214_FC20678_s2_e15_5_SL142.align_25.hg18.txt" Count="  610226" Date="080214" />
+<Track Flowcell="FC20AJ6" Lane="8" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s8_e1.5_Fet-Plac_hpa_SL142.align_25.mm9.txt" Count=" 3896266" Date="080318" />
 </Library>
 <Library Name="SL143">
-<Track Flowcell="FC2057U" Lane="8" Filename="Flowcells/FC2057U/080220_FC2057U_s8_e_15_5_Fet_Plac_msp_1_SL143.align_25.hg18.txt" Count=" 2901012" Date="080220"/>
-<Track Flowcell="FC205DP" Lane="8" Filename="Flowcells/FC205DP/080118_FC205DP_s8_e_15_5_Fet_Plac_msp_1_SL143.align_25.mm9.txt" Count=" 2661896" Date="080118"/>
+<Track Flowcell="FC2057U" Lane="8" Filename="Flowcells/FC2057U/080220_FC2057U_s8_e_15_5_Fet_Plac_msp_1_SL143.align_25.hg18.txt" Count=" 2901012" Date="080220" />
+<Track Flowcell="FC205DP" Lane="8" Filename="Flowcells/FC205DP/080118_FC205DP_s8_e_15_5_Fet_Plac_msp_1_SL143.align_25.mm9.txt" Count=" 2661896" Date="080118" />
 </Library>
 <Library Name="SL144">
-<Track Flowcell="FC20162" Lane="5" Filename="Flowcells/FC20162/080111_FC20162_s5_SK-N-MC_FOXP2_ChIP_SL144.align_25.hg18.txt" Count=" 2578704" Date="080111"/>
-<Track Flowcell="FC202W1" Lane="5678" Filename="Flowcells/FC202W1/080116_FC202W1_s5678_SK-N-MC_FOXP2_ChIP_SL144.align_25.hg18.txt" Count=" 10867872" Date="080116"/>
+<Track Flowcell="FC20162" Lane="5" Filename="Flowcells/FC20162/080111_FC20162_s5_SK-N-MC_FOXP2_ChIP_SL144.align_25.hg18.txt" Count=" 2578704" Date="080111" />
+<Track Flowcell="FC202W1" Lane="5678" Filename="Flowcells/FC202W1/080116_FC202W1_s5678_SK-N-MC_FOXP2_ChIP_SL144.align_25.hg18.txt" Count=" 10867872" Date="080116" />
 </Library>
 <Library Name="SL147">
-<Track Flowcell="FC2065U" Lane="12" Filename="Flowcells/FC2065U/080226_FC2065U_s12_BE2_C_NRSF_ChIP_SL147.align_25.hg18.txt" Count=" 5768434" Date="080226"/>
-<Track Flowcell="FC20686" Lane="5" Filename="Flowcells/FC20686/080221_FC20686_s5_BE2_C_NRSF_ChIP_SL147.align_25.hg18.txt" Count="     327" Date="080221"/>
-<Track Flowcell="FC20AJ4" Lane="3" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s3_BE_2_-C_NRSF_ChIP_SL147.align_25.hg18.txt" Count=" 3022727" Date="080312"/>
+<Track Flowcell="FC2065U" Lane="12" Filename="Flowcells/FC2065U/080226_FC2065U_s12_BE2_C_NRSF_ChIP_SL147.align_25.hg18.txt" Count=" 5768434" Date="080226" />
+<Track Flowcell="FC20686" Lane="5" Filename="Flowcells/FC20686/080221_FC20686_s5_BE2_C_NRSF_ChIP_SL147.align_25.hg18.txt" Count="     327" Date="080221" />
+<Track Flowcell="FC20AJ4" Lane="3" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s3_BE_2_-C_NRSF_ChIP_SL147.align_25.hg18.txt" Count=" 3022727" Date="080312" />
 </Library>
 <Library Name="SL148">
-<Track Flowcell="FC2065U" Lane="3" Filename="Flowcells/FC2065U/080226_FC2065U_s3_Input_BE2_C_SL148.align_25.hg18.txt" Count=" 4076715" Date="080226"/>
-<Track Flowcell="FC2079B" Lane="5" Filename="Flowcells/FC2079B/080129_FC2079B_s5_Input_BE2-C_SL148.align_25.hg18.txt" Count=" 3917265" Date="080129"/>
-<Track Flowcell="FC20AJ6" Lane="4" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s4_Input_control_BE2-C_SL148.align_25.hg18.txt" Count=" 4103876" Date="080318"/>
+<Track Flowcell="FC2065U" Lane="3" Filename="Flowcells/FC2065U/080226_FC2065U_s3_Input_BE2_C_SL148.align_25.hg18.txt" Count=" 4076715" Date="080226" />
+<Track Flowcell="FC2079B" Lane="5" Filename="Flowcells/FC2079B/080129_FC2079B_s5_Input_BE2-C_SL148.align_25.hg18.txt" Count=" 3917265" Date="080129" />
+<Track Flowcell="FC20AJ6" Lane="4" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s4_Input_control_BE2-C_SL148.align_25.hg18.txt" Count=" 4103876" Date="080318" />
 </Library>
 <Library Name="SL149">
-<Track Flowcell="FC2065U" Lane="45" Filename="Flowcells/FC2065U/080226_FC2065U_s45_PFSK1_NRSF_ChIP_SL149.align_25.hg18.txt" Count=" 5690999" Date="080226"/>
-<Track Flowcell="FC20678" Lane="6" Filename="Flowcells/FC20678/080214_FC20678_s6_NRSF_ChIP_PFSK-1_SL149.align_25.hg18.txt" Count="  976436" Date="080214"/>
-<Track Flowcell="FC20686" Lane="6" Filename="Flowcells/FC20686/080221_FC20686_s6_PFSK1_NRSF_ChIP_SL149.align_25.hg18.txt" Count="   17027" Date="080221"/>
-<Track Flowcell="FC20AJ4" Lane="4" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s4_PFSK1_NRSF_ChIP_SL149.align_25.hg18.txt" Count=" 2779349" Date="080312"/>
+<Track Flowcell="FC2065U" Lane="45" Filename="Flowcells/FC2065U/080226_FC2065U_s45_PFSK1_NRSF_ChIP_SL149.align_25.hg18.txt" Count=" 5690999" Date="080226" />
+<Track Flowcell="FC20678" Lane="6" Filename="Flowcells/FC20678/080214_FC20678_s6_NRSF_ChIP_PFSK-1_SL149.align_25.hg18.txt" Count="  976436" Date="080214" />
+<Track Flowcell="FC20686" Lane="6" Filename="Flowcells/FC20686/080221_FC20686_s6_PFSK1_NRSF_ChIP_SL149.align_25.hg18.txt" Count="   17027" Date="080221" />
+<Track Flowcell="FC20AJ4" Lane="4" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s4_PFSK1_NRSF_ChIP_SL149.align_25.hg18.txt" Count=" 2779349" Date="080312" />
 </Library>
 <Library Name="SL150">
-<Track Flowcell="FC2065U" Lane="6" Filename="Flowcells/FC2065U/080226_FC2065U_s6_Input_PFSK1_SL150.align_25.hg18.txt" Count=" 3558958" Date="080226"/>
-<Track Flowcell="FC2079B" Lane="6" Filename="Flowcells/FC2079B/080129_FC2079B_s6_Input_PFSK-1_SL150.align_25.hg18.txt" Count=" 3864147" Date="080129"/>
-<Track Flowcell="FC20AJ6" Lane="5" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s5_Input_control_PSF-1_SL150.align_25.hg18.txt" Count=" 4013975" Date="080318"/>
+<Track Flowcell="FC2065U" Lane="6" Filename="Flowcells/FC2065U/080226_FC2065U_s6_Input_PFSK1_SL150.align_25.hg18.txt" Count=" 3558958" Date="080226" />
+<Track Flowcell="FC2079B" Lane="6" Filename="Flowcells/FC2079B/080129_FC2079B_s6_Input_PFSK-1_SL150.align_25.hg18.txt" Count=" 3864147" Date="080129" />
+<Track Flowcell="FC20AJ6" Lane="5" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s5_Input_control_PSF-1_SL150.align_25.hg18.txt" Count=" 4013975" Date="080318" />
 </Library>
 <Library Name="SL152">
-<Track Flowcell="FC2079B" Lane="4" Filename="Flowcells/FC2079B/080129_FC2079B_s4_scer_rnaseq_SL152.align_25.scer.txt" Count=" 3578645" Date="080129"/>
+<Track Flowcell="FC2079B" Lane="4" Filename="Flowcells/FC2079B/080129_FC2079B_s4_scer_rnaseq_SL152.align_25.scer.txt" Count=" 3578645" Date="080129" />
 </Library>
 <Library Name="SL153">
-<Track Flowcell="FC207CF" Lane="2" Filename="Flowcells/FC207CF/080207_FC207CF_s2_InputControl_SL153.align_25.hg18.txt" Count="       0" Date="080207"/>
+<Track Flowcell="FC207CF" Lane="2" Filename="Flowcells/FC207CF/080207_FC207CF_s2_InputControl_SL153.align_25.hg18.txt" Count="       0" Date="080207" />
 </Library>
 <Library Name="SL154">
-<Track Flowcell="FC207CF" Lane="3" Filename="Flowcells/FC207CF/080207_FC207CF_s3_PSTAT_ChIP_SL154.align_25.hg18.txt" Count="       0" Date="080207"/>
+<Track Flowcell="FC207CF" Lane="3" Filename="Flowcells/FC207CF/080207_FC207CF_s3_PSTAT_ChIP_SL154.align_25.hg18.txt" Count="       0" Date="080207" />
 </Library>
 <Library Name="SL155">
-<Track Flowcell="FC20678" Lane="3" Filename="Flowcells/FC20678/080214_FC20678_s3_WL_GCT3_RNAseq_SL155.align_25.hg18.txt" Count="   90301" Date="080214"/>
+<Track Flowcell="FC20678" Lane="3" Filename="Flowcells/FC20678/080214_FC20678_s3_WL_GCT3_RNAseq_SL155.align_25.hg18.txt" Count="   90301" Date="080214" />
 </Library>
 <Library Name="SL156">
-<Track Flowcell="FC20678" Lane="4" Filename="Flowcells/FC20678/080214_FC20678_s4_WL_GCT4_RNAseq_SL156.align_25.hg18.txt" Count="    5791" Date="080214"/>
+<Track Flowcell="FC20678" Lane="4" Filename="Flowcells/FC20678/080214_FC20678_s4_WL_GCT4_RNAseq_SL156.align_25.hg18.txt" Count="    5791" Date="080214" />
 </Library>
 <Library Name="SL157">
-<Track Flowcell="FC2057U" Lane="3" Filename="Flowcells/FC2057U/080220_FC2057U_s3_Input_mouse_neurons_SL157.align_25.hg18.txt" Count=" 4030470" Date="080220"/>
+<Track Flowcell="FC2057U" Lane="3" Filename="Flowcells/FC2057U/080220_FC2057U_s3_Input_mouse_neurons_SL157.align_25.hg18.txt" Count=" 4030470" Date="080220" />
 </Library>
 <Library Name="SL158">
-<Track Flowcell="FC2057U" Lane="4" Filename="Flowcells/FC2057U/080220_FC2057U_s4_MeCP2_ChIP_SL158.align_25.hg18.txt" Count=" 2669313" Date="080220"/>
+<Track Flowcell="FC2057U" Lane="4" Filename="Flowcells/FC2057U/080220_FC2057U_s4_MeCP2_ChIP_SL158.align_25.hg18.txt" Count=" 2669313" Date="080220" />
 </Library>
 <Library Name="SL159">
-<Track Flowcell="FC2057U" Lane="5" Filename="Flowcells/FC2057U/080220_FC2057U_s5_Input_mouse_neurons_SL159.align_25.hg18.txt" Count=" 1776966" Date="080220"/>
+<Track Flowcell="FC2057U" Lane="5" Filename="Flowcells/FC2057U/080220_FC2057U_s5_Input_mouse_neurons_SL159.align_25.hg18.txt" Count=" 1776966" Date="080220" />
 </Library>
 <Library Name="SL160">
-<Track Flowcell="FC2057U" Lane="6" Filename="Flowcells/FC2057U/080220_FC2057U_s6_MEF2_ChIP_SL160.align_25.hg18.txt" Count=" 3568746" Date="080220"/>
+<Track Flowcell="FC2057U" Lane="6" Filename="Flowcells/FC2057U/080220_FC2057U_s6_MEF2_ChIP_SL160.align_25.hg18.txt" Count=" 3568746" Date="080220" />
 </Library>
 <Library Name="SL161">
-<Track Flowcell="FC2064D" Lane="1" Filename="Flowcells/FC2064D/080208_FC2064D_s1_GABP_1x_K562_ChIP_SL161.align_25.hg18.txt" Count=" 1337451" Date="080208"/>
-<Track Flowcell="FC20ANBA" Lane="4" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s4_GABP_ChIP_1x_K562_SL161.align_25.hg18.txt" Count=" 1933407" Date="080321"/>
+<Track Flowcell="FC2064D" Lane="1" Filename="Flowcells/FC2064D/080208_FC2064D_s1_GABP_1x_K562_ChIP_SL161.align_25.hg18.txt" Count=" 1337451" Date="080208" />
+<Track Flowcell="FC20ANBA" Lane="4" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s4_GABP_ChIP_1x_K562_SL161.align_25.hg18.txt" Count=" 1933407" Date="080321" />
 </Library>
 <Library Name="SL162">
-<Track Flowcell="FC2064D" Lane="2" Filename="Flowcells/FC2064D/080208_FC2064D_s2_GABP_4x_K562_ChIP_SL162.align_25.hg18.txt" Count=" 1581402" Date="080208"/>
-<Track Flowcell="FC20ANBA" Lane="5" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s5_GABP_ChIP_4x_K562_SL162.align_25.hg18.txt" Count=" 1981536" Date="080321"/>
+<Track Flowcell="FC2064D" Lane="2" Filename="Flowcells/FC2064D/080208_FC2064D_s2_GABP_4x_K562_ChIP_SL162.align_25.hg18.txt" Count=" 1581402" Date="080208" />
+<Track Flowcell="FC20ANBA" Lane="5" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s5_GABP_ChIP_4x_K562_SL162.align_25.hg18.txt" Count=" 1981536" Date="080321" />
 </Library>
 <Library Name="SL163">
-<Track Flowcell="FC2064D" Lane="3" Filename="Flowcells/FC2064D/080208_FC2064D_s3_Input_K562_1_SL163.align_25.hg18.txt" Count=" 2506864" Date="080208"/>
+<Track Flowcell="FC2064D" Lane="3" Filename="Flowcells/FC2064D/080208_FC2064D_s3_Input_K562_1_SL163.align_25.hg18.txt" Count=" 2506864" Date="080208" />
 </Library>
 <Library Name="SL164">
-<Track Flowcell="FC2064D" Lane="6" Filename="Flowcells/FC2064D/080208_FC2064D_s6_PolII_1x_K562_ChIP_SL164.align_25.hg18.txt" Count=" 2542107" Date="080208"/>
+<Track Flowcell="FC2064D" Lane="6" Filename="Flowcells/FC2064D/080208_FC2064D_s6_PolII_1x_K562_ChIP_SL164.align_25.hg18.txt" Count=" 2542107" Date="080208" />
 </Library>
 <Library Name="SL165">
-<Track Flowcell="FC2064D" Lane="7" Filename="Flowcells/FC2064D/080208_FC2064D_s7_PolII_4x_K562_ChIP_SL165.align_25.hg18.filter.txt" Count=" 2887076" Date="080208"/>
-<Track Flowcell="FC2064D" Lane="7" Filename="Flowcells/FC2064D/080208_FC2064D_s7_PolII_4x_K562_ChIP_SL165.align_25.hg18.txt" Count=" 2890553" Date="080208"/>
-<Track Flowcell="FC20ANBA" Lane="6" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s6_RNApol2_ChIP_4x_K562_SL165.align_25.hg18.txt" Count=" 2938622" Date="080321"/>
+<Track Flowcell="FC2064D" Lane="7" Filename="Flowcells/FC2064D/080208_FC2064D_s7_PolII_4x_K562_ChIP_SL165.align_25.hg18.filter.txt" Count=" 2887076" Date="080208" />
+<Track Flowcell="FC2064D" Lane="7" Filename="Flowcells/FC2064D/080208_FC2064D_s7_PolII_4x_K562_ChIP_SL165.align_25.hg18.txt" Count=" 2890553" Date="080208" />
+<Track Flowcell="FC20ANBA" Lane="6" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s6_RNApol2_ChIP_4x_K562_SL165.align_25.hg18.txt" Count=" 2938622" Date="080321" />
 </Library>
 <Library Name="SL166">
-<Track Flowcell="FC2064D" Lane="8" Filename="Flowcells/FC2064D/080208_FC2064D_s8_Input_K562_2_SL166.align_25.hg18.txt" Count=" 2704047" Date="080208"/>
+<Track Flowcell="FC2064D" Lane="8" Filename="Flowcells/FC2064D/080208_FC2064D_s8_Input_K562_2_SL166.align_25.hg18.txt" Count=" 2704047" Date="080208" />
 </Library>
 <Library Name="SL167">
-<Track Flowcell="FC2065U" Lane="78" Filename="Flowcells/FC2065U/080226_FC2065U_s78_FOXP2_ChIP_SKNMC_SL167.align_25.hg18.txt" Count=" 7161740" Date="080226"/>
-<Track Flowcell="FC20678" Lane="78" Filename="Flowcells/FC20678/080214_FC20678_s78_FOXP2_ChIP_SK-N-MC_SL167.align_25.hg18.txt" Count=" 2037766" Date="080214"/>
-<Track Flowcell="FC20686" Lane="78" Filename="Flowcells/FC20686/080221_FC20686_s78_FOXP2_ChIP_SKNMC_SL167.align_25.hg18.txt" Count="   35763" Date="080221"/>
-<Track Flowcell="FC20AJ4" Lane="5" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s5_FOXP2_ChIP_SK-N-MC_SL167.align_25.hg18.txt" Count=" 3185960" Date="080312"/>
+<Track Flowcell="FC2065U" Lane="78" Filename="Flowcells/FC2065U/080226_FC2065U_s78_FOXP2_ChIP_SKNMC_SL167.align_25.hg18.txt" Count=" 7161740" Date="080226" />
+<Track Flowcell="FC20678" Lane="78" Filename="Flowcells/FC20678/080214_FC20678_s78_FOXP2_ChIP_SK-N-MC_SL167.align_25.hg18.txt" Count=" 2037766" Date="080214" />
+<Track Flowcell="FC20686" Lane="78" Filename="Flowcells/FC20686/080221_FC20686_s78_FOXP2_ChIP_SKNMC_SL167.align_25.hg18.txt" Count="   35763" Date="080221" />
+<Track Flowcell="FC20AJ4" Lane="5" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s5_FOXP2_ChIP_SK-N-MC_SL167.align_25.hg18.txt" Count=" 3185960" Date="080312" />
 </Library>
 <Library Name="SL168">
-<Track Flowcell="FC207CF" Lane="6" Filename="Flowcells/FC207CF/080207_FC207CF_s6_RNASeq_muscle_1_SL168.align_25.hg18.txt" Count=" 1531101" Date="080207"/>
+<Track Flowcell="FC207CF" Lane="6" Filename="Flowcells/FC207CF/080207_FC207CF_s6_RNASeq_muscle_1_SL168.align_25.hg18.txt" Count=" 1531101" Date="080207" />
 </Library>
 <Library Name="SL169">
-<Track Flowcell="FC207CF" Lane="7" Filename="Flowcells/FC207CF/080207_FC207CF_s7_RNASeq_muscle_2_SL169.align_25.hg18.txt" Count="   89434" Date="080207"/>
+<Track Flowcell="FC207CF" Lane="7" Filename="Flowcells/FC207CF/080207_FC207CF_s7_RNASeq_muscle_2_SL169.align_25.hg18.txt" Count="   89434" Date="080207" />
 </Library>
 <Library Name="SL170">
-<Track Flowcell="FC20686" Lane="1" Filename="Flowcells/FC20686/080221_FC20686_s1_Methyl_ChIP_K562_SL170.align_25.hg18.txt" Count="    9738" Date="080221"/>
-<Track Flowcell="FC209RM" Lane="12" Filename="Flowcells/FC209RM/080325_FC209RM_s12_Input_Control_K562_SL170.align_25.hg18.txt" Count=" 5950898" Date="080325"/>
-<Track Flowcell="FC20AJB" Lane="7" Filename="Flowcells/FC20AJB/080411_FC20AJB_s7_Input_Control_K562_SL170.align_25.hg18.txt" Count=" 2808114" Date="080411"/>
-<Track Flowcell="FC20AN8" Lane="1" Filename="Flowcells/FC20AN8/080310_FC20AN8_s1_Input_Control_K562_SL170.align_25.hg18.txt" Count=" 2366449" Date="080310"/>
+<Track Flowcell="FC20686" Lane="1" Filename="Flowcells/FC20686/080221_FC20686_s1_Methyl_ChIP_K562_SL170.align_25.hg18.txt" Count="    9738" Date="080221" />
+<Track Flowcell="FC209RM" Lane="12" Filename="Flowcells/FC209RM/080325_FC209RM_s12_Input_Control_K562_SL170.align_25.hg18.txt" Count=" 5950898" Date="080325" />
+<Track Flowcell="FC20AJB" Lane="7" Filename="Flowcells/FC20AJB/080411_FC20AJB_s7_Input_Control_K562_SL170.align_25.hg18.txt" Count=" 2808114" Date="080411" />
+<Track Flowcell="FC20AN8" Lane="1" Filename="Flowcells/FC20AN8/080310_FC20AN8_s1_Input_Control_K562_SL170.align_25.hg18.txt" Count=" 2366449" Date="080310" />
 </Library>
 <Library Name="SL171">
-<Track Flowcell="FC20686" Lane="2" Filename="Flowcells/FC20686/080221_FC20686_s2_Input_K562_SL171.align_25.hg18.txt" Count="    5745" Date="080221"/>
-<Track Flowcell="FC209RM" Lane="34" Filename="Flowcells/FC209RM/080325_FC209RM_s34_MethylC_ChIP_K562_SL171.align_25.hg18.txt" Count=" 2019575" Date="080325"/>
-<Track Flowcell="FC20AJB" Lane="8" Filename="Flowcells/FC20AJB/080411_FC20AJB_s8_MethylC_ChIP_K562_SL171.align_25.hg18.txt" Count=" 1109615" Date="080411"/>
-<Track Flowcell="FC20AN8" Lane="2" Filename="Flowcells/FC20AN8/080310_FC20AN8_s2_MethylC_ChIP_K562_SL171.align_25.hg18.txt" Count=" 3470047" Date="080310"/>
-<Track Flowcell="FC20AN8" Lane="4" Filename="Flowcells/FC20AN8/080310_FC20AN8_s4_MethylC_ChIP_K562_SL171.align_25.hg18.txt" Count="  804871" Date="080310"/>
+<Track Flowcell="FC20686" Lane="2" Filename="Flowcells/FC20686/080221_FC20686_s2_Input_K562_SL171.align_25.hg18.txt" Count="    5745" Date="080221" />
+<Track Flowcell="FC209RM" Lane="34" Filename="Flowcells/FC209RM/080325_FC209RM_s34_MethylC_ChIP_K562_SL171.align_25.hg18.txt" Count=" 2019575" Date="080325" />
+<Track Flowcell="FC20AJB" Lane="8" Filename="Flowcells/FC20AJB/080411_FC20AJB_s8_MethylC_ChIP_K562_SL171.align_25.hg18.txt" Count=" 1109615" Date="080411" />
+<Track Flowcell="FC20AN8" Lane="2" Filename="Flowcells/FC20AN8/080310_FC20AN8_s2_MethylC_ChIP_K562_SL171.align_25.hg18.txt" Count=" 3470047" Date="080310" />
+<Track Flowcell="FC20AN8" Lane="4" Filename="Flowcells/FC20AN8/080310_FC20AN8_s4_MethylC_ChIP_K562_SL171.align_25.hg18.txt" Count="  804871" Date="080310" />
 </Library>
 <Library Name="SL172">
-<Track Flowcell="FC20686" Lane="3" Filename="Flowcells/FC20686/080221_FC20686_s3_Histone_Mod_ChIP_HESC_SL172.align_25.hg18.txt" Count="    6153" Date="080221"/>
-<Track Flowcell="FC20AJB" Lane="23" Filename="Flowcells/FC20AJB/080411_FC20AJB_s23_Histone_Mod_ChIP_HESC_SL172.align_25.hg18.txt" Count=" 6025511" Date="080411"/>
-<Track Flowcell="FC20AN8" Lane="3" Filename="Flowcells/FC20AN8/080310_FC20AN8_s3_Histone_Mod_ChIP_HESC_SL172.align_25.hg18.txt" Count=" 1662103" Date="080310"/>
+<Track Flowcell="FC20686" Lane="3" Filename="Flowcells/FC20686/080221_FC20686_s3_Histone_Mod_ChIP_HESC_SL172.align_25.hg18.txt" Count="    6153" Date="080221" />
+<Track Flowcell="FC20AJB" Lane="23" Filename="Flowcells/FC20AJB/080411_FC20AJB_s23_Histone_Mod_ChIP_HESC_SL172.align_25.hg18.txt" Count=" 6025511" Date="080411" />
+<Track Flowcell="FC20AN8" Lane="3" Filename="Flowcells/FC20AN8/080310_FC20AN8_s3_Histone_Mod_ChIP_HESC_SL172.align_25.hg18.txt" Count=" 1662103" Date="080310" />
 </Library>
 <Library Name="SL173">
-<Track Flowcell="FC207CF" Lane="1" Filename="Flowcells/FC207CF/080207_FC207CF_s1_RNASeq_WOL_GCT6_SL173.align_25.hg18.txt" Count="  458511" Date="080207"/>
-<Track Flowcell="FC20AUF" Lane="1" Filename="Flowcells/FC20AUF/080418_FC20AUF_s1_RNAseq_WOL_GCT6_SL173.align_25.hg18.txt" Count="  192208" Date="080418"/>
+<Track Flowcell="FC207CF" Lane="1" Filename="Flowcells/FC207CF/080207_FC207CF_s1_RNASeq_WOL_GCT6_SL173.align_25.hg18.txt" Count="  458511" Date="080207" />
+<Track Flowcell="FC20AUF" Lane="1" Filename="Flowcells/FC20AUF/080418_FC20AUF_s1_RNAseq_WOL_GCT6_SL173.align_25.hg18.txt" Count="  192208" Date="080418" />
 </Library>
 <Library Name="SL174">
-<Track Flowcell="FC207CF" Lane="8" Filename="Flowcells/FC207CF/080207_FC207CF_s8_RNAseq_WOL_GCT5_SL174.align_25.hg18.txt" Count="  419076" Date="080207"/>
-<Track Flowcell="FC20AUF" Lane="2" Filename="Flowcells/FC20AUF/080418_FC20AUF_s2_RNAseq_WOL_GCT5_SL174.align_25.hg18.txt" Count="  277173" Date="080418"/>
+<Track Flowcell="FC207CF" Lane="8" Filename="Flowcells/FC207CF/080207_FC207CF_s8_RNAseq_WOL_GCT5_SL174.align_25.hg18.txt" Count="  419076" Date="080207" />
+<Track Flowcell="FC20AUF" Lane="2" Filename="Flowcells/FC20AUF/080418_FC20AUF_s2_RNAseq_WOL_GCT5_SL174.align_25.hg18.txt" Count="  277173" Date="080418" />
 </Library>
 <Library Name="SL180">
-<Track Flowcell="FC20AJ4" Lane="6" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s6_genomic_DNA_SL180.align_25.hg18.txt" Count=" 2947761" Date="080312"/>
+<Track Flowcell="FC20AJ4" Lane="6" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s6_genomic_DNA_SL180.align_25.hg18.txt" Count=" 2947761" Date="080312" />
 </Library>
 <Library Name="SL182">
-<Track Flowcell="FC20AJ4" Lane="8" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s8_N_pound_124_SL182.align_25.hg18.txt" Count="  744786" Date="080312"/>
+<Track Flowcell="FC20AJ4" Lane="8" Filename="Flowcells/FC20AJ4/080312_FC20AJ4_s8_N_pound_124_SL182.align_25.hg18.txt" Count="  744786" Date="080312" />
 </Library>
 <Library Name="SL183">
-<Track Flowcell="FC20AN8" Lane="5" Filename="Flowcells/FC20AN8/080310_FC20AN8_s5_K27_ChIP_HESC_SL183.align_25.hg18.txt" Count=" 1323849" Date="080310"/>
+<Track Flowcell="FC20AN8" Lane="5" Filename="Flowcells/FC20AN8/080310_FC20AN8_s5_K27_ChIP_HESC_SL183.align_25.hg18.txt" Count=" 1323849" Date="080310" />
 </Library>
 <Library Name="SL184">
-<Track Flowcell="FC20AN8" Lane="6" Filename="Flowcells/FC20AN8/080310_FC20AN8_s6_K36_ChIP_HESC_SL184.align_25.hg18.txt" Count=" 1416960" Date="080310"/>
+<Track Flowcell="FC20AN8" Lane="6" Filename="Flowcells/FC20AN8/080310_FC20AN8_s6_K36_ChIP_HESC_SL184.align_25.hg18.txt" Count=" 1416960" Date="080310" />
 </Library>
 <Library Name="SL185">
-<Track Flowcell="FC20AN8" Lane="7" Filename="Flowcells/FC20AN8/080310_FC20AN8_s7_RNAPol2_ChIP_HESC_SL185.align_25.hg18.txt" Count="  303217" Date="080310"/>
+<Track Flowcell="FC20AN8" Lane="7" Filename="Flowcells/FC20AN8/080310_FC20AN8_s7_RNAPol2_ChIP_HESC_SL185.align_25.hg18.txt" Count="  303217" Date="080310" />
 </Library>
 <Library Name="SL186">
-<Track Flowcell="FC20AN8" Lane="8" Filename="Flowcells/FC20AN8/080310_FC20AN8_s8_Input_Control_HESC_SL186.align_25.hg18.txt" Count="  524314" Date="080310"/>
+<Track Flowcell="FC20AN8" Lane="8" Filename="Flowcells/FC20AN8/080310_FC20AN8_s8_Input_Control_HESC_SL186.align_25.hg18.txt" Count="  524314" Date="080310" />
 </Library>
 <Library Name="SL187">
-<Track Flowcell="FC204TE" Lane="4" Filename="Flowcells/FC204TE/080401_FC204TE_s4_RNApol2_ChIP_Jurkat_Rep2_SL187.align_25.hg18.txt" Count=" 3439954" Date="080401"/>
-<Track Flowcell="FC209TN" Lane="4" Filename="Flowcells/FC209TN/080320_FC209TN_s4_RNApol2_ChIP_Jurkat_Rep2_SL187.align_25.hg18.txt" Count=" 2798720" Date="080320"/>
-<Track Flowcell="FC20AJ6" Lane="3" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s3_RNApol2_ChIP_Jurkat_Rep2_SL187.align_25.hg18.txt" Count=" 2842778" Date="080318"/>
-<Track Flowcell="FC20AJB" Lane="6" Filename="Flowcells/FC20AJB/080411_FC20AJB_s6_RNApol2_ChIP_Jurkat_Rep2_SL187.align_25.hg18.txt" Count=" 3636448" Date="080411"/>
+<Track Flowcell="FC204TE" Lane="4" Filename="Flowcells/FC204TE/080401_FC204TE_s4_RNApol2_ChIP_Jurkat_Rep2_SL187.align_25.hg18.txt" Count=" 3439954" Date="080401" />
+<Track Flowcell="FC209TN" Lane="4" Filename="Flowcells/FC209TN/080320_FC209TN_s4_RNApol2_ChIP_Jurkat_Rep2_SL187.align_25.hg18.txt" Count=" 2798720" Date="080320" />
+<Track Flowcell="FC20AJ6" Lane="3" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s3_RNApol2_ChIP_Jurkat_Rep2_SL187.align_25.hg18.txt" Count=" 2842778" Date="080318" />
+<Track Flowcell="FC20AJB" Lane="6" Filename="Flowcells/FC20AJB/080411_FC20AJB_s6_RNApol2_ChIP_Jurkat_Rep2_SL187.align_25.hg18.txt" Count=" 3636448" Date="080411" />
 </Library>
 <Library Name="SL189">
-<Track Flowcell="FC20AJ6" Lane="6" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s6_RNAseq_yeast_SL189.align_25.scer.txt" Count="  262855" Date="080318"/>
+<Track Flowcell="FC20AJ6" Lane="6" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s6_RNAseq_yeast_SL189.align_25.scer.txt" Count="  262855" Date="080318" />
 </Library>
 <Library Name="SL190">
-<Track Flowcell="FC20AJ6" Lane="1" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s1_YX271_nucleosomal_DNA_SL190.align_25.cel.txt" Count=" 3261307" Date="080318"/>
+<Track Flowcell="FC20AJ6" Lane="1" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s1_YX271_nucleosomal_DNA_SL190.align_25.cel.txt" Count=" 3261307" Date="080318" />
 </Library>
 <Library Name="SL191">
-<Track Flowcell="FC20AJ6" Lane="2" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s2_YX213_nucleosomal_DNA_SL191.align_25.cel.txt" Count=" 1400954" Date="080318"/>
+<Track Flowcell="FC20AJ6" Lane="2" Filename="Flowcells/FC20AJ6/080318_FC20AJ6_s2_YX213_nucleosomal_DNA_SL191.align_25.cel.txt" Count=" 1400954" Date="080318" />
 </Library>
 <Library Name="SL192">
-<Track Flowcell="FC20ANBA" Lane="1" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s1_DKO_2_hpa_SL192.align_25.hg18.txt" Count=" 2724639" Date="080321"/>
+<Track Flowcell="FC20ANBA" Lane="1" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s1_DKO_2_hpa_SL192.align_25.hg18.txt" Count=" 2724639" Date="080321" />
 </Library>
 <Library Name="SL193">
-<Track Flowcell="FC20AJD" Lane="123" Filename="Flowcells/FC20AJD/080516_FC20AJD_s123_DKO_2_msp_SL193.align_25.hg18.txt" Count=" 10254337" Date="080516"/>
-<Track Flowcell="FC20ANBA" Lane="2" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s2_DKO_2_msp_SL193.align_25.hg18.txt" Count=" 2748790" Date="080321"/>
+<Track Flowcell="FC20AJD" Lane="123" Filename="Flowcells/FC20AJD/080516_FC20AJD_s123_DKO_2_msp_SL193.align_25.hg18.txt" Count=" 10254337" Date="080516" />
+<Track Flowcell="FC20ANBA" Lane="2" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s2_DKO_2_msp_SL193.align_25.hg18.txt" Count=" 2748790" Date="080321" />
 </Library>
 <Library Name="SL194">
-<Track Flowcell="FC20ANBA" Lane="3" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s3_colon_A_hpa_SL194.align_25.hg18.txt" Count=" 3041571" Date="080321"/>
+<Track Flowcell="FC20ANBA" Lane="3" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s3_colon_A_hpa_SL194.align_25.hg18.txt" Count=" 3041571" Date="080321" />
 </Library>
 <Library Name="SL195">
-<Track Flowcell="FC204TE" Lane="1" Filename="Flowcells/FC204TE/080401_FC204TE_s1_colon_B_hpa_SL195.align_25.hg18.txt" Count=" 3349137" Date="080401"/>
-<Track Flowcell="FC209TN" Lane="1" Filename="Flowcells/FC209TN/080320_FC209TN_s1_colon_B_hpa_SL195.align_25.hg18.txt" Count=" 3403447" Date="080320"/>
+<Track Flowcell="FC204TE" Lane="1" Filename="Flowcells/FC204TE/080401_FC204TE_s1_colon_B_hpa_SL195.align_25.hg18.txt" Count=" 3349137" Date="080401" />
+<Track Flowcell="FC209TN" Lane="1" Filename="Flowcells/FC209TN/080320_FC209TN_s1_colon_B_hpa_SL195.align_25.hg18.txt" Count=" 3403447" Date="080320" />
 </Library>
 <Library Name="SL196">
-<Track Flowcell="FC204TE" Lane="2" Filename="Flowcells/FC204TE/080401_FC204TE_s2_colon_C_hpa_SL196.align_25.hg18.txt" Count=" 3827859" Date="080401"/>
-<Track Flowcell="FC209TN" Lane="2" Filename="Flowcells/FC209TN/080320_FC209TN_s2_colon_C_hpa_SL196.align_25.hg18.txt" Count=" 3640251" Date="080320"/>
+<Track Flowcell="FC204TE" Lane="2" Filename="Flowcells/FC204TE/080401_FC204TE_s2_colon_C_hpa_SL196.align_25.hg18.txt" Count=" 3827859" Date="080401" />
+<Track Flowcell="FC209TN" Lane="2" Filename="Flowcells/FC209TN/080320_FC209TN_s2_colon_C_hpa_SL196.align_25.hg18.txt" Count=" 3640251" Date="080320" />
 </Library>
 <Library Name="SL197">
-<Track Flowcell="FC204TE" Lane="3" Filename="Flowcells/FC204TE/080401_FC204TE_s3_colon_A_msp_SL197.align_25.hg18.txt" Count=" 2691934" Date="080401"/>
-<Track Flowcell="FC209TN" Lane="3" Filename="Flowcells/FC209TN/080320_FC209TN_s3_colon_A_msp_SL197.align_25.hg18.txt" Count=" 2795747" Date="080320"/>
-<Track Flowcell="FC20AJD" Lane="678" Filename="Flowcells/FC20AJD/080516_FC20AJD_s678_colon_A_msp_SL197.align_25.hg18.txt" Count=" 10383564" Date="080516"/>
+<Track Flowcell="FC204TE" Lane="3" Filename="Flowcells/FC204TE/080401_FC204TE_s3_colon_A_msp_SL197.align_25.hg18.txt" Count=" 2691934" Date="080401" />
+<Track Flowcell="FC209TN" Lane="3" Filename="Flowcells/FC209TN/080320_FC209TN_s3_colon_A_msp_SL197.align_25.hg18.txt" Count=" 2795747" Date="080320" />
+<Track Flowcell="FC20AJD" Lane="678" Filename="Flowcells/FC20AJD/080516_FC20AJD_s678_colon_A_msp_SL197.align_25.hg18.txt" Count=" 10383564" Date="080516" />
 </Library>
 <Library Name="SL199">
-<Track Flowcell="FC20AME" Lane="1" Filename="Flowcells/FC20AME/080327_FC20AME_s1_RIBO-XRLP_SL199.align_25.scer.txt" Count="  700987" Date="080327"/>
+<Track Flowcell="FC20AME" Lane="1" Filename="Flowcells/FC20AME/080327_FC20AME_s1_RIBO-XRLP_SL199.align_25.scer.txt" Count="  700987" Date="080327" />
 </Library>
 <Library Name="SL200">
-<Track Flowcell="FC20ANBA" Lane="7" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s7_K562_Rep2_Hpa_SL200.align_25.hg18.txt" Count=" 1655989" Date="080321"/>
+<Track Flowcell="FC20ANBA" Lane="7" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s7_K562_Rep2_Hpa_SL200.align_25.hg18.txt" Count=" 1655989" Date="080321" />
 </Library>
 <Library Name="SL201">
-<Track Flowcell="FC20ANBA" Lane="8" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s8_K562_Rep2_Msp_SL201.align_25.hg18.txt" Count=" 1438074" Date="080321"/>
+<Track Flowcell="FC20ANBA" Lane="8" Filename="Flowcells/FC20ANBA/080321_FC20ANBA_s8_K562_Rep2_Msp_SL201.align_25.hg18.txt" Count=" 1438074" Date="080321" />
 </Library>
 <Library Name="SL202">
-<Track Flowcell="FC204PT" Lane="1234" Filename="Flowcells/FC204PT/080408_FC204PT_s1234_NRSF_ChIP_GM12878_Rep1_SL202.align_25.hg18.txt" Count=" 7274643" Date="080408"/>
-<Track Flowcell="FC204TE" Lane="5" Filename="Flowcells/FC204TE/080401_FC204TE_s5_NRSF_ChIP_GM12878_Rep1_SL202.align_25.hg18.txt" Count=" 2247042" Date="080401"/>
-<Track Flowcell="FC209TN" Lane="5" Filename="Flowcells/FC209TN/080320_FC209TN_s5_NRSF_ChIP_GM12878_Rep1_SL202.align_25.hg18.txt" Count=" 1576307" Date="080320"/>
+<Track Flowcell="FC204PT" Lane="1234" Filename="Flowcells/FC204PT/080408_FC204PT_s1234_NRSF_ChIP_GM12878_Rep1_SL202.align_25.hg18.txt" Count=" 7274643" Date="080408" />
+<Track Flowcell="FC204TE" Lane="5" Filename="Flowcells/FC204TE/080401_FC204TE_s5_NRSF_ChIP_GM12878_Rep1_SL202.align_25.hg18.txt" Count=" 2247042" Date="080401" />
+<Track Flowcell="FC209TN" Lane="5" Filename="Flowcells/FC209TN/080320_FC209TN_s5_NRSF_ChIP_GM12878_Rep1_SL202.align_25.hg18.txt" Count=" 1576307" Date="080320" />
 </Library>
 <Library Name="SL203">
-<Track Flowcell="FC204PT" Lane="5678" Filename="Flowcells/FC204PT/080408_FC204PT_s5678_GABP_ChIP_GM12878_Rep1_SL203.align_25.hg18.txt" Count=" 7887093" Date="080408"/>
-<Track Flowcell="FC204TE" Lane="6" Filename="Flowcells/FC204TE/080401_FC204TE_s6_GABP_ChIP_GM12878_Rep2_SL203.align_25.hg18.txt" Count=" 2373273" Date="080401"/>
-<Track Flowcell="FC209TN" Lane="6" Filename="Flowcells/FC209TN/080320_FC209TN_s6_GABP_ChIP_GM12878_Rep1_SL203.align_25.hg18.txt" Count=" 1701737" Date="080320"/>
+<Track Flowcell="FC204PT" Lane="5678" Filename="Flowcells/FC204PT/080408_FC204PT_s5678_GABP_ChIP_GM12878_Rep1_SL203.align_25.hg18.txt" Count=" 7887093" Date="080408" />
+<Track Flowcell="FC204TE" Lane="6" Filename="Flowcells/FC204TE/080401_FC204TE_s6_GABP_ChIP_GM12878_Rep2_SL203.align_25.hg18.txt" Count=" 2373273" Date="080401" />
+<Track Flowcell="FC209TN" Lane="6" Filename="Flowcells/FC209TN/080320_FC209TN_s6_GABP_ChIP_GM12878_Rep1_SL203.align_25.hg18.txt" Count=" 1701737" Date="080320" />
 </Library>
 <Library Name="SL204">
-<Track Flowcell="FC204GV" Lane="123" Filename="Flowcells/FC204GV/080429_FC204GV_s123_NRSF_ChIP_GM12878_Rep2_SL204.align_25.hg18.txt" Count=" 3577884" Date="080429"/>
-<Track Flowcell="FC209TN" Lane="7" Filename="Flowcells/FC209TN/080320_FC209TN_s7_NRSF_ChIP_GM12878_Rep2_SL204.align_25.hg18.txt" Count=" 1896929" Date="080320"/>
-<Track Flowcell="FC20ATL" Lane="3" Filename="Flowcells/FC20ATL/080527_FC20ATL_s3_NRSF_ChIP_GM12878_Rep2_SL204.align_25.hg18.txt" Count=" 3115234" Date="080527"/>
-<Track Flowcell="FC20ATL" Lane="4" Filename="Flowcells/FC20ATL/080527_FC20ATL_s4_NRSF_ChIP_GM12878_Rep2_SL204.align_25.hg18.txt" Count=" 3154935" Date="080527"/>
+<Track Flowcell="FC204GV" Lane="123" Filename="Flowcells/FC204GV/080429_FC204GV_s123_NRSF_ChIP_GM12878_Rep2_SL204.align_25.hg18.txt" Count=" 3577884" Date="080429" />
+<Track Flowcell="FC209TN" Lane="7" Filename="Flowcells/FC209TN/080320_FC209TN_s7_NRSF_ChIP_GM12878_Rep2_SL204.align_25.hg18.txt" Count=" 1896929" Date="080320" />
+<Track Flowcell="FC20ATL" Lane="3" Filename="Flowcells/FC20ATL/080527_FC20ATL_s3_NRSF_ChIP_GM12878_Rep2_SL204.align_25.hg18.txt" Count=" 3115234" Date="080527" />
+<Track Flowcell="FC20ATL" Lane="4" Filename="Flowcells/FC20ATL/080527_FC20ATL_s4_NRSF_ChIP_GM12878_Rep2_SL204.align_25.hg18.txt" Count=" 3154935" Date="080527" />
 </Library>
 <Library Name="SL205">
-<Track Flowcell="FC204PR" Lane="1" Filename="Flowcells/FC204PR/080520_FC204PR_s1_GABP_ChIP_GM12878_Rep2_SL205.align_25.hg18.txt" Count=" 2655501" Date="080520"/>
-<Track Flowcell="FC204TD" Lane="3" Filename="Flowcells/FC204TD/080509_FC204TD_s3_GABP_ChIP_GM12878_Rep2_SL205.align_25.hg18.txt" Count=" 3057775" Date="080509"/>
-<Track Flowcell="FC209TN" Lane="8" Filename="Flowcells/FC209TN/080320_FC209TN_s8_GABP_ChIP_GM12878_Rep2_SL205.align_25.hg18.txt" Count=" 2362256" Date="080320"/>
-<Track Flowcell="FC20ATL" Lane="1" Filename="Flowcells/FC20ATL/080527_FC20ATL_s1_GABP_ChIP_GM12878_Rep2_SL205.align_25.hg18.txt" Count=" 3517050" Date="080527"/>
+<Track Flowcell="FC204PR" Lane="1" Filename="Flowcells/FC204PR/080520_FC204PR_s1_GABP_ChIP_GM12878_Rep2_SL205.align_25.hg18.txt" Count=" 2655501" Date="080520" />
+<Track Flowcell="FC204TD" Lane="3" Filename="Flowcells/FC204TD/080509_FC204TD_s3_GABP_ChIP_GM12878_Rep2_SL205.align_25.hg18.txt" Count=" 3057775" Date="080509" />
+<Track Flowcell="FC209TN" Lane="8" Filename="Flowcells/FC209TN/080320_FC209TN_s8_GABP_ChIP_GM12878_Rep2_SL205.align_25.hg18.txt" Count=" 2362256" Date="080320" />
+<Track Flowcell="FC20ATL" Lane="1" Filename="Flowcells/FC20ATL/080527_FC20ATL_s1_GABP_ChIP_GM12878_Rep2_SL205.align_25.hg18.txt" Count=" 3517050" Date="080527" />
 </Library>
 <Library Name="SL206">
-<Track Flowcell="FC209RM" Lane="5" Filename="Flowcells/FC209RM/080325_FC209RM_s5_RNAPol2_ChIP_GM12878_Rep1_R1_SL206.align_25.hg18.txt" Count=" 2140588" Date="080325"/>
+<Track Flowcell="FC209RM" Lane="5" Filename="Flowcells/FC209RM/080325_FC209RM_s5_RNAPol2_ChIP_GM12878_Rep1_R1_SL206.align_25.hg18.txt" Count=" 2140588" Date="080325" />
 </Library>
 <Library Name="SL207">
-<Track Flowcell="FC204GW" Lane="12" Filename="Flowcells/FC204GW/080503_FC204GW_s12_RNAPol2_ChIP_GM12878_Rep1_R2_SL207.align_25.hg18.txt" Count=" 4626454" Date="080503"/>
-<Track Flowcell="FC204TD" Lane="4" Filename="Flowcells/FC204TD/080509_FC204TD_s4_RNAPol2_ChIP_GM12878_Rep1_R2_SL207.align_25.hg18.txt" Count=" 2702184" Date="080509"/>
-<Track Flowcell="FC209RM" Lane="6" Filename="Flowcells/FC209RM/080325_FC209RM_s6_RNAPol2_ChIP_GM12878_Rep1_R2_SL207.align_25.hg18.txt" Count=" 2332288" Date="080325"/>
-<Track Flowcell="FC20AJB" Lane="4" Filename="Flowcells/FC20AJB/080411_FC20AJB_s4_RNAPol2_ChIP_GM12878_Rep1_R2_SL207.align_25.hg18.txt" Count=" 2615980" Date="080411"/>
+<Track Flowcell="FC204GW" Lane="12" Filename="Flowcells/FC204GW/080503_FC204GW_s12_RNAPol2_ChIP_GM12878_Rep1_R2_SL207.align_25.hg18.txt" Count=" 4626454" Date="080503" />
+<Track Flowcell="FC204TD" Lane="4" Filename="Flowcells/FC204TD/080509_FC204TD_s4_RNAPol2_ChIP_GM12878_Rep1_R2_SL207.align_25.hg18.txt" Count=" 2702184" Date="080509" />
+<Track Flowcell="FC209RM" Lane="6" Filename="Flowcells/FC209RM/080325_FC209RM_s6_RNAPol2_ChIP_GM12878_Rep1_R2_SL207.align_25.hg18.txt" Count=" 2332288" Date="080325" />
+<Track Flowcell="FC20AJB" Lane="4" Filename="Flowcells/FC20AJB/080411_FC20AJB_s4_RNAPol2_ChIP_GM12878_Rep1_R2_SL207.align_25.hg18.txt" Count=" 2615980" Date="080411" />
 </Library>
 <Library Name="SL208">
-<Track Flowcell="FC209RM" Lane="7" Filename="Flowcells/FC209RM/080325_FC209RM_s7_RNAPol2_ChIP_GM12878_Rep2_R1_SL208.align_25.hg18.txt" Count=" 2045107" Date="080325"/>
+<Track Flowcell="FC209RM" Lane="7" Filename="Flowcells/FC209RM/080325_FC209RM_s7_RNAPol2_ChIP_GM12878_Rep2_R1_SL208.align_25.hg18.txt" Count=" 2045107" Date="080325" />
 </Library>
 <Library Name="SL209">
-<Track Flowcell="FC204GW" Lane="34" Filename="Flowcells/FC204GW/080503_FC204GW_s34_RNAPol2_ChIP_GM12878_Rep2_R2_SL209.align_25.hg18.txt" Count=" 6350506" Date="080503"/>
-<Track Flowcell="FC204TD" Lane="5" Filename="Flowcells/FC204TD/080509_FC204TD_s5_RNAPol2_ChIP_GM12878_Rep2_R2_SL209.align_25.hg18.txt" Count=" 2519907" Date="080509"/>
-<Track Flowcell="FC209RM" Lane="8" Filename="Flowcells/FC209RM/080325_FC209RM_s8_RNAPol2_ChIP_GM12878_Rep2_R2_SL209.align_25.hg18.txt" Count=" 2375516" Date="080325"/>
-<Track Flowcell="FC20AJB" Lane="5" Filename="Flowcells/FC20AJB/080411_FC20AJB_s5_RNAPol2_ChIP_GM12878_Rep2_R2_SL209.align_25.hg18.txt" Count=" 3527877" Date="080411"/>
+<Track Flowcell="FC204GW" Lane="34" Filename="Flowcells/FC204GW/080503_FC204GW_s34_RNAPol2_ChIP_GM12878_Rep2_R2_SL209.align_25.hg18.txt" Count=" 6350506" Date="080503" />
+<Track Flowcell="FC204TD" Lane="5" Filename="Flowcells/FC204TD/080509_FC204TD_s5_RNAPol2_ChIP_GM12878_Rep2_R2_SL209.align_25.hg18.txt" Count=" 2519907" Date="080509" />
+<Track Flowcell="FC209RM" Lane="8" Filename="Flowcells/FC209RM/080325_FC209RM_s8_RNAPol2_ChIP_GM12878_Rep2_R2_SL209.align_25.hg18.txt" Count=" 2375516" Date="080325" />
+<Track Flowcell="FC20AJB" Lane="5" Filename="Flowcells/FC20AJB/080411_FC20AJB_s5_RNAPol2_ChIP_GM12878_Rep2_R2_SL209.align_25.hg18.txt" Count=" 3527877" Date="080411" />
+</Library>
+<Library Name="SL210">
+<Track Flowcell="FC20AME" Lane="6" Filename="Flowcells/FC20AME/080327_FC20AME_s6_hESC_K27_New_SL210.align_25.hg18.txt" Count="  422900" Date="080327" />
+</Library>
+<Library Name="SL211">
+<Track Flowcell="FC20AME" Lane="7" Filename="Flowcells/FC20AME/080327_FC20AME_s7_hESC_Pol2_New_SL211.align_25.hg18.txt" Count="  805937" Date="080327" />
 </Library>
 <Library Name="SL212">
-<Track Flowcell="FC20AJB" Lane="1" Filename="Flowcells/FC20AJB/080411_FC20AJB_s1_hESC_input_New_SL212.align_25.hg18.txt" Count=" 1721512" Date="080411"/>
+<Track Flowcell="FC20AJB" Lane="1" Filename="Flowcells/FC20AJB/080411_FC20AJB_s1_hESC_input_New_SL212.align_25.hg18.txt" Count=" 1721512" Date="080411" />
+<Track Flowcell="FC20AME" Lane="8" Filename="Flowcells/FC20AME/080327_FC20AME_s8_hESC_input_New_SL212.align_25.hg18.txt" Count=" 2225791" Date="080327" />
 </Library>
 <Library Name="SL213">
-<Track Flowcell="FC204GW" Lane="7" Filename="Flowcells/FC204GW/080503_FC204GW_s7_day5_K4_SL213.align_25.hg18.txt" Count="  619689" Date="080503"/>
+<Track Flowcell="FC204GW" Lane="7" Filename="Flowcells/FC204GW/080503_FC204GW_s7_day5_K4_SL213.align_25.hg18.txt" Count="  619689" Date="080503" />
 </Library>
 <Library Name="SL214">
-<Track Flowcell="FC204GW" Lane="8" Filename="Flowcells/FC204GW/080503_FC204GW_s8_day5_input_SL214.align_25.hg18.txt" Count=" 1212965" Date="080503"/>
+<Track Flowcell="FC204GW" Lane="8" Filename="Flowcells/FC204GW/080503_FC204GW_s8_day5_input_SL214.align_25.hg18.txt" Count=" 1212965" Date="080503" />
 </Library>
 <Library Name="SL217">
-<Track Flowcell="FC20ATK" Lane="1234" Filename="Flowcells/FC20ATK/080404_FC20ATK_s1234_GM12878_input_Ctrl_Rep1_SL217.align_25.hg18.txt" Count=" 14209973" Date="080404"/>
+<Track Flowcell="FC20ATK" Lane="1234" Filename="Flowcells/FC20ATK/080404_FC20ATK_s1234_GM12878_input_Ctrl_Rep1_SL217.align_25.hg18.txt" Count=" 14209973" Date="080404" />
 </Library>
 <Library Name="SL218">
-<Track Flowcell="FC20ATK" Lane="5678" Filename="Flowcells/FC20ATK/080404_FC20ATK_s5678_GM12878_input_Ctrl_Rep2_SL218.align_25.hg18.txt" Count=" 11888537" Date="080404"/>
+<Track Flowcell="FC20ATK" Lane="5678" Filename="Flowcells/FC20ATK/080404_FC20ATK_s5678_GM12878_input_Ctrl_Rep2_SL218.align_25.hg18.txt" Count=" 11888537" Date="080404" />
 </Library>
 <Library Name="SL219">
-<Track Flowcell="FC204TE" Lane="7" Filename="Flowcells/FC204TE/080401_FC204TE_s7_RNAPol2_ChIP_K562_Dex_rep1_SL219.align_25.hg18.txt" Count=" 3414718" Date="080401"/>
+<Track Flowcell="FC204TE" Lane="7" Filename="Flowcells/FC204TE/080401_FC204TE_s7_RNAPol2_ChIP_K562_Dex_rep1_SL219.align_25.hg18.txt" Count=" 3414718" Date="080401" />
 </Library>
 <Library Name="SL220">
-<Track Flowcell="FC204TE" Lane="8" Filename="Flowcells/FC204TE/080401_FC204TE_s8_RNAPol2_ChIP_K562_EtOH_rep1_SL220.align_25.hg18.txt" Count=" 3318493" Date="080401"/>
+<Track Flowcell="FC204TE" Lane="8" Filename="Flowcells/FC204TE/080401_FC204TE_s8_RNAPol2_ChIP_K562_EtOH_rep1_SL220.align_25.hg18.txt" Count=" 3318493" Date="080401" />
 </Library>
 <Library Name="SL221">
-<Track Flowcell="FC209VL" Lane="12" Filename="Flowcells/FC209VL/080409_FC209VL_s12_NRSF_ChIP-K562_Rep1_SL221.align_25.hg18.txt" Count=" 5557080" Date="080409"/>
-<Track Flowcell="FC20AJD" Lane="4" Filename="Flowcells/FC20AJD/080516_FC20AJD_s4_NRSF_ChIP-K562_Rep1_SL221.align_25.hg18.txt" Count=" 3599218" Date="080516"/>
-<Track Flowcell="FC20ATL" Lane="5" Filename="Flowcells/FC20ATL/080527_FC20ATL_s5_NRSF_ChIP-K562_Rep1_SL221.align_25.hg18.txt" Count=" 4360336" Date="080527"/>
-<Track Flowcell="FC20ATL" Lane="6" Filename="Flowcells/FC20ATL/080527_FC20ATL_s6_NRSF_ChIP-K562_Rep1_SL221.align_25.hg18.txt" Count=" 4414231" Date="080527"/>
+<Track Flowcell="FC209VL" Lane="12" Filename="Flowcells/FC209VL/080409_FC209VL_s12_NRSF_ChIP-K562_Rep1_SL221.align_25.hg18.txt" Count=" 5557080" Date="080409" />
+<Track Flowcell="FC20AJD" Lane="4" Filename="Flowcells/FC20AJD/080516_FC20AJD_s4_NRSF_ChIP-K562_Rep1_SL221.align_25.hg18.txt" Count=" 3599218" Date="080516" />
+<Track Flowcell="FC20ATL" Lane="5" Filename="Flowcells/FC20ATL/080527_FC20ATL_s5_NRSF_ChIP-K562_Rep1_SL221.align_25.hg18.txt" Count=" 4360336" Date="080527" />
+<Track Flowcell="FC20ATL" Lane="6" Filename="Flowcells/FC20ATL/080527_FC20ATL_s6_NRSF_ChIP-K562_Rep1_SL221.align_25.hg18.txt" Count=" 4414231" Date="080527" />
 </Library>
 <Library Name="SL222">
-<Track Flowcell="FC209VL" Lane="34" Filename="Flowcells/FC209VL/080409_FC209VL_s34_NRSF_ChIP_K562_Rep2_SL222.align_25.hg18.txt" Count=" 5104501" Date="080409"/>
-<Track Flowcell="FC20AJD" Lane="5" Filename="Flowcells/FC20AJD/080516_FC20AJD_s5_NRSF_ChIP_K562_Rep2_SL222.align_25.hg18.txt" Count=" 3449963" Date="080516"/>
-<Track Flowcell="FC20ATL" Lane="7" Filename="Flowcells/FC20ATL/080527_FC20ATL_s7_NRSF_ChIP_K562_Rep2_SL222.align_25.hg18.txt" Count=" 3722128" Date="080527"/>
-<Track Flowcell="FC20ATL" Lane="8" Filename="Flowcells/FC20ATL/080527_FC20ATL_s8_NRSF_ChIP_K562_Rep2_SL222.align_25.hg18.txt" Count=" 3947293" Date="080527"/>
+<Track Flowcell="FC209VL" Lane="34" Filename="Flowcells/FC209VL/080409_FC209VL_s34_NRSF_ChIP_K562_Rep2_SL222.align_25.hg18.txt" Count=" 5104501" Date="080409" />
+<Track Flowcell="FC20AJD" Lane="5" Filename="Flowcells/FC20AJD/080516_FC20AJD_s5_NRSF_ChIP_K562_Rep2_SL222.align_25.hg18.txt" Count=" 3449963" Date="080516" />
+<Track Flowcell="FC20ATL" Lane="7" Filename="Flowcells/FC20ATL/080527_FC20ATL_s7_NRSF_ChIP_K562_Rep2_SL222.align_25.hg18.txt" Count=" 3722128" Date="080527" />
+<Track Flowcell="FC20ATL" Lane="8" Filename="Flowcells/FC20ATL/080527_FC20ATL_s8_NRSF_ChIP_K562_Rep2_SL222.align_25.hg18.txt" Count=" 3947293" Date="080527" />
 </Library>
 <Library Name="SL223">
-<Track Flowcell="FC204PR" Lane="2" Filename="Flowcells/FC204PR/080520_FC204PR_s2_GABP_ChIP_K562_Rep1_SL223.align_25.hg18.txt" Count=" 2860313" Date="080520"/>
-<Track Flowcell="FC209VL" Lane="56" Filename="Flowcells/FC209VL/080409_FC209VL_s56_GABP_ChIP_K562_Rep1_SL223.align_25.hg18.txt" Count=" 4864011" Date="080409"/>
-<Track Flowcell="FC20AJ8" Lane="4" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s4_GABP_ChIP_K562_Rep1_SL223.align_25.hg18.txt" Count=" 3540087" Date="080523"/>
+<Track Flowcell="FC204PR" Lane="2" Filename="Flowcells/FC204PR/080520_FC204PR_s2_GABP_ChIP_K562_Rep1_SL223.align_25.hg18.txt" Count=" 2860313" Date="080520" />
+<Track Flowcell="FC209VL" Lane="56" Filename="Flowcells/FC209VL/080409_FC209VL_s56_GABP_ChIP_K562_Rep1_SL223.align_25.hg18.txt" Count=" 4864011" Date="080409" />
+<Track Flowcell="FC20AJ8" Lane="4" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s4_GABP_ChIP_K562_Rep1_SL223.align_25.hg18.txt" Count=" 3540087" Date="080523" />
 </Library>
 <Library Name="SL224">
-<Track Flowcell="FC204PR" Lane="3" Filename="Flowcells/FC204PR/080520_FC204PR_s3_GABP_ChIP_K562_Rep2_SL224.align_25.hg18.txt" Count="      17" Date="080520"/>
-<Track Flowcell="FC209VL" Lane="78" Filename="Flowcells/FC209VL/080409_FC209VL_s78_GABP_ChIP_K562_Rep2_SL224.align_25.hg18.txt" Count=" 4173297" Date="080409"/>
-<Track Flowcell="FC20AJ8" Lane="1" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s1_GABP_ChIP_K562_Rep2_SL224.align_25.hg18.txt" Count=" 3048516" Date="080523"/>
-<Track Flowcell="FC20AJ8" Lane="5" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s5_GABP_ChIP_K562_Rep2_SL224.align_25.hg18.txt" Count=" 3259099" Date="080523"/>
+<Track Flowcell="FC204PR" Lane="3" Filename="Flowcells/FC204PR/080520_FC204PR_s3_GABP_ChIP_K562_Rep2_SL224.align_25.hg18.txt" Count="      17" Date="080520" />
+<Track Flowcell="FC209VL" Lane="78" Filename="Flowcells/FC209VL/080409_FC209VL_s78_GABP_ChIP_K562_Rep2_SL224.align_25.hg18.txt" Count=" 4173297" Date="080409" />
+<Track Flowcell="FC20AJ8" Lane="1" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s1_GABP_ChIP_K562_Rep2_SL224.align_25.hg18.txt" Count=" 3048516" Date="080523" />
+<Track Flowcell="FC20AJ8" Lane="5" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s5_GABP_ChIP_K562_Rep2_SL224.align_25.hg18.txt" Count=" 3259099" Date="080523" />
 </Library>
 <Library Name="SL225">
-<Track Flowcell="FC209VY" Lane="1" Filename="Flowcells/FC209VY/080415_FC209VY_s1_MeC_DIP_GM12878_Rep1_SL225.align_25.hg18.txt" Count="  596256" Date="080415"/>
+<Track Flowcell="FC209VY" Lane="1" Filename="Flowcells/FC209VY/080415_FC209VY_s1_MeC_DIP_GM12878_Rep1_SL225.align_25.hg18.txt" Count="  596256" Date="080415" />
 </Library>
 <Library Name="SL226">
-<Track Flowcell="FC209VY" Lane="2" Filename="Flowcells/FC209VY/080415_FC209VY_s2_MeC_DIP_GM12878_Rep2_SL226.align_25.hg18.txt" Count="  267004" Date="080415"/>
+<Track Flowcell="FC209VY" Lane="2" Filename="Flowcells/FC209VY/080415_FC209VY_s2_MeC_DIP_GM12878_Rep2_SL226.align_25.hg18.txt" Count="  267004" Date="080415" />
 </Library>
 <Library Name="SL227">
-<Track Flowcell="FC209VY" Lane="3" Filename="Flowcells/FC209VY/080415_FC209VY_s3_MeC_DIP_Input_GM12878_Rep1_SL227.align_25.hg18.txt" Count=" 2207861" Date="080415"/>
+<Track Flowcell="FC209VY" Lane="3" Filename="Flowcells/FC209VY/080415_FC209VY_s3_MeC_DIP_Input_GM12878_Rep1_SL227.align_25.hg18.txt" Count=" 2207861" Date="080415" />
 </Library>
 <Library Name="SL228">
-<Track Flowcell="FC209VY" Lane="6" Filename="Flowcells/FC209VY/080415_FC209VY_s6_MeC_DIP_Input_GM12878_Rep2_SL228.align_25.hg18.txt" Count=" 2130348" Date="080415"/>
+<Track Flowcell="FC209VY" Lane="6" Filename="Flowcells/FC209VY/080415_FC209VY_s6_MeC_DIP_Input_GM12878_Rep2_SL228.align_25.hg18.txt" Count=" 2130348" Date="080415" />
 </Library>
 <Library Name="SL229">
-<Track Flowcell="306WNAAXX" Lane="1" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s1_Methylseq_K562_R1_hpa_SL229.align_25.hg18.txt" Count=" 2789078" Date="080731"/>
-<Track Flowcell="FC204TD" Lane="6" Filename="Flowcells/FC204TD/080509_FC204TD_s6_Methylseq_K562_R1_hpa_SL229.align_25.hg18.txt" Count=" 1710215" Date="080509"/>
+<Track Flowcell="306WNAAXX" Lane="1" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s1_Methylseq_K562_R1_hpa_SL229.align_25.hg18.txt" Count=" 2789078" Date="080731" />
+<Track Flowcell="30EGGAAXX" Lane="4" Filename="Flowcells/30EGGAAXX/080910_30EGGAAXX_s4_Methylseq_K562_R1_hpa_SL229.align_25.hg18.txt" Count="  340831" Date="080910" />
+<Track Flowcell="FC204TD" Lane="6" Filename="Flowcells/FC204TD/080509_FC204TD_s6_Methylseq_K562_R1_hpa_SL229.align_25.hg18.txt" Count=" 1710215" Date="080509" />
 </Library>
 <Library Name="SL230">
-<Track Flowcell="306WNAAXX" Lane="2" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s2_Methylseq_K562_R1_msp_SL230.align_25.hg18.txt" Count=" 3452680" Date="080731"/>
-<Track Flowcell="FC204TD" Lane="7" Filename="Flowcells/FC204TD/080509_FC204TD_s7_Methylseq_K562_R1_msp_SL230.align_25.hg18.txt" Count=" 1645339" Date="080509"/>
+<Track Flowcell="306WNAAXX" Lane="2" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s2_Methylseq_K562_R1_msp_SL230.align_25.hg18.txt" Count=" 3452680" Date="080731" />
+<Track Flowcell="FC204TD" Lane="7" Filename="Flowcells/FC204TD/080509_FC204TD_s7_Methylseq_K562_R1_msp_SL230.align_25.hg18.txt" Count=" 1645339" Date="080509" />
 </Library>
 <Library Name="SL231">
-<Track Flowcell="306WNAAXX" Lane="3" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s3_Methylseq_K562_R2_hpa_SL231.align_25.hg18.txt" Count=" 3339995" Date="080731"/>
-<Track Flowcell="FC204TD" Lane="8" Filename="Flowcells/FC204TD/080509_FC204TD_s8_Methylseq_K562_R2_hpa_SL231.align_25.hg18.txt" Count=" 1671255" Date="080509"/>
+<Track Flowcell="306WNAAXX" Lane="3" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s3_Methylseq_K562_R2_hpa_SL231.align_25.hg18.txt" Count=" 3339995" Date="080731" />
+<Track Flowcell="30EGGAAXX" Lane="5" Filename="Flowcells/30EGGAAXX/080910_30EGGAAXX_s5_Methylseq_K562_R2_hpa_SL231.align_25.hg18.txt" Count="  508537" Date="080910" />
+<Track Flowcell="FC204TD" Lane="8" Filename="Flowcells/FC204TD/080509_FC204TD_s8_Methylseq_K562_R2_hpa_SL231.align_25.hg18.txt" Count=" 1671255" Date="080509" />
 </Library>
 <Library Name="SL232">
-<Track Flowcell="306WNAAXX" Lane="4" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s4_Methylseq_K562_R2_msp_SL232.align_25.hg18.txt" Count=" 2608243" Date="080731"/>
-<Track Flowcell="FC209VY" Lane="7" Filename="Flowcells/FC209VY/080415_FC209VY_s7_Methylseq_K562_msp_SL232.align_25.hg18.txt" Count=" 1996275" Date="080415"/>
+<Track Flowcell="306WNAAXX" Lane="4" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s4_Methylseq_K562_R2_msp_SL232.align_25.hg18.txt" Count=" 2608243" Date="080731" />
+<Track Flowcell="FC209VY" Lane="7" Filename="Flowcells/FC209VY/080415_FC209VY_s7_Methylseq_K562_msp_SL232.align_25.hg18.txt" Count=" 1996275" Date="080415" />
 </Library>
 <Library Name="SL233">
-<Track Flowcell="FC209VY" Lane="4" Filename="Flowcells/FC209VY/080415_FC209VY_s4_Input_Control_K562_Rep1_SL233.align_25.hg18.txt" Count=" 2749243" Date="080415"/>
-<Track Flowcell="FC20E3HAAXX" Lane="4" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s4_Input_Control_K562_Rep1_SL233.align_25.hg18.txt" Count=" 1825060" Date="080502"/>
-<Track Flowcell="FC303PRAAXX" Lane="4" Filename="Flowcells/FC303PRAAXX/080523_FC303PRAAXX_s4_Input_Control_K562_Rep1_SL233.align_25.hg18.txt" Count=" 2792190" Date="080523"/>
+<Track Flowcell="30DCTAAXX" Lane="1" Filename="Flowcells/30DCTAAXX/080904_30DCTAAXX_s1_Input_Control_K562_Rep1_SL233.align_25.hg18.txt" Count=" 2724511" Date="080904" />
+<Track Flowcell="FC209VY" Lane="4" Filename="Flowcells/FC209VY/080415_FC209VY_s4_Input_Control_K562_Rep1_SL233.align_25.hg18.txt" Count=" 2749243" Date="080415" />
+<Track Flowcell="FC20E3HAAXX" Lane="4" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s4_Input_Control_K562_Rep1_SL233.align_25.hg18.txt" Count=" 1825060" Date="080502" />
+<Track Flowcell="FC303PRAAXX" Lane="4" Filename="Flowcells/FC303PRAAXX/080523_FC303PRAAXX_s4_Input_Control_K562_Rep1_SL233.align_25.hg18.txt" Count=" 2792190" Date="080523" />
 </Library>
 <Library Name="SL234">
-<Track Flowcell="FC209VY" Lane="5" Filename="Flowcells/FC209VY/080415_FC209VY_s5_Input_Control_K562_Rep2_SL234.align_25.hg18.txt" Count=" 2190280" Date="080415"/>
-<Track Flowcell="FC20E3HAAXX" Lane="5" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s5_Input_Control_K562_Rep2_SL234.align_25.hg18.txt" Count=" 1592799" Date="080502"/>
-<Track Flowcell="FC303PRAAXX" Lane="5" Filename="Flowcells/FC303PRAAXX/080523_FC303PRAAXX_s5_Input_Control_K562_Rep2_SL234.align_25.hg18.txt" Count=" 2679553" Date="080523"/>
+<Track Flowcell="30DCTAAXX" Lane="2" Filename="Flowcells/30DCTAAXX/080904_30DCTAAXX_s2_Input_Control_K562_Rep2_SL234.align_25.hg18.txt" Count=" 3602099" Date="080904" />
+<Track Flowcell="30EFCAAXX" Lane="1" Filename="Flowcells/30EFCAAXX/080910_30EFCAAXX_s1_Input_Control_K562_Rep2_SL234.align_25.hg18.txt" Count="  569875" Date="080910" />
+<Track Flowcell="30EFCAAXX" Lane="2" Filename="Flowcells/30EFCAAXX/080910_30EFCAAXX_s2_Input_Control_K562_Rep2_SL234.align_25.hg18.txt" Count=" 1955971" Date="080910" />
+<Track Flowcell="FC209VY" Lane="5" Filename="Flowcells/FC209VY/080415_FC209VY_s5_Input_Control_K562_Rep2_SL234.align_25.hg18.txt" Count=" 2190280" Date="080415" />
+<Track Flowcell="FC20E3HAAXX" Lane="5" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s5_Input_Control_K562_Rep2_SL234.align_25.hg18.txt" Count=" 1592799" Date="080502" />
 </Library>
 <Library Name="SL235">
-<Track Flowcell="FC209VY" Lane="8" Filename="Flowcells/FC209VY/080415_FC209VY_s8_RNAseq_AF_sol_101_SL235.align_25.cel.txt" Count=" 2172789" Date="080415"/>
+<Track Flowcell="FC209VY" Lane="8" Filename="Flowcells/FC209VY/080415_FC209VY_s8_RNAseq_AF_sol_101_SL235.align_25.cel.txt" Count=" 2172789" Date="080415" />
 </Library>
 <Library Name="SL236">
-<Track Flowcell="FC20AUF" Lane="3" Filename="Flowcells/FC20AUF/080418_FC20AUF_s3_RNASeq_SL236.align_25.hg18.txt" Count="  334732" Date="080418"/>
+<Track Flowcell="FC20AUF" Lane="3" Filename="Flowcells/FC20AUF/080418_FC20AUF_s3_RNASeq_SL236.align_25.hg18.txt" Count="  334732" Date="080418" />
 </Library>
 <Library Name="SL237">
-<Track Flowcell="FC20AUF" Lane="6" Filename="Flowcells/FC20AUF/080418_FC20AUF_s6_DNA_nucleosomes_SL237.align_25.mm9.txt" Count=" 2337360" Date="080418"/>
+<Track Flowcell="FC20AUF" Lane="6" Filename="Flowcells/FC20AUF/080418_FC20AUF_s6_DNA_nucleosomes_SL237.align_25.mm9.txt" Count=" 2337360" Date="080418" />
 </Library>
 <Library Name="SL238">
-<Track Flowcell="FC20AUF" Lane="7" Filename="Flowcells/FC20AUF/080418_FC20AUF_s7_AF_SOL_104_SL238.align_25.hg18.txt" Count=" 2960999" Date="080418"/>
+<Track Flowcell="FC20AUF" Lane="7" Filename="Flowcells/FC20AUF/080418_FC20AUF_s7_AF_SOL_104_SL238.align_25.hg18.txt" Count=" 2960999" Date="080418" />
 </Library>
 <Library Name="SL239">
-<Track Flowcell="FC20AUF" Lane="8" Filename="Flowcells/FC20AUF/080418_FC20AUF_s8_AF_SOL_105_SL239.align_25.hg18.txt" Count=" 3601304" Date="080418"/>
+<Track Flowcell="FC20AUF" Lane="8" Filename="Flowcells/FC20AUF/080418_FC20AUF_s8_AF_SOL_105_SL239.align_25.hg18.txt" Count=" 3601304" Date="080418" />
 </Library>
 <Library Name="SL240">
-<Track Flowcell="FC20E3HAAXX" Lane="1" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s1_K562_RNApol2_rep1_SL240.align_25.hg18.txt" Count=" 1666658" Date="080502"/>
-<Track Flowcell="FC303PRAAXX" Lane="12" Filename="Flowcells/FC303PRAAXX/080523_FC303PRAAXX_s12_K562_RNApol2_rep1_SL240.align_25.hg18.txt" Count=" 6613625" Date="080523"/>
+<Track Flowcell="30DCTAAXX" Lane="3" Filename="Flowcells/30DCTAAXX/080904_30DCTAAXX_s3_K562_RNApol2_rep1_SL240.align_25.hg18.txt" Count=" 4391389" Date="080904" />
+<Track Flowcell="FC20E3HAAXX" Lane="1" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s1_K562_RNApol2_rep1_SL240.align_25.hg18.txt" Count=" 1666658" Date="080502" />
+<Track Flowcell="FC303PRAAXX" Lane="12" Filename="Flowcells/FC303PRAAXX/080523_FC303PRAAXX_s12_K562_RNApol2_rep1_SL240.align_25.hg18.txt" Count=" 6613625" Date="080523" />
 </Library>
 <Library Name="SL241">
-<Track Flowcell="FC20E3HAAXX" Lane="2" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s2_K562_RNApol2_rep2_SL241.align_25.hg18.txt" Count=" 2005718" Date="080502"/>
-<Track Flowcell="FC303PRAAXX" Lane="36" Filename="Flowcells/FC303PRAAXX/080523_FC303PRAAXX_s36_K562_RNApol2_rep2_SL241.align_25.hg18.txt" Count=" 5690721" Date="080523"/>
+<Track Flowcell="30DCTAAXX" Lane="4" Filename="Flowcells/30DCTAAXX/080904_30DCTAAXX_s4_K562_RNApol2_rep2_SL241.align_25.hg18.txt" Count=" 3497136" Date="080904" />
+<Track Flowcell="FC20E3HAAXX" Lane="2" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s2_K562_RNApol2_rep2_SL241.align_25.hg18.txt" Count=" 2005718" Date="080502" />
+<Track Flowcell="FC303PRAAXX" Lane="36" Filename="Flowcells/FC303PRAAXX/080523_FC303PRAAXX_s36_K562_RNApol2_rep2_SL241.align_25.hg18.txt" Count=" 5690721" Date="080523" />
 </Library>
 <Library Name="SL242">
-<Track Flowcell="FC20E3HAAXX" Lane="36" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s36_K562_TAF250_Rep1_SL242.align_25.hg18.txt" Count=" 3378725" Date="080502"/>
-<Track Flowcell="FC303PRAAXX" Lane="7" Filename="Flowcells/FC303PRAAXX/080523_FC303PRAAXX_s7_K562_TAF250_Rep1_SL242.align_25.hg18.txt" Count=" 1171122" Date="080523"/>
+<Track Flowcell="306WPAAXX" Lane="1" Filename="Flowcells/306WPAAXX/080731_306WPAAXX_s1_K562_TAF250_Rep1_SL242.align_25.hg18.txt" Count=" 2063352" Date="080731" />
+<Track Flowcell="30DCTAAXX" Lane="5" Filename="Flowcells/30DCTAAXX/080904_30DCTAAXX_s5_K562_TAF250_Rep1_SL242.align_25.hg18.txt" Count=" 1499911" Date="080904" />
+<Track Flowcell="30EFCAAXX" Lane="3" Filename="Flowcells/30EFCAAXX/080910_30EFCAAXX_s3_K562_TAF250_Rep1_SL242.align_25.hg18.txt" Count=" 1802228" Date="080910" />
+<Track Flowcell="FC20E3HAAXX" Lane="36" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s36_K562_TAF250_Rep1_SL242.align_25.hg18.txt" Count=" 3378725" Date="080502" />
+<Track Flowcell="FC303PRAAXX" Lane="7" Filename="Flowcells/FC303PRAAXX/080523_FC303PRAAXX_s7_K562_TAF250_Rep1_SL242.align_25.hg18.txt" Count=" 1171122" Date="080523" />
 </Library>
 <Library Name="SL243">
-<Track Flowcell="FC20E3HAAXX" Lane="78" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s78_K562_TAF250_Rep2_SL243.align_25.hg18.txt" Count=" 4628303" Date="080502"/>
-<Track Flowcell="FC303PRAAXX" Lane="8" Filename="Flowcells/FC303PRAAXX/080523_FC303PRAAXX_s8_K562_TAF250_Rep2_SL243.align_25.hg18.txt" Count=" 2228574" Date="080523"/>
+<Track Flowcell="306WPAAXX" Lane="2" Filename="Flowcells/306WPAAXX/080731_306WPAAXX_s2_K562_TAF250_Rep2_SL243.align_25.hg18.txt" Count=" 4389115" Date="080731" />
+<Track Flowcell="FC20E3HAAXX" Lane="78" Filename="Flowcells/FC20E3HAAXX/080502_FC20E3HAAXX_s78_K562_TAF250_Rep2_SL243.align_25.hg18.txt" Count=" 4628303" Date="080502" />
+<Track Flowcell="FC303PRAAXX" Lane="8" Filename="Flowcells/FC303PRAAXX/080523_FC303PRAAXX_s8_K562_TAF250_Rep2_SL243.align_25.hg18.txt" Count=" 2228574" Date="080523" />
 </Library>
 <Library Name="SL244">
-<Track Flowcell="303y5aaxx" Lane="3" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s3_ChIPseq_A549_Pol2_Dex_SL244.align_25.hg18.txt" Count=" 4670412" Date="080715"/>
-<Track Flowcell="FC204GV" Lane="4" Filename="Flowcells/FC204GV/080429_FC204GV_s4_ChIPseq_A549_Pol2_Dex_SL244.align_25.hg18.txt" Count=" 1143215" Date="080429"/>
-<Track Flowcell="FC204GW" Lane="5" Filename="Flowcells/FC204GW/080503_FC204GW_s5_ChIPseq_A549_Pol2_Dex_SL244.align_25.hg18.txt" Count=" 2893570" Date="080503"/>
-<Track Flowcell="FC204PR" Lane="4" Filename="Flowcells/FC204PR/080520_FC204PR_s4_ChIPseq_A549_Pol2_Dex_SL244.align_25.hg18.txt" Count=" 2984654" Date="080520"/>
+<Track Flowcell="303y5aaxx" Lane="3" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s3_ChIPseq_A549_Pol2_Dex_SL244.align_25.hg18.txt" Count=" 4670412" Date="080715" />
+<Track Flowcell="FC204GV" Lane="4" Filename="Flowcells/FC204GV/080429_FC204GV_s4_ChIPseq_A549_Pol2_Dex_SL244.align_25.hg18.txt" Count=" 1143215" Date="080429" />
+<Track Flowcell="FC204GW" Lane="5" Filename="Flowcells/FC204GW/080503_FC204GW_s5_ChIPseq_A549_Pol2_Dex_SL244.align_25.hg18.txt" Count=" 2893570" Date="080503" />
+<Track Flowcell="FC204PR" Lane="4" Filename="Flowcells/FC204PR/080520_FC204PR_s4_ChIPseq_A549_Pol2_Dex_SL244.align_25.hg18.txt" Count=" 2984654" Date="080520" />
 </Library>
 <Library Name="SL245">
-<Track Flowcell="303y5aaxx" Lane="4" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s4_ChIPSeq_A549_Pol2_EtOH_SL245.align_25.hg18.txt" Count=" 5705811" Date="080715"/>
-<Track Flowcell="FC204GV" Lane="5" Filename="Flowcells/FC204GV/080429_FC204GV_s5_ChIPSeq_A549_Pol2_EtOH_SL245.align_25.hg18.txt" Count=" 1331975" Date="080429"/>
-<Track Flowcell="FC204GW" Lane="6" Filename="Flowcells/FC204GW/080503_FC204GW_s6_ChIPSeq_A549_Pol2_EtOH_SL245.align_25.hg18.txt" Count=" 3378626" Date="080503"/>
-<Track Flowcell="FC204PR" Lane="5" Filename="Flowcells/FC204PR/080520_FC204PR_s5_ChIPSeq_A549_Pol2_EtOH_SL245.align_25.hg18.txt" Count=" 3137998" Date="080520"/>
+<Track Flowcell="303y5aaxx" Lane="4" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s4_ChIPSeq_A549_Pol2_EtOH_SL245.align_25.hg18.txt" Count=" 5705811" Date="080715" />
+<Track Flowcell="FC204GV" Lane="5" Filename="Flowcells/FC204GV/080429_FC204GV_s5_ChIPSeq_A549_Pol2_EtOH_SL245.align_25.hg18.txt" Count=" 1331975" Date="080429" />
+<Track Flowcell="FC204GW" Lane="6" Filename="Flowcells/FC204GW/080503_FC204GW_s6_ChIPSeq_A549_Pol2_EtOH_SL245.align_25.hg18.txt" Count=" 3378626" Date="080503" />
+<Track Flowcell="FC204PR" Lane="5" Filename="Flowcells/FC204PR/080520_FC204PR_s5_ChIPSeq_A549_Pol2_EtOH_SL245.align_25.hg18.txt" Count=" 3137998" Date="080520" />
 </Library>
 <Library Name="SL246">
-<Track Flowcell="303y5aaxx" Lane="1" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s1_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 2056910" Date="080715"/>
-<Track Flowcell="FC204JB" Lane="2" Filename="Flowcells/FC204JB/080507_FC204JB_s2_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1321687" Date="080507"/>
-<Track Flowcell="FC204PR" Lane="6" Filename="Flowcells/FC204PR/080520_FC204PR_s6_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1321643" Date="080520"/>
-<Track Flowcell="FC20AUF" Lane="4" Filename="Flowcells/FC20AUF/080418_FC20AUF_s4_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1236139" Date="080418"/>
-<Track Flowcell="FC20AUM" Lane="6" Filename="Flowcells/FC20AUM/080616_FC20AUM_s6_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1449936" Date="080616"/>
-<Track Flowcell="FC20AUM" Lane="7" Filename="Flowcells/FC20AUM/080616_FC20AUM_s7_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1599501" Date="080616"/>
-<Track Flowcell="FC20AUM" Lane="8" Filename="Flowcells/FC20AUM/080616_FC20AUM_s8_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1605226" Date="080616"/>
+<Track Flowcell="303y5aaxx" Lane="1" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s1_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 2056910" Date="080715" />
+<Track Flowcell="FC204JB" Lane="2" Filename="Flowcells/FC204JB/080507_FC204JB_s2_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1321687" Date="080507" />
+<Track Flowcell="FC204PR" Lane="6" Filename="Flowcells/FC204PR/080520_FC204PR_s6_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1321643" Date="080520" />
+<Track Flowcell="FC20AUF" Lane="4" Filename="Flowcells/FC20AUF/080418_FC20AUF_s4_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1236139" Date="080418" />
+<Track Flowcell="FC20AUM" Lane="6" Filename="Flowcells/FC20AUM/080616_FC20AUM_s6_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1449936" Date="080616" />
+<Track Flowcell="FC20AUM" Lane="7" Filename="Flowcells/FC20AUM/080616_FC20AUM_s7_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1599501" Date="080616" />
+<Track Flowcell="FC20AUM" Lane="8" Filename="Flowcells/FC20AUM/080616_FC20AUM_s8_ChIPSeq_A549_M20_GR_Dex_SL246.align_25.hg18.txt" Count=" 1605226" Date="080616" />
 </Library>
 <Library Name="SL247">
-<Track Flowcell="303y5aaxx" Lane="2" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s2_ChIPSeq_A549_M20_GR_EtOH_SL247.align_25.hg18.txt" Count=" 3710876" Date="080715"/>
-<Track Flowcell="FC204JB" Lane="4" Filename="Flowcells/FC204JB/080507_FC204JB_s4_ChIPSeq_A549_M20_GR_EtOH_SL247.align_25.hg18.txt" Count=" 2448458" Date="080507"/>
-<Track Flowcell="FC204PR" Lane="7" Filename="Flowcells/FC204PR/080520_FC204PR_s7_ChIPSeq_A549_M20_GR_EtOH_SL247.align_25.hg18.txt" Count=" 2346726" Date="080520"/>
-<Track Flowcell="FC20AUF" Lane="5" Filename="Flowcells/FC20AUF/080418_FC20AUF_s5_ChIPSeq_A549_M20_GR_EtOH_SL247.align_25.hg18.txt" Count=" 2148284" Date="080418"/>
+<Track Flowcell="303y5aaxx" Lane="2" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s2_ChIPSeq_A549_M20_GR_EtOH_SL247.align_25.hg18.txt" Count=" 3710876" Date="080715" />
+<Track Flowcell="FC204JB" Lane="4" Filename="Flowcells/FC204JB/080507_FC204JB_s4_ChIPSeq_A549_M20_GR_EtOH_SL247.align_25.hg18.txt" Count=" 2448458" Date="080507" />
+<Track Flowcell="FC204PR" Lane="7" Filename="Flowcells/FC204PR/080520_FC204PR_s7_ChIPSeq_A549_M20_GR_EtOH_SL247.align_25.hg18.txt" Count=" 2346726" Date="080520" />
+<Track Flowcell="FC20AUF" Lane="5" Filename="Flowcells/FC20AUF/080418_FC20AUF_s5_ChIPSeq_A549_M20_GR_EtOH_SL247.align_25.hg18.txt" Count=" 2148284" Date="080418" />
 </Library>
 <Library Name="SL248">
-<Track Flowcell="FC204GV" Lane="6" Filename="Flowcells/FC204GV/080429_FC204GV_s6_XRLP_041408_SL248.align_25.scer.txt" Count=" 2411445" Date="080429"/>
+<Track Flowcell="FC204GV" Lane="6" Filename="Flowcells/FC204GV/080429_FC204GV_s6_XRLP_041408_SL248.align_25.scer.txt" Count=" 2411445" Date="080429" />
 </Library>
 <Library Name="SL249">
-<Track Flowcell="FC204GV" Lane="7" Filename="Flowcells/FC204GV/080429_FC204GV_s7_NaCl_041408_SL249.align_25.scer.txt" Count=" 2433903" Date="080429"/>
+<Track Flowcell="FC204GV" Lane="7" Filename="Flowcells/FC204GV/080429_FC204GV_s7_NaCl_041408_SL249.align_25.scer.txt" Count=" 2433903" Date="080429" />
 </Library>
 <Library Name="SL250">
-<Track Flowcell="FC204GV" Lane="8" Filename="Flowcells/FC204GV/080429_FC204GV_s8_WT_041408_SL250.align_25.scer.txt" Count=" 2135397" Date="080429"/>
+<Track Flowcell="FC204GV" Lane="8" Filename="Flowcells/FC204GV/080429_FC204GV_s8_WT_041408_SL250.align_25.scer.txt" Count=" 2135397" Date="080429" />
 </Library>
 <Library Name="SL259">
-<Track Flowcell="FC204JB" Lane="3" Filename="Flowcells/FC204JB/080507_FC204JB_s3_Input_Control_Namwala_RX_Ch_SL259.align_25.hg18.txt" Count=" 3608279" Date="080507"/>
+<Track Flowcell="FC204JB" Lane="3" Filename="Flowcells/FC204JB/080507_FC204JB_s3_Input_Control_Namwala_RX_Ch_SL259.align_25.hg18.txt" Count=" 3608279" Date="080507" />
 </Library>
 <Library Name="SL260">
-<Track Flowcell="FC204JB" Lane="5" Filename="Flowcells/FC204JB/080507_FC204JB_s5_Input_Control_MNase_UB_SL260.align_25.hg18.txt" Count=" 2239155" Date="080507"/>
+<Track Flowcell="FC204JB" Lane="5" Filename="Flowcells/FC204JB/080507_FC204JB_s5_Input_Control_MNase_UB_SL260.align_25.hg18.txt" Count=" 2239155" Date="080507" />
 </Library>
 <Library Name="SL261">
-<Track Flowcell="FC204JB" Lane="6" Filename="Flowcells/FC204JB/080507_FC204JB_s6_Input_Control_MNase_LB_SL261.align_25.hg18.txt" Count=" 4413501" Date="080507"/>
+<Track Flowcell="FC204JB" Lane="6" Filename="Flowcells/FC204JB/080507_FC204JB_s6_Input_Control_MNase_LB_SL261.align_25.hg18.txt" Count=" 4413501" Date="080507" />
 </Library>
 <Library Name="SL262">
-<Track Flowcell="FC204JB" Lane="7" Filename="Flowcells/FC204JB/080507_FC204JB_s7_ChIPSeq_Namwala_Pol2_MNase_UB_SL262.align_25.hg18.txt" Count=" 2135250" Date="080507"/>
+<Track Flowcell="FC204JB" Lane="7" Filename="Flowcells/FC204JB/080507_FC204JB_s7_ChIPSeq_Namwala_Pol2_MNase_UB_SL262.align_25.hg18.txt" Count=" 2135250" Date="080507" />
 </Library>
 <Library Name="SL263">
-<Track Flowcell="FC204JB" Lane="8" Filename="Flowcells/FC204JB/080507_FC204JB_s8_ChIPSeq_Namwala_Pol2_MNase_LB_SL263.align_25.hg18.txt" Count=" 4570064" Date="080507"/>
+<Track Flowcell="FC204JB" Lane="8" Filename="Flowcells/FC204JB/080507_FC204JB_s8_ChIPSeq_Namwala_Pol2_MNase_LB_SL263.align_25.hg18.txt" Count=" 4570064" Date="080507" />
 </Library>
 <Library Name="SL264">
-<Track Flowcell="FC204JB" Lane="1" Filename="Flowcells/FC204JB/080507_FC204JB_s1_RNASeq_GM12878_Rep1_SL264.align_25.hg18.txt" Count=" 3546913" Date="080507"/>
+<Track Flowcell="FC204JB" Lane="1" Filename="Flowcells/FC204JB/080507_FC204JB_s1_RNASeq_GM12878_Rep1_SL264.align_25.hg18.txt" Count=" 3546913" Date="080507" />
 </Library>
 <Library Name="SL265">
-<Track Flowcell="FC204TD" Lane="1" Filename="Flowcells/FC204TD/080509_FC204TD_s1_RNASeq_K562_Rep1_SL265.align_25.hg18.txt" Count=" 3677080" Date="080509"/>
+<Track Flowcell="FC204TD" Lane="1" Filename="Flowcells/FC204TD/080509_FC204TD_s1_RNASeq_K562_Rep1_SL265.align_25.hg18.txt" Count=" 3677080" Date="080509" />
 </Library>
 <Library Name="SL266">
-<Track Flowcell="FC204TD" Lane="2" Filename="Flowcells/FC204TD/080509_FC204TD_s2_RNASeq_K562_Rep2_SL266.align_25.hg18.txt" Count=" 3565092" Date="080509"/>
+<Track Flowcell="FC204TD" Lane="2" Filename="Flowcells/FC204TD/080509_FC204TD_s2_RNASeq_K562_Rep2_SL266.align_25.hg18.txt" Count=" 3565092" Date="080509" />
 </Library>
 <Library Name="SL269">
-<Track Flowcell="FC204MT" Lane="1" Filename="Flowcells/FC204MT/080512_FC204MT_s1_MCF7_ChIPSeq_GR_Dex_SL269.align_25.hg18.txt" Count=" 2282494" Date="080512"/>
+<Track Flowcell="FC204MT" Lane="1" Filename="Flowcells/FC204MT/080512_FC204MT_s1_MCF7_ChIPSeq_GR_Dex_SL269.align_25.hg18.txt" Count=" 2282494" Date="080512" />
 </Library>
 <Library Name="SL270">
-<Track Flowcell="FC204MT" Lane="2" Filename="Flowcells/FC204MT/080512_FC204MT_s2_MCF7_ChIPSeq_GR_EtOH_SL270.align_25.hg18.txt" Count=" 2399296" Date="080512"/>
+<Track Flowcell="FC204MT" Lane="2" Filename="Flowcells/FC204MT/080512_FC204MT_s2_MCF7_ChIPSeq_GR_EtOH_SL270.align_25.hg18.txt" Count=" 2399296" Date="080512" />
 </Library>
 <Library Name="SL271">
-<Track Flowcell="FC204MT" Lane="3" Filename="Flowcells/FC204MT/080512_FC204MT_s3_MCF7_ChIPSeq_Pol2_Dex_SL271.align_25.hg18.txt" Count=" 2884011" Date="080512"/>
+<Track Flowcell="FC204MT" Lane="3" Filename="Flowcells/FC204MT/080512_FC204MT_s3_MCF7_ChIPSeq_Pol2_Dex_SL271.align_25.hg18.txt" Count=" 2884011" Date="080512" />
 </Library>
 <Library Name="SL272">
-<Track Flowcell="FC204MT" Lane="4" Filename="Flowcells/FC204MT/080512_FC204MT_s4_ChIPSeq_MCF7_Pol2_EtOH_SL272.align_25.hg18.txt" Count=" 3016679" Date="080512"/>
+<Track Flowcell="FC204MT" Lane="4" Filename="Flowcells/FC204MT/080512_FC204MT_s4_ChIPSeq_MCF7_Pol2_EtOH_SL272.align_25.hg18.txt" Count=" 3016679" Date="080512" />
 </Library>
 <Library Name="SL273">
-<Track Flowcell="209UKAAXX" Lane="1" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s1_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 1096000" Date="080528"/>
-<Track Flowcell="209UKAAXX" Lane="2" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s2_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 1197533" Date="080528"/>
-<Track Flowcell="209UKAAXX" Lane="3" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s3_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 1437394" Date="080528"/>
-<Track Flowcell="209UKAAXX" Lane="4" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s4_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 1523562" Date="080528"/>
-<Track Flowcell="306P2AAXX" Lane="4" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s4_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 3111388" Date="080722"/>
-<Track Flowcell="FC204MT" Lane="5" Filename="Flowcells/FC204MT/080512_FC204MT_s5_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 2875972" Date="080512"/>
+<Track Flowcell="209UKAAXX" Lane="1" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s1_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 1096000" Date="080528" />
+<Track Flowcell="209UKAAXX" Lane="2" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s2_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 1197533" Date="080528" />
+<Track Flowcell="209UKAAXX" Lane="3" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s3_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 1437394" Date="080528" />
+<Track Flowcell="209UKAAXX" Lane="4" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s4_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 1523562" Date="080528" />
+<Track Flowcell="306P2AAXX" Lane="4" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s4_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 3111388" Date="080722" />
+<Track Flowcell="FC204MT" Lane="5" Filename="Flowcells/FC204MT/080512_FC204MT_s5_ChIPSeq_HepG2_Rep1_NRSF_SL273.align_25.hg18.txt" Count=" 2875972" Date="080512" />
 </Library>
 <Library Name="SL274">
-<Track Flowcell="209UKAAXX" Lane="5" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s5_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 1726267" Date="080528"/>
-<Track Flowcell="209UKAAXX" Lane="6" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s6_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 1693140" Date="080528"/>
-<Track Flowcell="209UKAAXX" Lane="7" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s7_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 1537265" Date="080528"/>
-<Track Flowcell="209UKAAXX" Lane="8" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s8_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 1364998" Date="080528"/>
-<Track Flowcell="306P2AAXX" Lane="3" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s3_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 3945743" Date="080722"/>
-<Track Flowcell="FC204MT" Lane="6" Filename="Flowcells/FC204MT/080512_FC204MT_s6_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 2969609" Date="080512"/>
+<Track Flowcell="209UKAAXX" Lane="5" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s5_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 1726267" Date="080528" />
+<Track Flowcell="209UKAAXX" Lane="6" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s6_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 1693140" Date="080528" />
+<Track Flowcell="209UKAAXX" Lane="7" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s7_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 1537265" Date="080528" />
+<Track Flowcell="209UKAAXX" Lane="8" Filename="Flowcells/209UKAAXX/080528_209UKAAXX_s8_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 1364998" Date="080528" />
+<Track Flowcell="306P2AAXX" Lane="3" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s3_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 3945743" Date="080722" />
+<Track Flowcell="FC204MT" Lane="6" Filename="Flowcells/FC204MT/080512_FC204MT_s6_ChIPSeq_HepG2_Rep2_NRSF_SL274.align_25.hg18.txt" Count=" 2969609" Date="080512" />
 </Library>
 <Library Name="SL275">
-<Track Flowcell="306P2AAXX" Lane="2" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s2_ChIPSeq_HepG2_Rep1_GABP_SL275.align_25.hg18.txt" Count=" 4599829" Date="080722"/>
-<Track Flowcell="FC204MT" Lane="7" Filename="Flowcells/FC204MT/080512_FC204MT_s7_ChIPSeq_HepG2_Rep1_GABP_SL275.align_25.hg18.txt" Count=" 3373373" Date="080512"/>
+<Track Flowcell="306P2AAXX" Lane="2" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s2_ChIPSeq_HepG2_Rep1_GABP_SL275.align_25.hg18.txt" Count=" 4599829" Date="080722" />
+<Track Flowcell="30DCTAAXX" Lane="7" Filename="Flowcells/30DCTAAXX/080904_30DCTAAXX_s7_ChIPSeq_HepG2_Rep1_GABP_SL275.align_25.hg18.txt" Count="  677714" Date="080904" />
+<Track Flowcell="FC204MT" Lane="7" Filename="Flowcells/FC204MT/080512_FC204MT_s7_ChIPSeq_HepG2_Rep1_GABP_SL275.align_25.hg18.txt" Count=" 3373373" Date="080512" />
 </Library>
 <Library Name="SL276">
-<Track Flowcell="306P2AAXX" Lane="1" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s1_ChIPSeq_HepG2_Rep2_GABP_SL276.align_25.hg18.txt" Count=" 4297640" Date="080722"/>
-<Track Flowcell="FC204MT" Lane="8" Filename="Flowcells/FC204MT/080512_FC204MT_s8_ChIPSeq_HepG2_Rep2_GABP_SL276.align_25.hg18.txt" Count=" 3252004" Date="080512"/>
+<Track Flowcell="306P2AAXX" Lane="1" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s1_ChIPSeq_HepG2_Rep2_GABP_SL276.align_25.hg18.txt" Count=" 4297640" Date="080722" />
+<Track Flowcell="30DCTAAXX" Lane="8" Filename="Flowcells/30DCTAAXX/080904_30DCTAAXX_s8_ChIPSeq_HepG2_Rep2_GABP_SL276.align_25.hg18.txt" Count="  604582" Date="080904" />
+<Track Flowcell="FC204MT" Lane="8" Filename="Flowcells/FC204MT/080512_FC204MT_s8_ChIPSeq_HepG2_Rep2_GABP_SL276.align_25.hg18.txt" Count=" 3252004" Date="080512" />
 </Library>
 <Library Name="SL277">
-<Track Flowcell="FC20ATL" Lane="2" Filename="Flowcells/FC20ATL/080527_FC20ATL_s2_ChIPSeq_Jurkat_S_S_Rep1_SRF_SL277.align_25.hg18.txt" Count=" 3716401" Date="080527"/>
+<Track Flowcell="FC20ATL" Lane="2" Filename="Flowcells/FC20ATL/080527_FC20ATL_s2_ChIPSeq_Jurkat_S_S_Rep1_SRF_SL277.align_25.hg18.txt" Count=" 3716401" Date="080527" />
 </Library>
 <Library Name="SL280">
-<Track Flowcell="FC20AJ8" Lane="2" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s2_RNASeq_HepG2_Rep1_SL280.align_25.hg18.txt" Count="  194175" Date="080523"/>
+<Track Flowcell="FC20AJ8" Lane="2" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s2_RNASeq_HepG2_Rep1_SL280.align_25.hg18.txt" Count="  194175" Date="080523" />
 </Library>
 <Library Name="SL281">
-<Track Flowcell="FC20AJ8" Lane="3" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s3_RNASeq_HepG2_Rep2_SL281.align_25.hg18.txt" Count="  421392" Date="080523"/>
+<Track Flowcell="FC20AJ8" Lane="3" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s3_RNASeq_HepG2_Rep2_SL281.align_25.hg18.txt" Count="  421392" Date="080523" />
 </Library>
 <Library Name="SL288">
-<Track Flowcell="306P2AAXX" Lane="8" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s8_ChIPSeq_GM12878_Rep1_TAF250_SL288.align_25.hg18.txt" Count=" 2153614" Date="080722"/>
-<Track Flowcell="FC20AJ8" Lane="6" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s6_ChIPSeq_GM12878_Rep1_TAF250_SL288.align_25.hg18.txt" Count=" 3168587" Date="080523"/>
+<Track Flowcell="306P2AAXX" Lane="8" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s8_ChIPSeq_GM12878_Rep1_TAF250_SL288.align_25.hg18.txt" Count=" 2153614" Date="080722" />
+<Track Flowcell="30DBLAAXX" Lane="1" Filename="Flowcells/30DBLAAXX/080815_30DBLAAXX_s1_ChIPSeq_GM12878_Rep1_TAF250_SL288.align_25.hg18.txt" Count=" 3958844" Date="080815" />
+<Track Flowcell="30DCTAAXX" Lane="6" Filename="Flowcells/30DCTAAXX/080904_30DCTAAXX_s6_ChIPSeq_GM12878_Rep1_TAF250_SL288.align_25.hg18.txt" Count=" 1715117" Date="080904" />
+<Track Flowcell="FC20AJ8" Lane="6" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s6_ChIPSeq_GM12878_Rep1_TAF250_SL288.align_25.hg18.txt" Count=" 3168587" Date="080523" />
 </Library>
 <Library Name="SL289">
-<Track Flowcell="FC20AJ8" Lane="7" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s7_ChIPSeq_K562_Rep1_SRF_SL289.align_25.hg18.txt" Count=" 2705050" Date="080523"/>
+<Track Flowcell="30DBLAAXX" Lane="5" Filename="Flowcells/30DBLAAXX/080815_30DBLAAXX_s5_ChIPSeq_K562_Rep1_SRF_SL289.align_25.hg18.txt" Count=" 3892910" Date="080815" />
+<Track Flowcell="30DBLAAXX" Lane="6" Filename="Flowcells/30DBLAAXX/080815_30DBLAAXX_s6_ChIPSeq_K562_Rep1_SRF_SL289.align_25.hg18.txt" Count=" 3749795" Date="080815" />
+<Track Flowcell="FC20AJ8" Lane="7" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s7_ChIPSeq_K562_Rep1_SRF_SL289.align_25.hg18.txt" Count=" 2705050" Date="080523" />
 </Library>
 <Library Name="SL290">
-<Track Flowcell="FC20AJ8" Lane="8" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s8_ChIPSeq_K562_Rep2_SRF_SL290.align_25.hg18.txt" Count=" 2889602" Date="080523"/>
+<Track Flowcell="30DBLAAXX" Lane="7" Filename="Flowcells/30DBLAAXX/080815_30DBLAAXX_s7_ChIPSeq_K562_Rep2_SRF_SL290.align_25.hg18.txt" Count=" 4165480" Date="080815" />
+<Track Flowcell="30DBLAAXX" Lane="8" Filename="Flowcells/30DBLAAXX/080815_30DBLAAXX_s8_ChIPSeq_K562_Rep2_SRF_SL290.align_25.hg18.txt" Count=" 2870741" Date="080815" />
+<Track Flowcell="FC20AJ8" Lane="8" Filename="Flowcells/FC20AJ8/080523_FC20AJ8_s8_ChIPSeq_K562_Rep2_SRF_SL290.align_25.hg18.txt" Count=" 2889602" Date="080523" />
 </Library>
 <Library Name="SL291">
-<Track Flowcell="2087VAAXX" Lane="1" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s1_ChIPSeq_GM12878_Rep1_SRF_SL291.align_25.hg18.txt" Count=" 2326626" Date="080611"/>
-<Track Flowcell="2087VAAXX" Lane="5" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s5_ChIPSeq_GM12878_Rep1_SRF_SL291.align_25.hg18.txt" Count=" 2283483" Date="080611"/>
-<Track Flowcell="FC20ATH" Lane="1" Filename="Flowcells/FC20ATH/080602_FC20ATH_s1_ChIP-seq_SRF_GM12878_Rep1_SL291.align_25.hg18.txt" Count=" 1165384" Date="080602"/>
+<Track Flowcell="2087VAAXX" Lane="1" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s1_ChIPSeq_GM12878_Rep1_SRF_SL291.align_25.hg18.txt" Count=" 2326626" Date="080611" />
+<Track Flowcell="2087VAAXX" Lane="5" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s5_ChIPSeq_GM12878_Rep1_SRF_SL291.align_25.hg18.txt" Count=" 2283483" Date="080611" />
+<Track Flowcell="30DBLAAXX" Lane="3" Filename="Flowcells/30DBLAAXX/080815_30DBLAAXX_s3_ChIP-seq_SRF_GM12878_Rep1_SL291.align_25.hg18.txt" Count=" 4312781" Date="080815" />
+<Track Flowcell="FC20ATH" Lane="1" Filename="Flowcells/FC20ATH/080602_FC20ATH_s1_ChIP-seq_SRF_GM12878_Rep1_SL291.align_25.hg18.txt" Count=" 1165384" Date="080602" />
 </Library>
 <Library Name="SL292">
-<Track Flowcell="2087VAAXX" Lane="2" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s2_ChIPSeq_GM12878_Rep2_SRF_SL292.align_25.hg18.txt" Count=" 2117859" Date="080611"/>
-<Track Flowcell="2087VAAXX" Lane="6" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s6_ChIPSeq_GM12878_Rep2_SRF_SL292.align_25.hg18.txt" Count=" 2135165" Date="080611"/>
-<Track Flowcell="FC20ATH" Lane="2" Filename="Flowcells/FC20ATH/080602_FC20ATH_s2_ChIP-seq_SRF_GM12878_Rep2_SL292.align_25.hg18.txt" Count=" 2027947" Date="080602"/>
+<Track Flowcell="2087VAAXX" Lane="2" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s2_ChIPSeq_GM12878_Rep2_SRF_SL292.align_25.hg18.txt" Count=" 2117859" Date="080611" />
+<Track Flowcell="2087VAAXX" Lane="6" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s6_ChIPSeq_GM12878_Rep2_SRF_SL292.align_25.hg18.txt" Count=" 2135165" Date="080611" />
+<Track Flowcell="30DBLAAXX" Lane="4" Filename="Flowcells/30DBLAAXX/080815_30DBLAAXX_s4_ChIP-seq_SRF_GM12878_Rep2_SL292.align_25.hg18.txt" Count=" 4481065" Date="080815" />
+<Track Flowcell="FC20ATH" Lane="2" Filename="Flowcells/FC20ATH/080602_FC20ATH_s2_ChIP-seq_SRF_GM12878_Rep2_SL292.align_25.hg18.txt" Count=" 2027947" Date="080602" />
 </Library>
 <Library Name="SL293">
-<Track Flowcell="2087VAAXX" Lane="3" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s3_ChIPSeq_GM12878_Rep2_TAF250_SL293.align_25.hg18.txt" Count=" 2598142" Date="080611"/>
-<Track Flowcell="2087VAAXX" Lane="7" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s7_ChIPSeq_GM12878_Rep2_TAF250_SL293.align_25.hg18.txt" Count=" 2556642" Date="080611"/>
-<Track Flowcell="FC20ATH" Lane="3" Filename="Flowcells/FC20ATH/080602_FC20ATH_s3_ChIP-seq_TAF250_GM12878_Rep2_SL293.align_25.hg18.txt" Count=" 2398112" Date="080602"/>
+<Track Flowcell="2087VAAXX" Lane="3" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s3_ChIPSeq_GM12878_Rep2_TAF250_SL293.align_25.hg18.txt" Count=" 2598142" Date="080611" />
+<Track Flowcell="2087VAAXX" Lane="7" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s7_ChIPSeq_GM12878_Rep2_TAF250_SL293.align_25.hg18.txt" Count=" 2556642" Date="080611" />
+<Track Flowcell="30DBLAAXX" Lane="2" Filename="Flowcells/30DBLAAXX/080815_30DBLAAXX_s2_ChIP-seq_TAF250_GM12878_Rep2_SL293.align_25.hg18.txt" Count=" 4857889" Date="080815" />
+<Track Flowcell="FC20ATH" Lane="3" Filename="Flowcells/FC20ATH/080602_FC20ATH_s3_ChIP-seq_TAF250_GM12878_Rep2_SL293.align_25.hg18.txt" Count=" 2398112" Date="080602" />
 </Library>
 <Library Name="SL294">
-<Track Flowcell="2087VAAXX" Lane="8" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s8_ChIPSeq_HepG2_Rep1_InputControl_RXLCh_SL294.align_25.hg18.txt" Count=" 2190318" Date="080611"/>
-<Track Flowcell="306P2AAXX" Lane="7" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s7_Input_Control_HepG2_Rep1_SL294.align_25.hg18.txt" Count=" 1918136" Date="080722"/>
-<Track Flowcell="FC20ATH" Lane="4" Filename="Flowcells/FC20ATH/080602_FC20ATH_s4_Input_Control_HepG2_Rep1_SL294.align_25.hg18.txt" Count=" 2168270" Date="080602"/>
+<Track Flowcell="2087VAAXX" Lane="8" Filename="Flowcells/2087VAAXX/080611_2087VAAXX_s8_ChIPSeq_HepG2_Rep1_InputControl_RXLCh_SL294.align_25.hg18.txt" Count=" 2190318" Date="080611" />
+<Track Flowcell="306P2AAXX" Lane="7" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s7_Input_Control_HepG2_Rep1_SL294.align_25.hg18.txt" Count=" 1918136" Date="080722" />
+<Track Flowcell="30CLAAXX" Lane="7" Filename="Flowcells/30CLAAXX/080815_30CLAAXX_s7_Input_Control_HepG2_Rep1_SL294.align_25.hg18.txt" Count=" 5027019" Date="080815" />
+<Track Flowcell="30EFCAAXX" Lane="4" Filename="Flowcells/30EFCAAXX/080910_30EFCAAXX_s4_Input_Control_HepG2_Rep1_SL294.align_25.hg18.txt" Count=" 1919675" Date="080910" />
+<Track Flowcell="30EFCAAXX" Lane="5" Filename="Flowcells/30EFCAAXX/080910_30EFCAAXX_s5_Input_Control_HepG2_Rep1_SL294.align_25.hg18.txt" Count=" 1999038" Date="080910" />
+<Track Flowcell="FC20ATH" Lane="4" Filename="Flowcells/FC20ATH/080602_FC20ATH_s4_Input_Control_HepG2_Rep1_SL294.align_25.hg18.txt" Count=" 2168270" Date="080602" />
 </Library>
 <Library Name="SL295">
-<Track Flowcell="306P2AAXX" Lane="5" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s5_Input_Control_HepG2_Rep2_SL295.align_25.hg18.txt" Count=" 2771168" Date="080722"/>
-<Track Flowcell="306P2AAXX" Lane="6" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s6_Input_Control_HepG2_Rep2_SL295.align_25.hg18.txt" Count=" 1633531" Date="080722"/>
-<Track Flowcell="FC20ATH" Lane="5" Filename="Flowcells/FC20ATH/080602_FC20ATH_s5_Input_Control_HepG2_Rep2_SL295.align_25.hg18.txt" Count=" 1970158" Date="080602"/>
+<Track Flowcell="306P2AAXX" Lane="5" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s5_Input_Control_HepG2_Rep2_SL295.align_25.hg18.txt" Count=" 2771168" Date="080722" />
+<Track Flowcell="306P2AAXX" Lane="6" Filename="Flowcells/306P2AAXX/080722_306P2AAXX_s6_Input_Control_HepG2_Rep2_SL295.align_25.hg18.txt" Count=" 1633531" Date="080722" />
+<Track Flowcell="30CLAAXX" Lane="8" Filename="Flowcells/30CLAAXX/080815_30CLAAXX_s8_Input_Control_HepG2_Rep2_SL295.align_25.hg18.txt" Count=" 3842145" Date="080815" />
+<Track Flowcell="30EFCAAXX" Lane="7" Filename="Flowcells/30EFCAAXX/080910_30EFCAAXX_s7_Input_Control_HepG2_Rep2_SL295.align_25.hg18.txt" Count=" 2989786" Date="080910" />
+<Track Flowcell="30EFCAAXX" Lane="8" Filename="Flowcells/30EFCAAXX/080910_30EFCAAXX_s8_Input_Control_HepG2_Rep2_SL295.align_25.hg18.txt" Count=" 2811384" Date="080910" />
+<Track Flowcell="FC20ATH" Lane="5" Filename="Flowcells/FC20ATH/080602_FC20ATH_s5_Input_Control_HepG2_Rep2_SL295.align_25.hg18.txt" Count=" 1970158" Date="080602" />
 </Library>
 <Library Name="SL296">
-<Track Flowcell="FC209TJ" Lane="5" Filename="Flowcells/FC209TJ/080606_FC209TJ_s5_Methylseq_GM12878_R1_hpa_1pcr_SL296.align_25.hg18.txt" Count=" 2940725" Date="080606"/>
+<Track Flowcell="30DDDAAXX" Lane="4" Filename="Flowcells/30DDDAAXX/080826_30DDDAAXX_s4_Methylseq_GM12878_R1_hpa_1pcr_SL296.align_25.hg18.txt" Count=" 5963498" Date="080826" />
+<Track Flowcell="30EGGAAXX" Lane="1" Filename="Flowcells/30EGGAAXX/080910_30EGGAAXX_s1_Methylseq_GM12878_R1_hpa_1pcr_SL296.align_25.hg18.txt" Count="  977352" Date="080910" />
+<Track Flowcell="30EGGAAXX" Lane="2" Filename="Flowcells/30EGGAAXX/080910_30EGGAAXX_s2_Methylseq_GM12878_R1_hpa_1pcr_SL296.align_25.hg18.txt" Count="  687356" Date="080910" />
+<Track Flowcell="30EGGAAXX" Lane="3" Filename="Flowcells/30EGGAAXX/080910_30EGGAAXX_s3_Methylseq_GM12878_R1_hpa_1pcr_SL296.align_25.hg18.txt" Count="  488635" Date="080910" />
+<Track Flowcell="FC209TJ" Lane="5" Filename="Flowcells/FC209TJ/080606_FC209TJ_s5_Methylseq_GM12878_R1_hpa_1pcr_SL296.align_25.hg18.txt" Count=" 2940725" Date="080606" />
 </Library>
 <Library Name="SL297">
-<Track Flowcell="FC209TJ" Lane="6" Filename="Flowcells/FC209TJ/080606_FC209TJ_s6_Methylseq_GM12878_R2_hpa_2pcr_SL297.align_25.hg18.txt" Count=" 2634191" Date="080606"/>
+<Track Flowcell="30DDDAAXX" Lane="3" Filename="Flowcells/30DDDAAXX/080826_30DDDAAXX_s3_Methylseq_GM12878_R2_hpa_2pcr_SL297.align_25.hg18.txt" Count=" 5868879" Date="080826" />
+<Track Flowcell="30EGGAAXX" Lane="6" Filename="Flowcells/30EGGAAXX/080910_30EGGAAXX_s6_Methylseq_GM12878_R2_hpa_2pcr_SL297.align_25.hg18.txt" Count="  326483" Date="080910" />
+<Track Flowcell="30EGGAAXX" Lane="7" Filename="Flowcells/30EGGAAXX/080910_30EGGAAXX_s7_Methylseq_GM12878_R2_hpa_2pcr_SL297.align_25.hg18.txt" Count="  397246" Date="080910" />
+<Track Flowcell="30EGGAAXX" Lane="8" Filename="Flowcells/30EGGAAXX/080910_30EGGAAXX_s8_Methylseq_GM12878_R2_hpa_2pcr_SL297.align_25.hg18.txt" Count="  646888" Date="080910" />
+<Track Flowcell="FC209TJ" Lane="6" Filename="Flowcells/FC209TJ/080606_FC209TJ_s6_Methylseq_GM12878_R2_hpa_2pcr_SL297.align_25.hg18.txt" Count=" 2634191" Date="080606" />
 </Library>
 <Library Name="SL298">
-<Track Flowcell="FC209TJ" Lane="7" Filename="Flowcells/FC209TJ/080606_FC209TJ_s7_Methylseq_GM12878_R1_msp_1pcr_SL298.align_25.hg18.txt" Count=" 2516383" Date="080606"/>
+<Track Flowcell="30DDDAAXX" Lane="2" Filename="Flowcells/30DDDAAXX/080826_30DDDAAXX_s2_Methylseq_GM12878_R1_msp_1pcr_SL298.align_25.hg18.txt" Count=" 4205665" Date="080826" />
+<Track Flowcell="FC209TJ" Lane="7" Filename="Flowcells/FC209TJ/080606_FC209TJ_s7_Methylseq_GM12878_R1_msp_1pcr_SL298.align_25.hg18.txt" Count=" 2516383" Date="080606" />
 </Library>
 <Library Name="SL299">
-<Track Flowcell="FC209TJ" Lane="8" Filename="Flowcells/FC209TJ/080606_FC209TJ_s8_Methylseq_GM12878_R2_msp_2pcr_SL299.align_25.hg18.txt" Count=" 1951342" Date="080606"/>
+<Track Flowcell="30DDDAAXX" Lane="1" Filename="Flowcells/30DDDAAXX/080826_30DDDAAXX_s1_Methylseq_GM12878_R2_msp_2pcr_SL299.align_25.hg18.txt" Count=" 3481486" Date="080826" />
+<Track Flowcell="FC209TJ" Lane="8" Filename="Flowcells/FC209TJ/080606_FC209TJ_s8_Methylseq_GM12878_R2_msp_2pcr_SL299.align_25.hg18.txt" Count=" 1951342" Date="080606" />
 </Library>
 <Library Name="SL300">
-<Track Flowcell="306WNAAXX" Lane="5" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s5_Methyl-seq_HepG2__rep1_hpa_1PCR_SL300.align_25.hg18.txt" Count=" 1404807" Date="080731"/>
+<Track Flowcell="306WNAAXX" Lane="5" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s5_Methyl-seq_HepG2__rep1_hpa_1PCR_SL300.align_25.hg18.txt" Count=" 1404807" Date="080731" />
+<Track Flowcell="30DDDAAXX" Lane="5" Filename="Flowcells/30DDDAAXX/080826_30DDDAAXX_s5_Methyl-seq_HepG2__rep1_hpa_1PCR_SL300.align_25.hg18.txt" Count=" 5941690" Date="080826" />
 </Library>
 <Library Name="SL301">
-<Track Flowcell="306WNAAXX" Lane="6" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s6_Methyl-seq_HepG2__rep2_hpa_2PCR_SL301.align_25.hg18.txt" Count=" 1216872" Date="080731"/>
+<Track Flowcell="306WNAAXX" Lane="6" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s6_Methyl-seq_HepG2__rep2_hpa_2PCR_SL301.align_25.hg18.txt" Count=" 1216872" Date="080731" />
+<Track Flowcell="30DDDAAXX" Lane="6" Filename="Flowcells/30DDDAAXX/080826_30DDDAAXX_s6_Methyl-seq_HepG2__rep2_hpa_2PCR_SL301.align_25.hg18.txt" Count=" 6122369" Date="080826" />
 </Library>
 <Library Name="SL302">
-<Track Flowcell="306WNAAXX" Lane="7" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s7_Methyl-seq_HepG2__rep2_msp_1PCR_SL302.align_25.hg18.txt" Count=" 1205138" Date="080731"/>
+<Track Flowcell="306WNAAXX" Lane="7" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s7_Methyl-seq_HepG2__rep2_msp_1PCR_SL302.align_25.hg18.txt" Count=" 1205138" Date="080731" />
+<Track Flowcell="30DDDAAXX" Lane="7" Filename="Flowcells/30DDDAAXX/080826_30DDDAAXX_s7_Methyl-seq_HepG2__rep2_msp_1PCR_SL302.align_25.hg18.txt" Count=" 4609878" Date="080826" />
 </Library>
 <Library Name="SL303">
-<Track Flowcell="306WNAAXX" Lane="8" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s8_Methyl-seq_HepG2__rep2_msp_2PCR_SL303.align_25.hg18.txt" Count="  856073" Date="080731"/>
+<Track Flowcell="306WNAAXX" Lane="8" Filename="Flowcells/306WNAAXX/080731_306WNAAXX_s8_Methyl-seq_HepG2__rep2_msp_2PCR_SL303.align_25.hg18.txt" Count="  856073" Date="080731" />
+<Track Flowcell="30DDDAAXX" Lane="8" Filename="Flowcells/30DDDAAXX/080826_30DDDAAXX_s8_Methyl-seq_HepG2__rep2_msp_2PCR_SL303.align_25.hg18.txt" Count=" 4337314" Date="080826" />
 </Library>
 <Library Name="SL304">
-<Track Flowcell="3072MAAXX" Lane="3" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s3_A549_Rep2_GR_Dex_ChIP_SL304.align_25.hg18.txt" Count=" 3036609" Date="080722"/>
-<Track Flowcell="3072MAAXX" Lane="4" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s4_A549_Rep2_GR_Dex_ChIP_SL304.align_25.hg18.txt" Count=" 2826138" Date="080722"/>
-<Track Flowcell="FC20AUG" Lane="5" Filename="Flowcells/FC20AUG/080612_FC20AUG_s5_A549_Rep2_GR_Dex_ChIP_SL304.align_25.hg18.txt" Count=" 2357287" Date="080612"/>
+<Track Flowcell="3072MAAXX" Lane="3" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s3_A549_Rep2_GR_Dex_ChIP_SL304.align_25.hg18.txt" Count=" 3036609" Date="080722" />
+<Track Flowcell="3072MAAXX" Lane="4" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s4_A549_Rep2_GR_Dex_ChIP_SL304.align_25.hg18.txt" Count=" 2826138" Date="080722" />
+<Track Flowcell="30DC1AAXX" Lane="1" Filename="Flowcells/30DC1AAXX/080826_30DC1AAXX_s1_A549_Rep2_GR_Dex_ChIP_SL304.align_25.hg18.txt" Count=" 2155855" Date="080826" />
+<Track Flowcell="FC20AUG" Lane="5" Filename="Flowcells/FC20AUG/080612_FC20AUG_s5_A549_Rep2_GR_Dex_ChIP_SL304.align_25.hg18.txt" Count=" 2357287" Date="080612" />
 </Library>
 <Library Name="SL305">
-<Track Flowcell="FC20AUG" Lane="6" Filename="Flowcells/FC20AUG/080612_FC20AUG_s6_A549_Rep2_GR_EtOH_ChIP_SL305.align_25.hg18.txt" Count=" 2182536" Date="080612"/>
+<Track Flowcell="30DAGAAXX" Lane="7" Filename="Flowcells/30DAGAAXX/080826_30DAGAAXX_s7_A549_Rep2_GR_EtOH_ChIP_SL305.align_25.hg18.txt" Count=" 3119566" Date="080826" />
+<Track Flowcell="30DC1AAXX" Lane="2" Filename="Flowcells/30DC1AAXX/080826_30DC1AAXX_s2_A549_Rep2_GR_EtOH_ChIP_SL305.align_25.hg18.txt" Count=" 2437734" Date="080826" />
+<Track Flowcell="30DC1AAXX" Lane="3" Filename="Flowcells/30DC1AAXX/080826_30DC1AAXX_s3_A549_Rep2_GR_EtOH_ChIP_SL305.align_25.hg18.txt" Count=" 2429901" Date="080826" />
+<Track Flowcell="FC20AUG" Lane="6" Filename="Flowcells/FC20AUG/080612_FC20AUG_s6_A549_Rep2_GR_EtOH_ChIP_SL305.align_25.hg18.txt" Count=" 2182536" Date="080612" />
 </Library>
 <Library Name="SL306">
-<Track Flowcell="3072MAAXX" Lane="5" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s5_A549_Rep2_Pol2_Dex_ChIP_SL306.align_25.hg18.txt" Count=" 3787015" Date="080722"/>
-<Track Flowcell="3072MAAXX" Lane="6" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s6_A549_Rep2_Pol2_Dex_ChIP_SL306.align_25.hg18.txt" Count=" 3262311" Date="080722"/>
-<Track Flowcell="3072MAAXX" Lane="7" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s7_A549_Rep2_Pol2_Dex_ChIP_SL306.align_25.hg18.txt" Count=" 2664712" Date="080722"/>
-<Track Flowcell="3072MAAXX" Lane="8" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s8_A549_Rep2_Pol2_Dex_ChIP_SL306.align_25.hg18.txt" Count=" 2082693" Date="080722"/>
-<Track Flowcell="FC20AUG" Lane="7" Filename="Flowcells/FC20AUG/080612_FC20AUG_s7_A549_Rep2_Pol2_Dex_ChIP_SL306.align_25.hg18.txt" Count=" 4246636" Date="080612"/>
+<Track Flowcell="3072MAAXX" Lane="5" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s5_A549_Rep2_Pol2_Dex_ChIP_SL306.align_25.hg18.txt" Count=" 3787015" Date="080722" />
+<Track Flowcell="3072MAAXX" Lane="6" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s6_A549_Rep2_Pol2_Dex_ChIP_SL306.align_25.hg18.txt" Count=" 3262311" Date="080722" />
+<Track Flowcell="3072MAAXX" Lane="7" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s7_A549_Rep2_Pol2_Dex_ChIP_SL306.align_25.hg18.txt" Count=" 2664712" Date="080722" />
+<Track Flowcell="3072MAAXX" Lane="8" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s8_A549_Rep2_Pol2_Dex_ChIP_SL306.align_25.hg18.txt" Count=" 2082693" Date="080722" />
+<Track Flowcell="FC20AUG" Lane="7" Filename="Flowcells/FC20AUG/080612_FC20AUG_s7_A549_Rep2_Pol2_Dex_ChIP_SL306.align_25.hg18.txt" Count=" 4246636" Date="080612" />
 </Library>
 <Library Name="SL307">
-<Track Flowcell="3072MAAXX" Lane="1" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s1_A549_EtOH_RX_noIP_SL307.align_25.hg18.txt" Count=" 3727098" Date="080722"/>
-<Track Flowcell="3072MAAXX" Lane="2" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s2_A549_EtOH_RX_noIP_SL307.align_25.hg18.txt" Count=" 4398655" Date="080722"/>
-<Track Flowcell="FC20AUG" Lane="8" Filename="Flowcells/FC20AUG/080612_FC20AUG_s8_A549_EtOH_RX_noIP_SL307.align_25.hg18.txt" Count=" 3738550" Date="080612"/>
+<Track Flowcell="3072MAAXX" Lane="1" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s1_A549_EtOH_RX_noIP_SL307.align_25.hg18.txt" Count=" 3727098" Date="080722" />
+<Track Flowcell="3072MAAXX" Lane="2" Filename="Flowcells/3072MAAXX/080722_3072MAAXX_s2_A549_EtOH_RX_noIP_SL307.align_25.hg18.txt" Count=" 4398655" Date="080722" />
+<Track Flowcell="FC20AUG" Lane="8" Filename="Flowcells/FC20AUG/080612_FC20AUG_s8_A549_EtOH_RX_noIP_SL307.align_25.hg18.txt" Count=" 3738550" Date="080612" />
 </Library>
 <Library Name="SL310">
-<Track Flowcell="FC20ATH" Lane="6" Filename="Flowcells/FC20ATH/080602_FC20ATH_s6_RNA-seq_GM12878_Rep2_SL310.align_25.hg18.txt" Count=" 3087245" Date="080602"/>
+<Track Flowcell="FC20ATH" Lane="6" Filename="Flowcells/FC20ATH/080602_FC20ATH_s6_RNA-seq_GM12878_Rep2_SL310.align_25.hg18.txt" Count=" 3087245" Date="080602" />
 </Library>
 <Library Name="SL311">
-<Track Flowcell="FC20AUM" Lane="1" Filename="Flowcells/FC20AUM/080616_FC20AUM_s1_RNASeq_BJ_rep1_SL311.align_25.hg18.txt" Count=" 3688931" Date="080616"/>
+<Track Flowcell="FC20AUM" Lane="1" Filename="Flowcells/FC20AUM/080616_FC20AUM_s1_RNASeq_BJ_rep1_SL311.align_25.hg18.txt" Count=" 3688931" Date="080616" />
 </Library>
 <Library Name="SL312">
-<Track Flowcell="FC20ATH" Lane="7" Filename="Flowcells/FC20ATH/080602_FC20ATH_s7_RNA-seq_HepG2_Rep1_SL312.align_25.hg18.txt" Count=" 3535250" Date="080602"/>
+<Track Flowcell="30EG4AAXX" Lane="8" Filename="Flowcells/30EG4AAXX/080916_30EG4AAXX_s8_RNA-seq_HepG2_Rep1_SL312.align_25.hg18.txt" Count=" 4776370" Date="080916" />
+<Track Flowcell="FC20ATH" Lane="7" Filename="Flowcells/FC20ATH/080602_FC20ATH_s7_RNA-seq_HepG2_Rep1_SL312.align_25.hg18.txt" Count=" 3535250" Date="080602" />
 </Library>
 <Library Name="SL313">
-<Track Flowcell="FC20ATH" Lane="8" Filename="Flowcells/FC20ATH/080602_FC20ATH_s8_RNA-seq_HepG2_Rep2_SL313.align_25.hg18.txt" Count=" 3462781" Date="080602"/>
+<Track Flowcell="FC20ATH" Lane="8" Filename="Flowcells/FC20ATH/080602_FC20ATH_s8_RNA-seq_HepG2_Rep2_SL313.align_25.hg18.txt" Count=" 3462781" Date="080602" />
 </Library>
 <Library Name="SL314">
-<Track Flowcell="FC20AUM" Lane="2" Filename="Flowcells/FC20AUM/080616_FC20AUM_s2_RNA-seq_HMEC_rep1_SL314.align_25.hg18.txt" Count=" 4056466" Date="080616"/>
+<Track Flowcell="FC20AUM" Lane="2" Filename="Flowcells/FC20AUM/080616_FC20AUM_s2_RNA-seq_HMEC_rep1_SL314.align_25.hg18.txt" Count=" 4056466" Date="080616" />
 </Library>
 <Library Name="SL315">
-<Track Flowcell="FC20AUM" Lane="3" Filename="Flowcells/FC20AUM/080616_FC20AUM_s3_RNA-seq_HMEC_rep2_SL315.align_25.hg18.txt" Count=" 3958633" Date="080616"/>
+<Track Flowcell="FC20AUM" Lane="3" Filename="Flowcells/FC20AUM/080616_FC20AUM_s3_RNA-seq_HMEC_rep2_SL315.align_25.hg18.txt" Count=" 3958633" Date="080616" />
 </Library>
 <Library Name="SL316">
-<Track Flowcell="306WKAAXX" Lane="5" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s5_RNAseq_Jurkat_rep1_SL316.align_25.hg18.txt" Count=" 2116970" Date="080728"/>
-<Track Flowcell="306WKAAXX" Lane="6" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s6_RNAseq_Jurkat_rep1_SL316.align_25.hg18.txt" Count=" 3213207" Date="080728"/>
-<Track Flowcell="FC20AUM" Lane="4" Filename="Flowcells/FC20AUM/080616_FC20AUM_s4_RNAseq_Jurkat_rep1_SL316.align_25.hg18.txt" Count=" 3926383" Date="080616"/>
+<Track Flowcell="306WKAAXX" Lane="5" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s5_RNAseq_Jurkat_rep1_SL316.align_25.hg18.txt" Count=" 2116970" Date="080728" />
+<Track Flowcell="306WKAAXX" Lane="6" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s6_RNAseq_Jurkat_rep1_SL316.align_25.hg18.txt" Count=" 3213207" Date="080728" />
+<Track Flowcell="30DAGAAXX" Lane="8" Filename="Flowcells/30DAGAAXX/080826_30DAGAAXX_s8_RNAseq_Jurkat_rep1_SL316.align_25.hg18.txt" Count=" 4938781" Date="080826" />
+<Track Flowcell="FC20AUM" Lane="4" Filename="Flowcells/FC20AUM/080616_FC20AUM_s4_RNAseq_Jurkat_rep1_SL316.align_25.hg18.txt" Count=" 3926383" Date="080616" />
 </Library>
 <Library Name="SL317">
-<Track Flowcell="306WKAAXX" Lane="7" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s7_RNAseq_Jurkat_rep2_SL317.align_25.hg18.txt" Count=" 4116201" Date="080728"/>
-<Track Flowcell="306WKAAXX" Lane="8" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s8_RNAseq_Jurkat_rep2_SL317.align_25.hg18.txt" Count=" 3689888" Date="080728"/>
-<Track Flowcell="FC20AUM" Lane="5" Filename="Flowcells/FC20AUM/080616_FC20AUM_s5_RNAseq_Jurkat_rep2_SL317.align_25.hg18.txt" Count=" 4104444" Date="080616"/>
+<Track Flowcell="306WKAAXX" Lane="7" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s7_RNAseq_Jurkat_rep2_SL317.align_25.hg18.txt" Count=" 4116201" Date="080728" />
+<Track Flowcell="306WKAAXX" Lane="8" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s8_RNAseq_Jurkat_rep2_SL317.align_25.hg18.txt" Count=" 3689888" Date="080728" />
+<Track Flowcell="FC20AUM" Lane="5" Filename="Flowcells/FC20AUM/080616_FC20AUM_s5_RNAseq_Jurkat_rep2_SL317.align_25.hg18.txt" Count=" 4104444" Date="080616" />
 </Library>
 <Library Name="SL318">
-<Track Flowcell="FC20AMC" Lane="1" Filename="Flowcells/FC20AMC/080609_FC20AMC_s1_ChIP-seq_hESC_K36_repurified_SL318.align_25.hg18.txt" Count="  971624" Date="080609"/>
+<Track Flowcell="FC20AMC" Lane="1" Filename="Flowcells/FC20AMC/080609_FC20AMC_s1_ChIP-seq_hESC_K36_repurified_SL318.align_25.hg18.txt" Count="  971624" Date="080609" />
 </Library>
 <Library Name="SL319">
-<Track Flowcell="FC20AMC" Lane="2" Filename="Flowcells/FC20AMC/080609_FC20AMC_s2_ChIP-seq_hESC_K27_repurified_SL319.align_25.hg18.txt" Count="  365209" Date="080609"/>
+<Track Flowcell="FC20AMC" Lane="2" Filename="Flowcells/FC20AMC/080609_FC20AMC_s2_ChIP-seq_hESC_K27_repurified_SL319.align_25.hg18.txt" Count="  365209" Date="080609" />
 </Library>
 <Library Name="SL320">
-<Track Flowcell="FC20AMC" Lane="3" Filename="Flowcells/FC20AMC/080609_FC20AMC_s3_ChIP-seq_hESC_Pol2_repurified_SL320.align_25.hg18.txt" Count="  643582" Date="080609"/>
+<Track Flowcell="FC20AMC" Lane="3" Filename="Flowcells/FC20AMC/080609_FC20AMC_s3_ChIP-seq_hESC_Pol2_repurified_SL320.align_25.hg18.txt" Count="  643582" Date="080609" />
 </Library>
 <Library Name="SL321">
-<Track Flowcell="FC20AMC" Lane="4" Filename="Flowcells/FC20AMC/080609_FC20AMC_s4_Input_Control_hESC_Repurified_SL321.align_25.hg18.txt" Count=" 1384822" Date="080609"/>
+<Track Flowcell="FC20AMC" Lane="4" Filename="Flowcells/FC20AMC/080609_FC20AMC_s4_Input_Control_hESC_Repurified_SL321.align_25.hg18.txt" Count=" 1384822" Date="080609" />
 </Library>
 <Library Name="SL322">
-<Track Flowcell="FC209TJ" Lane="1" Filename="Flowcells/FC209TJ/080606_FC209TJ_s1_ChIpSeq_hESCday5_K4_SL322.align_25.hg18.txt" Count="  578452" Date="080606"/>
+<Track Flowcell="FC209TJ" Lane="1" Filename="Flowcells/FC209TJ/080606_FC209TJ_s1_ChIpSeq_hESCday5_K4_SL322.align_25.hg18.txt" Count="  578452" Date="080606" />
 </Library>
 <Library Name="SL323">
-<Track Flowcell="FC209TJ" Lane="2" Filename="Flowcells/FC209TJ/080606_FC209TJ_s2_Input_Control_hESCday5_SL323.align_25.hg18.txt" Count=" 1756643" Date="080606"/>
+<Track Flowcell="FC209TJ" Lane="2" Filename="Flowcells/FC209TJ/080606_FC209TJ_s2_Input_Control_hESCday5_SL323.align_25.hg18.txt" Count=" 1756643" Date="080606" />
 </Library>
 <Library Name="SL324">
-<Track Flowcell="FC209TJ" Lane="3" Filename="Flowcells/FC209TJ/080606_FC209TJ_s3_ChIpSeq_hESCday5_K27_SL324.align_25.hg18.txt" Count=" 1306396" Date="080606"/>
+<Track Flowcell="FC209TJ" Lane="3" Filename="Flowcells/FC209TJ/080606_FC209TJ_s3_ChIpSeq_hESCday5_K27_SL324.align_25.hg18.txt" Count=" 1306396" Date="080606" />
 </Library>
 <Library Name="SL325">
-<Track Flowcell="FC209TJ" Lane="4" Filename="Flowcells/FC209TJ/080606_FC209TJ_s4_ChIpSeq_hESCday5_K36_SL325.align_25.hg18.txt" Count="  478866" Date="080606"/>
+<Track Flowcell="FC209TJ" Lane="4" Filename="Flowcells/FC209TJ/080606_FC209TJ_s4_ChIpSeq_hESCday5_K36_SL325.align_25.hg18.txt" Count="  478866" Date="080606" />
 </Library>
 <Library Name="SL326">
-<Track Flowcell="FC20AUG" Lane="1" Filename="Flowcells/FC20AUG/080612_FC20AUG_s1_RNA-seq_BJ_Rep2_75_SL326.align_25.hg18.txt" Count=" 3188417" Date="080612"/>
+<Track Flowcell="FC20AUG" Lane="1" Filename="Flowcells/FC20AUG/080612_FC20AUG_s1_RNA-seq_BJ_Rep2_75_SL326.align_25.hg18.txt" Count=" 3188417" Date="080612" />
 </Library>
 <Library Name="SL327">
-<Track Flowcell="FC20AUG" Lane="2" Filename="Flowcells/FC20AUG/080612_FC20AUG_s2_RNA-seq_K562_Rep3_75_SL327.align_25.hg18.txt" Count=" 3717306" Date="080612"/>
+<Track Flowcell="FC20AUG" Lane="2" Filename="Flowcells/FC20AUG/080612_FC20AUG_s2_RNA-seq_K562_Rep3_75_SL327.align_25.hg18.txt" Count=" 3717306" Date="080612" />
 </Library>
 <Library Name="SL328">
-<Track Flowcell="FC20AUG" Lane="3" Filename="Flowcells/FC20AUG/080612_FC20AUG_s3_RNA-seq_BJ_Rep2_7_5_SL328.align_25.hg18.txt" Count=" 3864656" Date="080612"/>
+<Track Flowcell="FC20AUG" Lane="3" Filename="Flowcells/FC20AUG/080612_FC20AUG_s3_RNA-seq_BJ_Rep2_7_5_SL328.align_25.hg18.txt" Count=" 3864656" Date="080612" />
 </Library>
 <Library Name="SL329">
-<Track Flowcell="FC20AUG" Lane="4" Filename="Flowcells/FC20AUG/080612_FC20AUG_s4_RNA-seq_K562_Rep3_7_5_SL329.align_25.hg18.txt" Count=" 3915270" Date="080612"/>
+<Track Flowcell="FC20AUG" Lane="4" Filename="Flowcells/FC20AUG/080612_FC20AUG_s4_RNA-seq_K562_Rep3_7_5_SL329.align_25.hg18.txt" Count=" 3915270" Date="080612" />
 </Library>
 <Library Name="SL330">
-<Track Flowcell="303n0aaxx" Lane="1" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s1_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 1006720" Date="080715"/>
-<Track Flowcell="303n0aaxx" Lane="2" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s2_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 1140136" Date="080715"/>
-<Track Flowcell="306WKAAXX" Lane="1" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s1_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 3860069" Date="080728"/>
-<Track Flowcell="FC20AMC" Lane="5" Filename="Flowcells/FC20AMC/080609_FC20AMC_s5_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 2586689" Date="080609"/>
-<Track Flowcell="FC306VCAAXX" Lane="1" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s1_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 2607495" Date="080725"/>
-<Track Flowcell="FC306VCAAXX" Lane="2" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s2_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 2538777" Date="080725"/>
+<Track Flowcell="303n0aaxx" Lane="1" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s1_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 1006721" Date="080715" />
+<Track Flowcell="303n0aaxx" Lane="2" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s2_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 1140136" Date="080715" />
+<Track Flowcell="306WKAAXX" Lane="1" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s1_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 3860069" Date="080728" />
+<Track Flowcell="30DC1AAXX" Lane="4" Filename="Flowcells/30DC1AAXX/080826_30DC1AAXX_s4_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 5037938" Date="080826" />
+<Track Flowcell="FC20AMC" Lane="5" Filename="Flowcells/FC20AMC/080609_FC20AMC_s5_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 2586689" Date="080609" />
+<Track Flowcell="FC306VCAAXX" Lane="1" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s1_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 2607495" Date="080725" />
+<Track Flowcell="FC306VCAAXX" Lane="2" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s2_RNA-seq_A549_Rep1_Dex_SL330.align_25.hg18.txt" Count=" 2538777" Date="080725" />
 </Library>
 <Library Name="SL331">
-<Track Flowcell="303n0aaxx" Lane="5" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s5_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 2173243" Date="080715"/>
-<Track Flowcell="303n0aaxx" Lane="6" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s6_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 2197491" Date="080715"/>
-<Track Flowcell="306WKAAXX" Lane="2" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s2_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 3706943" Date="080728"/>
-<Track Flowcell="FC20AMC" Lane="6" Filename="Flowcells/FC20AMC/080609_FC20AMC_s6_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 2877770" Date="080609"/>
-<Track Flowcell="FC306VCAAXX" Lane="5" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s5_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 1159780" Date="080725"/>
-<Track Flowcell="FC306VCAAXX" Lane="6" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s6_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 1488352" Date="080725"/>
+<Track Flowcell="303n0aaxx" Lane="5" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s5_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 2173243" Date="080715" />
+<Track Flowcell="303n0aaxx" Lane="6" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s6_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 2197491" Date="080715" />
+<Track Flowcell="306WKAAXX" Lane="2" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s2_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 3706943" Date="080728" />
+<Track Flowcell="30DC1AAXX" Lane="5" Filename="Flowcells/30DC1AAXX/080826_30DC1AAXX_s5_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 5087597" Date="080826" />
+<Track Flowcell="FC20AMC" Lane="6" Filename="Flowcells/FC20AMC/080609_FC20AMC_s6_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 2877770" Date="080609" />
+<Track Flowcell="FC306VCAAXX" Lane="5" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s5_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 1159780" Date="080725" />
+<Track Flowcell="FC306VCAAXX" Lane="6" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s6_RNA-seq_A549_Rep1_EtOH_SL331.align_25.hg18.txt" Count=" 1488352" Date="080725" />
 </Library>
 <Library Name="SL332">
-<Track Flowcell="303n0aaxx" Lane="3" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s3_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 1087155" Date="080715"/>
-<Track Flowcell="303n0aaxx" Lane="4" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s4_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 1070083" Date="080715"/>
-<Track Flowcell="306WKAAXX" Lane="3" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s3_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 4289055" Date="080728"/>
-<Track Flowcell="FC20AMC" Lane="7" Filename="Flowcells/FC20AMC/080609_FC20AMC_s7_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 2950811" Date="080609"/>
-<Track Flowcell="FC306VCAAXX" Lane="3" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s3_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 1260681" Date="080725"/>
+<Track Flowcell="303n0aaxx" Lane="3" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s3_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 1087155" Date="080715" />
+<Track Flowcell="303n0aaxx" Lane="4" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s4_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 1070083" Date="080715" />
+<Track Flowcell="306WKAAXX" Lane="3" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s3_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 4289055" Date="080728" />
+<Track Flowcell="30DC1AAXX" Lane="6" Filename="Flowcells/30DC1AAXX/080826_30DC1AAXX_s6_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 5053382" Date="080826" />
+<Track Flowcell="30DC1AAXX" Lane="7" Filename="Flowcells/30DC1AAXX/080826_30DC1AAXX_s7_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 4921156" Date="080826" />
+<Track Flowcell="FC20AMC" Lane="7" Filename="Flowcells/FC20AMC/080609_FC20AMC_s7_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 2950811" Date="080609" />
+<Track Flowcell="FC306VCAAXX" Lane="3" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s3_RNA-seq_A549_Rep2_Dex_SL332.align_25.hg18.txt" Count=" 1260681" Date="080725" />
 </Library>
 <Library Name="SL333">
-<Track Flowcell="303n0aaxx" Lane="7" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s7_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 1479883" Date="080715"/>
-<Track Flowcell="303n0aaxx" Lane="8" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s8_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 1429681" Date="080715"/>
-<Track Flowcell="306WKAAXX" Lane="4" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s4_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 3317843" Date="080728"/>
-<Track Flowcell="FC20AMC" Lane="8" Filename="Flowcells/FC20AMC/080609_FC20AMC_s8_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 2863677" Date="080609"/>
-<Track Flowcell="FC306VCAAXX" Lane="7" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s7_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 3146212" Date="080725"/>
-<Track Flowcell="FC306VCAAXX" Lane="8" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s8_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 2107413" Date="080725"/>
+<Track Flowcell="303n0aaxx" Lane="7" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s7_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 1479883" Date="080715" />
+<Track Flowcell="303n0aaxx" Lane="8" Filename="Flowcells/303n0aaxx/080715_303n0aaxx_s8_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 1429681" Date="080715" />
+<Track Flowcell="306WKAAXX" Lane="4" Filename="Flowcells/306WKAAXX/080728_306WKAAXX_s4_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 3317843" Date="080728" />
+<Track Flowcell="30DC1AAXX" Lane="8" Filename="Flowcells/30DC1AAXX/080826_30DC1AAXX_s8_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 4215546" Date="080826" />
+<Track Flowcell="FC20AMC" Lane="8" Filename="Flowcells/FC20AMC/080609_FC20AMC_s8_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 2863677" Date="080609" />
+<Track Flowcell="FC306VCAAXX" Lane="7" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s7_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 3146212" Date="080725" />
+<Track Flowcell="FC306VCAAXX" Lane="8" Filename="Flowcells/FC306VCAAXX/080725_FC306VCAAXX_s8_RNA-seq_A549_Rep2_EtOH_SL333.align_25.hg18.txt" Count=" 2107413" Date="080725" />
 </Library>
 <Library Name="SL334">
-<Track Flowcell="303y5aaxx" Lane="5" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s5_Pol2_EtOH_chIP_Rep1_SL334.align_25.hg18.txt" Count=" 4221253" Date="080715"/>
-<Track Flowcell="303y5aaxx" Lane="6" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s6_Pol2_EtOH_chIP_Rep1_SL334.align_25.hg18.txt" Count=" 4389966" Date="080715"/>
+<Track Flowcell="303y5aaxx" Lane="5" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s5_Pol2_EtOH_chIP_Rep1_SL334.align_25.hg18.txt" Count=" 4221253" Date="080715" />
+<Track Flowcell="303y5aaxx" Lane="6" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s6_Pol2_EtOH_chIP_Rep1_SL334.align_25.hg18.txt" Count=" 4389966" Date="080715" />
+<Track Flowcell="30DAGAAXX" Lane="5" Filename="Flowcells/30DAGAAXX/080826_30DAGAAXX_s5_A549_Pol2_EtOH_chIP_Rep2_SL334.align_25.hg18.txt" Count=" 6048948" Date="080826" />
 </Library>
 <Library Name="SL335">
-<Track Flowcell="303y5aaxx" Lane="7" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s7_Input_RXLCh_+Dex_SL335.align_25.hg18.txt" Count=" 4320528" Date="080715"/>
-<Track Flowcell="303y5aaxx" Lane="8" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s8_Input_RXLCh_+Dex_SL335.align_25.hg18.txt" Count=" 3212232" Date="080715"/>
+<Track Flowcell="303y5aaxx" Lane="7" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s7_Input_RXLCh_+Dex_SL335.align_25.hg18.txt" Count=" 4320528" Date="080715" />
+<Track Flowcell="303y5aaxx" Lane="8" Filename="Flowcells/303y5aaxx/080715_303y5aaxx_s8_Input_RXLCh_+Dex_SL335.align_25.hg18.txt" Count=" 3212232" Date="080715" />
+<Track Flowcell="30DAGAAXX" Lane="6" Filename="Flowcells/30DAGAAXX/080826_30DAGAAXX_s6_Input_RXLCh_Dex_SL335.align_25.hg18.txt" Count=" 5399341" Date="080826" />
 </Library>
 <Library Name="SL336">
-<Track Flowcell="303PNAXX" Lane="1" Filename="Flowcells/303PNAXX/080718_303PNAXX_s1_Input_Control_RXLCh_Neuro2A_Rep1_SL336.align_25.mm9.txt" Count=" 4919007" Date="080718"/>
+<Track Flowcell="303PNAXX" Lane="1" Filename="Flowcells/303PNAXX/080718_303PNAXX_s1_Input_Control_RXLCh_Neuro2A_Rep1_SL336.align_25.mm9.txt" Count=" 4919007" Date="080718" />
 </Library>
 <Library Name="SL337">
-<Track Flowcell="303PNAXX" Lane="2" Filename="Flowcells/303PNAXX/080718_303PNAXX_s2_Input_Control_RXLCh_CAD_Rep1_SL337.align_25.mm9.txt" Count=" 5960847" Date="080718"/>
+<Track Flowcell="303PNAXX" Lane="2" Filename="Flowcells/303PNAXX/080718_303PNAXX_s2_Input_Control_RXLCh_CAD_Rep1_SL337.align_25.mm9.txt" Count=" 5960847" Date="080718" />
 </Library>
 <Library Name="SL338">
-<Track Flowcell="303PNAXX" Lane="3" Filename="Flowcells/303PNAXX/080718_303PNAXX_s3_Neuro2A_CTCF_Rep1_SL338.align_25.mm9.txt" Count=" 5871158" Date="080718"/>
+<Track Flowcell="303PNAXX" Lane="3" Filename="Flowcells/303PNAXX/080718_303PNAXX_s3_Neuro2A_CTCF_Rep1_SL338.align_25.mm9.txt" Count=" 5871158" Date="080718" />
 </Library>
 <Library Name="SL339">
-<Track Flowcell="303PNAXX" Lane="4" Filename="Flowcells/303PNAXX/080718_303PNAXX_s4_CAD_CTCF_Rep1_SL339.align_25.mm9.txt" Count=" 5226675" Date="080718"/>
+<Track Flowcell="303PNAXX" Lane="4" Filename="Flowcells/303PNAXX/080718_303PNAXX_s4_CAD_CTCF_Rep1_SL339.align_25.mm9.txt" Count=" 5226675" Date="080718" />
 </Library>
 <Library Name="SL340">
-<Track Flowcell="303PNAXX" Lane="5" Filename="Flowcells/303PNAXX/080718_303PNAXX_s5_Neuro2A_USF1_Rep1_SL340.align_25.mm9.txt" Count=" 5113687" Date="080718"/>
+<Track Flowcell="303PNAXX" Lane="5" Filename="Flowcells/303PNAXX/080718_303PNAXX_s5_Neuro2A_USF1_Rep1_SL340.align_25.mm9.txt" Count=" 5113687" Date="080718" />
 </Library>
 <Library Name="SL341">
-<Track Flowcell="303PNAXX" Lane="6" Filename="Flowcells/303PNAXX/080718_303PNAXX_s6_CAD_USF1_Rep1_SL341.align_25.mm9.txt" Count=" 5580547" Date="080718"/>
+<Track Flowcell="303PNAXX" Lane="6" Filename="Flowcells/303PNAXX/080718_303PNAXX_s6_CAD_USF1_Rep1_SL341.align_25.mm9.txt" Count=" 5580547" Date="080718" />
 </Library>
 <Library Name="SL342">
-<Track Flowcell="303PNAXX" Lane="7" Filename="Flowcells/303PNAXX/080718_303PNAXX_s7_Neuro2A_USF2_Rep1_SL342.align_25.mm9.txt" Count=" 4845266" Date="080718"/>
+<Track Flowcell="303PNAXX" Lane="7" Filename="Flowcells/303PNAXX/080718_303PNAXX_s7_Neuro2A_USF2_Rep1_SL342.align_25.mm9.txt" Count=" 4845266" Date="080718" />
 </Library>
 <Library Name="SL343">
-<Track Flowcell="303PNAXX" Lane="8" Filename="Flowcells/303PNAXX/080718_303PNAXX_s8_CAD_USF2_Rep1_SL343.align_25.mm9.txt" Count=" 4722617" Date="080718"/>
+<Track Flowcell="303PNAXX" Lane="8" Filename="Flowcells/303PNAXX/080718_303PNAXX_s8_CAD_USF2_Rep1_SL343.align_25.mm9.txt" Count=" 4722617" Date="080718" />
 </Library>
 <Library Name="SL344">
-<Track Flowcell="FC20AUL" Lane="5" Filename="Flowcells/FC20AUL/080621_FC20AUL_s5_Input_Control_HMEC_rep1_SL344.align_25.hg18.txt" Count=" 1854345" Date="080621"/>
-<Track Flowcell="FC20AUL" Lane="6" Filename="Flowcells/FC20AUL/080621_FC20AUL_s6_Input_Control_HMEC_rep1_SL344.align_25.hg18.txt" Count=" 2139393" Date="080621"/>
+<Track Flowcell="FC20AUL" Lane="5" Filename="Flowcells/FC20AUL/080621_FC20AUL_s5_Input_Control_HMEC_rep1_SL344.align_25.hg18.txt" Count=" 1854345" Date="080621" />
+<Track Flowcell="FC20AUL" Lane="6" Filename="Flowcells/FC20AUL/080621_FC20AUL_s6_Input_Control_HMEC_rep1_SL344.align_25.hg18.txt" Count=" 2139393" Date="080621" />
 </Library>
 <Library Name="SL345">
-<Track Flowcell="FC20AUL" Lane="7" Filename="Flowcells/FC20AUL/080621_FC20AUL_s7_Input_Control_HMEC_rep2_SL345.align_25.hg18.txt" Count=" 1981441" Date="080621"/>
-<Track Flowcell="FC20AUL" Lane="8" Filename="Flowcells/FC20AUL/080621_FC20AUL_s8_Input_Control_HMEC_rep2_SL345.align_25.hg18.txt" Count=" 2279789" Date="080621"/>
+<Track Flowcell="FC20AUL" Lane="7" Filename="Flowcells/FC20AUL/080621_FC20AUL_s7_Input_Control_HMEC_rep2_SL345.align_25.hg18.txt" Count=" 1981441" Date="080621" />
+<Track Flowcell="FC20AUL" Lane="8" Filename="Flowcells/FC20AUL/080621_FC20AUL_s8_Input_Control_HMEC_rep2_SL345.align_25.hg18.txt" Count=" 2279789" Date="080621" />
+</Library>
+<Library Name="SL346">
+<Track Flowcell="306WPAAXX" Lane="7" Filename="Flowcells/306WPAAXX/080731_306WPAAXX_s7_ChIP-seq_HepG2_Rep1_SRF_SL346.align_25.hg18.txt" Count=" 2030668" Date="080731" />
+<Track Flowcell="30EFCAAXX" Lane="6" Filename="Flowcells/30EFCAAXX/080910_30EFCAAXX_s6_ChIP-seq_HepG2_Rep1_SRF_SL346.align_25.hg18.txt" Count=" 1131395" Date="080910" />
+<Track Flowcell="30EH5AAXX" Lane="3" Filename="Flowcells/30EH5AAXX/080910_30EH5AAXX_s3_ChIP-seq_HepG2_Rep1_SRF_SL346.align_25.hg18.txt" Count="  656597" Date="080910" />
+</Library>
+<Library Name="SL347">
+<Track Flowcell="306WPAAXX" Lane="8" Filename="Flowcells/306WPAAXX/080731_306WPAAXX_s8_ChIP-seq_HepG2_Rep2_SRF_SL347.align_25.hg18.txt" Count=" 1645829" Date="080731" />
+</Library>
+<Library Name="SL348">
+<Track Flowcell="306WPAAXX" Lane="5" Filename="Flowcells/306WPAAXX/080731_306WPAAXX_s5_ChIP-seq_HepG2_Rep1_RNA_Pol2_SL348.align_25.hg18.txt" Count=" 3221651" Date="080731" />
+</Library>
+<Library Name="SL349">
+<Track Flowcell="306WPAAXX" Lane="6" Filename="Flowcells/306WPAAXX/080731_306WPAAXX_s6_ChIP-seq_HepG2_Rep2_RNA_Pol2_SL349.align_25.hg18.txt" Count=" 3150928" Date="080731" />
 </Library>
 <Library Name="SL350">
-<Track Flowcell="FC20AUL" Lane="1" Filename="Flowcells/FC20AUL/080621_FC20AUL_s1_ChIPSeq_HMEC_Rep1_RNApol2_SL350.align_25.hg18.txt" Count=" 1211303" Date="080621"/>
-<Track Flowcell="FC20AUL" Lane="2" Filename="Flowcells/FC20AUL/080621_FC20AUL_s2_ChIPSeq_HMEC_Rep1_RNApol2_SL350.align_25.hg18.txt" Count=" 1646993" Date="080621"/>
+<Track Flowcell="FC20AUL" Lane="1" Filename="Flowcells/FC20AUL/080621_FC20AUL_s1_ChIPSeq_HMEC_Rep1_RNApol2_SL350.align_25.hg18.txt" Count=" 1211303" Date="080621" />
+<Track Flowcell="FC20AUL" Lane="2" Filename="Flowcells/FC20AUL/080621_FC20AUL_s2_ChIPSeq_HMEC_Rep1_RNApol2_SL350.align_25.hg18.txt" Count=" 1646993" Date="080621" />
 </Library>
 <Library Name="SL351">
-<Track Flowcell="FC20AUL" Lane="3" Filename="Flowcells/FC20AUL/080621_FC20AUL_s3_chIPSeq_HMEC_Rep2_RNApol2_SL351.align_25.hg18.txt" Count=" 1810613" Date="080621"/>
-<Track Flowcell="FC20AUL" Lane="4" Filename="Flowcells/FC20AUL/080621_FC20AUL_s4_chIPSeq_HMEC_Rep1_RNApol2_SL351.align_25.hg18.txt" Count=" 1866673" Date="080621"/>
+<Track Flowcell="FC20AUL" Lane="3" Filename="Flowcells/FC20AUL/080621_FC20AUL_s3_chIPSeq_HMEC_Rep2_RNApol2_SL351.align_25.hg18.txt" Count=" 1810613" Date="080621" />
+<Track Flowcell="FC20AUL" Lane="4" Filename="Flowcells/FC20AUL/080621_FC20AUL_s4_chIPSeq_HMEC_Rep1_RNApol2_SL351.align_25.hg18.txt" Count=" 1866673" Date="080621" />
+</Library>
+<Library Name="SL352">
+<Track Flowcell="30CLAAXX" Lane="1" Filename="Flowcells/30CLAAXX/080815_30CLAAXX_s1_RNAseq_mouse_skin_gb1_SL352.align_25.mm9.txt" Count=" 3921939" Date="080815" />
+<Track Flowcell="30CLAAXX" Lane="1" Filename="Flowcells/DATA_FROM_HA/080815_30CLAAXX_s1_RNAseq_mouse_skin_gb1_SL352.align_25.mm9.txt" Count=" 1224253" Date="080815" />
+</Library>
+<Library Name="SL353">
+<Track Flowcell="30CLAAXX" Lane="2" Filename="Flowcells/30CLAAXX/080815_30CLAAXX_s2_RNAseq_mouse_skin_gb2_SL353.align_25.mm9.txt" Count=" 4617024" Date="080815" />
+</Library>
+<Library Name="SL354">
+<Track Flowcell="30CLAAXX" Lane="3" Filename="Flowcells/30CLAAXX/080815_30CLAAXX_s3_RNAseq_mouse_skin_gb3_SL354.align_25.mm9.txt" Count=" 4018744" Date="080815" />
+</Library>
+<Library Name="SL355">
+<Track Flowcell="30CLAAXX" Lane="4" Filename="Flowcells/30CLAAXX/080815_30CLAAXX_s4_RNAseq_mouse_skin_gb4_SL355.align_25.mm9.txt" Count=" 3719245" Date="080815" />
+</Library>
+<Library Name="SL356">
+<Track Flowcell="30CLAAXX" Lane="5" Filename="Flowcells/30CLAAXX/080815_30CLAAXX_s5_Input_Control_ChIP-seq_protocadherin_tagged_SL356.align_25.hg18.txt" Count=" 6608872" Date="080815" />
+</Library>
+<Library Name="SL357">
+<Track Flowcell="30CLAAXX" Lane="6" Filename="Flowcells/30CLAAXX/080815_30CLAAXX_s6_ChIP-seq_protocadherin_alpha6_tagged_SL357.align_25.hg18.txt" Count=" 6057062" Date="080815" />
 </Library>
 <Library Name="SL358">
-<Track Flowcell="306WDAAXX" Lane="1" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s1_ChIP-seq_HepG2_Rep1_TAF250_SL358.align_25.hg18.txt" Count=" 3950828" Date="080725"/>
-<Track Flowcell="306WDAAXX" Lane="2" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s2_ChIP-seq_HepG2_Rep1_TAF250_SL358.align_25.hg18.txt" Count=" 4064007" Date="080725"/>
+<Track Flowcell="306WDAAXX" Lane="1" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s1_ChIP-seq_HepG2_Rep1_TAF250_SL358.align_25.hg18.txt" Count=" 3950828" Date="080725" />
+<Track Flowcell="306WDAAXX" Lane="2" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s2_ChIP-seq_HepG2_Rep1_TAF250_SL358.align_25.hg18.txt" Count=" 4064007" Date="080725" />
+<Track Flowcell="306WPAAXX" Lane="3" Filename="Flowcells/306WPAAXX/080731_306WPAAXX_s3_ChIP-seq_HepG2_Rep1_TAF250_SL358.align_25.hg18.txt" Count=" 3307317" Date="080731" />
 </Library>
 <Library Name="SL359">
-<Track Flowcell="306WDAAXX" Lane="3" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s3_ChIP-seq_HepG2_Rep2_TAF250_SL359.align_25.hg18.txt" Count=" 2721181" Date="080725"/>
-<Track Flowcell="306WDAAXX" Lane="4" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s4_ChIP-seq_HepG2_Rep2_TAF250_SL359.align_25.hg18.txt" Count=" 3705820" Date="080725"/>
+<Track Flowcell="306WDAAXX" Lane="3" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s3_ChIP-seq_HepG2_Rep2_TAF250_SL359.align_25.hg18.txt" Count=" 2721181" Date="080725" />
+<Track Flowcell="306WDAAXX" Lane="4" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s4_ChIP-seq_HepG2_Rep2_TAF250_SL359.align_25.hg18.txt" Count=" 3705820" Date="080725" />
+<Track Flowcell="306WPAAXX" Lane="4" Filename="Flowcells/306WPAAXX/080731_306WPAAXX_s4_ChIP-seq_HepG2_Rep2_TAF250_SL359.align_25.hg18.txt" Count=" 3232318" Date="080731" />
+<Track Flowcell="30EG4AAXX" Lane="7" Filename="Flowcells/30EG4AAXX/080916_30EG4AAXX_s7_ChIP-seq_HepG2_Rep2_TAF250_SL359.align_25.hg18.txt" Count=" 4307991" Date="080916" />
 </Library>
 <Library Name="SL360">
-<Track Flowcell="306WDAAXX" Lane="5" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s5_ChIP-seq_BJ_Fibroblast_Rep1_RNAPol2_SL360.align_25.hg18.txt" Count=" 3104910" Date="080725"/>
+<Track Flowcell="306WDAAXX" Lane="5" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s5_ChIP-seq_BJ_Fibroblast_Rep1_RNAPol2_SL360.align_25.hg18.txt" Count=" 3104910" Date="080725" />
 </Library>
 <Library Name="SL361">
-<Track Flowcell="306WDAAXX" Lane="6" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s6_ChIP-seq_BJ_Fibroblast_Rep2_RNAPol2_SL361.align_25.hg18.txt" Count=" 2279682" Date="080725"/>
+<Track Flowcell="306WDAAXX" Lane="6" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s6_ChIP-seq_BJ_Fibroblast_Rep2_RNAPol2_SL361.align_25.hg18.txt" Count=" 2279682" Date="080725" />
 </Library>
 <Library Name="SL362">
-<Track Flowcell="306WDAAXX" Lane="7" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s7_Input_Control_BJ_Fibroblast_Rep1_SL362.align_25.hg18.txt" Count=" 1305197" Date="080725"/>
+<Track Flowcell="306WDAAXX" Lane="7" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s7_Input_Control_BJ_Fibroblast_Rep1_SL362.align_25.hg18.txt" Count=" 1305197" Date="080725" />
 </Library>
 <Library Name="SL363">
-<Track Flowcell="306WDAAXX" Lane="8" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s8_Input_Control_BJ_Fibroblast_Rep2_SL363.align_25.hg18.txt" Count=" 1981571" Date="080725"/>
+<Track Flowcell="306WDAAXX" Lane="8" Filename="Flowcells/306WDAAXX/080725_306WDAAXX_s8_Input_Control_BJ_Fibroblast_Rep2_SL363.align_25.hg18.txt" Count=" 1981571" Date="080725" />
 </Library>
-<Library Name="SL400">
-<Track Flowcell="FCAlyssa" Lane="1" Filename="Flowcells/Alyssa/080731_FCAlyssa_s1_BG_SL400.align_25.mm9.txt" Count=" 3652474" Date="080731"/>
+<Library Name="SL368">
+<Track Flowcell="30DRRAAXX" Lane="8" Filename="Flowcells/30DRRAAXX/080919_30DRRAAXX_s8_Input_Control_RXLCh_Neuro2A_Rep2_SL368.align_25.mm9.txt" Count=" 2783931" Date="080919" />
 </Library>
-<Library Name="SL401">
-<Track Flowcell="FCAlyssa" Lane="2" Filename="Flowcells/Alyssa/080731_FCAlyssa_s2_Pol2_SL401.align_25.mm9.txt" Count=" 3895128" Date="080731"/>
+<Library Name="SL369">
+<Track Flowcell="30DRRAAXX" Lane="7" Filename="Flowcells/30DRRAAXX/080919_30DRRAAXX_s7_Input_Control_RXLCh_CAD_Rep2_SL369.align_25.mm9.txt" Count=" 2520025" Date="080919" />
 </Library>
-<Library Name="SL402">
-<Track Flowcell="FCAlyssa" Lane="3" Filename="Flowcells/Alyssa/080731_FCAlyssa_s3_CHD1L_SL402.align_25.mm9.txt" Count=" 4498952" Date="080731"/>
+<Library Name="SL370">
+<Track Flowcell="30DRRAAXX" Lane="6" Filename="Flowcells/30DRRAAXX/080919_30DRRAAXX_s6_Neuro2A_CTCF_Rep2_SL370.align_25.mm9.txt" Count=" 3046099" Date="080919" />
+</Library>
+<Library Name="SL371">
+<Track Flowcell="30DRRAAXX" Lane="5" Filename="Flowcells/30DRRAAXX/080919_30DRRAAXX_s5_CAD_CTCF_Rep2_SL371.align_25.mm9.txt" Count=" 3466060" Date="080919" />
+</Library>
+<Library Name="SL372">
+<Track Flowcell="30DRRAAXX" Lane="4" Filename="Flowcells/30DRRAAXX/080919_30DRRAAXX_s4_Neuro2A_USF1_Rep2_SL372.align_25.mm9.txt" Count=" 2857481" Date="080919" />
+</Library>
+<Library Name="SL373">
+<Track Flowcell="30DRRAAXX" Lane="3" Filename="Flowcells/30DRRAAXX/080919_30DRRAAXX_s3_CAD_USF1_Rep2_SL373.align_25.mm9.txt" Count=" 3741192" Date="080919" />
+</Library>
+<Library Name="SL374">
+<Track Flowcell="30DRRAAXX" Lane="2" Filename="Flowcells/30DRRAAXX/080919_30DRRAAXX_s2_Neuro2A_USF2_Rep2_SL374.align_25.mm9.txt" Count=" 4160807" Date="080919" />
+</Library>
+<Library Name="SL375">
+<Track Flowcell="30DRRAAXX" Lane="1" Filename="Flowcells/30DRRAAXX/080919_30DRRAAXX_s1_CAD_USF2_Rep2_SL375.align_25.mm9.txt" Count=" 2005344" Date="080919" />
+</Library>
+<Library Name="SL376">
+<Track Flowcell="30CUNAAXX" Lane="1" Filename="Flowcells/30CUNAAXX/080918_30CUNAAXX_s1_A549_P65_Dex_Rep2_SL376.align_25.hg18.txt" Count="  506090" Date="080918" />
+</Library>
+<Library Name="SL377">
+<Track Flowcell="30CUNAAXX" Lane="2" Filename="Flowcells/30CUNAAXX/080918_30CUNAAXX_s2_A549_P65_EtOH_Rep2_SL377.align_25.hg18.txt" Count=" 1618541" Date="080918" />
+</Library>
+<Library Name="SL378">
+<Track Flowcell="30CUNAAXX" Lane="3" Filename="Flowcells/30CUNAAXX/080918_30CUNAAXX_s3_A549_Pol2Ser2_Dex_Rep2_SL378.align_25.hg18.txt" Count=" 2773966" Date="080918" />
+<Track Flowcell="30CUNAAXX" Lane="7" Filename="Flowcells/30CUNAAXX/080918_30CUNAAXX_s7_A549_Pol2Ser2_Dex_Rep2_SL378.align_25.hg18.txt" Count=" 3050258" Date="080918" />
+</Library>
+<Library Name="SL379">
+<Track Flowcell="30CUNAAXX" Lane="4" Filename="Flowcells/30CUNAAXX/080918_30CUNAAXX_s4_A549_Pol2Ser2_EtOH_Rep2_SL379.align_25.hg18.txt" Count=" 1315068" Date="080918" />
+<Track Flowcell="30CUNAAXX" Lane="8" Filename="Flowcells/30CUNAAXX/080918_30CUNAAXX_s8_A549_Pol2Ser2_EtOH_Rep2_SL379.align_25.hg18.txt" Count=" 2957711" Date="080918" />
+</Library>
+<Library Name="SL388">
+<Track Flowcell="30EF9AAXX" Lane="8" Filename="Flowcells/30EF9AAXX/080916_30EF9AAXX_s8_RNAseq_mtN_mtG_7d_SL388.align_25.mm9.txt" Count=" 4555457" Date="080916" />
+</Library>
+<Library Name="SL389">
+<Track Flowcell="30EF9AAXX" Lane="7" Filename="Flowcells/30EF9AAXX/080916_30EF9AAXX_s7_RNAseq_mtN_WTG_7d_SL389.align_25.mm9.txt" Count="    2247" Date="080916" />
+</Library>
+<Library Name="SL390">
+<Track Flowcell="30EF9AAXX" Lane="6" Filename="Flowcells/30EF9AAXX/080916_30EF9AAXX_s6_RNAseq_WTN_mtG_7d_SL390.align_25.mm9.txt" Count=" 5472114" Date="080916" />
+</Library>
+<Library Name="SL391">
+<Track Flowcell="30EF9AAXX" Lane="5" Filename="Flowcells/30EF9AAXX/080916_30EF9AAXX_s5_RNAseq_WTN_WTG_7d_SL391.align_25.mm9.txt" Count=" 6010993" Date="080916" />
+</Library>
+<Library Name="SL392">
+<Track Flowcell="30EF9AAXX" Lane="4" Filename="Flowcells/30EF9AAXX/080916_30EF9AAXX_s4_RNAseq_mtG_mtN_7d_SL392.align_25.mm9.txt" Count=" 5573656" Date="080916" />
+</Library>
+<Library Name="SL393">
+<Track Flowcell="30EF9AAXX" Lane="3" Filename="Flowcells/30EF9AAXX/080916_30EF9AAXX_s3_RNAseq_WTG_mtN_7d_SL393.align_25.mm9.txt" Count=" 5993678" Date="080916" />
+</Library>
+<Library Name="SL394">
+<Track Flowcell="30EF9AAXX" Lane="2" Filename="Flowcells/30EF9AAXX/080916_30EF9AAXX_s2_RNAseq_mtG_WTN_7d_SL394.align_25.mm9.txt" Count=" 5988007" Date="080916" />
+</Library>
+<Library Name="SL395">
+<Track Flowcell="30EF9AAXX" Lane="1" Filename="Flowcells/30EF9AAXX/080916_30EF9AAXX_s1_RNAseq_WTG_WTN_7d_SL395.align_25.mm9.txt" Count=" 5716492" Date="080916" />
+</Library>
+<Library Name="SL396">
+<Track Flowcell="30EG4AAXX" Lane="6" Filename="Flowcells/30EG4AAXX/080916_30EG4AAXX_s6_RNAseq_4484-17_occipital_cortex_SL396.align_25.hg18.txt" Count=" 5908254" Date="080916" />
+</Library>
+<Library Name="SL397">
+<Track Flowcell="30EG4AAXX" Lane="5" Filename="Flowcells/30EG4AAXX/080916_30EG4AAXX_s5_RNAseq_4484-6_basal_ganglia_SL397.align_25.hg18.txt" Count=" 5949974" Date="080916" />
+</Library>
+<Library Name="SL398">
+<Track Flowcell="30CUNAAXX" Lane="5" Filename="Flowcells/30CUNAAXX/080918_30CUNAAXX_s5_A549_Pol2Ser2_Dex_Rep3_SL398.align_25.hg18.txt" Count=" 1352310" Date="080918" />
+<Track Flowcell="30EH5AAXX" Lane="1" Filename="Flowcells/30EH5AAXX/080910_30EH5AAXX_s1_A549_Pol2Ser2_Dex_Rep3_SL398.align_25.hg18.txt" Count=" 2249460" Date="080910" />
+</Library>
+<Library Name="SL399">
+<Track Flowcell="30CUNAAXX" Lane="6" Filename="Flowcells/30CUNAAXX/080918_30CUNAAXX_s6_A549_Pol2Ser2_EtOH_Rep3_SL399.align_25.hg18.txt" Count=" 1475564" Date="080918" />
+<Track Flowcell="30EH5AAXX" Lane="2" Filename="Flowcells/30EH5AAXX/080910_30EH5AAXX_s2_A549_Pol2Ser2_EtOH_Rep3_SL399.align_25.hg18.txt" Count=" 2020061" Date="080910" />
+</Library>
+<Library Name="SL415">
+<Track Flowcell="30EH5AAXX" Lane="4" Filename="Flowcells/30EH5AAXX/080910_30EH5AAXX_s4_A549_ChIP_NFkB_Dex_R3_SL415.align_25.hg18.txt" Count=" 1605808" Date="080910" />
+</Library>
+<Library Name="SL419">
+<Track Flowcell="30EG4AAXX" Lane="1" Filename="Flowcells/30EG4AAXX/080916_30EG4AAXX_s1_GM12878_Rep1_NFATc1_SL419.align_25.hg18.txt" Count=" 3203524" Date="080916" />
+</Library>
+<Library Name="SL420">
+<Track Flowcell="30EG4AAXX" Lane="2" Filename="Flowcells/30EG4AAXX/080916_30EG4AAXX_s2_K562_Rep1_NFATc1_SL420.align_25.hg18.txt" Count=" 4198383" Date="080916" />
+</Library>
+<Library Name="SL421">
+<Track Flowcell="30EG4AAXX" Lane="3" Filename="Flowcells/30EG4AAXX/080916_30EG4AAXX_s3_GM12878_Dex_Rep1_GR_ChIP_SL421.align_25.hg18.txt" Count=" 5259681" Date="080916" />
+</Library>
+<Library Name="SL422">
+<Track Flowcell="30EG4AAXX" Lane="4" Filename="Flowcells/30EG4AAXX/080916_30EG4AAXX_s4_GM12878_EtOH_Rep1_GR_ChIP_SL422.align_25.hg18.txt" Count=" 3451771" Date="080916" />
 </Library>
 </Libraries>

@@ -6,6 +6,8 @@ class Library_Inline(admin.TabularInline):
   model = Library
 
 class CelllineOptions(admin.ModelAdmin):
+    list_display = ('cellline_name', 'nickname', 'notes')
+    search_fields = ('cellline_name', 'nickname', 'notes')
     fieldsets = (
       (None, {
           'fields': (('cellline_name'),('notes'),)
@@ -16,7 +18,7 @@ class LibraryOptions(admin.ModelAdmin):
     date_hierarchy = "creation_date"
     save_as = True
     save_on_top = True
-    search_fieldsets = (
+    search_fields = (
         'library_id',
         'library_name',
         'cell_line__cellline_name',
@@ -78,6 +80,7 @@ class AffiliationOptions(admin.ModelAdmin):
 #   inlines = [Library_Inline]
 
 class AntibodyOptions(admin.ModelAdmin):
+    search_fields = ('antigene','nickname','catalog','antibodies','source','biology','notes')
     list_display = ('antigene','nickname','antibodies','catalog','source','biology','notes')
     list_filter = ('antibodies','source')
     fieldsets = (

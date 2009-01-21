@@ -135,7 +135,9 @@ class Library(models.Model):
                                      default='RNA-seq')
   
   creation_date = models.DateField(blank=True, null=True)
-  made_for = models.ForeignKey(User)
+  # made_for = models.ForeignKey(User)
+  made_for = models.CharField(max_length=50, blank=True, 
+      verbose_name='ChIP/DNA/RNA Made By')
   made_by = models.CharField(max_length=50, blank=True, default="Lorian")
   
   PROTOCOL_END_POINTS = (

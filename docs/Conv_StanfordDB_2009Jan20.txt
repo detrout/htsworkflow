@@ -1,0 +1,21 @@
+# mostly I just renamed tables
+# 
+
+alter table analys_track_projects rename to analysis_projects;
+alter table analys_track_project rename to analysis_project;
+alter table analys_track_project_tasks rename to analysis_project_tasks;
+alter table analys_track_task rename to analysis_task;
+alter table exp_track_datarun rename to experiments_datarun;
+alter table exp_track_flowcell rename to experiments_flowcell;
+alter table fctracker_affiliation rename to samples_affiliation;
+alter table fctracker_antibody rename to samples_antibody;
+alter table fctracker_cellline rename to samples_cellline;
+alter table fctracker_condition rename to samples_condition;
+alter table fctracker_flowcell rename to samples_flowcell;
+alter table fctracker_library rename to samples_library;
+alter table fctracker_library_affiliations rename to samples_library_affiliations;
+alter table fctracker_library_tags rename to samples_library_tags;
+alter table fctracker_primary rename to samples_primer;
+alter table fctracker_species rename to samples_species;
+alter table fctracker_tag rename to samples_tag;
+alter table htsw_reports_progressreport rename to reports_progressreport;

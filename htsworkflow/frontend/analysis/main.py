@@ -66,17 +66,44 @@ def getProjects(request):
           outputfile += '\n'
           if (t.apply_calc == 'QuEST' or t.apply_calc == 'WingPeaks' or t.apply_calc == 'MACS'):
             outputfile += '\n<PeakCalling TaskId="'+t.id.__str__()+'" Name="'+t.task_name+'" Caller="'+t.apply_calc+'" Genome="'+t.subject1.library_species.use_genome_build+'">'
-            outputfile += '\n<Signal Library="'+t.subject1.library_id+'"/>'
-            outputfile += '\n<Background Library="'+t.subject2.library_id+'"/>'
+            if t.subject1:
+              outputfile += '\n<Signal Library="'+t.subject1.library_id+'"/>'
+              if t.subject2:
+                outputfile += '\n<Background Library="'+t.subject2.library_id+'"/>'
+              else:
+                outputfile += '\n<Err>Background Library Missing</Err>'
+            else:
+              outputfile += '\n<Err>Signal Library Missing</Err>'
+            outputfile += '\n<params>'+t.task_params.__str__()+'</params>'
             outputfile += '\n</PeakCalling>'
+          
+          if (t.apply_calc == 'Methylseq'):
+            outputfile += '\n<Methylseq TaskId="'+t.id.__str__()+'" Name="'+t.task_name+'" Genome="'+t.subject1.library_species.use_genome_build+'">'
+            if t.subject1:
+              outputfile += '\n<Hpa2 Library="'+t.subject1.library_id+'"/>'
+              if t.subject2:
+                outputfile += '\n<Msp1 Library="'+t.subject2.library_id+'"/>'
+              else:
+                outputfile += '\n<Err>Msp1 Library Missing</Err>'
+            else:
+              outputfile += '\n<Err>Hpa2 Library Missing</Err>'
+            outputfile += '\n<params>'+t.task_params.__str__()+'</params>'
+            outputfile += '\n</Methylseq>' 
 
           if (t.apply_calc == 'ProfileReads' or t.apply_calc == 'qPCR'):
             outputfile += '\n<'+t.apply_calc+' TaskId="'+t.id.__str__()+'" Name="'+t.task_name+'" Genome="'+t.subject1.library_species.use_genome_build+'" Library="'+t.subject1.library_id+'"/>'
 
           if (t.apply_calc == 'CompareLibs'):
             outputfile += '\n<CompareLibraries TaskId="'+t.id.__str__()+'" TF="'+t.task_name+'" Genome="'+t.subject1.library_species.use_genome_build+'">'
-            outputfile += '\n<Library Library="'+t.subject1.library_id+'"/>'
-            outputfile += '\n<Library Library="'+t.subject2.library_id+'"/>'
+            if t.subject1:
+              outputfile += '\n<Library Library="'+t.subject1.library_id+'"/>'
+            else:
+              outputfile += '\n<Err>Library Missing</Err>'
+            if t.subject2:
+              outputfile += '\n<Library Library="'+t.subject2.library_id+'"/>'
+            else:
+              outputfile += '\n<Err>Library Missing</Err>'
+            outputfile += '\n<params>'+t.task_params.__str__()+'</params>'
             outputfile += '\n</CompareLibraries>'
 
           #if (t.apply_calc == 'ComparePeakCalls'):                                                                                                                            

@@ -3,12 +3,32 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 class DataRunOptions(admin.ModelAdmin):
-  search_fieldsets = ['run_folder','run_note','config_params','=fcid__lane_1_library__library_id','=fcid__lane_2_library__library_id','=fcid__lane_3_library__library_id','=fcid__lane_4_library__library_id','=fcid__lane_5_library__library_id','=fcid__lane_6_library__library_id','=fcid__lane_7_library__library_id','=fcid__lane_8_library__library_id']
+  search_fields = [
+      'run_folder',
+      'run_note',
+      'config_params',
+      '=fcid__lane_1_library__library_id',
+      '=fcid__lane_2_library__library_id',
+      '=fcid__lane_3_library__library_id',
+      '=fcid__lane_4_library__library_id',
+      '=fcid__lane_5_library__library_id',
+      '=fcid__lane_6_library__library_id',
+      '=fcid__lane_7_library__library_id',
+      '=fcid__lane_8_library__library_id'
+  ]
+  list_display = [
+      'run_folder', 
+      'Flowcell_Info', 
+      'run_start_time',
+      'main_status', 
+      'run_note',
+  ]
+  list_filter = ('run_status', 'run_start_time')
 
 class FlowCellOptions(admin.ModelAdmin):
     date_hierarchy = "run_date"
     save_on_top = True
-    search_fieldsets = ('flowcell_id',
+    search_fields = ('flowcell_id',
         'seq_mac_id',
         'cluster_mac_id',
         '=lane_1_library__library_id',
