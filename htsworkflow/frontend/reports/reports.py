@@ -27,8 +27,8 @@ def getBgColor(reads_cnt,exp_type):
 def report1(request):
   EXP = 'ChIP-seq'
 
-  if request.has_key('aflid'):
-    AFL_Id = request['aflid']
+  if request.GET.has_key('aflid'):
+    AFL_Id = request.GET['aflid']
     try:
       AFL = Affiliation.objects.get(id=AFL_Id).name
       AFL_CNT = Affiliation.objects.get(id=AFL_Id).contact
@@ -62,15 +62,15 @@ def report1(request):
     str += '<option value='+af.id.__str__()
     if AFL_Id == af.id.__str__():
       str += ' selected'
-    str += ' onclick="window.location=\'/htsw_reports/report?aflid='+af.id.__str__()+'\'; return false;">'+af.name+' '+af.contact+'</option>'  
+    str += ' onclick="window.location=\'/reports/report?aflid='+af.id.__str__()+'\'; return false;">'+af.name+' '+af.contact+'</option>'  
   str += '</select>'
 
   str += '<span style="margin-left:20px;padding:1px;border:solid #cccccc 1px">color scheme: <span style="margin-left:5px;background-color:#66ff66"> > 12 M</span><span style="margin-left:5px;background-color:#00ccff"> >  5 M</span><span style="margin-left:5px;background-color:#ffcc33"> > 3 M</span><span style="margin-left:5px;background-color:#ff3300"> < 3 M</span></span>' 
 
   str += '<span style="margin-left:20px">'
-  str += '<u>Switch to:</u> '+AFL+' '+AFL_CNT+' <a target=_self href="/htsw_reports/report_RM?exp=RNA-seq&aflid='+AFL_Id+'"><b>RNA-Seq</b> Report</a>'
+  str += '<u>Switch to:</u> '+AFL+' '+AFL_CNT+' <a target=_self href="/reports/report_RM?exp=RNA-seq&aflid='+AFL_Id+'"><b>RNA-Seq</b> Report</a>'
   str += '  | '
-  str += '<a target=_self href="/htsw_reports/report_RM?exp=Methyl-seq&aflid='+AFL_Id+'"><b>Methyl-Seq</b> Report</a>'
+  str += '<a target=_self href="/reports/report_RM?exp=Methyl-seq&aflid='+AFL_Id+'"><b>Methyl-Seq</b> Report</a>'
 
   bgc = '#ffffff' 
   pbgc = '#f7f7f7'
@@ -160,17 +160,17 @@ def report1(request):
     str += '</tr>'
   str += '</table>'
 
-  return render_to_response('htsw_reports/report.html',{'main': str})
+  return render_to_response('reports/report.html',{'main': str})
 
 
 def report_RM(request): #for RNA-Seq and Methyl-Seq
   EXP = 'RNA-seq'  
 
-  if request.has_key('exp'):
-    EXP = request['exp'] # Methyl-seq
+  if request.GET.has_key('exp'):
+    EXP = request.GET['exp'] # Methyl-seq
 
-  if request.has_key('aflid'):
-    AFL_Id = request['aflid']
+  if request.GET.has_key('aflid'):
+    AFL_Id = request.GET['aflid']
     try:
       AFL = Affiliation.objects.get(id=AFL_Id).name
       AFL_CNT = Affiliation.objects.get(id=AFL_Id).contact
@@ -200,21 +200,21 @@ def report_RM(request): #for RNA-Seq and Methyl-Seq
     str += '<option value='+af.id.__str__()
     if AFL_Id == af.id.__str__():
       str += ' selected'
-    str += ' onclick="window.location=\'/htsw_reports/report_RM?exp='+EXP+'&aflid='+af.id.__str__()+'\'; return false;">'+af.name+' '+af.contact+'</option>'
+    str += ' onclick="window.location=\'/reports/report_RM?exp='+EXP+'&aflid='+af.id.__str__()+'\'; return false;">'+af.name+' '+af.contact+'</option>'
   str += '</select>'
 
   if EXP == 'RNA-seq':
     str += '<span style="margin-left:20px;padding:1px;border:solid #cccccc 1px">color scheme: <span style="margin-left:5px;background-color:#66ff66"> > 20 M</span><span style="margin-left:5px;background-color:#00ccff"> >  10 M</span><span style="margin-left:5px;background-color:#ffcc33"> > 6 M</span><span style="margin-left:5px;background-color:#ff3300"> < 6 M</span></span>'
     str += '<span style="margin-left:20px">'
-    str += '<u>Switch to:</u> '+AFL+' '+AFL_CNT+' <a target=_self href="/htsw_reports/report?exp=RNA-seq&aflid='+AFL_Id+'"><b>ChIP-Seq</b> Report</a>'
+    str += '<u>Switch to:</u> '+AFL+' '+AFL_CNT+' <a target=_self href="/reports/report?exp=RNA-seq&aflid='+AFL_Id+'"><b>ChIP-Seq</b> Report</a>'
     str += '  | '
-    str += '<a target=_self href="/htsw_reports/report_RM?exp=Methyl-seq&aflid='+AFL_Id+'"><b>Methyl-Seq</b> Report</a>'
+    str += '<a target=_self href="/reports/report_RM?exp=Methyl-seq&aflid='+AFL_Id+'"><b>Methyl-Seq</b> Report</a>'
   else:
     str += '<span style="margin-left:20px;padding:1px;border:solid #cccccc 1px">color scheme: <span style="margin-left:5px;background-color:#66ff66"> > 12 M</span><span style="margin-left:5px;background-color:#00ccff"> >  5 M</span><span style="margin-left:5px;background-color:#ffcc33"> > 3 M</span><span style="margin-left:5px;background-color:#ff3300"> < 3 M</span></span>'
     str += '<span style="margin-left:20px">'
-    str += '<u>Switch to:</u> '+AFL+' '+AFL_CNT+' <a target=_self href="/htsw_reports/report?exp=RNA-seq&aflid='+AFL_Id+'"><b>ChIP-Seq</b> Report</a>'
+    str += '<u>Switch to:</u> '+AFL+' '+AFL_CNT+' <a target=_self href="/reports/report?exp=RNA-seq&aflid='+AFL_Id+'"><b>ChIP-Seq</b> Report</a>'
     str += '  | '
-    str += '<a target=_self href="/htsw_reports/report_RM?exp=RNA-seq&aflid='+AFL_Id+'"><b>RNA-Seq</b> Report</a>'
+    str += '<a target=_self href="/reports/report_RM?exp=RNA-seq&aflid='+AFL_Id+'"><b>RNA-Seq</b> Report</a>'
 
   str += '<br/><br/><table border=1 cellspacing="2">'
   str += '<tr><th colspan='+(Reps*len(CLLs)).__str__()+' style="text-align:center">'+AFL+' '+AFL_CNT+'  <span style="font-size:140%">'+EXP+'</span></th></tr>'
@@ -269,7 +269,7 @@ def report_RM(request): #for RNA-Seq and Methyl-Seq
   str += '</tr>'
   str += '</table>'
 
-  return render_to_response('htsw_reports/report.html',{'main': str})
+  return render_to_response('reports/report.html',{'main': str})
 
 def getNotRanFCs(request):
   FCall = FlowCell.objects.order_by('-run_date').distinct()
@@ -280,7 +280,7 @@ def getNotRanFCs(request):
     except ObjectDoesNotExist:
       str += '<tr><td>'+f.flowcell_id+'</td><td>'+f.Lanes()+'</td><td>'+f.run_date.__str__()+'</td></tr>'
   str += "</table>"
-  return render_to_response('htsw_reports/report.html',{'main':str})
+  return render_to_response('reports/report.html',{'main':str})
  
 def test_Libs(request):
   str = ''

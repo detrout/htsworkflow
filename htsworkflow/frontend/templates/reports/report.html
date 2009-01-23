@@ -1,0 +1,11 @@
+{% extends "admin/base_site.html" %}
+
+{% if main %}
+{% block content %}
+ 
+ {{ main|safe }}
+
+{% endblock %}
+{% else %}
+    <p>No content. Can't create report.</p>
+{% endif %}
