@@ -107,8 +107,8 @@ class Affiliation(models.Model):
     unique_together = (("name", "contact"),)
 
 class Library(models.Model):
-  
-  library_id = models.CharField(max_length=30, primary_key=True, db_index=True)
+  id = models.AutoField(primary_key=True)
+  library_id = models.CharField(max_length=30, db_index=True)
   library_name = models.CharField(max_length=100, unique=True)
   library_species = models.ForeignKey(Species)
   cell_line = models.ForeignKey(Cellline)
@@ -135,7 +135,6 @@ class Library(models.Model):
                                      default='RNA-seq')
   
   creation_date = models.DateField(blank=True, null=True)
-  # made_for = models.ForeignKey(User)
   made_for = models.CharField(max_length=50, blank=True, 
       verbose_name='ChIP/DNA/RNA Made By')
   made_by = models.CharField(max_length=50, blank=True, default="Lorian")
