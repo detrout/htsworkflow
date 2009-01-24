@@ -29,6 +29,7 @@ read counts. (The report isn't currently very pretty)
 """
 import logging
 import optparse
+import os
 import sys
 
 from htsworkflow.pipelines import runfolder
@@ -66,6 +67,8 @@ def main(cmdlist=None):
 
     runs = []
     if opt.run_xml:
+        # handle ~ shortcut
+        opt.run_xml = os.path.expanduser(opt.run_xml)
         tree = ElementTree.parse(opt.run_xml).getroot()
         runs.append(runfolder.PipelineRun(xml=tree))
     for run_dir in args:
