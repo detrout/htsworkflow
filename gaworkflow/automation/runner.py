@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from glob import glob
 import logging
 import os
 import re
@@ -8,8 +9,7 @@ import threading
 
 from benderjab import rpc
 
-from gaworkflow.pipeline.configure_run import *
-from gaworkflow.pipeline.monitors import _percentCompleted
+from htsworkflow.pipelines.configure_run import *
 
 #s_fc = re.compile('FC[0-9]+')
 s_fc = re.compile('_[0-9a-zA-Z]*$')
@@ -36,7 +36,7 @@ class Runner(rpc.XmlRpcBot):
     """    
     def __init__(self, section=None, configfile=None):
         #if configfile is None:
-        #    self.configfile = "~/.gaworkflow"
+        #    self.configfile = "~/.htsworkflow"
         super(Runner, self).__init__(section, configfile)
         
         self.cfg['notify_users'] = None
@@ -83,6 +83,8 @@ class Runner(rpc.XmlRpcBot):
                 reply = u"starting run for %s" % (words[1])
             else:
                 reply = u"need runfolder name"
+        elif re.match(u"path", msg):
+	    reply = u"My path is: " + unicode(os.environ['PATH'])
         else:
             reply = u"I didn't understand '%s'" %(msg)
 
@@ -103,24 +105,7 @@ class Runner(rpc.XmlRpcBot):
             return "No status information for %s yet." \
                    " Probably still in configure step. Try again later." % (fc_num)
 
-        fc,ft = status.statusFirecrest()
-        bc,bt = status.statusBustard()
-        gc,gt = status.statusGerald()
-
-        tc,tt = status.statusTotal()
-
-        fp = _percentCompleted(fc, ft)
-        bp = _percentCompleted(bc, bt)
-        gp = _percentCompleted(gc, gt)
-        tp = _percentCompleted(tc, tt)
-
-        output = []
-
-        output.append(u'Firecrest: %s%% (%s/%s)' % (fp, fc, ft))
-        output.append(u'  Bustard: %s%% (%s/%s)' % (bp, bc, bt))
-        output.append(u'   Gerald: %s%% (%s/%s)' % (gp, gc, gt))
-        output.append(u'-----------------------')
-        output.append(u'    Total: %s%% (%s/%s)' % (tp, tc, tt))
+        output = status.statusReport()
 
         return '\n'.join(output)
     
@@ -177,7 +162,7 @@ class Runner(rpc.XmlRpcBot):
 
         # retrieve config step
         cfg_filepath = os.path.join(conf_info.analysis_dir,
-                                    'config32auto.txt')
+                                    'config-auto.txt')
         status_retrieve_cfg = retrieve_config(conf_info,
                                           flowcell,
                                           cfg_filepath,
@@ -196,6 +181,9 @@ class Runner(rpc.XmlRpcBot):
             if status:
                 logging.info("Runner: Configure: success")
                 self.reportMsg("Configure (%s): success" % (run_dir))
+                self.reportMsg(
+                    os.linesep.join(glob(os.path.join(run_dir,'Data','C*')))
+                )
             else:
                 logging.error("Runner: Configure: failed")
                 self.reportMsg("Configure (%s): FAILED" % (run_dir))
@@ -210,7 +198,7 @@ class Runner(rpc.XmlRpcBot):
                 run_status = run_pipeline(conf_info)
                 if run_status is True:
                     logging.info('Runner: Pipeline: success')
-                    self.piplineFinished(run_dir)
+                    self.reportMsg("Pipeline run (%s): Finished" % (run_dir,))
                 else:
                     logging.info('Runner: Pipeline: failed')
                     self.reportMsg("Pipeline run (%s): FAILED" % (run_dir))
