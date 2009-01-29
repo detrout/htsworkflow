@@ -223,7 +223,7 @@ def _summary_stats(flowcell_id, lane_id):
         xmlpath = fc_result_dict[cycle_width]['run_xml']
         
         if xmlpath is None:
-            err_list.append('Run xml for Flowcell %s(%s) not found.' % (fc_id, cnm))
+            err_list.append('Run xml for Flowcell %s(%s) not found.' % (fc_id, cycle_width))
             continue
         
         tree = ElementTree.parse(xmlpath).getroot()
