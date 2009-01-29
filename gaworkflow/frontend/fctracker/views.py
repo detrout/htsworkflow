@@ -12,18 +12,35 @@ from django.template.loader import get_template
 from django.template import Context
 
 import StringIO
+import logging
+import os
 
 #from django.db.models import base 
+LANE_LIST = [1,2,3,4,5,6,7,8]
+
+def create_library_list():
+    """
+    Create a list of libraries that includes how many lanes were run
+    """
+    library_list = []
+    for lib in Library.objects.all():
+       summary = {}
+       summary['library_id'] = lib.library_id
+       summary['library_name'] = lib.library_name
+       summary['species_name' ] = lib.library_species.scientific_name
+       lanes_run = 0
+       for lane_id in LANE_LIST:
+           lane = getattr(lib, 'lane_%d_library' % (lane_id,))
+           lanes_run += len( lane.all() )
+       summary['lanes_run'] = lanes_run
+       library_list.append(summary)
+    return library_list
 
 def library(request):
-    library_list = Library.objects.all() #.order_by('-pub_date')
-    rep_string = '<a href="/library/%s/">%s - %s (%s)</a>'
-    output = '<br />\n'.join([rep_string \
-      % (l.library_id,
-         l.library_id,
-         l.library_name,
-         l.library_species.scientific_name) for l in library_list])
-    return HttpResponse(output)
+    library_list = create_library_list()
+    t = get_template('library.html')
+    c = Context({'library_list': library_list })
+    return HttpResponse( t.render(c) )
 
 def library_to_flowcells(request, lib_id):
     """
@@ -74,24 +91,18 @@ def library_to_flowcells(request, lib_id):
     flowcell_list.extend([ (fc.flowcell_id, 8) for fc in lib.lane_8_library.all() ])
     flowcell_list.sort()
     
-    output.append('<br />')
-    
-    data_dict_list = []
+    lane_summary_list = []
     for fc, lane in flowcell_list:
-        dicts, err_list, summary_list = _summary_stats(fc, lane)
+        lane_summary, err_list = _summary_stats(fc, lane)
         
-        data_dict_list.extend(dicts)
+        lane_summary_list.extend(lane_summary)
     
         for err in err_list:    
             output.append(err)
-    
-        for summary in summary_list:
-            output.append(summary.replace('\n', '<br />\n'))
-    html = t.render(Context({'data_dict_list': data_dict_list}))
+   
+    logging.error("len lane summary %d" % (len(lane_summary_list)))
     output.append('<br />')
-    output.append('<br />')
-    output.append(html)
-    output.append('<br />')
+    output.append(t.render(Context({'lane_summary_list': lane_summary_list})))
     output.append('<br />')
     
     if record_count == 0:
@@ -194,7 +205,47 @@ def bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane, ucsc_compatible=False):
         return HttpResponse(bedgen, mimetype="application/x-bedfile")
 
 
-def _summary_stats(flowcell_id, lane):
+def _summary_stats(flowcell_id, lane_id):
+    """
+    Return the summary statistics for a given flowcell, lane, and end.
+    """
+    fc_id = flowcellIdStrip(flowcell_id)
+    fc_result_dict = get_flowcell_result_dict(fc_id)
+
+    summary_list = []
+    err_list = []
+    
+    if fc_result_dict is None:
+        err_list.append('Results for Flowcell %s not found.' % (fc_id))
+        return (summary_list, err_list)
+
+    for cycle_width in fc_result_dict:
+        xmlpath = fc_result_dict[cycle_width]['run_xml']
+        
+        if xmlpath is None:
+            err_list.append('Run xml for Flowcell %s(%s) not found.' % (fc_id, cnm))
+            continue
+        
+        tree = ElementTree.parse(xmlpath).getroot()
+        try:
+            runs = runfolder.PipelineRun(pathname='', xml=tree)
+            gerald_summary = runs.gerald.summary.lane_results
+            for end in range(len(gerald_summary)):
+                eland_summary = runs.gerald.eland_results.results[end][lane_id]
+                # add information to lane_summary
+                eland_summary.flowcell_id = flowcell_id
+                eland_summary.clusters = gerald_summary[end][lane_id].cluster
+                eland_summary.cycle_width = cycle_width
+                eland_summary.summarized_reads = runfolder.summarize_mapped_reads(eland_summary.mapped_reads)
+                summary_list.append(eland_summary)
+
+        except Exception, e:
+            summary_list.append("Summary report needs to be updated.")
+            logging.error("Exception: " + str(e))
+    
+    return (summary_list, err_list)
+
+def _summary_stats_old(flowcell_id, lane):
     """
     return a dictionary of summary stats for a given flowcell_id & lane.
     """
@@ -220,10 +271,15 @@ def _summary_stats(flowcell_id, lane):
         tree = ElementTree.parse(xmlpath).getroot()
         results = runfolder.PipelineRun(pathname='', xml=tree)
         try:
-            summary_list.append(runfolder.summary_report([results]))
-        except:
+            lane_report = runfolder.summarize_lane(results.gerald, lane)
+            summary_list.append(os.linesep.join(lane_report))
+        except Exception, e:
             summary_list.append("Summary report needs to be updated.")
-        
+            logging.error("Exception: " + str(e))
+       
+        print "----------------------------------"
+        print "-- DOES NOT SUPPORT PAIRED END ---"
+        print "----------------------------------"
         lane_results = results.gerald.summary[0][lane]
         lrs = lane_results
         
@@ -280,4 +336,4 @@ def _files(flowcell_id, lane):
         return ''
     
     return '(' + '|'.join(output) + ')'
-
+            

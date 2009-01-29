@@ -1,23 +1,94 @@
+<hr/>
+<br/>
+<style type="text/css">
+  /* <![CDATA[ */
+  table, td {
+    border-style: solid;
+  }
+  table {
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+  td {
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+  }
+  thead {
+    text-align: center;
+    }
+  tbody {
+    text-align: right;
+  }
+  /* ]]> */
+</style>
 
 {% block summary_stats %}
-
-<table border="1">
-{% for d in data_dict_list %}
-    {# Header row for table #}
-    {% if forloop.first %}
-        <tr>
-        {% for key, value in d.items %}
-            <td><b>{{ key }}</b></td>
-        {% endfor %}
-        </tr>
-    {% endif %}
-    {# Main contents of table #}
+<table>
+  <thead>
     <tr>
-    {% for key, value in d.items %}
-        <td>{{ value }}</td>
-    {% endfor %}
+      <td colspan="6"></td>
+      <td colspan="2">No Match</td>
+      <td colspan="2">QC Failed</td>
+      <td colspan="4">Unique</td>
+      <td colspan="4">Repeat</td>
     </tr>
-{% endfor %}
-</table>
+    <tr>
+    <td>Cycles</td>
+    <td>Flowcell</td>
+    <td>Lane</td>
+    <td>End</td>
+    <td>Clusters</td>
+    <td>Raw Reads</td>
+    <td>total</td>
+    <td>%</td>
+    <td>total</td>
+    <td>%</td>
+    <td>Total</td>
+    <td>0 mismatch</td>
+    <td>1 mismatch</td>
+    <td>2 mismatch</td>
+    <td>Total</td>
+    <td>0 mismatch</td>
+    <td>1 mismatch</td>
+    <td>2 mismatch</td>
+    </tr>
+  </thead>
+  <tbody>
 
+    {% for lane in lane_summary_list %}
+    <tr>
+      <td>{{ lane.cycle_width }}</td>
+      <td>{{ lane.flowcell_id }}</td>
+      <td>{{ lane.lane_id }}</td>
+      <td>{% if lane.end %}{{ lane.end }}{% endif %}</td>
+      <td>{{ lane.clusters.0 }} &plusmn; {{ lane.clusters.1 }}</td>
+      <td>{{ lane.reads }}</td>
+      <td>{{ lane.no_match }}</td>
+      <td>{{ lane.no_match_percent|stringformat:".2f" }}</td>
+      <td>{{ lane.qc_failed }}</td>
+      <td>{{ lane.qc_failed_percent|stringformat:".2f" }}</td>
+      <td>{{ lane.unique_reads }}</td>
+      <td>{{ lane.match_codes.U0 }}</td>
+      <td>{{ lane.match_codes.U1 }}</td>
+      <td>{{ lane.match_codes.U2 }}</td>
+      <td>{{ lane.repeat_reads }}</td>
+      <td>{{ lane.match_codes.R0 }}</td>
+      <td>{{ lane.match_codes.R1 }}</td>
+      <td>{{ lane.match_codes.R2 }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br/>
+<hr/>
+{% for lane in lane_summary_list %}
+<h2>{{lane.cycle_width}} {{ lane.flowcell_id }} {{ lane.lane_id }} {{ lane.end }}</h2>
+  <ul>
+    {% for name, counts in lane.summarized_reads.items %}
+    <li><b>{{ name }}</b>: {{ counts }}</li>
+    {% endfor %}
+  </ul>
+{% endfor %}
 {% endblock %}
