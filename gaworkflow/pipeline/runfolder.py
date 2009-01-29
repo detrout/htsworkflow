@@ -5,6 +5,7 @@ from glob import glob
 import logging
 import os
 import re
+import shutil
 import stat
 import subprocess
 import sys
@@ -24,7 +25,6 @@ LANES_PER_FLOWCELL = 8
 from gaworkflow.util.alphanum import alphanum
 from gaworkflow.util.ethelp import indent, flatten
 
-
 class PipelineRun(object):
     """
     Capture "interesting" information about a pipeline run
@@ -33,17 +33,20 @@ class PipelineRun(object):
     PIPELINE_RUN = 'PipelineRun'
     FLOWCELL_ID = 'FlowcellID'
 
-    def __init__(self, pathname=None, firecrest=None, bustard=None, gerald=None, xml=None):
-        self.pathname = os.path.normpath(pathname)
+    def __init__(self, pathname=None, xml=None):
+        if pathname is not None:
+          self.pathname = os.path.normpath(pathname)
+        else:
+          self.pathname = None
         self._name = None
         self._flowcell_id = None
-        self.firecrest = firecrest
-        self.bustard = bustard
-        self.gerald = gerald
+        self.image_analysis = None
+        self.bustard = None
+        self.gerald = None
 
         if xml is not None:
           self.set_elements(xml)
-    
+
     def _get_flowcell_id(self):
         # extract flowcell ID
         if self._flowcell_id is None:
@@ -59,7 +62,7 @@ class PipelineRun(object):
               flowcell_id = path_fields[-1]
             else:
               flowcell_id = 'unknown'
-              
+
 	    logging.warning(
 	      "Flowcell id was not found, guessing %s" % (
 	         flowcell_id))
@@ -74,7 +77,7 @@ class PipelineRun(object):
         root = ElementTree.Element(PipelineRun.PIPELINE_RUN)
         flowcell = ElementTree.SubElement(root, PipelineRun.FLOWCELL_ID)
         flowcell.text = self.flowcell_id
-        root.append(self.firecrest.get_elements())
+        root.append(self.image_analysis.get_elements())
         root.append(self.bustard.get_elements())
         root.append(self.gerald.get_elements())
         return root
@@ -83,6 +86,7 @@ class PipelineRun(object):
         # this file gets imported by all the others,
         # so we need to hide the imports to avoid a cyclic imports
         from gaworkflow.pipeline import firecrest
+        from gaworkflow.pipeline import ipar
         from gaworkflow.pipeline import bustard
         from gaworkflow.pipeline import gerald
 
@@ -95,8 +99,11 @@ class PipelineRun(object):
           if tag == PipelineRun.FLOWCELL_ID.lower():
             self._flowcell_id = element.text
           #ok the xword.Xword.XWORD pattern for module.class.constant is lame
+          # you should only have Firecrest or IPAR, never both of them.
           elif tag == firecrest.Firecrest.FIRECREST.lower():
-            self.firecrest = firecrest.Firecrest(xml=element)
+            self.image_analysis = firecrest.Firecrest(xml=element)
+          elif tag == ipar.IPAR.IPAR.lower():
+            self.image_analysis = ipar.IPAR(xml=element)
           elif tag == bustard.Bustard.BUSTARD.lower():
             self.bustard = bustard.Bustard(xml=element)
           elif tag == gerald.Gerald.GERALD.lower():
@@ -109,7 +116,7 @@ class PipelineRun(object):
         Given a run tuple, find the latest date and use that as our name
         """
         if self._name is None:
-          tmax = max(self.firecrest.time, self.bustard.time, self.gerald.time)
+          tmax = max(self.image_analysis.time, self.bustard.time, self.gerald.time)
           timestamp = time.strftime('%Y-%m-%d', time.localtime(tmax))
           self._name = 'run_'+self.flowcell_id+"_"+timestamp+'.xml'
         return self._name
@@ -139,28 +146,48 @@ def get_runs(runfolder):
     in there gerald component.
     """
     from gaworkflow.pipeline import firecrest
+    from gaworkflow.pipeline import ipar
     from gaworkflow.pipeline import bustard
     from gaworkflow.pipeline import gerald
+
+    def scan_post_image_analysis(runs, runfolder, image_analysis, pathname):
+        logging.info("Looking for bustard directories in %s" % (pathname,))
+        bustard_glob = os.path.join(pathname, "Bustard*")
+        for bustard_pathname in glob(bustard_glob):
+            logging.info("Found bustard directory %s" % (bustard_pathname,))
+            b = bustard.bustard(bustard_pathname)
+            gerald_glob = os.path.join(bustard_pathname, 'GERALD*')
+            logging.info("Looking for gerald directories in %s" % (pathname,))
+            for gerald_pathname in glob(gerald_glob):
+                logging.info("Found gerald directory %s" % (gerald_pathname,))
+                try:
+                    g = gerald.gerald(gerald_pathname)
+                    p = PipelineRun(runfolder)
+                    p.image_analysis = image_analysis
+                    p.bustard = b
+                    p.gerald = g
+                    runs.append(p)
+                except IOError, e:
+                    print "Ignoring", str(e)
 
     datadir = os.path.join(runfolder, 'Data')
 
     logging.info('Searching for runs in ' + datadir)
     runs = []
+    # scan for firecrest directories
     for firecrest_pathname in glob(os.path.join(datadir,"*Firecrest*")):
-        f = firecrest.firecrest(firecrest_pathname)
-        bustard_glob = os.path.join(firecrest_pathname, "Bustard*")
-        for bustard_pathname in glob(bustard_glob):
-            b = bustard.bustard(bustard_pathname)
-            gerald_glob = os.path.join(bustard_pathname, 'GERALD*')
-            for gerald_pathname in glob(gerald_glob):
-                try:
-                    g = gerald.gerald(gerald_pathname)
-                    runs.append(PipelineRun(runfolder, f, b, g))
-                except IOError, e:
-                    print "Ignoring", str(e)
+        logging.info('Found firecrest in ' + datadir)
+        image_analysis = firecrest.firecrest(firecrest_pathname)
+        scan_post_image_analysis(runs, runfolder, image_analysis, firecrest_pathname)
+    # scan for IPAR directories
+    for ipar_pathname in glob(os.path.join(datadir,"IPAR_*")):
+        logging.info('Found ipar directories in ' + datadir)
+        image_analysis = ipar.ipar(ipar_pathname)
+        scan_post_image_analysis(runs, runfolder, image_analysis, ipar_pathname)
+
     return runs
-                
-    
+
+
 def extract_run_parameters(runs):
     """
     Search through runfolder_path for various runs and grab their parameters
@@ -186,6 +213,35 @@ def summarize_mapped_reads(mapped_reads):
     summarized_reads[genome] = genome_reads
     return summarized_reads
 
+def summarize_lane(gerald, lane_id):
+    report = []
+    summary_results = gerald.summary.lane_results
+    for end in range(len(summary_results)):  
+      eland_result = gerald.eland_results.results[end][lane_id]
+      report.append("Sample name %s" % (eland_result.sample_name))
+      report.append("Lane id %s end %s" % (eland_result.lane_id, end))
+      cluster = summary_results[end][eland_result.lane_id].cluster
+      report.append("Clusters %d +/- %d" % (cluster[0], cluster[1]))
+      report.append("Total Reads: %d" % (eland_result.reads))
+      mc = eland_result._match_codes
+      nm = mc['NM']
+      nm_percent = float(nm)/eland_result.reads  * 100
+      qc = mc['QC']
+      qc_percent = float(qc)/eland_result.reads * 100
+
+      report.append("No Match: %d (%2.2g %%)" % (nm, nm_percent))
+      report.append("QC Failed: %d (%2.2g %%)" % (qc, qc_percent))
+      report.append('Unique (0,1,2 mismatches) %d %d %d' % \
+                    (mc['U0'], mc['U1'], mc['U2']))
+      report.append('Repeat (0,1,2 mismatches) %d %d %d' % \
+                    (mc['R0'], mc['R1'], mc['R2']))
+      report.append("Mapped Reads")
+      mapped_reads = summarize_mapped_reads(eland_result.mapped_reads)
+      for name, counts in mapped_reads.items():
+        report.append("  %s: %d" % (name, counts))
+      report.append('')
+    return report
+
 def summary_report(runs):
     """
     Summarize cluster numbers and mapped read counts for a runfolder
@@ -195,31 +251,22 @@ def summary_report(runs):
         # print a run name?
         report.append('Summary for %s' % (run.name,))
 	# sort the report
-	eland_keys = run.gerald.eland_results.results.keys()
+	eland_keys = run.gerald.eland_results.results[0].keys()
 	eland_keys.sort(alphanum)
 
-        lane_results = run.gerald.summary.lane_results
 	for lane_id in eland_keys:
-	    result = run.gerald.eland_results.results[lane_id]
-            report.append("Sample name %s" % (result.sample_name))
-            report.append("Lane id %s" % (result.lane_id,))
-            cluster = lane_results[result.lane_id].cluster
-            report.append("Clusters %d +/- %d" % (cluster[0], cluster[1]))
-            report.append("Total Reads: %d" % (result.reads))
-            mc = result._match_codes
-	    report.append("No Match: %d" % (mc['NM']))
-	    report.append("QC Failed: %d" % (mc['QC']))
-            report.append('Unique (0,1,2 mismatches) %d %d %d' % \
-                          (mc['U0'], mc['U1'], mc['U2']))
-            report.append('Repeat (0,1,2 mismatches) %d %d %d' % \
-                          (mc['R0'], mc['R1'], mc['R2']))
-            report.append("Mapped Reads")
-            mapped_reads = summarize_mapped_reads(result.mapped_reads)
-            for name, counts in mapped_reads.items():
-              report.append("  %s: %d" % (name, counts))
+            report.extend(summarize_lane(run.gerald, lane_id))
             report.append('---')
             report.append('')
         return os.linesep.join(report)
+
+def is_compressed(filename):
+    if os.path.splitext(filename)[1] == ".gz":
+        return True
+    elif os.path.splitext(filename)[1] == '.bz2':
+        return True
+    else:
+        return False
 
 def extract_results(runs, output_base_dir=None):
     if output_base_dir is None:
@@ -230,9 +277,9 @@ def extract_results(runs, output_base_dir=None):
       logging.info("Using %s as result directory" % (result_dir,))
       if not os.path.exists(result_dir):
         os.mkdir(result_dir)
-      
+
       # create cycle_dir
-      cycle = "C%d-%d" % (r.firecrest.start, r.firecrest.stop)
+      cycle = "C%d-%d" % (r.image_analysis.start, r.image_analysis.stop)
       logging.info("Filling in %s" % (cycle,))
       cycle_dir = os.path.join(result_dir, cycle)
       if os.path.exists(cycle_dir):
@@ -247,9 +294,25 @@ def extract_results(runs, output_base_dir=None):
       # save run file
       r.save(cycle_dir)
 
+      # Copy Summary.htm
+      summary_path = os.path.join(r.gerald.pathname, 'Summary.htm')
+      if os.path.exists(summary_path):
+          logging.info('Copying %s to %s' % (summary_path, cycle_dir))
+          shutil.copy(summary_path, cycle_dir)
+      else:
+          logging.info('Summary file %s was not found' % (summary_path,))
+
       # tar score files
       score_files = []
-      for f in os.listdir(g.pathname):
+
+      # check for g.pathname/Temp a new feature of 1.1rc1
+      scores_path = g.pathname
+      scores_path_temp = os.path.join(scores_path, 'Temp')
+      if os.path.isdir(scores_path_temp):
+          scores_path = scores_path_temp
+
+      # hopefully we have a directory that contains s_*_score files
+      for f in os.listdir(scores_path):
           if re.match('.*_score.txt', f):
               score_files.append(f)
 
@@ -257,26 +320,50 @@ def extract_results(runs, output_base_dir=None):
       bzip_cmd = [ 'bzip2', '-9', '-c' ]
       tar_dest_name =os.path.join(cycle_dir, 'scores.tar.bz2')
       tar_dest = open(tar_dest_name, 'w')
-      logging.info("Compressing score files in %s" % (g.pathname,))
+      logging.info("Compressing score files from %s" % (scores_path,))
       logging.info("Running tar: " + " ".join(tar_cmd[:10]))
       logging.info("Running bzip2: " + " ".join(bzip_cmd))
       logging.info("Writing to %s" %(tar_dest_name))
-      
-      tar = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, shell=False, cwd=g.pathname)
+
+      tar = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, shell=False, 
+                             cwd=scores_path)
       bzip = subprocess.Popen(bzip_cmd, stdin=tar.stdout, stdout=tar_dest)
       tar.wait()
 
       # copy & bzip eland files
-      for eland_lane in g.eland_results.values():
-          source_name = eland_lane.pathname
-          path, name = os.path.split(eland_lane.pathname)
-          dest_name = os.path.join(cycle_dir, name+'.bz2')
+      for lanes_dictionary in g.eland_results.results:
+          for eland_lane in lanes_dictionary.values():
+              source_name = eland_lane.pathname
+              path, name = os.path.split(eland_lane.pathname)
+              dest_name = os.path.join(cycle_dir, name)
+	      logging.info("Saving eland file %s to %s" % \
+	                   (source_name, dest_name))
 
-          args = ['bzip2', '-9', '-c', source_name]
-          logging.info('Running: %s' % ( " ".join(args) ))
-          bzip_dest = open(dest_name, 'w')
-          bzip = subprocess.Popen(args, stdout=bzip_dest)
-          logging.info('Saving to %s' % (dest_name, ))
-          bzip.wait()
+              if is_compressed(name):
+                logging.info('Already compressed, Saving to %s' % (dest_name, ))
+                shutil.copy(source_name, dest_name)
+              else:
+                # not compressed
+                dest_name += '.bz2'
+                args = ['bzip2', '-9', '-c', source_name]
+                logging.info('Running: %s' % ( " ".join(args) ))
+                bzip_dest = open(dest_name, 'w')
+                bzip = subprocess.Popen(args, stdout=bzip_dest)
+                logging.info('Saving to %s' % (dest_name, ))
+                bzip.wait()
 
-      
+def clean_runs(runs):
+    """
+    Clean up run folders to optimize for compression.
+    """
+    # TODO: implement this.
+    # rm RunLog*.xml
+    # rm pipeline_*.txt
+    # rm gclog.txt
+    # rm NetCopy.log
+    # rm nfn.log
+    # rm Images/L*
+    # cd Data/C1-*_Firecrest*
+    # make clean_intermediate
+
+    pass

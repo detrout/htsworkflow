@@ -9,7 +9,7 @@ import threading
 
 from benderjab import rpc
 
-from htsworkflow.pipelines.configure_run import *
+from gaworkflow.pipeline.configure_run import *
 
 #s_fc = re.compile('FC[0-9]+')
 s_fc = re.compile('_[0-9a-zA-Z]*$')

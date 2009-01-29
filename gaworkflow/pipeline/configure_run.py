@@ -13,12 +13,6 @@ from gaworkflow.pipeline.run_status import GARunStatus
 from pyinotify import WatchManager, ThreadedNotifier
 from pyinotify import EventsCodes, ProcessEvent
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)-8s %(message)s',
-                    datefmt='%a, %d %b %Y %H:%M:%S',
-                    filename='pipeline_main.log',
-                    filemode='w')
-
 class ConfigInfo:
   
   def __init__(self):
@@ -398,11 +392,13 @@ def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir):
   genome_dict = getAvailableGenomes(genome_dir)
   mapper_dict = constructMapperDict(genome_dict)
 
+  logging.debug(data)
+
   f = open(cfg_filepath, 'w')
   f.write(data % (mapper_dict))
   f.close()
   
-  return True  
+  return True
   
 
 
@@ -451,12 +447,11 @@ def configure(conf_info):
   ferr = open(stderr_filepath, 'w')
   
   pipe = subprocess.Popen(['goat_pipeline.py',
-                    '--GERALD=%s' % (conf_info.config_filepath),
-                           #'--tiles=s_4_0100,s_4_0101,s_4_0102,s_4_0103,s_4_0104',
+                           '--GERALD=%s' % (conf_info.config_filepath),
                            '--make',
                            conf_info.analysis_dir],
-                          stdout=fout,
-                          stderr=ferr)
+                           stdout=fout,
+                           stderr=ferr)
 
   print "Configuring pipeline: %s" % (time.ctime())
   error_code = pipe.wait()

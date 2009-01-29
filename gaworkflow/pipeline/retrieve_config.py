@@ -3,12 +3,13 @@
 from optparse import OptionParser, IndentedHelpFormatter
 from ConfigParser import SafeConfigParser
 
+import logging
 import os
 import sys
-import urllib
+import urllib2
 
-CONFIG_SYSTEM = '/etc/ga_frontend/ga_frontend.conf'
-CONFIG_USER = os.path.expanduser('~/.ga_frontend.conf')
+CONFIG_SYSTEM = '/etc/hts_frontend/hts_frontend.conf'
+CONFIG_USER = os.path.expanduser('~/.hts_frontend.conf')
 
 #Disable or enable commandline arg parsing; disabled by default.
 DISABLE_CMDLINE = True
@@ -57,7 +58,7 @@ def constructOptionParser():
   
   parser = OptionParser(formatter=PreformattedDescriptionFormatter())
 
-  parser.set_description('Retrieves eland config file from ga_frontend web frontend.')
+  parser.set_description('Retrieves eland config file from hts_frontend web frontend.')
   
   parser.epilog = """
 Config File:
@@ -144,7 +145,14 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
   
   f = open(output_filepath, 'w')
   #try:
-  web = urllib.urlopen(url)
+  try:
+    web = urllib2.urlopen(url)
+  except urllib2.URLError, e:
+    errmsg = 'URLError: %s' % (e.reason,)
+    logging.error(errmsg)
+    logging.error('opened %s' % (url,))
+    raise IOError(errmsg)
+
   #except IOError, msg:
   #  if str(msg).find("Connection refused") >= 0:
   #    print 'Error: Connection refused for: %s' % (url)
@@ -171,6 +179,6 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
   f.write(data)
   web.close()
   f.close()
-  print 'Wrote config file to %s' % (output_filepath)
+  logging.info('Wrote config file to %s' % (output_filepath,))
 
   

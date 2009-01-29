@@ -6,7 +6,7 @@ import sys
 import time
 #import glob
 
-from htsworkflow.util import mount
+from gaworkflow.util import mount
 
 # this uses pyinotify
 import pyinotify

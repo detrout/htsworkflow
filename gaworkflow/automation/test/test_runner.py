@@ -1,8 +1,6 @@
 import unittest
-
-
 import os
-from htsworkflow.automation.copier import runfolder_validate
+from gaworkflow.automation.copier import runfolder_validate
 
 def extract_runfolder_path(watchdir, event):
   runfolder_path = watchdir

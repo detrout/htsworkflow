@@ -224,7 +224,7 @@ def _summary_stats(flowcell_id, lane):
         except:
             summary_list.append("Summary report needs to be updated.")
         
-        lane_results = results.gerald.summary[str(lane)]
+        lane_results = results.gerald.summary[0][lane]
         lrs = lane_results
         
         d = {}
@@ -280,4 +280,4 @@ def _files(flowcell_id, lane):
         return ''
     
     return '(' + '|'.join(output) + ')'
-            
+

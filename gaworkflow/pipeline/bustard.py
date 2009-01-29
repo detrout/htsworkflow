@@ -69,6 +69,7 @@ class Bustard(object):
         self.date = date.today()
         self.user = None
         self.phasing = {}
+        self.pathname = None
 
         if xml is not None:
             self.set_elements(xml)
@@ -133,6 +134,7 @@ def bustard(pathname):
     t = time.strptime(groups[1], EUROPEAN_STRPTIME)
     b.date = date(*t[0:3])
     b.user = groups[2]
+    b.pathname = pathname
     paramfiles = glob(os.path.join(pathname, "params?.xml"))
     for paramfile in paramfiles:
         phasing = Phasing(paramfile)
