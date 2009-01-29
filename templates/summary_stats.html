@@ -45,7 +45,6 @@
     <td>%</td>
     <td>total</td>
     <td>%</td>
-    <td>Total</td>
     <td>0 mismatch</td>
     <td>1 mismatch</td>
     <td>2 mismatch</td>
@@ -53,6 +52,7 @@
     <td>0 mismatch</td>
     <td>1 mismatch</td>
     <td>2 mismatch</td>
+    <td>Total</td>
     </tr>
   </thead>
   <tbody>
@@ -69,14 +69,14 @@
       <td>{{ lane.no_match_percent|stringformat:".2f" }}</td>
       <td>{{ lane.qc_failed }}</td>
       <td>{{ lane.qc_failed_percent|stringformat:".2f" }}</td>
-      <td>{{ lane.unique_reads }}</td>
       <td>{{ lane.match_codes.U0 }}</td>
       <td>{{ lane.match_codes.U1 }}</td>
       <td>{{ lane.match_codes.U2 }}</td>
-      <td>{{ lane.repeat_reads }}</td>
+      <td>{{ lane.unique_reads }}</td>
       <td>{{ lane.match_codes.R0 }}</td>
       <td>{{ lane.match_codes.R1 }}</td>
       <td>{{ lane.match_codes.R2 }}</td>
+      <td>{{ lane.repeat_reads }}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -84,7 +84,10 @@
 <br/>
 <hr/>
 {% for lane in lane_summary_list %}
-<h2>{{lane.cycle_width}} {{ lane.flowcell_id }} {{ lane.lane_id }} {{ lane.end }}</h2>
+<h2>
+  {{lane.cycle_width}} {{ lane.flowcell_id }} lane {{ lane.lane_id }} 
+  {% if lane.end %} end {{ lane.end }}{% endif %}
+</h2>
   <ul>
     {% for name, counts in lane.summarized_reads.items %}
     <li><b>{{ name }}</b>: {{ counts }}</li>
