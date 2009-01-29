@@ -307,7 +307,6 @@ def getElandConfig(flowcell, regenerate=False):
   #data.append("GENOME_DIR %s" % (BASE_DIR))
   #data.append("CONTAM_DIR %s" % (BASE_DIR))
   read_length = fcObj.read_length
-  data.append("READ_LENGTH %d" % (read_length))
   #data.append("ELAND_REPEAT")
   data.append("ELAND_MULTIPLE_INSTANCES 8")
   
