@@ -1,3 +1,5 @@
+{% load humanize %}
+
 <hr/>
 <br/>
 <style type="text/css">
@@ -39,7 +41,7 @@
     <td>Flowcell</td>
     <td>Lane</td>
     <td>End</td>
-    <td>Clusters</td>
+    <td>Cluster / Tile</td>
     <td>Raw Reads</td>
     <td>total</td>
     <td>%</td>
@@ -63,20 +65,20 @@
       <td>{{ lane.flowcell_id }}</td>
       <td>{{ lane.lane_id }}</td>
       <td>{% if lane.end %}{{ lane.end }}{% endif %}</td>
-      <td>{{ lane.clusters.0 }} &plusmn; {{ lane.clusters.1 }}</td>
-      <td>{{ lane.reads }}</td>
-      <td>{{ lane.no_match }}</td>
+      <td>{{ lane.clusters.0|intcomma }}</td>
+      <td>{{ lane.reads|intcomma }}</td>
+      <td>{{ lane.no_match|intcomma }}</td>
       <td>{{ lane.no_match_percent|stringformat:".2f" }}</td>
-      <td>{{ lane.qc_failed }}</td>
+      <td>{{ lane.qc_failed|intcomma }}</td>
       <td>{{ lane.qc_failed_percent|stringformat:".2f" }}</td>
-      <td>{{ lane.match_codes.U0 }}</td>
-      <td>{{ lane.match_codes.U1 }}</td>
-      <td>{{ lane.match_codes.U2 }}</td>
-      <td>{{ lane.unique_reads }}</td>
-      <td>{{ lane.match_codes.R0 }}</td>
-      <td>{{ lane.match_codes.R1 }}</td>
-      <td>{{ lane.match_codes.R2 }}</td>
-      <td>{{ lane.repeat_reads }}</td>
+      <td>{{ lane.match_codes.U0|intcomma }}</td>
+      <td>{{ lane.match_codes.U1|intcomma }}</td>
+      <td>{{ lane.match_codes.U2|intcomma }}</td>
+      <td>{{ lane.unique_reads|intcomma }}</td>
+      <td>{{ lane.match_codes.R0|intcomma }}</td>
+      <td>{{ lane.match_codes.R1|intcomma }}</td>
+      <td>{{ lane.match_codes.R2|intcomma }}</td>
+      <td>{{ lane.repeat_reads|intcomma }}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -90,7 +92,7 @@
 </h2>
   <ul>
     {% for name, counts in lane.summarized_reads.items %}
-    <li><b>{{ name }}</b>: {{ counts }}</li>
+    <li><b>{{ name }}</b>: {{ counts|intcomma }}</li>
     {% endfor %}
   </ul>
 {% endfor %}
