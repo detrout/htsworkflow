@@ -115,6 +115,8 @@ def firecrest(pathname):
     # should I parse this deeper than just stashing the 
     # contents of the matrix file?
     matrix_pathname = os.path.join(pathname, 'Matrix', 's_matrix.txt')
+    if not os.path.exists(matrix_pathname):
+        return None
     f.matrix = open(matrix_pathname, 'r').read()
     return f
 

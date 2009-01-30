@@ -41,7 +41,10 @@ class Gerald(object):
             if len(container.getchildren()) > LANES_PER_FLOWCELL:
                 raise RuntimeError('GERALD config.xml file changed')
             lanes = [x.tag.split('_')[1] for x in container.getchildren()]
-            index = lanes.index(self._lane_id)
+            try:
+                index = lanes.index(self._lane_id)
+            except ValueError, e:
+                return None
             element = container[index]
             return element.text
         def _get_analysis(self):

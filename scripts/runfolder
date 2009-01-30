@@ -27,6 +27,7 @@ runfolder.py can also spit out a simple summary report (-s option)
 that contains the per lane post filter cluster numbers and the mapped 
 read counts. (The report isn't currently very pretty)
 """
+from glob import glob
 import logging
 import optparse
 import os
@@ -50,9 +51,13 @@ def make_parser():
     parser.add_option('--extract-results', action='store_true',
            default=False,
            help='extract result files out of runfolder into a simpler archive')
+    parser.add_option('-o', '--output-dir', default=None,
+           help="specify the default output directory for extract results")
+
     parser.add_option('--run-xml', dest='run_xml',
            default=None,
            help='specify a run_<FlowCell>.xml file for summary reports')
+    
 
     return parser
 
@@ -65,14 +70,17 @@ def main(cmdlist=None):
         root_log = logging.getLogger()
         root_log.setLevel(logging.INFO)
 
+    logging.info('Starting htsworkflow illumina runfolder processing tool.')
     runs = []
     if opt.run_xml:
         # handle ~ shortcut
         opt.run_xml = os.path.expanduser(opt.run_xml)
         tree = ElementTree.parse(opt.run_xml).getroot()
         runs.append(runfolder.PipelineRun(xml=tree))
-    for run_dir in args:
-        runs.extend(runfolder.get_runs(run_dir))
+    for run_pattern in args:
+        # expand args on our own if needed
+        for run_dir in glob(run_pattern):
+            runs.extend(runfolder.get_runs(run_dir))
 
     if len(runs) > 0:
         if opt.summary:
@@ -80,7 +88,7 @@ def main(cmdlist=None):
         if opt.archive:
             runfolder.extract_run_parameters(runs)
         if opt.extract_results:
-            runfolder.extract_results(runs)
+            runfolder.extract_results(runs, opt.output_dir)
 
     return 0
 

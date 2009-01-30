@@ -193,6 +193,8 @@ def ipar(pathname):
 
     # contents of the matrix file?
     matrix_pathname = os.path.join(pathname, 'Matrix', 's_matrix.txt')
+    if not os.path.exists(matrix_pathname):
+        return None
     i.matrix = open(matrix_pathname, 'r').read()
 
     # look for parameter xml file

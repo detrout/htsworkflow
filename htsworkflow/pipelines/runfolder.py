@@ -178,12 +178,26 @@ def get_runs(runfolder):
     for firecrest_pathname in glob(os.path.join(datadir,"*Firecrest*")):
         logging.info('Found firecrest in ' + datadir)
         image_analysis = firecrest.firecrest(firecrest_pathname)
-        scan_post_image_analysis(runs, runfolder, image_analysis, firecrest_pathname)
+        if image_analysis is None:
+	    logging.warn(
+                "%s is an empty or invalid firecrest directory" % (firecrest_pathname,)
+            )
+	else:
+            scan_post_image_analysis(
+                runs, runfolder, image_analysis, firecrest_pathname
+            )
     # scan for IPAR directories
     for ipar_pathname in glob(os.path.join(datadir,"IPAR_*")):
         logging.info('Found ipar directories in ' + datadir)
         image_analysis = ipar.ipar(ipar_pathname)
-        scan_post_image_analysis(runs, runfolder, image_analysis, ipar_pathname)
+        if image_analysis is None:
+	    logging.warn(
+                "%s is an empty or invalid IPAR directory" %(ipar_pathname,)
+            )
+	else:
+            scan_post_image_analysis(
+                runs, runfolder, image_analysis, ipar_pathname
+            )
 
     return runs
 
