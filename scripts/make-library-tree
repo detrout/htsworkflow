@@ -1,6 +1,7 @@
 """
 Make a tree of symlinks organized by library id.
 """
+from ConfigParser import SafeConfigParser
 from glob import glob
 import logging
 from optparse import OptionParser
@@ -147,12 +148,19 @@ def make_parser():
     Make parser
     """
     parser = OptionParser()
+    parser.add_option('-c', '--config', default=None,
+                      help='path to a configuration file containing a '
+                           'sequence archive section')
+                      
     parser.add_option("-d", "--database", dest="database",
                       help="path to the fctracker.db",
                       default=None)
+    parser.add_option('-a', '--sequence-archive', default=None,
+                      help='path to where the sequence archive lives')
     parser.add_option("-w", "--where", dest="where",
                       help="add a where clause",
                       default=None)
+
     parser.add_option("--dry-run", dest="dry_run", action="store_true",
                       default=False,
                       help="Don't modify the filesystem")
@@ -161,19 +169,51 @@ def make_parser():
 def main(argv=None):
     logging.basicConfig(level=logging.INFO)
 
+    FRONTEND_NAME = 'frontend'
+    SECTION_NAME = 'sequence_archive'
+    DATABASE_OPT = 'database_name'
+    ARCHIVE_OPT = 'archive_path'
+
     if argv is None:
         argv = []
     parser = make_parser()
 
+    # parse command line arguments
     opt, args = parser.parse_args(argv)
+
+    # figure out what config file to read
+    config_path = [os.path.expanduser('~/.htsworkflow.ini'),
+                   '/etc/htsworkflow.ini']
+    if opt.config is not None:
+        config_path = [opt.config]
     
+    # parse options from config file
+    config_file = SafeConfigParser()
+    config_file.read(config_path)
+
+    # load defaults from config file if not overriden by the command line
+    print opt.database
+    if opt.database is None and \
+       config_file.has_option(FRONTEND_NAME, DATABASE_OPT):
+        opt.database = config_file.get(FRONTEND_NAME, DATABASE_OPT)
+
+    if opt.sequence_archive is None and \
+       config_file.has_option(SECTION_NAME, ARCHIVE_OPT):
+        opt.sequence_archive = config_file.get(SECTION_NAME, ARCHIVE_OPT)
+  
+    # complain if critical things are missing
+    if opt.database is None:
+       parser.error('Need location of htsworkflow frontend database')
+
+    if opt.sequence_archive is None:
+       parser.error('Need the root path for the sequence archive')
+
     fcdb = fctracker.fctracker(opt.database)
     cells = fcdb._get_flowcells(opt.where)
 
-    root_dir = '/woldlab/loxcyc/data00/solexa-sequence'
-    library_dir = os.path.join(root_dir, 'libraries')
-    flowcell_dir = os.path.join(root_dir, 'flowcells')
-    srfs_dir = os.path.join(root_dir, 'srfs')
+    library_dir = os.path.join(opt.sequence_archive, 'libraries')
+    flowcell_dir = os.path.join(opt.sequence_archive, 'flowcells')
+    srfs_dir = os.path.join(opt.sequence_archive, 'srfs')
     make_library_tree(fcdb, 
                       library_dir, flowcell_dir, srfs_dir, 
                       opt.dry_run)
