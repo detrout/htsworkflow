@@ -5,8 +5,9 @@ import time
 import re
 import os
 
-from htsworkflow.pipelines.retrieve_config import getCombinedOptions, saveConfigFile
-from htsworkflow.pipelines.retrieve_config import FlowCellNotFound, WebError404
+from htsworkflow.pipelines.retrieve_config import \
+     CONFIG_SYSTEM, CONFIG_USER, \
+     FlowCellNotFound, getCombinedOptions, saveConfigFile, WebError404
 from htsworkflow.pipelines.genome_mapper import DuplicateGenome, getAvailableGenomes, constructMapperDict
 from htsworkflow.pipelines.run_status import GARunStatus
 
@@ -348,7 +349,8 @@ def pipeline_stderr_handler(line, conf_info):
   return False
 
 
-def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir):
+def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir, 
+                    cfg_defaults=None):
   """
   Gets the config file from server...
   requires config file in:
@@ -362,11 +364,11 @@ def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir):
 
   return True if successful, False is failure
   """
-  options = getCombinedOptions()
+  options = getCombinedOptions(cfg_defaults)
 
   if options.url is None:
-    logging.error("~/.ga_frontend.conf or /etc/ga_frontend/ga_frontend.conf" \
-                  " missing base_host_url option")
+    logging.error("%s or %s missing base_host_url option" % \
+                  (CONFIG_USER, CONFIG_SYSTEM))
     return False
 
   try:
