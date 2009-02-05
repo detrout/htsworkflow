@@ -136,6 +136,19 @@ class PipelineRun(object):
         tree = ElementTree.parse(filename).getroot()
         self.set_elements(tree)
 
+def load_pipeline_run_xml(pathname):
+    """
+    Load and instantiate a Pipeline run from a run xml file
+
+    :Parameters: 
+      - `pathname` : location of an run xml file
+
+    :Returns: initialized PipelineRun object
+    """
+    tree = ElementTree.parse(pathname).getroot()
+    run = PipelineRun(xml=tree)
+    return run
+
 def get_runs(runfolder):
     """
     Search through a run folder for all the various sub component runs
