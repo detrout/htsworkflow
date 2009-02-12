@@ -1,10 +1,13 @@
 """
 Extract information about the Firecrest run
 
-Firecrest - class holding the properties we found
-firecrest - Firecrest factory function initalized from a directory name
-fromxml - Firecrest factory function initalized from an xml dump from
-          the Firecrest object.
+Firecrest 
+  class holding the properties we found
+firecrest 
+  Firecrest factory function initalized from a directory name
+fromxml 
+  Firecrest factory function initalized from an xml dump from
+  the Firecrest object.
 """
 
 from datetime import date
@@ -16,6 +19,8 @@ from htsworkflow.pipelines.runfolder import \
    ElementTree, \
    VERSION_RE, \
    EUROPEAN_STRPTIME
+
+__docformat__ = "restructuredtext en"
 
 class Firecrest(object):
     XML_VERSION=1

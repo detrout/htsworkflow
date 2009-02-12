@@ -1,4 +1,9 @@
+"""
+Extract configuration from Illumina Bustard Directory.
 
+This includes the version number, run date, bustard executable parameters, and 
+phasing estimates. 
+"""
 from datetime import date
 from glob import glob
 import logging
@@ -10,6 +15,9 @@ from htsworkflow.pipelines.runfolder import \
    ElementTree, \
    VERSION_RE, \
    EUROPEAN_STRPTIME
+
+# make epydoc happy
+__docformat__ = "restructuredtext en"
 
 class Phasing(object):
     PHASING = 'Phasing'
@@ -124,7 +132,13 @@ class Bustard(object):
 
 def bustard(pathname):
     """
-    Construct a Bustard object from pathname
+    Construct a Bustard object by analyzing an Illumina Bustard directory.
+
+    :Parameters:
+      - `pathname`: A bustard directory
+
+    :Return:
+      Fully initialized Bustard object.
     """
     b = Bustard()
     path, name = os.path.split(pathname)
@@ -143,6 +157,9 @@ def bustard(pathname):
     return b
 
 def fromxml(tree):
+    """
+    Reconstruct a htsworkflow.pipelines.Bustard object from an xml block
+    """
     b = Bustard()
     b.set_elements(tree)
     return b

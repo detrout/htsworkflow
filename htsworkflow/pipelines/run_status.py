@@ -1,3 +1,5 @@
+__docformat__ = "restructuredtext en"
+
 import glob
 import re
 import os
@@ -397,11 +399,12 @@ def _cmdLineStatusMonitorFunc(conf_info):
   You should probably use startCmdLineStatusMonitor()
   instead of ths function.
 
-  Use with:
-    t = threading.Thread(target=_cmdLineStatusMonitorFunc,
-                         args=[conf_info])
-    t.setDaemon(True)
-    t.start()
+  .. python:
+    def example_launch():
+        t = threading.Thread(target=_cmdLineStatusMonitorFunc,
+                             args=[conf_info])
+        t.setDaemon(True)
+        t.start()
   """
   SLEEP_AMOUNT = 30
 

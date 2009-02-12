@@ -1,4 +1,6 @@
 #!/usr/bin/python
+__docformat__ = "restructuredtext en"
+
 import subprocess
 import logging
 import time

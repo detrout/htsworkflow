@@ -1,11 +1,15 @@
 """
 Extract information about the IPAR run
 
-IPAR - class holding the properties we found
-IPAR - IPAR factory function initalized from a directory name
-fromxml - IPAR factory function initalized from an xml dump from
-          the IPAR object.
+IPAR 
+    class holding the properties we found
+ipar
+    IPAR factory function initalized from a directory name
+fromxml
+    IPAR factory function initalized from an xml dump from
+    the IPAR object.
 """
+__docformat__ = "restructuredtext en"
 
 import datetime
 import logging

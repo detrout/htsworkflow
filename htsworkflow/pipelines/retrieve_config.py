@@ -8,6 +8,8 @@ import os
 import sys
 import urllib2
 
+__docformat__ = "restructredtext en"
+
 CONFIG_SYSTEM = '/etc/hts_frontend/hts_frontend.conf'
 CONFIG_USER = os.path.expanduser('~/.hts_frontend.conf')
 
