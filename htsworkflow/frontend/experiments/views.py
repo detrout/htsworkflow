@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 def index(request):
-    all_runs = DataRun.objects.all().order_by('-run_start_time')
+    all_runs = DataRun.objects.order_by('-run_start_time')
     #t = loader.get_template('experiments/index.html')
     #c = Context({
     #    'data_run_list': all_runs,
