@@ -27,6 +27,9 @@ The options understood by this module are (with their defaults):
 import ConfigParser
 import os
 
+# make epydoc happy
+__docformat__ = "restructuredtext en"
+
 def options_to_list(dest, section_name):
   """
   Load a options from section_name and store in a dictionary
@@ -140,6 +143,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.sites',
     'htsworkflow.frontend.eland_config',

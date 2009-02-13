@@ -4,11 +4,13 @@ Utility functions to make bedfiles.
 import os
 import re
 
+__docformat__ = "restructredtext en"
+
 # map eland_result.txt sense 
 sense_map = { 'F': '+', 'R': '-'}
 sense_color = { 'F': '0,0,255', 'R': '255,255,0' }
 
-def write_bed_header(outstream, name, description):
+def create_bed_header(name, description):
   """
   Produce the headerline for a bedfile
   """
@@ -17,11 +19,33 @@ def write_bed_header(outstream, name, description):
   if description is None: description = "eland result file"
   bed_header = 'track name="%s" description="%s" visibility=4 itemRgb="ON"'
   bed_header += os.linesep
-  outstream.write(bed_header % (name, description))
+  return bed_header
 
 def make_bed_from_eland_stream(instream, outstream, name, description, chromosome_prefix='chr'):
   """
   read an eland result file from instream and write a bedfile to outstream
+
+  :Parameters:
+    - `instream`: stream containing the output from eland 
+    - `outstream`: stream to write the bed file too
+    - `name`: name of bed-file (must be unique)
+    - `description`: longer description of the bed file
+    - `chromosome_prefix`: restrict output lines to fasta records that start with this pattern
+  """
+  for line in make_bed_from_eland_generator(instream, name, description, chromosome_prefix):
+      outstream.write(line)
+
+def make_bed_from_eland_generator(instream, name, description, chromosome_prefix='chr'):
+  """
+  read an eland result file from instream and write a bedfile to outstream
+
+  :Parameters:
+    - `instream`: stream containing the output from eland 
+    - `name`: name of bed-file (must be unique)
+    - `description`: longer description of the bed file
+    - `chromosome_prefix`: restrict output lines to fasta records that start with this pattern
+
+  :Return: generator which yields lines of bedfile
   """
   # indexes into fields in eland_result.txt file
   SEQ = 1
@@ -29,7 +53,7 @@ def make_bed_from_eland_stream(instream, outstream, name, description, chromosom
   START = 7
   SENSE = 8
 
-  write_bed_header(outstream, name, description)
+  yield create_bed_header(name, description)
   prefix_len = len(chromosome_prefix)
 
   for line in instream:
@@ -42,15 +66,14 @@ def make_bed_from_eland_stream(instream, outstream, name, description, chromosom
     # strip off filename extension
     chromosome = fields[CHR].split('.')[0]
 
-    outstream.write('%s %s %d read 0 %s - - %s%s' % (
+    yield '%s %s %d read 0 %s - - %s%s' % (
       chromosome,
       start,
       stop,
       sense_map[fields[SENSE]], 
       sense_color[fields[SENSE]],
       os.linesep  
-    ))
-
+    )
 
 def make_bed_from_multi_eland_stream(
   instream, 
@@ -61,17 +84,25 @@ def make_bed_from_multi_eland_stream(
   max_reads=255
   ):
   """
-  read a multi eland stream and write a bedfile
+  read a multi eland result file from instream and write the bedfile to outstream
+
+  :Parameters:
+    - `instream`: stream containing the output from eland 
+    - `outstream`: stream to write the bed file too
+    - `name`: name of bed-file (must be unique)
+    - `description`: longer description of the bed file
+    - `chromosome_prefix`: restrict output lines to fasta records that start with this pattern
+    - `max_reads`: maximum number of reads to write to bed stream
   """
-  write_bed_header(outstream, name, description)
-  parse_multi_eland(instream, outstream, chr_prefix, max_reads)
+  for lane in make_bed_from_multi_eland_generator(instream, name, description, chr_prefix, max_reads):
+      oustream.write(lane)
 
-def parse_multi_eland(instream, outstream, chr_prefix, max_reads=255):
-
+def make_bed_from_multi_eland_generator(instream, name, description, chr_prefix, max_reads=255):
   loc_pattern = '(?P<fullloc>(?P<start>[0-9]+)(?P<dir>[FR])(?P<count>[0-9]+))'
   other_pattern = '(?P<chr>[^:,]+)'
   split_re = re.compile('(%s|%s)' % (loc_pattern, other_pattern))
 
+  yield create_bed_header(name, description)
   for line in instream:
     rec = line.split()
     if len(rec) > 3:
@@ -110,35 +141,30 @@ def parse_multi_eland(instream, outstream, chr_prefix, max_reads=255):
         if reported_reads <= max_reads:
           for cur_chr, start, stop, strand, color in read_list:
             reported_reads += 1
-            outstream.write('%s %d %d read 0 %s - - %s%s' % (
+            yield '%s %d %d read 0 %s - - %s%s' % (
                 cur_chr,
                 start,
                 stop,
                 sense_map[orientation],
                 sense_color[orientation],
                 os.linesep
-            ))
+            )
 
-def make_description(database, flowcell_id, lane):
+def make_description(flowcell_id, lane):
     """
-    compute a bedfile name and description from the fctracker database
+    compute a bedfile name and description from the django database
     """
-    from htsworkflow.util.fctracker import fctracker
+    from htsworkflow.frontend.experiments import models as experiments
 
-    fc = fctracker(database)
-    cells = fc._get_flowcells("where flowcell_id='%s'" % (flowcell_id))
-    if len(cells) != 1:
-      raise RuntimeError("couldn't find flowcell id %s" % (flowcell_id))
     lane = int(lane)
     if lane < 1 or lane > 8:
       raise RuntimeError("flowcells only have lanes 1-8")
 
+    cell = experiments.FlowCell.objects.get(flowcell_id=flowcell_id)
+
     name = "%s-%s" % (flowcell_id, lane)
 
-    cell_id, cell = cells.items()[0]
-    assert cell_id == flowcell_id
-
-    cell_library_id = cell['lane_%d_library_id' %(lane,)]
-    cell_library = cell['lane_%d_library' %(lane,)]
-    description = "%s-%s" % (cell_library['library_name'], cell_library_id)
+    cell_library = getattr(cell, 'lane_%d_library' %(lane,))
+    cell_library_id = cell_library.library_id
+    description = "%s-%s" % (cell_library.library_name, cell_library_id)
     return name, description

@@ -194,6 +194,50 @@ class ElandLane(object):
         return self._match_codes
     match_codes = property(_get_match_codes)
 
+    def _get_no_match(self):
+        if self._mapped_reads is None:
+            self._update()  
+        return self._match_codes['NM']
+    no_match = property(_get_no_match, 
+                        doc="total reads that didn't match the target genome.")
+
+    def _get_no_match_percent(self):
+        return float(self.no_match)/self.reads * 100 
+    no_match_percent = property(_get_no_match_percent,
+                                doc="no match reads as percent of total")
+
+    def _get_qc_failed(self):
+        if self._mapped_reads is None:
+            self._update()  
+        return self._match_codes['QC']
+    qc_failed = property(_get_qc_failed,
+                        doc="total reads that didn't match the target genome.")
+
+    def _get_qc_failed_percent(self):
+        return float(self.qc_failed)/self.reads * 100 
+    qc_failed_percent = property(_get_qc_failed_percent,
+                                 doc="QC failed reads as percent of total")
+
+    def _get_unique_reads(self):
+        if self._mapped_reads is None:
+           self._update()
+        sum = 0
+        for code in ['U0','U1','U2']:
+            sum += self._match_codes[code]
+        return sum
+    unique_reads = property(_get_unique_reads,
+                            doc="total unique reads")
+
+    def _get_repeat_reads(self):
+        if self._mapped_reads is None:
+           self._update()
+        sum = 0
+        for code in ['R0','R1','R2']:
+            sum += self._match_codes[code]
+        return sum
+    repeat_reads = property(_get_repeat_reads,
+                            doc="total repeat reads")
+    
     def get_elements(self):
         lane = ElementTree.Element(ElandLane.LANE,
                                    {'version':

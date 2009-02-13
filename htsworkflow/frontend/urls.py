@@ -19,6 +19,19 @@ urlpatterns = patterns('',
     #(r'^analysis/', include('htsworkflow.frontend.analysis.urls')),
     # Report Views:
     (r'^reports/', include('htsworkflow.frontend.reports.urls')),
+    # Library browser
+    (r'^library/$', 'htsworkflow.frontend.samples.views.library'),
+    (r'^library/(?P<lib_id>\w+)/$', 
+      'htsworkflow.frontend.samples.views.library_to_flowcells'),
+    # Raw result files
+    (r'^results/(?P<fc_id>\w+)/(?P<cnm>C[1-9]-[0-9]+)/summary/',
+      'htsworkflow.frontend.samples.views.summaryhtm_fc_cnm'),
+    (r'^results/(?P<fc_id>\w+)/(?P<cnm>C[1-9]-[0-9]+)/eland_result/(?P<lane>[1-8])',
+      'htsworkflow.frontend.samples.views.result_fc_cnm_eland_lane'),
+    (r'^results/(?P<fc_id>\w+)/(?P<cnm>C[1-9]-[0-9]+)/bedfile/(?P<lane>[1-8])/ucsc',
+      'htsworkflow.frontend.samples.views.bedfile_fc_cnm_eland_lane_ucsc'),
+    (r'^results/(?P<fc_id>\w+)/(?P<cnm>C[1-9]-[0-9]+)/bedfile/(?P<lane>[1-8])',
+      'htsworkflow.frontend.samples.views.bedfile_fc_cnm_eland_lane'),
     
     # databrowser
     #(r'^databrowse/(.*)', databrowse.site.root)

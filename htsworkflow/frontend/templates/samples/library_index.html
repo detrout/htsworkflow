@@ -1,0 +1,46 @@
+<style type="text/css">
+  /* <![CDATA[ */
+  table, td {
+    border-style: solid;
+  }
+  table {
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+  thead {
+    text-align: center;
+  }
+  td {
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+  }
+  td a {
+    display: block;
+  }
+  /* ]]> */
+</style>
+
+{% block summary_stats %}
+<table>
+  <thead>
+    <tr>
+    <td>Library ID</td>
+    <td>Species</td>
+    <td>Library Name</td>
+    <td>Total Lanes</td>
+    </tr>
+  </thead>
+  <tbody>
+    {% for lib in library_list%}
+    <tr>
+      <td><a href="/library/{{ lib.library_id }}">{{ lib.library_id }}</a></td>
+      <td><a href="/library/{{ lib.library_id }}">{{ lib.species_name }}</a></td>
+      <td><a href="/library/{{ lib.library_id }}">{{ lib.library_name }}</a></td>
+      <td>{{ lib.lanes_run }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

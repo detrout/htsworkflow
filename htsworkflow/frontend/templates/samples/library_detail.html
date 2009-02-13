@@ -1,0 +1,99 @@
+{% load humanize %}
+
+<hr/>
+<br/>
+<style type="text/css">
+  /* <![CDATA[ */
+  table, td {
+    border-style: solid;
+  }
+  table {
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+  td {
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+  }
+  thead {
+    text-align: center;
+    }
+  tbody {
+    text-align: right;
+  }
+  /* ]]> */
+</style>
+
+{% block summary_stats %}
+<table>
+  <thead>
+    <tr>
+      <td colspan="6"></td>
+      <td colspan="2">No Match</td>
+      <td colspan="2">QC Failed</td>
+      <td colspan="4">Unique</td>
+      <td colspan="4">Repeat</td>
+    </tr>
+    <tr>
+    <td>Cycles</td>
+    <td>Flowcell</td>
+    <td>Lane</td>
+    <td>End</td>
+    <td>Cluster / Tile</td>
+    <td>Raw Reads</td>
+    <td>total</td>
+    <td>%</td>
+    <td>total</td>
+    <td>%</td>
+    <td>0 mismatch</td>
+    <td>1 mismatch</td>
+    <td>2 mismatch</td>
+    <td>Total</td>
+    <td>0 mismatch</td>
+    <td>1 mismatch</td>
+    <td>2 mismatch</td>
+    <td>Total</td>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for lane in lane_summary_list %}
+    <tr>
+      <td>{{ lane.cycle_width }}</td>
+      <td>{{ lane.flowcell_id }}</td>
+      <td>{{ lane.lane_id }}</td>
+      <td>{% if lane.end %}{{ lane.end }}{% endif %}</td>
+      <td>{{ lane.clusters.0|intcomma }}</td>
+      <td>{{ lane.reads|intcomma }}</td>
+      <td>{{ lane.no_match|intcomma }}</td>
+      <td>{{ lane.no_match_percent|stringformat:".2f" }}</td>
+      <td>{{ lane.qc_failed|intcomma }}</td>
+      <td>{{ lane.qc_failed_percent|stringformat:".2f" }}</td>
+      <td>{{ lane.match_codes.U0|intcomma }}</td>
+      <td>{{ lane.match_codes.U1|intcomma }}</td>
+      <td>{{ lane.match_codes.U2|intcomma }}</td>
+      <td>{{ lane.unique_reads|intcomma }}</td>
+      <td>{{ lane.match_codes.R0|intcomma }}</td>
+      <td>{{ lane.match_codes.R1|intcomma }}</td>
+      <td>{{ lane.match_codes.R2|intcomma }}</td>
+      <td>{{ lane.repeat_reads|intcomma }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br/>
+<hr/>
+{% for lane in lane_summary_list %}
+<h2>
+  {{lane.cycle_width}} {{ lane.flowcell_id }} lane {{ lane.lane_id }} 
+  {% if lane.end %} end {{ lane.end }}{% endif %}
+</h2>
+  <ul>
+    {% for name, counts in lane.summarized_reads.items %}
+    <li><b>{{ name }}</b>: {{ counts|intcomma }}</li>
+    {% endfor %}
+  </ul>
+{% endfor %}
+{% endblock %}
