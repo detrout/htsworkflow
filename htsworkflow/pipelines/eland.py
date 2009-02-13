@@ -127,8 +127,10 @@ class ElandLane(object):
             if groups is None:
                 match_codes[fields[2]] += 1
             else:
-                # when there are too many hit, eland writes a - where
-                # it would have put the list of hits
+                # when there are too many hit, eland  writes a - where
+                # it would have put the list of hits.
+                # or in a different version of eland, it just leaves
+                # that column blank, and only outputs 3 fields.     
                 if len(fields) < 4 or fields[3] == '-':
                   continue
                 zero_mismatches = int(groups.group(1))
