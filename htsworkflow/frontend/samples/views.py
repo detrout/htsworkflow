@@ -22,7 +22,7 @@ def create_library_list():
     Create a list of libraries that includes how many lanes were run
     """
     library_list = []
-    for lib in Library.objects.all():
+    for lib in Library.objects.order_by('-library_id'):
        summary = {}
        summary['library_id'] = lib.library_id
        summary['library_name'] = lib.library_name
