@@ -129,7 +129,7 @@ class ElandLane(object):
             else:
                 # when there are too many hit, eland writes a - where
                 # it would have put the list of hits
-                if fields[3] == '-':
+                if len(fields) < 4 or fields[3] == '-':
                   continue
                 zero_mismatches = int(groups.group(1))
                 if zero_mismatches == 1:
