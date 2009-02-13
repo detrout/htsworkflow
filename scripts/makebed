@@ -3,6 +3,7 @@ import optparse
 import sys
 import os
 
+from htsworkflow.util.opener import autoopen
 from htsworkflow.util.makebed import make_bed_from_eland_stream, make_bed_from_multi_eland_stream, make_description
 
 def make_parser():
@@ -61,7 +62,7 @@ def main(command_line=None):
   if options.inname == '-':
     instream = sys.stdin
   elif os.path.exists(options.inname):
-    instream = open(options.inname, 'r')
+    instream = autoopen(options.inname, 'r')
   else:
     parser.error('%s was not found' % (options.inname))
     return 1
