@@ -346,7 +346,10 @@ def getElandConfig(flowcell, regenerate=False):
   #Loop through and create entries for each species.
   for genome in genome_list:
     lanes = ''.join(genome_dict[genome])
-    data.append('%s:ANALYSIS eland' % (lanes))
+    if fcObj.paired_end:
+        data.append('%s:ANALYSIS eland_pair' % (lanes))
+    else:
+        data.append('%s:ANALYSIS eland_extended' % (lanes))
     data.append('%s:READ_LENGTH %s' % (lanes, read_length))
     data.append('%s:ELAND_GENOME %s' % (lanes, '%%(%s)s' % (genome)))
     data.append('%s:USE_BASES %s' % (lanes, 'Y'*int(read_length)))
