@@ -7,6 +7,7 @@ class FlowCell(models.Model):
   flowcell_id = models.CharField(max_length=20, unique=True, db_index=True)
   run_date = models.DateTimeField()
   advanced_run = models.BooleanField(default=False)
+  paired_end = models.BooleanField(default=False)
   read_length = models.IntegerField(default=32) #Stanford is currenlty 25
   
   lane_1_library = models.ForeignKey(Library, related_name="lane_1_library")
