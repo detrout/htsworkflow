@@ -351,8 +351,7 @@ def pipeline_stderr_handler(line, conf_info):
   return False
 
 
-def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir, 
-                    cfg_defaults=None):
+def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir):
   """
   Gets the config file from server...
   requires config file in:
@@ -366,7 +365,7 @@ def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir,
 
   return True if successful, False is failure
   """
-  options = getCombinedOptions(cfg_defaults)
+  options = getCombinedOptions()
 
   if options.url is None:
     logging.error("%s or %s missing base_host_url option" % \
