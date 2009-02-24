@@ -153,7 +153,9 @@ class Library(models.Model):
   stopping_point = models.CharField(max_length=25, choices=PROTOCOL_END_POINTS, default='Done')
   amplified_from_sample = models.ForeignKey('self', blank=True, null=True)  
   
-  undiluted_concentration = models.DecimalField("Undiluted concentration (ng/ul)", max_digits=5, decimal_places=2, default=0, blank=True, null=True)
+  undiluted_concentration = models.DecimalField("Concentration", 
+      max_digits=5, decimal_places=2, default=0, blank=True, null=True,
+      help_text="Undiluted concentration (ng/ul)")
   successful_pM = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
   ten_nM_dilution = models.BooleanField()
   avg_lib_size = models.IntegerField(default=225, blank=True, null=True)
