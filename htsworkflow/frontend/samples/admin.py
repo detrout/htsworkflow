@@ -30,17 +30,19 @@ class LibraryOptions(admin.ModelAdmin):
         #'aligned_reads',
         #'DataRun',
         'library_name',
-        'experiment_type',
+        #'experiment_type',
         #'organism',
         #'antibody_name',
         #'cell_line',
         #'libtags',
         #'made_for',
 	'affiliation',
-        'made_by',
+        #'made_by',
         'undiluted_concentration',
         'creation_date',
+	'stopping_point',
         #'condition',
+
     )
     list_filter = (
         'experiment_type', 

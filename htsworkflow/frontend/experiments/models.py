@@ -81,7 +81,15 @@ class FlowCell(models.Model):
   Create_LOG.allow_tags = True 
 
   def Lanes(self):
-    return '<div><span style="margin-right:10px">1)%s</span><span style="margin-right:10px">2)%s</span><span style="margin-right:10px">3)%s</span><span style="margin-right:10px">4)%s</span><span style="margin-right:10px">5)%s</span><span style="margin-right:10px">6)%s</span><span style="margin-right:10px">7)%s</span><span style="margin-right:10px">8)%s</span></div>' % (self.lane_1_library,self.lane_2_library,self.lane_3_library,self.lane_4_library,self.lane_5_library,self.lane_6_library,self.lane_7_library,self.lane_8_library)
+    library_url = '/admin/samples/library/%s' 
+    html = ['<ol>']
+    for i in range(1,9):
+	library_id = getattr(self, 'lane_%d_library_id' % i)
+        library = getattr(self, 'lane_%d_library' % i)
+	element = '<li><a href="%s">%s</a></li>'
+        html.append(element % (library_url % library_id, library))
+    html.append('</ol>')
+    return "\n".join(html)
   Lanes.allow_tags = True
 
   class Meta:

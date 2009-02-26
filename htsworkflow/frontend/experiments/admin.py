@@ -39,7 +39,7 @@ class FlowCellOptions(admin.ModelAdmin):
         '=lane_6_library__library_id',
         '=lane_7_library__library_id',
         '=lane_8_library__library_id')
-    list_display = ('flowcell_id','seq_mac_id','run_date', 'Create_LOG','Lanes')
+    list_display = ('flowcell_id','run_date','Lanes')
     list_filter = ('seq_mac_id','cluster_mac_id')
     fieldsets = (
         (None, {
