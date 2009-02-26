@@ -98,7 +98,7 @@ class Affiliation(models.Model):
   
   def __unicode__(self):
     str = unicode(self.name)
-    if len(self.contact) != 0:
+    if self.contact is not None and len(self.contact) > 0:
       str += u' ('+self.contact+u')' 
     return str
 
