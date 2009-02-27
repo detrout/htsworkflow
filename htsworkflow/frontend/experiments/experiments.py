@@ -120,16 +120,20 @@ def generateConfile(request,fcid):
 
     return cnfgfile
 
-def getConfile(request):
+def getConfile(req):
     granted = False
-    ClIP = request.META['REMOTE_ADDR']
+    ClIP = req.META['REMOTE_ADDR']
     if (settings.ALLOWED_IPS.has_key(ClIP)):  granted = True
 
     if not granted: return HttpResponse("access denied. IP: "+ClIP)
 
     fcid = 'none'
-    cnfgfile = ''
+    cnfgfile = 'Nothing found'
     runfolder = 'unknown'
+    request = req.REQUEST
+    print request, dir(request)
+    print request['fcid'], request.has_key('fcid')
+    print request['runf']
     if request.has_key('fcid'):
       fcid = request['fcid']
       if request.has_key('runf'):
@@ -151,19 +155,20 @@ def getConfile(request):
         except ObjectDoesNotExist:
           cnfgfile = 'Entry not found for RunFolder = '+runfolder
 
-    return HttpResponse(cnfgfile)
+    return HttpResponse(cnfgfile, mimetype='text/plain')
 
-def getLaneLibs(request):
+def getLaneLibs(req):
     granted = False
-    ClIP = request.META['REMOTE_ADDR']
+    ClIP = req.META['REMOTE_ADDR']
     if (settings.ALLOWED_IPS.has_key(ClIP)):  granted = True
 
     if not granted: return HttpResponse("access denied.")
 
+    request = req.REQUEST
     fcid = 'none'
     outputfile = ''
     if request.has_key('fcid'):
-      fcid = request['fcid']                                                                                                      
+      fcid = request['fcid']
       try:                                
         rec = FlowCell.objects.get(flowcell_id=fcid)
         #Ex: 071211
@@ -191,4 +196,4 @@ def getLaneLibs(request):
         outputfile = 'Flowcell entry not found for: '+fcid
     else: outputfile = 'Missing input: flowcell id'
 
-    return HttpResponse(outputfile)
+    return HttpResponse(outputfile, mimetype='text/plain')
