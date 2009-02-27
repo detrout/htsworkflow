@@ -6,12 +6,6 @@ from htsworkflow.pipelines.configure_run import *
 from htsworkflow.pipelines import retrieve_config as _rc
 from htsworkflow.pipelines.run_status import startCmdLineStatusMonitor
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)-8s %(message)s',
-                    datefmt='%a, %d %b %Y %H:%M:%S',
-                    #filename='pipeline_main.log',
-                    filemode='w')
-
 s_fc = re.compile('FC[0-9]+')
 
 #Turn on built-in command-line parsing.
@@ -85,4 +79,10 @@ def main(args=None):
     return 2
 
 if __name__ == "__main__":
+  logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)-8s %(message)s',
+                    datefmt='%a, %d %b %Y %H:%M:%S',
+                    #filename='pipeline_main.log',
+                    filemode='w')
+
   sys.exit(main(sys.argv[1:]))
