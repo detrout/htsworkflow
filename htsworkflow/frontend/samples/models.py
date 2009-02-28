@@ -1,3 +1,4 @@
+import urlparse
 from django.db import models
 from django.contrib.auth.models import User
 from htsworkflow.frontend import settings
@@ -229,3 +230,8 @@ class Library(models.Model):
     return tstr
   aligned_reads.allow_tags = True
 
+  def public(self):
+    SITE_ROOT = '/'
+    summary_url = urlparse.urljoin(SITE_ROOT, 'library/%s' % (self.library_id))
+    return '<a href="%s">S</a>' % (summary_url,)
+  public.allow_tags = True

@@ -30,6 +30,7 @@ class LibraryOptions(admin.ModelAdmin):
         #'aligned_reads',
         #'DataRun',
         'library_name',
+        'public',
         #'experiment_type',
         #'organism',
         #'antibody_name',
@@ -40,7 +41,7 @@ class LibraryOptions(admin.ModelAdmin):
         #'made_by',
         'undiluted_concentration',
         'creation_date',
-	'stopping_point',
+        'stopping_point',
         #'condition',
 
     )
