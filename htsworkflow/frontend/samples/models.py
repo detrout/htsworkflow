@@ -228,6 +228,10 @@ class Library(models.Model):
 
   def public(self):
     SITE_ROOT = '/'
-    summary_url = urlparse.urljoin(SITE_ROOT, 'library/%s' % (self.library_id))
+    summary_url = self.get_absolute_url()
     return '<a href="%s">S</a>' % (summary_url,)
   public.allow_tags = True
+
+  @models.permalink
+  def get_absolute_url(self):
+    return ('htsworkflow.frontend.samples.views.library_to_flowcells', [str(self.id)])
