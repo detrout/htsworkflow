@@ -11,6 +11,15 @@ def main(cmdline=None):
     conn = sqlite3.connect(dest)
     c = conn.cursor()
     c.execute('drop table fctracker_elandresult');
+    c.execute('''CREATE TABLE "experiments_clusterstation" (
+      "id" integer NOT NULL PRIMARY KEY,
+      "name" varchar(50) NOT NULL UNIQUE);''')
+    c.execute('''INSERT INTO experiments_clusterstation (name) values ("station");''')
+    c.execute('''CREATE TABLE "experiments_sequencer" (
+      "id" integer NOT NULL PRIMARY KEY,
+      "name" varchar(50) NOT NULL UNIQUE);''')
+    c.execute('''INSERT INTO experiments_sequencer (name) values ("HWI-EAS229");''')
+
     c.execute('''CREATE TABLE "experiments_flowcell" (
     "id" integer NOT NULL PRIMARY KEY,
     "flowcell_id" varchar(20) NOT NULL UNIQUE,
@@ -42,8 +51,8 @@ def main(cmdline=None):
     "lane_6_cluster_estimate" integer NULL,
     "lane_7_cluster_estimate" integer NULL,
     "lane_8_cluster_estimate" integer NULL,
-    "cluster_mac_id" varchar(50) NOT NULL,
-    "seq_mac_id" varchar(50) NOT NULL,
+    "cluster_station_id" integer NOT NULL REFERENCES "experiments_clusterstation" ("id"),
+    "sequencer_id" integer NOT NULL REFERENCES "experiments_sequencer" ("id"),
     "notes" text NOT NULL
 );''')
     c.execute('''insert into experiments_flowcell 
@@ -56,7 +65,7 @@ def main(cmdline=None):
          lane_2_cluster_estimate, lane_3_cluster_estimate, 
          lane_4_cluster_estimate, lane_5_cluster_estimate,
          lane_6_cluster_estimate, lane_7_cluster_estimate, 
-         lane_8_cluster_estimate, cluster_mac_id, seq_mac_id,
+         lane_8_cluster_estimate, cluster_station_id, sequencer_id,
          notes) 
       select
          id, flowcell_id, run_date, advanced_run, paired_end, read_length,
@@ -68,7 +77,7 @@ def main(cmdline=None):
          lane_2_cluster_estimate, lane_3_cluster_estimate, 
          lane_4_cluster_estimate, lane_5_cluster_estimate,
          lane_6_cluster_estimate, lane_7_cluster_estimate, 
-         lane_8_cluster_estimate, "", "",
+         lane_8_cluster_estimate, 1, 1,
          notes from fctracker_flowcell;''')
     c.execute('''drop table fctracker_flowcell;''')
 
