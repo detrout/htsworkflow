@@ -59,6 +59,12 @@ class Condition(models.Model):
     class Meta:
         ordering = ["condition_name"]
 
+class ExperimentType(models.Model):
+  name = models.CharField(max_length=50, unique=True)
+
+  def __unicode__(self):
+    return unicode(self.name)
+
 class Tag(models.Model): 
   tag_name = models.CharField(max_length=100, db_index=True,blank=False,null=False) 
   TAG_CONTEXT = ( 
@@ -123,18 +129,7 @@ class Library(models.Model):
   # SQL to add column: alter table fctracker_library add column "replicate" smallint unsigned NULL;
   REPLICATE_NUM = ((1,1),(2,2),(3,3),(4,4))
   replicate =  models.PositiveSmallIntegerField(choices=REPLICATE_NUM,default=1) 
-
-  EXPERIMENT_TYPES = (
-      ('INPUT_RXLCh','INPUT_RXLCh'),
-      ('ChIP-seq', 'ChIP-seq'),
-      ('Sheared', 'Sheared'),
-      ('RNA-seq', 'RNA-seq'),
-      ('Methyl-seq', 'Methyl-seq'),
-      ('DIP-seq', 'DIP-seq'),
-    ) 
-  experiment_type = models.CharField(max_length=50, choices=EXPERIMENT_TYPES,
-                                     default='RNA-seq')
-  
+  experiment_type = models.ForeignKey(ExperimentType)
   creation_date = models.DateField(blank=True, null=True)
   made_for = models.CharField(max_length=50, blank=True, 
       verbose_name='ChIP/DNA/RNA Made By')

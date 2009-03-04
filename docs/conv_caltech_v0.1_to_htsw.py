@@ -97,6 +97,19 @@ def main(cmdline=None):
     "notes" text NOT NULL);''')
     c.execute('''insert into samples_condition (condition_name,notes) values("Unknown","Unknown");''')
 
+    # create samples.experiment type
+    c.execute('''CREATE TABLE "samples_experimenttype" (
+          "id" integer NOT NULL PRIMARY KEY,
+          "name" varchar(50) NOT NULL UNIQUE);''')
+    for et in [ ('Unknown',),
+                ('ChIP-seq',),
+                ('Sheared',),
+                ('RNA-seq',),
+                ('Methyl-seq',),
+                ('DIP-seq',),
+                ('De Novo',)]:
+        c.execute('insert into samples_experimenttype (name) values (?)', et)
+
     # create samples.library
     c.execute('''CREATE TABLE "samples_library" (
     "id" integer NOT NULL PRIMARY KEY,
@@ -107,7 +120,7 @@ def main(cmdline=None):
     "condition_id" integer NOT NULL REFERENCES "samples_condition" ("id"),
     "antibody_id" integer NULL REFERENCES "samples_antibody" ("id"),
     "replicate" smallint unsigned NOT NULL,
-    "experiment_type" varchar(50) NOT NULL,
+    "experiment_type_id" NOT NULL REFERENCES "samples_experimenttype" ("id"),
     "creation_date" date NULL,
     "made_for" varchar(50) NOT NULL,
     "made_by" varchar(50) NOT NULL,
@@ -119,17 +132,19 @@ def main(cmdline=None):
     "avg_lib_size" integer NULL,
     "notes" text NOT NULL);''')
     c.execute('''INSERT INTO samples_library 
-      (id,library_id,library_name,library_species_id, experiment_type,
+      (id,library_id,library_name,library_species_id, experiment_type_id,
        cell_line_id,condition_id,replicate,made_by,creation_date,
        made_for,stopping_point,amplified_from_sample_id,
        undiluted_concentration,ten_nM_dilution,successful_pM,
        avg_lib_size,notes) 
-select library_id,library_id,library_name,library_species_id,"unknown",
+select library_id,library_id,library_name,library_species_id, 1,
        1,           1,           1,        made_by,creation_date,
        made_for,stopping_point,amplified_from_sample_id,
        undiluted_concentration,ten_nM_dilution,successful_pM,
        0,notes from fctracker_library;''');
-    c.execute('''update samples_library set experiment_type="RNA-seq" where library_id in (select library_id from fctracker_library where RNASeq = 1);''')
+    c.execute('select id from samples_experimenttype where name = "RNA-seq";')
+    rna_seq_id = list(c)[0]
+    c.execute('''update samples_library set experiment_type_id=?  where library_id in (select library_id from fctracker_library where RNASeq = 1);''', rna_seq_id)
     #c.execute('''drop table fctracker_library;''') 
     # add many to many tables
     c.execute('''CREATE TABLE "samples_library_affiliations" (

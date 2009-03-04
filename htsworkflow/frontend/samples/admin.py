@@ -1,4 +1,4 @@
-from htsworkflow.frontend.samples.models import Antibody, Cellline, Condition, Species, Affiliation, Library, Tag
+from htsworkflow.frontend.samples.models import Antibody, Cellline, Condition, ExperimentType, Species, Affiliation, Library, Tag
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
@@ -13,6 +13,11 @@ class CelllineOptions(admin.ModelAdmin):
           'fields': (('cellline_name'),('notes'),)
       }),
      )
+
+class ExperimentTypeOptions(admin.ModelAdmin):
+  model = ExperimentType
+  #list_display = ('name',)
+  #fieldsets = ( (None, { 'fields': ('name',) }), )
 
 class LibraryOptions(admin.ModelAdmin):
     date_hierarchy = "creation_date"
@@ -121,6 +126,7 @@ admin.site.register(Affiliation, AffiliationOptions)
 admin.site.register(Antibody, AntibodyOptions)
 admin.site.register(Cellline, CelllineOptions)
 admin.site.register(Condition, ConditionOptions)
+admin.site.register(ExperimentType, ExperimentTypeOptions)
 admin.site.register(Library, LibraryOptions)
 admin.site.register(Species, SpeciesOptions)
 admin.site.register(Tag, TagOptions)
