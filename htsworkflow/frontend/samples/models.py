@@ -156,8 +156,9 @@ class Library(models.Model):
   
   undiluted_concentration = models.DecimalField("Concentration", 
       max_digits=5, decimal_places=2, default=0, blank=True, null=True,
-      help_text="Undiluted concentration (ng/ul)")
-  successful_pM = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+      help_text=u"Undiluted concentration (ng/\u00b5l)") 
+      # note \u00b5 is the micro symbol in unicode
+  successful_pM = models.DecimalField(max_digits=9, decimal_places=1, blank=True, null=True)
   ten_nM_dilution = models.BooleanField()
   avg_lib_size = models.IntegerField(default=225, blank=True, null=True)
   notes = models.TextField(blank=True)
