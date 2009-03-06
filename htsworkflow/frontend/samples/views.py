@@ -1,4 +1,5 @@
 # Create your views here.
+from htsworkflow.frontend.samples.changelist import ChangeList
 from htsworkflow.frontend.samples.models import Library
 from htsworkflow.frontend.samples.results import get_flowcell_result_dict, parse_flowcell_id
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
@@ -8,8 +9,8 @@ from htsworkflow.util import makebed
 from htsworkflow.util import opener
 
 from django.http import HttpResponse
+from django.template import RequestContext
 from django.template.loader import get_template
-from django.template import Context
 
 import StringIO
 import logging
@@ -17,12 +18,13 @@ import os
 
 LANE_LIST = [1,2,3,4,5,6,7,8]
 
-def create_library_list():
+def create_library_context(cl):
     """
     Create a list of libraries that includes how many lanes were run
     """
-    library_list = []
-    for lib in Library.objects.order_by('-library_id'):
+    records = []
+    #for lib in library_items.object_list:
+    for lib in cl.result_list:
        summary = {}
        summary['library_id'] = lib.library_id
        summary['library_name'] = lib.library_name
@@ -32,13 +34,23 @@ def create_library_list():
            lane = getattr(lib, 'lane_%d_library' % (lane_id,))
            lanes_run += len( lane.all() )
        summary['lanes_run'] = lanes_run
-       library_list.append(summary)
-    return library_list
+       records.append(summary)
+    cl.result_count = unicode(cl.paginator._count) + u" libraries"
+    return {'library_list': records }
 
 def library(request):
-    library_list = create_library_list()
+   # build changelist
+    fcl = ChangeList(request, Library,
+        list_filter=['library_species','affiliations'],
+        search_fields=['library_id', 'library_name'],
+        list_per_page=25,
+        queryset=Library.objects.filter(hidden__exact=0)
+    )
+
+    context = { 'cl': fcl}
+    context.update(create_library_context(fcl))
     t = get_template('samples/library_index.html')
-    c = Context({'library_list': library_list })
+    c = RequestContext(request, context)
     return HttpResponse( t.render(c) )
 
 def library_to_flowcells(request, lib_id):
@@ -100,7 +112,7 @@ def library_to_flowcells(request, lib_id):
             output.append(err)
    
     output.append('<br />')
-    output.append(t.render(Context({'lane_summary_list': lane_summary_list})))
+    output.append(t.render(RequestContext(request, {'lane_summary_list': lane_summary_list})))
     output.append('<br />')
     
     if record_count == 0:

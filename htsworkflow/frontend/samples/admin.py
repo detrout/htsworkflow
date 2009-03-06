@@ -65,9 +65,9 @@ class LibraryOptions(admin.ModelAdmin):
     fieldsets = (
       (None, {
         'fields': (
-          ('replicate','library_id','library_name'),
+          ('library_id','library_name','hidden'),
           ('library_species'),
-          ('experiment_type'),
+          ('experiment_type', 'replicate'),
           ('cell_line','condition','antibody'),)
          }),
          ('Creation Information:', {

@@ -8,6 +8,8 @@ admin.autodiscover()
 #databrowse.site.register(Library)
 #databrowse.site.register(FlowCell)
 
+from htsworkflow.frontend import settings
+
 urlpatterns = patterns('',
     # Base:
     (r'^eland_config/', include('htsworkflow.frontend.eland_config.urls')),
@@ -36,3 +38,9 @@ urlpatterns = patterns('',
     # databrowser
     #(r'^databrowse/(.*)', databrowse.site.root)
 )
+
+if settings.DEBUG:
+  urlpatterns += patterns('',
+      (r'^static/(?P<path>.*)$', 'django.views.static.serve', 
+        {'document_root': settings.MEDIA_ROOT}),
+  )

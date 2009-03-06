@@ -102,11 +102,11 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.abspath(os.path.split(__file__)[0]) + '/static/'
 
 # URL that handles the media served from MEDIA_ROOT.
 # Example: "http://media.lawrence.com"
-MEDIA_URL = ''
+MEDIA_URL = '/static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -157,12 +157,13 @@ INSTALLED_APPS = (
 
 # Project specific settings
 
-ALLOWED_IPS={'localhost': '127.0.0.1'}
+ALLOWED_IPS={'127.0.0.1': '127.0.0.1'}
 options_to_dict(ALLOWED_IPS, 'allowed_hosts')
 
-ALLOWED_ANALYS_IPS = {'localhost': '127.0.0.1'}
+ALLOWED_ANALYS_IPS = {'127.0.0.1': '127.0.0.1'}
 options_to_dict(ALLOWED_ANALYS_IPS, 'allowed_analysis_hosts')
 #UPLOADTO_HOME = os.path.abspath('../../uploads')
 #UPLOADTO_CONFIG_FILE = os.path.join(UPLOADTO_HOME, 'eland_config')
 #UPLOADTO_ELAND_RESULT_PACKS = os.path.join(UPLOADTO_HOME, 'eland_results')
 #UPLOADTO_BED_PACKS = os.path.join(UPLOADTO_HOME, 'bed_packs')
+RESULT_HOME_DIR='/Users/diane/proj/solexa/results/flowcells'

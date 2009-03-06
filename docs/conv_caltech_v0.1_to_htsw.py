@@ -116,6 +116,7 @@ def main(cmdline=None):
     "library_id" varchar(30) NOT NULL,
     "library_name" varchar(100) NOT NULL UNIQUE,
     "library_species_id" integer NOT NULL REFERENCES "samples_species" ("id"),
+    "hidden" bool NOT NULL,
     "cell_line_id" integer NOT NULL REFERENCES "samples_cellline" ("id"),
     "condition_id" integer NOT NULL REFERENCES "samples_condition" ("id"),
     "antibody_id" integer NULL REFERENCES "samples_antibody" ("id"),
@@ -132,27 +133,36 @@ def main(cmdline=None):
     "avg_lib_size" integer NULL,
     "notes" text NOT NULL);''')
     c.execute('''INSERT INTO samples_library 
-      (id,library_id,library_name,library_species_id, experiment_type_id,
+      (id,library_id,library_name,library_species_id, hidden, experiment_type_id,
        cell_line_id,condition_id,replicate,made_by,creation_date,
        made_for,stopping_point,amplified_from_sample_id,
        undiluted_concentration,ten_nM_dilution,successful_pM,
        avg_lib_size,notes) 
-select library_id,library_id,library_name,library_species_id, 1,
+select library_id,library_id,library_name,library_species_id, 0, 1,
        1,           1,           1,        made_by,creation_date,
        made_for,stopping_point,amplified_from_sample_id,
        undiluted_concentration,ten_nM_dilution,successful_pM,
        0,notes from fctracker_library;''');
+
+    # mark gel isolates as "hidden"
+    c.execute('''update samples_library set hidden=1  
+              where stopping_point = "1A" or stopping_point = "1Ab";''');
+
+    # get pk for RNA-seq experiment type
     c.execute('select id from samples_experimenttype where name = "RNA-seq";')
     rna_seq_id = list(c)[0]
+    # change everything marked as rnaseq to experiment_type rnaseq
     c.execute('''update samples_library set experiment_type_id=?  where library_id in (select library_id from fctracker_library where RNASeq = 1);''', rna_seq_id)
     #c.execute('''drop table fctracker_library;''') 
-    # add many to many tables
+
+    # add affiliation linking table
     c.execute('''CREATE TABLE "samples_library_affiliations" (
     "id" integer NOT NULL PRIMARY KEY,
     "library_id" integer NOT NULL REFERENCES "samples_library" ("id"),
     "affiliation_id" integer NOT NULL REFERENCES "samples_affiliation" ("id"),
     UNIQUE ("library_id", "affiliation_id"));''')
 
+    # add library to tags linking table
     c.execute('''CREATE TABLE "samples_library_tags" (
     "id" integer NOT NULL PRIMARY KEY,
     "library_id" integer NOT NULL REFERENCES "samples_library" ("id"),

@@ -118,6 +118,8 @@ class Library(models.Model):
   library_id = models.CharField(max_length=30, db_index=True)
   library_name = models.CharField(max_length=100, unique=True)
   library_species = models.ForeignKey(Species)
+  # new field 2008 Mar 5, alter table samples_library add column "hidden" NOT NULL default 0;
+  hidden = models.BooleanField()
   cell_line = models.ForeignKey(Cellline)
   condition = models.ForeignKey(Condition)
   antibody = models.ForeignKey(Antibody,blank=True,null=True)
