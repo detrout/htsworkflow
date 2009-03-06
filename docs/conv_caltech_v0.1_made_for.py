@@ -42,6 +42,7 @@ def main():
       'Tony',
       'Tristan',
       'Yuling Jiao',
+      u'Anil Ozdemir',
     ]
 
     name_map = {
@@ -79,6 +80,7 @@ def main():
       'Tony': ('Tony',),
       'Tristan': ('Tristan',),
       'Yuling Jiao': ('Yuling Jiao',),
+      u'Anil Ozdemir': (u'Anil Ozdemir',),
     }
 
     affiliations = {}
