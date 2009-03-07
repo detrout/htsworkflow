@@ -142,7 +142,7 @@ select library_id,library_id,library_name,library_species_id, 0, 1,
        1,           1,           1,        made_by,creation_date,
        made_for,stopping_point,amplified_from_sample_id,
        undiluted_concentration,ten_nM_dilution,successful_pM,
-       0,notes from fctracker_library;''');
+       225,notes from fctracker_library;''');
 
     # mark gel isolates as "hidden"
     c.execute('''update samples_library set hidden=1  
