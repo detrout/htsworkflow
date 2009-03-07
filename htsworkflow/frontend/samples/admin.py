@@ -60,7 +60,8 @@ class LibraryOptions(admin.ModelAdmin):
         'antibody',
         'cell_line',
         'condition',
-        'stopping_point')
+        'stopping_point',
+        'hidden')
     list_display_links = ('library_id', 'library_name',)
     fieldsets = (
       (None, {
