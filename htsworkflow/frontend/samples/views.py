@@ -1,4 +1,5 @@
 # Create your views here.
+from htsworkflow.frontend.experiments.models import FlowCell
 from htsworkflow.frontend.samples.changelist import ChangeList
 from htsworkflow.frontend.samples.models import Library
 from htsworkflow.frontend.samples.results import get_flowcell_result_dict, parse_flowcell_id
@@ -43,11 +44,11 @@ def library(request):
     fcl = ChangeList(request, Library,
         list_filter=['library_species','affiliations'],
         search_fields=['library_id', 'library_name'],
-        list_per_page=25,
+        list_per_page=200,
         queryset=Library.objects.filter(hidden__exact=0)
     )
 
-    context = { 'cl': fcl}
+    context = { 'cl': fcl, 'title': 'Library Index'}
     context.update(create_library_context(fcl))
     t = get_template('samples/library_index.html')
     c = RequestContext(request, context)
@@ -243,6 +244,12 @@ def _summary_stats(flowcell_id, lane_id):
                 eland_summary.clusters = gerald_summary[end][lane_id].cluster
                 eland_summary.cycle_width = cycle_width
                 eland_summary.summarized_reads = runfolder.summarize_mapped_reads(eland_summary.mapped_reads)
+
+                # grab some more information out of the flowcell db
+                flowcell = FlowCell.objects.get(flowcell_id=fc_id)
+                pm_field = 'lane_%d_pM' % (lane_id)
+                eland_summary.successful_pm = getattr(flowcell, pm_field)
+
                 summary_list.append(eland_summary)
 
         except Exception, e:

@@ -1,24 +1,29 @@
-{% load i18n %}
-{% load admin_list %}
+{% extends "base_site.html" %}
+{% load adminmedia admin_list i18n %}
 
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL}}css/changelists.css" />
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL}}css/click-table.css" />
+{% block stylesheet %}{{ MEDIA_URL }}css/data-browse-index.css{% endblock %}
 
-<div id="content" class="flex>
-  <form action="" method="get">
+{% block bodyclass %}change-list{% endblock %}
+{% block coltype %}flex{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
     {% block search %}{% search_form cl %}{% endblock %}
-    {% block pagination %}{% pagination cl %}{% endblock %}
-  </form>
-  {% block filters %}
-  {% if cl.has_filters %}
-  <div id="changelist-filter">
-    <h2>{% trans 'Filter' %}</h2>
-    {% for spec in cl.filter_specs %}
-       {% admin_list_filter cl spec %}
-    {% endfor %}
-  </div>
-  {% endif %}
-  {% endblock %}
+
+    {% block filters %}
+    {% if cl.has_filters %}
+    <div id="changelist-filter">
+      <h2>{% trans 'Filter' %}</h2>
+      {% for spec in cl.filter_specs %}
+         {% admin_list_filter cl spec %}
+         {% endfor %}
+       </div>
+       {% endif %}
+       {% endblock %}
+
+  
+ {% block pagination %}{% pagination cl %}{% endblock %}
 
 {% block summary_stats %}
 <table>
@@ -42,4 +47,5 @@
   </tbody>
 </table>
 </div>
+{% endblock %}
 {% endblock %}

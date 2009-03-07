@@ -30,7 +30,7 @@
 <table>
   <thead>
     <tr>
-      <td colspan="6"></td>
+      <td colspan="7"></td>
       <td colspan="2">No Match</td>
       <td colspan="2">QC Failed</td>
       <td colspan="4">Unique</td>
@@ -42,6 +42,7 @@
     <td>Lane</td>
     <td>End</td>
     <td>Cluster / Tile</td>
+    <td>pM</td>
     <td>Raw Reads</td>
     <td>total</td>
     <td>%</td>
@@ -66,6 +67,7 @@
       <td>{{ lane.lane_id }}</td>
       <td>{% if lane.end %}{{ lane.end }}{% endif %}</td>
       <td>{{ lane.clusters.0|intcomma }}</td>
+      <td>{{ lane.successful_pm }}</td>
       <td>{{ lane.reads|intcomma }}</td>
       <td>{{ lane.no_match|intcomma }}</td>
       <td>{{ lane.no_match_percent|stringformat:".2f" }}</td>
