@@ -268,22 +268,22 @@ def getElandConfig(flowcell, regenerate=False):
   
   #Convert all newline conventions to unix style
   l1d = str(fcObj.lane_1_library.library_id) + '|' \
-          + fcObj.lane_1_library.library_name.replace('\r\n', '\n').replace('\r', '\n')
+          + fcObj.lane_1_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
   l2d = str(fcObj.lane_2_library.library_id) + '|' \
-          + fcObj.lane_2_library.library_name.replace('\r\n', '\n').replace('\r', '\n')
+          + fcObj.lane_2_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
   l3d = str(fcObj.lane_3_library.library_id) + '|' \
-          + fcObj.lane_3_library.library_name.replace('\r\n', '\n').replace('\r', '\n')
+          + fcObj.lane_3_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
   l4d = str(fcObj.lane_4_library.library_id) + '|' \
-          + fcObj.lane_4_library.library_name.replace('\r\n', '\n').replace('\r', '\n')
+          + fcObj.lane_4_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
   
   l5d = str(fcObj.lane_5_library.library_id) + '|' \
-          + fcObj.lane_5_library.library_name.replace('\r\n', '\n').replace('\r', '\n')
+          + fcObj.lane_5_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
   l6d = str(fcObj.lane_6_library.library_id) + '|' \
-          + fcObj.lane_6_library.library_name.replace('\r\n', '\n').replace('\r', '\n')
+          + fcObj.lane_6_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
   l7d = str(fcObj.lane_7_library.library_id) + '|' \
-          + fcObj.lane_7_library.library_name.replace('\r\n', '\n').replace('\r', '\n')
+          + fcObj.lane_7_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
   l8d = str(fcObj.lane_8_library.library_id) + '|' \
-          + fcObj.lane_8_library.library_name.replace('\r\n', '\n').replace('\r', '\n')
+          + fcObj.lane_8_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
   
   # Turn new lines into indented commented newlines
   l1d = l1d.replace('\n', '\n#  ')
