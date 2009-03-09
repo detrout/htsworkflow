@@ -1,0 +1,22 @@
+[frontend]
+; database engine, currently only sqlite3 will work right
+database_engine=sqlite3
+; location of the sqlite3 database
+database_name=/htsworkflow/htswfrontend/dev_tracker.db
+
+; settings for what email server to use
+email_host = localhost
+email_port = 25
+
+; default timezone for this server
+time_zone = America/Los_Angels
+
+; set the default picomolarity when creating a new flowcell
+default_pm = 5
+
+
+[allowed_hosts]
+localhost=localhost
+
+[allowed_analysis_hosts]
+localhost=localhost
