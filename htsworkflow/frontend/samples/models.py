@@ -115,7 +115,7 @@ class Affiliation(models.Model):
 
 class Library(models.Model):
   id = models.AutoField(primary_key=True)
-  library_id = models.CharField(max_length=30, db_index=True)
+  library_id = models.CharField(max_length=30, db_index=True, unique=True)
   library_name = models.CharField(max_length=100, unique=True)
   library_species = models.ForeignKey(Species)
   # new field 2008 Mar 5, alter table samples_library add column "hidden" NOT NULL default 0;
@@ -152,7 +152,7 @@ class Library(models.Model):
   amplified_from_sample = models.ForeignKey('self', blank=True, null=True)  
   
   undiluted_concentration = models.DecimalField("Concentration", 
-      max_digits=5, decimal_places=2, default=0, blank=True, null=True,
+      max_digits=5, decimal_places=2, blank=True, null=True,
       help_text=u"Undiluted concentration (ng/\u00b5l)") 
       # note \u00b5 is the micro symbol in unicode
   successful_pM = models.DecimalField(max_digits=9, decimal_places=1, blank=True, null=True)
@@ -165,7 +165,8 @@ class Library(models.Model):
   
   class Meta:
     verbose_name_plural = "libraries"
-    ordering = ["-creation_date"] #["-library_id"]
+    #ordering = ["-creation_date"] 
+    ordering = ["-library_id"]
   
   def antibody_name(self):
     str ='<a target=_self href="/admin/samples/antibody/'+self.antibody.id.__str__()+'/" title="'+self.antibody.__str__()+'">'+self.antibody.nickname+'</a>' 
