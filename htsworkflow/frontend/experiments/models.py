@@ -89,13 +89,19 @@ class FlowCell(models.Model):
 
   def Lanes(self):
     library_url = '/admin/samples/library/%s' 
-    html = ['<ol>']
+    html = ['<table>']
     for i in range(1,9):
-	library_id = getattr(self, 'lane_%d_library_id' % i)
+        cluster_estimate = getattr(self, 'lane_%d_cluster_estimate' % (i,))
+        if cluster_estimate is not None:
+            cluster_estimate = "%s k" % ((int(cluster_estimate)/1000), )
+        else:
+            cluster_estimate = 'None'
+	library_id = getattr(self, 'lane_%d_library_id' % (i,))
         library = getattr(self, 'lane_%d_library' % i)
-	element = '<li><a href="%s">%s</a></li>'
-        html.append(element % (library_url % library_id, library))
-    html.append('</ol>')
+	element = '<tr><td>%d</td><td><a href="%s">%s</a></td><td>%s</td></tr>'
+        expanded_library_url = library_url %(library_id,)
+        html.append(element % (i, expanded_library_url, library, cluster_estimate))
+    html.append('</table>')
     return "\n".join(html)
   Lanes.allow_tags = True
 
