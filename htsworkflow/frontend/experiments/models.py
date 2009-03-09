@@ -1,6 +1,8 @@
 from django.db import models
 from htsworkflow.frontend.samples.models import *
+from htsworkflow.frontend.settings import options
 from django.core.exceptions import ObjectDoesNotExist
+import logging
 
 class ClusterStation(models.Model):
   name = models.CharField(max_length=50, unique=True)
@@ -13,6 +15,12 @@ class Sequencer(models.Model):
 
   def __unicode__(self):
     return unicode(self.name)
+
+default_pM = 5
+try:
+  default_pM = int(options.get('frontend', 'default_pm'))
+except ValueError,e:
+  logging.error("invalid value for frontend.default_pm")
 
 class FlowCell(models.Model):
   
@@ -31,14 +39,14 @@ class FlowCell(models.Model):
   lane_7_library = models.ForeignKey(Library, related_name="lane_7_library")
   lane_8_library = models.ForeignKey(Library, related_name="lane_8_library")
 
-  lane_1_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=2.5)
-  lane_2_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=2.5)
-  lane_3_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=2.5)
-  lane_4_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=2.5)
-  lane_5_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=2.5)
-  lane_6_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=2.5)
-  lane_7_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=2.5)
-  lane_8_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=2.5)
+  lane_1_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
+  lane_2_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
+  lane_3_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
+  lane_4_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
+  lane_5_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
+  lane_6_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
+  lane_7_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
+  lane_8_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
   
   lane_1_cluster_estimate = models.IntegerField(blank=True, null=True)
   lane_2_cluster_estimate = models.IntegerField(blank=True, null=True)

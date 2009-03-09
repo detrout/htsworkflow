@@ -54,6 +54,7 @@ options = ConfigParser.SafeConfigParser(
              'database_name': 
                os.path.abspath('/htsworkflow/htswfrontend/dev_fctracker.db'),
              'time_zone': 'America/Los_Angeles',
+             'default_pm': '5'
            })
 
 options.read([os.path.expanduser("~/.htsworkflow.ini"),
