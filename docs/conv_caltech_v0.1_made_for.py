@@ -26,7 +26,7 @@ def main():
       'Erich Schwarz',
       'Georgi Warinov',
       'Gilberto Desalvo',
-      'Gigio',
+      'Gilberto Hernandez',
       'Gordon Kwan',
       'Hudson-Alpha',
       'James Puckett',
@@ -62,6 +62,7 @@ def main():
       'Erich Schwartz': ('Erich Schwarz',),
       'Georgi Warinov': ('Georgi Warinov',),
       'Gilberto Desalvo': ('Gilberto Desalvo',),
+      'Gilberto Hernandez': ('Gilberto Hernandez',),
       'Gordon Kwan': ('Gordon Kwan',),
       'Gordon': ('Gordon Kwan',),
       'Alpha-Hudson': ('Hudson-Alpha',),
@@ -71,7 +72,7 @@ def main():
       'Jingli Zhang': ('Jingli Zhang',),
       'Jose Luis': ('Jose Luis',),
       'Katherine Fisher': ('Katherine Fisher',),
-      'Katherine, Gigio': ('Katherine Fisher', 'Gigio',),
+      'Katherine, Gigio': ('Katherine Fisher', 'Gilberto Desalvo',),
       'Meyerowitz': ('Meyerowitz',),
       'Ryan, Demo': ('Ryan', 'Demo',),
       'Stathopoulos': ('Angela Stathopoulos',),
@@ -104,4 +105,4 @@ if __name__ == "__main__":
   print ""
   print "The user lists are hard coded and exist mostly for my"
   print "convienence."
-  #main()
+  main()
