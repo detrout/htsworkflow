@@ -243,7 +243,7 @@ def _summary_stats(flowcell_id, lane_id):
                 eland_summary.flowcell_id = flowcell_id
                 eland_summary.clusters = gerald_summary[end][lane_id].cluster
                 eland_summary.cycle_width = cycle_width
-                eland_summary.summarized_reads = runfolder.summarize_mapped_reads(eland_summary.mapped_reads)
+                eland_summary.summarized_reads = runfolder.summarize_mapped_reads(eland_summary.genome_map, eland_summary.mapped_reads)
 
                 # grab some more information out of the flowcell db
                 flowcell = FlowCell.objects.get(flowcell_id=fc_id)
