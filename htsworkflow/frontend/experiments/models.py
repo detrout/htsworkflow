@@ -66,10 +66,8 @@ class FlowCell(models.Model):
   # lane_7_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_7_primer")
   # lane_8_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_8_primer")
 
-  #cluster_mac_id = models.CharField(max_length=50, choices=CLUSTER_MAC, default='BitBit')
-  #seq_mac_id = models.CharField(max_length=50, choices=SEQ_MAC, verbose_name = 'Sequencer', default='Britney')
-  cluster_station = models.ForeignKey(ClusterStation)
-  sequencer = models.ForeignKey(Sequencer)
+  cluster_station = models.ForeignKey(ClusterStation, default=1)
+  sequencer = models.ForeignKey(Sequencer, default=1)
   
   notes = models.TextField(blank=True)
 
