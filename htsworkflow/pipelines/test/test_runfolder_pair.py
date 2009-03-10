@@ -229,12 +229,12 @@ class RunfolderTests(unittest.TestCase):
         # check first end
         for i in range(1,9):
             lane = eland.results[0][i]
-            self.failUnlessEqual(lane.reads, 4)
+            self.failUnlessEqual(lane.reads, 6)
             self.failUnlessEqual(lane.sample_name, "s")
             self.failUnlessEqual(lane.lane_id, i)
-            self.failUnlessEqual(len(lane.mapped_reads), 15)
+            self.failUnlessEqual(len(lane.mapped_reads), 17)
             self.failUnlessEqual(lane.mapped_reads['hg18/chr5.fa'], 4)
-            self.failUnlessEqual(lane.match_codes['U0'], 1)
+            self.failUnlessEqual(lane.match_codes['U0'], 3)
             self.failUnlessEqual(lane.match_codes['R0'], 2)
             self.failUnlessEqual(lane.match_codes['U1'], 1)
             self.failUnlessEqual(lane.match_codes['R1'], 9)
@@ -246,12 +246,12 @@ class RunfolderTests(unittest.TestCase):
         # check second end
         for i in range(1,9):
             lane = eland.results[1][i]
-            self.failUnlessEqual(lane.reads, 5)
+            self.failUnlessEqual(lane.reads, 7)
             self.failUnlessEqual(lane.sample_name, "s")
             self.failUnlessEqual(lane.lane_id, i)
-            self.failUnlessEqual(len(lane.mapped_reads), 15)
+            self.failUnlessEqual(len(lane.mapped_reads), 17)
             self.failUnlessEqual(lane.mapped_reads['hg18/chr5.fa'], 4)
-            self.failUnlessEqual(lane.match_codes['U0'], 1)
+            self.failUnlessEqual(lane.match_codes['U0'], 3)
             self.failUnlessEqual(lane.match_codes['R0'], 2)
             self.failUnlessEqual(lane.match_codes['U1'], 1)
             self.failUnlessEqual(lane.match_codes['R1'], 9)
@@ -273,7 +273,7 @@ class RunfolderTests(unittest.TestCase):
                 self.failUnlessEqual(l1.sample_name, l2.sample_name)
                 self.failUnlessEqual(l1.lane_id, l2.lane_id)
                 self.failUnlessEqual(len(l1.mapped_reads), len(l2.mapped_reads))
-                self.failUnlessEqual(len(l1.mapped_reads), 15)
+                self.failUnlessEqual(len(l1.mapped_reads), 17)
                 for k in l1.mapped_reads.keys():
                     self.failUnlessEqual(l1.mapped_reads[k],
                                          l2.mapped_reads[k])

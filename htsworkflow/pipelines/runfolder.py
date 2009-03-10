@@ -181,7 +181,7 @@ def get_runs(runfolder):
                     p.gerald = g
                     runs.append(p)
                 except IOError, e:
-                    print "Ignoring", str(e)
+                    logging.error("Ignoring " + str(e))
 
     datadir = os.path.join(runfolder, 'Data')
 
@@ -222,7 +222,7 @@ def extract_run_parameters(runs):
     for run in runs:
       run.save()
 
-def summarize_mapped_reads(mapped_reads):
+def summarize_mapped_reads(genome_map, mapped_reads):
     """
     Summarize per chromosome reads into a genome count
     But handle spike-in/contamination symlinks seperately.
@@ -232,7 +232,7 @@ def summarize_mapped_reads(mapped_reads):
     genome = 'unknown'
     for k, v in mapped_reads.items():
         path, k = os.path.split(k)
-        if len(path) > 0:
+        if len(path) > 0 and not genome_map.has_key(path):
             genome = path
             genome_reads += v
         else:
@@ -263,7 +263,7 @@ def summarize_lane(gerald, lane_id):
       report.append('Repeat (0,1,2 mismatches) %d %d %d' % \
                     (mc['R0'], mc['R1'], mc['R2']))
       report.append("Mapped Reads")
-      mapped_reads = summarize_mapped_reads(eland_result.mapped_reads)
+      mapped_reads = summarize_mapped_reads(eland_result.genome_map, eland_result.mapped_reads)
       for name, counts in mapped_reads.items():
         report.append("  %s: %d" % (name, counts))
       report.append('')
