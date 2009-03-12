@@ -29,8 +29,8 @@ class FlowCellOptions(admin.ModelAdmin):
     date_hierarchy = "run_date"
     save_on_top = True
     search_fields = ('flowcell_id',
-        #'sequencer',
-        #'cluster_station',
+        'sequencer__name',
+        'cluster_station__name',
         '=lane_1_library__library_id',
         '=lane_2_library__library_id',
         '=lane_3_library__library_id',
