@@ -1,6 +1,9 @@
-from htsworkflow.frontend.samples.models import Antibody, Cellline, Condition, ExperimentType, Species, Affiliation, Library, Tag
 from django.contrib import admin
+from django.contrib.admin import widgets
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
+from htsworkflow.frontend.samples.models import Antibody, Cellline, Condition, ExperimentType, Species, Affiliation, Library, Tag
 
 class Library_Inline(admin.TabularInline):
   model = Library
@@ -78,6 +81,18 @@ class LibraryOptions(admin.ModelAdmin):
              'fields' : (('affiliations'), ('tags'),)
          }),
          )
+
+    # some post 1.0.2 version of django has formfield_overrides 
+    # which would replace this code with:
+    # formfield_overrids = {
+    #   models.ManyToMany: { 'widget': widgets.FilteredSelectMultiple }
+    # }
+    def formfield_for_dbfield(self, db_field, **kwargs):
+      if db_field.name == 'affiliations':
+        kwargs['widget'] = widgets.FilteredSelectMultiple(db_field.verbose_name, (db_field.name in self.filter_vertical))
+      rv = super(LibraryOptions, self).formfield_for_dbfield(db_field, **kwargs)
+      print db_field.name, kwargs
+      return rv
 
 class AffiliationOptions(admin.ModelAdmin):
     list_display = ('name','contact','email')
