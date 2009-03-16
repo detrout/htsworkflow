@@ -355,24 +355,30 @@ def check_for_eland_file(basedir, pattern, lane_id, end):
    basename = pattern % (full_lane_id,)
    pathname = os.path.join(basedir, basename)
    if os.path.exists(pathname):
+       logging.info('found eland file in %s' % (pathname,))
        return pathname
    else:
+       logging.info('no eland file in %s' % (pathname,))
        return None
 
-def eland(basedir, gerald=None, genome_maps=None):
+def eland(gerald_dir, gerald=None, genome_maps=None):
     e = ELAND()
+
+    lane_ids = range(1,9)
+    ends = [None, 1, 2]
+
+    basedirs = [gerald_dir]
 
     # if there is a basedir/Temp change basedir to point to the temp
     # directory, as 1.1rc1 moves most of the files we've historically
     # cared about to that subdirectory.
     # we should look into what the official 'result' files are.
-    basedir_temp = os.path.join(basedir, 'Temp')
+    # and 1.3 moves them back
+    basedir_temp = os.path.join(gerald_dir, 'Temp')
     if os.path.isdir(basedir_temp):
-        basedir = basedir_temp
+        basedirs.append(basedir_temp)
 
-    lane_ids = range(1,9)
-    ends = [None, 1, 2]
-    
+   
     # the order in patterns determines the preference for what
     # will be found.
     patterns = ['s_%s_eland_result.txt',
@@ -385,37 +391,38 @@ def eland(basedir, gerald=None, genome_maps=None):
                 's_%s_eland_multi.txt.bz2',
                 's_%s_eland_multi.txt.gz',]
 
-    for end in ends:
-        for lane_id in lane_ids:
-            for p in patterns:
-                pathname = check_for_eland_file(basedir, p, lane_id, end)
-                if pathname is not None:
-                  break
-            else:
-                continue
-            # yes the lane_id is also being computed in ElandLane._update
-            # I didn't want to clutter up my constructor
-            # but I needed to persist the sample_name/lane_id for
-            # runfolder summary_report
-            path, name = os.path.split(pathname)
-            logging.info("Adding eland file %s" %(name,))
-            # split_name = name.split('_')
-            # lane_id = int(split_name[1])
+    for basedir in basedirs:
+        for end in ends:
+            for lane_id in lane_ids:
+                for p in patterns:
+                    pathname = check_for_eland_file(basedir, p, lane_id, end)
+                    if pathname is not None:
+                      break
+                else:
+                    continue
+                # yes the lane_id is also being computed in ElandLane._update
+                # I didn't want to clutter up my constructor
+                # but I needed to persist the sample_name/lane_id for
+                # runfolder summary_report
+                path, name = os.path.split(pathname)
+                logging.info("Adding eland file %s" %(name,))
+                # split_name = name.split('_')
+                # lane_id = int(split_name[1])
+    
+                if genome_maps is not None:
+                    genome_map = genome_maps[lane_id]
+                elif gerald is not None:
+                    genome_dir = gerald.lanes[lane_id].eland_genome
+                    genome_map = build_genome_fasta_map(genome_dir)
+                else:
+                    genome_map = {}
 
-            if genome_maps is not None:
-                genome_map = genome_maps[lane_id]
-            elif gerald is not None:
-                genome_dir = gerald.lanes[lane_id].eland_genome
-                genome_map = build_genome_fasta_map(genome_dir)
-            else:
-                genome_map = {}
-
-            eland_result = ElandLane(pathname, lane_id, end, genome_map)
-            if end is None:
-                effective_end =  0
-            else:
-                effective_end = end - 1
-            e.results[effective_end][lane_id] = eland_result
+                eland_result = ElandLane(pathname, lane_id, end, genome_map)
+                if end is None:
+                    effective_end =  0
+                else:
+                    effective_end = end - 1
+                e.results[effective_end][lane_id] = eland_result
     return e
 
 def build_genome_fasta_map(genome_dir):

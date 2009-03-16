@@ -12,6 +12,7 @@ fromxml
 __docformat__ = "restructuredtext en"
 
 import datetime
+from glob import glob
 import logging
 import os
 import re
@@ -195,11 +196,17 @@ def ipar(pathname):
     if groups[0] != 'IPAR':
       raise ValueError('ipar can only process IPAR directories')
 
+    bustard_pattern = os.path.join(pathname, 'Bustard*')
     # contents of the matrix file?
     matrix_pathname = os.path.join(pathname, 'Matrix', 's_matrix.txt')
-    if not os.path.exists(matrix_pathname):
+    if os.path.exists(matrix_pathname):
+        # this is IPAR_1.01
+        i.matrix = open(matrix_pathname, 'r').read()
+    elif glob(bustard_pattern) > 0:
+        i.matrix = None
+        # its still live.
+    else:
         return None
-    i.matrix = open(matrix_pathname, 'r').read()
 
     # look for parameter xml file
     paramfile = os.path.join(path, '.params')

@@ -3,6 +3,7 @@ Create simulated solexa/illumina runfolders for testing
 """
 
 import os
+import shutil
 
 def make_firecrest_dir(data_dir, version="1.9.2", start=1, stop=37):
     firecrest_dir = os.path.join(data_dir, 
@@ -1898,6 +1899,13 @@ def make_summary_paired_htm(gerald_dir):
     f = open(pathname, 'w')
     f.write(summary_htm)
     f.close()
+
+def make_summary_ipar130_htm(gerald_dir):
+     test_dir = os.path.split(__file__)[0]
+     testdata_dir = os.path.join(test_dir, 'testdata')
+     summary_htm = os.path.join(testdata_dir, 'Summary-ipar130.htm')
+     dest = os.path.join(gerald_dir, 'Summary.htm')
+     shutil.copy(summary_htm, dest)
 
 def make_eland_results(gerald_dir):
     eland_result = """>HWI-EAS229_24_207BTAAXX:1:7:599:759    ACATAGNCACAGACATAAACATAGACATAGAC U0      1       1       3       chrUextra.fa    28189829        R       D.

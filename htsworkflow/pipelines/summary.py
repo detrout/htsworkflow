@@ -2,6 +2,7 @@
 Analyze the Summary.htm file produced by GERALD
 """
 import types
+from pprint import pprint
 
 from htsworkflow.pipelines.runfolder import ElementTree
 from htsworkflow.util.ethelp import indent, flatten
@@ -51,7 +52,7 @@ class Summary(object):
 
         def set_elements_from_html(self, data):
             if not len(data) in (8,10):
-                raise RuntimeError("Summary.htm file format changed")
+                raise RuntimeError("Summary.htm file format changed, len(data)=%d" % (len(data),))
 
             # same in pre-0.3.0 Summary file and 0.3 summary file
             self.lane = int(data[0])
@@ -197,8 +198,9 @@ class Summary(object):
             # grab the lane by lane data
             lane_summary = lane_summary[1:]
 
-        # this is version 2 of the summary file
-        if len(lane_summary[-1]) == 10:
+        # len(lane_summary[-1] = 10 is version 2 of the summary file
+        #                      = 9  is version 3 of the Summary.htm file
+        elif len(lane_summary[-1]) in (9, 10):
             # lane_summary[0] is a different less specific header row
             headers = lane_summary[1]
             lane_summary = lane_summary[2:10]
