@@ -354,7 +354,7 @@ def getElandConfig(flowcell, regenerate=False):
     data.append('%s:ELAND_GENOME %s' % (lanes, '%%(%s)s' % (genome)))
     data.append('%s:USE_BASES %s' % (lanes, 'Y'*int(read_length)))
     
-  data.append('SEQUENCE_FORMAT --scarf')
+  data.append('SEQUENCE_FORMAT --fastq')
   
   data = '\n'.join(data)
   
