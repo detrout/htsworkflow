@@ -48,7 +48,6 @@ class QueueCommands(object):
         (or have run out of jobs)
         """
         queue_log = logging.getLogger('queue')
-        queue_log.debug('using %s as cwd' % (self.cwd,))
 
         while (len(self.to_run) > 0) and self.under_process_limit():
             queue_log.info('%d left to run', len(self.to_run))
@@ -62,6 +61,7 @@ class QueueCommands(object):
         run up to N jobs until we run out of jobs
         """
         queue_log = logging.getLogger('queue')
+        queue_log.debug('using %s as cwd' % (self.cwd,))
 
         # to_run slowly gets consumed by start_jobs
         while len(self.to_run) > 0 or len(self.running) > 0:
