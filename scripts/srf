@@ -30,11 +30,15 @@ def make_commands(run_name, lanes, site_name, destdir):
     dest_path = os.path.join(destdir, destname)
     seq_pattern = 's_%d_*_seq.txt' % (lane,)
 
-    cmd = ['solexa2srf', 
-           '-N', name_prefix,
-           '-n', '%3x:%3y', 
-           '-o', dest_path, 
-	   seq_pattern]
+    #cmd = ['solexa2srf', 
+    #       '-N', name_prefix,
+    #       '-n', '%3x:%3y', 
+    #       '-o', dest_path, 
+    #       seq_pattern]
+    cmd = ['illumina2srf', 
+           '-v1.0',
+           '-o', dest_path,
+           seq_pattern]
 
     cmd_list.append(" ".join(cmd))
   return cmd_list
@@ -72,7 +76,13 @@ def make_parser():
   parser.add_option('-j', '--jobs', default=1, type='int',
                     help='how many jobs to run simultaneously')
                      
-
+  parser.add_option('-v', '--verbose', dest='verbose',
+                    default=False, action='store_true',
+                    help='report more about internals (INFO)')
+  parser.add_option('--debug', dest='debug',
+                    default=False, action='store_true',
+                    help='report even more about internals (DEBUG)')
+ 
   return parser
 
 def parse_lane_arg(lane_arg):
@@ -93,7 +103,14 @@ def parse_lane_arg(lane_arg):
 def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
-  
+   
+    if opts.debug: 
+        logging.basicConfig(level=logging.DEBUG)
+    elif opts.verbose:
+        logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARNING)
+
     if len(args) == 0:
         parser.error('need runfolder arguments')
 
@@ -145,5 +162,4 @@ def main(cmdline=None):
     return 0
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
     sys.exit(main(sys.argv[1:]))
