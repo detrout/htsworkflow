@@ -3,6 +3,7 @@ Run up to N simultanous jobs from provided of commands
 """
 
 import logging
+import os
 from subprocess import PIPE
 import subprocess
 import select
@@ -74,8 +75,8 @@ class QueueCommands(object):
 
             # wait for something to finish
             # wl= write list, xl=exception list (not used so get bad names)
-            read_list, wl, xl = select.select(fds, [], fds)
-        
+            read_list, wl, xl = select.select(fds, [], fds, 1 )
+
             # for everything that might have finished...
             for pending_fd in read_list:
                 pending = self.running[pending_fd]
@@ -84,4 +85,10 @@ class QueueCommands(object):
                     queue_log.info("Process %d finished [%d]",
                                    pending.pid, pending.returncode)
                     del self.running[pending_fd]
+                else:
+                    # It's still running, but there's some output
+                    buffer = pending_fd.readline()
+                    buffer = buffer.strip()
+                    msg = "%d:(%d) %s" %(pending.pid, len(buffer), buffer)
+                    logging.debug(msg)
             time.sleep(1)
