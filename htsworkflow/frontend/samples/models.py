@@ -99,8 +99,8 @@ class Species(models.Model):
     ordering = ["scientific_name"]
   
 class Affiliation(models.Model):
-  name = models.CharField(max_length=256, db_index=True, verbose_name='Group Name')
-  contact = models.CharField(max_length=256, null=True, blank=True,verbose_name='Contact Name')  
+  name = models.CharField(max_length=256, db_index=True, verbose_name='Name')
+  contact = models.CharField(max_length=256, null=True, blank=True,verbose_name='Lab Name')  
   email = models.EmailField(null=True,blank=True)
   
   def __unicode__(self):
