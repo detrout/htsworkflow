@@ -29,12 +29,13 @@ def make_runfolder(obj=None):
     data_dir = os.path.join(runfolder_dir, 'Data')
     os.mkdir(data_dir)
 
-    ipar_dir = make_ipar_dir(data_dir)
+    ipar_dir = make_ipar_dir(data_dir, '1.30')
 
     bustard_dir = os.path.join(ipar_dir,
                                'Bustard1.3.2_15-03-2008_diane')
     os.mkdir(bustard_dir)
     make_phasing_params(bustard_dir)
+    make_bustard_config132(bustard_dir)
 
     gerald_dir = os.path.join(bustard_dir,
                               'GERALD_15-03-2008_diane')
@@ -94,6 +95,27 @@ class RunfolderTests(unittest.TestCase):
         self.failUnlessEqual(b.user,    'diane')
         self.failUnlessEqual(len(b.phasing), 8)
         self.failUnlessAlmostEqual(b.phasing[8].phasing, 0.0099)
+        self.failUnlessEqual(b.crosstalk.base.keys(), ['A','C','T','G'])
+
+        self.failUnlessAlmostEqual(b.crosstalk.base['A'][0],  1.27)
+        self.failUnlessAlmostEqual(b.crosstalk.base['A'][1],  0.20999999999999)
+        self.failUnlessAlmostEqual(b.crosstalk.base['A'][2], -0.02)
+        self.failUnlessAlmostEqual(b.crosstalk.base['A'][3], -0.03)
+
+        self.failUnlessAlmostEqual(b.crosstalk.base['C'][0],  0.57)
+        self.failUnlessAlmostEqual(b.crosstalk.base['C'][1],  0.58)
+        self.failUnlessAlmostEqual(b.crosstalk.base['C'][2], -0.01)
+        self.failUnlessAlmostEqual(b.crosstalk.base['C'][3], -0.01)
+
+        self.failUnlessAlmostEqual(b.crosstalk.base['T'][0], -0.02)
+        self.failUnlessAlmostEqual(b.crosstalk.base['T'][1], -0.02)
+        self.failUnlessAlmostEqual(b.crosstalk.base['T'][2],  0.80)
+        self.failUnlessAlmostEqual(b.crosstalk.base['T'][3],  1.07)
+
+        self.failUnlessAlmostEqual(b.crosstalk.base['G'][0], -0.03)
+        self.failUnlessAlmostEqual(b.crosstalk.base['G'][1], -0.04)
+        self.failUnlessAlmostEqual(b.crosstalk.base['G'][2],  1.51)
+        self.failUnlessAlmostEqual(b.crosstalk.base['G'][3], -0.02)
 
         xml = b.get_elements()
         b2 = bustard.Bustard(xml=xml)

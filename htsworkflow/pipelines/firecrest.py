@@ -11,6 +11,7 @@ fromxml
 """
 
 from datetime import date
+from glob import glob
 import os
 import re
 import time
@@ -117,12 +118,19 @@ def firecrest(pathname):
     # username
     f.user = groups[3]
 
+    bustard_pattern = os.path.join(pathname, 'Bustard*')
     # should I parse this deeper than just stashing the 
     # contents of the matrix file?
     matrix_pathname = os.path.join(pathname, 'Matrix', 's_matrix.txt')
-    if not os.path.exists(matrix_pathname):
+    if os.path.exists(matrix_pathname):
+        # this is for firecrest < 1.3.2
+        f.matrix = open(matrix_pathname, 'r').read()
+    elif glob(bustard_pattern) > 0:
+        f.matrix = None
+        # there are runs here. Bustard should save the matrix.
+    else:
         return None
-    f.matrix = open(matrix_pathname, 'r').read()
+
     return f
 
 def fromxml(tree):

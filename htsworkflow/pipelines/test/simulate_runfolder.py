@@ -15,14 +15,14 @@ def make_firecrest_dir(data_dir, version="1.9.2", start=1, stop=37):
     os.mkdir(firecrest_dir)
     return firecrest_dir
     
-def make_ipar_dir(data_dir):
+def make_ipar_dir(data_dir, version='1.01'):
     """
     Construct an artificial ipar parameter file and directory
     """
     ipar1_01_file = os.path.join(TESTDATA_DIR, 'IPAR1.01.params')
     shutil.copy(ipar1_01_file, os.path.join(data_dir, '.params'))
 
-    ipar_dir = os.path.join(data_dir, 'IPAR_1.01')
+    ipar_dir = os.path.join(data_dir, 'IPAR_%s' % (version,))
     if not os.path.exists(ipar_dir):
       os.mkdir(ipar_dir)
     return ipar_dir
@@ -43,6 +43,11 @@ def make_flowcell_id(runfolder_dir, flowcell_id=None):
     f = open(pathname,'w')
     f.write(config)
     f.close()
+
+def make_bustard_config132(gerald_dir):
+    source = os.path.join(TESTDATA_DIR, 'bustard-config132.xml')
+    destination = os.path.join(gerald_dir, 'config.xml')
+    shutil.copy(source, destination)
 
 def make_matrix(matrix_filename):
     contents = """# Auto-generated frequency response matrix

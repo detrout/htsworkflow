@@ -321,6 +321,8 @@ def extract_results(runs, output_base_dir=None):
       # save run file
       r.save(cycle_dir)
 
+      return
+
       # Copy Summary.htm
       summary_path = os.path.join(r.gerald.pathname, 'Summary.htm')
       if os.path.exists(summary_path):

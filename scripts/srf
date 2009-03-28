@@ -30,15 +30,15 @@ def make_commands(run_name, lanes, site_name, destdir):
     dest_path = os.path.join(destdir, destname)
     seq_pattern = 's_%d_*_seq.txt' % (lane,)
 
-    #cmd = ['solexa2srf', 
-    #       '-N', name_prefix,
-    #       '-n', '%3x:%3y', 
-    #       '-o', dest_path, 
-    #       seq_pattern]
-    cmd = ['illumina2srf', 
-           '-v1.0',
-           '-o', dest_path,
+    cmd = ['solexa2srf', 
+           '-N', name_prefix,
+           '-n', '%3x:%3y', 
+           '-o', dest_path, 
            seq_pattern]
+    #cmd = ['illumina2srf', 
+    #       '-v1.0',
+    #       '-o', dest_path,
+    #       seq_pattern]
 
     cmd_list.append(" ".join(cmd))
   return cmd_list
