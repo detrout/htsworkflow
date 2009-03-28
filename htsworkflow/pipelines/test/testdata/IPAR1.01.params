@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<ImageAnalysis>
+  <Run Name="IPAR_1.01">
+    <Software Name="IPAR" Version="2.01.192.0" />
+    <Cycles First="1" Last="37" Number="37" />
+    <RunParameters>
+      <ImagingReads Index="1">
+        <FirstCycle>1</FirstCycle>
+        <LastCycle>37</LastCycle>
+        <RunFolder>090220_HWI-EAS229_0093_30VR0AAXX</RunFolder>
+      </ImagingReads>
+      <Reads Index="1">
+        <FirstCycle>1</FirstCycle>
+        <LastCycle>37</LastCycle>
+        <RunFolder>090220_HWI-EAS229_0093_30VR0AAXX</RunFolder>
+      </Reads>
+      <Compression>gzip</Compression>
+      <CompressionSuffix>.p.gz</CompressionSuffix>
+      <Instrument>HWI-EAS229</Instrument>
+      <RunFolder>090220_HWI-EAS229_0093_30VR0AAXX</RunFolder>
+    </RunParameters>
+    <ImageParameters>
+      <AutoOffsetFlag>1</AutoOffsetFlag>
+      <Fwhm>2.7</Fwhm>
+      <RemappingDistance>1.5</RemappingDistance>
+      <Threshold>4</Threshold>
+    </ImageParameters>
+    <TileSelection>
+      <Lane Index="1">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="2">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="3">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="4">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="5">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="6">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="7">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="8">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+    </TileSelection>
+  </Run>
+</ImageAnalysis>

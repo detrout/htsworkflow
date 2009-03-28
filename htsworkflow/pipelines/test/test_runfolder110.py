@@ -33,19 +33,19 @@ def make_runfolder(obj=None):
                                  'C1-37_Firecrest1.9.6_20-10-2008_diane')
     os.mkdir(firecrest_dir)
 
-    matrix_dir = os.path.join(firecrest_dir, 'Matrix')
-    os.mkdir(matrix_dir)
-    make_matrix(matrix_dir)
-
     bustard_dir = os.path.join(firecrest_dir,
                                'Bustard1.9.6_20-10-2008_diane')
     os.mkdir(bustard_dir)
     make_phasing_params(bustard_dir)
 
+    matrix_name = os.path.join(bustard_dir, 'matrix1.txt')
+    make_matrix(matrix_name)
+
+
     gerald_dir = os.path.join(bustard_dir,
                               'GERALD_20-10-2008_diane')
     os.mkdir(gerald_dir)
-    make_gerald_config(gerald_dir)
+    make_gerald_config_100(gerald_dir)
     make_summary_htm_110(gerald_dir)
     make_eland_multi(gerald_dir)
 
@@ -54,7 +54,6 @@ def make_runfolder(obj=None):
         obj.runfolder_dir = runfolder_dir
         obj.data_dir = data_dir
         obj.image_analysis_dir = firecrest_dir
-        obj.matrix_dir = matrix_dir
         obj.bustard_dir = bustard_dir
         obj.gerald_dir = gerald_dir
 
@@ -122,8 +121,8 @@ class RunfolderTests(unittest.TestCase):
         g = gerald.gerald(self.gerald_dir)
 
         self.failUnlessEqual(g.version,
-            '@(#) Id: GERALD.pl,v 1.68.2.2 2007/06/13 11:08:49 km Exp')
-        self.failUnlessEqual(g.date, datetime(2008,4,19,19,8,30))
+            '@(#) Id: GERALD.pl,v 1.171 2008/05/19 17:36:14 mzerara Exp')
+        self.failUnlessEqual(g.date, datetime(2009,2,22,21,15,59))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.keys()))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.items()))
 
@@ -132,22 +131,29 @@ class RunfolderTests(unittest.TestCase):
         # make_gerald_config.
         # the first None is to offset the genomes list to be 1..9
         # instead of pythons default 0..8
-        genomes = [None, '/g/dm3', '/g/equcab1', '/g/equcab1', '/g/canfam2',
-                         '/g/hg18', '/g/hg18', '/g/hg18', '/g/hg18', ]
+        genomes = [None, 
+                   '/g/mm9', 
+                   '/g/mm9', 
+                   '/g/elegans190', 
+                   '/g/arabidopsis01222004',
+                   '/g/mm9', 
+                   '/g/mm9', 
+                   '/g/mm9', 
+                   '/g/mm9', ]
 
         # test lane specific parameters from gerald config file
         for i in range(1,9):
             cur_lane = g.lanes[i]
-            self.failUnlessEqual(cur_lane.analysis, 'eland')
+            self.failUnlessEqual(cur_lane.analysis, 'eland_extended')
             self.failUnlessEqual(cur_lane.eland_genome, genomes[i])
-            self.failUnlessEqual(cur_lane.read_length, '32')
-            self.failUnlessEqual(cur_lane.use_bases, 'Y'*32)
+            self.failUnlessEqual(cur_lane.read_length, '37')
+            self.failUnlessEqual(cur_lane.use_bases, 'Y'*37)
 
         # I want to be able to use a simple iterator
         for l in g.lanes.values():
-          self.failUnlessEqual(l.analysis, 'eland')
-          self.failUnlessEqual(l.read_length, '32')
-          self.failUnlessEqual(l.use_bases, 'Y'*32)
+          self.failUnlessEqual(l.analysis, 'eland_extended')
+          self.failUnlessEqual(l.read_length, '37')
+          self.failUnlessEqual(l.use_bases, 'Y'*37)
 
         # raw cluster numbers extracted from summary file
         # its the first +/- value in the lane results summary
@@ -267,14 +273,14 @@ class RunfolderTests(unittest.TestCase):
 
         # do we get the flowcell id from the filename?
         self.failUnlessEqual(len(runs), 1)
-        name = 'run_30J55AAXX_2008-10-20.xml'
+        name = 'run_30J55AAXX_2009-02-22.xml'
         self.failUnlessEqual(runs[0].name, name)
 
         # do we get the flowcell id from the FlowcellId.xml file
         make_flowcell_id(self.runfolder_dir, '30J55AAXX')
         runs = runfolder.get_runs(self.runfolder_dir)
         self.failUnlessEqual(len(runs), 1)
-        name = 'run_30J55AAXX_2008-10-20.xml'
+        name = 'run_30J55AAXX_2009-02-22.xml'
         self.failUnlessEqual(runs[0].name, name)
 
         r1 = runs[0]

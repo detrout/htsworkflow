@@ -653,7 +653,8 @@ def make_runfolder(obj=None):
     os.mkdir(firecrest_dir)
     matrix_dir = os.path.join(firecrest_dir, 'Matrix')
     os.mkdir(matrix_dir)
-    make_matrix(matrix_dir)
+    matrix_filename = os.path.join(matrix_dir, 's_matrix.txt')
+    make_matrix(matrix_filename)
 
     bustard_dir = os.path.join(firecrest_dir, 
                                'Bustard1.8.28_12-04-2008_diane')
@@ -663,7 +664,7 @@ def make_runfolder(obj=None):
     gerald_dir = os.path.join(bustard_dir,
                               'GERALD_12-04-2008_diane')
     os.mkdir(gerald_dir)
-    make_gerald_config(gerald_dir)
+    make_gerald_config_026(gerald_dir)
     make_summary_htm(gerald_dir)
     make_eland_results(gerald_dir)
 

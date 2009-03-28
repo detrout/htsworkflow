@@ -33,7 +33,8 @@ def make_runfolder(obj=None):
 
     matrix_dir = os.path.join(ipar_dir, 'Matrix')
     os.mkdir(matrix_dir)
-    make_matrix(matrix_dir)
+    matrix_name = os.path.join(matrix_dir, 's_matrix.txt')
+    make_matrix(matrix_name)
 
     bustard_dir = os.path.join(ipar_dir,
                                'Bustard1.8.28_12-04-2008_diane')
@@ -43,7 +44,7 @@ def make_runfolder(obj=None):
     gerald_dir = os.path.join(bustard_dir,
                               'GERALD_12-04-2008_diane')
     os.mkdir(gerald_dir)
-    make_gerald_config(gerald_dir)
+    make_gerald_config_100(gerald_dir)
     make_summary_paired_htm(gerald_dir)
     make_eland_multi(gerald_dir, paired=True)
 
@@ -122,8 +123,8 @@ class RunfolderTests(unittest.TestCase):
         g = gerald.gerald(self.gerald_dir)
 
         self.failUnlessEqual(g.version,
-            '@(#) Id: GERALD.pl,v 1.68.2.2 2007/06/13 11:08:49 km Exp')
-        self.failUnlessEqual(g.date, datetime(2008,4,19,19,8,30))
+            '@(#) Id: GERALD.pl,v 1.171 2008/05/19 17:36:14 mzerara Exp')
+        self.failUnlessEqual(g.date, datetime(2009,2,22,21,15,59))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.keys()))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.items()))
 
@@ -132,22 +133,29 @@ class RunfolderTests(unittest.TestCase):
         # make_gerald_config.
         # the first None is to offset the genomes list to be 1..9
         # instead of pythons default 0..8
-        genomes = [None, '/g/dm3', '/g/equcab1', '/g/equcab1', '/g/canfam2',
-                         '/g/hg18', '/g/hg18', '/g/hg18', '/g/hg18', ]
+        genomes = [None, 
+                   '/g/mm9', 
+                   '/g/mm9', 
+                   '/g/elegans190', 
+                   '/g/arabidopsis01222004',
+                   '/g/mm9', 
+                   '/g/mm9', 
+                   '/g/mm9', 
+                   '/g/mm9', ]
 
         # test lane specific parameters from gerald config file
         for i in range(1,9):
             cur_lane = g.lanes[i]
-            self.failUnlessEqual(cur_lane.analysis, 'eland')
+            self.failUnlessEqual(cur_lane.analysis, 'eland_extended')
             self.failUnlessEqual(cur_lane.eland_genome, genomes[i])
-            self.failUnlessEqual(cur_lane.read_length, '32')
-            self.failUnlessEqual(cur_lane.use_bases, 'Y'*32)
+            self.failUnlessEqual(cur_lane.read_length, '37')
+            self.failUnlessEqual(cur_lane.use_bases, 'Y'*37)
 
         # I want to be able to use a simple iterator
         for l in g.lanes.values():
-          self.failUnlessEqual(l.analysis, 'eland')
-          self.failUnlessEqual(l.read_length, '32')
-          self.failUnlessEqual(l.use_bases, 'Y'*32)
+          self.failUnlessEqual(l.analysis, 'eland_extended')
+          self.failUnlessEqual(l.read_length, '37')
+          self.failUnlessEqual(l.use_bases, 'Y'*37)
 
         # test data extracted from summary file
         clusters = [[None,
@@ -290,14 +298,14 @@ class RunfolderTests(unittest.TestCase):
         # do we get the flowcell id from the filename?
         self.failUnlessEqual(len(runs), 1)
         # firecrest's date depends on filename not the create time.
-        name = 'run_207BTAAXX_2008-04-19.xml'
+        name = 'run_207BTAAXX_2009-02-22.xml'
         self.failUnlessEqual(runs[0].name, name)
 
         # do we get the flowcell id from the FlowcellId.xml file
         make_flowcell_id(self.runfolder_dir, '207BTAAXY')
         runs = runfolder.get_runs(self.runfolder_dir)
         self.failUnlessEqual(len(runs), 1)
-        name = 'run_207BTAAXY_2008-04-19.xml'
+        name = 'run_207BTAAXY_2009-02-22.xml'
         self.failUnlessEqual(runs[0].name, name)
 
         r1 = runs[0]

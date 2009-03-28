@@ -250,7 +250,8 @@ class RunfolderTests(unittest.TestCase):
         os.mkdir(self.firecrest_dir)
         self.matrix_dir = os.path.join(self.firecrest_dir, 'Matrix')
         os.mkdir(self.matrix_dir)
-        make_matrix(self.matrix_dir)
+        matrix_filename = os.path.join(self.matrix_dir, 's_matrix')
+        make_matrix(matrix_filename)
 
         self.bustard_dir = os.path.join(self.firecrest_dir, 
                                         'Bustard1.8.28_12-04-2008_diane')
@@ -260,7 +261,7 @@ class RunfolderTests(unittest.TestCase):
         self.gerald_dir = os.path.join(self.bustard_dir,
                                        'GERALD_12-04-2008_diane')
         os.mkdir(self.gerald_dir)
-        make_gerald_config(self.gerald_dir)
+        make_gerald_config_026(self.gerald_dir)
         make_summary_htm(self.gerald_dir)
         make_eland_results(self.gerald_dir)
 
