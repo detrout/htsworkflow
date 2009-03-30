@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
 Make a tree of symlinks organized by library id.
 """
@@ -5,15 +6,15 @@ from ConfigParser import SafeConfigParser
 from glob import glob
 import logging
 from optparse import OptionParser
+import logging
 import os
 import stat
 import sys
 
 from htsworkflow.util import fctracker
 
-
 def find_lanes(flowcell_dir, flowcell_id, lane):
-    lane_name = "s_%s_eland_result*" %(lane)
+    lane_name = "s_%s_eland_*" %(lane)
     pattern = os.path.join(flowcell_dir, flowcell_id, "*", lane_name)
     lanes = glob(pattern)
     return lanes
@@ -75,6 +76,7 @@ def carefully_make_hardlink(source, destination, dry_run=False):
         else:
             raise IOError('%s and %s are different files' % \
                            (source, destination))
+    logging.info('Linking: %s -> %s' % (source, destination))
 
     if dry_run: return 
 
@@ -152,7 +154,7 @@ def make_parser():
                       help='path to a configuration file containing a '
                            'sequence archive section')
                       
-    parser.add_option("-d", "--database", dest="database",
+    parser.add_option("--database", dest="database",
                       help="path to the fctracker.db",
                       default=None)
     parser.add_option('-a', '--sequence-archive', default=None,
@@ -161,14 +163,17 @@ def make_parser():
                       help="add a where clause",
                       default=None)
 
+    parser.add_option('-v', '--verbose', action='store_true', default=False,
+                      help='be more verbose')
+    parser.add_option('-d', '--debug', action='store_true', default=False,
+                      help='report everything')
+             
     parser.add_option("--dry-run", dest="dry_run", action="store_true",
                       default=False,
                       help="Don't modify the filesystem")
     return parser
 
 def main(argv=None):
-    logging.basicConfig(level=logging.INFO)
-
     FRONTEND_NAME = 'frontend'
     SECTION_NAME = 'sequence_archive'
     DATABASE_OPT = 'database_name'
@@ -180,6 +185,14 @@ def main(argv=None):
 
     # parse command line arguments
     opt, args = parser.parse_args(argv)
+
+    # setup logging
+    level = logging.WARN
+    if opt.verbose:
+        level = logging.INFO
+    if opt.debug:
+        level = logging.DEBUG
+    logging.basicConfig(level=level)
 
     # figure out what config file to read
     config_path = [os.path.expanduser('~/.htsworkflow.ini'),
