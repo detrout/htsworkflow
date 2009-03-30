@@ -89,6 +89,27 @@ class RunfolderTests(unittest.TestCase):
         """
         construct a bustard object
         """
+        def check_crosstalk(crosstalk):
+            self.failUnlessAlmostEqual(crosstalk.base['A'][0],  1.27)
+            self.failUnlessAlmostEqual(crosstalk.base['A'][1],  0.20999999999999)
+            self.failUnlessAlmostEqual(crosstalk.base['A'][2], -0.02)
+            self.failUnlessAlmostEqual(crosstalk.base['A'][3], -0.03)
+
+            self.failUnlessAlmostEqual(crosstalk.base['C'][0],  0.57)
+            self.failUnlessAlmostEqual(crosstalk.base['C'][1],  0.58)
+            self.failUnlessAlmostEqual(crosstalk.base['C'][2], -0.01)
+            self.failUnlessAlmostEqual(crosstalk.base['C'][3], -0.01)
+
+            self.failUnlessAlmostEqual(crosstalk.base['T'][0], -0.02)
+            self.failUnlessAlmostEqual(crosstalk.base['T'][1], -0.02)
+            self.failUnlessAlmostEqual(crosstalk.base['T'][2],  0.80)
+            self.failUnlessAlmostEqual(crosstalk.base['T'][3],  1.07)
+
+            self.failUnlessAlmostEqual(crosstalk.base['G'][0], -0.03)
+            self.failUnlessAlmostEqual(crosstalk.base['G'][1], -0.04)
+            self.failUnlessAlmostEqual(crosstalk.base['G'][2],  1.51)
+            self.failUnlessAlmostEqual(crosstalk.base['G'][3], -0.02)
+
         b = bustard.bustard(self.bustard_dir)
         self.failUnlessEqual(b.version, '1.3.2')
         self.failUnlessEqual(b.date,    date(2008,3,15))
@@ -96,28 +117,10 @@ class RunfolderTests(unittest.TestCase):
         self.failUnlessEqual(len(b.phasing), 8)
         self.failUnlessAlmostEqual(b.phasing[8].phasing, 0.0099)
         self.failUnlessEqual(b.crosstalk.base.keys(), ['A','C','T','G'])
-
-        self.failUnlessAlmostEqual(b.crosstalk.base['A'][0],  1.27)
-        self.failUnlessAlmostEqual(b.crosstalk.base['A'][1],  0.20999999999999)
-        self.failUnlessAlmostEqual(b.crosstalk.base['A'][2], -0.02)
-        self.failUnlessAlmostEqual(b.crosstalk.base['A'][3], -0.03)
-
-        self.failUnlessAlmostEqual(b.crosstalk.base['C'][0],  0.57)
-        self.failUnlessAlmostEqual(b.crosstalk.base['C'][1],  0.58)
-        self.failUnlessAlmostEqual(b.crosstalk.base['C'][2], -0.01)
-        self.failUnlessAlmostEqual(b.crosstalk.base['C'][3], -0.01)
-
-        self.failUnlessAlmostEqual(b.crosstalk.base['T'][0], -0.02)
-        self.failUnlessAlmostEqual(b.crosstalk.base['T'][1], -0.02)
-        self.failUnlessAlmostEqual(b.crosstalk.base['T'][2],  0.80)
-        self.failUnlessAlmostEqual(b.crosstalk.base['T'][3],  1.07)
-
-        self.failUnlessAlmostEqual(b.crosstalk.base['G'][0], -0.03)
-        self.failUnlessAlmostEqual(b.crosstalk.base['G'][1], -0.04)
-        self.failUnlessAlmostEqual(b.crosstalk.base['G'][2],  1.51)
-        self.failUnlessAlmostEqual(b.crosstalk.base['G'][3], -0.02)
+        check_crosstalk(b.crosstalk)
 
         xml = b.get_elements()
+        print ElementTree.dump(xml)
         b2 = bustard.Bustard(xml=xml)
         self.failUnlessEqual(b.version, b2.version)
         self.failUnlessEqual(b.date,    b2.date )
@@ -130,6 +133,7 @@ class RunfolderTests(unittest.TestCase):
                                  b2.phasing[key].phasing)
             self.failUnlessEqual(b.phasing[key].prephasing,
                                  b2.phasing[key].prephasing)
+        check_crosstalk(b2.crosstalk)
 
     def test_gerald(self):
         # need to update gerald and make tests for it

@@ -189,7 +189,7 @@ class Bustard(object):
         self.date = date.today()
         self.user = None
         self.phasing = {}
-        self.crosstalk = {}
+        self.crosstalk = None
         self.pathname = None
         self.bustard_config = None
 
@@ -215,10 +215,15 @@ class Bustard(object):
         user.text = self.user
         params = ElementTree.SubElement(root, Bustard.PARAMETERS)
 
+        # add phasing parameters
         for lane in LANE_LIST:
             params.append(self.phasing[lane].get_elements())
-            #params.append(self.crosstalk[lane].get_elements())
-        
+
+        # add crosstalk matrix if it exists
+        if self.crosstalk is not None:
+            root.append(self.crosstalk.get_elements())
+       
+        # add bustard config if it exists
         if self.bustard_config is not None:
             root.append(self.bustard_config)
         return root
@@ -240,6 +245,8 @@ class Bustard(object):
                 for param in element:
                     p = Phasing(xml=param)
                     self.phasing[p.lane] = p
+            elif element.tag == CrosstalkMatrix.CROSSTALK:
+                self.crosstalk = CrosstalkMatrix(xml=element)
             elif element.tag == Bustard.BUSTARD_CONFIG:
                 self.bustard_config = element
             else:
