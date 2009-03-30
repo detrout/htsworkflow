@@ -239,9 +239,9 @@ def get_specific_run(gerald_dir):
     logging.debug('gerald_dir: %s' % (gerald_dir,))
 
     # find our processed image dir
-    image_run = firecrest.firecrest(image_dir)
+    image_run = ipar.ipar(image_dir)
     if image_run is None:
-        image_run = ipar.ipar(image_dir)
+        image_run = firecrest.firecrest(image_dir)
     if image_run is None:
         msg = '%s does not contain an image processing step' % (image_dir,)
         logging.error(msg)
