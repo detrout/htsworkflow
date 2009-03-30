@@ -214,6 +214,58 @@ def get_runs(runfolder):
 
     return runs
 
+def get_specific_run(gerald_dir):
+    """
+    Given a gerald directory, construct a PipelineRun out of its parents
+
+    Basically this allows specifying a particular run instead of the previous
+    get_runs which scans a runfolder for various combinations of
+    firecrest/ipar/bustard/gerald runs.
+    """
+    from htsworkflow.pipelines import firecrest
+    from htsworkflow.pipelines import ipar
+    from htsworkflow.pipelines import bustard
+    from htsworkflow.pipelines import gerald
+
+    bustard_dir = os.path.abspath(os.path.join(gerald_dir, '..'))
+    image_dir = os.path.abspath(os.path.join(gerald_dir, '..', '..'))
+
+    runfolder_dir = os.path.abspath(os.path.join(image_dir, '..','..'))
+   
+    logging.debug('--- use-run detected options ---')
+    logging.debug('runfolder: %s' % (runfolder_dir,))
+    logging.debug('image_dir: %s' % (image_dir,))
+    logging.debug('bustard_dir: %s' % (bustard_dir,))
+    logging.debug('gerald_dir: %s' % (gerald_dir,))
+
+    # find our processed image dir
+    image_run = firecrest.firecrest(image_dir)
+    if image_run is None:
+        image_run = ipar.ipar(image_dir)
+    if image_run is None:
+        msg = '%s does not contain an image processing step' % (image_dir,)
+        logging.error(msg)
+        return None
+
+    # find our base calling
+    base_calling_run = bustard.bustard(bustard_dir)
+    if base_calling_run is None:
+        logging.error('%s does not contain a bustard run' % (bustard_dir,))
+        return None
+
+    # find alignments
+    gerald_run = gerald.gerald(gerald_dir)
+    if gerald_run is None:
+        logging.error('%s does not contain a gerald run' % (gerald_dir,))
+        return None
+
+    p = PipelineRun(runfolder_dir)
+    p.image_analysis = image_run
+    p.bustard = base_calling_run
+    p.gerald = gerald_run
+    
+    logging.info('Constructed PipelineRun from %s' % (gerald_dir,))
+    return p
 
 def extract_run_parameters(runs):
     """

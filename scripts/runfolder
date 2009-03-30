@@ -39,21 +39,34 @@ from htsworkflow.pipelines.runfolder import ElementTree
 def make_parser():
     usage = 'usage: %prog [options] runfolder_root_dir'
     parser = optparse.OptionParser(usage)
+
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                       default=False,
                       help='turn on verbose mode')
-    parser.add_option('-s', '--summary', dest='summary', action='store_true',
-                      default=False,
-                      help='produce summary report')
-    parser.add_option('-a', '--archive', dest='archive', action='store_true',
-                      default=False,
-                      help='generate run configuration archive')
-    parser.add_option('--extract-results', action='store_true',
+    commands = optparse.OptionGroup(parser, 'Commands')
+
+    commands.add_option('-s', '--summary', dest='summary', action='store_true',
+                        default=False,
+                        help='produce summary report')
+    commands.add_option('-a', '--archive', dest='archive', action='store_true',
+                        default=False,
+                        help='generate run configuration archive')
+    commands.add_option('--extract-results', action='store_true',
            default=False,
-           help='extract result files out of runfolder into a simpler archive')
+           help='create run-xml summary, compress the eland result files, and '
+                'copy them and the Summary.htm file into archival directory.')
+    parser.add_option_group(commands)
+
     parser.add_option('-o', '--output-dir', default=None,
            help="specify the default output directory for extract results")
 
+    parser.add_option('-u', '--use-run', dest='use_run', default=None,
+                      help='Specify which run to use instead of autoscanning '
+                           'the runfolder. You do this by providing the final '
+                           ' GERALD directory, and it assumes the parent '
+                           'directories are the bustard and image processing '
+                           'directories.')
+                    
     parser.add_option('--run-xml', dest='run_xml',
            default=None,
            help='specify a run_<FlowCell>.xml file for summary reports')
@@ -77,18 +90,34 @@ def main(cmdlist=None):
         opt.run_xml = os.path.expanduser(opt.run_xml)
         tree = ElementTree.parse(opt.run_xml).getroot()
         runs.append(runfolder.PipelineRun(xml=tree))
+
+    # look for manually specified run
+    if opt.use_run is not None:
+        runs.append(runfolder.get_specific_run(opt.use_run))
+
+    # scan runfolders for runs
     for run_pattern in args:
         # expand args on our own if needed
         for run_dir in glob(run_pattern):
             runs.extend(runfolder.get_runs(run_dir))
 
     if len(runs) > 0:
+        command_run = False
         if opt.summary:
             print runfolder.summary_report(runs)
+            command_run = True
         if opt.archive:
             runfolder.extract_run_parameters(runs)
+            command_run = True
         if opt.extract_results:
             runfolder.extract_results(runs, opt.output_dir)
+            command_run = True
+        if command_run == False:
+            print "You need to specify a command."+os.linesep
+            parser.print_help()
+    else:
+        print "You need to specify some run folders to process..."+os.linesep
+        parser.print_help()
 
     return 0
 
