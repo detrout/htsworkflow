@@ -93,7 +93,11 @@ def main(cmdlist=None):
 
     # look for manually specified run
     if opt.use_run is not None:
-        runs.append(runfolder.get_specific_run(opt.use_run))
+        specific_run = runfolder.get_specific_run(opt.use_run)
+        if specific_run is not None:
+            runs.append(specific_run)
+        else:
+            logging.warn("Couldn't find a run in %s" % (opt.use_run,))
 
     # scan runfolders for runs
     for run_pattern in args:
