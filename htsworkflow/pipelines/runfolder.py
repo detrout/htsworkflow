@@ -232,16 +232,27 @@ def get_specific_run(gerald_dir):
 
     runfolder_dir = os.path.abspath(os.path.join(image_dir, '..','..'))
    
-    logging.debug('--- use-run detected options ---')
-    logging.debug('runfolder: %s' % (runfolder_dir,))
-    logging.debug('image_dir: %s' % (image_dir,))
-    logging.debug('bustard_dir: %s' % (bustard_dir,))
-    logging.debug('gerald_dir: %s' % (gerald_dir,))
+    logging.info('--- use-run detected options ---')
+    logging.info('runfolder: %s' % (runfolder_dir,))
+    logging.info('image_dir: %s' % (image_dir,))
+    logging.info('bustard_dir: %s' % (bustard_dir,))
+    logging.info('gerald_dir: %s' % (gerald_dir,))
 
     # find our processed image dir
-    image_run = ipar.ipar(image_dir)
-    if image_run is None:
+    image_run = None
+    # split into parent, and leaf directory
+    # leaf directory should be an IPAR or firecrest directory
+    data_dir, short_image_dir = os.path.split(image_dir)
+    logging.info('data_dir: %s' % (data_dir,))
+    logging.info('short_iamge_dir: %s' %(short_image_dir,))
+
+    # guess which type of image processing directory we have by looking
+    # in the leaf directory name
+    if re.search('Firecrest', short_image_dir, re.IGNORECASE) is not None:
         image_run = firecrest.firecrest(image_dir)
+    elif re.search('IPAR', short_image_dir, re.IGNORECASE) is not None:
+        image_run = ipar.ipar(image_dir)
+    # if we din't find a run, report the error and return 
     if image_run is None:
         msg = '%s does not contain an image processing step' % (image_dir,)
         logging.error(msg)
@@ -372,8 +383,6 @@ def extract_results(runs, output_base_dir=None):
 
       # save run file
       r.save(cycle_dir)
-
-      return
 
       # Copy Summary.htm
       summary_path = os.path.join(r.gerald.pathname, 'Summary.htm')
