@@ -170,7 +170,6 @@ def crosstalk_matrix_from_bustard_config(bustard_path, bustard_config_tree):
             raise RuntimeError('Expected to find MatrixElements in Bustard BaseCallParameters')
         matrix = CrosstalkMatrix(xml=matrix_elements)
 
-    print "matrix:", matrix
     return matrix
 
 class Bustard(object):
@@ -273,7 +272,6 @@ def bustard(pathname):
     b.user = groups[2]
     b.pathname = pathname
     bustard_config_filename = os.path.join(pathname, 'config.xml')
-    print bustard_config_filename
     paramfiles = glob(os.path.join(pathname, "params?.xml"))
     for paramfile in paramfiles:
         phasing = Phasing(paramfile)
