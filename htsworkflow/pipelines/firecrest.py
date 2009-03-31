@@ -70,8 +70,9 @@ class Firecrest(object):
         run_date.text = str(self.time)
         user = ElementTree.SubElement(root, Firecrest.USER)
         user.text = self.user
-        matrix = ElementTree.SubElement(root, Firecrest.MATRIX)
-        matrix.text = self.matrix
+        if self.matrix is not None:
+            matrix = ElementTree.SubElement(root, Firecrest.MATRIX)
+            matrix.text = self.matrix
         return root
 
     def set_elements(self, tree):
