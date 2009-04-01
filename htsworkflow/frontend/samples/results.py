@@ -71,7 +71,7 @@ def get_flowcell_result_dict(flowcell_id):
         
         d[c_dir]['eland_results'] = {}
         
-        result_filepaths = glob.glob(os.path.join(c_dir_path, 's_*_eland_result.txt*'))
+        result_filepaths = glob.glob(os.path.join(c_dir_path, 's_*_eland_*'))
         
         for filepath in result_filepaths:
             

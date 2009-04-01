@@ -30,6 +30,10 @@ def create_library_context(cl):
        summary['library_id'] = lib.library_id
        summary['library_name'] = lib.library_name
        summary['species_name' ] = lib.library_species.scientific_name
+       if lib.amplified_from_sample is not None:
+           summary['amplified_from'] = lib.amplified_from_sample.library_id
+       else:
+           summary['amplified_from'] = ''
        lanes_run = 0
        for lane_id in LANE_LIST:
            lane = getattr(lib, 'lane_%d_library' % (lane_id,))
@@ -42,8 +46,8 @@ def create_library_context(cl):
 def library(request):
    # build changelist
     fcl = ChangeList(request, Library,
-        list_filter=['library_species','affiliations'],
-        search_fields=['library_id', 'library_name'],
+        list_filter=['affiliations', 'library_species'],
+        search_fields=['library_id', 'library_name', 'amplified_from_sample__library_id'],
         list_per_page=200,
         queryset=Library.objects.filter(hidden__exact=0)
     )
@@ -318,12 +322,26 @@ def _summary_stats_old(flowcell_id, lane):
     return (dict_list, err_list, summary_list)
     
     
-
+def get_eland_result_type(pathname):
+    """
+    Guess the eland result file type from the filename
+    """
+    path, filename = os.path.split(pathname)
+    if 'extended' in filename:
+        return 'extended'
+    elif 'multi' in filename:
+        return 'multi'
+    elif 'result' in filename:
+        return 'result'
+    else:
+        return 'unknown'
     
 def _files(flowcell_id, lane):
     """
     Sets up available files for download
     """
+    lane = int(lane)
+
     flowcell_id, id = parse_flowcell_id(flowcell_id)
     d = get_flowcell_result_dict(flowcell_id)
     
@@ -340,10 +358,13 @@ def _files(flowcell_id, lane):
                           % (flowcell_id, c_name, c_name))
         
         erd = d[c_name]['eland_results']
-        
-        if int(lane) in erd:
-            output.append('<a href="/results/%s/%s/eland_result/%s">eland_result(%s)</a>' % (flowcell_id, c_name, lane, c_name))
-            output.append('<a href="/results/%s/%s/bedfile/%s">bedfile(%s)</a>' % (flowcell_id, c_name, lane, c_name))
+        if lane in erd:
+            result_type = get_eland_result_type(erd[lane])
+            result_url_pattern = '<a href="/results/%s/%s/eland_result/%s">eland %s(%s)</a>'
+            output.append(result_url_pattern % (flowcell_id, c_name, lane, result_type, c_name))
+            if result_type == 'result':
+                bed_url_pattern = '<a href="/results/%s/%s/bedfile/%s">bedfile(%s)</a>'
+                output.append(bed_url_pattern % (flowcell_id, c_name, lane, c_name))
     
     if len(output) == 0:
         return ''

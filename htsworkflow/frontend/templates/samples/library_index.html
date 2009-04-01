@@ -29,6 +29,7 @@
 <table>
   <thead>
     <tr>
+    <td>Parent</td>
     <td>Library ID</td>
     <td>Species</td>
     <td>Library Name</td>
@@ -36,8 +37,9 @@
     </tr>
   </thead>
   <tbody>
-    {% for lib in library_list%}
+    {% for lib in library_list %}
     <tr>
+      <td><a href="/library/{{ lib.library_id }}">{{ lib.amplified_from }}</a></td>
       <td><a href="/library/{{ lib.library_id }}">{{ lib.library_id }}</a></td>
       <td><a href="/library/{{ lib.library_id }}">{{ lib.species_name }}</a></td>
       <td><a href="/library/{{ lib.library_id }}">{{ lib.library_name }}</a></td>

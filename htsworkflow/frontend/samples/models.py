@@ -120,8 +120,8 @@ class Library(models.Model):
   library_species = models.ForeignKey(Species)
   # new field 2008 Mar 5, alter table samples_library add column "hidden" NOT NULL default 0;
   hidden = models.BooleanField()
-  cell_line = models.ForeignKey(Cellline)
-  condition = models.ForeignKey(Condition)
+  cell_line = models.ForeignKey(Cellline, null=True)
+  condition = models.ForeignKey(Condition, null=True)
   antibody = models.ForeignKey(Antibody,blank=True,null=True)
   # New field Aug/25/08. SQL: alter table fctracker_library add column "lib_affiliation" varchar(256)  NULL;
   affiliations = models.ManyToManyField(Affiliation,related_name='library_affiliations',null=True)
@@ -149,7 +149,7 @@ class Library(models.Model):
       ('Done', 'Completed'),
     )
   stopping_point = models.CharField(max_length=25, choices=PROTOCOL_END_POINTS, default='Done')
-  amplified_from_sample = models.ForeignKey('self', blank=True, null=True)  
+  amplified_from_sample = models.ForeignKey('self', blank=True, null=True, related_name='amplified_into_sample')  
   
   undiluted_concentration = models.DecimalField("Concentration", 
       max_digits=5, decimal_places=2, blank=True, null=True,
