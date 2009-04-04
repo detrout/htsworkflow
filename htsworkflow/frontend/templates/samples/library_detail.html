@@ -1,7 +1,4 @@
 {% load humanize %}
-
-<hr/>
-<br/>
 <style type="text/css">
   /* <![CDATA[ */
   table, td {
@@ -26,6 +23,45 @@
   /* ]]> */
 </style>
 
+<h2>About this library</h2>
+<b>Library ID</b>: {{ lib.library_id }}<br/>
+<b>Name</b>: {{ lib.library_name }}<br/>
+<b>Species</b>: {{ lib.library_species.scientific_name }}<br/>
+<b>Affiliations</b>:
+<ul>
+  {% for individual in lib.affiliations.all %}
+    <li>{{ individual.name }} ( {{ individual.contact }} )</li>
+  {% endfor %}
+</ul>
+
+<h2>Raw Result Files</h2>
+<table>
+<thead>
+  <tr>
+    <td>Cycle</td>
+    <td>Flowcell</td>
+    <td>Lane</td>
+    <td>Summary</td>
+    <td>Eland</td>
+    <td>Bed</td>
+  </tr>
+{% for result in eland_results %}
+<tr>
+  <td>{{ result.cycle }}</td>
+  <td>{{ result.flowcell_id }}</td>
+  <td>{{ result.lane }}</td>
+  <td><a href="{{ result.summary_url }}">Summary</a></td>
+  <td><a href="{{ result.result_url }}">{{ result.result_label }}</a></td>
+  <td>
+  {% if result.bed_url %}
+    <a href="{{ result.bed_url }}">Bed</a>
+  {% endif %}
+  </td>
+</tr>
+{% endfor %}
+</table>
+
+<h2>Lane Summary Statistics</h2>
 {% block summary_stats %}
 <table>
   <thead>
@@ -87,11 +123,12 @@
 </table>
 <br/>
 <hr/>
+<h2>Count of multi-reads</h2>
 {% for lane in lane_summary_list %}
-<h2>
+<h3>
   {{lane.cycle_width}} {{ lane.flowcell_id }} lane {{ lane.lane_id }} 
   {% if lane.end %} end {{ lane.end }}{% endif %}
-</h2>
+</h3>
   <ul>
     {% for name, counts in lane.summarized_reads.items %}
     <li><b>{{ name }}</b>: {{ counts|intcomma }}</li>
