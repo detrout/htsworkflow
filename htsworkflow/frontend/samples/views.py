@@ -310,7 +310,10 @@ def get_eland_result_type(pathname):
 
 def _make_eland_results(flowcell_id, lane, interesting_flowcells):
 
-    cur_fc = interesting_flowcells[flowcell_id]
+    cur_fc = interesting_flowcells.get(flowcell_id, None)
+    if cur_fc is None:
+      return []
+
     results = []
     for cycle in cur_fc.keys():
         result_path = cur_fc[cycle]['eland_results'][lane]
