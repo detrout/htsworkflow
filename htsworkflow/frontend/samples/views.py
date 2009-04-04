@@ -10,6 +10,7 @@ from htsworkflow.util import makebed
 from htsworkflow.util import opener
 
 from django.http import HttpResponse
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
 
@@ -62,69 +63,40 @@ def library_to_flowcells(request, lib_id):
     """
     Display information about all the flowcells a library has been run on.
     """
-    t = get_template("samples/library_detail.html")
     
     try:
       lib = Library.objects.get(library_id=lib_id)
     except:
       return HttpResponse("Library %s does not exist" % (lib_id))
-    
-    output = []
-    
-    output.append('<b>Library ID:</b> %s' % (lib.library_id))
-    output.append('<b>Name:</b> %s' % (lib.library_name))
-    output.append('<b>Species:</b> %s' % (lib.library_species.scientific_name))
-    output.append('')
-    
-    output.append('<b>FLOWCELL - LANE:</b>')
-    
-    output.extend([ '%s - Lane 1 %s' % (fc.flowcell_id, _files(fc.flowcell_id, 1)) for fc in lib.lane_1_library.all() ])
-    output.extend([ '%s - Lane 2 %s' % (fc.flowcell_id, _files(fc.flowcell_id, 2)) for fc in lib.lane_2_library.all() ])
-    output.extend([ '%s - Lane 3 %s' % (fc.flowcell_id, _files(fc.flowcell_id, 3)) for fc in lib.lane_3_library.all() ])
-    output.extend([ '%s - Lane 4 %s' % (fc.flowcell_id, _files(fc.flowcell_id, 4)) for fc in lib.lane_4_library.all() ])
-    output.extend([ '%s - Lane 5 %s' % (fc.flowcell_id, _files(fc.flowcell_id, 5)) for fc in lib.lane_5_library.all() ])
-    output.extend([ '%s - Lane 6 %s' % (fc.flowcell_id, _files(fc.flowcell_id, 6)) for fc in lib.lane_6_library.all() ])
-    output.extend([ '%s - Lane 7 %s' % (fc.flowcell_id, _files(fc.flowcell_id, 7)) for fc in lib.lane_7_library.all() ])
-    output.extend([ '%s - Lane 8 %s' % (fc.flowcell_id, _files(fc.flowcell_id, 8)) for fc in lib.lane_8_library.all() ])
-    
-    record_count = lib.lane_1_library.count() + \
-                    lib.lane_2_library.count() + \
-                    lib.lane_3_library.count() + \
-                    lib.lane_4_library.count() + \
-                    lib.lane_5_library.count() + \
-                    lib.lane_6_library.count() + \
-                    lib.lane_7_library.count() + \
-                    lib.lane_8_library.count()
-    
+   
     flowcell_list = []
-    flowcell_list.extend([ (fc.flowcell_id, 1) for fc in lib.lane_1_library.all() ])
-    flowcell_list.extend([ (fc.flowcell_id, 2) for fc in lib.lane_2_library.all() ])
-    flowcell_list.extend([ (fc.flowcell_id, 3) for fc in lib.lane_3_library.all() ])
-    flowcell_list.extend([ (fc.flowcell_id, 4) for fc in lib.lane_4_library.all() ])
-    flowcell_list.extend([ (fc.flowcell_id, 5) for fc in lib.lane_5_library.all() ])
-    flowcell_list.extend([ (fc.flowcell_id, 6) for fc in lib.lane_6_library.all() ])
-    flowcell_list.extend([ (fc.flowcell_id, 7) for fc in lib.lane_7_library.all() ])
-    flowcell_list.extend([ (fc.flowcell_id, 8) for fc in lib.lane_8_library.all() ])
+    interesting_flowcells = {} # aka flowcells we're looking at
+    for lane in LANE_LIST:
+        lane_library = getattr(lib, 'lane_%d_library' % (lane,))
+        for fc in lane_library.all():
+            flowcell_id, id = parse_flowcell_id(fc.flowcell_id)
+            if flowcell_id not in interesting_flowcells:
+                interesting_flowcells[flowcell_id] = get_flowcell_result_dict(flowcell_id)
+            flowcell_list.append((fc.flowcell_id, lane))
+
     flowcell_list.sort()
     
     lane_summary_list = []
+    eland_results = []
     for fc, lane in flowcell_list:
         lane_summary, err_list = _summary_stats(fc, lane)
         
+        eland_results.extend(_make_eland_results(fc, lane, interesting_flowcells))
         lane_summary_list.extend(lane_summary)
-    
-        for err in err_list:    
-            output.append(err)
-   
-    output.append('<br />')
-    output.append(t.render(RequestContext(request, {'lane_summary_list': lane_summary_list})))
-    output.append('<br />')
-    
-    if record_count == 0:
-        output.append("None Found")
-    
-    return HttpResponse('<br />\n'.join(output))
 
+
+    return render_to_response(
+        'samples/library_detail.html',
+        {'lib': lib,
+         'eland_results': eland_results,
+         'lane_summary_list': lane_summary_list,
+        },
+        context_instance = RequestContext(request))
 
 def summaryhtm_fc_cnm(request, fc_id, cnm):
     """
@@ -335,7 +307,39 @@ def get_eland_result_type(pathname):
         return 'result'
     else:
         return 'unknown'
+
+def _make_eland_results(flowcell_id, lane, interesting_flowcells):
+
+    cur_fc = interesting_flowcells[flowcell_id]
+    results = []
+    for cycle in cur_fc.keys():
+        result_path = cur_fc[cycle]['eland_results'][lane]
+        result_link = make_result_link(flowcell_id, cycle, lane, result_path)
+        results.append({'flowcell_id': flowcell_id,
+                        'cycle': cycle, 
+                        'lane': lane, 
+                        'summary_url': make_summary_url(flowcell_id, cycle),
+                        'result_url': result_link[0],
+                        'result_label': result_link[1],
+                        'bed_url': result_link[2],
+        })
+    return results
+
+def make_summary_url(flowcell_id, cycle_name):
+    url = '/results/%s/%s/summary/' % (flowcell_id, cycle_name)
+    return url
+
+def make_result_link(flowcell_id, cycle_name, lane, eland_result_path):
+    result_type = get_eland_result_type(eland_result_path)
+    result_url = '/results/%s/%s/eland_result/%s' % (flowcell_id, cycle_name, lane)
+    result_label = 'eland %s' % (result_type,)
+    bed_url = None
+    if result_type == 'result':
+       bed_url_pattern = '/results/%s/%s/bedfile/%s'
+       bed_url = bed_url_pattern % (flowcell_id, cycle_name, lane)
     
+    return (result_url, result_label, bed_url)
+
 def _files(flowcell_id, lane):
     """
     Sets up available files for download
