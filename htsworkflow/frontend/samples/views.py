@@ -9,7 +9,7 @@ from htsworkflow.frontend import settings
 from htsworkflow.util import makebed
 from htsworkflow.util import opener
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
@@ -316,7 +316,7 @@ def _make_eland_results(flowcell_id, lane, interesting_flowcells):
 
     results = []
     for cycle in cur_fc.keys():
-        result_path = cur_fc[cycle]['eland_results'][lane]
+        result_path = cur_fc[cycle]['eland_results'].get(lane, None)
         result_link = make_result_link(flowcell_id, cycle, lane, result_path)
         results.append({'flowcell_id': flowcell_id,
                         'cycle': cycle, 
@@ -333,6 +333,9 @@ def make_summary_url(flowcell_id, cycle_name):
     return url
 
 def make_result_link(flowcell_id, cycle_name, lane, eland_result_path):
+    if eland_result_path is None:
+        return ("", "", "")
+
     result_type = get_eland_result_type(eland_result_path)
     result_url = '/results/%s/%s/eland_result/%s' % (flowcell_id, cycle_name, lane)
     result_label = 'eland %s' % (result_type,)
@@ -377,4 +380,8 @@ def _files(flowcell_id, lane):
         return ''
     
     return '(' + '|'.join(output) + ')'
-            
+
+def library_id_to_admin_url(request, lib_id):
+    lib = Library.objects.get(library_id=lib_id)
+    return HttpResponseRedirect('/admin/samples/library/%s' % (lib.id,))
+

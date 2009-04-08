@@ -237,4 +237,4 @@ class Library(models.Model):
 
   @models.permalink
   def get_absolute_url(self):
-    return ('htsworkflow.frontend.samples.views.library_to_flowcells', [str(self.id)])
+    return ('htsworkflow.frontend.samples.views.library_to_flowcells', [str(self.library_id)])
