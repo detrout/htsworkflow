@@ -358,7 +358,6 @@ def check_for_eland_file(basedir, pattern, lane_id, end):
        logging.info('found eland file in %s' % (pathname,))
        return pathname
    else:
-       logging.info('no eland file in %s' % (pathname,))
        return None
 
 def eland(gerald_dir, gerald=None, genome_maps=None):
@@ -399,7 +398,9 @@ def eland(gerald_dir, gerald=None, genome_maps=None):
                     if pathname is not None:
                       break
                 else:
+                    logging.debug("No eland file found in %s for lane %s and end %s" %(basedir, lane_id, end))
                     continue
+
                 # yes the lane_id is also being computed in ElandLane._update
                 # I didn't want to clutter up my constructor
                 # but I needed to persist the sample_name/lane_id for

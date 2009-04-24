@@ -189,6 +189,7 @@ def ipar(pathname):
     """
     logging.info("Searching IPAR directory")
     i = IPAR()
+    i.pathname = pathname
 
     # parse firecrest directory name
     path, name = os.path.split(pathname)

@@ -102,6 +102,7 @@ def firecrest(pathname):
     Examine the directory at pathname and initalize a Firecrest object
     """
     f = Firecrest()
+    f.pathname = pathname
 
     # parse firecrest directory name
     path, name = os.path.split(pathname)

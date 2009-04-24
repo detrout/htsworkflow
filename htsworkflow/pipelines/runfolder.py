@@ -442,18 +442,52 @@ def extract_results(runs, output_base_dir=None):
                 logging.info('Saving to %s' % (dest_name, ))
                 bzip.wait()
 
-def clean_runs(runs):
+def rm_list(files, dry_run=True):
+    for f in files:
+        if os.path.exists(f):
+            logging.info('deleting %s' % (f,))
+            if not dry_run:
+                if os.path.isdir(f):
+                    shutil.rmtree(f)
+                else:
+                    os.unlink(f)
+        else:
+            logging.warn("%s doesn't exist."% (f,))
+
+def clean_runs(runs, dry_run=True):
     """
     Clean up run folders to optimize for compression.
     """
-    # TODO: implement this.
-    # rm RunLog*.xml
-    # rm pipeline_*.txt
-    # rm gclog.txt
-    # rm NetCopy.log
-    # rm nfn.log
-    # rm Images/L*
-    # cd Data/C1-*_Firecrest*
-    # make clean_intermediate
+    if dry_run:
+        logging.info('In dry-run mode')
 
-    pass
+    for run in runs:
+        logging.info('Cleaninging %s' % (run.pathname,))
+        # rm RunLog*.xml
+        runlogs = glob(os.path.join(run.pathname, 'RunLog*xml'))
+        rm_list(runlogs, dry_run)
+        # rm pipeline_*.txt
+        pipeline_logs = glob(os.path.join(run.pathname, 'pipeline*.txt'))
+        rm_list(pipeline_logs, dry_run)
+        # rm gclog.txt?
+        # rm NetCopy.log? Isn't this robocopy?
+        logs = glob(os.path.join(run.pathname, '*.log'))
+        rm_list(logs, dry_run)
+        # rm nfn.log?
+        # Calibration
+        calibration_dir = glob(os.path.join(run.pathname, 'Calibration_*'))
+        rm_list(calibration_dir, dry_run)
+        # rm Images/L*
+        logging.info("Cleaning images")
+        image_dirs = glob(os.path.join(run.pathname, 'Images', 'L*'))
+        rm_list(image_dirs, dry_run)
+        # cd Data/C1-*_Firecrest*
+        logging.info("Cleaning intermediate files")
+        # make clean_intermediate
+        if os.path.exists(os.path.join(run.image_analysis.pathname, 'Makefile')):
+            clean_process = subprocess.Popen(['make', 'clean_intermediate'], 
+                                             cwd=run.image_analysis.pathname,)
+            clean_process.wait()
+
+
+
