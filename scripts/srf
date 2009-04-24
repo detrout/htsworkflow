@@ -10,7 +10,11 @@ import sys
 from htsworkflow.util import queuecommands
 from htsworkflow.pipelines import runfolder
 
-def make_commands(run_name, lanes, site_name, destdir):
+SOLEXA2SRF = 0
+ILLUMINA2SRF10 = 1
+ILLUMINA2SRF11 = 2
+
+def make_commands(run_name, lanes, site_name, destdir, cmdlevel=ILLUMINA2SRF11):
   """
   make a subprocess-friendly list of command line arguments to run solexa2srf
   generates files like: 
@@ -30,15 +34,24 @@ def make_commands(run_name, lanes, site_name, destdir):
     dest_path = os.path.join(destdir, destname)
     seq_pattern = 's_%d_*_seq.txt' % (lane,)
 
-    cmd = ['solexa2srf', 
-           '-N', name_prefix,
-           '-n', '%3x:%3y', 
-           '-o', dest_path, 
-           seq_pattern]
-    #cmd = ['illumina2srf', 
-    #       '-v1.0',
-    #       '-o', dest_path,
-    #       seq_pattern]
+    if cmdlevel == SOLEXA2SRF:
+        cmd = ['solexa2srf', 
+               '-N', name_prefix,
+               '-n', '%3x:%3y', 
+               '-o', dest_path, 
+               seq_pattern]
+    elif cmdlevel == ILLUMINA2SRF10:
+        cmd = ['illumina2srf', 
+               '-v1.0',
+               '-o', dest_path,
+               seq_pattern]
+    elif cmdlevel == ILLUMINA2SRF11:
+        seq_pattern = 's_%d_*_qseq.txt' % (lane,)
+        cmd = ['illumina2srf', 
+               '-o', dest_path,
+               seq_pattern]
+    else:
+        raise ValueError("Unrecognized run level %d" % (cmdlevel,))
 
     cmd_list.append(" ".join(cmd))
   return cmd_list
@@ -75,6 +88,11 @@ def make_parser():
   )
   parser.add_option('-j', '--jobs', default=1, type='int',
                     help='how many jobs to run simultaneously')
+  parser.add_option('-r', '--runfolder-version', default=ILLUMINA2SRF11, type='int',
+                    help='Which class of srf file should we attempt to create\n'
+                         '0 = Solexa pipeline 0.2.6 - 0.3\n'
+                         '1 = illumina pipeline 1.0\n'
+                         '2 = illumina pipeline 1.1rc1 and later \n')
                      
   parser.add_option('-v', '--verbose', dest='verbose',
                     default=False, action='store_true',
@@ -141,7 +159,7 @@ def main(cmdline=None):
           return 1
         elif len(runs) == 1:
           bustard_dir = runs[0].bustard.pathname
-          cmds[bustard_dir] = make_commands(name, lanes, opts.site, opts.dest_dir)
+          cmds[bustard_dir] = make_commands(name, lanes, opts.site, opts.dest_dir, opts.runfolder_version)
         else:
           print "ERROR: Couldn't find a bustard directory in", runfolder_path
           return 1
