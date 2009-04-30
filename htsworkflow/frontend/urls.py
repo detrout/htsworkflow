@@ -25,6 +25,9 @@ urlpatterns = patterns('',
     (r'^library/$', 'htsworkflow.frontend.samples.views.library'),
     (r'^library/(?P<lib_id>\w+)/$', 
       'htsworkflow.frontend.samples.views.library_to_flowcells'),
+    # library id to admin url
+    (r'^library_id_to_admin_url/(?P<lib_id>\w+)/$',
+     'htsworkflow.frontend.samples.views.library_id_to_admin_url'),
     # Raw result files
     (r'^results/(?P<fc_id>\w+)/(?P<cnm>C[1-9]-[0-9]+)/summary/',
       'htsworkflow.frontend.samples.views.summaryhtm_fc_cnm'),
