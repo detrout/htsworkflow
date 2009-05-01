@@ -28,15 +28,26 @@ class WatcherEvents(object):
         
 
 class Handler(pyinotify.ProcessEvent):
-    def __init__(self, watchmanager, bot):
+    def __init__(self, watchmanager, bot, ipar=False):
+        """
+        ipar flag indicates we should wait for ipar to finish, instead of 
+             just the run finishing
+        """
+        print 'ipar flag: ' + str(ipar)
         self.last_event_time = None
         self.watchmanager = watchmanager
         self.bot = bot
+        self.ipar_mode = ipar
+        if self.ipar_mode:
+            self.last_file = 'IPAR_Netcopy_Complete.txt'.lower()
+        else:
+            self.last_file = "run.completed".lower()
 
     def process_IN_CREATE(self, event):
         self.last_event_time = time.time()
         msg = "Create: %s" %  os.path.join(event.path, event.name)
-        if event.name.lower() == "run.completed":
+
+        if event.name.lower() == self.last_file:
             try:
                 self.bot.sequencingFinished(event.path)
             except IOError, e:
@@ -81,11 +92,10 @@ class SpoolWatcher(rpc.XmlRpcBot):
         self.cfg['write_timeout'] = 10
         self.cfg['notify_users'] = None
         self.cfg['notify_runner'] = None
+        self.cfg['wait_for_ipar'] = 0
         
         self.notify_timeout = 0.001
         self.wm = pyinotify.WatchManager()
-        self.handler = Handler(self.wm, self)
-        self.notifier = pyinotify.Notifier(self.wm, self.handler)
         self.wdd = None
         self.mount_point = None
         self.mounted = True
@@ -100,6 +110,8 @@ class SpoolWatcher(rpc.XmlRpcBot):
         
         self.watch_dir = self._check_required_option('watchdir')
         self.write_timeout = int(self.cfg['write_timeout'])
+        self.wait_for_ipar = int(self.cfg['wait_for_ipar'])
+	print 'wait for ipar: ' + str(self.cfg['wait_for_ipar'])
         
         self.notify_users = self._parse_user_list(self.cfg['notify_users'])
         try:
@@ -110,6 +122,9 @@ class SpoolWatcher(rpc.XmlRpcBot):
             msg = 'need a full jabber ID + resource for xml-rpc destinations'
             logging.FATAL(msg)
             raise bot.JIDMissingResource(msg)
+
+        self.handler = Handler(self.wm, self, self.wait_for_ipar)
+        self.notifier = pyinotify.Notifier(self.wm, self.handler)
 
     def add_watch(self, watchdir=None):
         """
