@@ -313,22 +313,27 @@ def summarize_lane(gerald, lane_id):
       cluster = summary_results[end][eland_result.lane_id].cluster
       report.append("Clusters %d +/- %d" % (cluster[0], cluster[1]))
       report.append("Total Reads: %d" % (eland_result.reads))
-      mc = eland_result._match_codes
-      nm = mc['NM']
-      nm_percent = float(nm)/eland_result.reads  * 100
-      qc = mc['QC']
-      qc_percent = float(qc)/eland_result.reads * 100
 
-      report.append("No Match: %d (%2.2g %%)" % (nm, nm_percent))
-      report.append("QC Failed: %d (%2.2g %%)" % (qc, qc_percent))
-      report.append('Unique (0,1,2 mismatches) %d %d %d' % \
-                    (mc['U0'], mc['U1'], mc['U2']))
-      report.append('Repeat (0,1,2 mismatches) %d %d %d' % \
-                    (mc['R0'], mc['R1'], mc['R2']))
-      report.append("Mapped Reads")
-      mapped_reads = summarize_mapped_reads(eland_result.genome_map, eland_result.mapped_reads)
-      for name, counts in mapped_reads.items():
-        report.append("  %s: %d" % (name, counts))
+      if hasattr(eland_result, 'match_codes'):
+          mc = eland_result.match_codes
+          nm = mc['NM']
+          nm_percent = float(nm)/eland_result.reads  * 100
+          qc = mc['QC']
+          qc_percent = float(qc)/eland_result.reads * 100
+
+          report.append("No Match: %d (%2.2g %%)" % (nm, nm_percent))
+          report.append("QC Failed: %d (%2.2g %%)" % (qc, qc_percent))
+          report.append('Unique (0,1,2 mismatches) %d %d %d' % \
+                        (mc['U0'], mc['U1'], mc['U2']))
+          report.append('Repeat (0,1,2 mismatches) %d %d %d' % \
+                        (mc['R0'], mc['R1'], mc['R2']))
+
+      if hasattr(eland_result, 'genome_map'):
+          report.append("Mapped Reads")
+          mapped_reads = summarize_mapped_reads(eland_result.genome_map, eland_result.mapped_reads)
+          for name, counts in mapped_reads.items():
+            report.append("  %s: %d" % (name, counts))
+
       report.append('')
     return report
 
@@ -415,7 +420,8 @@ def extract_results(runs, output_base_dir=None):
       logging.info("Running bzip2: " + " ".join(bzip_cmd))
       logging.info("Writing to %s" %(tar_dest_name))
 
-      tar = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, shell=False, 
+      env = {'BZIP': '-9'}
+      tar = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, shell=False, env=env,
                              cwd=scores_path)
       bzip = subprocess.Popen(bzip_cmd, stdin=tar.stdout, stdout=tar_dest)
       tar.wait()

@@ -6,6 +6,7 @@ import tempfile
 import shutil
 import unittest
 
+from htsworkflow.pipelines import eland
 from htsworkflow.pipelines import ipar
 from htsworkflow.pipelines import bustard
 from htsworkflow.pipelines import gerald
@@ -42,7 +43,9 @@ def make_runfolder(obj=None):
     os.mkdir(gerald_dir)
     make_gerald_config_100(gerald_dir)
     make_summary_ipar130_htm(gerald_dir)
-    make_eland_multi(gerald_dir)
+    make_eland_multi(gerald_dir, lane_list=[1,2,3,4,5,6,])
+    make_scarf(gerald_dir, lane_list=[7,])
+    make_fastq(gerald_dir, lane_list=[8,])
 
     if obj is not None:
         obj.temp_dir = temp_dir
@@ -222,17 +225,18 @@ class RunfolderTests(unittest.TestCase):
                 g2_results = g2_eland.results[0][lane]
                 self.failUnlessEqual(g_results.reads,
                                      g2_results.reads)
-                self.failUnlessEqual(len(g_results.mapped_reads),
-                                     len(g2_results.mapped_reads))
-                for k in g_results.mapped_reads.keys():
-                    self.failUnlessEqual(g_results.mapped_reads[k],
-                                         g2_results.mapped_reads[k])
+                if isinstance(g_results, eland.ElandLane):
+                  self.failUnlessEqual(len(g_results.mapped_reads),
+                                       len(g2_results.mapped_reads))
+                  for k in g_results.mapped_reads.keys():
+                      self.failUnlessEqual(g_results.mapped_reads[k],
+                                           g2_results.mapped_reads[k])
 
-                self.failUnlessEqual(len(g_results.match_codes),
-                                     len(g2_results.match_codes))
-                for k in g_results.match_codes.keys():
-                    self.failUnlessEqual(g_results.match_codes[k],
-                                         g2_results.match_codes[k])
+                  self.failUnlessEqual(len(g_results.match_codes),
+                                       len(g2_results.match_codes))
+                  for k in g_results.match_codes.keys():
+                      self.failUnlessEqual(g_results.match_codes[k],
+                                           g2_results.match_codes[k])
 
 
     def test_eland(self):
@@ -244,10 +248,11 @@ class RunfolderTests(unittest.TestCase):
 
         genome_maps = { 1:hg_map, 2:hg_map, 3:hg_map, 4:hg_map,
                         5:hg_map, 6:hg_map, 7:hg_map, 8:hg_map }
-        eland = gerald.eland(self.gerald_dir, genome_maps=genome_maps)
+        eland_container = gerald.eland(self.gerald_dir, genome_maps=genome_maps)
 
-        for i in range(1,9):
-            lane = eland.results[0][i]
+        # I added sequence lanes to the last 2 lanes of this test case
+        for i in range(1,7):
+            lane = eland_container.results[0][i]
             self.failUnlessEqual(lane.reads, 6)
             self.failUnlessEqual(lane.sample_name, "s")
             self.failUnlessEqual(lane.lane_id, i)
@@ -262,28 +267,47 @@ class RunfolderTests(unittest.TestCase):
             self.failUnlessEqual(lane.match_codes['NM'], 1)
             self.failUnlessEqual(lane.match_codes['QC'], 0)
 
-        xml = eland.get_elements()
+        # test scarf
+        lane = eland_container.results[0][7]
+        self.failUnlessEqual(lane.reads, 5)
+        self.failUnlessEqual(lane.sample_name, 's')
+        self.failUnlessEqual(lane.lane_id, 7)
+        self.failUnlessEqual(lane.sequence_type, eland.SequenceLane.SCARF_TYPE)
+
+        # test fastq
+        lane = eland_container.results[0][8]
+        self.failUnlessEqual(lane.reads, 3)
+        self.failUnlessEqual(lane.sample_name, 's')
+        self.failUnlessEqual(lane.lane_id, 8)
+        self.failUnlessEqual(lane.sequence_type, eland.SequenceLane.FASTQ_TYPE)
+
+        xml = eland_container.get_elements()
         # just make sure that element tree can serialize the tree
         xml_str = ElementTree.tostring(xml)
         e2 = gerald.ELAND(xml=xml)
 
         for i in range(1,9):
-            l1 = eland.results[0][i]
+            l1 = eland_container.results[0][i]
             l2 = e2.results[0][i]
             self.failUnlessEqual(l1.reads, l2.reads)
             self.failUnlessEqual(l1.sample_name, l2.sample_name)
             self.failUnlessEqual(l1.lane_id, l2.lane_id)
-            self.failUnlessEqual(len(l1.mapped_reads), len(l2.mapped_reads))
-            self.failUnlessEqual(len(l1.mapped_reads), 17)
-            for k in l1.mapped_reads.keys():
-                self.failUnlessEqual(l1.mapped_reads[k],
-                                     l2.mapped_reads[k])
+            if isinstance(l1, eland.ElandLane):
+              self.failUnlessEqual(len(l1.mapped_reads), len(l2.mapped_reads))
+              self.failUnlessEqual(len(l1.mapped_reads), 17)
+              for k in l1.mapped_reads.keys():
+                  self.failUnlessEqual(l1.mapped_reads[k],
+                                       l2.mapped_reads[k])
 
-            self.failUnlessEqual(len(l1.match_codes), 9)
-            self.failUnlessEqual(len(l1.match_codes), len(l2.match_codes))
-            for k in l1.match_codes.keys():
-                self.failUnlessEqual(l1.match_codes[k],
-                                     l2.match_codes[k])
+              self.failUnlessEqual(len(l1.match_codes), 9)
+              self.failUnlessEqual(len(l1.match_codes), len(l2.match_codes))
+              for k in l1.match_codes.keys():
+                  self.failUnlessEqual(l1.match_codes[k],
+                                       l2.match_codes[k])
+            elif isinstance(l1, eland.SequenceLane):
+                print 'l1', l1.__dict__
+                print 'l2', l2.__dict__
+                self.failUnlessEqual(l1.sequence_type, l2.sequence_type)
 
     def test_runfolder(self):
         runs = runfolder.get_runs(self.runfolder_dir)

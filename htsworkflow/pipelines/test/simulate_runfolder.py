@@ -7,7 +7,8 @@ import shutil
 
 TEST_CODE_DIR = os.path.split(__file__)[0]
 TESTDATA_DIR = os.path.join(TEST_CODE_DIR, 'testdata')
- 
+LANE_LIST = range(1,9)
+
 def make_firecrest_dir(data_dir, version="1.9.2", start=1, stop=37):
     firecrest_dir = os.path.join(data_dir, 
                                  'C%d-%d_Firecrest%s_12-04-2008_diane' % (start, stop, version)
@@ -118,7 +119,7 @@ def make_eland_results(gerald_dir):
         f.write(eland_result)
         f.close()
 
-def make_eland_multi(gerald_dir, paired=False):
+def make_eland_multi(gerald_dir, paired=False, lane_list=LANE_LIST):
     eland_multi = [""">HWI-EAS229_60_30DP9AAXX:1:1:1221:788   AAGATATCTACGACGTGGTATGGCGGTGTCTGGTCGT      NM
 >HWI-EAS229_60_30DP9AAXX:1:1:931:747    AAAAAAGCAAATTTCATTCACATGTTCTGTGTTCATA   1:0:2   chr5.fa:55269838R0
 >HWI-EAS229_60_30DP9AAXX:1:1:1121:379   AGAAGAGACATTAAGAGTTCCTGAAATTTATATCTGG   2:1:0   chr16.fa:46189180R1,chr7.fa:122968519R0,chr8.fa:48197174F0
@@ -135,16 +136,51 @@ def make_eland_multi(gerald_dir, paired=False):
 """]
     if paired:
         for e in [1,2]:
-            for i in range(1,9):
+            for i in lane_list:
                 pathname = os.path.join(gerald_dir,
                                         's_%d_%d_eland_multi.txt' % (i,e))
                 f = open(pathname, 'w')
                 f.write(eland_multi[e-1])
                 f.close()
     else:
-        for i in range(1,9):
+        for i in lane_list:
             pathname = os.path.join(gerald_dir,
                                     's_%d_eland_multi.txt' % (i,))
             f = open(pathname, 'w')
             f.write(eland_multi[0])
             f.close()
+
+def make_scarf(gerald_dir, lane_list=LANE_LIST):
+    seq = """HWI-EAS229_92_30VNBAAXX:1:1:0:161:NCAATTACACGACGCTAGCCCTAAAGCTATTTCGAGG:E[aaaabb^a\a_^^a[S`ba_WZUXaaaaaaUKPER
+HWI-EAS229_92_30VNBAAXX:1:1:0:447:NAGATGCGCATTTGAAGTAGGAGCAAAAGATCAAGGT:EUabaab^baabaaaaaaaa^^Uaaaaa\aaaa__`a
+HWI-EAS229_92_30VNBAAXX:1:1:0:1210:NATAGCCTCTATAGAAGCCACTATTATTTTTTTCTTA:EUa`]`baaaaa^XQU^a`S``S_`J_aaaaaabb^V
+HWI-EAS229_92_30VNBAAXX:1:1:0:1867:NTGGAGCAGATATAAAAACAGATGGTGACGTTGAAGT:E[^UaaaUaba^aaa^aa^XV\baaLaLaaaaQVXV^
+HWI-EAS229_92_30VNBAAXX:1:1:0:1898:NAGCTCGTGTCGTGAGATGTTAGGTTAAGTCCTGCAA:EK_aaaaaaaaaaaUZaaZaXM[aaaXSM\aaZ]URE
+"""
+    for l in lane_list:
+        pathname = os.path.join(gerald_dir, 's_%d_sequence.txt' %(l,))
+        f = open(pathname,'w')
+        f.write(seq)
+        f.close()
+
+def make_fastq(gerald_dir, lane_list=LANE_LIST):
+    seq = """@HWI-EAS229:1:2:182:712#0/1
+AAAAAAAAAAAAAAAAAAAAANAAAAAAAAAAAAAAA
++HWI-EAS229:1:2:182:712#0/1
+\bab_bbaabbababbaaa]]D]bb_baabbab\baa
+@HWI-EAS229:1:2:198:621#0/1
+CCCCCCCCCCCCCCCCCCCCCNCCCCCCCCCCCCCCC
++HWI-EAS229:1:2:198:621#0/1
+[aaaaaaa`_`aaaaaaa[`ZDZaaaaaaaaaaaaaa
+@HWI-EAS229:1:2:209:1321#0/1
+AAAAAAAAAAAAAAAAAAAAANAAAAAAAAAAAAAAA
++HWI-EAS229:1:2:209:1321#0/1
+_bbbbbaaababaabbbbab]D]aaaaaaaaaaaaaa
+"""
+    for l in lane_list:
+        pathname = os.path.join(gerald_dir, 's_%d_sequence.txt' %(l,))
+        f = open(pathname,'w')
+        f.write(seq)
+        f.close()
+
+

@@ -12,34 +12,80 @@ from htsworkflow.pipelines.runfolder import ElementTree
 from htsworkflow.util.ethelp import indent, flatten
 from htsworkflow.util.opener import autoopen
 
-class ElandLane(object):
+SAMPLE_NAME = 'SampleName'
+LANE_ID = 'LaneID'
+END = 'End'
+READS = 'Reads'
+
+GENOME_MAP = 'GenomeMap'
+GENOME_ITEM = 'GenomeItem'
+MAPPED_READS = 'MappedReads'
+MAPPED_ITEM = 'MappedItem'
+MATCH_CODES = 'MatchCodes'
+MATCH_ITEM = 'Code'
+READS = 'Reads'
+
+ELAND_SINGLE = 0
+ELAND_MULTI = 1
+ELAND_EXTENDED = 2
+ELAND_EXPORT = 3
+
+
+class ResultLane(object):
     """
-    Process an eland result file
+    Base class for result lanes
     """
     XML_VERSION = 2
-    LANE = 'ElandLane'
-    SAMPLE_NAME = 'SampleName'
-    LANE_ID = 'LaneID'
-    END = 'End'
-    GENOME_MAP = 'GenomeMap'
-    GENOME_ITEM = 'GenomeItem'
-    MAPPED_READS = 'MappedReads'
-    MAPPED_ITEM = 'MappedItem'
-    MATCH_CODES = 'MatchCodes'
-    MATCH_ITEM = 'Code'
-    READS = 'Reads'
+    LANE = 'ResultLane'
 
-    ELAND_SINGLE = 0
-    ELAND_MULTI = 1
-    ELAND_EXTENDED = 2
-    ELAND_EXPORT = 3
-
-    def __init__(self, pathname=None, lane_id=None, end=None, genome_map=None, eland_type=None, xml=None):
+    def __init__(self, pathname=None, lane_id=None, end=None, xml=None):
         self.pathname = pathname
         self._sample_name = None
         self.lane_id = lane_id
         self.end = end
         self._reads = None
+        
+        if xml is not None:
+            self.set_elements(xml)
+
+    def _update(self):
+        """
+        Actually read the file and actually count the reads
+        """
+        raise NotImplementedError("Can't count abstract classes")
+
+    def _update_name(self):
+        # extract the sample name
+        if self.pathname is None:
+            return
+
+        path, name = os.path.split(self.pathname)
+        split_name = name.split('_')
+        self._sample_name = split_name[0]
+
+    def _get_sample_name(self):
+        if self._sample_name is None:
+            self._update_name()
+        return self._sample_name
+    sample_name = property(_get_sample_name)
+
+    def _get_reads(self):
+        if self._reads is None:
+            self._update()
+        return self._reads
+    reads = property(_get_reads)
+
+
+class ElandLane(ResultLane):
+    """
+    Process an eland result file
+    """
+    XML_VERSION = 2
+    LANE = "ElandLane"
+
+    def __init__(self, pathname=None, lane_id=None, end=None, genome_map=None, eland_type=None, xml=None):
+        super(ElandLane, self).__init__(pathname, lane_id, xml)
+
         self._mapped_reads = None
         self._match_codes = None
         if genome_map is None:
@@ -55,15 +101,15 @@ class ElandLane(object):
           # attempt autodetect eland file type
           pathn, name = os.path.split(pathname)
           if re.search('result', name):
-            self.eland_type = ElandLane.ELAND_SINGLE
+            self.eland_type = ELAND_SINGLE
           elif re.search('multi', name):
-            self.eland_type = ElandLane.ELAND_MULTI
+            self.eland_type = ELAND_MULTI
           elif re.search('extended', name):
-            self.eland_type = ElandLane.ELAND_EXTENDED
+            self.eland_type = ELAND_EXTENDED
           elif re.search('export', name):
-            self.eland_type = ElandLane.ELAND_EXPORT
+            self.eland_type = ELAND_EXPORT
           else:
-            self.eland_type = ElandLane.ELAND_SINGLE
+            self.eland_type = ELAND_SINGLE
 
     def _update(self):
         """
@@ -79,10 +125,10 @@ class ElandLane(object):
 
         logging.info("summarizing results for %s" % (self.pathname))
 
-        if self.eland_type == ElandLane.ELAND_SINGLE:
+        if self.eland_type == ELAND_SINGLE:
           result = self._update_eland_result(self.pathname)
-        elif self.eland_type == ElandLane.ELAND_MULTI or \
-             self.eland_type == ElandLane.ELAND_EXTENDED:
+        elif self.eland_type == ELAND_MULTI or \
+             self.eland_type == ELAND_EXTENDED:
           result = self._update_eland_multi(self.pathname)
         else:
           raise NotImplementedError("Only support single/multi/extended eland files")
@@ -163,27 +209,6 @@ class ElandLane(object):
                   mapped_reads[fasta] = mapped_reads.setdefault(fasta, 0) + 1
         return match_codes, mapped_reads, reads
 
-    def _update_name(self):
-        # extract the sample name
-        if self.pathname is None:
-            return
-
-        path, name = os.path.split(self.pathname)
-        split_name = name.split('_')
-        self._sample_name = split_name[0]
-
-    def _get_sample_name(self):
-        if self._sample_name is None:
-            self._update_name()
-        return self._sample_name
-    sample_name = property(_get_sample_name)
-
-    def _get_reads(self):
-        if self._reads is None:
-            self._update()
-        return self._reads
-    reads = property(_get_reads)
-
     def _get_mapped_reads(self):
         if self._mapped_reads is None:
             self._update()
@@ -244,29 +269,29 @@ class ElandLane(object):
         lane = ElementTree.Element(ElandLane.LANE,
                                    {'version':
                                     unicode(ElandLane.XML_VERSION)})
-        sample_tag = ElementTree.SubElement(lane, ElandLane.SAMPLE_NAME)
+        sample_tag = ElementTree.SubElement(lane, SAMPLE_NAME)
         sample_tag.text = self.sample_name
-        lane_tag = ElementTree.SubElement(lane, ElandLane.LANE_ID)
+        lane_tag = ElementTree.SubElement(lane, LANE_ID)
         lane_tag.text = str(self.lane_id)
         if self.end is not None:
-            end_tag = ElementTree.SubElement(lane, ElandLane.END)
+            end_tag = ElementTree.SubElement(lane, END)
             end_tag.text = str(self.end)
-        genome_map = ElementTree.SubElement(lane, ElandLane.GENOME_MAP)
+        genome_map = ElementTree.SubElement(lane, GENOME_MAP)
         for k, v in self.genome_map.items():
             item = ElementTree.SubElement(
-                genome_map, ElandLane.GENOME_ITEM,
+                genome_map, GENOME_ITEM,
                 {'name':k, 'value':unicode(v)})
-        mapped_reads = ElementTree.SubElement(lane, ElandLane.MAPPED_READS)
+        mapped_reads = ElementTree.SubElement(lane, MAPPED_READS)
         for k, v in self.mapped_reads.items():
             item = ElementTree.SubElement(
-                mapped_reads, ElandLane.MAPPED_ITEM,
+                mapped_reads, MAPPED_ITEM,
                 {'name':k, 'value':unicode(v)})
-        match_codes = ElementTree.SubElement(lane, ElandLane.MATCH_CODES)
+        match_codes = ElementTree.SubElement(lane, MATCH_CODES)
         for k, v in self.match_codes.items():
             item = ElementTree.SubElement(
-                match_codes, ElandLane.MATCH_ITEM,
+                match_codes, MATCH_ITEM,
                 {'name':k, 'value':unicode(v)})
-        reads = ElementTree.SubElement(lane, ElandLane.READS)
+        reads = ElementTree.SubElement(lane, READS)
         reads.text = unicode(self.reads)
 
         return lane
@@ -281,37 +306,132 @@ class ElandLane(object):
 
         for element in tree:
             tag = element.tag.lower()
-            if tag == ElandLane.SAMPLE_NAME.lower():
+            if tag == SAMPLE_NAME.lower():
                 self._sample_name = element.text
-            elif tag == ElandLane.LANE_ID.lower():
+            elif tag == LANE_ID.lower():
                 self.lane_id = int(element.text)
-            elif tag == ElandLane.END.lower():
+            elif tag == END.lower():
                 self.end = int(element.text)
-            elif tag == ElandLane.GENOME_MAP.lower():
+            elif tag == GENOME_MAP.lower():
                 for child in element:
                     name = child.attrib['name']
                     value = child.attrib['value']
                     self.genome_map[name] = value
-            elif tag == ElandLane.MAPPED_READS.lower():
+            elif tag == MAPPED_READS.lower():
                 for child in element:
                     name = child.attrib['name']
                     value = child.attrib['value']
                     self._mapped_reads[name] = int(value)
-            elif tag == ElandLane.MATCH_CODES.lower():
+            elif tag == MATCH_CODES.lower():
                 for child in element:
                     name = child.attrib['name']
                     value = int(child.attrib['value'])
                     self._match_codes[name] = value
-            elif tag == ElandLane.READS.lower():
+            elif tag == READS.lower():
                 self._reads = int(element.text)
             else:
                 logging.warn("ElandLane unrecognized tag %s" % (element.tag,))
+
+class SequenceLane(ResultLane):
+    XML_VERSION=1
+    LANE = 'SequenceLane'
+    SEQUENCE_TYPE = 'SequenceType'
+
+    NONE_TYPE = None
+    SCARF_TYPE = 1
+    FASTQ_TYPE = 2
+    SEQUENCE_DESCRIPTION = { NONE_TYPE: 'None', SCARF_TYPE: 'SCARF', FASTQ_TYPE: 'FASTQ' }
+
+    def __init__(self, pathname=None, lane_id=None, end=None, xml=None):
+        self.sequence_type = None
+        super(SequenceLane, self).__init__(pathname, lane_id, end, xml)
+
+    def _guess_sequence_type(self, pathname):
+        """
+        Determine if we have a scarf or fastq sequence file
+        """
+        f = open(pathname,'r')
+        l = f.readline()
+        f.close()
+
+        if l[0] == '@':
+            # fastq starts with a @
+            self.sequence_type = SequenceLane.FASTQ_TYPE
+        else:
+            self.sequence_type = SequenceLane.SCARF_TYPE
+        return self.sequence_type
+
+    def _update(self):
+        """
+        Actually read the file and actually count the reads
+        """
+        # can't do anything if we don't have a file to process
+        if self.pathname is None:
+            return
+
+        if os.stat(self.pathname)[stat.ST_SIZE] == 0:
+            raise RuntimeError("Sequencing isn't done, try again later.")
+
+        self._guess_sequence_type(self.pathname)
+
+        logging.info("summarizing results for %s" % (self.pathname))
+        lines = 0
+        f = open(self.pathname)
+        for l in f.xreadlines():
+            lines += 1
+        f.close()
+
+        if self.sequence_type == SequenceLane.SCARF_TYPE:
+            self._reads = lines
+        elif self.sequence_type == SequenceLane.FASTQ_TYPE:
+            self._reads = lines / 4
+        else:
+          raise NotImplementedError("This only supports scarf or fastq squence files")
+
+    def get_elements(self):
+        lane = ElementTree.Element(SequenceLane.LANE,
+                                   {'version':
+                                    unicode(SequenceLane.XML_VERSION)})
+        sample_tag = ElementTree.SubElement(lane, SAMPLE_NAME)
+        sample_tag.text = self.sample_name
+        lane_tag = ElementTree.SubElement(lane, LANE_ID)
+        lane_tag.text = str(self.lane_id)
+        if self.end is not None:
+            end_tag = ElementTree.SubElement(lane, END)
+            end_tag.text = str(self.end)
+        reads = ElementTree.SubElement(lane, READS)
+        reads.text = unicode(self.reads)
+        sequence_type = ElementTree.SubElement(lane, SequenceLane.SEQUENCE_TYPE)
+        sequence_type.text = unicode(SequenceLane.SEQUENCE_DESCRIPTION[self.sequence_type])
+
+        return lane
+
+    def set_elements(self, tree):
+        if tree.tag != SequenceLane.LANE:
+            raise ValueError('Exptecting %s' % (SequenceLane.LANE,))
+        lookup_sequence_type = dict([ (v,k) for k,v in SequenceLane.SEQUENCE_DESCRIPTION.items()])
+
+        for element in tree:
+            tag = element.tag.lower()
+            if tag == SAMPLE_NAME.lower():
+                self._sample_name = element.text
+            elif tag == LANE_ID.lower():
+                self.lane_id = int(element.text)
+            elif tag == END.lower():
+                self.end = int(element.text)
+            elif tag == READS.lower():
+                self._reads = int(element.text)
+            elif tag == SequenceLane.SEQUENCE_TYPE.lower():
+                self.sequence_type = lookup_sequence_type.get(element.text, None)
+                print self.sequence_type
+            else:
+                logging.warn("SequenceLane unrecognized tag %s" % (element.tag,))
 
 class ELAND(object):
     """
     Summarize information from eland files
     """
-    XML_VERSION = 2
+    XML_VERSION = 3
 
     ELAND = 'ElandCollection'
     LANE = 'Lane'
@@ -343,7 +463,11 @@ class ELAND(object):
         for element in list(tree):
             lane_id = int(element.attrib[ELAND.LANE_ID])
             end = int(element.attrib.get(ELAND.END, 0)) 
-            lane = ElandLane(xml=element)
+            if element.tag.lower() == ElandLane.LANE.lower():
+                lane = ElandLane(xml=element)
+            elif element.tag.lower() == SequenceLane.LANE.lower():
+                lane = SequenceLane(xml=element)
+
             self.results[end][lane_id] = lane
 
 def check_for_eland_file(basedir, pattern, lane_id, end):
@@ -359,6 +483,44 @@ def check_for_eland_file(basedir, pattern, lane_id, end):
        return pathname
    else:
        return None
+
+def update_result_with_eland(gerald, results, lane_id, end, pathname, genome_maps):
+    # yes the lane_id is also being computed in ElandLane._update
+    # I didn't want to clutter up my constructor
+    # but I needed to persist the sample_name/lane_id for
+    # runfolder summary_report
+    path, name = os.path.split(pathname)
+    logging.info("Adding eland file %s" %(name,))
+    # split_name = name.split('_')
+    # lane_id = int(split_name[1])
+
+    if genome_maps is not None:
+        genome_map = genome_maps[lane_id]
+    elif gerald is not None:
+        genome_dir = gerald.lanes[lane_id].eland_genome
+        genome_map = build_genome_fasta_map(genome_dir)
+    else:
+        genome_map = {}
+
+    lane = ElandLane(pathname, lane_id, end, genome_map)
+    
+    if end is None:
+        effective_end =  0
+    else:
+        effective_end = end - 1
+
+    results[effective_end][lane_id] = lane
+
+def update_result_with_sequence(gerald, results, lane_id, end, pathname):
+    result = SequenceLane(pathname, lane_id, end)
+
+    if end is None:
+        effective_end =  0
+    else:
+        effective_end = end - 1
+
+    results[effective_end][lane_id] = result
+
 
 def eland(gerald_dir, gerald=None, genome_maps=None):
     e = ELAND()
@@ -380,50 +542,34 @@ def eland(gerald_dir, gerald=None, genome_maps=None):
    
     # the order in patterns determines the preference for what
     # will be found.
-    patterns = ['s_%s_eland_result.txt',
-                's_%s_eland_result.txt.bz2',
-                's_%s_eland_result.txt.gz',
-                's_%s_eland_extended.txt',
-                's_%s_eland_extended.txt.bz2',
-                's_%s_eland_extended.txt.gz',
-                's_%s_eland_multi.txt',
-                's_%s_eland_multi.txt.bz2',
-                's_%s_eland_multi.txt.gz',]
+    MAPPED_ELAND = 0
+    SEQUENCE = 1
+    patterns = [('s_%s_eland_result.txt', MAPPED_ELAND),
+                ('s_%s_eland_result.txt.bz2', MAPPED_ELAND),
+                ('s_%s_eland_result.txt.gz', MAPPED_ELAND),
+                ('s_%s_eland_extended.txt', MAPPED_ELAND),
+                ('s_%s_eland_extended.txt.bz2', MAPPED_ELAND),
+                ('s_%s_eland_extended.txt.gz', MAPPED_ELAND),
+                ('s_%s_eland_multi.txt', MAPPED_ELAND),
+                ('s_%s_eland_multi.txt.bz2', MAPPED_ELAND),
+                ('s_%s_eland_multi.txt.gz', MAPPED_ELAND),
+                ('s_%s_sequence.txt', SEQUENCE),]
 
     for basedir in basedirs:
         for end in ends:
             for lane_id in lane_ids:
                 for p in patterns:
-                    pathname = check_for_eland_file(basedir, p, lane_id, end)
+                    pathname = check_for_eland_file(basedir, p[0], lane_id, end)
                     if pathname is not None:
-                      break
+                        if p[1] == MAPPED_ELAND:
+                            update_result_with_eland(gerald, e.results, lane_id, end, pathname, genome_maps)
+                        elif p[1] == SEQUENCE:
+                            update_result_with_sequence(gerald, e.results, lane_id, end, pathname)
+                        break
                 else:
                     logging.debug("No eland file found in %s for lane %s and end %s" %(basedir, lane_id, end))
                     continue
 
-                # yes the lane_id is also being computed in ElandLane._update
-                # I didn't want to clutter up my constructor
-                # but I needed to persist the sample_name/lane_id for
-                # runfolder summary_report
-                path, name = os.path.split(pathname)
-                logging.info("Adding eland file %s" %(name,))
-                # split_name = name.split('_')
-                # lane_id = int(split_name[1])
-    
-                if genome_maps is not None:
-                    genome_map = genome_maps[lane_id]
-                elif gerald is not None:
-                    genome_dir = gerald.lanes[lane_id].eland_genome
-                    genome_map = build_genome_fasta_map(genome_dir)
-                else:
-                    genome_map = {}
-
-                eland_result = ElandLane(pathname, lane_id, end, genome_map)
-                if end is None:
-                    effective_end =  0
-                else:
-                    effective_end = end - 1
-                e.results[effective_end][lane_id] = eland_result
     return e
 
 def build_genome_fasta_map(genome_dir):
