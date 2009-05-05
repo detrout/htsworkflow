@@ -7,6 +7,8 @@ from pprint import pprint
 from htsworkflow.pipelines.runfolder import ElementTree
 from htsworkflow.util.ethelp import indent, flatten
 
+nan = float('nan')
+
 class Summary(object):
     """
     Extract some useful information from the Summary.htm file
@@ -260,9 +262,16 @@ def parse_mean_range(value):
     Parse values like 123 +/- 4.5
     """
     if value.strip() == 'unknown':
-        return 0, 0
+        return nan, nan
 
-    average, pm, deviation = value.split()
+    values = value.split()
+    if len(values) == 1:
+        if values[0] == '+/-':
+            return nan,nan
+        else:
+            return tonumber(values[0])
+
+    average, pm, deviation = values
     if pm != '+/-':
         raise RuntimeError("Summary.htm file format changed")
     return tonumber(average), tonumber(deviation)
