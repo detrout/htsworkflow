@@ -125,14 +125,16 @@
 <hr/>
 <h2>Count of multi-reads</h2>
 {% for lane in lane_summary_list %}
-<h3>
-  {{lane.cycle_width}} {{ lane.flowcell_id }} lane {{ lane.lane_id }} 
-  {% if lane.end %} end {{ lane.end }}{% endif %}
-</h3>
+  {% if lane.summarized_reads %}
+  <h3>
+    {{lane.cycle_width}} {{ lane.flowcell_id }} lane {{ lane.lane_id }} 
+    {% if lane.end %} end {{ lane.end }}{% endif %}
+  </h3>
   <ul>
     {% for name, counts in lane.summarized_reads.items %}
     <li><b>{{ name }}</b>: {{ counts|intcomma }}</li>
     {% endfor %}
   </ul>
+  {% endif %}
 {% endfor %}
 {% endblock %}

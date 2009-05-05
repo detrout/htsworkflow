@@ -142,9 +142,12 @@ def result_fc_cnm_eland_lane(request, fc_id, cnm, lane):
     
     filepath = erd[lane]
     
-    f = opener.autoopen(filepath, 'r')
+    #f = opener.autoopen(filepath, 'r')
+    # return HttpResponse(f, mimetype="application/x-elandresult")
+
+    f = open(filepath, 'r')
+    return HttpResponse(f, mimetype='application/x-bzip2')
     
-    return HttpResponse(f, mimetype="application/x-elandresult")
 
 
 def bedfile_fc_cnm_eland_lane_ucsc(request, fc_id, cnm, lane):
@@ -219,7 +222,10 @@ def _summary_stats(flowcell_id, lane_id):
                 eland_summary.flowcell_id = flowcell_id
                 eland_summary.clusters = gerald_summary[end][lane_id].cluster
                 eland_summary.cycle_width = cycle_width
-                eland_summary.summarized_reads = runfolder.summarize_mapped_reads(eland_summary.genome_map, eland_summary.mapped_reads)
+		if hasattr(eland_summary, 'genome_map'):
+                    eland_summary.summarized_reads = runfolder.summarize_mapped_reads( 
+                                                       eland_summary.genome_map, 
+                                                       eland_summary.mapped_reads)
 
                 # grab some more information out of the flowcell db
                 flowcell = FlowCell.objects.get(flowcell_id=fc_id)
