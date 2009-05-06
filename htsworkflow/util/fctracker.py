@@ -81,8 +81,8 @@ class fctracker:
         attach the library dictionary to the instance
         """
         self.library = self._make_dict_from_table(
-                         'fctracker_library', 
-                         'library_id')
+                         'samples_library', 
+                         'id')
                                                   
         
     def _get_species(self):
@@ -90,7 +90,7 @@ class fctracker:
         attach the species dictionary to the instance
         """
         self.species = self._make_dict_from_table(
-                         'fctracker_species',
+                         'samples_species',
                          'id'
                        )
         
@@ -106,7 +106,7 @@ class fctracker:
             where = ""
         self.flowcells = {}
         c = self.conn.cursor()
-        c.execute('select * from fctracker_flowcell %s;' % (where))
+        c.execute('select * from experiments_flowcell %s;' % (where))
         # extract just the field name
         description = [ f[0] for f in c.description ]
         for row in c:

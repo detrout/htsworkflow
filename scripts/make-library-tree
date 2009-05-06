@@ -42,7 +42,9 @@ def parse_srf_directory(srf_dir):
         path, filename = os.path.split(pathname)
         basename, ext = os.path.splitext(filename)
         record = basename.split('_')
-        assert len(record) == 6
+        if len(record) != 6:
+            logging.error("Unrecognized srf file: %s expected 6 fields got %d" % (pathname,len(record)))
+            continue
 
         site = record[0]
         date = record[1]
@@ -64,7 +66,7 @@ def carefully_make_hardlink(source, destination, dry_run=False):
     the same as the link we want to make.
     If the link already exists and is different, throw an error.
     """
-    logging.debug("%s -> %s", source, destination)
+    logging.debug("CHECKING: %s -> %s", source, destination)
 
     if not os.path.exists(source):
         logging.warning("%s doesn't exist", source)
@@ -72,6 +74,7 @@ def carefully_make_hardlink(source, destination, dry_run=False):
 
     if os.path.exists(destination):
         if os.path.samefile(source, destination):
+            logging.debug('SAME: %s -> %s' % (source, destination))
             return
         else:
             raise IOError('%s and %s are different files' % \
