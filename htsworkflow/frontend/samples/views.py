@@ -9,6 +9,7 @@ from htsworkflow.frontend import settings
 from htsworkflow.util import makebed
 from htsworkflow.util import opener
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -85,10 +86,9 @@ def library_to_flowcells(request, lib_id):
     eland_results = []
     for fc, lane in flowcell_list:
         lane_summary, err_list = _summary_stats(fc, lane)
-        
+
         eland_results.extend(_make_eland_results(fc, lane, interesting_flowcells))
         lane_summary_list.extend(lane_summary)
-
 
     return render_to_response(
         'samples/library_detail.html',
@@ -98,11 +98,11 @@ def library_to_flowcells(request, lib_id):
         },
         context_instance = RequestContext(request))
 
-def summaryhtm_fc_cnm(request, fc_id, cnm):
+def summaryhtm_fc_cnm(request, flowcell_id, cnm):
     """
     returns a Summary.htm file if it exists.
     """
-    fc_id, status = parse_flowcell_id(fc_id)
+    fc_id, status = parse_flowcell_id(flowcell_id)
     d = get_flowcell_result_dict(fc_id)
     
     if d is None:
@@ -121,11 +121,11 @@ def summaryhtm_fc_cnm(request, fc_id, cnm):
     return HttpResponse(f)
 
 
-def result_fc_cnm_eland_lane(request, fc_id, cnm, lane):
+def result_fc_cnm_eland_lane(request, flowcell_id, cnm, lane):
     """
     returns an eland_file upon calling.
     """
-    fc_id, status = parse_flowcell_id(fc_id)
+    fc_id, status = parse_flowcell_id(flowcell_id)
     d = get_flowcell_result_dict(fc_id)
     
     if d is None:
@@ -157,11 +157,11 @@ def bedfile_fc_cnm_eland_lane_ucsc(request, fc_id, cnm, lane):
     return bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane, ucsc_compatible=True)
 
 
-def bedfile_fc_cnm_eland_lane(request, fc_id, cnm, lane, ucsc_compatible=False):
+def bedfile_fc_cnm_eland_lane(request, flowcell_id, cnm, lane, ucsc_compatible=False):
     """
     returns a bed file for a given flowcell, CN-M (i.e. C1-33), and lane
     """
-    fc_id, status = parse_flowcell_id(fc_id)
+    fc_id, status = parse_flowcell_id(flowcell_id)
     d = get_flowcell_result_dict(fc_id)
     
     if d is None:
@@ -213,30 +213,29 @@ def _summary_stats(flowcell_id, lane_id):
             err_list.append('Run xml for Flowcell %s(%s) not found.' % (fc_id, cycle_width))
             continue
         
-        try:
-            run = load_pipeline_run_xml(xmlpath)
-            gerald_summary = run.gerald.summary.lane_results
-            for end in range(len(gerald_summary)):
-                eland_summary = run.gerald.eland_results.results[end][lane_id]
-                # add information to lane_summary
-                eland_summary.flowcell_id = flowcell_id
-                eland_summary.clusters = gerald_summary[end][lane_id].cluster
-                eland_summary.cycle_width = cycle_width
-		if hasattr(eland_summary, 'genome_map'):
-                    eland_summary.summarized_reads = runfolder.summarize_mapped_reads( 
-                                                       eland_summary.genome_map, 
-                                                       eland_summary.mapped_reads)
+        run = load_pipeline_run_xml(xmlpath)
+        gerald_summary = run.gerald.summary.lane_results
+        for end in range(len(gerald_summary)):
+            eland_summary = run.gerald.eland_results.results[end][lane_id]
+            # add information to lane_summary
+            eland_summary.flowcell_id = flowcell_id
+            eland_summary.clusters = gerald_summary[end][lane_id].cluster
+            eland_summary.cycle_width = cycle_width
+            if hasattr(eland_summary, 'genome_map'):
+                eland_summary.summarized_reads = runfolder.summarize_mapped_reads( 
+                                                   eland_summary.genome_map, 
+                                                   eland_summary.mapped_reads)
 
-                # grab some more information out of the flowcell db
-                flowcell = FlowCell.objects.get(flowcell_id=fc_id)
-                pm_field = 'lane_%d_pM' % (lane_id)
-                eland_summary.successful_pm = getattr(flowcell, pm_field)
+            # grab some more information out of the flowcell db
+            flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
+            pm_field = 'lane_%d_pM' % (lane_id)
+            eland_summary.successful_pm = getattr(flowcell, pm_field)
 
-                summary_list.append(eland_summary)
+            summary_list.append(eland_summary)
 
-        except Exception, e:
-            summary_list.append("Summary report needs to be updated.")
-            logging.error("Exception: " + str(e))
+        #except Exception, e:
+        #    summary_list.append("Summary report needs to be updated.")
+        #    logging.error("Exception: " + str(e))
     
     return (summary_list, err_list)
 
@@ -315,16 +314,16 @@ def get_eland_result_type(pathname):
         return 'unknown'
 
 def _make_eland_results(flowcell_id, lane, interesting_flowcells):
-
-    cur_fc = interesting_flowcells.get(flowcell_id, None)
+    fc_id, status = parse_flowcell_id(flowcell_id)
+    cur_fc = interesting_flowcells.get(fc_id, None)
     if cur_fc is None:
       return []
 
     results = []
     for cycle in cur_fc.keys():
         result_path = cur_fc[cycle]['eland_results'].get(lane, None)
-        result_link = make_result_link(flowcell_id, cycle, lane, result_path)
-        results.append({'flowcell_id': flowcell_id,
+        result_link = make_result_link(fc_id, cycle, lane, result_path)
+        results.append({'flowcell_id': fc_id,
                         'cycle': cycle, 
                         'lane': lane, 
                         'summary_url': make_summary_url(flowcell_id, cycle),
