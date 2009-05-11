@@ -84,7 +84,7 @@ class ElandLane(ResultLane):
     LANE = "ElandLane"
 
     def __init__(self, pathname=None, lane_id=None, end=None, genome_map=None, eland_type=None, xml=None):
-        super(ElandLane, self).__init__(pathname, lane_id, xml)
+        super(ElandLane, self).__init__(pathname, lane_id, end)
 
         self._mapped_reads = None
         self._match_codes = None
