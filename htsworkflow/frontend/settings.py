@@ -153,6 +153,7 @@ INSTALLED_APPS = (
     'htsworkflow.frontend.experiments',
     'htsworkflow.frontend.analysis', 
     'htsworkflow.frontend.reports',
+    'htsworkflow.frontend.inventory',
     'django.contrib.databrowse',
 )
 
