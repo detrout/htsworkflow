@@ -58,7 +58,6 @@ def find_mount_point_for(pathname):
     if len(prefixes) == 0:
         return None
     else:
-        print prefixes
         # return longest common prefix
         return prefixes[-1][1]
 
