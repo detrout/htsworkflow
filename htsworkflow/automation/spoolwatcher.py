@@ -158,7 +158,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
 
     def add_watch(self, watchdirs=None):
         """
-        start watching watchdir or self.watch_dir
+        start watching watchdir or self.watchdir
         we're currently limited to watching one directory tree.
         """
         # the one tree limit is mostly because self.wdd is a single item
@@ -200,13 +200,13 @@ class SpoolWatcher(rpc.XmlRpcBot):
             self.notifier.read_events()
             # should we do something?
         # has something happened?
-        for watch_dir, last_events in self.handler.last_event.items():
-            logging.debug('last_events: %s %s' % (watch_dir, last_events))
+        for watchdir, last_events in self.handler.last_event.items():
+            logging.debug('last_events: %s %s' % (watchdir, last_events))
             for last_event_dir, last_event_time in last_events.items():
                 time_delta = time.time() - last_event_time
                 if time_delta > self.write_timeout:
-                    self.startCopy(watch_dir, last_event_dir)
-                    self.handler.last_event[watch_dir] = {}
+                    self.startCopy(watchdir, last_event_dir)
+                    self.handler.last_event[watchdir] = {}
         # handle unmounted filesystems
         for mount_point, was_mounted in self.mounted_points.items():
             if not was_mounted and mount.is_mounted(mount_point):
@@ -267,7 +267,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
                 self.send(u, 'startCopy %s %s' % (watchdir, event_path))
         
     def sequencingFinished(self, run_dir):
-        # need to strip off self.watch_dir from rundir I suspect.
+        # need to strip off self.watchdirs from rundir I suspect.
         logging.info("run.completed in " + str(run_dir))
         pattern = self.watch_dir
         if pattern[-1] != os.path.sep:
