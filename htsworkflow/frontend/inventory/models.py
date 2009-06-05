@@ -42,8 +42,11 @@ class Location(models.Model):
 pre_save.connect(_assign_uuid, sender=Location)
 
 class ItemInfo(models.Model):
-    model_id = models.CharField(max_length=256)
-    model_url = models.URLField(blank=True, null=True)
+    model_id = models.CharField(max_length=256, blank=True, null=True)
+    part_number = models.CharField(max_length=256, blank=True, null=True)
+    lot_number = models.CharField(max_length=256, blank=True, null=True)
+    
+    url = models.URLField(blank=True, null=True)
     
     qty_purchased = models.IntegerField(default=1)
     
@@ -51,8 +54,18 @@ class ItemInfo(models.Model):
     purchase_date = models.DateField(blank=True, null=True)
     warranty_months = models.IntegerField(blank=True, null=True)
     
+    notes = models.TextField(blank=True, null=True)
+    
     def __unicode__(self):
-        return u"%s: %s" % (self.model_id, self.purchase_date)
+        name = u''
+        if self.model_id:
+            name += u"model:%s " % (self.model_id)
+        if self.part_number:
+            name += u"part:%s " % (self.part_number)
+        if self.lot_number:
+            name += u"lot:%s " % (self.lot_number)
+            
+        return u"%s: %s" % (name, self.purchase_date)
 
 
 class ItemType(models.Model):
@@ -62,7 +75,13 @@ class ItemType(models.Model):
     
     def __unicode__(self):
         return u"%s" % (self.name)
+
+class ItemStatus(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+    notes = models.TextField(blank=True, null=True)
     
+    def __unicode__(self):
+        return self.name
 
 class Item(models.Model):
     
@@ -79,6 +98,8 @@ class Item(models.Model):
     item_info = models.ForeignKey(ItemInfo)
     
     location = models.ForeignKey(Location)
+    
+    status = models.ForeignKey(ItemStatus, blank=True, null=True)
     
     creation_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
