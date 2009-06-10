@@ -4,6 +4,7 @@
 #os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.frontend.settings'
 
 from htsworkflow.util.hdquery import get_hd_serial_num
+from htsworkflow.frontend import settings
 
 #from django.conf import settings
 from optparse import OptionParser
@@ -11,8 +12,6 @@ from optparse import OptionParser
 import sys
 import urllib
 
-#FIXME: Remove hard coded URL
-HTSW_URL = "http://localhost:8000/inventory/lts/link/"
 
 def construct_parser():
     """
@@ -32,7 +31,7 @@ def update_db(flowcell, serial):
     """
     Creates link between flowcell and storage device over http
     """
-    www = urllib.urlopen(HTSW_URL+'%s/%s/' % (flowcell, serial))
+    www = urllib.urlopen(settings.LINK_FLOWCELL_STORAGE_DEVICE_URL+'%s/%s/' % (flowcell, serial))
     httpcode = www.getcode()
     if httpcode != 200:
         print 'ERROR - HTTP OUTPUT:'
