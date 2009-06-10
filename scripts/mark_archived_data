@@ -1,0 +1,96 @@
+#!/usr/bin/env python
+
+#import os
+#os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.frontend.settings'
+
+from htsworkflow.util.hdquery import get_hd_serial_num
+
+#from django.conf import settings
+from optparse import OptionParser
+
+import sys
+import urllib
+
+#FIXME: Remove hard coded URL
+HTSW_URL = "http://localhost:8000/inventory/lts/link/"
+
+def construct_parser():
+    """
+    """
+    parser = OptionParser("usage: %prog -f <flowcell> -d </dev/sdX> OR\n\t %prog -f <flowcell> -s <dev_serial_num>")
+    parser.add_option("-f", "--flowcell", action="store", type="string", dest="flowcell",
+                      help="flowcell being archived")
+    parser.add_option("-d", "--device", action="store", type="string", dest="device",
+                      help="device flowcell is being archived to")
+    parser.add_option("-s", "--serial", action="store", type="string", dest="serial",
+                      help="serial num. of archive device")
+    
+    return parser
+
+
+def update_db(flowcell, serial):
+    """
+    Creates link between flowcell and storage device over http
+    """
+    www = urllib.urlopen(HTSW_URL+'%s/%s/' % (flowcell, serial))
+    httpcode = www.getcode()
+    if httpcode != 200:
+        print 'ERROR - HTTP OUTPUT:'
+        print www.read()
+        sys.exit(httpcode)
+    
+    print "DB Update of %s & %s succeeded" % (flowcell, serial)
+
+
+def process_args(parser):
+    """
+    returns flowcell and serial#
+    """
+    options, args = parser.parse_args()
+    
+    msg = []
+    
+    # Only provide device or serial
+    if options.device is not None and options.serial is not None:
+        print "ERROR: Please only provide --device or --serial.\n" \
+              "  The serial number is extracted automatically if the device is provided."
+        sys.exit(2)
+    
+    print options.flowcell
+    print options.device
+    print options.serial
+    
+    if options.flowcell is None:
+        msg.append("  --flowcell required")
+    
+    # if device and serial missing:
+    if options.device is None and options.serial is None:
+        msg.append("  --device OR --serial required")
+    
+    if len(msg) > 0:
+        print '\n'.join(msg)
+        sys.exit(3)
+    
+    # Update db records
+    if options.device is not None:
+        serial = get_hd_serial_num(options.device)
+        update_db(flowcell=options.flowcell, serial=serial)
+    elif options.serial is not None:
+        update_db(flowcell=options.flowcell, serial=options.serial)
+    else:
+        msg ="FATAL should not happen error occured; i.e. the best kind!"
+        raise ValueError, msg
+    
+    
+
+def main():
+    """
+    """
+    parser = construct_parser()
+    process_args(parser)
+    
+    #print "Database Updated."
+    sys.exit(0)
+
+if __name__ == '__main__':
+    main()

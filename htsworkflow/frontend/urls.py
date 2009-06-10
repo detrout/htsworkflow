@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     # AnalysTrack:
     #(r'^analysis/', include('htsworkflow.frontend.analysis.urls')),
     # Report Views:
+    (r'^inventory/', include('htsworkflow.frontend.inventory.urls')),
     (r'^reports/', include('htsworkflow.frontend.reports.urls')),
     # Library browser
     (r'^library/$', 'htsworkflow.frontend.samples.views.library'),
