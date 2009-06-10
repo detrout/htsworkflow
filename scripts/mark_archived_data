@@ -23,22 +23,25 @@ def construct_parser():
                       help="device flowcell is being archived to")
     parser.add_option("-s", "--serial", action="store", type="string", dest="serial",
                       help="serial num. of archive device")
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False)
     
     return parser
 
 
-def update_db(flowcell, serial):
+def update_db(flowcell, serial, debug=False):
     """
     Creates link between flowcell and storage device over http
     """
     www = urllib.urlopen(settings.LINK_FLOWCELL_STORAGE_DEVICE_URL+'%s/%s/' % (flowcell, serial))
     httpcode = www.getcode()
     if httpcode != 200:
-        print 'ERROR - HTTP OUTPUT:'
-        print www.read()
+        print 'ERROR - HTTP OUTPUT (Return Code: %s); use -v/--verbose for more details.' % (httpcode)
+        if debug:
+            print www.read()
         sys.exit(httpcode)
     
     print "DB Update of %s & %s succeeded" % (flowcell, serial)
+    print www.read()
 
 
 def process_args(parser):
@@ -55,9 +58,9 @@ def process_args(parser):
               "  The serial number is extracted automatically if the device is provided."
         sys.exit(2)
     
-    print options.flowcell
-    print options.device
-    print options.serial
+    print 'Flowcell:', options.flowcell
+    print '  Device:', options.device
+    print '  Serial:', options.serial
     
     if options.flowcell is None:
         msg.append("  --flowcell required")
@@ -73,9 +76,9 @@ def process_args(parser):
     # Update db records
     if options.device is not None:
         serial = get_hd_serial_num(options.device)
-        update_db(flowcell=options.flowcell, serial=serial)
+        update_db(flowcell=options.flowcell, serial=serial, debug=options.verbose)
     elif options.serial is not None:
-        update_db(flowcell=options.flowcell, serial=options.serial)
+        update_db(flowcell=options.flowcell, serial=options.serial, debug=options.verbose)
     else:
         msg ="FATAL should not happen error occured; i.e. the best kind!"
         raise ValueError, msg
