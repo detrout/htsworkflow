@@ -15,7 +15,14 @@ class DataRunOptions(admin.ModelAdmin):
       '=fcid__lane_6_library__library_id',
       '=fcid__lane_7_library__library_id',
       '=fcid__lane_8_library__library_id'
-  ]
+      'fcid__lane_1_library__library_name',
+      'fcid__lane_2_library__library_name',
+      'fcid__lane_3_library__library_name',
+      'fcid__lane_4_library__library_name',
+      'fcid__lane_5_library__library_name',
+      'fcid__lane_6_library__library_name',
+      'fcid__lane_7_library__library_name',
+      'fcid__lane_8_library__library_name'  ]
   list_display = [
       'run_folder', 
       'Flowcell_Info', 
@@ -38,7 +45,15 @@ class FlowCellOptions(admin.ModelAdmin):
         '=lane_5_library__library_id',
         '=lane_6_library__library_id',
         '=lane_7_library__library_id',
-        '=lane_8_library__library_id')
+        '=lane_8_library__library_id',
+        'lane_1_library__library_name',
+        'lane_2_library__library_name',
+        'lane_3_library__library_name',
+        'lane_4_library__library_name',
+        'lane_5_library__library_name',
+        'lane_6_library__library_name',
+        'lane_7_library__library_name',
+        'lane_8_library__library_name')
     list_display = ('flowcell_id','run_date','Lanes')
     list_filter = ('sequencer','cluster_station')
     fieldsets = (
