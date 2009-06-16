@@ -8,8 +8,14 @@ setup(
   packages=["htsworkflow", 
             "htsworkflow.pipelines",
             "htsworkflow.frontend",
+            "htsworkflow.analysis",
+            "htsworkflow.frontend.eland_config",
+            "htsworkflow.frontend.experiments",
+            "htsworkflow.frontend.inventory",
+            "htsworkflow.frontend.reports",
             "htsworkflow.frontend.samples",
-            "htsworkflow.frontend.eland_config"           
+            "htsworkflow.automation",
+            "htsworkflow.util"
              ],
   scripts=[
         'scripts/configure_pipeline',
@@ -23,5 +29,6 @@ setup(
         'scripts/runner',
         'scripts/spoolwatcher', 
         'scripts/srf',
+        'scripts/mark_archived_data'
         ],
 )
