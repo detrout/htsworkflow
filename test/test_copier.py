@@ -24,7 +24,7 @@ jid: copier@example.fake
 password: badpassword
 authorized_users: user1@example.fake user2@example.fake
 rsync_password_file: ~/.sequencer
-rsync_source: /tmp/sequencer_source
+rsync_sources: /tmp/sequencer_source
 rsync_destination: /tmp/sequencer_destination
 notify_users: user3@example.fake
 # who to run to
@@ -32,12 +32,14 @@ notify_users: user3@example.fake
 """)
         c = copier.CopierBot("copier", configfile=cfg)
         c.read_config()
+        c._init_rsync()
         self.failUnlessEqual(c.jid, 'copier@example.fake')
         self.failUnlessEqual(c.cfg['password'], 'badpassword')
         self.failUnlessEqual(len(c.authorized_users), 2)
         self.failUnlessEqual(c.authorized_users[0], 'user1@example.fake')
         self.failUnlessEqual(c.authorized_users[1], 'user2@example.fake')
-        self.failUnlessEqual(c.rsync.source_base, '/tmp/sequencer_source')
+        self.failUnlessEqual(c.rsync.source_base_list[0], 
+                             '/tmp/sequencer_source/')
         self.failUnlessEqual(c.rsync.dest_base, '/tmp/sequencer_destination')
         self.failUnlessEqual(len(c.notify_users), 1)
         self.failUnlessEqual(c.notify_users[0], 'user3@example.fake')
