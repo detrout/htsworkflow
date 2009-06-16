@@ -10,7 +10,6 @@ from htsworkflow.frontend import settings
 from optparse import OptionParser
 
 import sys
-import urllib
 import urllib2
 
 
