@@ -8,7 +8,7 @@ setup(
   packages=["htsworkflow", 
             "htsworkflow.pipelines",
             "htsworkflow.frontend",
-            "htsworkflow.analysis",
+            "htsworkflow.frontend.analysis",
             "htsworkflow.frontend.eland_config",
             "htsworkflow.frontend.experiments",
             "htsworkflow.frontend.inventory",
