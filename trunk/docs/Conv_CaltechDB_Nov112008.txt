@@ -1,0 +1,76 @@
+Conversion SQLs for Caltech DB (schema of 2008Aug08 @ 5:06 PM) 
+______________________________________________________________
+
+
+Step by step do the following:
+
+''' Note: Instead of '?' you can put one of your machine names.
+sqlite> ALTER TABLE fctracker_flowcell ADD cluster_mac_id varchar(50) NOT NULL DEFAULT '?';
+sqlite> ALTER TABLE fctracker_flowcell ADD seq_mac_id varchar(50) NOT NULL DEFAULT '?';
+sqlite> ALTER TABLE fctracker_library RENAME TO PREV_fctracker_library;
+
+Now, do a syncdb. The output should look like this (assuming you have migrated to the new models.py):
+sh-3.2# pym syncdb
+Creating table fctracker_cellline
+Creating table fctracker_library
+Creating table fctracker_primer
+Creating table fctracker_antibody
+Creating table fctracker_condition
+Creating table exp_track_datarun
+Creating table exp_track_flowcell
+Creating table analys_track_project
+Creating table analys_track_task
+Creating table htsw_reports_progressreport
+Installing index for fctracker.Library model
+Failed to install index for fctracker.Library model: index fctracker_library_library_species_id already existsInstalling index for fctracker.Primer model
+Installing index for fctracker.Antibody model
+Installing index for exp_track.DataRun model
+Installing index for exp_track.FlowCell model
+Installing index for analys_track.Task model
+Installing index for htsw_reports.ProgressReport model
+sh-3.2# 
+
+''' Copy all records from "fctracker_flowcell" to "exp_track_flowcell" table. (Why? Because, Flowcell table moves now from the "fctracker" to the "exp_track" component). 
+sqlite> insert into experiments_flowcell select * from fctracker_flowcell;
+
+''' Now to fctracker_library, a bit more complex case
+
+'''Back to the sqlite prompt..
+sqlite> insert into samples_cellline (cellline_name,notes) values('Unknown','Unknown');
+sqlite> insert into samples_condition (condition_name,notes) values('Unknown','Unknown');
+''' Now we can put 1 in these fields for the Library insert.
+''' Note: avg_lib_size field is missing in Caltech DB (although it's in the models.py Trac), so I put default value 225.
+
+''' Now the actual migration to the new fctracker_library table
+''' (This version looses data, the current Nov 11, 2008 schema, has made_for as a one to many 
+''' relationship to the auth_user table, instead of being a text field. Here I just assigned
+''' the made for to a (semi)-random user.
+sqlite> INSERT INTO samples_library (library_id,library_name,library_species_id,experiment_type,cell_line_id,condition_id,replicate,made_by,creation_date,made_for_id,stopping_point,amplified_from_sample_id,undiluted_concentration,ten_nM_dilution,successful_pM,avg_lib_size,notes) select library_id,library_name,library_species_id,'unknown',1,1,1,made_by,creation_date,12,stopping_point,amplified_from_sample_id,undiluted_concentration,ten_nM_dilution,successful_pM,0,notes from PREV_fctracker_library; 
+
+''' Set the right values for "experiment_type"
+sqlite> update samples_library set experiment_type = "RNA-seq" where library_idin (select library_id from prev_fctracker_library where RNASeq = 1);
+''' YOU CAN ADD SIMILAR SQL CMD TO SET THE VALUE FOR "avg_lib_size" FIELD (WHICH IS NOW SET TO 0) ...  
+
+----------------------------------------------------------------------------------------
+THAT SHOULD BE IT --- NOW YOUR WEB SITE SHOULD SUCESSFULY LOAD THE NEW DB WITH YOUR DATA.
+
+2009 Jan 13 
+
+I had a working database and then merged in a few more changes from
+stanford. I ended up needing to do the following:
+
+alter table analysis_task add task_params varchar(200) null;
+alter table samples_cellline add nickname varchar(20) null;
+alter table samples_condition add nickname varchar(20) null;
+
+Those changes might happen automatically when reconverting from our 
+original database, or they might not.
+
+CREATE TABLE "samples_library_tags" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "library_id" varchar(30) NOT NULL REFERENCES "samples_library" ("library_id"),
+    "tag_id" integer NOT NULL REFERENCES "samples_tag" ("id"),
+    UNIQUE ("library_id", "tag_id")
+)
+;
+

@@ -1,0 +1,183 @@
+#!/usr/bin/python
+
+from glob import glob
+import logging
+import optparse
+import os
+import subprocess
+import sys
+
+from htsworkflow.util import queuecommands
+from htsworkflow.pipelines import runfolder
+
+SOLEXA2SRF = 0
+ILLUMINA2SRF10 = 1
+ILLUMINA2SRF11 = 2
+
+def make_commands(run_name, lanes, site_name, destdir, cmdlevel=ILLUMINA2SRF11):
+  """
+  make a subprocess-friendly list of command line arguments to run solexa2srf
+  generates files like: 
+  woldlab:080514_HWI-EAS229_0029_20768AAXX:8.srf
+   site        run name                    lane
+             
+  run_name - most of the file name (run folder name is a good choice)
+  lanes - list of integers corresponding to which lanes to process
+  site_name - name of your "sequencing site" or "Individual"
+  destdir - where to write all the srf files
+  """
+  cmd_list = []
+  for lane in lanes:
+    name_prefix = '%s_%%l_%%t_' % (run_name,)
+    destname = '%s_%s_%d.srf' % (site_name, run_name, lane)
+    destdir = os.path.normpath(destdir)
+    dest_path = os.path.join(destdir, destname)
+    seq_pattern = 's_%d_*_seq.txt' % (lane,)
+
+    if cmdlevel == SOLEXA2SRF:
+        cmd = ['solexa2srf', 
+               '-N', name_prefix,
+               '-n', '%3x:%3y', 
+               '-o', dest_path, 
+               seq_pattern]
+    elif cmdlevel == ILLUMINA2SRF10:
+        cmd = ['illumina2srf', 
+               '-v1.0',
+               '-o', dest_path,
+               seq_pattern]
+    elif cmdlevel == ILLUMINA2SRF11:
+        seq_pattern = 's_%d_*_qseq.txt' % (lane,)
+        cmd = ['illumina2srf', 
+               '-o', dest_path,
+               seq_pattern]
+    else:
+        raise ValueError("Unrecognized run level %d" % (cmdlevel,))
+
+    cmd_list.append(" ".join(cmd))
+  return cmd_list
+
+def pathname_to_run_name(base):
+  """
+  Convert a pathname to a base runfolder name
+  handle the case with a trailing /
+  """
+  name = ""
+  while len(name) == 0:
+    base, name = os.path.split(base)
+    if len(base) == 0:
+      return None
+  return name
+
+def make_parser():
+  usage = '%prog: [options] runfolder -l 1,2,3 [runfolder -l 5,6 ...]'
+
+  parser = optparse.OptionParser(usage)
+  parser.add_option('--dry-run', action='store_true',
+                    help='print what would be done',
+                    default=False)
+
+  parser.add_option('-d', '--dest-dir', dest='dest_dir',
+                    help='location to write srf files to',
+                    default='.')
+  parser.add_option('-s', '--site',
+                    help='site name',
+                    default='Individual')
+  parser.add_option('-l', '--lanes', dest='lanes', action="append",
+         default=[],
+         help='comma seperated list of lanes to add to srf'
+  )
+  parser.add_option('-j', '--jobs', default=1, type='int',
+                    help='how many jobs to run simultaneously')
+  parser.add_option('-r', '--runfolder-version', default=ILLUMINA2SRF11, type='int',
+                    help='Which class of srf file should we attempt to create\n'
+                         '0 = Solexa pipeline 0.2.6 - 0.3\n'
+                         '1 = illumina pipeline 1.0\n'
+                         '2 = illumina pipeline 1.1rc1 and later \n')
+                     
+  parser.add_option('-v', '--verbose', dest='verbose',
+                    default=False, action='store_true',
+                    help='report more about internals (INFO)')
+  parser.add_option('--debug', dest='debug',
+                    default=False, action='store_true',
+                    help='report even more about internals (DEBUG)')
+ 
+  return parser
+
+def parse_lane_arg(lane_arg):
+    """
+    Convert comma sperated list of lane ids to a list of integers
+    """
+    lanes = []
+    for lane in lane_arg.split(','):
+        try:
+            lane = int(lane)
+            if lane < 1 or lane > 8:
+                parser.error('Lanes must be in range [1..8]')
+            lanes.append(lane)
+        except ValueError:
+            parser.error('Lane selections must be integers')
+    return lanes
+
+def main(cmdline=None):
+    parser = make_parser()
+    opts, args = parser.parse_args(cmdline)
+   
+    if opts.debug: 
+        logging.basicConfig(level=logging.DEBUG)
+    elif opts.verbose:
+        logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARNING)
+
+    if len(args) == 0:
+        parser.error('need runfolder arguments')
+
+    # parse lane arguemnts
+    lanes_list = []
+    if len(opts.lanes) == 0:
+        lanes_list = [[1,2,3,4,5,6,7,8]] * len(args)
+    elif len(opts.lanes) == len(args):
+        for lane_arg in opts.lanes:
+            lanes_list.append(parse_lane_arg(lane_arg))
+    else:
+        parser.error(
+          "Number of lane arguments must match number of runfolders"
+        )
+    
+    # build list of commands
+    cmds = {}
+    for runfolder_path, lanes in zip(args, lanes_list):
+        # normalize paths, either relative to home dirs or current dir
+        runfolder_path = os.path.abspath(runfolder_path)
+        # the last part of the path should be a runfolder name
+        name = pathname_to_run_name(runfolder_path)
+        # so any bustard directories?
+        runs = runfolder.get_runs(runfolder_path)
+        # give up if there are anything other than 1 run
+        if len(runs) > 1:
+          print 'ERROR: Too many run directories in %s' %(runfolder_path,)
+          return 1
+        elif len(runs) == 1:
+          bustard_dir = runs[0].bustard.pathname
+          cmds[bustard_dir] = make_commands(name, lanes, opts.site, opts.dest_dir, opts.runfolder_version)
+        else:
+          print "ERROR: Couldn't find a bustard directory in", runfolder_path
+          return 1
+
+    if not opts.dry_run:
+      for cwd, cmd_list in cmds.items():
+        curdir = os.getcwd()
+        os.chdir(cwd)
+        q = queuecommands.QueueCommands(cmd_list, opts.jobs)
+        q.run()
+        os.chdir(curdir)
+    else:
+      for cwd, cmd_list in cmds.items():
+        print cwd
+        print cmd_list
+        print 'jobs: ', opts.jobs
+
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

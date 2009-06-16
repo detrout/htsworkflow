@@ -1,0 +1,34 @@
+from setuptools import setup
+
+setup(
+  name="htsworkflow",
+  description="some bots and other utilities to help deal with data from an illumina sequencer",
+  author="Diane Trout & Brandon King",
+  author_email="diane@caltech.edu",
+  packages=["htsworkflow", 
+            "htsworkflow.pipelines",
+            "htsworkflow.frontend",
+            "htsworkflow.frontend.analysis",
+            "htsworkflow.frontend.eland_config",
+            "htsworkflow.frontend.experiments",
+            "htsworkflow.frontend.inventory",
+            "htsworkflow.frontend.reports",
+            "htsworkflow.frontend.samples",
+            "htsworkflow.automation",
+            "htsworkflow.util"
+             ],
+  scripts=[
+        'scripts/configure_pipeline',
+        'scripts/copier',
+        'scripts/gerald2bed.py',
+        'scripts/library.py',
+        'scripts/makebed',
+        'scripts/rerun_eland.py',
+        'scripts/retrieve_config',
+        'scripts/runfolder',
+        'scripts/runner',
+        'scripts/spoolwatcher', 
+        'scripts/srf',
+        'scripts/mark_archived_data'
+        ],
+)

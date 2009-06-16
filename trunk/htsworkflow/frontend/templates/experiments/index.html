@@ -1,0 +1,9 @@
+{% if data_run_list %}
+    <ul>
+    {% for run in data_run_list %}
+        <li>{{ run.run_folder }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No data runs are available.</p>
+{% endif %}

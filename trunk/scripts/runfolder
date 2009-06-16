@@ -1,0 +1,138 @@
+#!/usr/bin/env python
+"""
+Runfolder.py can generate a xml file capturing all the 'interesting' parameters from a finished pipeline run. (using the -a option). The information currently being captured includes:
+
+  * Flowcell ID
+  * run dates
+  * start/stop cycle numbers
+  * Firecrest, bustard, gerald version numbers
+  * Eland analysis types, and everything in the eland configuration file.
+  * cluster numbers and other values from the Summary.htm 
+    LaneSpecificParameters table. 
+  * How many reads mapped to a genome from an eland file
+
+The ELAND "mapped reads" counter will also check for eland squashed file
+that were symlinked from another directory. This is so I can track how 
+many reads landed on the genome of interest and on the spike ins. 
+
+Basically my subdirectories something like:
+
+genomes/hg18
+genomes/hg18/chr*.2bpb <- files for hg18 genome
+genomes/hg18/chr*.vld  
+genomes/hg18/VATG.fa.2bp <- symlink to genomes/spikeins
+genomes/spikein 
+
+runfolder.py can also spit out a simple summary report (-s option) 
+that contains the per lane post filter cluster numbers and the mapped 
+read counts. (The report isn't currently very pretty)
+"""
+from glob import glob
+import logging
+import optparse
+import os
+import sys
+
+from htsworkflow.pipelines import runfolder
+from htsworkflow.pipelines.runfolder import ElementTree
+        
+def make_parser():
+    usage = 'usage: %prog [options] runfolder_root_dir'
+    parser = optparse.OptionParser(usage)
+
+    parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
+                      default=False,
+                      help='turn on verbose mode')
+    parser.add_option('--dry-run', action='store_true', default=False,
+                      help="Don't delete anything (in clean mode)")
+
+    commands = optparse.OptionGroup(parser, 'Commands')
+
+    commands.add_option('-s', '--summary', dest='summary', action='store_true',
+                        default=False,
+                        help='produce summary report')
+    commands.add_option('-a', '--archive', dest='archive', action='store_true',
+                        default=False,
+                        help='generate run configuration archive')
+    commands.add_option('--extract-results', action='store_true',
+           default=False,
+           help='create run-xml summary, compress the eland result files, and '
+                'copy them and the Summary.htm file into archival directory.')
+    commands.add_option('-c', '--clean', action='store_true', default=False,
+                        help='Clean runfolder, preparing it for long-term storage')
+    parser.add_option_group(commands)
+
+    parser.add_option('-o', '--output-dir', default=None,
+           help="specify the default output directory for extract results")
+
+    parser.add_option('-u', '--use-run', dest='use_run', default=None,
+                      help='Specify which run to use instead of autoscanning '
+                           'the runfolder. You do this by providing the final '
+                           ' GERALD directory, and it assumes the parent '
+                           'directories are the bustard and image processing '
+                           'directories.')
+                    
+    parser.add_option('--run-xml', dest='run_xml',
+           default=None,
+           help='specify a run_<FlowCell>.xml file for summary reports')
+    
+
+    return parser
+
+def main(cmdlist=None):
+    parser = make_parser()
+    opt, args = parser.parse_args(cmdlist)
+
+    logging.basicConfig()
+    if opt.verbose:
+        root_log = logging.getLogger()
+        root_log.setLevel(logging.INFO)
+
+    logging.info('Starting htsworkflow illumina runfolder processing tool.')
+    runs = []
+    if opt.run_xml:
+        # handle ~ shortcut
+        opt.run_xml = os.path.expanduser(opt.run_xml)
+        tree = ElementTree.parse(opt.run_xml).getroot()
+        runs.append(runfolder.PipelineRun(xml=tree))
+
+    # look for manually specified run
+    if opt.use_run is not None:
+        specific_run = runfolder.get_specific_run(opt.use_run)
+        if specific_run is not None:
+            runs.append(specific_run)
+        else:
+            logging.warn("Couldn't find a run in %s" % (opt.use_run,))
+
+    # scan runfolders for runs
+    for run_pattern in args:
+        # expand args on our own if needed
+        for run_dir in glob(run_pattern):
+            runs.extend(runfolder.get_runs(run_dir))
+
+    if len(runs) > 0:
+        command_run = False
+        if opt.summary:
+            print runfolder.summary_report(runs)
+            command_run = True
+        if opt.archive:
+            runfolder.extract_run_parameters(runs)
+            command_run = True
+        if opt.extract_results:
+            runfolder.extract_results(runs, opt.output_dir)
+            command_run = True
+        if opt.clean:
+            runfolder.clean_runs(runs, opt.dry_run)
+            command_run = True
+
+        if command_run == False:
+            print "You need to specify a command."+os.linesep
+            parser.print_help()
+    else:
+        print "You need to specify some run folders to process..."+os.linesep
+        parser.print_help()
+
+    return 0
+
+if __name__ == "__main__":
+  sys.exit(main(sys.argv[1:]))

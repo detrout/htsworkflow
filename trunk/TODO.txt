@@ -1,0 +1,49 @@
+Improvements:
+
+* Auto restart spoolwatcher's watch
+
+  * use dbus to detect newly mounted drive (hard to do)
+  * spoolwatcher hangs out on jabber and accepts a "make new drive" command
+    (which runs a script to format/mount/watch the drive) (security hole)
+  * a script is added to jumpgate which does the drive formatting/mounting/etc
+    and then when finishes sends an xml-rpc message to spoolwatcher to
+    start watching again. 
+
+* Change umask group for the rsync to be writable for multiple users
+  really really needs to be 002
+* the directory also needs to be set group id
+* need to make sure that there's a final rsync that finishes without coping any files
+* demon processes need to restart
+
+  * most likely solution, they should detect if there's a currently running 
+    version and stop running. This'd allow a cron script to restart them
+
+* The machine to machine communication needs to be via xml-rpc
+
+  * Update benderjab and/or xmppy to send/receive xml-rpc messages
+
+* Add logging to everything
+
+  * high priority messages go out as jabber messages
+  * low priority go to disk
+  * some subset of recent messages should be stored in ram so they can 
+    be retrieved by a user jabber status message (or a web page view)
+
+* Generate config files
+
+  * For goat (from brandon's web interface)
+  * For bed file generator
+
+* Need longish term storage to make generating bed and mapped read files
+  from multiple lanes on multiple flow cells
+
+* View current status page.
+
+  * once xml-rpc is working it should be easier to update the jumpgate
+    web page to report the current status of a run.
+
+    * sequencing
+    * waiting on copy (final rsync)
+    * running goat
+    * running pipeline
+    * ... (more processing)

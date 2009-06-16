@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+import os
+import sys
+import re
+from htsworkflow.pipelines.configure_run import *
+from htsworkflow.pipelines import retrieve_config as _rc
+from htsworkflow.pipelines.run_status import startCmdLineStatusMonitor
+
+s_fc = re.compile('FC[0-9]+')
+
+#Turn on built-in command-line parsing.
+_rc.DISABLE_CMDLINE = False
+
+GENOME_DIR = '/data-store01/compbio/genomes/'
+
+
+
+def main(args=None):
+  ci = ConfigInfo()
+  ci.analysis_dir = os.getcwd()
+  ci.base_analysis_dir, junk = os.path.split(ci.analysis_dir)
+
+  #FIXME: make a better command line tool
+  skip_retrieve_config = False
+  if len(args) == 1:
+    arg = args[0]
+
+    #If FC##### found
+    if s_fc.search(arg):
+      cfg_filepath = os.path.abspath('config32auto.txt')
+      flowcell = arg
+    #else, config file provide
+    else:
+      cfg_filepath = os.path.abspath(args[0])
+      skip_retrieve_config = True
+  else:
+    print "usage:\n" \
+          "       configure_pipeline FC#####\n" \
+          " or:\n" \
+          "       configure_pipeline <conf_filepath>\n"
+    return 3
+
+  genome_dir = GENOME_DIR
+
+  if not skip_retrieve_config:
+    status_retrieve_cfg = retrieve_config(ci, flowcell, cfg_filepath, genome_dir)
+    if status_retrieve_cfg:
+      print "Retrieve config file successful"
+    else:
+      print "Failed to retrieve config file"
+  else:
+    print "Config file %s provided from command-line" % (cfg_filepath)
+    ci.config_filepath = cfg_filepath
+    status_retrieve_cfg = True
+  
+  if status_retrieve_cfg:
+    status = configure(ci)
+    if status:
+      print "Configure success"
+    else:
+      print "Configure failed"
+    
+    print 'Run Dir:', ci.run_path
+    print 'Bustard Dir:', ci.bustard_path
+    
+    if status:
+      # Setup status cmdline status monitor
+      startCmdLineStatusMonitor(ci)
+      
+      print 'Running pipeline now!'
+      run_status = run_pipeline(ci)
+      if run_status is True:
+        print 'Pipeline ran successfully.'
+        return 0
+      else:
+        print 'Pipeline run failed.'
+        return 1
+
+    return 2
+
+if __name__ == "__main__":
+  logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)-8s %(message)s',
+                    datefmt='%a, %d %b %Y %H:%M:%S',
+                    #filename='pipeline_main.log',
+                    filemode='w')
+
+  sys.exit(main(sys.argv[1:]))

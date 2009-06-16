@@ -1,0 +1,59 @@
+{% extends "base_site.html" %}
+{% load adminmedia admin_list i18n %}
+
+{% block stylesheet %}{{ MEDIA_URL }}css/data-browse-index.css{% endblock %}
+
+{% block bodyclass %}change-list{% endblock %}
+{% block coltype %}flex{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+    {% block search %}{% search_form cl %}{% endblock %}
+
+    {% block filters %}
+    {% if cl.has_filters %}
+    <div id="changelist-filter">
+      <h2>{% trans 'Filter' %}</h2>
+      {% for spec in cl.filter_specs %}
+         {% admin_list_filter cl spec %}
+         {% endfor %}
+       </div>
+       {% endif %}
+       {% endblock %}
+
+  
+ {% block pagination %}{% pagination cl %}{% endblock %}
+
+{% block summary_stats %}
+<table>
+  <thead>
+    <tr>
+    <td>Parent</td>
+    <td>Library ID</td>
+    <td>Species</td>
+    <td>Library Name</td>
+    <td>Total Lanes</td>
+    <td>HD</td>
+    </tr>
+  </thead>
+  <tbody>
+    {% for lib in library_list %}
+    <tr>
+      <td><a href="/library/{{ lib.library_id }}">{{ lib.amplified_from }}</a></td>
+      <td><a href="/library/{{ lib.library_id }}">{{ lib.library_id }}</a></td>
+      <td><a href="/library/{{ lib.library_id }}">{{ lib.species_name }}</a></td>
+      <td><a href="/library/{{ lib.library_id }}">{{ lib.library_name }}</a></td>
+      <td>{{ lib.lanes_run }}</td>
+      {% if lib.is_archived %}
+        <td><img src="/static/img/hdd_unmount.png" alt="Archived" /></td>
+      {% else %}
+        <td></td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}
+{% endblock %}
