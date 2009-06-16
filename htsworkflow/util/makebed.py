@@ -17,7 +17,7 @@ def create_bed_header(name, description):
   # provide default track names
   if name is None: name = "track"
   if description is None: description = "eland result file"
-  bed_header = 'track name="%s" description="%s" visibility=4 itemRgb="ON"'
+  bed_header = 'track name="%s" description="%s" visibility=4 itemRgb="ON"' % (name, description)
   bed_header += os.linesep
   return bed_header
 
@@ -95,7 +95,7 @@ def make_bed_from_multi_eland_stream(
     - `max_reads`: maximum number of reads to write to bed stream
   """
   for lane in make_bed_from_multi_eland_generator(instream, name, description, chr_prefix, max_reads):
-      oustream.write(lane)
+      outstream.write(lane)
 
 def make_bed_from_multi_eland_generator(instream, name, description, chr_prefix, max_reads=255):
   loc_pattern = '(?P<fullloc>(?P<start>[0-9]+)(?P<dir>[FR])(?P<count>[0-9]+))'
