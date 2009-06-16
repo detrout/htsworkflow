@@ -170,7 +170,18 @@ class CopierBot(rpc.XmlRpcBot):
         self.register_function(self.startCopy)
         self.register_function(self.sequencingFinished)
         self.eventTasks.append(self.update)
-        
+       
+    def _init_rsync(self):
+        """
+        Initalize rsync class
+
+        This is only accessible for test purposes.
+        """
+        # we can't call any logging function until after start finishes.
+        # this got moved to a seperate function from run to help with test code
+        if self.rsync is None:
+            self.rsync = rsync(self.sources, self.destination, self.password)
+
     def read_config(self, section=None, configfile=None):
         """
         read the config file
@@ -195,9 +206,7 @@ class CopierBot(rpc.XmlRpcBot):
         """
         Start application
         """
-        # we can't call any logging function until after start finishes.
-        if self.rsync is None:
-            self.rsync = rsync(self.sources, self.destination, self.password)
+        self._init_rsync()
         super(CopierBot, self).run()
 
     def startCopy(self, *args):
