@@ -11,6 +11,8 @@ from optparse import OptionParser
 
 import sys
 import urllib
+import urllib2
+
 
 
 def construct_parser():
@@ -32,16 +34,19 @@ def update_db(flowcell, serial, debug=False):
     """
     Creates link between flowcell and storage device over http
     """
-    www = urllib.urlopen(settings.LINK_FLOWCELL_STORAGE_DEVICE_URL+'%s/%s/' % (flowcell, serial))
-    httpcode = www.getcode()
-    if httpcode != 200:
-        print 'ERROR - HTTP OUTPUT (Return Code: %s); use -v/--verbose for more details.' % (httpcode)
+    url = settings.LINK_FLOWCELL_STORAGE_DEVICE_URL+'%s/%s/' % (flowcell, serial)
+    
+    req = urllib2.Request(url)
+    try:
+        response = urllib2.urlopen(req)
+    except urllib2.URLError, e:
+        print 'ERROR - HTTP OUTPUT (Return Code: %s); use -v/--verbose for more details.' % (e.code)
         if debug:
-            print www.read()
-        sys.exit(httpcode)
+            print e.read()
+        sys.exit(e.code)
     
     print "DB Update of %s & %s succeeded" % (flowcell, serial)
-    print www.read()
+    print response.read()
 
 
 def process_args(parser):
