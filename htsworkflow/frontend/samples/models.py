@@ -183,6 +183,15 @@ class Library(models.Model):
     for t in affs:
         ar.append(t.__unicode__())
     return '%s' % (", ".join(ar))
+    
+  def is_archived(self):
+    """
+    returns True if archived else False
+    """
+    if self.longtermstorage_set.count() > 0:
+        return True
+    else:
+        return False
 
   def libtags(self):
     affs = self.tags.all().order_by('tag_name')

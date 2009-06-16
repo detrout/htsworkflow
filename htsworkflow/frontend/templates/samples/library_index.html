@@ -34,6 +34,7 @@
     <td>Species</td>
     <td>Library Name</td>
     <td>Total Lanes</td>
+    <td>HD</td>
     </tr>
   </thead>
   <tbody>
@@ -44,6 +45,11 @@
       <td><a href="/library/{{ lib.library_id }}">{{ lib.species_name }}</a></td>
       <td><a href="/library/{{ lib.library_id }}">{{ lib.library_name }}</a></td>
       <td>{{ lib.lanes_run }}</td>
+      {% if lib.is_archived %}
+        <td><img src="/static/img/hdd_unmount.png" alt="Archived" /></td>
+      {% else %}
+        <td></td>
+      {% endif %}
     </tr>
     {% endfor %}
   </tbody>

@@ -41,6 +41,7 @@ def create_library_context(cl):
            lane = getattr(lib, 'lane_%d_library' % (lane_id,))
            lanes_run += len( lane.all() )
        summary['lanes_run'] = lanes_run
+       summary['is_archived'] = lib.is_archived()
        records.append(summary)
     cl.result_count = unicode(cl.paginator._count) + u" libraries"
     return {'library_list': records }
