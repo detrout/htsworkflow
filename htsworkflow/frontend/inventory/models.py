@@ -1,3 +1,5 @@
+import logging
+
 from django.db import models
 from django.db.models.signals import pre_save
 
@@ -5,7 +7,16 @@ from htsworkflow.frontend.samples.models import Library
 from htsworkflow.frontend.experiments.models import FlowCell
 
 
-import uuid
+try:
+    import uuid
+except ImportError, e:
+    # Some systems are using python 2.4, which doesn't have uuid
+    # this is a stub
+    logging.warning('Real uuid is not available, initializing fake uuid module')
+    class uuid:
+        def uuid1(self):
+            self.hex = None
+            return self
 
 def _assign_uuid(sender, instance, **kwargs):
     """
@@ -124,3 +135,4 @@ class LongTermStorage(models.Model):
     
     def __unicode__(self):
         return u"%s: %s" % (str(self.flowcell), ', '.join([ str(s) for s in self.storage_devices.iterator() ]))
+
