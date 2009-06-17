@@ -8,7 +8,7 @@ import os
 import re
 import stat
 
-from htsworkflow.pipelines.runfolder import ElementTree
+from htsworkflow.pipelines.runfolder import ElementTree, LANE_LIST
 from htsworkflow.util.ethelp import indent, flatten
 from htsworkflow.util.opener import autoopen
 
@@ -423,7 +423,6 @@ class SequenceLane(ResultLane):
                 self._reads = int(element.text)
             elif tag == SequenceLane.SEQUENCE_TYPE.lower():
                 self.sequence_type = lookup_sequence_type.get(element.text, None)
-                print self.sequence_type
             else:
                 logging.warn("SequenceLane unrecognized tag %s" % (element.tag,))
 
@@ -444,6 +443,12 @@ class ELAND(object):
 
         if xml is not None:
             self.set_elements(xml)
+
+        if len(self.results[0]) == 0:
+            # Initialize our eland object with meaningless junk
+            for l in  LANE_LIST:
+                self.results[0][l] = ResultLane(lane_id=l, end=0)
+
 
     def get_elements(self):
         root = ElementTree.Element(ELAND.ELAND,

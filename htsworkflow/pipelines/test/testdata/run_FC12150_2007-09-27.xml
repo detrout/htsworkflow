@@ -1,0 +1,173 @@
+<PipelineRun>
+  <FlowcellID>FC12150</FlowcellID>
+  <Firecrest>
+    <version>1.8.28</version>
+    <FirstCycle>1</FirstCycle>
+    <LastCycle>36</LastCycle>
+    <run_time>1190876400.0</run_time>
+    <matrix># Auto-generated frequency response matrix
+&gt; A
+&gt; C
+&gt; G
+&gt; T
+2.19 0.39 -0.03 -0.02 
+3.09 2.85 -0.15 -0.12 
+-0.02 -0.01 0.39 -0.00 
+-0.02 -0.02 0.37 0.51 
+</matrix>
+  </Firecrest>
+  <Bustard>
+    <version>1.8.28</version>
+    <run_time>1190876400.0</run_time>
+  </Bustard>
+  <Gerald>
+    <RunParameters>
+      <ChipWideRunParameters>
+        <ANALYSIS>default</ANALYSIS>
+        <BAD_LANES />
+        <BAD_TILES />
+        <CONTAM_DIR>/data-store01/compbio/genomes</CONTAM_DIR>
+        <CONTAM_FILE />
+        <ELAND_GENOME>Need_to_specify_ELAND_genome_directory</ELAND_GENOME>
+        <ELAND_MULTIPLE_INSTANCES>8</ELAND_MULTIPLE_INSTANCES>
+        <ELAND_REPEAT />
+        <EMAIL_DOMAIN>domain.com</EMAIL_DOMAIN>
+        <EMAIL_LIST>diane</EMAIL_LIST>
+        <EMAIL_SERVER>localhost:25</EMAIL_SERVER>
+        <EXPT_DIR>/zpool1/compbio/diane/sequencer/070924_USI-EAS44_0022_FC12150/Data/C1-36_Firecrest1.8.28_27-09-2007_diane/Bustard1.8.28_27-09-2007_diane</EXPT_DIR>
+        <EXPT_DIR_ROOT>/zpool1/compbio/diane/sequencer</EXPT_DIR_ROOT>
+        <FORCE>1</FORCE>
+        <GENOME_DIR>/data-store01/compbio/genomes</GENOME_DIR>
+        <GENOME_FILE>Need_to_specify_genome_file_name</GENOME_FILE>
+        <HAMSTER_FLAG>genome</HAMSTER_FLAG>
+        <OUT_DIR>/zpool1/compbio/diane/sequencer/070924_USI-EAS44_0022_FC12150/Data/C1-36_Firecrest1.8.28_27-09-2007_diane/Bustard1.8.28_27-09-2007_diane/GERALD_27-09-2007_diane</OUT_DIR>
+        <POST_RUN_COMMAND />
+        <PRB_FILE_SUFFIX>_prb.txt</PRB_FILE_SUFFIX>
+        <PURE_BASES>12</PURE_BASES>
+        <QF_PARAMS>'((CHASTITY&gt;=0.6))'</QF_PARAMS>
+        <QHG_FILE_SUFFIX>_qhg.txt</QHG_FILE_SUFFIX>
+        <QUALITY_FORMAT>--symbolic</QUALITY_FORMAT>
+        <READ_LENGTH>32</READ_LENGTH>
+        <SEQUENCE_FORMAT>--scarf</SEQUENCE_FORMAT>
+        <SEQ_FILE_SUFFIX>_seq.txt</SEQ_FILE_SUFFIX>
+        <SIG_FILE_SUFFIX_DEPHASED>_sig2.txt</SIG_FILE_SUFFIX_DEPHASED>
+        <SIG_FILE_SUFFIX_NOT_DEPHASED>_sig.txt</SIG_FILE_SUFFIX_NOT_DEPHASED>
+        <SOFTWARE_VERSION>@(#) Id: GERALD.pl,v 1.68.2.2 2007/06/13 11:08:49 km Exp</SOFTWARE_VERSION>
+        <TILE_REGEX>s_[1-8]_[0-9][0-9][0-9][0-9]</TILE_REGEX>
+        <TILE_ROOT>s</TILE_ROOT>
+        <TIME_STAMP>Thu Sep 27 14:22:54 2007</TIME_STAMP>
+        <TOOLS_DIR>/home/diane/proj/SolexaPipeline-0.2.2.6/Goat/../Gerald</TOOLS_DIR>
+        <USE_BASES>all</USE_BASES>
+        <WEB_DIR_ROOT>http://host.domain.com/yourshare/</WEB_DIR_ROOT>
+      </ChipWideRunParameters>
+      <LaneSpecificRunParameters>
+        <ANALYSIS>
+          <s_1>eland</s_1>
+          <s_2>eland</s_2>
+          <s_3>eland</s_3>
+          <s_4>eland</s_4>
+          <s_5>eland</s_5>
+          <s_6>eland</s_6>
+          <s_7>eland</s_7>
+          <s_8>eland</s_8>
+        </ANALYSIS>
+        <ELAND_GENOME>
+          <s_1>/data-store01/compbio/genomes/hg18</s_1>
+          <s_2>/data-store01/compbio/genomes/hg18</s_2>
+          <s_3>/data-store01/compbio/genomes/hg18</s_3>
+          <s_4>/data-store01/compbio/genomes/hg18</s_4>
+          <s_5>/data-store01/compbio/genomes/hg18</s_5>
+          <s_6>/data-store01/compbio/genomes/hg18</s_6>
+          <s_7>/data-store01/compbio/genomes/hg18</s_7>
+          <s_8>/data-store01/compbio/genomes/hg18</s_8>
+        </ELAND_GENOME>
+        <READ_LENGTH>
+          <s_1>32</s_1>
+          <s_2>32</s_2>
+          <s_3>32</s_3>
+          <s_4>32</s_4>
+          <s_5>32</s_5>
+          <s_6>32</s_6>
+          <s_7>32</s_7>
+          <s_8>32</s_8>
+        </READ_LENGTH>
+        <USE_BASES>
+          <s_1>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_1>
+          <s_2>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_2>
+          <s_3>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_3>
+          <s_4>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_4>
+          <s_5>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_5>
+          <s_6>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_6>
+          <s_7>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_7>
+          <s_8>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_8>
+        </USE_BASES>
+      </LaneSpecificRunParameters>
+    </RunParameters>
+    <Summary>
+      <LaneResultSummary lane="1">
+        <Cluster deviation="6010" mean="31261" />
+        <AverageFirstCycleIntensity deviation="36" mean="500" />
+        <PercentIntensityAfter20Cycles deviation="3.78" mean="74.74" />
+        <PercentPassFilterClusters deviation="7.31" mean="27.38" />
+        <AverageAlignmentScore deviation="596.07" mean="12116.63" />
+        <PercentErrorRate deviation="0.38" mean="2.07" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="2">
+        <Cluster deviation="1595" mean="33336" />
+        <AverageFirstCycleIntensity deviation="18" mean="610" />
+        <PercentIntensityAfter20Cycles deviation="1.54" mean="72.76" />
+        <PercentPassFilterClusters deviation="3.49" mean="32.73" />
+        <AverageAlignmentScore deviation="251.86" mean="12681.91" />
+        <PercentErrorRate deviation="0.09" mean="1.69" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="3">
+        <Cluster deviation="1596" mean="33860" />
+        <AverageFirstCycleIntensity deviation="25" mean="642" />
+        <PercentIntensityAfter20Cycles deviation="1.52" mean="74.67" />
+        <PercentPassFilterClusters deviation="2.87" mean="35.05" />
+        <AverageAlignmentScore deviation="245.19" mean="12940.51" />
+        <PercentErrorRate deviation="0.1" mean="1.65" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="4">
+        <Cluster deviation="1481" mean="32524" />
+        <AverageFirstCycleIntensity deviation="22" mean="639" />
+        <PercentIntensityAfter20Cycles deviation="2.35" mean="75.1" />
+        <PercentPassFilterClusters deviation="2.25" mean="37.61" />
+        <AverageAlignmentScore deviation="204.7" mean="12841.73" />
+        <PercentErrorRate deviation="0.09" mean="1.61" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="5">
+        <Cluster deviation="1791" mean="32612" />
+        <AverageFirstCycleIntensity deviation="27" mean="668" />
+        <PercentIntensityAfter20Cycles deviation="2.15" mean="78.4" />
+        <PercentPassFilterClusters deviation="2.52" mean="38.56" />
+        <AverageAlignmentScore deviation="221.56" mean="12920.71" />
+        <PercentErrorRate deviation="0.1" mean="1.66" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="6">
+        <Cluster deviation="1901" mean="35452" />
+        <AverageFirstCycleIntensity deviation="37" mean="707" />
+        <PercentIntensityAfter20Cycles deviation="2.53" mean="77.42" />
+        <PercentPassFilterClusters deviation="2.21" mean="35.38" />
+        <AverageAlignmentScore deviation="223.73" mean="12393.36" />
+        <PercentErrorRate deviation="0.1" mean="1.63" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="7">
+        <Cluster deviation="1765" mean="33031" />
+        <AverageFirstCycleIntensity deviation="23" mean="669" />
+        <PercentIntensityAfter20Cycles deviation="1.71" mean="79.27" />
+        <PercentPassFilterClusters deviation="2.29" mean="37.84" />
+        <AverageAlignmentScore deviation="241.37" mean="12489.76" />
+        <PercentErrorRate deviation="0.1" mean="1.68" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="8">
+        <Cluster deviation="1531" mean="29782" />
+        <AverageFirstCycleIntensity deviation="86" mean="440" />
+        <PercentIntensityAfter20Cycles deviation="2.07" mean="79.97" />
+        <PercentPassFilterClusters deviation="3.97" mean="32.72" />
+        <AverageAlignmentScore deviation="1059.46" mean="11087.61" />
+        <PercentErrorRate deviation="0.45" mean="2.35" />
+      </LaneResultSummary>
+    </Summary>
+  </Gerald>
+</PipelineRun>

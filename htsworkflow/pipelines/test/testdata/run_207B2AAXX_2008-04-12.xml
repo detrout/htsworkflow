@@ -1,0 +1,836 @@
+<PipelineRun>
+  <FlowcellID>207B2AAXX</FlowcellID>
+  <Firecrest version="1">
+    <version>1.8.28</version>
+    <FirstCycle>1</FirstCycle>
+    <LastCycle>33</LastCycle>
+    <run_time>1207983600.0</run_time>
+    <user>diane</user>
+    <matrix># Auto-generated frequency response matrix
+&gt; A
+&gt; C
+&gt; G
+&gt; T
+0.77 0.15 -0.04 -0.04 
+0.76 1.02 -0.05 -0.06 
+-0.10 -0.10 1.17 -0.03 
+-0.13 -0.12 0.80 1.27 
+</matrix>
+  </Firecrest>
+  <Bustard version="1">
+    <version>1.8.28</version>
+    <run_time>1207983600.0</run_time>
+    <user>diane</user>
+    <Parameters>
+      <Phasing lane="1">
+        <Phasing>0.0099</Phasing>
+        <Prephasing>0.0035</Prephasing>
+      </Phasing>
+      <Phasing lane="2">
+        <Phasing>0.0099</Phasing>
+        <Prephasing>0.0035</Prephasing>
+      </Phasing>
+      <Phasing lane="3">
+        <Phasing>0.0099</Phasing>
+        <Prephasing>0.0035</Prephasing>
+      </Phasing>
+      <Phasing lane="4">
+        <Phasing>0.0099</Phasing>
+        <Prephasing>0.0035</Prephasing>
+      </Phasing>
+      <Phasing lane="5">
+        <Phasing>0.0099</Phasing>
+        <Prephasing>0.0035</Prephasing>
+      </Phasing>
+      <Phasing lane="6">
+        <Phasing>0.0099</Phasing>
+        <Prephasing>0.0035</Prephasing>
+      </Phasing>
+      <Phasing lane="7">
+        <Phasing>0.0099</Phasing>
+        <Prephasing>0.0035</Prephasing>
+      </Phasing>
+      <Phasing lane="8">
+        <Phasing>0.0099</Phasing>
+        <Prephasing>0.0035</Prephasing>
+      </Phasing>
+    </Parameters>
+  </Bustard>
+  <Gerald version="1">
+    <RunParameters>
+      <ChipWideRunParameters>
+        <ANALYSIS>default</ANALYSIS>
+        <BAD_LANES />
+        <BAD_TILES />
+        <CONTAM_DIR />
+        <CONTAM_FILE />
+        <ELAND_GENOME>Need_to_specify_ELAND_genome_directory</ELAND_GENOME>
+        <ELAND_MULTIPLE_INSTANCES>8</ELAND_MULTIPLE_INSTANCES>
+        <ELAND_REPEAT />
+        <EMAIL_DOMAIN>domain.com</EMAIL_DOMAIN>
+        <EMAIL_LIST>diane</EMAIL_LIST>
+        <EMAIL_SERVER>localhost:25</EMAIL_SERVER>
+        <EXPT_DIR>/home/diane/gec/080408_HWI-EAS229_0023_207B2AAXX/Data/C1-33_Firecrest1.8.28_12-04-2008_diane/Bustard1.8.28_12-04-2008_diane</EXPT_DIR>
+        <EXPT_DIR_ROOT>/home/diane/gec</EXPT_DIR_ROOT>
+        <FORCE>1</FORCE>
+        <GENOME_DIR>/home/diane/proj/SolexaPipeline-0.2.2.6/Goat/../Gerald/../../Genomes</GENOME_DIR>
+        <GENOME_FILE>Need_to_specify_genome_file_name</GENOME_FILE>
+        <HAMSTER_FLAG>genome</HAMSTER_FLAG>
+        <OUT_DIR>/home/diane/gec/080408_HWI-EAS229_0023_207B2AAXX/Data/C1-33_Firecrest1.8.28_12-04-2008_diane/Bustard1.8.28_12-04-2008_diane/GERALD_12-04-2008_diane</OUT_DIR>
+        <POST_RUN_COMMAND />
+        <PRB_FILE_SUFFIX>_prb.txt</PRB_FILE_SUFFIX>
+        <PURE_BASES>12</PURE_BASES>
+        <QF_PARAMS>'((CHASTITY&gt;=0.6))'</QF_PARAMS>
+        <QHG_FILE_SUFFIX>_qhg.txt</QHG_FILE_SUFFIX>
+        <QUALITY_FORMAT>--symbolic</QUALITY_FORMAT>
+        <READ_LENGTH>32</READ_LENGTH>
+        <SEQUENCE_FORMAT>--scarf</SEQUENCE_FORMAT>
+        <SEQ_FILE_SUFFIX>_seq.txt</SEQ_FILE_SUFFIX>
+        <SIG_FILE_SUFFIX_DEPHASED>_sig2.txt</SIG_FILE_SUFFIX_DEPHASED>
+        <SIG_FILE_SUFFIX_NOT_DEPHASED>_sig.txt</SIG_FILE_SUFFIX_NOT_DEPHASED>
+        <SOFTWARE_VERSION>@(#) Id: GERALD.pl,v 1.68.2.2 2007/06/13 11:08:49 km Exp</SOFTWARE_VERSION>
+        <TILE_REGEX>s_[1-8]_[0-9][0-9][0-9][0-9]</TILE_REGEX>
+        <TILE_ROOT>s</TILE_ROOT>
+        <TIME_STAMP>Sat Apr 12 08:51:25 2008</TIME_STAMP>
+        <TOOLS_DIR>/home/diane/proj/SolexaPipeline-0.2.2.6/Goat/../Gerald</TOOLS_DIR>
+        <USE_BASES>all</USE_BASES>
+        <WEB_DIR_ROOT>http://host.domain.com/yourshare/</WEB_DIR_ROOT>
+      </ChipWideRunParameters>
+      <LaneSpecificRunParameters>
+        <ANALYSIS>
+          <s_1>eland</s_1>
+          <s_2>eland</s_2>
+          <s_3>eland</s_3>
+          <s_4>eland</s_4>
+          <s_5>eland</s_5>
+          <s_6>eland</s_6>
+          <s_7>eland</s_7>
+          <s_8>eland</s_8>
+        </ANALYSIS>
+        <ELAND_GENOME>
+          <s_1>/data-store01/compbio/genomes/canfam2</s_1>
+          <s_2>/data-store01/compbio/genomes/equcab1</s_2>
+          <s_3>/data-store01/compbio/genomes/hg18</s_3>
+          <s_4>/data-store01/compbio/genomes/hg18</s_4>
+          <s_5>/data-store01/compbio/genomes/strpur2</s_5>
+          <s_6>/data-store01/compbio/genomes/elegans170</s_6>
+          <s_7>/data-store01/compbio/genomes/elegans170</s_7>
+          <s_8>/data-store01/compbio/genomes/elegans170</s_8>
+        </ELAND_GENOME>
+        <READ_LENGTH>
+          <s_1>32</s_1>
+          <s_2>32</s_2>
+          <s_3>32</s_3>
+          <s_4>32</s_4>
+          <s_5>32</s_5>
+          <s_6>32</s_6>
+          <s_7>32</s_7>
+          <s_8>32</s_8>
+        </READ_LENGTH>
+        <USE_BASES>
+          <s_1>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_1>
+          <s_2>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_2>
+          <s_3>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_3>
+          <s_4>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_4>
+          <s_5>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_5>
+          <s_6>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_6>
+          <s_7>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_7>
+          <s_8>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_8>
+        </USE_BASES>
+      </LaneSpecificRunParameters>
+    </RunParameters>
+    <Summary version="2">
+      <LaneResultSummary lane="1">
+        <PercentPassFilterClusters deviation="28.34" mean="35.77" />
+        <PercentIntensityAfter20Cycles deviation="15.88" mean="21.93" />
+        <Cluster deviation="3170" mean="25167" />
+        <AverageFirstCycleIntensity deviation="966" mean="7071" />
+        <AverageAlignmentScore deviation="1198.06" mean="3963.69" />
+        <PercentPassFilterAlign deviation="6.19" mean="21.2" />
+        <PercentErrorRate deviation="5.23" mean="4.09" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="3">
+        <PercentPassFilterClusters deviation="17.43" mean="46.52" />
+        <PercentIntensityAfter20Cycles deviation="3.09" mean="15.96" />
+        <Cluster deviation="4648" mean="38205" />
+        <AverageFirstCycleIntensity deviation="669" mean="7476" />
+        <AverageAlignmentScore deviation="1620.11" mean="7961.24" />
+        <PercentPassFilterAlign deviation="7.51" mean="39.39" />
+        <PercentErrorRate deviation="3.76" mean="3.43" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="2">
+        <PercentPassFilterClusters deviation="19.82" mean="46.97" />
+        <PercentIntensityAfter20Cycles deviation="4.84" mean="15.01" />
+        <Cluster deviation="3188" mean="29088" />
+        <AverageFirstCycleIntensity deviation="1006" mean="7253" />
+        <AverageAlignmentScore deviation="786.73" mean="2113.02" />
+        <PercentPassFilterAlign deviation="3.9" mean="10.72" />
+        <PercentErrorRate deviation="2.99" mean="3.39" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="5">
+        <PercentPassFilterClusters deviation="16.39" mean="61.0" />
+        <PercentIntensityAfter20Cycles deviation="8.67" mean="16.18" />
+        <Cluster deviation="3367" mean="28208" />
+        <AverageFirstCycleIntensity deviation="941" mean="8033" />
+        <AverageAlignmentScore deviation="119.51" mean="416.18" />
+        <PercentPassFilterAlign deviation="0.55" mean="2.06" />
+        <PercentErrorRate deviation="2.49" mean="3.16" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="4">
+        <PercentPassFilterClusters deviation="12.44" mean="42.21" />
+        <PercentIntensityAfter20Cycles deviation="3.55" mean="15.67" />
+        <Cluster deviation="2935" mean="41543" />
+        <AverageFirstCycleIntensity deviation="686" mean="7592" />
+        <AverageAlignmentScore deviation="2286.82" mean="7952.4" />
+        <PercentPassFilterAlign deviation="10.74" mean="40.31" />
+        <PercentErrorRate deviation="5.72" mean="3.53" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="7">
+        <PercentPassFilterClusters deviation="9.12" mean="45.97" />
+        <PercentIntensityAfter20Cycles deviation="3.59" mean="13.44" />
+        <Cluster deviation="2478" mean="40286" />
+        <AverageFirstCycleIntensity deviation="699" mean="8193" />
+        <AverageAlignmentScore deviation="836.97" mean="2786.79" />
+        <PercentPassFilterAlign deviation="4.99" mean="17.79" />
+        <PercentErrorRate deviation="4.7" mean="4.77" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="6">
+        <PercentPassFilterClusters deviation="13.76" mean="61.66" />
+        <PercentIntensityAfter20Cycles deviation="3.67" mean="14.86" />
+        <Cluster deviation="3541" mean="27049" />
+        <AverageFirstCycleIntensity deviation="833" mean="8160" />
+        <AverageAlignmentScore deviation="877.84" mean="2463.72" />
+        <PercentPassFilterAlign deviation="4.83" mean="14.09" />
+        <PercentErrorRate deviation="5.77" mean="4.9" />
+      </LaneResultSummary>
+      <LaneResultSummary lane="8">
+        <PercentPassFilterClusters deviation="10.44" mean="54.89" />
+        <PercentIntensityAfter20Cycles deviation="4.06" mean="21.59" />
+        <Cluster deviation="3038" mean="35567" />
+        <AverageFirstCycleIntensity deviation="728" mean="8307" />
+        <AverageAlignmentScore deviation="2132.04" mean="11771.38" />
+        <PercentPassFilterAlign deviation="11.62" mean="66.11" />
+        <PercentErrorRate deviation="2.15" mean="2.03" />
+      </LaneResultSummary>
+    </Summary>
+    <ElandCollection version="1">
+      <ElandLane id="1" version="1">
+        <SampleName>s</SampleName>
+        <LaneID>1</LaneID>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="canfam2/chr20.fa" />
+          <GenomeItem name="chr15.fa" value="canfam2/chr15.fa" />
+          <GenomeItem name="chr3.fa" value="canfam2/chr3.fa" />
+          <GenomeItem name="chr4.fa" value="canfam2/chr4.fa" />
+          <GenomeItem name="chr35.fa" value="canfam2/chr35.fa" />
+          <GenomeItem name="chr6.fa" value="canfam2/chr6.fa" />
+          <GenomeItem name="chr36.fa" value="canfam2/chr36.fa" />
+          <GenomeItem name="chr19.fa" value="canfam2/chr19.fa" />
+          <GenomeItem name="chr38.fa" value="canfam2/chr38.fa" />
+          <GenomeItem name="chr26.fa" value="canfam2/chr26.fa" />
+          <GenomeItem name="chr34.fa" value="canfam2/chr34.fa" />
+          <GenomeItem name="chr12.fa" value="canfam2/chr12.fa" />
+          <GenomeItem name="chr1.fa" value="canfam2/chr1.fa" />
+          <GenomeItem name="chr23.fa" value="canfam2/chr23.fa" />
+          <GenomeItem name="chr21.fa" value="canfam2/chr21.fa" />
+          <GenomeItem name="chr8.fa" value="canfam2/chr8.fa" />
+          <GenomeItem name="chr24.fa" value="canfam2/chr24.fa" />
+          <GenomeItem name="chr18.fa" value="canfam2/chr18.fa" />
+          <GenomeItem name="chr30.fa" value="canfam2/chr30.fa" />
+          <GenomeItem name="chr28.fa" value="canfam2/chr28.fa" />
+          <GenomeItem name="chr17.fa" value="canfam2/chr17.fa" />
+          <GenomeItem name="chr33.fa" value="canfam2/chr33.fa" />
+          <GenomeItem name="chr7.fa" value="canfam2/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="canfam2/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="canfam2/chrM.fa" />
+          <GenomeItem name="chr31.fa" value="canfam2/chr31.fa" />
+          <GenomeItem name="chr25.fa" value="canfam2/chr25.fa" />
+          <GenomeItem name="chrUn.fa" value="canfam2/chrUn.fa" />
+          <GenomeItem name="chr14.fa" value="canfam2/chr14.fa" />
+          <GenomeItem name="chr13.fa" value="canfam2/chr13.fa" />
+          <GenomeItem name="chr27.fa" value="canfam2/chr27.fa" />
+          <GenomeItem name="chr10.fa" value="canfam2/chr10.fa" />
+          <GenomeItem name="chr11.fa" value="canfam2/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="canfam2/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr32.fa" value="canfam2/chr32.fa" />
+          <GenomeItem name="chr9.fa" value="canfam2/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="canfam2/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr37.fa" value="canfam2/chr37.fa" />
+          <GenomeItem name="chr5.fa" value="canfam2/chr5.fa" />
+          <GenomeItem name="chr22.fa" value="canfam2/chr22.fa" />
+          <GenomeItem name="chr29.fa" value="canfam2/chr29.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="canfam2/chr10.fa" value="29257" />
+          <MappedItem name="canfam2/chr25.fa" value="16135" />
+          <MappedItem name="canfam2/chr24.fa" value="18143" />
+          <MappedItem name="canfam2/chrM.fa" value="1337" />
+          <MappedItem name="canfam2/chr5.fa" value="35101" />
+          <MappedItem name="canfam2/chr12.fa" value="19253" />
+          <MappedItem name="canfam2/chr35.fa" value="10790" />
+          <MappedItem name="canfam2/chr7.fa" value="25921" />
+          <MappedItem name="canfam2/chr19.fa" value="11627" />
+          <MappedItem name="canfam2/chr29.fa" value="8906" />
+          <MappedItem name="canfam2/chr37.fa" value="9791" />
+          <MappedItem name="canfam2/chr32.fa" value="7316" />
+          <MappedItem name="canfam2/chrUn.fa" value="10999" />
+          <MappedItem name="canfam2/chr14.fa" value="22380" />
+          <MappedItem name="canfam2/chr13.fa" value="21781" />
+          <MappedItem name="canfam2/chr30.fa" value="13895" />
+          <MappedItem name="canfam2/chr16.fa" value="15134" />
+          <MappedItem name="canfam2/chr17.fa" value="31318" />
+          <MappedItem name="canfam2/chrX.fa" value="24677" />
+          <MappedItem name="canfam2/chr2.fa" value="31665" />
+          <MappedItem name="canfam2/chr9.fa" value="34881" />
+          <MappedItem name="canfam2/chr20.fa" value="28261" />
+          <MappedItem name="canfam2/chr6.fa" value="27538" />
+          <MappedItem name="canfam2/chr11.fa" value="21024" />
+          <MappedItem name="canfam2/chr23.fa" value="16508" />
+          <MappedItem name="canfam2/chr22.fa" value="13098" />
+          <MappedItem name="canfam2/chr27.fa" value="14028" />
+          <MappedItem name="canfam2/chr33.fa" value="8047" />
+          <MappedItem name="canfam2/chr36.fa" value="7601" />
+          <MappedItem name="canfam2/chr31.fa" value="9798" />
+          <MappedItem name="canfam2/chr8.fa" value="27519" />
+          <MappedItem name="canfam2/chr34.fa" value="12467" />
+          <MappedItem name="newcontam_UK.fa" value="291001" />
+          <MappedItem name="BAC_plus_vector.fa" value="1396" />
+          <MappedItem name="canfam2/chr21.fa" value="14217" />
+          <MappedItem name="canfam2/chr26.fa" value="17426" />
+          <MappedItem name="canfam2/chr1.fa" value="40155" />
+          <MappedItem name="canfam2/chr4.fa" value="27219" />
+          <MappedItem name="canfam2/chr28.fa" value="15791" />
+          <MappedItem name="canfam2/chr18.fa" value="20921" />
+          <MappedItem name="canfam2/chr38.fa" value="8660" />
+          <MappedItem name="canfam2/chr3.fa" value="26776" />
+          <MappedItem name="canfam2/chr15.fa" value="18602" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="R0" value="85498" />
+          <Code name="NM" value="5808462" />
+          <Code name="R2" value="89255" />
+          <Code name="U1" value="358530" />
+          <Code name="U0" value="465548" />
+          <Code name="U2" value="244282" />
+          <Code name="QC" value="1122557" />
+          <Code name="RM" value="0" />
+          <Code name="R1" value="131253" />
+        </MatchCodes>
+        <Reads>8305385</Reads>
+      </ElandLane>
+      <ElandLane id="3" version="1">
+        <SampleName>s</SampleName>
+        <LaneID>3</LaneID>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="Lambda-sequence-1-1.--length-=-11936.fa" value="Lambda-sequence-1-1.--length-=-11936.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" value="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="117975" />
+          <MappedItem name="hg18/chr17.fa" value="164588" />
+          <MappedItem name="hg18/chr15_random.fa" value="16" />
+          <MappedItem name="hg18/chrX_random.fa" value="37" />
+          <MappedItem name="hg18/chr5_random.fa" value="3" />
+          <MappedItem name="hg18/chr11.fa" value="162312" />
+          <MappedItem name="hg18/chr10_random.fa" value="1" />
+          <MappedItem name="hg18/chrM.fa" value="195939" />
+          <MappedItem name="hg18/chr18.fa" value="41302" />
+          <MappedItem name="OBF5.fa" value="19694" />
+          <MappedItem name="Lambda-sequence-1-1.--length-=-11936.fa" value="701" />
+          <MappedItem name="EPR-1.fa" value="8" />
+          <MappedItem name="Apetala2.fa" value="49" />
+          <MappedItem name="hg18/chr13.fa" value="61916" />
+          <MappedItem name="hg18/chr21.fa" value="29452" />
+          <MappedItem name="hg18/chr13_random.fa" value="7" />
+          <MappedItem name="hg18/chr21_random.fa" value="738" />
+          <MappedItem name="hg18/chr4.fa" value="95632" />
+          <MappedItem name="hg18/chr6_random.fa" value="10" />
+          <MappedItem name="hg18/chr22_random.fa" value="8" />
+          <MappedItem name="hg18/chr16_random.fa" value="2" />
+          <MappedItem name="hg18/chr17_random.fa" value="177" />
+          <MappedItem name="hg18/chr8_random.fa" value="1" />
+          <MappedItem name="hg18/chr9.fa" value="101134" />
+          <MappedItem name="hg18/chr2.fa" value="204319" />
+          <MappedItem name="hg18/chr19.fa" value="138973" />
+          <MappedItem name="hg18/chr4_random.fa" value="26" />
+          <MappedItem name="hg18/chr7_random.fa" value="106" />
+          <MappedItem name="hg18/chr22.fa" value="58352" />
+          <MappedItem name="hg18/chr12.fa" value="171468" />
+          <MappedItem name="hg18/chr8.fa" value="95057" />
+          <MappedItem name="hg18/chr10.fa" value="109113" />
+          <MappedItem name="hg18/chrY.fa" value="943" />
+          <MappedItem name="hg18/chr15.fa" value="100694" />
+          <MappedItem name="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" value="3" />
+          <MappedItem name="hg18/chr16.fa" value="99128" />
+          <MappedItem name="hg18/chr2_random.fa" value="3" />
+          <MappedItem name="hg18/chr14.fa" value="99959" />
+          <MappedItem name="newcontam_UK.fa" value="34" />
+          <MappedItem name="hg18/chr1.fa" value="287927" />
+          <MappedItem name="BAC_plus_vector.fa" value="106" />
+          <MappedItem name="hg18/chrX.fa" value="90790" />
+          <MappedItem name="hg18/chr3.fa" value="171217" />
+          <MappedItem name="hg18/chr20.fa" value="63909" />
+          <MappedItem name="VATG.fa" value="1108" />
+          <MappedItem name="hg18/chr1_random.fa" value="42" />
+          <MappedItem name="hg18/chr6.fa" value="170063" />
+          <MappedItem name="hg18/chr3_random.fa" value="1" />
+          <MappedItem name="hg18/chr9_random.fa" value="14" />
+          <MappedItem name="hg18/chr5.fa" value="154456" />
+          <MappedItem name="AGP.fa" value="5" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="R0" value="337169" />
+          <Code name="NM" value="7043627" />
+          <Code name="R2" value="348468" />
+          <Code name="U1" value="1097126" />
+          <Code name="U0" value="958773" />
+          <Code name="U2" value="953619" />
+          <Code name="QC" value="1482479" />
+          <Code name="RM" value="0" />
+          <Code name="R1" value="386670" />
+        </MatchCodes>
+        <Reads>12607931</Reads>
+      </ElandLane>
+      <ElandLane id="2" version="1">
+        <SampleName>s</SampleName>
+        <LaneID>2</LaneID>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="equcab1/chr20.fa" />
+          <GenomeItem name="chr3.fa" value="equcab1/chr3.fa" />
+          <GenomeItem name="chr4.fa" value="equcab1/chr4.fa" />
+          <GenomeItem name="chr6.fa" value="equcab1/chr6.fa" />
+          <GenomeItem name="chr10.fa" value="equcab1/chr10.fa" />
+          <GenomeItem name="chr19.fa" value="equcab1/chr19.fa" />
+          <GenomeItem name="chr26.fa" value="equcab1/chr26.fa" />
+          <GenomeItem name="chr12.fa" value="equcab1/chr12.fa" />
+          <GenomeItem name="chr1.fa" value="equcab1/chr1.fa" />
+          <GenomeItem name="chr23.fa" value="equcab1/chr23.fa" />
+          <GenomeItem name="chr21.fa" value="equcab1/chr21.fa" />
+          <GenomeItem name="chr8.fa" value="equcab1/chr8.fa" />
+          <GenomeItem name="chr24.fa" value="equcab1/chr24.fa" />
+          <GenomeItem name="chrX.fa" value="equcab1/chrX.fa" />
+          <GenomeItem name="chr30.fa" value="equcab1/chr30.fa" />
+          <GenomeItem name="chr28.fa" value="equcab1/chr28.fa" />
+          <GenomeItem name="chr17.fa" value="equcab1/chr17.fa" />
+          <GenomeItem name="chr15.fa" value="equcab1/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="equcab1/chr7.fa" />
+          <GenomeItem name="chr18.fa" value="equcab1/chr18.fa" />
+          <GenomeItem name="chrM.fa" value="equcab1/chrM.fa" />
+          <GenomeItem name="chr31.fa" value="equcab1/chr31.fa" />
+          <GenomeItem name="chr25.fa" value="equcab1/chr25.fa" />
+          <GenomeItem name="chrUn.fa" value="equcab1/chrUn.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr13.fa" value="equcab1/chr13.fa" />
+          <GenomeItem name="chr27.fa" value="equcab1/chr27.fa" />
+          <GenomeItem name="chr11.fa" value="equcab1/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="equcab1/chr16.fa" />
+          <GenomeItem name="chr14.fa" value="equcab1/chr14.fa" />
+          <GenomeItem name="chr9.fa" value="equcab1/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="equcab1/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr5.fa" value="equcab1/chr5.fa" />
+          <GenomeItem name="chr22.fa" value="equcab1/chr22.fa" />
+          <GenomeItem name="chr29.fa" value="equcab1/chr29.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="equcab1/chr29.fa" value="3477" />
+          <MappedItem name="equcab1/chr19.fa" value="5877" />
+          <MappedItem name="equcab1/chr1.fa" value="19106" />
+          <MappedItem name="equcab1/chr15.fa" value="8959" />
+          <MappedItem name="equcab1/chrX.fa" value="2711" />
+          <MappedItem name="equcab1/chr13.fa" value="2369" />
+          <MappedItem name="equcab1/chr4.fa" value="8773" />
+          <MappedItem name="equcab1/chr20.fa" value="6009" />
+          <MappedItem name="equcab1/chr26.fa" value="3634" />
+          <MappedItem name="equcab1/chr3.fa" value="10735" />
+          <MappedItem name="equcab1/chr6.fa" value="8951" />
+          <MappedItem name="equcab1/chr7.fa" value="8640" />
+          <MappedItem name="equcab1/chr30.fa" value="1838" />
+          <MappedItem name="equcab1/chr18.fa" value="5345" />
+          <MappedItem name="equcab1/chr8.fa" value="9190" />
+          <MappedItem name="equcab1/chr24.fa" value="5158" />
+          <MappedItem name="equcab1/chr17.fa" value="6443" />
+          <MappedItem name="equcab1/chr23.fa" value="3805" />
+          <MappedItem name="equcab1/chr28.fa" value="4860" />
+          <MappedItem name="equcab1/chrUn.fa" value="43941" />
+          <MappedItem name="equcab1/chr12.fa" value="2961" />
+          <MappedItem name="equcab1/chr2.fa" value="11605" />
+          <MappedItem name="equcab1/chr9.fa" value="7042" />
+          <MappedItem name="equcab1/chr11.fa" value="8124" />
+          <MappedItem name="equcab1/chr14.fa" value="9885" />
+          <MappedItem name="equcab1/chr16.fa" value="9479" />
+          <MappedItem name="equcab1/chrM.fa" value="58" />
+          <MappedItem name="equcab1/chr31.fa" value="2826" />
+          <MappedItem name="newcontam_UK.fa" value="378598" />
+          <MappedItem name="equcab1/chr25.fa" value="4883" />
+          <MappedItem name="equcab1/chr22.fa" value="6565" />
+          <MappedItem name="BAC_plus_vector.fa" value="687" />
+          <MappedItem name="equcab1/chr27.fa" value="3240" />
+          <MappedItem name="equcab1/chr21.fa" value="4781" />
+          <MappedItem name="equcab1/chr10.fa" value="8299" />
+          <MappedItem name="equcab1/chr5.fa" value="7383" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="R0" value="35424" />
+          <Code name="NM" value="7290197" />
+          <Code name="R2" value="87472" />
+          <Code name="U1" value="217832" />
+          <Code name="U0" value="246856" />
+          <Code name="U2" value="171549" />
+          <Code name="QC" value="1456243" />
+          <Code name="RM" value="0" />
+          <Code name="R1" value="93723" />
+        </MatchCodes>
+        <Reads>9599296</Reads>
+      </ElandLane>
+      <ElandLane id="5" version="1">
+        <SampleName>s</SampleName>
+        <LaneID>5</LaneID>
+        <GenomeMap>
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="strPur2.fa" value="strpur2/strPur2.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="strpur2/strPur2.fa" value="48599" />
+          <MappedItem name="BAC_plus_vector.fa" value="86173" />
+          <MappedItem name="newcontam_UK.fa" value="4811" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="R0" value="25456" />
+          <Code name="NM" value="8637432" />
+          <Code name="R2" value="11528" />
+          <Code name="U1" value="44902" />
+          <Code name="U0" value="58232" />
+          <Code name="U2" value="36449" />
+          <Code name="QC" value="482671" />
+          <Code name="RM" value="0" />
+          <Code name="R1" value="12299" />
+        </MatchCodes>
+        <Reads>9308969</Reads>
+      </ElandLane>
+      <ElandLane id="4" version="1">
+        <SampleName>s</SampleName>
+        <LaneID>4</LaneID>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="Lambda-sequence-1-1.--length-=-11936.fa" value="Lambda-sequence-1-1.--length-=-11936.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" value="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="159684" />
+          <MappedItem name="hg18/chr17.fa" value="171017" />
+          <MappedItem name="hg18/chr22_random.fa" value="29" />
+          <MappedItem name="hg18/chrX_random.fa" value="18" />
+          <MappedItem name="hg18/chr5_random.fa" value="9" />
+          <MappedItem name="hg18/chr11.fa" value="182860" />
+          <MappedItem name="hg18/chr10_random.fa" value="2" />
+          <MappedItem name="hg18/chrM.fa" value="221083" />
+          <MappedItem name="hg18/chr18.fa" value="42295" />
+          <MappedItem name="OBF5.fa" value="19911" />
+          <MappedItem name="Lambda-sequence-1-1.--length-=-11936.fa" value="710" />
+          <MappedItem name="EPR-1.fa" value="7" />
+          <MappedItem name="Apetala2.fa" value="46" />
+          <MappedItem name="hg18/chr13.fa" value="39566" />
+          <MappedItem name="hg18/chr21.fa" value="36381" />
+          <MappedItem name="hg18/chr13_random.fa" value="84" />
+          <MappedItem name="hg18/chr21_random.fa" value="1022" />
+          <MappedItem name="hg18/chr4.fa" value="104306" />
+          <MappedItem name="hg18/chr6_random.fa" value="22" />
+          <MappedItem name="hg18/chr16_random.fa" value="8" />
+          <MappedItem name="hg18/chr17_random.fa" value="104" />
+          <MappedItem name="hg18/chr8_random.fa" value="1" />
+          <MappedItem name="hg18/chr9.fa" value="100436" />
+          <MappedItem name="hg18/chr2.fa" value="212111" />
+          <MappedItem name="hg18/chr19.fa" value="146631" />
+          <MappedItem name="hg18/chr4_random.fa" value="345" />
+          <MappedItem name="hg18/chr7_random.fa" value="587" />
+          <MappedItem name="hg18/chr22.fa" value="65577" />
+          <MappedItem name="hg18/chr15_random.fa" value="22" />
+          <MappedItem name="hg18/chr12.fa" value="176515" />
+          <MappedItem name="hg18/chr8.fa" value="99621" />
+          <MappedItem name="hg18/chr10.fa" value="118216" />
+          <MappedItem name="hg18/chrY.fa" value="1158" />
+          <MappedItem name="hg18/chr15.fa" value="92333" />
+          <MappedItem name="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" value="3" />
+          <MappedItem name="hg18/chr16.fa" value="110237" />
+          <MappedItem name="hg18/chr14.fa" value="74253" />
+          <MappedItem name="newcontam_UK.fa" value="78" />
+          <MappedItem name="hg18/chr19_random.fa" value="3" />
+          <MappedItem name="hg18/chr1.fa" value="366404" />
+          <MappedItem name="BAC_plus_vector.fa" value="18" />
+          <MappedItem name="hg18/chrX.fa" value="101675" />
+          <MappedItem name="hg18/chr3.fa" value="163755" />
+          <MappedItem name="hg18/chr20.fa" value="67691" />
+          <MappedItem name="VATG.fa" value="1164" />
+          <MappedItem name="hg18/chr1_random.fa" value="54" />
+          <MappedItem name="hg18/chr6.fa" value="190720" />
+          <MappedItem name="hg18/chr9_random.fa" value="186" />
+          <MappedItem name="hg18/chr5.fa" value="161049" />
+          <MappedItem name="AGP.fa" value="1" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="R0" value="449286" />
+          <Code name="NM" value="7840273" />
+          <Code name="R2" value="277380" />
+          <Code name="U1" value="1063696" />
+          <Code name="U0" value="1343130" />
+          <Code name="U2" value="823182" />
+          <Code name="QC" value="1553370" />
+          <Code name="RM" value="0" />
+          <Code name="R1" value="359163" />
+        </MatchCodes>
+        <Reads>13709480</Reads>
+      </ElandLane>
+      <ElandLane id="7" version="1">
+        <SampleName>s</SampleName>
+        <LaneID>7</LaneID>
+        <GenomeMap>
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="Lambda-sequence-1-1.--length-=-11936.fa" value="Lambda-sequence-1-1.--length-=-11936.fa" />
+          <GenomeItem name="chrX.fa" value="elegans170/chrX.fa" />
+          <GenomeItem name="chrm.fa" value="elegans170/chrm.fa" />
+          <GenomeItem name="chrV.fa" value="elegans170/chrV.fa" />
+          <GenomeItem name="chrII.fa" value="elegans170/chrII.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chrIII.fa" value="elegans170/chrIII.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chrI.fa" value="elegans170/chrI.fa" />
+          <GenomeItem name="chrIV.fa" value="elegans170/chrIV.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" value="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="elegans170/chrX.fa" value="158885" />
+          <MappedItem name="newcontam_UK.fa" value="374301" />
+          <MappedItem name="Lambda-sequence-1-1.--length-=-11936.fa" value="7" />
+          <MappedItem name="BAC_plus_vector.fa" value="544" />
+          <MappedItem name="elegans170/chrV.fa" value="188118" />
+          <MappedItem name="elegans170/chrm.fa" value="335" />
+          <MappedItem name="elegans170/chrIV.fa" value="169430" />
+          <MappedItem name="elegans170/chrI.fa" value="184814" />
+          <MappedItem name="elegans170/chrII.fa" value="164709" />
+          <MappedItem name="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" value="3" />
+          <MappedItem name="elegans170/chrIII.fa" value="174952" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="R0" value="32042" />
+          <Code name="NM" value="10820174" />
+          <Code name="R2" value="43465" />
+          <Code name="U1" value="522658" />
+          <Code name="U0" value="413309" />
+          <Code name="U2" value="480131" />
+          <Code name="QC" value="944609" />
+          <Code name="RM" value="0" />
+          <Code name="R1" value="38077" />
+        </MatchCodes>
+        <Reads>13294465</Reads>
+      </ElandLane>
+      <ElandLane id="6" version="1">
+        <SampleName>s</SampleName>
+        <LaneID>6</LaneID>
+        <GenomeMap>
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="Lambda-sequence-1-1.--length-=-11936.fa" value="Lambda-sequence-1-1.--length-=-11936.fa" />
+          <GenomeItem name="chrX.fa" value="elegans170/chrX.fa" />
+          <GenomeItem name="chrm.fa" value="elegans170/chrm.fa" />
+          <GenomeItem name="chrV.fa" value="elegans170/chrV.fa" />
+          <GenomeItem name="chrII.fa" value="elegans170/chrII.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chrIII.fa" value="elegans170/chrIII.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chrI.fa" value="elegans170/chrI.fa" />
+          <GenomeItem name="chrIV.fa" value="elegans170/chrIV.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" value="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="elegans170/chrX.fa" value="84643" />
+          <MappedItem name="newcontam_UK.fa" value="12553" />
+          <MappedItem name="Lambda-sequence-1-1.--length-=-11936.fa" value="17085" />
+          <MappedItem name="BAC_plus_vector.fa" value="67778" />
+          <MappedItem name="elegans170/chrV.fa" value="103998" />
+          <MappedItem name="elegans170/chrm.fa" value="46" />
+          <MappedItem name="elegans170/chrIV.fa" value="166323" />
+          <MappedItem name="elegans170/chrI.fa" value="191515" />
+          <MappedItem name="elegans170/chrII.fa" value="99396" />
+          <MappedItem name="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" value="14057" />
+          <MappedItem name="elegans170/chrIII.fa" value="148865" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="R0" value="32337" />
+          <Code name="NM" value="7238860" />
+          <Code name="R2" value="104357" />
+          <Code name="U1" value="328165" />
+          <Code name="U0" value="203188" />
+          <Code name="U2" value="374906" />
+          <Code name="QC" value="588784" />
+          <Code name="RM" value="0" />
+          <Code name="R1" value="55854" />
+        </MatchCodes>
+        <Reads>8926451</Reads>
+      </ElandLane>
+      <ElandLane id="8" version="1">
+        <SampleName>s</SampleName>
+        <LaneID>8</LaneID>
+        <GenomeMap>
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="Lambda-sequence-1-1.--length-=-11936.fa" value="Lambda-sequence-1-1.--length-=-11936.fa" />
+          <GenomeItem name="chrX.fa" value="elegans170/chrX.fa" />
+          <GenomeItem name="chrm.fa" value="elegans170/chrm.fa" />
+          <GenomeItem name="chrV.fa" value="elegans170/chrV.fa" />
+          <GenomeItem name="chrII.fa" value="elegans170/chrII.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chrIII.fa" value="elegans170/chrIII.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chrI.fa" value="elegans170/chrI.fa" />
+          <GenomeItem name="chrIV.fa" value="elegans170/chrIV.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" value="Lambda-sequence-2,3-2.-length-=-9786nts-.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="elegans170/chrX.fa" value="970545" />
+          <MappedItem name="newcontam_UK.fa" value="26971" />
+          <MappedItem name="BAC_plus_vector.fa" value="150" />
+          <MappedItem name="elegans170/chrV.fa" value="1090880" />
+          <MappedItem name="elegans170/chrm.fa" value="11651" />
+          <MappedItem name="elegans170/chrIV.fa" value="859262" />
+          <MappedItem name="elegans170/chrI.fa" value="870480" />
+          <MappedItem name="elegans170/chrII.fa" value="835119" />
+          <MappedItem name="elegans170/chrIII.fa" value="747421" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="R0" value="420530" />
+          <Code name="NM" value="5019224" />
+          <Code name="R2" value="171357" />
+          <Code name="U1" value="1529191" />
+          <Code name="U0" value="2960409" />
+          <Code name="U2" value="922879" />
+          <Code name="QC" value="457936" />
+          <Code name="RM" value="0" />
+          <Code name="R1" value="255660" />
+        </MatchCodes>
+        <Reads>11737186</Reads>
+      </ElandLane>
+    </ElandCollection>
+  </Gerald>
+</PipelineRun>
