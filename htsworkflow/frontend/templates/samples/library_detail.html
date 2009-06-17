@@ -44,6 +44,7 @@
     <td>Summary</td>
     <td>Eland</td>
     <td>Bed</td>
+    <td>Archived</td>
   </tr>
 {% for result in eland_results %}
 <tr>
@@ -56,6 +57,11 @@
   {% if result.bed_url %}
     <a href="{{ result.bed_url }}">Bed</a>
   {% endif %}
+  </td>
+  <td>
+    {% if result.storage_ids %}
+      {{ result.storage_ids }}
+    {% endif %}
   </td>
 </tr>
 {% endfor %}

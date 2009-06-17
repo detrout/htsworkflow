@@ -320,6 +320,23 @@ def _make_eland_results(flowcell_id, lane, interesting_flowcells):
     if cur_fc is None:
       return []
 
+    # Loop throw storage devices if a result has been archived
+    storage_id_list = []
+    for lts in cur_fc.longtermstorage_set.all():
+        for sd in lts.storage_devices.all():
+            # Use barcode_id if it exists
+            if sd.barcode_id is not None and sd.barcode_id != '':
+                storage_id_list.append(sd.barcode_id)
+            # Otherwise use UUID
+            else:
+                storage_id_list.append(sd.uuid)
+    
+    # Formatting for template use
+    if len(storage_id_list) == 0:
+        storage_ids = None
+    else:
+        storage_ids = ', '.join(storage_id_list)
+
     results = []
     for cycle in cur_fc.keys():
         result_path = cur_fc[cycle]['eland_results'].get(lane, None)
@@ -331,6 +348,7 @@ def _make_eland_results(flowcell_id, lane, interesting_flowcells):
                         'result_url': result_link[0],
                         'result_label': result_link[1],
                         'bed_url': result_link[2],
+                        'storage_ids': storage_ids
         })
     return results
 
