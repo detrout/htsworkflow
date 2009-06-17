@@ -322,15 +322,16 @@ def _make_eland_results(flowcell_id, lane, interesting_flowcells):
 
     # Loop throw storage devices if a result has been archived
     storage_id_list = []
-    for lts in cur_fc.longtermstorage_set.all():
-        for sd in lts.storage_devices.all():
-            # Use barcode_id if it exists
-            if sd.barcode_id is not None and sd.barcode_id != '':
-                storage_id_list.append(sd.barcode_id)
-            # Otherwise use UUID
-            else:
-                storage_id_list.append(sd.uuid)
-    
+    if cur_fc is not None:
+        for lts in cur_fc.longtermstorage_set.all():
+            for sd in lts.storage_devices.all():
+                # Use barcode_id if it exists
+                if sd.barcode_id is not None and sd.barcode_id != '':
+                    storage_id_list.append(sd.barcode_id)
+                # Otherwise use UUID
+                else:
+                    storage_id_list.append(sd.uuid)
+        
     # Formatting for template use
     if len(storage_id_list) == 0:
         storage_ids = None
