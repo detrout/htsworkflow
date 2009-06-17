@@ -123,7 +123,6 @@ class RunfolderTests(unittest.TestCase):
         check_crosstalk(b.crosstalk)
 
         xml = b.get_elements()
-        print ElementTree.dump(xml)
         b2 = bustard.Bustard(xml=xml)
         self.failUnlessEqual(b.version, b2.version)
         self.failUnlessEqual(b.date,    b2.date )
@@ -305,8 +304,6 @@ class RunfolderTests(unittest.TestCase):
                   self.failUnlessEqual(l1.match_codes[k],
                                        l2.match_codes[k])
             elif isinstance(l1, eland.SequenceLane):
-                print 'l1', l1.__dict__
-                print 'l2', l2.__dict__
                 self.failUnlessEqual(l1.sequence_type, l2.sequence_type)
 
     def test_runfolder(self):
