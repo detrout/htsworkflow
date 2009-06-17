@@ -320,7 +320,7 @@ def _make_eland_results(flowcell_id, lane, interesting_flowcells):
     if cur_fc is None:
       return []
 
-    flowcell = Flowcell.objects.get(flowcell_id=flowcell_id)
+    flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
     # Loop throw storage devices if a result has been archived
     storage_id_list = []
     if cur_fc is not None:
