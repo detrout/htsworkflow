@@ -61,6 +61,12 @@ options = ConfigParser.SafeConfigParser(
 options.read([os.path.expanduser("~/.htsworkflow.ini"),
               '/etc/htsworkflow.ini',])
 
+# OptionParser will use the dictionary passed into the config parser as
+# 'Default' values in any section. However it still needs an empty section
+# to exist in order to retrieve anything.
+if not options.has_section('frontend'):
+    options.add_section('frontend')
+
 # Django settings for elandifier project.
 
 DEBUG = True
