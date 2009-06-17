@@ -173,6 +173,7 @@ class Gerald(object):
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > Gerald.XML_VERSION:
             logging.warn('XML tree is a higher version than this class')
+        self.eland_results = ELAND()
         for element in list(tree):
             tag = element.tag.lower()
             if tag == Gerald.RUN_PARAMETERS.lower():
@@ -184,18 +185,17 @@ class Gerald(object):
             else:
                 logging.warn("Unrecognized tag %s" % (element.tag,))
 
-
 def gerald(pathname):
     g = Gerald()
-    g.pathname = pathname
-    path, name = os.path.split(pathname)
+    g.pathname = os.path.expanduser(pathname)
+    path, name = os.path.split(g.pathname)
     logging.info("Parsing gerald config.xml")
-    config_pathname = os.path.join(pathname, 'config.xml')
+    config_pathname = os.path.join(g.pathname, 'config.xml')
     g.tree = ElementTree.parse(config_pathname).getroot()
 
     # parse Summary.htm file
     logging.info("Parsing Summary.htm")
-    summary_pathname = os.path.join(pathname, 'Summary.htm')
+    summary_pathname = os.path.join(g.pathname, 'Summary.htm')
     g.summary = Summary(summary_pathname)
     # parse eland files
     g.eland_results = eland(g.pathname, g)

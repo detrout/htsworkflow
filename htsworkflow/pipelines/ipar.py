@@ -24,6 +24,8 @@ from htsworkflow.pipelines.runfolder import \
    VERSION_RE, \
    EUROPEAN_STRPTIME
 
+SOFTWARE_NAMES = ('IPAR_1.01', 'IPAR_1.3', 'Intensities')
+
 class Tiles(object):
   def __init__(self, tree):
     self.tree = tree.find("TileSelection")
@@ -82,8 +84,9 @@ class IPAR(object):
 
     def _get_cycles(self):
         if self.tree is None:
-          return None
+          raise RuntimeError("get cycles called before xml tree initalized")
         cycles = self.tree.find("Cycles")
+        assert cycles is not None
         if cycles is None:
           return None
         return cycles.attrib
@@ -178,23 +181,24 @@ def load_ipar_param_tree(paramfile):
 
     tree = ElementTree.parse(paramfile).getroot()
     run = tree.find('Run')
-    if run.attrib.has_key('Name') and run.attrib['Name'].startswith("IPAR"):
+    if run.attrib.has_key('Name') and run.attrib['Name'] in SOFTWARE_NAMES:
         return run
-
-    return None
+    else:
+        logging.info("No run found")
+        return None
 
 def ipar(pathname):
     """
     Examine the directory at pathname and initalize a IPAR object
     """
-    logging.info("Searching IPAR directory")
+    logging.info("Searching IPAR directory %s" % (pathname,))
     i = IPAR()
     i.pathname = pathname
 
     # parse firecrest directory name
     path, name = os.path.split(pathname)
     groups = name.split('_')
-    if groups[0] != 'IPAR':
+    if not (groups[0] == 'IPAR' or groups[0] == 'Intensities'):
       raise ValueError('ipar can only process IPAR directories')
 
     bustard_pattern = os.path.join(pathname, 'Bustard*')
@@ -206,15 +210,18 @@ def ipar(pathname):
     elif glob(bustard_pattern) > 0:
         i.matrix = None
         # its still live.
-    else:
-        return None
 
     # look for parameter xml file
-    paramfile = os.path.join(path, '.params')
-    if os.path.exists(paramfile):
-      i.tree = load_ipar_param_tree(paramfile)
-      mtime_local = os.stat(paramfile)[stat.ST_MTIME]
-      i.time = mtime_local
+    paramfiles = [os.path.join(pathname, 'config.xml'),
+                  os.path.join(path, '.params')]
+    for paramfile in paramfiles:
+        if os.path.exists(paramfile):
+            logging.info("Found IPAR Config file at: %s" % ( paramfile, ))
+            i.tree = load_ipar_param_tree(paramfile)
+            mtime_local = os.stat(paramfile)[stat.ST_MTIME]
+            i.time = mtime_local
+            return i
+
     return i
 
 def fromxml(tree):
@@ -225,15 +232,15 @@ def fromxml(tree):
     f.set_elements(tree)
     return f
 
-if __name__ == "__main__":
-  i = ipar(os.path.expanduser('~/gec/081021_HWI-EAS229_0063_30HKUAAXX/Data/IPAR_1.01'))
-  x = i.get_elements()
-  j = fromxml(x)
+#if __name__ == "__main__":
+  #i = ipar(os.path.expanduser('~/gec/081021_HWI-EAS229_0063_30HKUAAXX/Data/IPAR_1.01'))
+  #x = i.get_elements()
+  #j = fromxml(x)
   #ElementTree.dump(x)
-  print j.date
-  print j.start
-  print j.stop
-  print i.tiles.keys()
-  print j.tiles.keys()
-  print j.tiles.items()
-  print j.file_list()
+  #print j.date
+  #print j.start
+  #print j.stop
+  #print i.tiles.keys()
+  #print j.tiles.keys()
+  #print j.tiles.items()
+  #print j.file_list()

@@ -158,19 +158,22 @@ def crosstalk_matrix_from_bustard_config(bustard_path, bustard_config_tree):
     matrix_auto_flag = int(matrix.find('AutoFlag').text)
     matrix_auto_lane = int(matrix.find('AutoLane').text)
 
+    crosstalk = None
     if matrix_auto_flag:
         # we estimated the matrix from something in this run.
         # though we don't really care which lane it was
         matrix_path = os.path.join(bustard_path, 'Matrix', 's_02_matrix.txt')
-        matrix = CrosstalkMatrix(matrix_path)
+        crosstalk = CrosstalkMatrix(matrix_path)
     else:
-        # the matrix was provided
         matrix_elements = call_parameters.find('MatrixElements')
-        if matrix_elements is None:
-            raise RuntimeError('Expected to find MatrixElements in Bustard BaseCallParameters')
-        matrix = CrosstalkMatrix(xml=matrix_elements)
+        # the matrix was provided
+        if matrix_elements is not None:
+            crosstalk = CrosstalkMatrix(xml=matrix_elements)
+        else:
+            # we have no crosstalk matrix?
+            pass
 
-    return matrix
+    return crosstalk
 
 class Bustard(object):
     XML_VERSION = 2
@@ -185,7 +188,7 @@ class Bustard(object):
 
     def __init__(self, xml=None):
         self.version = None
-        self.date = date.today()
+        self.date = None
         self.user = None
         self.phasing = {}
         self.crosstalk = None
@@ -196,6 +199,8 @@ class Bustard(object):
             self.set_elements(xml)
 
     def _get_time(self):
+        if self.date is None:
+            return None
         return time.mktime(self.date.timetuple())
     time = property(_get_time, doc='return run time as seconds since epoch')
 
@@ -208,15 +213,18 @@ class Bustard(object):
                                    {'version': str(Bustard.XML_VERSION)})
         version = ElementTree.SubElement(root, Bustard.SOFTWARE_VERSION)
         version.text = self.version
-        run_date = ElementTree.SubElement(root, Bustard.DATE)
-        run_date.text = str(self.time)
-        user = ElementTree.SubElement(root, Bustard.USER)
-        user.text = self.user
+        if self.time is not None:
+            run_date = ElementTree.SubElement(root, Bustard.DATE)
+            run_date.text = str(self.time)
+        if self.user is not None:
+            user = ElementTree.SubElement(root, Bustard.USER)
+            user.text = self.user
         params = ElementTree.SubElement(root, Bustard.PARAMETERS)
 
         # add phasing parameters
         for lane in LANE_LIST:
-            params.append(self.phasing[lane].get_elements())
+            if self.phasing.has_key(lane):
+                params.append(self.phasing[lane].get_elements())
 
         # add crosstalk matrix if it exists
         if self.crosstalk is not None:
@@ -265,11 +273,18 @@ def bustard(pathname):
     pathname = os.path.abspath(pathname)
     path, name = os.path.split(pathname)
     groups = name.split("_")
-    version = re.search(VERSION_RE, groups[0])
-    b.version = version.group(1)
-    t = time.strptime(groups[1], EUROPEAN_STRPTIME)
-    b.date = date(*t[0:3])
-    b.user = groups[2]
+    if groups[0].lower().startswith('bustard'):
+        version = re.search(VERSION_RE, groups[0])
+        b.version = version.group(1)
+        t = time.strptime(groups[1], EUROPEAN_STRPTIME)
+        b.date = date(*t[0:3])
+        b.user = groups[2]
+    elif groups[0] == 'BaseCalls':
+        # stub values
+        b.version = None
+        b.date = None
+        b.user = None
+
     b.pathname = pathname
     bustard_config_filename = os.path.join(pathname, 'config.xml')
     paramfiles = glob(os.path.join(pathname, "params?.xml"))
@@ -289,6 +304,9 @@ def bustard(pathname):
         bustard_config_root = ElementTree.parse(bustard_config_filename)
         b.bustard_config = bustard_config_root.getroot()
         b.crosstalk = crosstalk_matrix_from_bustard_config(b.pathname, b.bustard_config)
+        software = bustard_config_root.find('*/Software')
+        b.version = software.attrib['Version']
+        #b.version = software.attrib['Name'] + "-" + software.attrib['Version']
 
     return b
 

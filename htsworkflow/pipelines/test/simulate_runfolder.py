@@ -50,6 +50,33 @@ def make_bustard_config132(gerald_dir):
     destination = os.path.join(gerald_dir, 'config.xml')
     shutil.copy(source, destination)
 
+def make_rta_intensities_1460(data_dir, version='1.4.6.0'):
+    """
+    Construct an artificial RTA Intensities parameter file and directory
+    """
+    intensities_dir = os.path.join(data_dir, 'Intensities')
+    if not os.path.exists(intensities_dir):
+      os.mkdir(intensities_dir)
+ 
+    param_file = os.path.join(TESTDATA_DIR, 'rta_intensities_config.xml')
+    shutil.copy(param_file, os.path.join(intensities_dir, 'config.xml'))
+
+    return intensities_dir
+
+def make_rta_basecalls_1460(intensities_dir):
+    """
+    Construct an artificial RTA Intensities parameter file and directory
+    """
+    basecalls_dir = os.path.join(intensities_dir, 'BaseCalls')
+    if not os.path.exists(basecalls_dir):
+      os.mkdir(basecalls_dir)
+ 
+    param_file = os.path.join(TESTDATA_DIR, 'rta_basecalls_config.xml')
+    shutil.copy(param_file, os.path.join(basecalls_dir, 'config.xml'))
+
+    return basecalls_dir
+
+
 def make_matrix(matrix_filename):
     contents = """# Auto-generated frequency response matrix
 > A

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BaseCallAnalysis xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Run Name="BaseCalls">
+    <BaseCallParameters>
+      <ChastityThreshold>0.6</ChastityThreshold>
+      <Matrix Path="">
+        <AutoFlag>0</AutoFlag>
+        <AutoLane>0</AutoLane>
+        <Cycle>0</Cycle>
+        <CycleOffset>0</CycleOffset>
+        <FirstCycle>1</FirstCycle>
+        <LastCycle>38</LastCycle>
+        <Read>1</Read>
+      </Matrix>
+      <Phasing Path="">
+        <AutoFlag>0</AutoFlag>
+        <AutoLane>0</AutoLane>
+        <Cycle>0</Cycle>
+        <CycleOffset>0</CycleOffset>
+        <FirstCycle>1</FirstCycle>
+        <LastCycle>38</LastCycle>
+        <Read>1</Read>
+      </Phasing>
+      <PureBases>0</PureBases>
+      <SmtFilter>failed-chastity</SmtFilter>
+      <SmtRelation>le</SmtRelation>
+      <SmtThreshold>1.0</SmtThreshold>
+    </BaseCallParameters>
+    <Cycles First="1" Last="38" Number="38" />
+    <Input />
+    <RunParameters>
+      <AutoCycleFlag>0</AutoCycleFlag>
+      <BasecallFlag>0</BasecallFlag>
+      <Deblocked>0</Deblocked>
+      <DebugFlag>0</DebugFlag>
+      <FirstRunOnlyFlag>0</FirstRunOnlyFlag>
+      <ImagingReads Index="1">
+        <FirstCycle>1</FirstCycle>
+        <LastCycle>38</LastCycle>
+        <RunFolder>D:\Runs\090608_HWI-EAS229_0117_4286GAAXX</RunFolder>
+      </ImagingReads>
+      <Instrument>HWI-EAS229</Instrument>
+      <IterativeMatrixFlag>0</IterativeMatrixFlag>
+      <MakeFlag>0</MakeFlag>
+      <MaxCycle>0</MaxCycle>
+      <MinCycle>0</MinCycle>
+      <Reads Index="1">
+        <FirstCycle>1</FirstCycle>
+        <LastCycle>38</LastCycle>
+        <RunFolder>D:\Runs\090608_HWI-EAS229_0117_4286GAAXX</RunFolder>
+      </Reads>
+      <RunFolder>D:\Runs\090608_HWI-EAS229_0117_4286GAAXX</RunFolder>
+      <RunFolderDate>0</RunFolderDate>
+      <RunFolderId>0</RunFolderId>
+    </RunParameters>
+    <Software Name="RTA" Version="1.4.6.0" />
+    <TileSelection>
+      <Lane Index="1">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="2">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="3">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="4">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="5">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="6">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="7">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+      <Lane Index="8">
+        <Sample>s</Sample>
+        <TileRange Max="100" Min="1" />
+      </Lane>
+    </TileSelection>
+    <Time />
+    <User />
+  </Run>
+</BaseCallAnalysis>

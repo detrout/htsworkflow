@@ -21,6 +21,7 @@ EUROPEAN_DATE_RE = "([0-9]{1,2}-[0-9]{1,2}-[0-9]{4,4})"
 VERSION_RE = "([0-9\.]+)"
 USER_RE = "([a-zA-Z0-9]+)"
 LANES_PER_FLOWCELL = 8
+LANE_LIST = range(1, LANES_PER_FLOWCELL+1)
 
 from htsworkflow.util.alphanum import alphanum
 from htsworkflow.util.ethelp import indent, flatten
@@ -165,8 +166,10 @@ def get_runs(runfolder):
 
     def scan_post_image_analysis(runs, runfolder, image_analysis, pathname):
         logging.info("Looking for bustard directories in %s" % (pathname,))
-        bustard_glob = os.path.join(pathname, "Bustard*")
-        for bustard_pathname in glob(bustard_glob):
+        bustard_dirs = glob(os.path.join(pathname, "Bustard*"))
+        # RTA BaseCalls looks enough like Bustard.
+        bustard_dirs.extend(glob(os.path.join(pathname, "BaseCalls")))
+        for bustard_pathname in bustard_dirs:
             logging.info("Found bustard directory %s" % (bustard_pathname,))
             b = bustard.bustard(bustard_pathname)
             gerald_glob = os.path.join(bustard_pathname, 'GERALD*')
@@ -192,22 +195,25 @@ def get_runs(runfolder):
         logging.info('Found firecrest in ' + datadir)
         image_analysis = firecrest.firecrest(firecrest_pathname)
         if image_analysis is None:
-	    logging.warn(
+            logging.warn(
                 "%s is an empty or invalid firecrest directory" % (firecrest_pathname,)
             )
-	else:
+        else:
             scan_post_image_analysis(
                 runs, runfolder, image_analysis, firecrest_pathname
             )
     # scan for IPAR directories
-    for ipar_pathname in glob(os.path.join(datadir,"IPAR_*")):
+    ipar_dirs = glob(os.path.join(datadir, "IPAR_*"))
+    # The Intensities directory from the RTA software looks a lot like IPAR
+    ipar_dirs.extend(glob(os.path.join(datadir, 'Intensities')))
+    for ipar_pathname in ipar_dirs:
         logging.info('Found ipar directories in ' + datadir)
         image_analysis = ipar.ipar(ipar_pathname)
         if image_analysis is None:
-	    logging.warn(
+            logging.warn(
                 "%s is an empty or invalid IPAR directory" %(ipar_pathname,)
             )
-	else:
+        else:
             scan_post_image_analysis(
                 runs, runfolder, image_analysis, ipar_pathname
             )
@@ -227,6 +233,7 @@ def get_specific_run(gerald_dir):
     from htsworkflow.pipelines import bustard
     from htsworkflow.pipelines import gerald
 
+    gerald_dir = os.path.expanduser(gerald_dir)
     bustard_dir = os.path.abspath(os.path.join(gerald_dir, '..'))
     image_dir = os.path.abspath(os.path.join(gerald_dir, '..', '..'))
 
@@ -252,6 +259,9 @@ def get_specific_run(gerald_dir):
         image_run = firecrest.firecrest(image_dir)
     elif re.search('IPAR', short_image_dir, re.IGNORECASE) is not None:
         image_run = ipar.ipar(image_dir)
+    elif re.search('Intensities', short_image_dir, re.IGNORECASE) is not None:
+        image_run = ipar.ipar(image_dir)
+
     # if we din't find a run, report the error and return 
     if image_run is None:
         msg = '%s does not contain an image processing step' % (image_dir,)
