@@ -320,10 +320,11 @@ def _make_eland_results(flowcell_id, lane, interesting_flowcells):
     if cur_fc is None:
       return []
 
+    flowcell = Flowcell.objects.get(flowcell_id=flowcell_id)
     # Loop throw storage devices if a result has been archived
     storage_id_list = []
     if cur_fc is not None:
-        for lts in cur_fc.longtermstorage_set.all():
+        for lts in flowcell.longtermstorage_set.all():
             for sd in lts.storage_devices.all():
                 # Use barcode_id if it exists
                 if sd.barcode_id is not None and sd.barcode_id != '':
