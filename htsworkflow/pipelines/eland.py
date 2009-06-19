@@ -52,7 +52,7 @@ class ResultLane(object):
         """
         Actually read the file and actually count the reads
         """
-        raise NotImplementedError("Can't count abstract classes")
+        pass
 
     def _update_name(self):
         # extract the sample name
