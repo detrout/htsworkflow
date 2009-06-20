@@ -9,6 +9,7 @@ import subprocess
 import sys
 import time
 import traceback
+import urlparse
 
 from benderjab import rpc
 
@@ -81,17 +82,22 @@ class rsync(object):
     logging.debug("Rsync cmd:" + " ".join(args))
     return subprocess.Popen(args)
  
-  def copy(self):
+  def copy(self, url_list=None):
     """
     copy any interesting looking directories over
     return list of items that we started copying.
     """
     # clean up any lingering non-running processes
     self.poll()
-    
-    # what's available to copy?
-    dirs_to_copy = self.list()
-    
+
+    if url_list is None or len(url_list) == 0: 
+	    # what's available to copy?
+        dirs_to_copy = self.list()
+    else:
+        dirs_to_copy = url_list
+   
+    logging.info("dirs to copy %s" % (dirs_to_copy,))
+
     # lets start copying
     started = []
     for d in dirs_to_copy:
@@ -155,7 +161,7 @@ class CopierBot(rpc.XmlRpcBot):
         
         # options for rsync command
         self.cfg['rsync_password_file'] = None
-        self.cfg['rsync_source'] = None
+        self.cfg['rsync_sources'] = None
         self.cfg['rsync_destination'] = None 
         
         # options for reporting we're done 
@@ -213,8 +219,15 @@ class CopierBot(rpc.XmlRpcBot):
         """
         start our copy
         """
-        logging.info("starting copy scan, %s" % (args,))
-        started = self.rsync.copy()
+        # Note, args comes in over the network, so don't trust it.
+        copy_urls = []
+        for a in args:
+            clean_url = self.validate_url(a)
+            if clean_url is not None:
+                copy_urls.append(clean_url)
+
+        logging.info("Validated urls = %s" % (copy_urls,))
+        started = self.rsync.copy(copy_urls)
         logging.info("copying:" + " ".join(started)+".")
         return started
         
@@ -278,6 +291,16 @@ class CopierBot(rpc.XmlRpcBot):
         else:
             reply = u"I didn't understand '%s'" % (unicode(msg))
         return reply
+
+    def validate_url(self, url):
+        split_url = urlparse.urlsplit(url)
+        for source in self.sources:
+            split_source = urlparse.urlsplit(source)
+            if (split_url.scheme == split_source.scheme) and \
+               (split_url.netloc == split_source.netloc) and \
+               (split_url.path.startswith(split_source.path)):
+               return url
+        return None
 
 def main(args=None):
     bot = CopierBot()

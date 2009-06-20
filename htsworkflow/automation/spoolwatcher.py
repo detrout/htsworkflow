@@ -251,7 +251,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         if re.match(u"help", msg):
             reply = help
         elif re.match("copy", msg):            
-            self.startCopy()
+            self.startCopy(msg)
             reply = u"sent copy message"
         elif re.match(u"finished", msg):
             words = msg.split()
@@ -287,25 +287,28 @@ class SpoolWatcher(rpc.XmlRpcBot):
         logging.debug("writes seem to have stopped")
         if self.notify_runner is not None:
             for r in self.notify_runner:
-                self.rpc_send(r, tuple(), 'startCopy')
+                self.rpc_send(r, tuple([copy_url]), 'startCopy')
         if self.notify_users is not None:
             for u in self.notify_users:
-                self.send(u, 'startCopy %s.' % (copy_url,))
+                self.send(u, 'startCopy %s.' % (copy_urls,))
         
     def sequencingFinished(self, run_dir):
         # need to strip off self.watchdirs from rundir I suspect.
         logging.info("run.completed in " + str(run_dir))
-        pattern = self.watch_dir
-        if pattern[-1] != os.path.sep:
-            pattern += os.path.sep
-        stripped_run_dir = re.sub(pattern, "", run_dir)
-        logging.debug("stripped to " + stripped_run_dir)
-        if self.notify_users is not None:
-            for u in self.notify_users:
-                self.send(u, 'Sequencing run %s finished' % (stripped_run_dir))
-        if self.notify_runner is not None:
-            for r in self.notify_runner:
-                self.rpc_send(r, (stripped_run_dir,), 'sequencingFinished')
+        for watch in self.watchdirs:
+            if not run_dir.startswith(watch):
+                continue
+            if watch[-1] != os.path.sep:
+                watch += os.path.sep
+            stripped_run_dir = re.sub(watch, "", run_dir)
+            logging.debug("stripped to " + stripped_run_dir)
+            if self.notify_users is not None:
+                for u in self.notify_users:
+                    self.send(u, 'Sequencing run %s finished' % \
+                              (stripped_run_dir))
+            if self.notify_runner is not None:
+                for r in self.notify_runner:
+                    self.rpc_send(r, (stripped_run_dir,), 'sequencingFinished')
 
 def main(args=None):
     bot = SpoolWatcher()
