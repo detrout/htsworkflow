@@ -133,6 +133,9 @@ class LongTermStorage(models.Model):
 
     storage_devices = models.ManyToManyField(Item)
     
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
+    
     def __unicode__(self):
         return u"%s: %s" % (str(self.flowcell), ', '.join([ str(s) for s in self.storage_devices.iterator() ]))
 
