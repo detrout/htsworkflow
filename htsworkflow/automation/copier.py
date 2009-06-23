@@ -220,6 +220,7 @@ class CopierBot(rpc.XmlRpcBot):
         start our copy
         """
         # Note, args comes in over the network, so don't trust it.
+        logging.debug("Arguments to startCopy %s" % (unicode(args),))
         copy_urls = []
         for a in args:
             clean_url = self.validate_url(a)
@@ -293,12 +294,19 @@ class CopierBot(rpc.XmlRpcBot):
         return reply
 
     def validate_url(self, url):
-        split_url = urlparse.urlsplit(url)
+        user_url = urlparse.urlsplit(url)
+        user_scheme = user_url[0]
+        user_netloc = user_url[1]
+        user_path = user_url[2]
+
         for source in self.sources:
-            split_source = urlparse.urlsplit(source)
-            if (split_url.scheme == split_source.scheme) and \
-               (split_url.netloc == split_source.netloc) and \
-               (split_url.path.startswith(split_source.path)):
+            source_url = urlparse.urlsplit(source)
+            source_scheme = source_url[0]
+            source_netloc = source_url[1]
+            source_path = source_url[2]
+            if (user_scheme == source_scheme) and \
+               (user_netloc == source_netloc) and \
+               (user_path.startswith(source_path)):
                return url
         return None
 

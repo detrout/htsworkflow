@@ -24,7 +24,7 @@ jid: copier@example.fake
 password: badpassword
 authorized_users: user1@example.fake user2@example.fake
 rsync_password_file: ~/.sequencer
-rsync_sources: rsync://localhost/tmp/sequencer_source
+rsync_sources: rsync://localhost/tmp/sequencer_source rsync://user@server:1234/other_sequencer
 rsync_destination: /tmp/sequencer_destination
 notify_users: user3@example.fake
 # who to run to
@@ -57,6 +57,10 @@ notify_users: user3@example.fake
         self.failUnlessEqual(
           c.validate_url('rsync://localhost/tmp/sequencer_source/bleem'), 
           'rsync://localhost/tmp/sequencer_source/bleem')
+        self.failUnlessEqual(
+          c.validate_url('rsync://user@server:1234/other_sequencer'),
+          'rsync://user@server:1234/other_sequencer')
+
 
     def test_dirlist_filter(self):
        """
