@@ -11,6 +11,12 @@ admin.autodiscover()
 from htsworkflow.frontend import settings
 
 urlpatterns = patterns('',
+    ('^accounts/login/$', 'django.contrib.auth.views.login'),
+    ('^accounts/logout/$', 'django.contrib.auth.views.logout'),
+    ('^accounts/logout_then_login/$', 'django.contrib.auth.views.logout_then_login'),
+    ('^accounts/pwchange/$', 'django.contrib.auth.views.password_change'),
+    ('^accounts/pwchange_done/$', 'django.contrib.auth.views.password_change_done'),
+    ('^accounts/profile/$', 'htsworkflow.frontend.samples.views.user_profile'),
     # Base:
     (r'^eland_config/', include('htsworkflow.frontend.eland_config.urls')),
     # Admin:

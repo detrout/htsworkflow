@@ -1,8 +1,6 @@
 {% extends "base_site.html" %}
 {% load adminmedia admin_list i18n %}
 
-{% block stylesheet %}{{ MEDIA_URL }}css/data-browse-index.css{% endblock %}
-
 {% block bodyclass %}change-list{% endblock %}
 {% block coltype %}flex{% endblock %}
 
@@ -26,8 +24,8 @@
  {% block pagination %}{% pagination cl %}{% endblock %}
 
 {% block summary_stats %}
-<table>
-  <thead>
+<table class="libtable">
+  <thead class="libtable">
     <tr>
     <td>Parent</td>
     <td>Library ID</td>
@@ -37,18 +35,18 @@
     <td>HD</td>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="libtable">
     {% for lib in library_list %}
-    <tr>
-      <td><a href="/library/{{ lib.library_id }}">{{ lib.amplified_from }}</a></td>
-      <td><a href="/library/{{ lib.library_id }}">{{ lib.library_id }}</a></td>
-      <td><a href="/library/{{ lib.library_id }}">{{ lib.species_name }}</a></td>
-      <td><a href="/library/{{ lib.library_id }}">{{ lib.library_name }}</a></td>
-      <td>{{ lib.lanes_run }}</td>
+    <tr class="libtable">
+      <td class="libtable"><a href="/library/{{ lib.library_id }}">{{ lib.amplified_from }}</a></td>
+      <td class="libtable"><a href="/library/{{ lib.library_id }}">{{ lib.library_id }}</a></td>
+      <td class="libtable"><a href="/library/{{ lib.library_id }}">{{ lib.species_name }}</a></td>
+      <td class="libtable"><a href="/library/{{ lib.library_id }}">{{ lib.library_name }}</a></td>
+      <td class="libtable">{{ lib.lanes_run }}</td>
       {% if lib.is_archived %}
-        <td><img src="/static/img/hdd_unmount.png" alt="Archived" /></td>
+        <td class="libtable"><img src="/static/img/hdd_unmount.png" alt="Archived" /></td>
       {% else %}
-        <td></td>
+        <td class="libtable"></td>
       {% endif %}
     </tr>
     {% endfor %}

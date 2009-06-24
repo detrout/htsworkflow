@@ -14,12 +14,16 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
+from django.contrib.auth.decorators import login_required
 
 import StringIO
 import logging
 import os
 
 LANE_LIST = [1,2,3,4,5,6,7,8]
+SAMPLES_CONTEXT_DEFAULTS = {
+    'app_name': 'Flowcell/Library Tracker'
+}
 
 def create_library_context(cl):
     """
@@ -59,7 +63,16 @@ def library(request):
     context.update(create_library_context(fcl))
     t = get_template('samples/library_index.html')
     c = RequestContext(request, context)
-    return HttpResponse( t.render(c) )
+    
+    app_context = {
+        'page_name': 'Library Index',
+        'body': t.render(c)
+    }
+    app_context.update(SAMPLES_CONTEXT_DEFAULTS)
+    
+    app_t = get_template('flowcell_libraries_app.html')
+    app_c = RequestContext(request, app_context)
+    return HttpResponse( app_t.render(app_c) )
 
 def library_to_flowcells(request, lib_id):
     """
@@ -411,3 +424,17 @@ def library_id_to_admin_url(request, lib_id):
     lib = Library.objects.get(library_id=lib_id)
     return HttpResponseRedirect('/admin/samples/library/%s' % (lib.id,))
 
+@login_required
+def user_profile(request):
+    """
+    Information about the user
+    """
+    context = {
+                'page_name': 'User Profile',
+                'media': '',
+                #'bcmagic': BarcodeMagicForm(),
+                #'select': 'settings',
+            }
+    context.update(SAMPLES_CONTEXT_DEFAULTS)
+    return render_to_response('registration/profile.html', context,
+                              context_instance=RequestContext(request))
