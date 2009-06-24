@@ -61,9 +61,9 @@ $(document).ready(function(){
         region: 'west',
         collapsible: true,
 	split: true,
+	collapseMode: 'mini',
         margins: '4 0 0 0',
         //cmargins: '2 2 0 2',
-        collapseMode: 'mini',
         width: 200,
         minWidth: 150,
         border: false,
@@ -78,6 +78,46 @@ $(document).ready(function(){
        items: create_dynamic_panels().concat([panel_bcmagic])
     });
     
+    var get_east_panel_content = function(){
+      // East panel contentEl id is supplied in html div id of east_region_config.
+      var east_id = Ext.fly('east_region_config').dom.textContent;
+      
+      // If no element exists with the supplied content id, report and error.
+      if (Ext.fly(east_id) == null){
+	return 'east_region_config_error';
+      }
+      return east_id;
+    }
+    
+    var east_panel_content_id = get_east_panel_content();
+    if (east_panel_content_id.length > 0){
+      var eastPanel = new Ext.Panel({
+	  region: 'east',
+	  layout: 'auto',
+	  //margins: '0 2 0 2',
+	  width: 180,
+	  collapsible: true,
+	  split: true,
+	  collapseMode: 'mini',
+	  autoScroll: true,
+	  contentEl: east_panel_content_id
+      });
+    } else {
+      var eastPanel = new Ext.Panel({
+	  region: 'east',
+	  layout: 'auto',
+	  //margins: '0 2 0 2',
+	  width: 180,
+	  collapsible: true,
+	  split: true,
+	  hidden: true,
+	  collapseMode: 'mini',
+	  autoScroll: true
+	  //contentEl: ''
+      });
+    }
+    
+
     //-------------------------------
     // Main Viewport Setup
     //-------------------------------
@@ -113,13 +153,13 @@ $(document).ready(function(){
 	    //autoScroll: true,
             layout: 'fit',
             margins: '2 2 2 2',
-            items: {
+            items: [{
                 //title: 'Inner Panel',
                 contentEl: 'body_content',
                 border: true,
 		autoScroll: true
-            }
-       }]
+            }]
+	    },eastPanel]
     });
     
     //-------------------------------

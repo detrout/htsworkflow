@@ -72,6 +72,11 @@
         {% include "magic.html" %}
     </div>
     
+    {% block east_region %}
+    <div id="east_region_config" class="x-hidden"></div>
+    {% endblock %}
+    <div id="east_region_config_error">Check contents of div w/ id east_region_config, as the id supplied in text block does not exist.</div>
+    
     <!-- Left side tool bar -->
     <div id="left_tbar_data" class="x-hidden">
         {% block left_tbar_menu %}

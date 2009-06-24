@@ -1,0 +1,29 @@
+{% extends "app_base.html" %}
+
+{% block additional_css %}
+    <link rel="stylesheet" type="text/css" href="{% load adminmedia %}{% admin_media_prefix %}css/base.css" />
+    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% admin_media_prefix %}css/rtl.css{% endblock %}" />{% endif %}
+    {% block extrastyle %}{% endblock %}
+    {% block extrahead %}{% endblock %}
+    {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/data-browse-index.css" />
+{% endblock %}
+
+{% block dynamic_panels %}
+    <ul id="Libraries" class="x-hidden">
+            <li>
+                <img src="/static/img/s.gif" class="icon-show-all" />
+                <a href="{% url htsworkflow.frontend.samples.views.library %}">Index</a><br />
+            </li>
+    </ul>
+    <ul id="Flowcells" class="x-hidden">
+            <li>
+                <img src="/static/img/s.gif" class="icon-show-all" />
+                <a href="/runfolders/">Run Folders</a><br />
+            </li>
+    </ul>
+{% endblock %}
+
+{% block east_region %}
+<div id="east_region_config" class="x-hidden">changelist-filter</div>
+{% endblock %}
