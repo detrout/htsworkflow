@@ -5,14 +5,14 @@
 {% block coltype %}flex{% endblock %}
 
 {% block content %}
-<div id="content-main">
+<div id="library-index-div" class="djangocss">
   <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
     {% block search %}{% search_form cl %}{% endblock %}
 
     {% block filters %}
     {% if cl.has_filters %}
     <div id="changelist-filter">
-      <h2>{% trans 'Filter' %}</h2>
+      <h2 class="djangocss">{% trans 'Filter' %}</h2>
       {% for spec in cl.filter_specs %}
          {% admin_list_filter cl spec %}
          {% endfor %}
@@ -24,29 +24,29 @@
  {% block pagination %}{% pagination cl %}{% endblock %}
 
 {% block summary_stats %}
-<table class="libtable">
-  <thead class="libtable">
-    <tr>
-    <td>Parent</td>
-    <td>Library ID</td>
-    <td>Species</td>
-    <td>Library Name</td>
-    <td>Total Lanes</td>
-    <td>HD</td>
+<table class="djangocss">
+  <thead class="djangocss">
+    <tr class="djangocss">
+    <td class="djangocss">Parent</td>
+    <td class="djangocss">Library ID</td>
+    <td class="djangocss">Species</td>
+    <td class="djangocss">Library Name</td>
+    <td class="djangocss">Total Lanes</td>
+    <td class="djangocss">HD</td>
     </tr>
   </thead>
-  <tbody class="libtable">
+  <tbody class="djangocss">
     {% for lib in library_list %}
-    <tr class="libtable">
-      <td class="libtable"><a href="/library/{{ lib.library_id }}">{{ lib.amplified_from }}</a></td>
-      <td class="libtable"><a href="/library/{{ lib.library_id }}">{{ lib.library_id }}</a></td>
-      <td class="libtable"><a href="/library/{{ lib.library_id }}">{{ lib.species_name }}</a></td>
-      <td class="libtable"><a href="/library/{{ lib.library_id }}">{{ lib.library_name }}</a></td>
-      <td class="libtable">{{ lib.lanes_run }}</td>
+    <tr class="djangocss">
+      <td class="djangocss"><a href="/library/{{ lib.library_id }}">{{ lib.amplified_from }}</a></td>
+      <td class="djangocss"><a href="/library/{{ lib.library_id }}">{{ lib.library_id }}</a></td>
+      <td class="djangocss"><a href="/library/{{ lib.library_id }}">{{ lib.species_name }}</a></td>
+      <td class="djangocss"><a href="/library/{{ lib.library_id }}">{{ lib.library_name }}</a></td>
+      <td class="djangocss">{{ lib.lanes_run }}</td>
       {% if lib.is_archived %}
-        <td class="libtable"><img src="/static/img/hdd_unmount.png" alt="Archived" /></td>
+        <td class="djangocss"><img src="/static/img/hdd_unmount.png" alt="Archived" /></td>
       {% else %}
-        <td class="libtable"></td>
+        <td class="djangocss"></td>
       {% endif %}
     </tr>
     {% endfor %}

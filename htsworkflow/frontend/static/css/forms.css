@@ -4,34 +4,34 @@
 /* FORM ROWS */
 .form-row { overflow:hidden; padding:8px 12px; font-size:11px; border-bottom:1px solid #eee; }
 .form-row img, .form-row input { vertical-align:middle; }
-form .form-row p { padding-left:0; font-size:11px; }
+form.djangocss .form-row p { padding-left:0; font-size:11px; }
 
 /* FORM LABELS */
-form h4 { margin:0 !important; padding:0 !important; border:none !important; }
-label { font-weight:normal !important; color:#666; font-size:12px; }
+form.djangocss h4 { margin:0 !important; padding:0 !important; border:none !important; }
+label.djangocss { font-weight:normal !important; color:#666; font-size:12px; }
 .required label, label.required { font-weight:bold !important; color:#333 !important; }
 
 /* RADIO BUTTONS */
-form ul.radiolist li { list-style-type:none; }
-form ul.radiolist label { float:none; display:inline; }
-form ul.inline { margin-left:0; padding:0; }
-form ul.inline li { float:left; padding-right:7px; }
+form.djangocss ul.radiolist li { list-style-type:none; }
+form.djangocss ul.radiolist label { float:none; display:inline; }
+form.djangocss ul.inline { margin-left:0; padding:0; }
+form.djangocss ul.inline li { float:left; padding-right:7px; }
 
 /* ALIGNED FIELDSETS */
 .aligned label { display:block; padding:3px 10px 0 0; float:left; width:8em; }
 .colMS .aligned .vLargeTextField, .colMS .aligned .vXMLLargeTextField { width:350px; }
-form .aligned p, form .aligned ul { margin-left:7em; padding-left:30px; }
-form .aligned table p { margin-left:0; padding-left:0; }
-form .aligned p.help { padding-left:38px; }
+form.djangocss .aligned p, form .aligned ul { margin-left:7em; padding-left:30px; }
+form.djangocss .aligned table p { margin-left:0; padding-left:0; }
+form.djangocss .aligned p.help { padding-left:38px; }
 .aligned .vCheckboxLabel { float:none !important; display:inline; padding-left:4px; }
 .colM .aligned .vLargeTextField, .colM .aligned .vXMLLargeTextField { width:610px; }
 .checkbox-row p.help { margin-left:0; padding-left:0 !important; }
-fieldset .field-box { float:left; margin-right: 20px; }
+fieldset.djangocss .field-box { float:left; margin-right: 20px; }
 
 /* WIDE FIELDSETS */
 .wide label { width:15em !important; }
-form .wide p { margin-left:15em; }
-form .wide p.help { padding-left:38px; }
+form.djangocss .wide p { margin-left:15em; }
+form.djangocss .wide p.help { padding-left:38px; }
 .colM fieldset.wide .vLargeTextField, .colM fieldset.wide .vXMLLargeTextField { width:450px; }
 
 /* COLLAPSED FIELDSETS */

@@ -10,7 +10,7 @@
     <!-- App Stuff -->
     <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
     <link rel="stylesheet" type="text/css" href="/static/js/ext-3.0-rc2/resources/css/ext-all.css" />
-    <script type="text/javascript" src="/static/js/jquery-1.3.2.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="/static/js/ext-3.0-rc2/adapter/jquery/ext-jquery-adapter.js"></script>
     <script type="text/javascript" src="/static/js/ext-3.0-rc2/ext-all.js"></script>
     <!--<script type="text/javascript" src="/static/js/menu.js"></script>-->
@@ -75,7 +75,7 @@
     {% block east_region %}
     <div id="east_region_config" class="x-hidden"></div>
     {% endblock %}
-    <div id="east_region_config_error">Check contents of div w/ id east_region_config, as the id supplied in text block does not exist.</div>
+    <div id="east_region_config_error" class="x-hidden">Check contents of div w/ id east_region_config, as the id supplied in text block does not exist.</div>
     
     <!-- Left side tool bar -->
     <div id="left_tbar_data" class="x-hidden">

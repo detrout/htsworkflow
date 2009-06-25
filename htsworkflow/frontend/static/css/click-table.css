@@ -1,19 +1,19 @@
-table.libtable, td.libtable {
+table.djangocss, td.djangocss {
   border-style: solid;
 }
-table.libtable {
+table.djangocss {
   border-width: 0 0 1px 1px;
   border-spacing: 0;
   border-collapse: collapse;
 }
-thead.libtable {
+thead.djangocss {
   text-align: center;
 }
-td.libtable {
+td.djangocss {
   margin: 0;
   padding: 4px;
   border-width: 1px 1px 0 0;
 }
-td.libtable a {
+td.djangocss a {
   display: block;
 }

@@ -22,6 +22,14 @@ var goto_url = function(www_url)
 }
 
 $(document).ready(function(){
+    //----------------------------------------
+    // Django Library Page CSS Fix
+    /*var fix_library_css = function() {
+      Ext.fly('library-index-div').select('*').addClass('djangocss');
+    }
+    fix_library_css();
+    */
+    
     
     //----------------------------------------
     // Dynamically Generate Panels from HTML!
