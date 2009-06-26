@@ -24,6 +24,15 @@
     </ul>
 {% endblock %}
 
+{% block app_toolbar_west %}
+    <div id="Library Index" href="{% url htsworkflow.frontend.samples.views.library %}"></div>
+    <div id="Run Folders" href="/runfolders/"></div>
+{% endblock %}
+
+{% block app_toolbar_east %}
+    <!--<div id="Admin" href="/admin/"></div>-->
+{% endblock %}
+
 {% block east_region %}
 <div id="east_region_config" class="x-hidden">changelist-filter</div>
 {% endblock %}

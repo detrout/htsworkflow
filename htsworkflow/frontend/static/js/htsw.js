@@ -67,6 +67,7 @@ $(document).ready(function(){
     var menuPanel = new Ext.Panel({
         id: 'menu_panel',
         region: 'west',
+	hidden: true,
         collapsible: true,
 	split: true,
 	collapseMode: 'mini',
@@ -146,21 +147,27 @@ $(document).ready(function(){
                 },{
                     id: 'main_toolbar',
                     xtype: 'toolbar',
+		    height: 30,
                     //height: 100,
                     /*items: [{
                         text: "Demo Button",
                         handler: function() { quick_msg('Messages can be fun!'); }
                     }],*/
                     margins: '2 0 0 0'
-            }],
-            height: 60 
+		},{
+		    id: 'app_toolbar',
+		    xtype: 'toolbar',
+		    height: 30
+		    //margins: '2 0 0 0'
+		}],
+	    height: 90
        },menuPanel,{
             //title: 'Body',
             region: 'center',
             xtype: 'panel',
 	    //autoScroll: true,
             layout: 'fit',
-            margins: '2 2 2 2',
+            margins: '2 2 2 0',
             items: [{
                 //title: 'Inner Panel',
                 contentEl: 'body_content',
@@ -175,45 +182,26 @@ $(document).ready(function(){
     //-------------------------------
     var main_tb = Ext.getCmp('main_toolbar');
     
-    var add_buttons_from_html_left = function(main_tb){
-        var left_tbar_data = Ext.fly('left_tbar_data');
-        var div_array = left_tbar_data.query('div');
+    var add_buttons_from_html = function(tb, bar_id){
+        var tbar_data = Ext.fly(bar_id);
+        var div_array = tbar_data.query('div');
         var div_id = null;
         // Loop through each div since it defines a button and link or a spacer and add it to the right side of the toolbar
         Ext.each(div_array, function(divobj) {
             div_id = divobj.id;
             if (div_id == 'spacer'){
-                main_tb.add('-');
+                tb.add('-');
             } else {
-                main_tb.add({
+                tb.add({
                     text: div_id,
                     handler: function() { goto_url(divobj.getAttribute('href')); }
                 });
             }
         });
-        //return right_tbar_data;
     }
     
-    var add_buttons_from_html_right = function(main_tb){
-        var right_tbar_data = Ext.fly('right_tbar_data');
-        var div_array = right_tbar_data.query('div');
-        var div_id = null;
-        // Loop through each div since it defines a button and link or a spacer and add it to the right side of the toolbar
-        Ext.each(div_array, function(divobj) {
-            div_id = divobj.id;
-            if (div_id == 'spacer'){
-                main_tb.add('-');
-            } else {
-                main_tb.add({
-                    text: div_id,
-                    handler: function() { goto_url(divobj.getAttribute('href')); }
-                });
-            }
-        });
-        //return right_tbar_data;
-    }
-    
-    add_buttons_from_html_left(main_tb);
+    // Fill in left side of main toolbar
+    add_buttons_from_html(main_tb, 'left_tbar_data');
     
     // Shifts the remaining toolbar options to the right side.
     main_tb.add({ xtype: 'tbfill' });
@@ -227,7 +215,7 @@ $(document).ready(function(){
                         text: 'User: ' + user_info.getAttribute('user')
                     });
         main_tb.add('-');
-        add_buttons_from_html_right(main_tb);
+        add_buttons_from_html(main_tb, 'right_tbar_data');
         main_tb.add('-');
 	main_tb.add({
                         text: 'Logout',
@@ -242,5 +230,15 @@ $(document).ready(function(){
     }
     
     main_tb.doLayout();
+    
+    //-------------------------------
+    // App Toolbar Setup
+    //-------------------------------
+    var app_tb = Ext.getCmp('app_toolbar');
+    add_buttons_from_html(app_tb, 'app_toolbar_west');
+    app_tb.add({ xtype: 'tbfill' });
+    add_buttons_from_html(app_tb, 'app_toolbar_east');
+    app_tb.doLayout();
+    
     
 });

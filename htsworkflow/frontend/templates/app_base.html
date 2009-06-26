@@ -97,6 +97,16 @@
     <!-- Required login info stuff -->
     <div id="login_info" class="x-hidden" authenticated="{{ user.is_authenticated|lower }}" user="{{ user.username }}" loginurl="{% url django.contrib.auth.views.login %}" logouturl="{% url django.contrib.auth.views.logout_then_login %}"></div>
     
+    <!-- App specific toolbar setup -->
+    <div id="app_toolbar_west">
+        {% block app_toolbar_west %}
+        {% endblock %}
+    </div>
+    <div id="app_toolbar_east">
+        {% block app_toolbar_east %}
+        {% endblock %}
+    </div>
+    
     <!-- Main Content -->
     <div id="body_content" class="x-hidden">
         {% block msg %}
