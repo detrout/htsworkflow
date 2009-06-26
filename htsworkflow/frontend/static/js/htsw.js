@@ -25,7 +25,11 @@ $(document).ready(function(){
     //----------------------------------------
     // Django Library Page CSS Fix
     var fix_library_css = function() {
-      Ext.fly('library-index-div').select('*').addClass('djangocss');
+      var tofix = Ext.fly('library-index-div');
+      if (tofix != null)
+      {
+	tofix.select('*').addClass('djangocss');
+      }
     }
     fix_library_css();
     
