@@ -1,146 +1,154 @@
+{% extends "flowcell_libraries_app.html" %}
 {% load humanize %}
+
+{% block additional_css %}
 <style type="text/css">
   /* <![CDATA[ */
-  table, td {
+  div#librarydetail table, div#librarydetail td {
     border-style: solid;
   }
-  table {
+  div#librarydetail table {
     border-width: 0 0 1px 1px;
     border-spacing: 0;
     border-collapse: collapse;
   }
-  td {
+  div#librarydetail td {
     margin: 0;
     padding: 4px;
     border-width: 1px 1px 0 0;
   }
-  thead {
+  div#librarydetail thead {
     text-align: center;
     }
-  tbody {
+  div#librarydetail tbody {
     text-align: right;
   }
   /* ]]> */
 </style>
+{% endblock %}
 
-<h2>About this library</h2>
-<b>Library ID</b>: {{ lib.library_id }}<br/>
-<b>Name</b>: {{ lib.library_name }}<br/>
-<b>Species</b>: {{ lib.library_species.scientific_name }}<br/>
-<b>Affiliations</b>:
-<ul>
-  {% for individual in lib.affiliations.all %}
-    <li>{{ individual.name }} ( {{ individual.contact }} )</li>
-  {% endfor %}
-</ul>
-
-<h2>Raw Result Files</h2>
-<table>
-<thead>
-  <tr>
-    <td>Cycle</td>
-    <td>Flowcell</td>
-    <td>Lane</td>
-    <td>Summary</td>
-    <td>Eland</td>
-    <td>Bed</td>
-    <td>Archived</td>
-  </tr>
-{% for result in eland_results %}
-<tr>
-  <td>{{ result.cycle }}</td>
-  <td>{{ result.flowcell_id }}</td>
-  <td>{{ result.lane }}</td>
-  <td><a href="{{ result.summary_url }}">Summary</a></td>
-  <td><a href="{{ result.result_url }}">{{ result.result_label }}</a></td>
-  <td>
-  {% if result.bed_url %}
-    <a href="{{ result.bed_url }}">Bed</a>
-  {% endif %}
-  </td>
-  <td>
-    {% if result.storage_ids %}
-      {{ result.storage_ids }}
-    {% endif %}
-  </td>
-</tr>
-{% endfor %}
-</table>
-
-<h2>Lane Summary Statistics</h2>
-{% block summary_stats %}
-<table>
-  <thead>
-    <tr>
-      <td colspan="7"></td>
-      <td colspan="2">No Match</td>
-      <td colspan="2">QC Failed</td>
-      <td colspan="4">Unique</td>
-      <td colspan="4">Repeat</td>
-    </tr>
-    <tr>
-    <td>Cycles</td>
-    <td>Flowcell</td>
-    <td>Lane</td>
-    <td>End</td>
-    <td>Cluster / Tile</td>
-    <td>pM</td>
-    <td>Raw Reads</td>
-    <td>total</td>
-    <td>%</td>
-    <td>total</td>
-    <td>%</td>
-    <td>0 mismatch</td>
-    <td>1 mismatch</td>
-    <td>2 mismatch</td>
-    <td>Total</td>
-    <td>0 mismatch</td>
-    <td>1 mismatch</td>
-    <td>2 mismatch</td>
-    <td>Total</td>
-    </tr>
-  </thead>
-  <tbody>
-
-    {% for lane in lane_summary_list %}
-    <tr>
-      <td>{{ lane.cycle_width }}</td>
-      <td>{{ lane.flowcell_id }}</td>
-      <td>{{ lane.lane_id }}</td>
-      <td>{% if lane.end %}{{ lane.end }}{% endif %}</td>
-      <td>{{ lane.clusters.0|intcomma }}</td>
-      <td>{{ lane.successful_pm }}</td>
-      <td>{{ lane.reads|intcomma }}</td>
-      <td>{{ lane.no_match|intcomma }}</td>
-      <td>{{ lane.no_match_percent|stringformat:".2f" }}</td>
-      <td>{{ lane.qc_failed|intcomma }}</td>
-      <td>{{ lane.qc_failed_percent|stringformat:".2f" }}</td>
-      <td>{{ lane.match_codes.U0|intcomma }}</td>
-      <td>{{ lane.match_codes.U1|intcomma }}</td>
-      <td>{{ lane.match_codes.U2|intcomma }}</td>
-      <td>{{ lane.unique_reads|intcomma }}</td>
-      <td>{{ lane.match_codes.R0|intcomma }}</td>
-      <td>{{ lane.match_codes.R1|intcomma }}</td>
-      <td>{{ lane.match_codes.R2|intcomma }}</td>
-      <td>{{ lane.repeat_reads|intcomma }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<br/>
-<hr/>
-<h2>Count of multi-reads</h2>
-{% for lane in lane_summary_list %}
-  {% if lane.summarized_reads %}
-  <h3>
-    {{lane.cycle_width}} {{ lane.flowcell_id }} lane {{ lane.lane_id }} 
-    {% if lane.end %} end {{ lane.end }}{% endif %}
-  </h3>
+{% block content %}
+<div id="librarydetail">
+  <h2>About this library</h2>
+  <b>Library ID</b>: {{ lib.library_id }}<br/>
+  <b>Name</b>: {{ lib.library_name }}<br/>
+  <b>Species</b>: {{ lib.library_species.scientific_name }}<br/>
+  <b>Affiliations</b>:
   <ul>
-    {% for name, counts in lane.summarized_reads.items %}
-    <li><b>{{ name }}</b>: {{ counts|intcomma }}</li>
+    {% for individual in lib.affiliations.all %}
+      <li>{{ individual.name }} ( {{ individual.contact }} )</li>
     {% endfor %}
   </ul>
-  {% endif %}
-{% endfor %}
+  
+  <h2>Raw Result Files</h2>
+  <table>
+  <thead>
+    <tr>
+      <td>Cycle</td>
+      <td>Flowcell</td>
+      <td>Lane</td>
+      <td>Summary</td>
+      <td>Eland</td>
+      <td>Bed</td>
+      <td>Archived</td>
+    </tr>
+  {% for result in eland_results %}
+  <tr>
+    <td>{{ result.cycle }}</td>
+    <td>{{ result.flowcell_id }}</td>
+    <td>{{ result.lane }}</td>
+    <td><a href="{{ result.summary_url }}">Summary</a></td>
+    <td><a href="{{ result.result_url }}">{{ result.result_label }}</a></td>
+    <td>
+    {% if result.bed_url %}
+      <a href="{{ result.bed_url }}">Bed</a>
+    {% endif %}
+    </td>
+    <td>
+      {% if result.storage_ids %}
+        {{ result.storage_ids }}
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </table>
+  
+  <h2>Lane Summary Statistics</h2>
+  {% block summary_stats %}
+  <table>
+    <thead>
+      <tr>
+        <td colspan="7"></td>
+        <td colspan="2">No Match</td>
+        <td colspan="2">QC Failed</td>
+        <td colspan="4">Unique</td>
+        <td colspan="4">Repeat</td>
+      </tr>
+      <tr>
+      <td>Cycles</td>
+      <td>Flowcell</td>
+      <td>Lane</td>
+      <td>End</td>
+      <td>Cluster / Tile</td>
+      <td>pM</td>
+      <td>Raw Reads</td>
+      <td>total</td>
+      <td>%</td>
+      <td>total</td>
+      <td>%</td>
+      <td>0 mismatch</td>
+      <td>1 mismatch</td>
+      <td>2 mismatch</td>
+      <td>Total</td>
+      <td>0 mismatch</td>
+      <td>1 mismatch</td>
+      <td>2 mismatch</td>
+      <td>Total</td>
+      </tr>
+    </thead>
+    <tbody>
+  
+      {% for lane in lane_summary_list %}
+      <tr>
+        <td>{{ lane.cycle_width }}</td>
+        <td>{{ lane.flowcell_id }}</td>
+        <td>{{ lane.lane_id }}</td>
+        <td>{% if lane.end %}{{ lane.end }}{% endif %}</td>
+        <td>{{ lane.clusters.0|intcomma }}</td>
+        <td>{{ lane.successful_pm }}</td>
+        <td>{{ lane.reads|intcomma }}</td>
+        <td>{{ lane.no_match|intcomma }}</td>
+        <td>{{ lane.no_match_percent|stringformat:".2f" }}</td>
+        <td>{{ lane.qc_failed|intcomma }}</td>
+        <td>{{ lane.qc_failed_percent|stringformat:".2f" }}</td>
+        <td>{{ lane.match_codes.U0|intcomma }}</td>
+        <td>{{ lane.match_codes.U1|intcomma }}</td>
+        <td>{{ lane.match_codes.U2|intcomma }}</td>
+        <td>{{ lane.unique_reads|intcomma }}</td>
+        <td>{{ lane.match_codes.R0|intcomma }}</td>
+        <td>{{ lane.match_codes.R1|intcomma }}</td>
+        <td>{{ lane.match_codes.R2|intcomma }}</td>
+        <td>{{ lane.repeat_reads|intcomma }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br/>
+  <hr/>
+  <h2>Count of multi-reads</h2>
+  {% for lane in lane_summary_list %}
+    {% if lane.summarized_reads %}
+    <h3>
+      {{lane.cycle_width}} {{ lane.flowcell_id }} lane {{ lane.lane_id }} 
+      {% if lane.end %} end {{ lane.end }}{% endif %}
+    </h3>
+    <ul>
+      {% for name, counts in lane.summarized_reads.items %}
+      <li><b>{{ name }}</b>: {{ counts|intcomma }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  {% endfor %}
+  {% endblock %}
+</div>
 {% endblock %}

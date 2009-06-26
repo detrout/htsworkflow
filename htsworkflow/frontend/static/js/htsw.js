@@ -99,6 +99,8 @@ $(document).ready(function(){
       // East panel contentEl id is supplied in html div id of east_region_config.
       var east_id = Ext.fly('east_region_config').dom.textContent;
       
+      // Length of zero is a valid response... also happens to return null in next
+      //   if statement if not handled before hand.
       if (east_id.length == 0){
 	return east_id;
       }
@@ -107,6 +109,7 @@ $(document).ready(function(){
       if (Ext.fly(east_id) == null){
 	return 'east_region_config_error';
       }
+      
       return east_id;
     }
     
@@ -179,7 +182,7 @@ $(document).ready(function(){
             xtype: 'panel',
 	    //autoScroll: true,
             layout: 'fit',
-            margins: '2 2 2 0',
+            margins: '2 0 2 0',
             items: [{
                 //title: 'Inner Panel',
                 contentEl: 'body_content',

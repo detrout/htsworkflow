@@ -105,12 +105,17 @@ def library_to_flowcells(request, lib_id):
         eland_results.extend(_make_eland_results(fc, lane, interesting_flowcells))
         lane_summary_list.extend(lane_summary)
 
+    context = {
+        'page_name': 'Library Details',
+        'lib': lib,
+        'eland_results': eland_results,
+        'lane_summary_list': lane_summary_list,
+    }
+    context.update(SAMPLES_CONTEXT_DEFAULTS)
+
     return render_to_response(
         'samples/library_detail.html',
-        {'lib': lib,
-         'eland_results': eland_results,
-         'lane_summary_list': lane_summary_list,
-        },
+        context,
         context_instance = RequestContext(request))
 
 def summaryhtm_fc_cnm(request, flowcell_id, cnm):
