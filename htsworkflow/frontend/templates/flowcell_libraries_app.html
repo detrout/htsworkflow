@@ -1,7 +1,7 @@
 {% extends "app_base.html" %}
 
 {% block additional_css %}
-    <link rel="stylesheet" type="text/css" href="{% load adminmedia %}{% admin_media_prefix %}css/base.css" />
+    {% load adminmedia %}
     {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% admin_media_prefix %}css/rtl.css{% endblock %}" />{% endif %}
     {% block extrastyle %}{% endblock %}
     {% block extrahead %}{% endblock %}
