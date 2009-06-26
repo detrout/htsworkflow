@@ -90,9 +90,18 @@ $(document).ready(function(){
        items: create_dynamic_panels().concat([panel_bcmagic])
     });
     
+    
+    
+    //-------------------------------
+    // East Region Setup
+    //-------------------------------
     var get_east_panel_content = function(){
       // East panel contentEl id is supplied in html div id of east_region_config.
       var east_id = Ext.fly('east_region_config').dom.textContent;
+      
+      if (east_id.length == 0){
+	return east_id;
+      }
       
       // If no element exists with the supplied content id, report and error.
       if (Ext.fly(east_id) == null){

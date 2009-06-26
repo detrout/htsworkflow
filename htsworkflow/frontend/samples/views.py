@@ -66,6 +66,7 @@ def library(request):
     
     app_context = {
         'page_name': 'Library Index',
+        'east_region_config_div': 'changelist-filter',
         'body': t.render(c)
     }
     app_context.update(SAMPLES_CONTEXT_DEFAULTS)

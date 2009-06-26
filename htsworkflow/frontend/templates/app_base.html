@@ -73,7 +73,7 @@
     </div>
     
     {% block east_region %}
-    <div id="east_region_config" class="x-hidden"></div>
+    <div id="east_region_config" class="x-hidden">{% if east_region_config_div %}{{ east_region_config_div }}{% endif %}</div>
     {% endblock %}
     <div id="east_region_config_error" class="x-hidden">Check contents of div w/ id east_region_config, as the id supplied in text block does not exist.</div>
     
