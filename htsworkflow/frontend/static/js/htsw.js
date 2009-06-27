@@ -220,6 +220,25 @@ $(document).ready(function(){
     
     // Shifts the remaining toolbar options to the right side.
     main_tb.add({ xtype: 'tbfill' });
+    
+    //----------------------------------------
+    // ExtJS Barcode Magic Implementation
+    var bcmagic_ext_keyhandler = function(sObj, e){
+      //e.preventDefault();
+      //Process upon enter key as input.
+      if (e.getKey() == e.ENTER)
+	bcmagic_process();
+    }
+    
+    var bcmagic_input = new Ext.form.TextField({
+      id: 'bcmagic_input_field',
+      emptyText: 'barcode magic'
+    });
+    bcmagic_input.on('specialkey', bcmagic_ext_keyhandler);
+    
+    main_tb.add(bcmagic_input);
+    //--------------------------------------
+    
     var user_info = Ext.fly('login_info');
     var logout_url = user_info.getAttribute('logouturl');
     var login_url = user_info.getAttribute('loginurl');
@@ -255,5 +274,6 @@ $(document).ready(function(){
     add_buttons_from_html(app_tb, 'app_toolbar_east');
     app_tb.doLayout();
     
-    
+    // Focus on barcode magic, because it's awesome and needs attention! ;-)
+    bcmagic_input.focus();
 });

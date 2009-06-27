@@ -3,6 +3,7 @@ from htsworkflow.frontend.experiments.models import FlowCell
 from htsworkflow.frontend.samples.changelist import ChangeList
 from htsworkflow.frontend.samples.models import Library
 from htsworkflow.frontend.samples.results import get_flowcell_result_dict, parse_flowcell_id
+from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 from htsworkflow.pipelines import runfolder
 from htsworkflow.frontend import settings
@@ -22,7 +23,8 @@ import os
 
 LANE_LIST = [1,2,3,4,5,6,7,8]
 SAMPLES_CONTEXT_DEFAULTS = {
-    'app_name': 'Flowcell/Library Tracker'
+    'app_name': 'Flowcell/Library Tracker',
+    'bcmagic': BarcodeMagicForm()
 }
 
 def create_library_context(cl):

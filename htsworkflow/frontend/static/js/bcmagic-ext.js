@@ -7,12 +7,17 @@
 //---------------------------------------
 // BCMagic Core Processing AJAX Callback
 //---------------------------------------
-var bcmagic_process_callback = function(data, textStatus) {
+//var bcmagic_process_callback = function(data, textStatus) {
+var bcmagic_process_callback = function(response, opt) {
+    //FIXME: temp bypass hack
+    var textStatus = 'success';
     if (textStatus != 'success')
     {
         bcmagic_message('AJAX Status: '+textStatus);
         return;
     }
+    
+    var data = Ext.decode(response.responseText);
     
     for (key in data)
     {
@@ -59,16 +64,24 @@ var bcmagic_callback = function(data, textStatus)
 }
 
 var bcmagic_process = function(){
-    var magic = $("#id_magic");
-    var text = magic.attr('value');
-    magic.attr('value', '');
+    var magic = Ext.get("bcmagic_input_field");
+    var text = magic.getValue();
+    magic.dom.value = '';
+    magic.focus();
     
-    var bcm_mode = $("#id_bcm_mode");
-    var mode = bcm_mode.attr('value');
+    //var bcm_mode = $("#id_bcm_mode");
+    //var mode = bcm_mode.attr('value');
+    var mode = 'default';
     
     // Show what we have captured
     bcmagic_message('Sent command to server');
-    $.post('/bcmagic/magic/', {'text': text, 'bcm_mode': mode}, bcmagic_process_callback, 'json');
+    //$.post('/bcmagic/magic/', {'text': text, 'bcm_mode': mode}, bcmagic_process_callback, 'json');
+    Ext.Ajax.request({
+        url: '/bcmagic/magic/',
+        success: bcmagic_process_callback,
+        failure: function (r, o) { quick_msg('Some AJAX Fail!'); },
+        params: {'text': text, 'bcm_mode': mode}
+    });
 }
 
 var bcmagic_keyhandler = function(e) {
@@ -83,21 +96,24 @@ var bcmagic_keyhandler = function(e) {
 var bcmagic_message = function(text)
 {
     // Show message
-    $("#bcm_msg").html(text);
+    //$("#bcm_msg").html(text);
+    quick_msg(text);
     
     // clear message after 3000ms
+    /*
     setTimeout(function() {
         $("#bcm_msg").html('');
         }, 3000);
+    */
 }
 
 var bcmagic_status = function(state, text)
 {
-    var msg = $('#bcm_status');
+    //var msg = $('#bcm_status');
     if (state.length > 0 || text.length > 0)
-        msg.html('<b>'+state+':</b> '+text);
-    else
-        msg.html('');
+        quick_msg(state+': '+text);
+    //else
+    //    msg.html('');
 }
 
 

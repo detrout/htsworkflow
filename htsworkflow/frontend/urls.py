@@ -44,6 +44,7 @@ urlpatterns = patterns('',
       'htsworkflow.frontend.samples.views.bedfile_fc_cnm_eland_lane_ucsc'),
     (r'^results/(?P<fc_id>\w+)/(?P<cnm>C[1-9]-[0-9]+)/bedfile/(?P<lane>[1-8])',
       'htsworkflow.frontend.samples.views.bedfile_fc_cnm_eland_lane'),
+    (r'^bcmagic/', include('htsworkflow.frontend.bcmagic.urls')),
     
     # databrowser
     #(r'^databrowse/(.*)', databrowse.site.root)
