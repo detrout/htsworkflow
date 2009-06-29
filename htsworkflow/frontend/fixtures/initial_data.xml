@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+  <object model="bcmagic.keywordmap" pk="1">
+    <field name="keyword" type="CharField">frzr</field>
+    <field name="regex" type="CharField">(?P&lt;uuid&gt;[A-Fa-f0-9]+)</field>
+    <field name="url_template" type="TextField">/samples/freezer/{{ uuid }}/</field>
+  </object>
+  <object model="bcmagic.keywordmap" pk="2">
+    <field name="keyword" type="CharField">cntr</field>
+    <field name="regex" type="CharField">(?P&lt;uuid&gt;[A-Fa-f0-9]+)</field>
+    <field name="url_template" type="TextField">/samples/container/{{ uuid }}/</field>
+  </object>
+  <object model="bcmagic.keywordmap" pk="3">
+    <field name="keyword" type="CharField">s</field>
+    <field name="regex" type="CharField">(?P&lt;sampleid&gt;\d+)\|(?P&lt;owner&gt;[A-Za-z0-9_\- ]+)</field>
+    <field name="url_template" type="TextField">/samples/sample/{{ sampleid }}/</field>
+  </object>
+  <object model="bcmagic.keywordmap" pk="4">
+    <field name="keyword" type="CharField">gg</field>
+    <field name="regex" type="CharField">(?P&lt;search&gt;[\S\s]+)</field>
+    <field name="url_template" type="TextField">http://www.google.com/search?q={{ search }}</field>
+  </object>
+    <object model="bcmagic.keywordmap" pk="5">
+    <field name="keyword" type="CharField">flickr</field>
+    <field name="regex" type="CharField">(?P&lt;search&gt;[\S\s]+)</field>
+    <field name="url_template" type="TextField">http://www.flickr.com/search/?q={{ search }}</field>
+  </object>
+</django-objects>

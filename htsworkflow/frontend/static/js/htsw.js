@@ -224,7 +224,6 @@ $(document).ready(function(){
     //----------------------------------------
     // ExtJS Barcode Magic Implementation
     var bcmagic_ext_keyhandler = function(sObj, e){
-      //e.preventDefault();
       //Process upon enter key as input.
       if (e.getKey() == e.ENTER)
 	bcmagic_process();
