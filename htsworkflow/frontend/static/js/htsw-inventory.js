@@ -52,8 +52,8 @@ var getInventoryDataGrid = function(){
         
         frame: true,
         width: 'auto',
-        height: 500,
-        //autoHeight: true,
+        //height: 500,
+        autoHeight: true,
         collapsible: false,
         title: "Inventory Index",
         iconCls: 'icon-grid'
