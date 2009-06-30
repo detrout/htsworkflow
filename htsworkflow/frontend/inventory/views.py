@@ -1,6 +1,7 @@
 from htsworkflow.frontend.inventory.models import Item, LongTermStorage
 from htsworkflow.frontend.experiments.models import FlowCell
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
+from htsworkflow.util.jsonutil import encode_json
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
@@ -9,7 +10,7 @@ from django.template import RequestContext
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
 
-import json
+
 
 INVENTORY_CONTEXT_DEFAULTS = {
     'app_name': 'Inventory Tracker',
@@ -35,8 +36,7 @@ def data_items(request):
     
     d['rows'] = rows
     
-    j = json.JSONEncoder()
-    return HttpResponse(j.encode(d), content_type="application/javascript")
+    return HttpResponse(encode_json(d), content_type="application/javascript")
 
 def index(request):
     """

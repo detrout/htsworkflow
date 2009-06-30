@@ -6,8 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from htsworkflow.frontend.bcmagic import models
 from htsworkflow.frontend.bcmagic.utils import report_error, redirect_to_url
 from htsworkflow.frontend.bcmagic.plugin import bcm_plugin_processor
+from htsworkflow.util.jsonutil import encode_json
 
-import json
 import re
 
 from htsworkflow.frontend.bcmagic import forms
@@ -116,8 +116,8 @@ def magic(request):
     # Try keyword mapper
     else:
         d = __magic_process(text)
-    j = json.JSONEncoder()
-    return HttpResponse(j.encode(d), 'text/plain')
+    
+    return HttpResponse(encode_json(d), 'text/plain')
 
 
 
@@ -129,11 +129,11 @@ def json_test(request):
     else:
         text = None
     
-    #return HttpResponse(json.write(request.POST.items()), 'text/plain')
+    #return HttpResponse(encode_json(request.POST.items()), 'text/plain')
     if text is None or text.strip() == '':
         d['mode'] = 'Error'
         d['status'] = 'Did not recieve text'
-        return HttpResponse(json.write(d), 'text/plain')
+        return HttpResponse(encode_json(d), 'text/plain')
     
     if text.split('|')[0] == 'url':
         d['mode'] = 'redirect'
@@ -142,5 +142,4 @@ def json_test(request):
         d['msg'] = 'Recieved text: %s' % (text)
         d['mode'] = 'clear'
     
-    j = json.JSONEncoder()
-    return HttpResponse(j.encode(d), 'text/plain')
+    return HttpResponse(json_encode(d), 'text/plain')
