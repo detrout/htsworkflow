@@ -6,6 +6,7 @@ from htsworkflow.frontend.samples.results import get_flowcell_result_dict, parse
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 from htsworkflow.pipelines import runfolder
+from htsworkflow.pipelines.eland import ResultLane
 from htsworkflow.frontend import settings
 from htsworkflow.util import makebed
 from htsworkflow.util import opener
@@ -238,7 +239,11 @@ def _summary_stats(flowcell_id, lane_id):
         run = load_pipeline_run_xml(xmlpath)
         gerald_summary = run.gerald.summary.lane_results
         for end in range(len(gerald_summary)):
-            eland_summary = run.gerald.eland_results.results[end][lane_id]
+            end_summary = run.gerald.eland_results.results[end]
+            if end_summary.has_key(lane_id):
+                eland_summary = run.gerald.eland_results.results[end][lane_id]
+            else:
+                eland_summary = ResultLane(lane_id=lane_id, end=end)
             # add information to lane_summary
             eland_summary.flowcell_id = flowcell_id
             eland_summary.clusters = gerald_summary[end][lane_id].cluster
