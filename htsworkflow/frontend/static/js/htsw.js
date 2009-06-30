@@ -21,6 +21,20 @@ var goto_url = function(www_url)
     window.location = www_url; 
 }
 
+var RESIZEME_ARRAY = new Array();
+
+var resize_registered_panel = function(pnl){
+  Ext.each(RESIZEME_ARRAY, function(fnc){
+    fnc();
+  });
+}
+
+var resize_registered = function(cmp, adj_w, adj_h, raw_w, raw_h){
+  Ext.each(RESIZEME_ARRAY, function(fnc){
+    fnc();
+  });
+}
+
 $(document).ready(function(){
     //----------------------------------------
     // Django Library Page CSS Fix
@@ -146,8 +160,10 @@ $(document).ready(function(){
     // Main Viewport Setup
     //-------------------------------
     var mainBorderPanel = new Ext.Viewport({
+       //id: 'main_viewport',
        layout: 'border',
        items: [{
+	    id: 'north_border_panel',
             region: 'north',
             layout: 'vBox',
             layoutConfig: {
@@ -181,11 +197,13 @@ $(document).ready(function(){
 	    split: true
        },menuPanel,{
             //title: 'Body',
+	    id: 'body_content_panel',
             region: 'center',
             xtype: 'panel',
 	    //autoScroll: true,
             layout: 'fit',
             margins: '2 0 2 0',
+	    monitorResize: true,
             items: [{
                 //title: 'Inner Panel',
                 contentEl: 'body_content',
@@ -194,6 +212,15 @@ $(document).ready(function(){
             }]
 	    },eastPanel]
     });
+    
+    // Using a little trick to resize registered components:
+    // i.e. just use RESIZEME_ARRAY.push(function() { <code> }); to register a function
+    // to be called during these events.
+    mainBorderPanel.on('resize', resize_registered);
+    var northBorderPanel = Ext.getCmp('north_border_panel');
+    northBorderPanel.on('collapse', resize_registered_panel);
+    northBorderPanel.on('expand', resize_registered_panel);
+    
     
     //-------------------------------
     // Menu Bar Setup
@@ -284,5 +311,11 @@ $(document).ready(function(){
     if (grid_target != null){
       var grid = getInventoryDataGrid();
       grid.render(grid_target);
+      RESIZEME_ARRAY.push(function() {
+	Ext.getCmp('inventory_item_panel').setHeight(Ext.getCmp('body_content_panel').getHeight()-4);
+      });
+      grid.setHeight(Ext.get('body_content_panel').getHeight()-4);
     }
+    
+    
 });
