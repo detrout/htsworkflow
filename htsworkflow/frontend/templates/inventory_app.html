@@ -1,0 +1,29 @@
+{% extends "app_base.html" %}
+
+{% block additional_css %}
+{% endblock %}
+
+{% block additional_javascript %}
+<script type="text/javascript" src="/static/js/htsw-inventory.js"></script>
+{% endblock %}
+
+{% block dynamic_panels %}
+    <ul id="Libraries" class="x-hidden">
+            <li>
+                <img src="/static/img/s.gif" class="icon-show-all" />
+                <a href="{% url htsworkflow.frontend.samples.views.library %}">Index</a><br />
+            </li>
+    </ul>
+{% endblock %}
+
+{% block app_toolbar_west %}
+    <div id="Inventory Index" href="{% url htsworkflow.frontend.inventory.views.index %}"></div>
+{% endblock %}
+
+{% block app_toolbar_east %}
+    <!--<div id="Admin" href="/admin/"></div>-->
+{% endblock %}
+
+{% block content %}
+test
+{% endblock %}

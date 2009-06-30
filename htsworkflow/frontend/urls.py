@@ -25,8 +25,9 @@ urlpatterns = patterns('',
     (r'^experiments/', include('htsworkflow.frontend.experiments.urls')),
     # AnalysTrack:
     #(r'^analysis/', include('htsworkflow.frontend.analysis.urls')),
-    # Report Views:
+    # Inventory urls
     (r'^inventory/', include('htsworkflow.frontend.inventory.urls')),
+    # Report Views:
     (r'^reports/', include('htsworkflow.frontend.reports.urls')),
     # Library browser
     (r'^library/$', 'htsworkflow.frontend.samples.views.library'),

@@ -175,7 +175,10 @@ $(document).ready(function(){
 		    height: 30
 		    //margins: '2 0 0 0'
 		}],
-	    height: 90
+	    height: 90,
+	    collapsible: true,
+	    collapseMode: 'mini',
+	    split: true
        },menuPanel,{
             //title: 'Body',
             region: 'center',
@@ -275,4 +278,11 @@ $(document).ready(function(){
     
     // Focus on barcode magic, because it's awesome and needs attention! ;-)
     bcmagic_input.focus();
+    
+    // FIXME: grid target temp code.
+    var grid_target = Ext.fly('grid_target');
+    if (grid_target != null){
+      var grid = getInventoryDataGrid();
+      grid.render(grid_target);
+    }
 });

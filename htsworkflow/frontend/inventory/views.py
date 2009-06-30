@@ -1,9 +1,56 @@
 from htsworkflow.frontend.inventory.models import Item, LongTermStorage
 from htsworkflow.frontend.experiments.models import FlowCell
+from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.template.loader import get_template
+from django.contrib.auth.decorators import login_required
 
+import json
+
+INVENTORY_CONTEXT_DEFAULTS = {
+    'app_name': 'Inventory Tracker',
+    'bcmagic': BarcodeMagicForm()
+}
+
+def data_items(request):
+    """
+    Returns items in json format
+    """
+    item_list = Item.objects.all()
+    d = { 'results': len(item_list) }
+    rows = []
+    
+    for item in item_list:
+        item_d = {}
+        item_d['uuid'] = item.uuid
+        item_d['barcode_id'] = item.barcode_id
+        item_d['creation_date'] = item.creation_date.strftime('%Y-%m-%d %H:%M:%S')
+        item_d['modified_date'] = item.modified_date.strftime('%Y-%m-%d %H:%M:%S')
+        item_d['type'] = item.item_type.name
+        rows.append(item_d)
+    
+    d['rows'] = rows
+    
+    j = json.JSONEncoder()
+    return HttpResponse(j.encode(d), content_type="application/javascript")
+
+def index(request):
+    """
+    Inventory Index View
+    """
+    context_dict = {
+        'page_name': 'Inventory Index'
+    }
+    context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
+    
+    return render_to_response('inventory_index.html',
+                              context_dict,
+                              context_instance=RequestContext(request))
+    
 
 def link_flowcell_and_device(request, flowcell, serial):
     """
