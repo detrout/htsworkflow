@@ -29,14 +29,33 @@ def data_items(request):
         item_d = {}
         item_d['uuid'] = item.uuid
         item_d['barcode_id'] = item.barcode_id
+        item_d['model_id'] = item.item_info.model_id
+        item_d['part_number'] = item.item_info.part_number
+        item_d['lot_number'] = item.item_info.lot_number
+        item_d['vendor'] = item.item_info.vendor.name
         item_d['creation_date'] = item.creation_date.strftime('%Y-%m-%d %H:%M:%S')
         item_d['modified_date'] = item.modified_date.strftime('%Y-%m-%d %H:%M:%S')
+        item_d['location'] = item.location.name
+        
+        # Item status if exists
+        if item.status is None:
+            item_d['status'] = ''
+        else:
+            item_d['status'] = item.status.name
+            
+        # Stored flowcells on device
+        if item.longtermstorage_set.count() > 0:
+            item_d['flowcells'] = ','.join([ lts.flowcell.flowcell_id for lts in item.longtermstorage_set.all() ])
+        else:
+            item_d['flowcells'] = ''
+        
         item_d['type'] = item.item_type.name
         rows.append(item_d)
     
     d['rows'] = rows
     
     return HttpResponse(encode_json(d), content_type="application/javascript")
+
 
 def index(request):
     """
