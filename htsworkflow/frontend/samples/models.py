@@ -120,8 +120,8 @@ class Library(models.Model):
   library_species = models.ForeignKey(Species)
   # new field 2008 Mar 5, alter table samples_library add column "hidden" NOT NULL default 0;
   hidden = models.BooleanField()
-  cell_line = models.ForeignKey(Cellline, null=True)
-  condition = models.ForeignKey(Condition, null=True)
+  cell_line = models.ForeignKey(Cellline, blank=True, null=True)
+  condition = models.ForeignKey(Condition, blank=True, null=True)
   antibody = models.ForeignKey(Antibody,blank=True,null=True)
   # New field Aug/25/08. SQL: alter table fctracker_library add column "lib_affiliation" varchar(256)  NULL;
   affiliations = models.ManyToManyField(Affiliation,related_name='library_affiliations',null=True)
