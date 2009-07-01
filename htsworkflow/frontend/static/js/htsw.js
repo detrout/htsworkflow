@@ -239,7 +239,8 @@ $(document).ready(function(){
             } else {
                 tb.add({
                     text: div_id,
-                    handler: function() { goto_url(divobj.getAttribute('href')); }
+                    handler: function() { goto_url(divobj.getAttribute('href')); },
+		    disabled: (divobj.textContent == 'disabled') ? true : false 
                 });
             }
         });

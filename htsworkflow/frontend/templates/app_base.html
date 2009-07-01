@@ -63,9 +63,7 @@
     <div id="left_tbar_data" class="x-hidden">
         {% block left_tbar_menu %}
         <div id="Flowcells-Libraries Tracker" href="{% url htsworkflow.frontend.samples.views.library %}"></div>
-        {% if user.is_authenticated %}
-        <div id="Inventory Tracker" href="{% url htsworkflow.frontend.inventory.views.index %}"></div>
-        {% endif %}
+        <div id="Inventory Tracker" href="{% url htsworkflow.frontend.inventory.views.index %}">{% if user.is_authenticated %}{% else %}disabled{% endif %}</div>
         {% endblock %}
     </div>
     
