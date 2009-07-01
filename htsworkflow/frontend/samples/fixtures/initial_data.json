@@ -1,0 +1,16 @@
+[
+  {
+     "model": "samples.LibraryType",
+     "pk": 1,
+     "fields": {
+        "name": "Single End"
+     }
+  },
+  {
+     "model": "samples.LibraryType",
+     "pk": 2,
+     "fields": {
+        "name": "Paired End"
+     }
+  }
+]

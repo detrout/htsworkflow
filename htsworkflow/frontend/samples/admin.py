@@ -3,7 +3,7 @@ from django.contrib.admin import widgets
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from htsworkflow.frontend.samples.models import Antibody, Cellline, Condition, ExperimentType, Species, Affiliation, Library, Tag
+from htsworkflow.frontend.samples.models import Antibody, Cellline, Condition, ExperimentType, LibraryType, Species, Affiliation, Library, Tag
 
 class Library_Inline(admin.TabularInline):
   model = Library
@@ -21,6 +21,9 @@ class ExperimentTypeOptions(admin.ModelAdmin):
   model = ExperimentType
   #list_display = ('name',)
   #fieldsets = ( (None, { 'fields': ('name',) }), )
+
+class LibraryTypeOptions(admin.ModelAdmin):
+    model = LibraryType
 
 class LibraryOptions(admin.ModelAdmin):
     date_hierarchy = "creation_date"
@@ -71,7 +74,7 @@ class LibraryOptions(admin.ModelAdmin):
         'fields': (
           ('library_id','library_name','hidden'),
           ('library_species'),
-          ('experiment_type', 'replicate'),
+          ('library_type', 'experiment_type', 'replicate'),
           ('cell_line','condition','antibody'),)
          }),
          ('Creation Information:', {
@@ -143,6 +146,7 @@ admin.site.register(Antibody, AntibodyOptions)
 admin.site.register(Cellline, CelllineOptions)
 admin.site.register(Condition, ConditionOptions)
 admin.site.register(ExperimentType, ExperimentTypeOptions)
+admin.site.register(LibraryType, LibraryTypeOptions)
 admin.site.register(Library, LibraryOptions)
 admin.site.register(Species, SpeciesOptions)
 admin.site.register(Tag, TagOptions)

@@ -113,6 +113,12 @@ class Affiliation(models.Model):
     ordering = ["name","contact"]
     unique_together = (("name", "contact"),)
 
+class LibraryType(models.Model):
+  name = models.CharField(max_length=255, unique=True)
+
+  def __unicode__(self):
+    return unicode(self.name)
+
 class Library(models.Model):
   id = models.AutoField(primary_key=True)
   library_id = models.CharField(max_length=30, db_index=True, unique=True)
@@ -120,7 +126,7 @@ class Library(models.Model):
   library_species = models.ForeignKey(Species)
   # new field 2008 Mar 5, alter table samples_library add column "hidden" NOT NULL default 0;
   hidden = models.BooleanField()
-  cell_line = models.ForeignKey(Cellline, blank=True, null=True)
+  cell_line = models.ForeignKey(Cellline, blank=True, null=True, verbose_name="Background")
   condition = models.ForeignKey(Condition, blank=True, null=True)
   antibody = models.ForeignKey(Antibody,blank=True,null=True)
   # New field Aug/25/08. SQL: alter table fctracker_library add column "lib_affiliation" varchar(256)  NULL;
@@ -132,6 +138,7 @@ class Library(models.Model):
   REPLICATE_NUM = ((1,1),(2,2),(3,3),(4,4))
   replicate =  models.PositiveSmallIntegerField(choices=REPLICATE_NUM,default=1) 
   experiment_type = models.ForeignKey(ExperimentType)
+  library_type = models.ForeignKey(LibraryType, null=True)
   creation_date = models.DateField(blank=True, null=True)
   made_for = models.CharField(max_length=50, blank=True, 
       verbose_name='ChIP/DNA/RNA Made By')
