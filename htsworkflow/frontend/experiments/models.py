@@ -66,7 +66,7 @@ class FlowCell(models.Model):
   # lane_7_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_7_primer")
   # lane_8_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_8_primer")
 
-  cluster_station = models.ForeignKey(ClusterStation, default=1)
+  cluster_station = models.ForeignKey(ClusterStation, default=3)
   sequencer = models.ForeignKey(Sequencer, default=1)
   
   notes = models.TextField(blank=True)
