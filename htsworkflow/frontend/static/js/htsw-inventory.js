@@ -1,4 +1,11 @@
 
+var inventory_item_dblclick_handler = function(grid, row_index, e){
+    //quick_msg('Choose Row: ' + row_index);
+    var rec = grid.getStore().getAt(row_index);
+    //quick_msg('UUID: ' + rec.get('uuid'));
+    goto_url('/inventory/'+rec.get('uuid')+'/');
+}
+
 var getInventoryDataGrid = function(){
     
     var Item = Ext.data.Record.create([
@@ -73,9 +80,11 @@ var getInventoryDataGrid = function(){
         iconCls: 'icon-grid',
         id: 'inventory_item_panel',
         stateId: 'inventory_item_panel_state',
-        stateful: true,
+        stateful: true
         //renderTo: 'grid_target'
     });
+    
+    grid.on('rowdblclick', inventory_item_dblclick_handler);
     
     return grid;
 }

@@ -44,30 +44,6 @@
                     <a href="#">Add</a><br />
                 </li>
         </ul>
-        <ul id="Containers" class="x-hidden">
-            <li>
-                <img src="/static/img/s.gif" class="icon-show-all" />
-                <a href="#">Index</a>
-            </li>
-            <li>
-                <img src="/static/img/s.gif" class="icon-show-all" />
-                <a href="#">Add</a>
-            </li>
-        </ul>
-        <ul id="Samples" class="x-hidden">
-            <li>
-                <img src="/static/img/s.gif" class="icon-show-all" />
-                <a href="#">Index</a>
-            </li>
-            <li>
-                <img src="/static/img/s.gif" class="icon-show-all" />
-                <a href="#">Homeless</a>
-            </li>
-            <li>
-                <img src="/static/img/s.gif" class="icon-show-all" />
-                <a href="#">Add</a>
-            </li>
-        </ul>
         {% endblock %}
     </div>
     
@@ -87,7 +63,9 @@
     <div id="left_tbar_data" class="x-hidden">
         {% block left_tbar_menu %}
         <div id="Flowcells-Libraries Tracker" href="{% url htsworkflow.frontend.samples.views.library %}"></div>
+        {% if user.is_authenticated %}
         <div id="Inventory Tracker" href="{% url htsworkflow.frontend.inventory.views.index %}"></div>
+        {% endif %}
         {% endblock %}
     </div>
     

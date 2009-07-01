@@ -17,6 +17,7 @@ INVENTORY_CONTEXT_DEFAULTS = {
     'bcmagic': BarcodeMagicForm()
 }
 
+@login_required
 def data_items(request):
     """
     Returns items in json format
@@ -56,7 +57,7 @@ def data_items(request):
     
     return HttpResponse(encode_json(d), content_type="application/javascript")
 
-
+@login_required
 def index(request):
     """
     Inventory Index View
@@ -66,10 +67,30 @@ def index(request):
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
     
-    return render_to_response('inventory_index.html',
+    return render_to_response('inventory/inventory_index.html',
                               context_dict,
                               context_instance=RequestContext(request))
     
+@login_required
+def item_summary(request, uuid):
+    """
+    Display a summary for an item
+    """
+    try:
+        item = Item.objects.get(uuid=uuid)
+    except ObjectDoesNotExist, e:
+        item = None
+    
+    context_dict = {
+        'page_name': 'Item Summary',
+        'item': item,
+        'uuid': uuid
+    }
+    context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
+    
+    return render_to_response('inventory/inventory_summary.html',
+                              context_dict,
+                              context_instance=RequestContext(request))
 
 def link_flowcell_and_device(request, flowcell, serial):
     """

@@ -1,0 +1,9 @@
+{% extends "inventory/inventory_app.html" %}
+
+{% block content %}
+        {% if item %}
+                <h3>Item: {{item.uuid}}</h3>
+        {% else %}
+                <h3>Item with UUID of {{ uuid }} not found.</h3>
+        {% endif %}
+{% endblock %}
