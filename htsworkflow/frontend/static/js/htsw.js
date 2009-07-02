@@ -267,6 +267,7 @@ $(document).ready(function(){
     bcmagic_input.on('specialkey', bcmagic_ext_keyhandler);
     
     main_tb.add(bcmagic_input);
+    main_tb.add('-')
     //--------------------------------------
     
     var user_info = Ext.fly('login_info');
