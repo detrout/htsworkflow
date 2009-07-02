@@ -6,7 +6,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from htsworkflow.frontend.bcmagic import models
 from htsworkflow.frontend.bcmagic.utils import report_error, redirect_to_url
 from htsworkflow.frontend.bcmagic.plugin import bcm_plugin_processor
-from htsworkflow.util.jsonutil import encode_json
+#from htsworkflow.util.jsonutil import encode_json
+
+try:
+    import json
+except ImportError, e:
+    import simplejson as json
 
 import re
 
@@ -90,8 +95,8 @@ def magic(request):
     if text is None or text.strip() == '':
         d['mode'] = 'Error'
         d['status'] = 'Did not recieve text'
-        j = json.JSONEncoder()
-        return HttpResponse(j.encode(d), 'text/plain')
+        
+        return HttpResponse(json.dumps(d), 'text/plain')
     
     # Did not receive bcm_mode error
     if bcm_mode is None or bcm_mode.strip() == '':
@@ -117,7 +122,7 @@ def magic(request):
     else:
         d = __magic_process(text)
     
-    return HttpResponse(encode_json(d), 'text/plain')
+    return HttpResponse(json.dumps(d), 'text/plain')
 
 
 
@@ -129,11 +134,11 @@ def json_test(request):
     else:
         text = None
     
-    #return HttpResponse(encode_json(request.POST.items()), 'text/plain')
+    #return HttpResponse(json.dumps(request.POST.items()), 'text/plain')
     if text is None or text.strip() == '':
         d['mode'] = 'Error'
         d['status'] = 'Did not recieve text'
-        return HttpResponse(encode_json(d), 'text/plain')
+        return HttpResponse(json.dumps(d), 'text/plain')
     
     if text.split('|')[0] == 'url':
         d['mode'] = 'redirect'
@@ -142,4 +147,4 @@ def json_test(request):
         d['msg'] = 'Recieved text: %s' % (text)
         d['mode'] = 'clear'
     
-    return HttpResponse(json_encode(d), 'text/plain')
+    return HttpResponse(json.dumps(d), 'text/plain')

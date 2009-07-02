@@ -3,7 +3,7 @@ from htsworkflow.frontend.experiments.models import FlowCell
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.frontend.bcprinter.util import print_zpl_socket
 from htsworkflow.frontend import settings
-from htsworkflow.util.jsonutil import encode_json
+#from htsworkflow.util.jsonutil import encode_json
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
@@ -12,7 +12,10 @@ from django.template import RequestContext
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
 
-
+try:
+    import json
+except ImportError, e:
+    import simplejson as json
 
 INVENTORY_CONTEXT_DEFAULTS = {
     'app_name': 'Inventory Tracker',
@@ -71,7 +74,7 @@ def data_items(request):
     
     d['rows'] = rows
     
-    return HttpResponse(encode_json(d), content_type="application/javascript")
+    return HttpResponse(json.dumps(d), content_type="application/javascript")
 
 @login_required
 def index(request):
