@@ -20,6 +20,6 @@
 ^FX -------Barcode contains HD serial #-----------
 ^FO150,150
 ^BXN,3,200
-^FD{% if use_uuid %}{{ item.uuid }}{% else %}{{ item.barcode_id }}{% endif %}^FS
+^FD{% if use_uuid %}invu|{{ item.uuid }}{% else %}invb|{{ item.barcode_id }}{% endif %}^FS
 
 ^XZ
