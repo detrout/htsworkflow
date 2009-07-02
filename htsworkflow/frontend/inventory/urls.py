@@ -8,5 +8,6 @@ urlpatterns = patterns('',
      
     # INDEX
     (r'^(?P<uuid>[a-fA-F0-9]{32})/$', 'htsworkflow.frontend.inventory.views.item_summary'),
-     (r'^$', 'htsworkflow.frontend.inventory.views.index')
+    (r'^(?P<uuid>[a-fA-F0-9]{32})/print/$', 'htsworkflow.frontend.inventory.views.item_print'),
+    (r'^$', 'htsworkflow.frontend.inventory.views.index')
     )

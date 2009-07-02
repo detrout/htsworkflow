@@ -1,6 +1,8 @@
 from htsworkflow.frontend.inventory.models import Item, LongTermStorage
 from htsworkflow.frontend.experiments.models import FlowCell
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
+from htsworkflow.frontend.bcprinter.util import print_zpl_socket
+from htsworkflow.frontend import settings
 from htsworkflow.util.jsonutil import encode_json
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -16,6 +18,20 @@ INVENTORY_CONTEXT_DEFAULTS = {
     'app_name': 'Inventory Tracker',
     'bcmagic': BarcodeMagicForm()
 }
+
+INVENTORY_ITEM_PRINT_DEFAULTS = {
+    'default': 'inventory/default.zpl',
+    'host': settings.BCPRINTER_PRINTER1_HOST
+}
+
+def getTemplateByType(item_type):
+    """
+    returns template to use given item_type
+    """
+    if item_type in INVENTORY_ITEM_PRINT_DEFAULTS:
+        return INVENTORY_ITEM_PRINT_DEFAULTS[item_type]
+    else:
+        return INVENTORY_ITEM_PRINT_DEFAULTS['default']
 
 @login_required
 def data_items(request):
@@ -72,7 +88,7 @@ def index(request):
                               context_instance=RequestContext(request))
     
 @login_required
-def item_summary(request, uuid):
+def item_summary(request, uuid, msg=''):
     """
     Display a summary for an item
     """
@@ -84,13 +100,54 @@ def item_summary(request, uuid):
     context_dict = {
         'page_name': 'Item Summary',
         'item': item,
-        'uuid': uuid
+        'uuid': uuid,
+        'msg': msg
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
     
     return render_to_response('inventory/inventory_summary.html',
                               context_dict,
                               context_instance=RequestContext(request))
+
+
+def _item_print(item, request):
+    """
+    Prints an item given a type of item label to print
+    """
+    #FIXME: Hard coding this for now... need to abstract later.
+    context = {'item': item}
+    
+    # Print using barcode_id
+    if not item.force_use_uuid and (item.barcode_id is None or len(item.barcode_id.strip())):
+        context['use_uuid'] = False
+        msg = 'Printing item with barcode id: %s' % (item.barcode_id)
+    # Print using uuid
+    else:
+        context['use_uuid'] = True
+        msg = 'Printing item with UUID: %s' % (item.uuid)
+    
+    c = RequestContext(request, context)
+    t = get_template(getTemplateByType(item.item_type.name))
+    print_zpl_socket(t.render(c))
+    
+    return msg
+
+@login_required
+def item_print(request, uuid):
+    """
+    Print a label for a given item
+    """
+    try:
+        item = Item.objects.get(uuid=uuid)
+    except ObjectDoesNotExist, e:
+        item = None
+        msg = "Item with UUID %s does not exist" % (uuid)
+    
+    if item is not None:
+        msg = _item_print(item, request)
+    
+    return item_summary(request, uuid, msg)
+
 
 def link_flowcell_and_device(request, flowcell, serial):
     """

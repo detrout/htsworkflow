@@ -162,6 +162,7 @@ INSTALLED_APPS = (
     'htsworkflow.frontend.reports',
     'htsworkflow.frontend.inventory',
     'htsworkflow.frontend.bcmagic',
+    'htsworkflow.frontend.bcprinter',
     'django.contrib.databrowse',
 )
 
@@ -179,4 +180,9 @@ options_to_dict(ALLOWED_ANALYS_IPS, 'allowed_analysis_hosts')
 RESULT_HOME_DIR='/Users/diane/proj/solexa/results/flowcells'
 
 LINK_FLOWCELL_STORAGE_DEVICE_URL = options.get('frontend', 'link_flowcell_storage_device_url')
-
+# PORT 9100 is default for Zebra tabletop/desktop printers
+# PORT 6101 is default for Zebra mobile printers
+BCPRINTER_PRINTER1_HOST = options.get('bcprinter', 'printer1_host')
+BCPRINTER_PRINTER1_PORT = int(options.get('bcprinter', 'printer1_port'))
+BCPRINTER_PRINTER2_HOST = options.get('bcprinter', 'printer2_host')
+BCPRINTER_PRINTER2_PORT = int(options.get('bcprinter', 'printer2_port'))
