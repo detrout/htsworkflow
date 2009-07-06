@@ -90,15 +90,31 @@ def index(request):
                               context_dict,
                               context_instance=RequestContext(request))
     
+
 @login_required
-def item_summary(request, uuid, msg=''):
+def item_summary_by_barcode(request, barcode_id, msg=''):
+    """
+    Display a summary for an item by barcode
+    """
+    try:
+        item = Item.objects.get(barcode_id=barcode_id)
+    except ObjectDoesNotExist, e:
+        item = None
+        
+    return item_summary_by_uuid(request, None, msg, item)
+    
+
+@login_required
+def item_summary_by_uuid(request, uuid, msg='', item=None):
     """
     Display a summary for an item
     """
-    try:
-        item = Item.objects.get(uuid=uuid)
-    except ObjectDoesNotExist, e:
-        item = None
+    # Use item instead of looking it up if it is passed.
+    if item is None:
+        try:
+            item = Item.objects.get(uuid=uuid)
+        except ObjectDoesNotExist, e:
+            item = None
     
     context_dict = {
         'page_name': 'Item Summary',
@@ -149,7 +165,7 @@ def item_print(request, uuid):
     if item is not None:
         msg = _item_print(item, request)
     
-    return item_summary(request, uuid, msg)
+    return item_summary_by_uuid(request, uuid, msg)
 
 
 def link_flowcell_and_device(request, flowcell, serial):

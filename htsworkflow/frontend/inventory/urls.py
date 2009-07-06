@@ -7,7 +7,8 @@ urlpatterns = patterns('',
      (r'^lts/link/(?P<flowcell>.+)/(?P<serial>.+)/$', 'htsworkflow.frontend.inventory.views.link_flowcell_and_device'),
      
     # INDEX
-    (r'^(?P<uuid>[a-fA-F0-9]{32})/$', 'htsworkflow.frontend.inventory.views.item_summary'),
+    (r'^(?P<uuid>[a-fA-F0-9]{32})/$', 'htsworkflow.frontend.inventory.views.item_summary_by_uuid'),
     (r'^(?P<uuid>[a-fA-F0-9]{32})/print/$', 'htsworkflow.frontend.inventory.views.item_print'),
+    (r'^(?P<barcode_id>.+)/$', 'htsworkflow.frontend.inventory.views.item_summary_by_barcode'),
     (r'^$', 'htsworkflow.frontend.inventory.views.index')
     )

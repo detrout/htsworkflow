@@ -2,10 +2,42 @@
 
 {% block content %}
 {% if item %}
-        <h3>Item: {{item.uuid}}</h3>
-        <a href="{% url htsworkflow.frontend.inventory.views.index %}{{item.uuid}}/print/">Print</a>
-        
-        
+        <h2>Item Summary:</h2>
+        <a href="{% url htsworkflow.frontend.inventory.views.index %}{{item.uuid}}/print/">Print</a><br />
+        <br />
+        <b>UUID:</b> {{item.uuid}}<br />
+        <b>Barcode ID:</b> {{ item.barcode_id }}<br />
+        <b>Type:</b> {{ item.item_type.name }}<br />
+        <br />
+        <b>Location:</b> {{ item.location.name }}<br />
+        <b>Status: </b> {% if item.status %}{{ item.status.name }}{% else %}N/A{% endif %}<br />
+        <br />
+        {% if item.item_info.model_id %}
+        <b>Model ID:</b> {{ item.item_info.model_id }}<br />
+        {% endif %}
+        {% if item.item_info.part_number %}
+        <b>Part Number:</b> {{ item.item_info.part_number }}<br />
+        {% endif %}
+        {% if item.item_info.lot_number %}
+        <b>Lot Number:</b> {{ item.item_info.lot_number }}<br />
+        {% endif %}
+        <br />
+        {% if item.item_info.url %}
+        <b>Item Website:</b> <a href="{{ item.item_info.url }}">Link</a><br />
+        {% endif %}
+        <b>Vendor:</b> {% if item.item_info.vendor.url %}<a href="{{ item.item_info.vendor.url }}">{% endif %}{{ item.item_info.vendor.name }}{% if item.item_info.vendor.url %}</a>{% endif %}<br />
+        <b>Purchase Date:</b>{% if item.item_info.purchase_date %}{{ item.item_info.purchase_date }}{% else %}N/A{% endif %}<br />
+        <b>Warenty (Months):</b>{% if item.item_info.warenty_months %}{{item.item_info.warenty_months}}{% else %}N/A{% endif %}<br />
+        <br />
+        <b>Item Info Notes:</b>
+        <p>
+                {% if item.item_info.notes %}{{ item.item_info.notes }}{% else %}No notes found{% endif %}
+        </p>
+        <br />
+        <b>Item Specific Notes:</b>
+        <p>
+                {% if item.notes %}{{ item.notes }}{% else %}No notes found{% endif %}
+        </p>
         
 {% else %}
         <h3>Item with UUID of {{ uuid }} not found.</h3>

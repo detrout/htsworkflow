@@ -25,4 +25,14 @@
     <field name="regex" type="CharField">(?P&lt;search&gt;[\S\s]+)</field>
     <field name="url_template" type="TextField">http://www.flickr.com/search/?q={{ search }}</field>
   </object>
+  <object model="bcmagic.keywordmap" pk="6">
+    <field name="keyword" type="CharField">invu</field>
+    <field name="regex" type="CharField">(?P&lt;uuid&gt;[A-Fa-f0-9]+)</field>
+    <field name="url_template" type="TextField">/inventory/{{ uuid }}/</field>
+  </object>
+  <object model="bcmagic.keywordmap" pk="7">
+    <field name="keyword" type="CharField">invb</field>
+    <field name="regex" type="CharField">(?P&lt;barcode_id&gt;.+)</field>
+    <field name="url_template" type="TextField">/inventory/{{barcode_id}}/</field>
+  </object>
 </django-objects>
