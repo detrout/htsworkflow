@@ -38,6 +38,53 @@
         <p>
                 {% if item.notes %}{{ item.notes }}{% else %}No notes found{% endif %}
         </p>
+        <br />
+        <center><div id="lts-grid"></div></center>
+        <script>
+                var lts_data = [
+                {% for lts in item.longtermstorage_set.all %}
+                        {% for lib in lts.libraries.iterator %}[ "{{ lts.flowcell.flowcell_id }}","{{ lib.library_id }}","{% for sd in lts.storage_devices.iterator %}{{ sd }}{% if forloop.last %}"{% else %}|{% endif %}{% endfor %}{% if forloop.parentloop.last %}{% if forloop.last %}]{% else %}],{% endif %}{% else %}],{% endif %}
+                        {% endfor %}
+                {% endfor %}
+                ];
+                
+                var lts_reader = new Ext.data.ArrayReader({}, [
+                        {name: 'flowcell'},
+                        {name: 'library'},
+                        {name: 'storage_devices'}
+                ]);
+                
+                var lts_grid = new Ext.grid.GridPanel({
+                        store: new Ext.data.GroupingStore({
+                                reader: lts_reader,
+                                data: lts_data,
+                                sortInfo: {'field': 'flowcell', 'direction': 'DESC'},
+                                groupField: 'flowcell'
+                        }),
+                        
+                        columns: [
+                                {id: 'flowcell', header: 'Flowcell', width: 30, sortable: true, dataIndex: 'flowcell', hidden: true},
+                                {header: 'Library', width: 30, sortable: true, dataIndex: 'library'},
+                                {header: 'Storage Devices', width: 60, sortable: true, dataIndex: 'storage_devices'}
+                        ],
+                        
+                        view: new Ext.grid.GroupingView({
+                                forceFit: true,
+                                groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+                        }),
+                        
+                        frame: true,
+                        width: 700,
+                        autoHeight: true,
+                        collapisble: true,
+                        animCollapisble: true,
+                        stateful: true,
+                        stateId: 'inventory-item-lts-storage-grid',
+                        title: 'Long Term Storage Info',
+                        iconCls: 'icon-grid',
+                        renderTo: 'lts-grid'
+                })
+        </script>
         
 {% else %}
         <h3>Item with UUID of {{ uuid }} not found.</h3>
