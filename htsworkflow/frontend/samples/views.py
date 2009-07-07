@@ -363,7 +363,7 @@ def _make_eland_results(flowcell_id, lane, interesting_flowcells):
     if len(storage_id_list) == 0:
         storage_ids = None
     else:
-        storage_ids = ', '.join(storage_id_list)
+        storage_ids = ', '.join([ '<a href="/inventory/%s/">%s</a>' % (s,s) for s in storage_id_list ])
 
     results = []
     for cycle in cur_fc.keys():
