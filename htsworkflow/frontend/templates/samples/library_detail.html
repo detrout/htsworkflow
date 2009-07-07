@@ -66,7 +66,7 @@
     </td>
     <td>
       {% if result.storage_ids %}
-        {{ result.storage_ids }}
+        {{ result.storage_ids|safe }}
       {% endif %}
     </td>
   </tr>
