@@ -138,4 +138,35 @@ class LongTermStorage(models.Model):
     
     def __unicode__(self):
         return u"%s: %s" % (str(self.flowcell), ', '.join([ str(s) for s in self.storage_devices.iterator() ]))
+        
 
+
+class ReagentBase(models.Model):
+    
+    reagent = models.ManyToManyField(Item)
+    
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        abstract = True
+
+
+class ReagentFlowcell(ReagentBase):
+    """
+    Links reagents and flowcells
+    """
+    flowcell = models.ForeignKey(FlowCell)
+    
+    def __unicode__(self):
+        return u"%s: %s" % (str(self.flowcell), ', '.join([ str(s) for s in self.reagent.iterator() ]))
+   
+
+class ReagentLibrary(ReagentBase):
+    """
+    Links libraries and flowcells
+    """
+    library = models.ForeignKey(Library)
+    
+    def __unicode__(self):
+        return u"%s: %s" % (str(self.library), ', '.join([ str(s) for s in self.reagent.iterator() ]))
