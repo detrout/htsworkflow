@@ -123,6 +123,9 @@ class Item(models.Model):
         else:
             return u"invb|%s" % (self.barcode_id)
             
+    def get_absolute_url(self):
+        return '/inventory/%s/' % (self.uuid)
+            
 pre_save.connect(_assign_uuid, sender=Item)
 
 

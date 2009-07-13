@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from htsworkflow.frontend.bcmagic import models
 from htsworkflow.frontend.bcmagic.utils import report_error, redirect_to_url
 from htsworkflow.frontend.bcmagic.plugin import bcm_plugin_processor
+from htsworkflow.frontend.bcmagic import plugin
 #from htsworkflow.util.jsonutil import encode_json
 
 try:
@@ -27,6 +28,31 @@ def index(request):
                               context_instance=RequestContext(request))
 
 
+def __plugin_search(text):
+    """
+    Runs registered plugins to search for results
+    """
+    
+    hits = []
+    for label, search_func in plugin._SEARCH_FUNCTIONS.items():
+        result = search_func(text)
+        if result is not None:
+            hits.extend(result)
+            
+    n = len(hits)
+    if n == 0:
+        msg = 'No hits found for: %s' % (text)
+        return report_error(msg)
+    elif n == 1:
+        return redirect_to_url(hits[0][1])
+    else:
+        msg = "%d hits found for (%s); multi-hit not implemented yet." % (n, text)
+        return report_error(msg)
+    
+    
+    #return json.dumps(hits)
+    
+
 def __magic_process(text):
     """
     Based on scanned text, check to see if there is map object to use
@@ -37,7 +63,8 @@ def __magic_process(text):
     
     # There should always be at least one | in a valid scan.
     if len(split_text) <= 1:
-        return report_error('Invalid text: %s' % (text))
+        #return report_error('Invalid text: %s' % (text))
+        return __plugin_search(text)
     
     # Keyword is the first element in the list
     keyword = split_text[0]

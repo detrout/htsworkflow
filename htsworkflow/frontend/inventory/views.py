@@ -1,4 +1,6 @@
 from htsworkflow.frontend.inventory.models import Item, LongTermStorage
+from htsworkflow.frontend.inventory.bcmagic import item_search
+from htsworkflow.frontend.bcmagic.plugin import register_search_plugin
 from htsworkflow.frontend.experiments.models import FlowCell
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.frontend.bcprinter.util import print_zpl_socket
@@ -11,6 +13,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
+
+register_search_plugin('Inventory Item', item_search)
 
 try:
     import json
