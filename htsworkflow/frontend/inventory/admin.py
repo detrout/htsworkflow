@@ -3,13 +3,16 @@ from django.contrib import admin
 from htsworkflow.frontend.inventory.models import Item, ItemInfo, ItemType, Vendor, Location, LongTermStorage, ItemStatus, ReagentFlowcell, ReagentLibrary
 
 class ItemAdmin(admin.ModelAdmin):
+    save_as = True
+    save_on_top = True
     list_display = ('uuid', 'barcode_id','item_type', 'item_info', 'location', 'force_use_uuid', 'creation_date')
     list_filter = (
         'item_type',
     )
 
 class ItemInfoAdmin(admin.ModelAdmin):
-    pass
+    save_as = True
+    save_on_top = True
 
 class ItemTypeAdmin(admin.ModelAdmin):
     pass
