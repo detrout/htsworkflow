@@ -100,7 +100,7 @@ class Item(models.Model):
     
     #Automatically assigned uuid; used for barcode if one is not provided in
     # barcode_id
-    uuid = models.CharField(max_length=32, blank=True, help_text="Leave blank for automatic UUID generation")
+    uuid = models.CharField(max_length=32, blank=True, help_text="Leave blank for automatic UUID generation", unique=True)
     
     # field for existing barcodes; used instead of uuid if provided
     barcode_id = models.CharField(max_length=256, blank=True, null=True)
