@@ -91,6 +91,7 @@ class Handler(pyinotify.ProcessEvent):
                     # compute name of the top level directory that had an event
                     # in the current watch path
                     target = get_top_dir(watch_path, event.path)
+                    runfolder = os.path.join(watch_path, target)
 
                     if not is_runfolder(target):
                         logging.debug("Skipping %s, not a runfolder" % (target,))
@@ -109,7 +110,12 @@ class Handler(pyinotify.ProcessEvent):
 
                     msg = "Create: %s %s %s %s" % (watch_path, target, event.path, event.name)
 
-                    if self.completion_file == event.name.lower() or run_already_complete:
+                    # the ReadPrep step uses some of the same file completion flags as the
+                    # main analysis, which means this completion code might get tripped because of it
+                    # so we need to make sure we're getting the completion file in the root of the
+                    # runfolder
+                    if (self.completion_file == event.name.lower() and event.path == runfolder) \
+                      or run_already_complete:
                         self.last_event[watch_path][target].complete = True
                         msg += "(completed)"
 
