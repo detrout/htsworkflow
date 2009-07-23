@@ -9,6 +9,14 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = (
         'item_type',
     )
+    search_fields = [
+        'barcode_id',
+        'uuid',
+        'status__name',
+        'item_type__name',
+        'location__name',
+        'notes'
+    ]
 
 class ItemInfoAdmin(admin.ModelAdmin):
     save_as = True
