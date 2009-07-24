@@ -12,13 +12,13 @@
 ^FD{{ item.item_type.name }}:^FS
 
 ^FX -------Text contains HD serial #-------------
-^FO35,75
+^FO15,75
 ^CF0,42
-^FB305,3,,C
+^FB325,3,,C
 ^FD{% if use_uuid %}{{ item.uuid }}{% else %}{{ item.barcode_id }}{% endif %}^FS
 
 ^FX -------Barcode contains HD serial #-----------
-^FO150,150
+^FO150,200
 ^BXN,3,200
 ^FD{% if use_uuid %}invu|{{ item.uuid }}{% else %}invb|{{ item.barcode_id }}{% endif %}^FS
 
