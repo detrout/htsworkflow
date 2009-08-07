@@ -4,6 +4,11 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from htsworkflow.frontend.samples.models import Antibody, Cellline, Condition, ExperimentType, LibraryType, Species, Affiliation, Library, Tag
+from htsworkflow.frontend.experiments.models import Lane
+
+class LaneLibraryInline(admin.StackedInline):
+  model = Lane
+  extra = 0
 
 class Library_Inline(admin.TabularInline):
   model = Library
@@ -84,6 +89,9 @@ class LibraryOptions(admin.ModelAdmin):
              'fields' : (('affiliations'), ('tags'),)
          }),
          )
+    inlines = [
+      LaneLibraryInline,
+    ]
 
     # some post 1.0.2 version of django has formfield_overrides 
     # which would replace this code with:

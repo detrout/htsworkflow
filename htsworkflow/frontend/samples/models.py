@@ -138,7 +138,7 @@ class Library(models.Model):
   REPLICATE_NUM = ((1,1),(2,2),(3,3),(4,4))
   replicate =  models.PositiveSmallIntegerField(choices=REPLICATE_NUM,default=1) 
   experiment_type = models.ForeignKey(ExperimentType)
-  library_type = models.ForeignKey(LibraryType, null=True)
+  library_type = models.ForeignKey(LibraryType, blank=True, null=True)
   creation_date = models.DateField(blank=True, null=True)
   made_for = models.CharField(max_length=50, blank=True, 
       verbose_name='ChIP/DNA/RNA Made By')

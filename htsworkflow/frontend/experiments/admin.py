@@ -1,6 +1,11 @@
-from htsworkflow.frontend.experiments.models import FlowCell, DataRun, ClusterStation, Sequencer
+from htsworkflow.frontend.experiments.models import FlowCell, DataRun, ClusterStation, Sequencer, Lane
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+
+class LaneInline(admin.StackedInline):
+  model = Lane
+  max_num = 8
+  extra = 8
 
 class DataRunOptions(admin.ModelAdmin):
   search_fields = [
@@ -65,6 +70,9 @@ class FlowCellOptions(admin.ModelAdmin):
         }),
         ('Notes:', { 'fields': ('notes',),}),
     )
+    inlines = [
+      LaneInline,
+    ]
 
 class ClusterStationOptions(admin.ModelAdmin):
     list_display = ('name', )
@@ -73,8 +81,13 @@ class ClusterStationOptions(admin.ModelAdmin):
 class SequencerOptions(admin.ModelAdmin):
     list_display = ('name', )
     fieldsets = ( ( None, { 'fields': ( 'name', ) } ), )
+    
+class LaneOptions(admin.ModelAdmin):
+    list_display = ('flowcell', 'lane_number', 'library', 'comment')
+    
 
 admin.site.register(DataRun, DataRunOptions)
 admin.site.register(FlowCell, FlowCellOptions)
 admin.site.register(ClusterStation, ClusterStationOptions)
 admin.site.register(Sequencer, SequencerOptions)
+admin.site.register(Lane, LaneOptions)
