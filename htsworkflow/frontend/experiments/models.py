@@ -168,6 +168,6 @@ class Lane(models.Model):
   flowcell = models.ForeignKey(FlowCell)
   lane_number = models.IntegerField(choices=[(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8)])
   library = models.ForeignKey(Library)
-  pm = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
+  pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
   cluster_estimate = models.IntegerField(blank=True, null=True)
   comment = models.TextField(null=True, blank=True)

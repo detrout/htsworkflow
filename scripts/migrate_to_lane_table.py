@@ -20,7 +20,7 @@ if __name__ == '__main__':
         
         # Meta Data
         lane1.lane_number = 1
-        lane1.pm = flowcell.lane_1_pM
+        lane1.pM = flowcell.lane_1_pM
         lane1.cluster_estimate = flowcell.lane_1_cluster_estimate
         
         # Save
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         
         # Meta Data
         lane2.lane_number = 2
-        lane2.pm = flowcell.lane_2_pM
+        lane2.pM = flowcell.lane_2_pM
         lane2.cluster_estimate = flowcell.lane_2_cluster_estimate
         
         # Save
@@ -52,7 +52,7 @@ if __name__ == '__main__':
         
         # Meta Data
         lane3.lane_number = 3
-        lane3.pm = flowcell.lane_3_pM
+        lane3.pM = flowcell.lane_3_pM
         lane3.cluster_estimate = flowcell.lane_3_cluster_estimate
         
         # Save
@@ -68,7 +68,7 @@ if __name__ == '__main__':
         
         # Meta Data
         lane4.lane_number = 4
-        lane4.pm = flowcell.lane_4_pM
+        lane4.pM = flowcell.lane_4_pM
         lane4.cluster_estimate = flowcell.lane_4_cluster_estimate
         
         # Save
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         
         # Meta Data
         lane5.lane_number = 5
-        lane5.pm = flowcell.lane_5_pM
+        lane5.pM = flowcell.lane_5_pM
         lane5.cluster_estimate = flowcell.lane_5_cluster_estimate
         
         # Save
@@ -100,7 +100,7 @@ if __name__ == '__main__':
         
         # Meta Data
         lane6.lane_number = 6
-        lane6.pm = flowcell.lane_6_pM
+        lane6.pM = flowcell.lane_6_pM
         lane6.cluster_estimate = flowcell.lane_6_cluster_estimate
         
         # Save
@@ -116,7 +116,7 @@ if __name__ == '__main__':
         
         # Meta Data
         lane7.lane_number = 7
-        lane7.pm = flowcell.lane_7_pM
+        lane7.pM = flowcell.lane_7_pM
         lane7.cluster_estimate = flowcell.lane_7_cluster_estimate
         
         # Save
@@ -132,7 +132,7 @@ if __name__ == '__main__':
         
         # Meta Data
         lane8.lane_number = 8
-        lane8.pm = flowcell.lane_1_pM
+        lane8.pM = flowcell.lane_8_pM
         lane8.cluster_estimate = flowcell.lane_8_cluster_estimate
         
         # Save

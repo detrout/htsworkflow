@@ -84,6 +84,15 @@ class SequencerOptions(admin.ModelAdmin):
     
 class LaneOptions(admin.ModelAdmin):
     list_display = ('flowcell', 'lane_number', 'library', 'comment')
+    fieldsets = (
+      (None, {
+        'fields': ('lane_number', 'flowcell', 'library', 'pM', 'cluster_estimate')
+      }),
+      ('Optional', {
+        'classes': ('collapse', ),
+        'fields': ('comment', )
+      }),
+    )
     
 
 admin.site.register(DataRun, DataRunOptions)
