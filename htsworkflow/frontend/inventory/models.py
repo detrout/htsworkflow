@@ -22,7 +22,7 @@ def _assign_uuid(sender, instance, **kwargs):
     """
     Assigns a UUID to model on save
     """
-    print 'Entered _assign_uuid'
+    #print 'Entered _assign_uuid'
     if instance.uuid is None or len(instance.uuid) != 32:
         instance.uuid = uuid.uuid1().hex
 
