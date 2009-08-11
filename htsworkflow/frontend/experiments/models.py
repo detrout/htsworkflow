@@ -32,42 +32,6 @@ class FlowCell(models.Model):
   advanced_run = models.BooleanField(default=False)
   paired_end = models.BooleanField(default=False)
   read_length = models.IntegerField(default=32) #Stanford is currenlty 25
-  
-  lane_1_library = models.ForeignKey(Library, related_name="lane_1_library")
-  lane_2_library = models.ForeignKey(Library, related_name="lane_2_library")
-  lane_3_library = models.ForeignKey(Library, related_name="lane_3_library")
-  lane_4_library = models.ForeignKey(Library, related_name="lane_4_library")
-  lane_5_library = models.ForeignKey(Library, related_name="lane_5_library")
-  lane_6_library = models.ForeignKey(Library, related_name="lane_6_library")
-  lane_7_library = models.ForeignKey(Library, related_name="lane_7_library")
-  lane_8_library = models.ForeignKey(Library, related_name="lane_8_library")
-
-  lane_1_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
-  lane_2_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
-  lane_3_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
-  lane_4_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
-  lane_5_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
-  lane_6_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
-  lane_7_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
-  lane_8_pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
-  
-  lane_1_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_2_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_3_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_4_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_5_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_6_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_7_cluster_estimate = models.IntegerField(blank=True, null=True)
-  lane_8_cluster_estimate = models.IntegerField(blank=True, null=True)
- 
-  # lane_1_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_1_primer")
-  # lane_2_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_2_primer")
-  # lane_3_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_3_primer")
-  # lane_4_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_4_primer")
-  # lane_5_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_5_primer")
-  # lane_6_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_6_primer")
-  # lane_7_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_7_primer")
-  # lane_8_primer = models.ForeignKey(Primer,blank=True,null=True,related_name="lane_8_primer")
 
   cluster_station = models.ForeignKey(ClusterStation, default=3)
   sequencer = models.ForeignKey(Sequencer, default=1)
@@ -91,17 +55,18 @@ class FlowCell(models.Model):
   def Lanes(self):
     library_url = '/admin/samples/library/%s' 
     html = ['<table>']
-    for i in range(1,9):
-        cluster_estimate = getattr(self, 'lane_%d_cluster_estimate' % (i,))
+    #for i in range(1,9):
+    for lane in self.lane_set.all():
+        cluster_estimate = lane.cluster_estimate
         if cluster_estimate is not None:
             cluster_estimate = "%s k" % ((int(cluster_estimate)/1000), )
         else:
             cluster_estimate = 'None'
-	library_id = getattr(self, 'lane_%d_library_id' % (i,))
-        library = getattr(self, 'lane_%d_library' % i)
-	element = '<tr><td>%d</td><td><a href="%s">%s</a></td><td>%s</td></tr>'
+        library_id = lane.library_id
+        library = lane.library
+        element = '<tr><td>%d</td><td><a href="%s">%s</a></td><td>%s</td></tr>'
         expanded_library_url = library_url %(library_id,)
-        html.append(element % (i, expanded_library_url, library, cluster_estimate))
+        html.append(element % (lane.lane_number, expanded_library_url, library, cluster_estimate))
     html.append('</table>')
     return "\n".join(html)
   Lanes.allow_tags = True
