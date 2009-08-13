@@ -44,9 +44,10 @@ def create_library_context(cl):
        else:
            summary['amplified_from'] = ''
        lanes_run = 0
-       for lane_id in LANE_LIST:
-           lane = getattr(lib, 'lane_%d_library' % (lane_id,))
-           lanes_run += len( lane.all() )
+       #for lane_id in LANE_LIST:
+       #    lane = getattr(lib, 'lane_%d_library' % (lane_id,))
+       #    lanes_run += len( lane.all() )
+       lanes_run = lib.lane_set.count()
        summary['lanes_run'] = lanes_run
        summary['is_archived'] = lib.is_archived()
        records.append(summary)
@@ -90,13 +91,15 @@ def library_to_flowcells(request, lib_id):
    
     flowcell_list = []
     interesting_flowcells = {} # aka flowcells we're looking at
-    for lane in LANE_LIST:
-        lane_library = getattr(lib, 'lane_%d_library' % (lane,))
-        for fc in lane_library.all():
-            flowcell_id, id = parse_flowcell_id(fc.flowcell_id)
-            if flowcell_id not in interesting_flowcells:
-                interesting_flowcells[flowcell_id] = get_flowcell_result_dict(flowcell_id)
-            flowcell_list.append((fc.flowcell_id, lane))
+    #for lane in LANE_LIST:
+    for lane in lib.lane_set.all():
+        #lane_library = getattr(lib, 'lane_%d_library' % (lane,))
+        #for fc in lane_library.all():
+        fc = lane.flowcell
+        flowcell_id, id = parse_flowcell_id(fc.flowcell_id)
+        if flowcell_id not in interesting_flowcells:
+            interesting_flowcells[flowcell_id] = get_flowcell_result_dict(flowcell_id)
+        flowcell_list.append((fc.flowcell_id, lane))
 
     flowcell_list.sort()
     
