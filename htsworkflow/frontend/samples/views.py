@@ -258,8 +258,9 @@ def _summary_stats(flowcell_id, lane_id):
 
             # grab some more information out of the flowcell db
             flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
-            pm_field = 'lane_%d_pM' % (lane_id)
-            eland_summary.successful_pm = getattr(flowcell, pm_field)
+            #pm_field = 'lane_%d_pM' % (lane_id)
+            lane_obj = flowcell.lane_set.get(lane_number=lane_id)
+            eland_summary.successful_pm = lane_obj.pM
 
             summary_list.append(eland_summary)
 
