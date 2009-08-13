@@ -99,16 +99,16 @@ def library_to_flowcells(request, lib_id):
         flowcell_id, id = parse_flowcell_id(fc.flowcell_id)
         if flowcell_id not in interesting_flowcells:
             interesting_flowcells[flowcell_id] = get_flowcell_result_dict(flowcell_id)
-        flowcell_list.append((fc.flowcell_id, lane))
+        flowcell_list.append((fc.flowcell_id, lane.lane_number))
 
     flowcell_list.sort()
     
     lane_summary_list = []
     eland_results = []
-    for fc, lane in flowcell_list:
-        lane_summary, err_list = _summary_stats(fc, lane)
+    for fc, lane_number in flowcell_list:
+        lane_summary, err_list = _summary_stats(fc, lane_number)
 
-        eland_results.extend(_make_eland_results(fc, lane, interesting_flowcells))
+        eland_results.extend(_make_eland_results(fc, lane_number, interesting_flowcells))
         lane_summary_list.extend(lane_summary)
 
     context = {
