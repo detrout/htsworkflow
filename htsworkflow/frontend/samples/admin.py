@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from htsworkflow.frontend.samples.models import Antibody, Cellline, Condition, ExperimentType, LibraryType, Species, Affiliation, Library, Tag
 from htsworkflow.frontend.experiments.models import Lane
 
+
 class LaneLibraryInline(admin.StackedInline):
   model = Lane
   extra = 0

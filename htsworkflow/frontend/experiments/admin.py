@@ -1,11 +1,22 @@
 from htsworkflow.frontend.experiments.models import FlowCell, DataRun, ClusterStation, Sequencer, Lane
 from django.contrib import admin
+from django.forms import ModelForm
+from django.forms.fields import CharField
+from django.forms.widgets import TextInput
 from django.utils.translation import ugettext_lazy as _
+
+
+class LaneForm(ModelForm):
+    comment = CharField(widget=TextInput(attrs={'size':'80'}), required=False)
+    
+    class Meta:
+        model = Lane
 
 class LaneInline(admin.StackedInline):
   model = Lane
   max_num = 8
   extra = 8
+  form = LaneForm
 
 class DataRunOptions(admin.ModelAdmin):
   search_fields = [
