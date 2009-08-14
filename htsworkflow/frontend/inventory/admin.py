@@ -7,7 +7,7 @@ class ItemAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = ('uuid', 'barcode_id','item_type', 'item_info', 'location', 'force_use_uuid', 'creation_date')
     list_filter = (
-        'item_type',
+        'item_type', 'status'
     )
     search_fields = [
         'barcode_id',
