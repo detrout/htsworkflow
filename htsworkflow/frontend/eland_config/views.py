@@ -235,8 +235,12 @@ def _validate_input(data):
 
 
 def getElandConfig(flowcell, regenerate=False):
-  
-  file_path = os.path.join(settings.UPLOADTO_CONFIG_FILE, flowcell)
+
+  if hasattr(settings, 'UPLOADTO_CONFIG_FILE'):
+    dest = settings.UPLOADTO_CONFIG_FILE
+  else:
+    dest = '/tmp'
+  file_path = os.path.join(dest, flowcell)
   
   #If we are regenerating the config file, skip
   # reading of existing file. If the file doesn't
@@ -267,42 +271,9 @@ def getElandConfig(flowcell, regenerate=False):
   data.append("#  %s\n#" % (notes))
   
   #Convert all newline conventions to unix style
-  l1d = str(fcObj.lane_1_library.library_id) + '|' \
-          + fcObj.lane_1_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
-  l2d = str(fcObj.lane_2_library.library_id) + '|' \
-          + fcObj.lane_2_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
-  l3d = str(fcObj.lane_3_library.library_id) + '|' \
-          + fcObj.lane_3_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
-  l4d = str(fcObj.lane_4_library.library_id) + '|' \
-          + fcObj.lane_4_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
-  
-  l5d = str(fcObj.lane_5_library.library_id) + '|' \
-          + fcObj.lane_5_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
-  l6d = str(fcObj.lane_6_library.library_id) + '|' \
-          + fcObj.lane_6_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
-  l7d = str(fcObj.lane_7_library.library_id) + '|' \
-          + fcObj.lane_7_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
-  l8d = str(fcObj.lane_8_library.library_id) + '|' \
-          + fcObj.lane_8_library.library_name.replace('\r\n', '\n').replace('\r', '\n').replace('%', '%%')
-  
-  # Turn new lines into indented commented newlines
-  l1d = l1d.replace('\n', '\n#  ')
-  l2d = l2d.replace('\n', '\n#  ')
-  l3d = l3d.replace('\n', '\n#  ')
-  l4d = l4d.replace('\n', '\n#  ')
-  l5d = l5d.replace('\n', '\n#  ')
-  l6d = l6d.replace('\n', '\n#  ')
-  l7d = l7d.replace('\n', '\n#  ')
-  l8d = l8d.replace('\n', '\n#  ')
-  
-  data.append("# Lane1: %s" % (l1d))
-  data.append("# Lane2: %s" % (l2d))
-  data.append("# Lane3: %s" % (l3d))
-  data.append("# Lane4: %s" % (l4d))
-  data.append("# Lane5: %s" % (l5d))
-  data.append("# Lane6: %s" % (l6d))
-  data.append("# Lane7: %s" % (l7d))
-  data.append("# Lane8: %s" % (l8d))
+  for lane in fcObj.lane_set.all():
+    data.append("# Lane%d: %d | %s" % \
+      (lane.lane_number, lane.library_id,  lane.library.library_name.replace('%', '%%')))
   
   #data.append("GENOME_DIR %s" % (BASE_DIR))
   #data.append("CONTAM_DIR %s" % (BASE_DIR))
@@ -315,30 +286,9 @@ def getElandConfig(flowcell, regenerate=False):
   genome_dict = {}
   
   #l1s = form['lane1_species']
-  l1s = fcObj.lane_1_library.library_species.scientific_name #+ '|' + \
-        #fcObj.lane_1_library.library_species.use_genome_build
-  genome_dict.setdefault(l1s, []).append('1')
-  l2s = fcObj.lane_2_library.library_species.scientific_name #+ '|' + \
-        #fcObj.lane_2_library.library_species.use_genome_build
-  genome_dict.setdefault(l2s, []).append('2')
-  l3s = fcObj.lane_3_library.library_species.scientific_name #+ '|' + \
-        #fcObj.lane_3_library.library_species.use_genome_build
-  genome_dict.setdefault(l3s, []).append('3')
-  l4s = fcObj.lane_4_library.library_species.scientific_name #+ '|' + \
-        #fcObj.lane_4_library.library_species.use_genome_build
-  genome_dict.setdefault(l4s, []).append('4')
-  l5s = fcObj.lane_5_library.library_species.scientific_name #+ '|' + \
-        #fcObj.lane_5_library.library_species.use_genome_build
-  genome_dict.setdefault(l5s, []).append('5')
-  l6s = fcObj.lane_6_library.library_species.scientific_name #+ '|' + \
-        #fcObj.lane_6_library.library_species.use_genome_build
-  genome_dict.setdefault(l6s, []).append('6')
-  l7s = fcObj.lane_7_library.library_species.scientific_name #+ '|' + \
-        #fcObj.lane_7_library.library_species.use_genome_build
-  genome_dict.setdefault(l7s, []).append('7')
-  l8s = fcObj.lane_8_library.library_species.scientific_name #+ '|' + \
-        #fcObj.lane_8_library.library_species.use_genome_build
-  genome_dict.setdefault(l8s, []).append('8')
+  for lane in fcObj.lane_set.all():
+    species = lane.library.library_species.scientific_name
+    genome_dict.setdefault(species, []).append(unicode(lane.lane_number))
   
   genome_list = genome_dict.keys()
   genome_list.sort()
@@ -355,6 +305,7 @@ def getElandConfig(flowcell, regenerate=False):
     data.append('%s:USE_BASES %s' % (lanes, 'Y'*int(read_length)))
     
   data.append('SEQUENCE_FORMAT --fastq')
+  data.append('') # want a trailing newline
   
   data = '\n'.join(data)
   
