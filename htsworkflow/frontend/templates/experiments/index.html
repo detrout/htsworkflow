@@ -1,7 +1,7 @@
 {% if data_run_list %}
     <ul>
     {% for run in data_run_list %}
-        <li>{{ run.run_folder }}</li>
+        <li><a href="{{ run.fcid }}">{{ run.run_folder }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
