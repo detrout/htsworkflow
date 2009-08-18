@@ -2,6 +2,7 @@
 from django.http import HttpResponse
 from datetime import datetime
 from string import *
+import os
 import re
 from htsworkflow.frontend import settings
 from htsworkflow.frontend.experiments.models import FlowCell, DataRun
@@ -81,44 +82,26 @@ def generateConfile(request,fcid):
 
     #if not granted: return HttpResponse("access denied.")
 
-    cnfgfile = 'READ_LENGTH 25\n'
-    cnfgfile += 'ANALYSIS eland\n'
-    cnfgfile += 'GENOME_FILE all_chr.fa\n'
-    cnfgfile += 'ELAND_MULTIPLE_INSTANCES 8\n'
+    config = ['READ_LENGTH 25']
+    config += ['ANALYSIS eland']
+    config += ['GENOME_FILE all_chr.fa']
+    config += ['ELAND_MULTIPLE_INSTANCES 8']
     genome_dir = 'GENOME_DIR /Volumes/Genomes/'
     eland_genome = 'ELAND_GENOME /Volumes/Genomes/'
     
     try:                                                                                                                                              
-      rec = FlowCell.objects.get(flowcell_id=fcid)
+      fc = FlowCell.objects.get(flowcell_id=fcid)
+      for lane in fc.lane_set.all():
+          print dir(lane.library.library_species)
+          config += [ str(lane.lane_number) +":" + \
+                      genome_dir + lane.library.library_species.scientific_name ]
+          config += [ str(lane.lane_number) +":" + \
+                      eland_genome + lane.library.library_species.scientific_name ]
       
-      cnfgfile += '1:'+genome_dir+rec.lane_1_library.library_species.use_genome_build+'\n'
-      cnfgfile += '1:'+eland_genome+rec.lane_1_library.library_species.use_genome_build+'\n'
-
-      cnfgfile += '2:'+genome_dir+rec.lane_2_library.library_species.use_genome_build+'\n'
-      cnfgfile += '2:'+eland_genome+rec.lane_2_library.library_species.use_genome_build+'\n'
- 
-      cnfgfile += '3:'+genome_dir+rec.lane_3_library.library_species.use_genome_build+'\n'
-      cnfgfile += '3:'+eland_genome+rec.lane_3_library.library_species.use_genome_build+'\n'
-
-      cnfgfile += '4:'+genome_dir+rec.lane_4_library.library_species.use_genome_build+'\n'
-      cnfgfile += '4:'+eland_genome+rec.lane_4_library.library_species.use_genome_build+'\n'
-      
-      cnfgfile += '5:'+genome_dir+rec.lane_5_library.library_species.use_genome_build+'\n'
-      cnfgfile += '5:'+eland_genome+rec.lane_5_library.library_species.use_genome_build+'\n'
-
-      cnfgfile += '6:'+genome_dir+rec.lane_6_library.library_species.use_genome_build+'\n'
-      cnfgfile += '6:'+eland_genome+rec.lane_6_library.library_species.use_genome_build+'\n'
-
-      cnfgfile += '7:'+genome_dir+rec.lane_7_library.library_species.use_genome_build+'\n'
-      cnfgfile += '7:'+eland_genome+rec.lane_7_library.library_species.use_genome_build+'\n'
-
-      cnfgfile += '8:'+genome_dir+rec.lane_8_library.library_species.use_genome_build+'\n'
-      cnfgfile += '8:'+eland_genome+rec.lane_8_library.library_species.use_genome_build
-
     except ObjectDoesNotExist:
-      cnfgfile = 'Entry not found for fcid  = '+fcid
+      config = 'Entry not found for fcid  = '+fcid
 
-    return cnfgfile
+    return os.linesep.join(config)
 
 def getConfile(req):
     granted = False
