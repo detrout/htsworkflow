@@ -55,7 +55,11 @@ options = ConfigParser.SafeConfigParser(
                os.path.abspath('/htsworkflow/htswfrontend/dev_fctracker.db'),
              'time_zone': 'America/Los_Angeles',
              'default_pm': '5',
-             'link_flowcell_storage_device_url': "http://localhost:8000/inventory/lts/link/"
+             'link_flowcell_storage_device_url': "http://localhost:8000/inventory/lts/link/",
+             'printer1_host': '127.0.0.1',
+             'printer1_port': '9100',
+             'printer2_host': '127.0.0.1',
+             'printer2_port': '9100',
            })
 
 options.read([os.path.expanduser("~/.htsworkflow.ini"),
@@ -66,6 +70,9 @@ options.read([os.path.expanduser("~/.htsworkflow.ini"),
 # to exist in order to retrieve anything.
 if not options.has_section('frontend'):
     options.add_section('frontend')
+if not options.has_section('bcprinter'):
+    options.add_section('bcprinter')
+
 
 # Django settings for elandifier project.
 
@@ -76,6 +83,9 @@ ADMINS = []
 options_to_list(ADMINS, 'admins')
 
 MANAGERS = ADMINS
+
+AUTHENTICATION_BACKENDS = ( 'samples.auth_backend.HTSUserModelBackend', )
+CUSTOM_USER_MODEL = 'samples.HTSUser' 
 
 EMAIL_HOST = options.get('frontend', 'email_host')
 EMAIL_PORT = int(options.get('frontend', 'email_port'))

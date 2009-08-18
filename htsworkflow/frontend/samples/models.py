@@ -1,6 +1,6 @@
 import urlparse
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, UserManager
 from htsworkflow.frontend import settings
 from htsworkflow.frontend.reports.libinfopar import *
 
@@ -102,12 +102,18 @@ class Affiliation(models.Model):
   name = models.CharField(max_length=256, db_index=True, verbose_name='Name')
   contact = models.CharField(max_length=256, null=True, blank=True,verbose_name='Lab Name')  
   email = models.EmailField(null=True,blank=True)
+  users = models.ManyToManyField('HTSUser', null=True)
+  users.admin_order_field = "username"
   
   def __unicode__(self):
     str = unicode(self.name)
     if self.contact is not None and len(self.contact) > 0:
       str += u' ('+self.contact+u')' 
     return str
+
+  def Users(self):
+      users = self.users.all().order_by('username')
+      return ", ".join([unicode(a) for a in users ])
 
   class Meta:
     ordering = ["name","contact"]
@@ -254,3 +260,13 @@ class Library(models.Model):
   @models.permalink
   def get_absolute_url(self):
     return ('htsworkflow.frontend.samples.views.library_to_flowcells', [str(self.library_id)])
+
+class HTSUser(User):
+    """
+    Provide some site-specific customization for the django user class
+    """
+    #objects = UserManager()
+
+    class Meta:
+        ordering = ['username']
+        
