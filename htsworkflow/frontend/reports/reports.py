@@ -38,7 +38,7 @@ def report1(request):
     AFL = 'ENCODE_Tier1'
     AFL_CNT = ''
     try:
-      AFL_Id = Affiliation.objects.get(name=AFL,contact=AFL_CNT).id.__str__()
+      AFL_Id = str(Affiliation.objects.get(name=AFL).id)
     except ObjectDoesNotExist:
       return HttpResponse("ERROR: Affiliation Record Not Found for: '"+AFL+"'")
   
@@ -54,113 +54,117 @@ def report1(request):
   if len(RepRecs) > 0: Reps = RepRecs[0].replicate
   
   ########
-  str = ''
-  str += '<span style="margin-right:20px"><a target=_self href="/admin" target=_self">Main Page</a></span>'
-  ##str += '<span style="margin-right:20px">Max Replicates: '+MaxRep.replicate.__str__()+'</span>'
-  str += '<span>Select another <b>'+EXP+'</b> Report:</span>  <select>'
+  s = []
+  s += ['<span style="margin-right:20px"><a target=_self href="/admin" target=_self">Main Page</a></span>']
+  ##s += '<span style="margin-right:20px">Max Replicates: '+MaxRep.replicate.__str__()+'</span>'
+  s += ['<span>Select another <b>'+EXP+'</b> Report:</span>  <select>']
   for af in Affiliation.objects.distinct():
-    str += '<option value='+af.id.__str__()
-    if AFL_Id == af.id.__str__():
-      str += ' selected'
-    str += ' onclick="window.location=\'/reports/report?aflid='+af.id.__str__()+'\'; return false;">'+af.name+' '+af.contact+'</option>'  
-  str += '</select>'
+    option = []
+    option += ['<option value='+str(af.id)]
+    if AFL_Id == str(af.id):
+      option += [' selected']
+    option += [' onclick="window.location=\'/reports/report?aflid='+af.id.__str__()+'\'; return false;">'+str(af.name)+' '+str(af.contact)+'</option>']
+  s += option
+  s += ['</select>']
 
-  str += '<span style="margin-left:20px;padding:1px;border:solid #cccccc 1px">color scheme: <span style="margin-left:5px;background-color:#66ff66"> > 12 M</span><span style="margin-left:5px;background-color:#00ccff"> >  5 M</span><span style="margin-left:5px;background-color:#ffcc33"> > 3 M</span><span style="margin-left:5px;background-color:#ff3300"> < 3 M</span></span>' 
+  s += ['<span style="margin-left:20px;padding:1px;border:solid #cccccc 1px">color scheme: <span style="margin-left:5px;background-color:#66ff66"> > 12 M</span><span style="margin-left:5px;background-color:#00ccff"> >  5 M</span><span style="margin-left:5px;background-color:#ffcc33"> > 3 M</span><span style="margin-left:5px;background-color:#ff3300"> < 3 M</span></span>']
 
-  str += '<span style="margin-left:20px">'
-  str += '<u>Switch to:</u> '+AFL+' '+AFL_CNT+' <a target=_self href="/reports/report_RM?exp=RNA-seq&aflid='+AFL_Id+'"><b>RNA-Seq</b> Report</a>'
-  str += '  | '
-  str += '<a target=_self href="/reports/report_RM?exp=Methyl-seq&aflid='+AFL_Id+'"><b>Methyl-Seq</b> Report</a>'
+  s += ['<span style="margin-left:20px">']
+  s += ['<u>Switch to:</u> '+AFL+' '+AFL_CNT+' <a target=_self href="/reports/report_RM?exp=RNA-seq&aflid='+AFL_Id+'"><b>RNA-Seq</b> Report</a>']
+  s += ['  | ']
+  s += ['<a target=_self href="/reports/report_RM?exp=Methyl-seq&aflid='+AFL_Id+'"><b>Methyl-Seq</b> Report</a>']
 
   bgc = '#ffffff' 
   pbgc = '#f7f7f7'
-  str += '<br/><br/><table border=1 cellspacing="2">'
-  str += '<tr><th style="text-align:right">PROJECT</th><th colspan='+(Reps*len(CLLs)).__str__()+' style="text-align:center">'+AFL+' '+AFL_CNT+' <span style="font-size:140%">'+EXP+'</span></th></tr>'
-  str += '<tr><th style="text-align:right">CELL LINE</th>'
+  s += ['<br/><br/><table border=1 cellspacing="2">']
+  s += ['<tr><th style="text-align:right">PROJECT</th><th colspan='+str(Reps*len(CLLs))+' style="text-align:center">'+AFL+' '+AFL_CNT+' <span style="font-size:140%">'+EXP+'</span></th></tr>']
+  s += ['<tr><th style="text-align:right">CELL LINE</th>']
   for H in CLLs: 
-    str += '<th colspan='+Reps.__str__()+' style="text-align:center;background-color:'+bgc+'">'+Cellline.objects.get(id=H['cell_line']).cellline_name+'</th>'
+    s += ['<th colspan='+Reps.__str__()+' style="text-align:center;background-color:'+bgc+'">'+Cellline.objects.get(id=H['cell_line']).cellline_name+'</th>']
     tbgc = bgc
     bgc = pbgc
     pbgc = tbgc 
-  str += '</tr><tr><th style="text-align:left">TF</th>'
+  s += ['</tr><tr><th style="text-align:left">TF</th>']
   bgc = '#ffffff'
   pbgc = '#f7f7f7'
   for H in CLLs:
     for r in range(1,Reps+1):
-      str += '<th style="text-align:center;background-color:'+bgc+'">Rep. '+r.__str__()+'</th>'
+      s += ['<th style="text-align:center;background-color:'+bgc+'">Rep. '+r.__str__()+'</th>']
     tbgc = bgc
     bgc = pbgc
     pbgc = tbgc
-  str += '</tr>'
-  str += '<tr><td align=right><a title="View Libraries Records" target=_self href=/admin/fctracker/library/?affiliations__id__exact='+AFL_Id+'&experiment_type__exact=INPUT_RXLCh>Total Chromatin</a></td>'
+  s += ['</tr>']
+  s += ['<tr><td align=right><a title="View Libraries Records" target=_self href=/admin/fctracker/library/?affiliations__id__exact='+AFL_Id+'&experiment_type__exact=INPUT_RXLCh>Total Chromatin</a></td>']
   bgc = '#ffffff'
   pbgc = '#f7f7f7'
   for H in CLLs:
     for r in range(1,Reps+1):
       repReads = Library.objects.filter(experiment_type='INPUT_RXLCh',affiliations__name=AFL,affiliations__contact=AFL_CNT,cell_line=H['cell_line'].__str__(),replicate=r)
-      str += "<td align=center style='background-color:"+bgc+"'>"
+      s += ["<td align=center style='background-color:"+bgc+"'>"]
       if len(repReads) == 0:
-        str += 'No Libraries'
+        s += ['No Libraries']
       else:
         cnt = 0
         for R1 in repReads:
           rres = R1.aligned_m_reads()
           # Check data sanlty                                                                                                                                           
           if rres[2] != 'OK':
-            str += '<div style="border:solid red 2px">'+rres[2]
+            s += ['<div style="border:solid red 2px">'+rres[2]]
           else:
             cnt = rres[1]
             if cnt > 0:
-              str += "<div style='background-color:"+getBgColor(cnt,EXP)+";font-size:140%'>"
-              str += "%1.2f" % (cnt/1000000.0)+" M"
-            else:  str += "<div style='background-color:#ff3300;width:100%;font-size:140%'>0 Reads"
-          str += "<div style='font-size:70%'>"+R1.library_id+", "+R1.condition.nickname+"</div>"
-          str += "</div>"
-      str += '</td>'
+              s += ["<div style='background-color:"+getBgColor(cnt,EXP)+";font-size:140%'>"]
+              s += ["%1.2f" % (cnt/1000000.0)+" M"]
+            else:
+              s += ["<div style='background-color:#ff3300;width:100%;font-size:140%'>0 Reads"]
+          s += ["<div style='font-size:70%'>"+R1.library_id+", "+R1.condition.nickname+"</div>"]
+          s += ["</div>"]
+      s += ['</td>']
     tbgc = bgc
     bgc = pbgc
     pbgc = tbgc
-  str += '</tr>' 
+  s += ['</tr>' ]
 
   for T in TFs:
-    str += '<tr>'
+    s += ['<tr>']
     try:
       if T['antibody']:
-        str += '<td><a title="View Libraries Records" target=_self href=/admin/fctracker/library/?affiliations__id__exact='+AFL_Id+'&antibody__id__exact='+T['antibody'].__str__()+'>'+Antibody.objects.get(id=T['antibody']).nickname+'</a></td>'
+        s += ['<td><a title="View Libraries Records" target=_self href=/admin/fctracker/library/?affiliations__id__exact='+AFL_Id+'&antibody__id__exact='+T['antibody'].__str__()+'>'+Antibody.objects.get(id=T['antibody']).nickname+'</a></td>']
     except Antibody.DoesNotExist:
-      str += '<td>n/a</td>'
+      s += ['<td>n/a</td>']
 
     bgc = '#ffffff'
     pbgc = '#f7f7f7'
     for H in CLLs:
       for r in range(1,Reps+1):
         repReads = Library.objects.filter(experiment_type=EXP,affiliations__name=AFL,affiliations__contact=AFL_CNT,cell_line=H['cell_line'].__str__(),antibody=T['antibody'].__str__(),replicate=r)
-        str += "<td align=center style='background-color:"+bgc+"'>"
+        s += ["<td align=center style='background-color:"+bgc+"'>"]
         if len(repReads) == 0: 
-          str += 'No Libraries'
+          s += ['No Libraries']
         else:
           cnt = 0
           for R1 in repReads:
             rres = R1.aligned_m_reads()
             # Check data sanlty
             if rres[2] != 'OK':
-              str += '<div style="border:solid red 2px">'+rres[2]
+              s += ['<div style="border:solid red 2px">'+rres[2]]
             else:
               cnt = rres[1]
               if cnt > 0:
-                str += "<div style='background-color:"+getBgColor(cnt,EXP)+";font-size:140%'>"
-                str += "%1.2f" % (cnt/1000000.0)+" M"
-              else:  str += "<div style='background-color:#ff3300;width:100%;font-size:140%'>0 Reads"
-            str += "<div style='font-size:70%'>"+R1.library_id+", "+R1.condition.nickname+"</div>"
-            str += "</div>"
-        str += '</td>'
+                s += ["<div style='background-color:"+getBgColor(cnt,EXP)+";font-size:140%'>"]
+                s += "%1.2f" % (cnt/1000000.0)+" M"
+              else:
+                s += ["<div style='background-color:#ff3300;width:100%;font-size:140%'>0 Reads"]
+            s += ["<div style='font-size:70%'>"+R1.library_id+", "+R1.condition.nickname+"</div>"]
+            s += ["</div>"]
+        s += ['</td>']
       tbgc = bgc
       bgc = pbgc
       pbgc = tbgc
-    str += '</tr>'
-  str += '</table>'
+    s += ['</tr>']
+  s += ['</table>']
 
-  return render_to_response('reports/report.html',{'main': str})
+  return render_to_response('reports/report.html',{'main': "\n".join(s)})
 
 
 def report_RM(request): #for RNA-Seq and Methyl-Seq
