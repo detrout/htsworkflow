@@ -172,7 +172,6 @@ INSTALLED_APPS = (
     'htsworkflow.frontend.reports',
     'htsworkflow.frontend.inventory',
     'htsworkflow.frontend.bcmagic',
-    'htsworkflow.frontend.bcprinter',
     'django.contrib.databrowse',
 )
 
