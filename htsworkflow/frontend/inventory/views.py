@@ -3,7 +3,7 @@ from htsworkflow.frontend.inventory.bcmagic import item_search
 from htsworkflow.frontend.bcmagic.plugin import register_search_plugin
 from htsworkflow.frontend.experiments.models import FlowCell
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
-from htsworkflow.frontend.bcprinter.util import print_zpl_socket
+from htsworkflow.frontend.bcmagic.util import print_zpl_socket
 from htsworkflow.frontend import settings
 #from htsworkflow.util.jsonutil import encode_json
 
