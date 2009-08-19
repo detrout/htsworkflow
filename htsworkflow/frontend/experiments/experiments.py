@@ -55,7 +55,7 @@ def updStatus(request):
       mytimestamp = datetime.now().__str__()
       mytimestamp = re.sub(pattern=":[^:]*$",repl="",string=mytimestamp)
       if request.REQUEST.has_key('msg'):
-        rec.run_note += ", "+request['msg']+" ("+mytimestamp+")"
+        rec.run_note += ", "+request.REQUEST['msg']+" ("+mytimestamp+")"
       else :
         if UpdatedStatus == '1':
           rec.run_note = "Started ("+mytimestamp+")"
