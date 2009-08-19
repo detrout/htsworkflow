@@ -27,6 +27,7 @@ INVENTORY_CONTEXT_DEFAULTS = {
 }
 
 INVENTORY_ITEM_PRINT_DEFAULTS = {
+    'Hard Drive': 'inventory/hard_drive_shell.zpl',
     'default': 'inventory/default.zpl',
     'host': settings.BCPRINTER_PRINTER1_HOST
 }

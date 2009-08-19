@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
+import django
 admin.autodiscover()
 
 # Databrowser:
@@ -10,6 +11,7 @@ admin.autodiscover()
 
 from htsworkflow.frontend import settings
 
+
 urlpatterns = patterns('',
     ('^accounts/login/$', 'django.contrib.auth.views.login'),
     ('^accounts/logout/$', 'django.contrib.auth.views.logout'),
@@ -19,8 +21,8 @@ urlpatterns = patterns('',
     ('^accounts/profile/$', 'htsworkflow.frontend.samples.views.user_profile'),
     # Base:
     (r'^eland_config/', include('htsworkflow.frontend.eland_config.urls')),
-    # Admin:
-    (r'^admin/(.*)', admin.site.root),
+    ### MOVED Admin from here ###
+    #(r'^admin/(.*)', admin.site.root),
     # Experiments:
     (r'^experiments/', include('htsworkflow.frontend.experiments.urls')),
     # AnalysTrack:
@@ -50,6 +52,16 @@ urlpatterns = patterns('',
     # databrowser
     #(r'^databrowse/(.*)', databrowse.site.root)
 )
+
+# Allow admin
+if django.VERSION >= (1, 1, 0, 'final', 0):
+  urlpatterns = patterns('',
+    (r'^admin/', include(admin.site.urls)),
+  )
+else:
+  urlpatterns = patterns('',
+    (r'^admin/(.*)', admin.site.root),
+  )
 
 if settings.DEBUG:
   urlpatterns += patterns('',
