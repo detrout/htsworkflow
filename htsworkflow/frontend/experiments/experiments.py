@@ -18,30 +18,28 @@ def updStatus(request):
     fcid = 'none'
     runfolder = 'unknown'
     ClIP = request.META['REMOTE_ADDR']
-    granted = False    
 
-    if request.has_key('user'):
-      user = request['user']
+    if hasattr(request, 'user'):
+      user = request.user
 
-    #Check access permission 
-    if (user == 'rami' and settings.ALLOWED_IPS.has_key(ClIP)):  granted = True
-    if not granted: return HttpResponse("access denied.")
-
+    #Check access permission
+    if not (user.is_superuser and settings.ALLOWED_IPS.has_key(ClIP)): 
+        return HttpResponse("%s access denied from %s." % (user, ClIP))
 
     # ~~~~~~Parameters for the job ~~~~
-    if request.has_key('fcid'):
-      fcid = request['fcid']
+    if request.REQUEST.has_key('fcid'):
+      fcid = request.REQUEST['fcid']
     else:
       return HttpResponse('missing fcid')
     
-    if request.has_key('runf'):
-      runfolder = request['runf']
+    if request.REQUEST.has_key('runf'):
+      runfolder = request.REQUEST['runf']
     else:
       return HttpResponse('missing runf')
 
     
-    if request.has_key('updst'):
-      UpdatedStatus = request['updst']
+    if request.REQUEST.has_key('updst'):
+      UpdatedStatus = request.REQUEST['updst']
     else:
       return HttpResponse('missing status')
     
@@ -56,7 +54,7 @@ def updStatus(request):
       #if there's a message update that too
       mytimestamp = datetime.now().__str__()
       mytimestamp = re.sub(pattern=":[^:]*$",repl="",string=mytimestamp)
-      if request.has_key('msg'):
+      if request.REQUEST.has_key('msg'):
         rec.run_note += ", "+request['msg']+" ("+mytimestamp+")"
       else :
         if UpdatedStatus == '1':
