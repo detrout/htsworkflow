@@ -54,14 +54,10 @@ urlpatterns = patterns('',
 )
 
 # Allow admin
-if django.VERSION >= (1, 1, 0, 'final', 0):
-  urlpatterns += patterns('',
-    (r'^admin/', include(admin.site.urls)),
-  )
-else:
-  urlpatterns += patterns('',
-    (r'^admin/(.*)', admin.site.root),
-  )
+if hasattr(admin.site, 'urls'):
+  urlpatterns += patterns('', (r'^admin/', include(admin.site.urls)))
+else:                          
+  urlpatterns += patterns('', (r'^admin/(.*)', admin.site.root))
 
 if settings.DEBUG:
   urlpatterns += patterns('',
