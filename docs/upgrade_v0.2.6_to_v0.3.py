@@ -10,6 +10,10 @@ def main(cmdline=None):
     shutil.copy(cmdline[0], dest)
     conn = sqlite3.connect(dest)
     c = conn.cursor()
+    
+    #Copy user id's from auth User to new HTSUser
+    c.execute('INSERT INTO samples_htsuser (user_ptr_id) SELECT id FROM auth_user;')
+    
     c.execute("""CREATE TEMPORARY TABLE experiments_flowcell_temp (
     "id" integer NOT NULL PRIMARY KEY,                                     
     "flowcell_id" varchar(20) NOT NULL UNIQUE,                             
@@ -81,6 +85,7 @@ WHERE id=%(id)d;"""
             c.execute( lane_insert % {'lane': int(lane), 'id': int(pk)} )
             
     c.execute('DROP TABLE experiments_flowcell_temp;')
+    
     conn.commit()
 
 if __name__ == "__main__":
