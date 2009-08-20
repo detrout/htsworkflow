@@ -1,8 +1,11 @@
+import logging
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.core import urlresolvers
 from django.db import models
+
 from htsworkflow.frontend.samples.models import *
 from htsworkflow.frontend.settings import options
-from django.core.exceptions import ObjectDoesNotExist
-import logging
 
 class ClusterStation(models.Model):
   name = models.CharField(max_length=50, unique=True)
@@ -21,9 +24,6 @@ try:
   default_pM = int(options.get('frontend', 'default_pm'))
 except ValueError,e:
   logging.error("invalid value for frontend.default_pm")
-
-
-  
 
 class FlowCell(models.Model):
   
