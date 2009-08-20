@@ -1,10 +1,18 @@
 # Create your views here.
 #from django.template import Context, loader
 #shortcut to the above modules
-from django.shortcuts import render_to_response, get_object_or_404
-from htsworkflow.frontend.experiments.models import *
-from django.http import HttpResponse
+from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMessage, mail_managers
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import Context
+from django.template.loader import get_template
+
+from htsworkflow.frontend.experiments.models import *
+from htsworkflow.frontend.experiments.experiments import \
+     estimateFlowcellDuration, \
+     makeUserLaneMap
 
 def index(request):
     all_runs = DataRun.objects.order_by('-run_start_time')
@@ -32,3 +40,82 @@ def makeFCSheet(request,fcid):
     pass
   lanes = ['1','2','3','4','5','6','7','8']
   return render_to_response('experiments/flowcellSheet.html',{'fc': rec})
+
+
+@user_passes_test(lambda u: u.is_staff)
+def startedEmail(request, pk):
+    """
+    Create the we have started processing your samples email
+    """
+    fc = get_object_or_404(FlowCell, id=pk)
+
+    send = request.REQUEST.get('send',False)
+    if send in ('1', 'on', 'True', 'true', True):
+        send = True
+    else:
+        send = False
+
+    bcc_managers = request.REQUEST.get('bcc', False)
+    if bcc_managers in ('on', '1', 'True', 'true'):
+        bcc_managers = True
+    else:
+        bcc_managers = False
+
+    user_lane = makeUserLaneMap(fc)
+    estimate_low, estimate_high = estimateFlowcellDuration(fc)
+    email_verify = get_template('experiments/email_preview.html')
+    email_template = get_template('experiments/started_email.html')
+    sender = settings.NOTIFICATION_SENDER
+
+    warnings = []
+    emails = []
+    
+    for user in user_lane.keys():
+        sending = ""
+        # build body
+        context = Context({u'flowcell': fc,
+                   u'lanes': user_lane[user],
+                   u'runfolder': 'blank',
+                   u'finish_low': estimate_low,
+                   u'finish_high': estimate_high,
+                   u'user_admin': user.admin_url(),
+                  })
+
+        # build view
+        subject = "Flowcell  %s" % ( fc.flowcell_id )
+        body = email_template.render(context)
+
+        # provide warning
+        has_email = True
+        if user.email is None or len(user.email) == 0:
+            warnings.append((user.admin_url(), user.username))
+            has_email = False
+            
+        if send:
+            if has_email:
+                email = EmailMessage(subject, body, sender, to=[user.email])
+                if bcc_managers:
+                    print 'bcc_managers', bcc_managers
+                    email.bcc = settings.MANAGERS
+                print email.to, email.bcc
+                email.send()
+                sending = "sent"
+            else:
+                print settings.MANAGERS
+                mail_managers("Couldn't send to "+user.username, body)
+                sending = "bounced to managers"
+
+        emails.append((user.email, subject, body, sending))
+
+    verify_context = Context({
+        'send': send,
+        'warnings': warnings,
+        'emails': emails,
+        'from': sender,
+        })
+    return HttpResponse(email_verify.render(verify_context))
+    
+def finishedEmail(request, pk):
+    """
+    """
+    return HttpResponse("I've got nothing.")

@@ -269,4 +269,6 @@ class HTSUser(User):
 
     class Meta:
         ordering = ['username']
-        
+
+    def admin_url(self):
+        return '/admin/%s/%s/%d' % (self._meta.app_label, self._meta.module_name, self.id)

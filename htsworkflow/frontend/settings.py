@@ -26,17 +26,18 @@ The options understood by this module are (with their defaults):
 """
 import ConfigParser
 import os
+import shlex
 
 # make epydoc happy
 __docformat__ = "restructuredtext en"
 
-def options_to_list(dest, section_name):
+def options_to_list(options, dest, section_name, option_name):
   """
   Load a options from section_name and store in a dictionary
   """
-  if options.has_section(section_name):
-    for name in options.options(section_name):
-      dest.append( options.get(section_name, name) )
+  if options.has_option(section_name, option_name):
+    opt = options.get(section_name, option_name)
+    dest.extend( shlex.split(opt) )
       
 def options_to_dict(dest, section_name):
   """
@@ -80,15 +81,21 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = []
-options_to_list(ADMINS, 'admins')
+options_to_list(options, ADMINS, 'frontend', 'admins')
 
-MANAGERS = ADMINS
+MANAGERS = []
+options_to_list(options, MANAGERS, 'frontend', 'managers')
 
 AUTHENTICATION_BACKENDS = ( 'samples.auth_backend.HTSUserModelBackend', )
 CUSTOM_USER_MODEL = 'samples.HTSUser' 
 
 EMAIL_HOST = options.get('frontend', 'email_host')
 EMAIL_PORT = int(options.get('frontend', 'email_port'))
+
+if options.has_option('frontend', 'notification_sender'):
+    NOTIFICATION_SENDER = options.get('frontend', 'notification_sender')
+else:
+    NOTIFICATION_SENDER = "noreply@example.com"
 
 # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
 DATABASE_ENGINE = options.get('frontend', 'database_engine')

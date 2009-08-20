@@ -1,9 +1,9 @@
 # some core functions of the exp tracker module
-from django.http import HttpResponse
-from datetime import datetime
-from string import *
+from datetime import datetime, timedelta
 import os
 import re
+
+from django.http import HttpResponse
 from htsworkflow.frontend import settings
 from htsworkflow.frontend.experiments.models import FlowCell, DataRun
 from htsworkflow.frontend.samples.models import Library
@@ -178,3 +178,55 @@ def getLaneLibs(req):
     else: outputfile = 'Missing input: flowcell id'
 
     return HttpResponse(outputfile, mimetype='text/plain')
+
+def estimateFlowcellDuration(flowcell):
+    """
+    Attempt to estimate how long it will take to run a flowcell
+
+    """
+    # (3600 seconds * 1.5 hours per cycle )
+    sequencing_seconds_per_cycle= 3600 * 1.5
+    # 800 is a rough guess
+    pipeline_seconds_per_cycle = 800
+    
+    cycles = flowcell.read_length
+    if flowcell.paired_end:
+        cycles *= 2
+    sequencing_time = timedelta(0, cycles * sequencing_seconds_per_cycle)
+    analysis_time = timedelta(0, cycles * pipeline_seconds_per_cycle)
+    estimate_mid = sequencing_time + analysis_time
+    # floor estimate_mid
+    estimate_low = timedelta(estimate_mid.days, 0)
+    # floor estimate_mid and add a day
+    estimate_high = timedelta(estimate_mid.days+1, 0)
+    
+    return (estimate_low, estimate_high)
+    
+
+def makeUserLaneMap(flowcell):
+    """
+    Given a flowcell return a mapping of users interested in
+    the libraries on those lanes.
+    """
+    users = {}
+
+    for lane in flowcell.lane_set.all():
+        for affiliation in lane.library.affiliations.all():
+            for user in affiliation.users.all():
+                users.setdefault(user,[]).append(lane)
+
+    return users
+
+def makeUserLibrarMap(libraries):
+    """
+    Given an interable set of libraries return a mapping or
+    users interested in those libraries.
+    """
+    users = {}
+    
+    for library in libraries:
+        for affiliation in library.affiliations.all():
+            for user in affiliation.users.all():
+                users.setdefault(user,[]).append(library)
+                
+    return users

@@ -1,0 +1,19 @@
+<p>
+The following libraries are on the flowcell {{ flowcell.flowcell_id }}
+which is a {{ flowcell.read_length }} base pair {% if flowcell.paired_end %}paired end{% else %}single ended{% endif %} flowcell.
+</p>
+<p>{% for lane in lanes %}
+Lane #{{ lane.lane_number }} : 
+<a href="https://jumpgate.caltech.edu/library/{{lane.library.library_id}}">
+{{ lane.library.library_id }}</a>
+{{ lane.library.library_name }}<br/>
+{% endfor %}</p>
+<p>
+The data should be available at the following link when
+the pipeline finishes, probably in about
+{{ finish_low.days }} to {{ finish_high.days }} days after the flowcell is started.
+</p>
+<p>
+<a href="https://jumpgate.caltech.edu/runfolders/cellcenter/">
+https://jumpgate.caltech.edu/runfolders/cellcenter/
+</a></p>

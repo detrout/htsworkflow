@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title></title>
+</head>
+<body>
+<p>
+{% for user_admin_url, username in warnings %}
+Warning: User <a href="{{ user_admin_url}}">{{ username }}</a> has no
+email address <br/>
+{% endfor %}
+</p>
+{% for to, subject, body, sending in emails %}
+<hr/>
+{% if sending %}<b>Message:</b> {{ sending }}<br/>{% endif %}
+<b>From:</b> {{ from }}<br/>
+<b>To:</b> {{ to }}<br/>
+<b>Subject:</b> {{ subject }}<br/>
+{{ body }}
+{% endfor %}<hr/>
+<form method="get">
+<label for="bcc">BCC Managers?</label>
+<input type="checkbox" id="bcc" name="bcc" checked="on"/><br/>
+<input type="hidden" name="send" value="1"/>
+<input type="submit" value="Send Email"/>
+</body>
+</html>
