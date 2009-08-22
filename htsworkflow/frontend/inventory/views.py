@@ -1,4 +1,4 @@
-from htsworkflow.frontend.inventory.models import Item, LongTermStorage
+from htsworkflow.frontend.inventory.models import Item, LongTermStorage, ItemType
 from htsworkflow.frontend.inventory.bcmagic import item_search
 from htsworkflow.frontend.bcmagic.plugin import register_search_plugin
 from htsworkflow.frontend.experiments.models import FlowCell
@@ -10,7 +10,7 @@ from htsworkflow.frontend import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.template import RequestContext, Template
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
 
@@ -26,20 +26,71 @@ INVENTORY_CONTEXT_DEFAULTS = {
     'bcmagic': BarcodeMagicForm()
 }
 
-INVENTORY_ITEM_PRINT_DEFAULTS = {
-    'Hard Drive': 'inventory/hard_drive_shell.zpl',
-    'default': 'inventory/default.zpl',
-    'host': settings.BCPRINTER_PRINTER1_HOST
+def __flowcell_rundate_sort(x, y):
+    """
+    Sort by rundate
+    """
+    if x.run_date > y.run_date:
+        return 1
+    elif x.run_date == y.run_date:
+        return 0
+    else:
+        return -1
+
+def __expand_longtermstorage_context(context, item):
+    """
+    Expand information for LongTermStorage
+    """
+    flowcell_list = []
+    flowcell_id_list = []
+    library_id_list = []
+    
+    for lts in item.longtermstorage_set.all():
+        flowcell_list.append(lts.flowcell)
+        flowcell_id_list.append(lts.flowcell.flowcell_id)
+        library_id_list.extend([ lib.library_id for lib in lts.libraries.all() ])
+
+    flowcell_list.sort(__flowcell_rundate_sort)
+    context['oldest_rundate'] = flowcell_list[0].run_date
+    context['latest_rundate'] = flowcell_list[-1].run_date
+
+    context['flowcell_id_list'] = flowcell_id_list
+    context['library_id_list_1_to_20'] = library_id_list[0:20]
+    context['library_id_list_21_to_40'] = library_id_list[20:40]
+    context['library_id_list_41_to_60'] = library_id_list[40:60]
+    context['library_id_list_61_to_80'] = library_id_list[60:80]
+    
+
+EXPAND_CONTEXT = {
+    'Hard Drive': __expand_longtermstorage_context
 }
 
-def getTemplateByType(item_type):
+#INVENTORY_ITEM_PRINT_DEFAULTS = {
+#    'Hard Drive': 'inventory/hard_drive_shell.zpl',
+#    'default': 'inventory/default.zpl',
+#    'host': settings.BCPRINTER_PRINTER1_HOST
+#}
+
+def getPrinterTemplateByType(item_type):
     """
     returns template to use given item_type
     """
-    if item_type in INVENTORY_ITEM_PRINT_DEFAULTS:
-        return INVENTORY_ITEM_PRINT_DEFAULTS[item_type]
+    assert item_type.printertemplate_set.count() < 2
+    
+    # Get the template for item_type
+    if item_type.printertemplate_set.count() > 0:
+        printer_template = item_type.printertemplate_set.all()[0]
+        return printer_template
+    # Get default
     else:
-        return INVENTORY_ITEM_PRINT_DEFAULTS['default']
+        try: 
+            printer_template = PrinterTemplate.objects.get(default=True)
+        except ObjectDoesNotExist:
+            msg = "No template for item type (%s) and no default template found" % (item_type.name)
+            raise ValueError, msg
+        
+        return printer_template
+        
 
 @login_required
 def data_items(request):
@@ -134,12 +185,25 @@ def item_summary_by_uuid(request, uuid, msg='', item=None):
                               context_instance=RequestContext(request))
 
 
+
+    
+    
+
+def __expand_context(context, item):
+    """
+    If EXPAND_CONTEXT dictionary has item.item_type.name function registered, use it to expand context
+    """
+    if item.item_type.name in EXPAND_CONTEXT:
+        expand_func = EXPAND_CONTEXT[item.item_type.name]
+        expand_func(context, item)
+
 def _item_print(item, request):
     """
     Prints an item given a type of item label to print
     """
     #FIXME: Hard coding this for now... need to abstract later.
     context = {'item': item}
+    __expand_context(context, item)
     
     # Print using barcode_id
     if not item.force_use_uuid and (item.barcode_id is None or len(item.barcode_id.strip())):
@@ -150,9 +214,11 @@ def _item_print(item, request):
         context['use_uuid'] = True
         msg = 'Printing item with UUID: %s' % (item.uuid)
     
+    printer_template = getPrinterTemplateByType(item.item_type)
+    
     c = RequestContext(request, context)
-    t = get_template(getTemplateByType(item.item_type.name))
-    print_zpl_socket(t.render(c))
+    t = Template(printer_template.template)
+    print_zpl_socket(t.render(c), host=printer_template.printer.ip_address)
     
     return msg
 

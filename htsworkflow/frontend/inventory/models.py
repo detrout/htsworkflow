@@ -5,6 +5,7 @@ from django.db.models.signals import pre_save
 
 from htsworkflow.frontend.samples.models import Library
 from htsworkflow.frontend.experiments.models import FlowCell
+from htsworkflow.frontend.bcmagic.models import Printer
 
 
 try:
@@ -26,6 +27,17 @@ def _assign_uuid(sender, instance, **kwargs):
     if instance.uuid is None or len(instance.uuid) != 32:
         instance.uuid = uuid.uuid1().hex
 
+def _switch_default(sender, instance, **kwargs):
+    """
+    When new instance has default == True, uncheck all other defaults
+    """
+    if instance.default:
+        other_defaults = PrinterTemplate.objects.filter(default=True)
+        
+        for other in other_defaults:
+            other.default = False
+            other.save()
+    
 
 class Vendor(models.Model):
     name = models.CharField(max_length=256)
@@ -40,7 +52,7 @@ class Location(models.Model):
     name = models.CharField(max_length=256, unique=True)
     location_description = models.TextField()
     
-    uuid = models.CharField(max_length=32, blank=True, help_text="Leave blank for automatic UUID generation")
+    uuid = models.CharField(max_length=32, blank=True, help_text="Leave blank for automatic UUID generation", editable=False)
     
     notes = models.TextField(blank=True, null=True)
     
@@ -51,6 +63,7 @@ class Location(models.Model):
             return u"%s: %s" % (self.name, self.location_description)
 
 pre_save.connect(_assign_uuid, sender=Location)
+
 
 class ItemInfo(models.Model):
     model_id = models.CharField(max_length=256, blank=True, null=True)
@@ -77,6 +90,9 @@ class ItemInfo(models.Model):
             name += u"lot:%s " % (self.lot_number)
             
         return u"%s: %s" % (name, self.purchase_date)
+    
+    class Meta:
+        verbose_name_plural = "Item Info"
 
 
 class ItemType(models.Model):
@@ -93,6 +109,10 @@ class ItemStatus(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    class Meta:
+        verbose_name_plural = "Item Status"
+
 
 class Item(models.Model):
     
@@ -100,7 +120,7 @@ class Item(models.Model):
     
     #Automatically assigned uuid; used for barcode if one is not provided in
     # barcode_id
-    uuid = models.CharField(max_length=32, blank=True, help_text="Leave blank for automatic UUID generation", unique=True)
+    uuid = models.CharField(max_length=32, blank=True, help_text="Leave blank for automatic UUID generation", unique=True, editable=False)
     
     # field for existing barcodes; used instead of uuid if provided
     barcode_id = models.CharField(max_length=256, blank=True, null=True)
@@ -129,6 +149,26 @@ class Item(models.Model):
 pre_save.connect(_assign_uuid, sender=Item)
 
 
+class PrinterTemplate(models.Model):
+    """
+    Maps templates to printer to use
+    """
+    item_type = models.ForeignKey(ItemType)
+    printer = models.ForeignKey(Printer)
+    
+    default = models.BooleanField()
+    
+    template = models.TextField()
+    
+    def __unicode__(self):
+        if self.default:
+            return u'%s %s' % (self.item_type.name, self.printer.name)
+        else:
+            return u'%s %s (default)' % (self.item_type.name, self.printer.name)
+
+pre_save.connect(_switch_default, sender=PrinterTemplate)
+
+
 class LongTermStorage(models.Model):
     
     flowcell = models.ForeignKey(FlowCell)
@@ -141,6 +181,9 @@ class LongTermStorage(models.Model):
     
     def __unicode__(self):
         return u"%s: %s" % (str(self.flowcell), ', '.join([ str(s) for s in self.storage_devices.iterator() ]))
+        
+    class Meta:
+        verbose_name_plural = "Long Term Storage"
         
 
 

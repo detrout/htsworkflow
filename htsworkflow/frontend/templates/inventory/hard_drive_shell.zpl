@@ -10,14 +10,14 @@
 ^FX ^LH changes the 0,0 point of all subsequent location references
 ^FX------------
 
-^LH0,0
+^LH0,50
 
 ^FX ---Header---
 
 ^FO25,0
 ^CF0,50
 ^FB250,2,,C
-^FD{{ barcode_id }}^FS
+^FD{{ item.barcode_id }}^FS
 
 ^FX ---Column 1: Flowcells---
 
@@ -35,12 +35,12 @@
 ^FO0,725
 ^CF0,35
 ^FB300,2,,C
-^FDCreated {{ creation_date }}^FS
+^FD{{ oldest_rundate|date:"YMd" }} - {{ latest_rundate|date:"YMd" }}^FS
 
 ^FX ---Barcode---
 
-^FO135,775
-^BXN,3,200^FDinvb|{{ barcode_id }}^FS
+^FO135,795
+^BXN,3,200^FDinvb|{{ item.barcode_id }}^FS
 
 ^FX======== Right Side ===========
 
@@ -68,40 +68,40 @@
 ^CF0,30,30
 ^FO75,100
 ^FB100,20,,L
-^FD{% for lib_id in library_id_list_1_to_20 %}{{ lib_id }}{% if not forloop.last %}\&{% endif %}{% endfore %}^FS
+^FD{% for lib_id in library_id_list_1_to_20 %}{{ lib_id }}{% if not forloop.last %}\&{% endif %}{% endfor %}^FS
 
 ^FX ---Column 3: Libraries 21-40---
 
 ^CF0,30,30
 ^FO200,100
 ^FB100,20,,L
-^FD{% for lib_id in library_id_list_21_to_40 %}{{ lib_id }}{% if not forloop.last %}\&{% endif %}{% endfore %}^FS
+^FD{% for lib_id in library_id_list_21_to_40 %}{{ lib_id }}{% if not forloop.last %}\&{% endif %}{% endfor %}^FS
 
 ^FX ---Column 4: Libraries 41-60---
 
 ^CF0,30,30
 ^FO325,100
 ^FB100,20,,L
-^FD{% for lib_id in library_id_list_41_to_60 %}{{ lib_id }}{% if not forloop.last %}\&{% endif %}{% endfore %}^FS
+^FD{% for lib_id in library_id_list_41_to_60 %}{{ lib_id }}{% if not forloop.last %}\&{% endif %}{% endfor %}^FS
 
 ^FX ---Column 5: Libraries 61-80---
 
 ^CF0,30,30
 ^FO450,100
 ^FB100,20,,L
-^FD{% for lib_id in library_id_list_61_to_80 %}{{ lib_id }}{% if not forloop.last %}\&{% endif %}{% endfore %}^FS
+^FD{% for lib_id in library_id_list_61_to_80 %}{{ lib_id }}{% if not forloop.last %}\&{% endif %}{% endfor %}^FS
 
 ^FX ---Date---
 
-^FO0,725
+^FO0,715
 ^CF0,35
 ^FB600,2,,C
-^FDLast Modified {{ modified_date }}^FS
+^FDRun Dates: {{ oldest_rundate|date:"YMd" }}-{{ latest_rundate|date:"YMd" }}^FS
 
 ^FX ---Barcode---
 
-^FO255,775
-^BXN,3,200^FDinvb|{{ barcode_id }}^FS
+^FO255,785
+^BXN,3,200^FDinvb|{{ item.barcode_id }}^FS
 
 ^LH0,0
 ^FX ---End---
