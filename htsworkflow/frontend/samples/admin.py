@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.admin import widgets
 from django.contrib.admin.models import User
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -60,7 +61,19 @@ class ExperimentTypeOptions(admin.ModelAdmin):
   #list_display = ('name',)
   #fieldsets = ( (None, { 'fields': ('name',) }), )
 
-class HTSUserOptions(UserAdmin): pass
+class HTSUserCreationForm(UserCreationForm):
+    class Meta:
+        model = HTSUser
+        fields = ("username",)
+
+class HTSUserChangeForm(UserChangeForm):
+    class Meta:
+        model = HTSUser
+        
+class HTSUserOptions(UserAdmin):
+    form = HTSUserChangeForm
+    add_form = HTSUserCreationForm
+    
 
 class LaneLibraryInline(admin.StackedInline):
   model = Lane
