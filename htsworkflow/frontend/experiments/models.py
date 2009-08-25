@@ -32,6 +32,7 @@ class FlowCell(models.Model):
   advanced_run = models.BooleanField(default=False)
   paired_end = models.BooleanField(default=False)
   read_length = models.IntegerField(default=32) #Stanford is currenlty 25
+  control_lane = models.IntegerField(choices=[(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8)], null=True)
 
   cluster_station = models.ForeignKey(ClusterStation, default=3)
   sequencer = models.ForeignKey(Sequencer, default=1)

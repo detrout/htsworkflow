@@ -86,6 +86,9 @@ WHERE id=%(id)d;"""
             
     c.execute('DROP TABLE experiments_flowcell_temp;')
     
+    #Add control_lane column
+    c.execute('ALTER TABLE experiments_flowcell ADD COLUMN "control_lane" integer NULL;')
+    
     conn.commit()
 
 if __name__ == "__main__":

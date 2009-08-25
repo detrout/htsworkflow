@@ -60,7 +60,7 @@ class FlowCellOptions(admin.ModelAdmin):
     list_filter = ('sequencer','cluster_station')
     fieldsets = (
         (None, {
-            'fields': ('run_date', ('flowcell_id','cluster_station','sequencer'), ('read_length', 'paired_end'),)
+            'fields': ('run_date', ('flowcell_id','cluster_station','sequencer'), ('read_length', 'control_lane', 'paired_end'),)
         }),
         #('Lanes:', {
         #   'fields' : (('lane__library__library_id', 'lane__pM', 'lane__cluster_estimate'),)
