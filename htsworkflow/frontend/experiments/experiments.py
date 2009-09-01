@@ -217,7 +217,17 @@ def makeUserLaneMap(flowcell):
 
     return users
 
-def makeUserLibrarMap(libraries):
+def getUsersForFlowcell(flowcell):
+    users = set()
+    
+    for lane in flowcell.lane_set.all():
+        for affiliation in lane.library.affiliations.all():
+            for user in affiliation.users.all():
+                users.add(user)
+                
+    return users
+    
+def makeUserLibraryMap(libraries):
     """
     Given an interable set of libraries return a mapping or
     users interested in those libraries.
@@ -230,3 +240,29 @@ def makeUserLibrarMap(libraries):
                 users.setdefault(user,[]).append(library)
                 
     return users
+
+def makeAffiliationLaneMap(flowcell):
+    affs = {}
+
+    for lane in flowcell.lane_set.all():
+        for affiliation in lane.library.affiliations.all():
+            affs.setdefault(affiliation,[]).append(lane)
+
+    return affs
+
+def makeEmailLaneMap(flowcell):
+    """
+    Create a list of email addresses and the lanes associated with those users.
+
+    The email addresses can come from both the "users" table and the "affiliations" table.
+    """
+    emails = {}
+    for lane in flowcell.lane_set.all():
+        for affiliation in lane.library.affiliations.all():
+            if affiliation.email is not None and len(affiliation.email) > 0:
+                emails.setdefault(affiliation.email,set()).add(lane)
+            for user in affiliation.users.all():
+                if user.email is not None and len(user.email) > 0:
+                    emails.setdefault(user.email,set()).add(lane)
+
+    return emails

@@ -18,7 +18,7 @@ email address <br/>
 {{ body }}
 {% endfor %}<hr/>
 <form method="get">
-<label for="bcc">BCC Managers?</label>
+<label for="bcc">BCC {% for m in site_managers %}{{ m }} {% endfor %}</label>
 <input type="checkbox" id="bcc" name="bcc" checked="on"/><br/>
 <input type="hidden" name="send" value="1"/>
 <input type="submit" value="Send Email"/>

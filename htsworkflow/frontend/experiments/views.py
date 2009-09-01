@@ -12,7 +12,8 @@ from django.template.loader import get_template
 from htsworkflow.frontend.experiments.models import *
 from htsworkflow.frontend.experiments.experiments import \
      estimateFlowcellDuration, \
-     makeUserLaneMap
+     getUsersForFlowcell, \
+     makeEmailLaneMap
 
 def index(request):
     all_runs = DataRun.objects.order_by('-run_start_time')
@@ -61,7 +62,8 @@ def startedEmail(request, pk):
     else:
         bcc_managers = False
 
-    user_lane = makeUserLaneMap(fc)
+    email_lane = makeEmailLaneMap(fc)
+    flowcell_users = getUsersForFlowcell(fc)
     estimate_low, estimate_high = estimateFlowcellDuration(fc)
     email_verify = get_template('experiments/email_preview.html')
     email_template = get_template('experiments/started_email.html')
@@ -69,49 +71,44 @@ def startedEmail(request, pk):
 
     warnings = []
     emails = []
+
+    emailless_users = []
+    for user in flowcell_users:
+        # provide warning
+        if user.email is None or len(user.email) == 0:
+            warnings.append((user.admin_url(), user.username))
+    user=None
     
-    for user in user_lane.keys():
+    for user_email in email_lane.keys():
         sending = ""
         # build body
         context = Context({u'flowcell': fc,
-                   u'lanes': user_lane[user],
+                   u'lanes': email_lane[user_email],
                    u'runfolder': 'blank',
                    u'finish_low': estimate_low,
                    u'finish_high': estimate_high,
-                   u'user_admin': user.admin_url(),
                   })
 
         # build view
         subject = "Flowcell  %s" % ( fc.flowcell_id )
         body = email_template.render(context)
 
-        # provide warning
-        has_email = True
-        if user.email is None or len(user.email) == 0:
-            warnings.append((user.admin_url(), user.username))
-            has_email = False
-            
         if send:
-            if has_email:
-                email = EmailMessage(subject, body, sender, to=[user.email])
-                if bcc_managers:
-                    print 'bcc_managers', bcc_managers
-                    email.bcc = settings.MANAGERS
-                print email.to, email.bcc
-                email.send()
-                sending = "sent"
-            else:
-                print settings.MANAGERS
-                mail_managers("Couldn't send to "+user.username, body)
-                sending = "bounced to managers"
+            email = EmailMessage(subject, body, sender, to=[user_email])
+            if bcc_managers:
+                print 'bcc_managers', bcc_managers
+                email.bcc = settings.MANAGERS
+            print email.to, email.bcc
+            email.send()
 
-        emails.append((user.email, subject, body, sending))
+        emails.append((user_email, subject, body, sending))
 
     verify_context = Context({
         'send': send,
         'warnings': warnings,
         'emails': emails,
         'from': sender,
+        'site_managers': settings.MANAGERS,
         })
     return HttpResponse(email_verify.render(verify_context))
     
