@@ -157,7 +157,6 @@ class LibraryOptions(admin.ModelAdmin):
       if db_field.name == 'affiliations':
         kwargs['widget'] = widgets.FilteredSelectMultiple(db_field.verbose_name, (db_field.name in self.filter_vertical))
       rv = super(LibraryOptions, self).formfield_for_dbfield(db_field, **kwargs)
-      print db_field.name, kwargs
       return rv
 
 class SpeciesOptions(admin.ModelAdmin):
