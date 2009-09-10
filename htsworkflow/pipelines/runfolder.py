@@ -320,8 +320,9 @@ def summarize_lane(gerald, lane_id):
       eland_result = gerald.eland_results.results[end][lane_id]
       report.append("Sample name %s" % (eland_result.sample_name))
       report.append("Lane id %s end %s" % (eland_result.lane_id, end))
-      cluster = summary_results[end][eland_result.lane_id].cluster
-      report.append("Clusters %d +/- %d" % (cluster[0], cluster[1]))
+      if end < len(summary_results) and summary_results[end].has_key(eland_result.lane_id):
+          cluster = summary_results[end][eland_result.lane_id].cluster
+          report.append("Clusters %d +/- %d" % (cluster[0], cluster[1]))
       report.append("Total Reads: %d" % (eland_result.reads))
 
       if hasattr(eland_result, 'match_codes'):
