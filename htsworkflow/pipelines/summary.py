@@ -1,6 +1,7 @@
 """
 Analyze the Summary.htm file produced by GERALD
 """
+import logging
 import types
 from pprint import pprint
 
@@ -186,6 +187,8 @@ class Summary(object):
         for name, end in table_names:
           if tables.has_key(name):
             self._extract_lane_results_for_end(tables, name, end)
+        else:
+            logging.warning("No Lane Results Summary Found in %s" % (pathname,))
 
     def _extract_lane_results_for_end(self, tables, table_name, end):
         """
