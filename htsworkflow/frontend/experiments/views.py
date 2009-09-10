@@ -96,9 +96,7 @@ def startedEmail(request, pk):
         if send:
             email = EmailMessage(subject, body, sender, to=[user_email])
             if bcc_managers:
-                print 'bcc_managers', bcc_managers
                 email.bcc = settings.MANAGERS
-            print email.to, email.bcc
             email.send()
 
         emails.append((user_email, subject, body, sending))
