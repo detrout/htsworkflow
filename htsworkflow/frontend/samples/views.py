@@ -252,7 +252,7 @@ def _summary_stats(flowcell_id, lane_id):
             if len(gerald_summary) > end and gerald_summary[end].has_key(lane_id):
                 eland_summary.clusters = gerald_summary[end][lane_id].cluster
             else:
-                eland_summary.clusters = 'n/a'
+                eland_summary.clusters = None
             eland_summary.cycle_width = cycle_width
             if hasattr(eland_summary, 'genome_map'):
                 eland_summary.summarized_reads = runfolder.summarize_mapped_reads( 
