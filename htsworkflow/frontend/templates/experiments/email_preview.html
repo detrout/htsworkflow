@@ -15,7 +15,9 @@ email address <br/>
 <b>From:</b> {{ from }}<br/>
 <b>To:</b> {{ to }}<br/>
 <b>Subject:</b> {{ subject }}<br/>
+<pre>
 {{ body }}
+</pre>
 {% endfor %}<hr/>
 <form method="get">
 <label for="bcc">BCC {% for m in site_managers %}{{ m }} {% endfor %}</label>

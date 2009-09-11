@@ -66,7 +66,7 @@ def startedEmail(request, pk):
     flowcell_users = getUsersForFlowcell(fc)
     estimate_low, estimate_high = estimateFlowcellDuration(fc)
     email_verify = get_template('experiments/email_preview.html')
-    email_template = get_template('experiments/started_email.html')
+    email_template = get_template('experiments/started_email.txt')
     sender = settings.NOTIFICATION_SENDER
 
     warnings = []
