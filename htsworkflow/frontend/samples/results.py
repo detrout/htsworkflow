@@ -95,7 +95,11 @@ def get_flowcell_result_dict(flowcell_id):
             
         ###############################
         # scores.tar.gz
-        scores_filepath = glob.glob(os.path.join(c_dir_path, 'scores*'))
+        # restrict to only compressed files, so in case there are *.md5 files
+        # we don't get confused.
+        scores_filepath = []
+        for pattern in ['scores*.tar.bz2', 'scores*.tar.gz', 'scores*.tgz']:
+            scores_filepath += glob.glob(os.path.join(c_dir_path, pattern))
         
         if len(scores_filepath) == 0:
             d[c_dir]['scores'] = None
