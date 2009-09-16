@@ -1,6 +1,8 @@
 import urlparse
 from django.db import models
 from django.contrib.auth.models import User, UserManager
+from django.db.models.signals import pre_save, post_save
+from django.db import connection
 from htsworkflow.frontend import settings
 from htsworkflow.frontend.reports.libinfopar import *
 
@@ -272,3 +274,15 @@ class HTSUser(User):
 
     def admin_url(self):
         return '/admin/%s/%s/%d' % (self._meta.app_label, self._meta.module_name, self.id)
+    
+def HTSUserInsertID(sender, instance, **kwargs):
+    """
+    Force addition of HTSUsers when someone just modifies the auth_user object
+    """
+    u = HTSUser.objects.filter(pk=instance.id)
+    if len(u) == 0:
+        cursor = connection.cursor()
+        cursor.execute('INSERT INTO samples_htsuser (user_ptr_id) VALUES (%s);' % (instance.id,))
+        cursor.close()
+    
+post_save.connect(HTSUserInsertID, sender=User)
