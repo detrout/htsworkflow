@@ -128,12 +128,11 @@ def getCombinedOptions():
     if conf_parser.has_option('local_setup', 'genome_dir'):
       options.genome_dir = conf_parser.get('local_setup', 'genome_dir')
   
-  print 'USING OPTIONS:'
-  print ' URL:', options.url
-  print ' OUT:', options.output_filepath
-  print '  FC:', options.flowcell
-  print 'GDIR:', options.genome_dir
-  print ''
+  logging.info('USING OPTIONS:')
+  logging.info(' URL: %s' % (options.url,))
+  logging.info(' OUT: %s' % (options.output_filepath,))
+  logging.info('  FC: %s' % (options.flowcell,))
+  logging.info('GDIR: %s' % (options.genome_dir,))
   
   return options
 
@@ -150,7 +149,7 @@ def saveConfigFile(flowcell, base_host_url, output_filepath):
   try:
     web = urllib2.urlopen(url)
   except urllib2.URLError, e:
-    errmsg = 'URLError: %s' % (e.reason,)
+    errmsg = 'URLError: %d %s' % (e.code, e.msg)
     logging.error(errmsg)
     logging.error('opened %s' % (url,))
     raise IOError(errmsg)
