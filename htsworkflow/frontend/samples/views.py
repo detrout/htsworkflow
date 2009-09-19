@@ -504,6 +504,12 @@ def library_json(request, library_id):
 
     lib_json = json.dumps(lib)
     return HttpResponse(lib_json, mimetype='application/json')
+
+def species_json(request, species_id):
+    """
+    Return information about a species.
+    """
+    raise Http404
     
 @login_required
 def user_profile(request):
@@ -519,3 +525,4 @@ def user_profile(request):
     context.update(SAMPLES_CONTEXT_DEFAULTS)
     return render_to_response('registration/profile.html', context,
                               context_instance=RequestContext(request))
+
