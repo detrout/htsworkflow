@@ -1,15 +1,74 @@
 # some core functions of the exp tracker module
 from datetime import datetime, timedelta
+try:
+    import json
+except ImportError, e:
+    import simplejson as json
+    
 import os
 import re
 
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail, mail_admins
+from django.http import HttpResponse, Http404
+
 from htsworkflow.frontend import settings
 from htsworkflow.frontend.experiments.models import FlowCell, DataRun
 from htsworkflow.frontend.samples.models import Library
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import send_mail, mail_admins
 
+def flowcell_information(flowcell_id):
+    """
+    Return a dictionary describing a flowcell
+    """
+    try:
+        fc = FlowCell.objects.get(flowcell_id=flowcell_id)
+    except FlowCell.DoesNotExist, e:
+        return None
+
+    lane_set = {}
+    for lane in fc.lane_set.all():
+        lane_set[lane.lane_number] = {
+            'cluster_estimate': lane.cluster_estimate,
+            'comment': lane.comment,
+            'flowcell': lane.flowcell.flowcell_id,
+            'lane_number': int(lane.lane_number),
+            'library_name': lane.library.library_name,
+            'library_id': lane.library_id,
+            'pM': float(lane.pM),
+        }
+    info = {
+        'advanced_run': fc.advanced_run,
+        'cluster_station_id': fc.cluster_station_id,
+        'cluster_station': fc.cluster_station.name,
+        'control_lane': int(fc.control_lane),
+        # 'datarun_set': how should this be represented?,
+        'flowcell_id': fc.flowcell_id,
+        'id': fc.id,
+        'lane_set': lane_set,
+        'notes': fc.notes,
+        'paired_end': fc.paired_end,
+        'read_length': fc.read_length,
+        'run_date': fc.run_date.isoformat(),
+        'sequencer_id': fc.sequencer_id,
+        'sequencer': fc.sequencer.name,
+    }
+    
+    return info
+
+@login_required    
+def flowcell_json(request, fc_id):
+    """
+    Return a JSON blob containing enough information to generate a config file.
+    """
+    fc_dict = flowcell_information(fc_id)
+
+    if fc_dict is None:
+        raise Http404
+    
+    fc_json = json.dumps(fc_dict)
+    return HttpResponse(fc_json, mimetype = 'application/json')
+    
 def updStatus(request):
     output=''
     user = 'none'
