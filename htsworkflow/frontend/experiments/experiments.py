@@ -34,7 +34,7 @@ def flowcell_information(flowcell_id):
             'flowcell': lane.flowcell.flowcell_id,
             'lane_number': int(lane.lane_number),
             'library_name': lane.library.library_name,
-            'library_id': lane.library_id,
+            'library_id': lane.library.library_id,
             'pM': float(lane.pM),
         }
     info = {

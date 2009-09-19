@@ -1,4 +1,12 @@
 # Create your views here.
+import StringIO
+import logging
+import os
+try:
+    import json
+except ImportError, e:
+    import simplejson as json
+
 from htsworkflow.frontend.experiments.models import FlowCell
 from htsworkflow.frontend.samples.changelist import ChangeList
 from htsworkflow.frontend.samples.models import Library
@@ -12,15 +20,11 @@ from htsworkflow.util import makebed
 from htsworkflow.util import opener
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
-
-import StringIO
-import logging
-import os
 
 LANE_LIST = [1,2,3,4,5,6,7,8]
 SAMPLES_CONTEXT_DEFAULTS = {
@@ -444,6 +448,63 @@ def library_id_to_admin_url(request, lib_id):
     lib = Library.objects.get(library_id=lib_id)
     return HttpResponseRedirect('/admin/samples/library/%s' % (lib.id,))
 
+def library_dict(library_id):
+    """
+    Given a library id construct a dictionary containing important information
+    return None if nothing was found
+    """
+    try:
+        lib = Library.objects.get(library_id = library_id)
+    except Library.DoesNotExist, e:
+        return None
+
+    info = {
+        # 'affiliations'?
+        # 'aligned_reads': lib.aligned_reads,
+        #'amplified_into_sample': lib.amplified_into_sample, # into is a colleciton...
+        #'amplified_from_sample_id': lib.amplified_from_sample, 
+        #'antibody_name': lib.antibody_name(), # we have no antibodies.
+        'antibody_id': lib.antibody_id,
+        'avg_lib_size': lib.avg_lib_size,
+        'cell_line': lib.cell_line.cellline_name,
+        'cell_line_id': lib.cell_line_id,
+        'experiment_type': lib.experiment_type.name,
+        'experiment_type_id': lib.experiment_type_id,
+        'id': lib.id,
+        'library_id': lib.library_id,
+        'library_name': lib.library_name,
+        'library_species': lib.library_species.scientific_name,
+        'library_species_id': lib.library_species_id,
+        #'library_type': lib.library_type.name,
+        'library_type_id': lib.library_type_id,
+        'made_for': lib.made_for,
+        'made_by': lib.made_by,
+        'notes': lib.notes,
+        'replicate': lib.replicate,
+        'stopping_point': lib.stopping_point,
+        'successful_pM': lib.successful_pM,
+        'undiluted_concentration': unicode(lib.undiluted_concentration)
+        }
+    if lib.library_type_id is None:
+        info['library_type'] = None
+    else:
+        info['library_type'] = lib.library_type.name
+    return info
+
+@login_required
+def library_json(request, library_id):
+    """
+    Return a json formatted library dictionary
+    """
+    # what validation should we do on library_id?
+    
+    lib = library_dict(library_id)
+    if lib is None:
+        raise Http404
+
+    lib_json = json.dumps(lib)
+    return HttpResponse(lib_json, mimetype='application/json')
+    
 @login_required
 def user_profile(request):
     """

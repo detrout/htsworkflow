@@ -34,7 +34,7 @@ class ExperimentsTestCases(TestCase):
                 self.failUnlessEqual(lane_dict['flowcell'], lane.flowcell.flowcell_id)
                 self.failUnlessEqual(lane_dict['lane_number'], lane.lane_number)
                 self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
-                self.failUnlessEqual(lane_dict['library_id'], lane.library_id)
+                self.failUnlessEqual(lane_dict['library_id'], lane.library.library_id)
                 self.failUnlessAlmostEqual(lane_dict['pM'], float(lane.pM))
                     
             self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
@@ -55,7 +55,7 @@ class ExperimentsTestCases(TestCase):
                 self.failUnlessEqual(lane_dict['flowcell'], lane.flowcell.flowcell_id)
                 self.failUnlessEqual(lane_dict['lane_number'], lane.lane_number)
                 self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
-                self.failUnlessEqual(lane_dict['library_id'], lane.library_id)
+                self.failUnlessEqual(lane_dict['library_id'], lane.library.library_id)
                 self.failUnlessAlmostEqual(lane_dict['pM'], float(lane.pM))
 
     def test_invalid_flowcell(self):
@@ -72,3 +72,20 @@ class ExperimentsTestCases(TestCase):
         """
         response = self.client.get(u'/experiments/config/303TUAAXX/json')
         self.failUnlessEqual(response.status_code, 302)
+
+    def test_library_id(self):
+        """
+        Library IDs should be flexible, so make sure we can retrive a non-numeric ID
+        """
+        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
+        response = self.client.get('/experiments/config/303TUAAXX/json')
+        self.failUnlessEqual(response.status_code, 200)
+        flowcell = json.loads(response.content)
+
+        self.failUnlessEqual(flowcell['lane_set']['3']['library_id'], 'SL039')
+
+        response = self.client.get('/samples/library/SL039/json')
+        self.failUnlessEqual(response.status_code, 200)
+        library_sl039 = json.loads(response.content)
+
+        self.failUnlessEqual(library_sl039['library_id'], 'SL039')

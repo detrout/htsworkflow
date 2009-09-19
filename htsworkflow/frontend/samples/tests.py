@@ -1,10 +1,22 @@
 import datetime
 import unittest
+
+try:
+    import json
+except ImportError, e:
+    import simplejson as json
+    
+from django.test import TestCase
+
 from htsworkflow.frontend.samples.models import \
         Affiliation, \
         ExperimentType, \
         Species, \
         Library
+
+from htsworkflow.frontend.samples.views import \
+     library_dict, \
+     library_json
 
 # The django test runner flushes the database between test suites not cases,
 # so to be more compatible with running via nose we flush the database tables
@@ -81,7 +93,7 @@ def create_db(obj):
     )
     obj.library_10002.save()
  
-class LibraryTestCase(unittest.TestCase):
+class LibraryTestCase(TestCase):
     def setUp(self):
         create_db(self)
                
@@ -100,3 +112,69 @@ class LibraryTestCase(unittest.TestCase):
         self.failUnless(len(self.library_10002.affiliations.all()), 2)
         self.failUnless(self.library_10001.affiliation(), 'Alice, Bob')
 
+class SampleWebTestCase(TestCase):
+    """
+    Test returning data from our database in rest like ways.
+    (like returning json objects)
+    """
+    fixtures = ['test_samples.json']
+
+    def test_library_info(self):
+
+        for lib in Library.objects.all():
+            lib_dict = library_dict(lib.library_id)
+            self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
+            url = '/samples/library/%s/json' % (lib.library_id,)
+            lib_response = self.client.get(url)
+            self.failUnlessEqual(lib_response.status_code, 200)
+            lib_json = json.loads(lib_response.content)
+
+            for d in [lib_dict, lib_json]:
+                # amplified_from_sample is a link to the library table,
+                # I want to use the "library_id" for the data lookups not
+                # the embedded primary key.
+                # It gets slightly confusing on how to implement sending the right id
+                # since amplified_from_sample can be null
+                #self.failUnlessEqual(d['amplified_from_sample'], lib.amplified_from_sample)
+                self.failUnlessEqual(d['antibody_id'], lib.antibody_id)
+                self.failUnlessEqual(d['avg_lib_size'], lib.avg_lib_size)
+                self.failUnlessEqual(d['cell_line'], lib.cell_line.cellline_name)
+                self.failUnlessEqual(d['cell_line_id'], lib.cell_line_id)
+                self.failUnlessEqual(d['experiment_type'], lib.experiment_type.name)
+                self.failUnlessEqual(d['experiment_type_id'], lib.experiment_type_id)
+                self.failUnlessEqual(d['id'], lib.id)
+                self.failUnlessEqual(d['library_id'], lib.library_id)
+                self.failUnlessEqual(d['library_name'], lib.library_name)
+                self.failUnlessEqual(d['library_species'], lib.library_species.scientific_name)
+                self.failUnlessEqual(d['library_species_id'], lib.library_species_id)
+                self.failUnlessEqual(d['library_type_id'], lib.library_type_id)
+                if lib.library_type_id is not None:
+                    self.failUnlessEqual(d['library_type'], lib.library_type.name)
+                else:
+                    self.failUnlessEqual(d['library_type'], None)
+                    self.failUnlessEqual(d['made_for'], lib.made_for)
+                    self.failUnlessEqual(d['made_by'], lib.made_by)
+                    self.failUnlessEqual(d['notes'], lib.notes)
+                    self.failUnlessEqual(d['replicate'], lib.replicate)
+                    self.failUnlessEqual(d['stopping_point'], lib.stopping_point)
+                    self.failUnlessEqual(d['successful_pM'], lib.successful_pM)
+                    self.failUnlessEqual(d['undiluted_concentration'],
+                                         unicode(lib.undiluted_concentration))                                 
+    def test_invalid_library(self):
+        """
+        Make sure we get a 404 if we request an invalid library id
+        """
+        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
+        response = self.client.get('/samples/library/nottheone/json')
+        self.failUnlessEqual(response.status_code, 404)
+
+            
+    def test_library_not_logged_in(self):
+        """
+        Make sure we get a 302 if we're not logged in
+        """
+        response = self.client.get('/samples/library/10981/json')
+        self.failUnlessEqual(response.status_code, 302)
+        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
+        response = self.client.get('/samples/library/10981/json')
+        self.failUnlessEqual(response.status_code, 200)

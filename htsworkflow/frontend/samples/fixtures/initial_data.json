@@ -1,5 +1,29 @@
 [
   {
+     "model": "samples.Cellline",
+     "pk": 1,
+     "fields": {
+        "cellline_name": "Unknown",
+        "notes": "Unknown"    
+     }
+  },
+  {
+     "model": "samples.Cellline",
+     "pk": 2,
+     "fields": {
+        "cellline_name": "C2C12 Exponential",
+        "notes": ""    
+     }
+  },
+  {
+     "model": "samples.Cellline",
+     "pk": 3,
+     "fields": {
+        "cellline_name": "C2C12 60 hrs",
+        "notes": "Unknown"    
+     }
+  },
+  {
      "model": "samples.LibraryType",
      "pk": 1,
      "fields": {
@@ -12,5 +36,87 @@
      "fields": {
         "name": "Paired End"
      }
+  },
+  {
+     "model": "samples.ExperimentType",
+     "pk": 1,
+     "fields": {
+        "name": "Unknown"
+     }
+  },
+  {
+     "model": "samples.ExperimentType",
+     "pk": 2,
+     "fields": {
+        "name": "ChIP-seq"
+     }
+  },
+  {
+     "model": "samples.ExperimentType",
+     "pk": 4,
+     "fields": {
+        "name": "RNA-seq"
+     }
+  },
+  {
+     "model": "samples.ExperimentType",
+     "pk": 7,
+     "fields": {
+        "name": "De Novo"
+     }
+  },
+  {
+     "model": "samples.ExperimentType",
+     "pk": 8,
+     "fields": {
+        "name": "Whole Genome"
+     }
+  },
+  {
+     "model": "samples.ExperimentType",
+     "pk": 9,
+     "fields": {
+        "name": "Small RNA"
+     }
+  },
+  {
+     "model": "samples.ExperimentType",
+     "pk": 10,
+     "fields": {
+        "name": "Multiplexed"
+     }
+  },
+  {
+     "model": "samples.Species",
+     "pk": 1,
+     "fields": {
+        "scientific_name": "Mus musculus",
+        "common_name": "mouse"
+     }
+  },
+  {
+     "model": "samples.Species",
+     "pk": 2,
+     "fields": {
+        "scientific_name": "Drosophila melanogaster",
+        "common_name": "fruit fly"
+     }
+  },
+  {
+     "model": "samples.Species",
+     "pk": 3,
+     "fields": {
+        "scientific_name": "Caenorhabditis elegans",
+        "common_name": ""
+     }
+  },
+  {
+     "model": "samples.Species",
+     "pk": 8,
+     "fields": {
+        "scientific_name": "Homo sapiens",
+        "common_name": ""
+     }
   }
+
 ]

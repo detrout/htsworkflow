@@ -126,7 +126,7 @@
         "pk": 11042, 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11039", 
+            "library_id": "SL039", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 99 GM12892", 
