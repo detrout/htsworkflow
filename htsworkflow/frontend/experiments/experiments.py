@@ -16,6 +16,7 @@ from django.http import HttpResponse, Http404
 from htsworkflow.frontend import settings
 from htsworkflow.frontend.experiments.models import FlowCell, DataRun
 from htsworkflow.frontend.samples.models import Library
+from htsworkflow.frontend.auth import require_api_key
 
 def flowcell_information(flowcell_id):
     """
@@ -35,6 +36,7 @@ def flowcell_information(flowcell_id):
             'lane_number': int(lane.lane_number),
             'library_name': lane.library.library_name,
             'library_id': lane.library.library_id,
+            'library_species': lane.library.library_species.scientific_name,
             'pM': float(lane.pM),
         }
     info = {
@@ -56,11 +58,12 @@ def flowcell_information(flowcell_id):
     
     return info
 
-@login_required    
 def flowcell_json(request, fc_id):
     """
     Return a JSON blob containing enough information to generate a config file.
     """
+    require_api_key(request)
+    
     fc_dict = flowcell_information(fc_id)
 
     if fc_dict is None:

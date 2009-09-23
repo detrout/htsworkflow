@@ -53,7 +53,7 @@
             "library_name": "Paired End Pfl #3 MP 7/24/9 a", 
             "creation_date": "2009-08-06", 
             "cell_line": 1, 
-            "library_species": 1, 
+            "library_species": 9, 
             "library_type": 2, 
             "made_by": "Lorian", 
             "affiliations": [
@@ -115,7 +115,7 @@
             "library_name": "Paired End Pfl #3 MP 7/24/9", 
             "creation_date": "2009-08-05", 
             "cell_line": 1, 
-            "library_species": 1, 
+            "library_species": 8, 
             "library_type": 2, 
             "made_by": "Lorian", 
             "affiliations": [

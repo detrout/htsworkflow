@@ -141,6 +141,9 @@ ADMIN_MEDIA_PREFIX = '/media/'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '(ekv^=gf(j9f(x25@a7r+8)hqlz%&_1!tw^75l%^041#vi=@4n'
 
+# some of our urls need an api key
+DEFAULT_API_KEY = 'n7HsXGHIi0vp9j5u4TIRJyqAlXYc4wrH'
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',

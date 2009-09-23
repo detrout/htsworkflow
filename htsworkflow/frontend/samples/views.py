@@ -7,6 +7,7 @@ try:
 except ImportError, e:
     import simplejson as json
 
+from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend.experiments.models import FlowCell
 from htsworkflow.frontend.samples.changelist import ChangeList
 from htsworkflow.frontend.samples.models import Library
@@ -491,11 +492,11 @@ def library_dict(library_id):
         info['library_type'] = lib.library_type.name
     return info
 
-@login_required
 def library_json(request, library_id):
     """
     Return a json formatted library dictionary
     """
+    require_api_key(request)
     # what validation should we do on library_id?
     
     lib = library_dict(library_id)

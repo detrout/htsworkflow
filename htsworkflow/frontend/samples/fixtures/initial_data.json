@@ -88,14 +88,6 @@
   },
   {
      "model": "samples.Species",
-     "pk": 1,
-     "fields": {
-        "scientific_name": "Mus musculus",
-        "common_name": "mouse"
-     }
-  },
-  {
-     "model": "samples.Species",
      "pk": 2,
      "fields": {
         "scientific_name": "Drosophila melanogaster",
@@ -112,11 +104,32 @@
   },
   {
      "model": "samples.Species",
+     "pk": 6,
+     "fields": {
+        "scientific_name": "Arabidopsis thaliana"
+     }
+  },
+  {
+     "model": "samples.Species",
      "pk": 8,
      "fields": {
         "scientific_name": "Homo sapiens",
         "common_name": ""
      }
+  },
+  {
+     "model": "samples.Species",
+     "pk": 9,
+     "fields": {
+        "scientific_name": "Mus musculus",
+        "common_name": "mouse"
+     }
+  },
+  {
+     "model": "samples.Species",
+     "pk": 10,
+     "fields": {
+        "scientific_name": "Strongylocentrotus purpuratus"
+     }
   }
-
 ]

@@ -18,6 +18,8 @@ from htsworkflow.frontend.samples.views import \
      library_dict, \
      library_json
 
+from htsworkflow.frontend.auth import apidata
+
 # The django test runner flushes the database between test suites not cases,
 # so to be more compatible with running via nose we flush the database tables
 # of interest before creating our sample data.
@@ -123,9 +125,8 @@ class SampleWebTestCase(TestCase):
 
         for lib in Library.objects.all():
             lib_dict = library_dict(lib.library_id)
-            self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
             url = '/samples/library/%s/json' % (lib.library_id,)
-            lib_response = self.client.get(url)
+            lib_response = self.client.get(url, apidata)
             self.failUnlessEqual(lib_response.status_code, 200)
             lib_json = json.loads(lib_response.content)
 
@@ -164,17 +165,15 @@ class SampleWebTestCase(TestCase):
         """
         Make sure we get a 404 if we request an invalid library id
         """
-        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
-        response = self.client.get('/samples/library/nottheone/json')
+        response = self.client.get('/samples/library/nottheone/json', apidata)
         self.failUnlessEqual(response.status_code, 404)
 
             
-    def test_library_not_logged_in(self):
+    def test_library_no_key(self):
         """
         Make sure we get a 302 if we're not logged in
         """
         response = self.client.get('/samples/library/10981/json')
-        self.failUnlessEqual(response.status_code, 302)
-        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
-        response = self.client.get('/samples/library/10981/json')
+        self.failUnlessEqual(response.status_code, 403)
+        response = self.client.get('/samples/library/10981/json', apidata)
         self.failUnlessEqual(response.status_code, 200)

@@ -6,6 +6,7 @@ except ImportError, e:
 from django.test import TestCase
 from htsworkflow.frontend.experiments import models
 from htsworkflow.frontend.experiments import experiments
+from htsworkflow.frontend.auth import apidata
 
 class ExperimentsTestCases(TestCase):
     fixtures = ['test_flowcells.json']
@@ -36,9 +37,10 @@ class ExperimentsTestCases(TestCase):
                 self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
                 self.failUnlessEqual(lane_dict['library_id'], lane.library.library_id)
                 self.failUnlessAlmostEqual(lane_dict['pM'], float(lane.pM))
+                self.failUnlessEqual(lane_dict['library_species'],
+                                     lane.library.library_species.scientific_name)
                     
-            self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
-            response = self.client.get('/experiments/config/%s/json' % (fc_id,))
+            response = self.client.get('/experiments/config/%s/json' % (fc_id,), apidata)
             # strptime isoformat string = '%Y-%m-%dT%H:%M:%S'
             fc_json = json.loads(response.content)
             self.failUnlessEqual(fc_json['flowcell_id'], fc_id)
@@ -57,35 +59,38 @@ class ExperimentsTestCases(TestCase):
                 self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
                 self.failUnlessEqual(lane_dict['library_id'], lane.library.library_id)
                 self.failUnlessAlmostEqual(lane_dict['pM'], float(lane.pM))
+                self.failUnlessEqual(lane_dict['library_species'],
+                                     lane.library.library_species.scientific_name)
 
     def test_invalid_flowcell(self):
         """
         Make sure we get a 404 if we request an invalid flowcell ID
         """
-        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
-        response = self.client.get('/experiments/config/nottheone/json')
+        response = self.client.get('/experiments/config/nottheone/json', apidata)
         self.failUnlessEqual(response.status_code, 404)
 
-    def test_not_logged_in(self):
+    def test_no_key(self):
         """
         Require logging in to retrieve meta data
         """
         response = self.client.get(u'/experiments/config/303TUAAXX/json')
-        self.failUnlessEqual(response.status_code, 302)
+        self.failUnlessEqual(response.status_code, 403)
 
     def test_library_id(self):
         """
         Library IDs should be flexible, so make sure we can retrive a non-numeric ID
         """
-        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
-        response = self.client.get('/experiments/config/303TUAAXX/json')
+        response = self.client.get('/experiments/config/303TUAAXX/json', apidata)
         self.failUnlessEqual(response.status_code, 200)
         flowcell = json.loads(response.content)
 
         self.failUnlessEqual(flowcell['lane_set']['3']['library_id'], 'SL039')
 
-        response = self.client.get('/samples/library/SL039/json')
+        response = self.client.get('/samples/library/SL039/json', apidata)
         self.failUnlessEqual(response.status_code, 200)
         library_sl039 = json.loads(response.content)
 
         self.failUnlessEqual(library_sl039['library_id'], 'SL039')
+
+#class RetriveConfigTestCases(TestCase):
+#    fixtures = ['test_flowcells.json']
