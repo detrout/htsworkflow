@@ -74,35 +74,37 @@ class constructMapperDict(object):
     """
     def __init__(self, genome_dict):
         self.genome_dict = genome_dict
-        
+
     def __getitem__(self, key):
         """
         Return the best match for key
         """
         elements = re.split("\|", key)
         
-        try:  
-            if len(elements) == 1:
-                # we just the species name
-                # get the set of builds
-                builds = self.genome_dict[elements[0]]
+        if len(elements) == 1:
+          # we just the species name
+          # get the set of builds
+          builds = self.genome_dict[elements[0]]
             
-                # sort build names the way humans would
-                keys = builds.keys()
-                keys.sort(cmp=alphanum)
-            
-                # return the path from the 'last' build name
-                return builds[keys[-1]]
+          # sort build names the way humans would
+          keys = builds.keys()
+          keys.sort(cmp=alphanum)
+          
+          # return the path from the 'last' build name
+          return builds[keys[-1]]
                         
-            elif len(elements) == 2:
-                # we have species, and build name
-                return self.genome_dict[elements[0]][elements[1]]
-            else:
-                raise KeyError("Unrecognized key")
-        except KeyError, e:
-            logging.error('Unrecognized genome identifier: %s' % str((elements),))
-            return "NoGenomeAvailable"
-        
+        elif len(elements) == 2:
+          # we have species, and build name
+          return self.genome_dict[elements[0]][elements[1]]
+        else:
+          raise KeyError("Unrecognized key")
+
+    def get(self, key, default=None):
+      try:
+        return self[key]
+      except KeyError, e:
+        return default
+      
     def keys(self):
         keys = []
         for species in self.genome_dict.keys():

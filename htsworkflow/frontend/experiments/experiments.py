@@ -32,12 +32,15 @@ def flowcell_information(flowcell_id):
         lane_set[lane.lane_number] = {
             'cluster_estimate': lane.cluster_estimate,
             'comment': lane.comment,
+            'experiment_type': lane.library.experiment_type.name,
+            'experiment_type_id': lane.library.experiment_type_id,
             'flowcell': lane.flowcell.flowcell_id,
             'lane_number': int(lane.lane_number),
             'library_name': lane.library.library_name,
             'library_id': lane.library.library_id,
             'library_species': lane.library.library_species.scientific_name,
             'pM': float(lane.pM),
+            'read_length': fc.read_length
         }
     info = {
         'advanced_run': fc.advanced_run,
@@ -152,7 +155,6 @@ def generateConfile(request,fcid):
     try:                                                                                                                                              
       fc = FlowCell.objects.get(flowcell_id=fcid)
       for lane in fc.lane_set.all():
-          print dir(lane.library.library_species)
           config += [ str(lane.lane_number) +":" + \
                       genome_dir + lane.library.library_species.scientific_name ]
           config += [ str(lane.lane_number) +":" + \
@@ -174,9 +176,6 @@ def getConfile(req):
     cnfgfile = 'Nothing found'
     runfolder = 'unknown'
     request = req.REQUEST
-    print request, dir(request)
-    print request['fcid'], request.has_key('fcid')
-    print request['runf']
     if request.has_key('fcid'):
       fcid = request['fcid']
       if request.has_key('runf'):

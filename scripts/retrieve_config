@@ -3,22 +3,18 @@ import logging
 import sys
 from htsworkflow.pipelines.retrieve_config import *
 from htsworkflow.pipelines import retrieve_config
-from htsworkflow.pipelines.genome_mapper import getAvailableGenomes
-from htsworkflow.pipelines.genome_mapper import constructMapperDict
 
 #Turn on built-in command-line parsing.
 retrieve_config.DISABLE_CMDLINE = False
 
-def main(args=None):
+def main(argv=None):
+  if argv is None:
+    argv = sys.argv
+    
   #Display help if no args are presented
-  if len(sys.argv) == 1:
-    sys.argv.append('-h')
-    
-  options = getCombinedOptions()
+  options = getCombinedOptions(argv)
+  
   msg_list = ['ERROR MESSAGES:']
-  if options.output_filepath is None:
-    msg_list.append("  Output filepath argument required. -o <filepath> or --output=<filepath>")
-    
   if options.flowcell is None:
     msg_list.append("  Flow cell argument required. -f <flowcell> or --flowcell=<flowcell>")
     
@@ -34,18 +30,7 @@ def main(args=None):
     print '\n'.join(msg_list)
     return 1
   
-  saveConfigFile(options.flowcell, options.url, options.output_filepath)
-
-  f = open(options.output_filepath, 'r')
-  data = f.read()
-  f.close()
-
-  genome_dict = getAvailableGenomes(options.genome_dir)
-  mapper_dict = constructMapperDict(genome_dict)
-
-  f = open(options.output_filepath, 'w')
-  f.write(data % (mapper_dict))
-  f.close()
+  saveConfigFile(options)
   
   return 0
   
