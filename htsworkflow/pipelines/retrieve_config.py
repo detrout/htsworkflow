@@ -49,7 +49,7 @@ def retrieve_flowcell_info(base_host_url, flowcell):
     
     contents = web.read()
     headers = web.info()
-   
+
     if web.code == 403:
         msg = "403 - Forbbidden, probably need api key"
         raise FlowCellNotFound(msg)
@@ -106,6 +106,8 @@ def format_gerald_header(flowcell_info):
         lane_info = flowcell_info['lane_set'][lane_number]
         config += ['Lane%s: %s | %s' % (lane_number, lane_info['library_id'],
                                         lane_info['library_name'])]
+
+    config += ['SEQUENCE_FORMAT --fastq']
     config += ['']
     return "\n# ".join(config)
 
