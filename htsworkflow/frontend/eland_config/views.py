@@ -272,8 +272,8 @@ def getElandConfig(flowcell, regenerate=False):
   
   #Convert all newline conventions to unix style
   for lane in fcObj.lane_set.all():
-    data.append("# Lane%d: %d | %s" % \
-      (lane.lane_number, lane.library_id,  lane.library.library_name.replace('%', '%%')))
+    data.append("# Lane%d: %s | %s" % \
+      (lane.lane_number, unicode(lane.library.library_id),  lane.library.library_name.replace('%', '%%')))
   
   #data.append("GENOME_DIR %s" % (BASE_DIR))
   #data.append("CONTAM_DIR %s" % (BASE_DIR))
