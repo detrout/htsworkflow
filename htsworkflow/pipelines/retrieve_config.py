@@ -49,12 +49,12 @@ def retrieve_flowcell_info(base_host_url, flowcell):
     
     contents = web.read()
     headers = web.info()
-    
-    if web.getcode() == 403:
+   
+    if web.code == 403:
         msg = "403 - Forbbidden, probably need api key"
         raise FlowCellNotFound(msg)
     
-    if web.getcode() == 404:
+    if web.code == 404:
         msg = "404 - Not Found: Flowcell (%s); base_host_url (%s);\n full url(%s)\n " \
               "Did you get right port #?" % (flowcell, base_host_url, url)
         raise FlowCellNotFound(msg)
