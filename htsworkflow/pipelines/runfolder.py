@@ -26,6 +26,8 @@ LANE_LIST = range(1, LANES_PER_FLOWCELL+1)
 from htsworkflow.util.alphanum import alphanum
 from htsworkflow.util.ethelp import indent, flatten
 
+from htsworkflow.pipelines import srf
+
 class PipelineRun(object):
     """
     Capture "interesting" information about a pipeline run
@@ -374,7 +376,74 @@ def is_compressed(filename):
     else:
         return False
 
-def extract_results(runs, output_base_dir=None):
+def save_summary_file(gerald_object, cycle_dir):
+      # Copy Summary.htm
+      summary_path = os.path.join(gerald_object.pathname, 'Summary.htm')
+      if os.path.exists(summary_path):
+          logging.info('Copying %s to %s' % (summary_path, cycle_dir))
+          shutil.copy(summary_path, cycle_dir)
+      else:
+          logging.info('Summary file %s was not found' % (summary_path,))
+
+    
+def compress_score_files(gerald_object, cycle_dir):
+    """
+    Compress score files into our result directory
+    """
+    # check for g.pathname/Temp a new feature of 1.1rc1
+    scores_path = gerald_object.pathname
+    scores_path_temp = os.path.join(scores_path, 'Temp')
+    if os.path.isdir(scores_path_temp):
+        scores_path = scores_path_temp
+
+    # hopefully we have a directory that contains s_*_score files
+    score_files = []
+    for f in os.listdir(scores_path):
+        if re.match('.*_score.txt', f):
+            score_files.append(f)
+
+    tar_cmd = ['/bin/tar', 'c'] + score_files
+    bzip_cmd = [ 'bzip2', '-9', '-c' ]
+    tar_dest_name =os.path.join(cycle_dir, 'scores.tar.bz2')
+    tar_dest = open(tar_dest_name, 'w')
+    logging.info("Compressing score files from %s" % (scores_path,))
+    logging.info("Running tar: " + " ".join(tar_cmd[:10]))
+    logging.info("Running bzip2: " + " ".join(bzip_cmd))
+    logging.info("Writing to %s" %(tar_dest_name))
+
+    env = {'BZIP': '-9'}
+    tar = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, shell=False, env=env,
+                           cwd=scores_path)
+    bzip = subprocess.Popen(bzip_cmd, stdin=tar.stdout, stdout=tar_dest)
+    tar.wait()
+
+def compress_eland_results(gerald_object, cycle_dir):
+    """
+    Compress eland result files into the archive directory
+    """
+    # copy & bzip eland files
+    for lanes_dictionary in gerald_object.eland_results.results:
+        for eland_lane in lanes_dictionary.values():
+            source_name = eland_lane.pathname
+            path, name = os.path.split(eland_lane.pathname)
+            dest_name = os.path.join(cycle_dir, name)
+            logging.info("Saving eland file %s to %s" % \
+                         (source_name, dest_name))
+            
+            if is_compressed(name):
+              logging.info('Already compressed, Saving to %s' % (dest_name, ))
+              shutil.copy(source_name, dest_name)
+            else:
+              # not compressed
+              dest_name += '.bz2'
+              args = ['bzip2', '-9', '-c', source_name]
+              logging.info('Running: %s' % ( " ".join(args) ))
+              bzip_dest = open(dest_name, 'w')
+              bzip = subprocess.Popen(args, stdout=bzip_dest)
+              logging.info('Saving to %s' % (dest_name, ))
+              bzip.wait()
+    
+def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1):
     if output_base_dir is None:
         output_base_dir = os.getcwd()
 
@@ -400,65 +469,20 @@ def extract_results(runs, output_base_dir=None):
       # save run file
       r.save(cycle_dir)
 
-      # Copy Summary.htm
-      summary_path = os.path.join(r.gerald.pathname, 'Summary.htm')
-      if os.path.exists(summary_path):
-          logging.info('Copying %s to %s' % (summary_path, cycle_dir))
-          shutil.copy(summary_path, cycle_dir)
-      else:
-          logging.info('Summary file %s was not found' % (summary_path,))
-
+      # save summary file
+      save_summary_file(g, cycle_dir)
+      
       # tar score files
-      score_files = []
+      compress_score_files(g, cycle_dir)
 
-      # check for g.pathname/Temp a new feature of 1.1rc1
-      scores_path = g.pathname
-      scores_path_temp = os.path.join(scores_path, 'Temp')
-      if os.path.isdir(scores_path_temp):
-          scores_path = scores_path_temp
-
-      # hopefully we have a directory that contains s_*_score files
-      for f in os.listdir(scores_path):
-          if re.match('.*_score.txt', f):
-              score_files.append(f)
-
-      tar_cmd = ['/bin/tar', 'c'] + score_files
-      bzip_cmd = [ 'bzip2', '-9', '-c' ]
-      tar_dest_name =os.path.join(cycle_dir, 'scores.tar.bz2')
-      tar_dest = open(tar_dest_name, 'w')
-      logging.info("Compressing score files from %s" % (scores_path,))
-      logging.info("Running tar: " + " ".join(tar_cmd[:10]))
-      logging.info("Running bzip2: " + " ".join(bzip_cmd))
-      logging.info("Writing to %s" %(tar_dest_name))
-
-      env = {'BZIP': '-9'}
-      tar = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, shell=False, env=env,
-                             cwd=scores_path)
-      bzip = subprocess.Popen(bzip_cmd, stdin=tar.stdout, stdout=tar_dest)
-      tar.wait()
-
-      # copy & bzip eland files
-      for lanes_dictionary in g.eland_results.results:
-          for eland_lane in lanes_dictionary.values():
-              source_name = eland_lane.pathname
-              path, name = os.path.split(eland_lane.pathname)
-              dest_name = os.path.join(cycle_dir, name)
-	      logging.info("Saving eland file %s to %s" % \
-	                   (source_name, dest_name))
-
-              if is_compressed(name):
-                logging.info('Already compressed, Saving to %s' % (dest_name, ))
-                shutil.copy(source_name, dest_name)
-              else:
-                # not compressed
-                dest_name += '.bz2'
-                args = ['bzip2', '-9', '-c', source_name]
-                logging.info('Running: %s' % ( " ".join(args) ))
-                bzip_dest = open(dest_name, 'w')
-                bzip = subprocess.Popen(args, stdout=bzip_dest)
-                logging.info('Saving to %s' % (dest_name, ))
-                bzip.wait()
-
+      # compress eland result files
+      compress_eland_results(g, cycle_dir)
+      
+      # build srf commands
+      lanes = range(1,9)
+      srf_cmds = srf.make_commands(r.pathname, lanes, "woldlab", cycle_dir)
+      srf.run_srf_commands(r.bustard.pathname, srf_cmds, 2)
+      
 def rm_list(files, dry_run=True):
     for f in files:
         if os.path.exists(f):
