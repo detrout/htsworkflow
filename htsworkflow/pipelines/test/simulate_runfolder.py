@@ -8,6 +8,7 @@ import shutil
 TEST_CODE_DIR = os.path.split(__file__)[0]
 TESTDATA_DIR = os.path.join(TEST_CODE_DIR, 'testdata')
 LANE_LIST = range(1,9)
+TILE_LIST = range(1,101)
 
 def make_firecrest_dir(data_dir, version="1.9.2", start=1, stop=37):
     firecrest_dir = os.path.join(data_dir, 
@@ -45,9 +46,9 @@ def make_flowcell_id(runfolder_dir, flowcell_id=None):
     f.write(config)
     f.close()
 
-def make_bustard_config132(gerald_dir):
+def make_bustard_config132(image_dir):
     source = os.path.join(TESTDATA_DIR, 'bustard-config132.xml')
-    destination = os.path.join(gerald_dir, 'config.xml')
+    destination = os.path.join(image_dir, 'config.xml')
     shutil.copy(source, destination)
 
 def make_rta_intensities_1460(data_dir, version='1.4.6.0'):
@@ -76,7 +77,65 @@ def make_rta_basecalls_1460(intensities_dir):
 
     return basecalls_dir
 
+def make_qseqs(bustard_dir, in_temp=True):
+    """
+    Fill gerald directory with qseq files
+    """
+    # 42BRJ 8 1 0039 happened to be a better than usual tile, in that there
+    # was actually sequence at the start
+    source = os.path.join(TESTDATA_DIR, '42BRJAAXX_8_1_0039_qseq.txt')
+    destdir = bustard_dir
+    if not os.path.isdir(destdir):
+        os.mkdir(destdir)
+        
+    for lane in LANE_LIST:
+        for tile in TILE_LIST:
+            destination = os.path.join(bustard_dir, 's_%d_1_%04d_qseq.txt' % (lane, tile))
+            shutil.copy(source, destination)
 
+    make_matrix_dir(bustard_dir)
+    make_phasing_dir(bustard_dir)
+
+    summary_source = os.path.join(TESTDATA_DIR, '42BRJAAXX_BustardSummary.xml')
+    summary_dest = os.path.join(bustard_dir, 'BustardSummary.xml')
+    shutil.copy(summary_source, summary_dest)
+    
+    return destdir
+
+def make_scores(gerald_dir, in_temp=True):
+    """
+    Fill gerald directory with score temp files
+    will create the directory if it doesn't exist.
+    """
+    source = os.path.join(TESTDATA_DIR, 's_1_0001_score.txt')
+    destdir = gerald_dir
+    if in_temp:
+        destdir = os.path.join(destdir, 'Temp')
+    if not os.path.isdir(destdir):
+        os.mkdir(destdir)
+        
+    for lane in LANE_LIST:
+        for tile in TILE_LIST:
+            destination = os.path.join(destdir, 's_%d_%04d_score.txt' % (lane, tile))
+            shutil.copy(source, destination)
+            
+    return destdir
+
+def make_matrix_dir(bustard_dir):
+    """
+    Create several matrix files in <bustard_dir>/Matrix/
+
+    from pipeline 1.4    
+    """
+    destdir = os.path.join(bustard_dir, 'Matrix')
+    if not os.path.isdir(destdir):
+        os.mkdir(destdir)
+        
+    source = os.path.join(TESTDATA_DIR, '42BRJAAXX_8_02_matrix.txt')
+    for lane in LANE_LIST:
+        destination = os.path.join(destdir, 's_%d_02_matrix.txt' % ( lane, ))
+        shutil.copy(source, destination)
+        
 def make_matrix(matrix_filename):
     contents = """# Auto-generated frequency response matrix
 > A
@@ -92,8 +151,23 @@ def make_matrix(matrix_filename):
     f.write(contents)
     f.close()
 
+def make_phasing_dir(bustard_dir):
+    """
+    Create several phasing files in <bustard_dir>/Phasing/
+
+    from pipeline 1.4
+    """
+    destdir = os.path.join(bustard_dir, 'Phasing')
+    if not os.path.isdir(destdir):
+        os.mkdir(destdir)
+        
+    source = os.path.join(TESTDATA_DIR, '42BRJAAXX_8_01_phasing.xml')
+    for lane in LANE_LIST:
+        destination = os.path.join(destdir, 's_%d_01_phasing.xml' % ( lane, ))
+        shutil.copy(source, destination)
+    
 def make_phasing_params(bustard_dir):
-    for lane in range(1,9):
+    for lane in LANE_LIST:
         pathname = os.path.join(bustard_dir, 'params%d.xml' % (lane))
         f = open(pathname, 'w')
         f.write("""<Parameters>
@@ -139,7 +213,7 @@ def make_eland_results(gerald_dir):
 >HWI-EAS229_24_207BTAAXX:1:7:776:582    AGCTCANCCGATCGAAAACCTCNCCAAGCAAT        NM      0       0       0
 >HWI-EAS229_24_207BTAAXX:1:7:205:842    AAACAANNCTCCCAAACACGTAAACTGGAAAA        U1      0       1       0       Lambda.fa        8796855 R       DD      24T
 """
-    for i in range(1,9):
+    for i in LANE_LIST:
         pathname = os.path.join(gerald_dir,
                                 's_%d_eland_result.txt' % (i,))
         f = open(pathname, 'w')

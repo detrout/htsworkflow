@@ -9,6 +9,7 @@ import shutil
 import stat
 import subprocess
 import sys
+import tarfile
 import time
 
 try:
@@ -386,12 +387,12 @@ def save_summary_file(gerald_object, cycle_dir):
           logging.info('Summary file %s was not found' % (summary_path,))
 
     
-def compress_score_files(gerald_object, cycle_dir):
+def compress_score_files(bustard_object, cycle_dir):
     """
     Compress score files into our result directory
     """
     # check for g.pathname/Temp a new feature of 1.1rc1
-    scores_path = gerald_object.pathname
+    scores_path = bustard_object.pathname
     scores_path_temp = os.path.join(scores_path, 'Temp')
     if os.path.isdir(scores_path_temp):
         scores_path = scores_path_temp
@@ -402,20 +403,21 @@ def compress_score_files(gerald_object, cycle_dir):
         if re.match('.*_score.txt', f):
             score_files.append(f)
 
-    tar_cmd = ['/bin/tar', 'c'] + score_files
+    tar_cmd = ['tar', 'c'] + score_files
     bzip_cmd = [ 'bzip2', '-9', '-c' ]
     tar_dest_name =os.path.join(cycle_dir, 'scores.tar.bz2')
     tar_dest = open(tar_dest_name, 'w')
     logging.info("Compressing score files from %s" % (scores_path,))
     logging.info("Running tar: " + " ".join(tar_cmd[:10]))
     logging.info("Running bzip2: " + " ".join(bzip_cmd))
-    logging.info("Writing to %s" %(tar_dest_name))
+    logging.info("Writing to %s" %(tar_dest_name,))
 
     env = {'BZIP': '-9'}
     tar = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, shell=False, env=env,
                            cwd=scores_path)
     bzip = subprocess.Popen(bzip_cmd, stdin=tar.stdout, stdout=tar_dest)
     tar.wait()
+
 
 def compress_eland_results(gerald_object, cycle_dir):
     """
@@ -444,6 +446,14 @@ def compress_eland_results(gerald_object, cycle_dir):
               bzip.wait()
     
 def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1):
+    """
+    Iterate over runfolders in runs extracting the most useful information.
+      * run parameters (in run-*.xml)
+      * eland_result files
+      * score files
+      * Summary.htm
+      * srf files (raw sequence & qualities)
+    """
     if output_base_dir is None:
         output_base_dir = os.getcwd()
 
@@ -473,14 +483,15 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1):
       save_summary_file(g, cycle_dir)
       
       # tar score files
-      compress_score_files(g, cycle_dir)
+      compress_score_files(r.bustard, cycle_dir)
 
       # compress eland result files
       compress_eland_results(g, cycle_dir)
       
       # build srf commands
       lanes = range(1,9)
-      srf_cmds = srf.make_commands(r.pathname, lanes, "woldlab", cycle_dir)
+      run_name = srf.pathname_to_run_name(r.pathname)
+      srf_cmds = srf.make_commands(run_name, lanes, site, cycle_dir)
       srf.run_srf_commands(r.bustard.pathname, srf_cmds, 2)
       
 def rm_list(files, dry_run=True):
