@@ -130,14 +130,20 @@ def format_gerald_config(options, flowcell_info, genome_map):
         lane_numbers.sort()
         lane_prefix = u"".join(lane_numbers)
         
+        species_path = genome_map.get(species, None)
+        logging.debug("Looked for genome '%s' got location '%s'" % (species, species_path))
+        if species_path is None:
+            no_genome_msg = "Forcing lanes %s to sequencing as there is no genome for %s"
+            logging.warning(no_genome_msg % (lane_numbers, species))
+            is_sequencing = True
+            
         if not is_sequencing:
             config += ['%s:ANALYSIS eland%s' % (lane_prefix, analysis_suffix)]
+            config += ['%s:ELAND_GENOME %s' % (lane_prefix, species_path) ]
         else:
             config += ['%s:ANALYSIS sequence%s' % (lane_prefix, analysis_suffix)]
         #config += ['%s:READ_LENGTH %s' % ( lane_prefix, read_length ) ]
         config += ['%s:USE_BASES Y%s' % ( lane_prefix, read_length ) ]
-        species_path = genome_map.get(species, "Unknown")
-        config += ['%s:ELAND_GENOME %s' % (lane_prefix, species_path) ]
 
     # add in option for running script after 
     if options.post_run is not None:
@@ -220,7 +226,9 @@ Config File:
     parser.add_option("-r", "--runfolder",
                       action="store", type="string",
                       help="specify runfolder for post_run command ")
-    
+
+    parser.add_option('-v', '--verbose', action='store_true', default=False,
+                       help='increase logging verbosity')
     return parser
     
 def constructConfigParser():
@@ -269,13 +277,6 @@ def getCombinedOptions(argv=None):
         if options.runfolder is not None:
             options.output_filepath = os.path.join(options.runfolder, 'config-auto.txt')
             
-    logging.info('USING OPTIONS:')
-    logging.info(u'     URL: %s' % (options.url,))
-    logging.info(u'     OUT: %s' % (options.output_filepath,))
-    logging.info(u'      FC: %s' % (options.flowcell,))
-    #logging.info(': %s' % (options.genome_dir,))
-    logging.info(u'post_run: %s' % ( unicode(options.post_run),))
-    
     return options
 
 
@@ -284,10 +285,19 @@ def saveConfigFile(options):
   retrieves the flowcell eland config file, give the base_host_url
   (i.e. http://sub.domain.edu:port)
   """
+  logging.info('USING OPTIONS:')
+  logging.info(u'     URL: %s' % (options.url,))
+  logging.info(u'     OUT: %s' % (options.output_filepath,))
+  logging.info(u'      FC: %s' % (options.flowcell,))
+  #logging.info(': %s' % (options.genome_dir,))
+  logging.info(u'post_run: %s' % ( unicode(options.post_run),))
+   
   flowcell_info = retrieve_flowcell_info(options.url, options.flowcell)
 
+  logging.debug('genome_dir: %s' % ( options.genome_dir, ))
   available_genomes = getAvailableGenomes(options.genome_dir)
   genome_map = constructMapperDict(available_genomes)
+  logging.debug('available genomes: %s' % ( unicode( genome_map.keys() ),))
 
   config = format_gerald_config(options, flowcell_info, genome_map)
 

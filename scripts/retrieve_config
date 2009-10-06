@@ -13,6 +13,11 @@ def main(argv=None):
     
   #Display help if no args are presented
   options = getCombinedOptions(argv)
+
+  if options.verbose:
+    logging.basicConfig(level=logging.DEBUG)
+  else:
+    logging.basicConfig(level=logging.INFO)
   
   msg_list = ['ERROR MESSAGES:']
   if options.flowcell is None:
@@ -35,5 +40,4 @@ def main(argv=None):
   return 0
   
 if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
   sys.exit(main(sys.argv[1:]))
