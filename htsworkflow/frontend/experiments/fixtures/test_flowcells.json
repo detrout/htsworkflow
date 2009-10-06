@@ -1,5 +1,45 @@
 [
-  {"pk": 5, "model": "auth.user", 
+    {"pk": 1, "model": "samples.affiliation",
+     "fields": {
+         "users": [],
+         "contact": "group 1",
+         "name": "affiliation 1",
+         "email": "pk1@example.com"
+         }
+     },
+    {"pk": 2, "model": "samples.affiliation",
+     "fields": {
+         "users": [],
+         "contact": "group 2",
+         "name": "affiliation 2",
+         "email": "pk2@example.com"
+         }
+     },
+    {"pk": 3, "model": "samples.affiliation",
+     "fields": {
+         "users": [],
+         "contact": "group 3",
+         "name": "affiliation 3",
+         "email": "pk3@example.com"
+         }
+     },
+    {"pk": 4, "model": "samples.affiliation",
+     "fields": {
+         "users": [],
+         "contact": "group 4",
+         "name": "affiliation 4",
+         "email": "pk1@example.com"
+         }
+     },
+    {"pk": 5, "model": "samples.affiliation",
+     "fields": {
+         "users": [],
+         "contact": "group 5",
+         "name": "affiliation 5",
+         "email": "pk5@example.com"
+         }
+     },
+    {"pk": 5, "model": "auth.user", 
    "fields": {
        "username": "test",
        "first_name": "",
@@ -7,6 +47,22 @@
        "is_active": true,
        "is_superuser": false,
        "is_staff": false,
+       "last_login": "2009-01-01 00:00:01",
+       "groups": [],
+       "user_permissions": [],
+       "password": "sha1$foo$5e4eefec1144a04becfb7da79244f07c487fc345",
+       "email": "",
+       "date_joined": "2009-01-01 00:01:01"
+       }
+   },
+  {"pk": 6, "model": "auth.user", 
+   "fields": {
+       "username": "admintest",
+       "first_name": "",
+       "last_name": "",
+       "is_active": true,
+       "is_superuser": false,
+       "is_staff": true,
        "last_login": "2009-01-01 00:00:01",
        "groups": [],
        "user_permissions": [],
@@ -56,7 +112,7 @@
             "library_type": null, 
             "made_by": "Igor", 
             "affiliations": [
-                40
+                1,2
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -96,7 +152,7 @@
             "library_type": 2, 
             "made_by": "Lorian", 
             "affiliations": [
-                41
+                2
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -136,9 +192,7 @@
             "library_type": 2, 
             "made_by": "Brian Williams", 
             "affiliations": [
-                4, 
-                8, 
-                12
+                3,4
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -178,8 +232,7 @@
             "library_type": 2, 
             "made_by": "Brian Williams", 
             "affiliations": [
-                37, 
-                8
+                5
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -219,8 +272,7 @@
             "library_type": 2, 
             "made_by": "Brian Williams", 
             "affiliations": [
-                37, 
-                8
+                2,4
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -260,8 +312,7 @@
             "library_type": 2, 
             "made_by": "Brian Williams", 
             "affiliations": [
-                37, 
-                8
+                4,5
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -301,8 +352,7 @@
             "library_type": 2, 
             "made_by": "Brian Williams", 
             "affiliations": [
-                37, 
-                8
+                1,3
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -342,8 +392,7 @@
             "library_type": 2, 
             "made_by": "Brian Williams", 
             "affiliations": [
-                37, 
-                8
+                3,5
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -396,7 +445,7 @@
             "library_type": 2, 
             "made_by": "Brian Williams", 
             "affiliations": [
-                14
+                3
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -436,7 +485,7 @@
             "library_type": 2, 
             "made_by": "Brian Williams", 
             "affiliations": [
-                26
+                4
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -476,7 +525,7 @@
             "library_type": 1, 
             "made_by": "Lorian", 
             "affiliations": [
-                18
+                5
             ], 
             "replicate": 1, 
             "condition": null, 
@@ -515,7 +564,7 @@
             "library_type": 1, 
             "made_by": "Lorian", 
             "affiliations": [
-                18
+                6
             ], 
             "replicate": 1, 
             "condition": null, 
@@ -555,7 +604,7 @@
             "library_type": 1, 
             "made_by": "Lorian", 
             "affiliations": [
-                26
+                1
             ], 
             "replicate": 1, 
             "condition": null, 
@@ -595,7 +644,7 @@
             "library_type": 1, 
             "made_by": "Lorian", 
             "affiliations": [
-                26
+                2
             ], 
             "replicate": 1, 
             "condition": null, 
@@ -635,7 +684,7 @@
             "library_type": 1, 
             "made_by": "Lorian", 
             "affiliations": [
-                26
+                3
             ], 
             "replicate": 1, 
             "condition": null, 
@@ -675,7 +724,7 @@
             "library_type": 2, 
             "made_by": "Brian Williams", 
             "affiliations": [
-                26
+                4
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -738,7 +787,7 @@
             "library_type": 2, 
             "made_by": "Brian Williams", 
             "affiliations": [
-                26
+                5
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -768,7 +817,7 @@
             "library_type": 2, 
             "made_by": "Brian Williams", 
             "affiliations": [
-                14
+                1
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -798,7 +847,7 @@
             "library_type": 1, 
             "made_by": "Lorian", 
             "affiliations": [
-                21
+                2
             ], 
             "replicate": 1, 
             "condition": null, 
@@ -839,7 +888,7 @@
             "library_type": 1, 
             "made_by": "Lorian", 
             "affiliations": [
-                21
+                3
             ], 
             "replicate": 1, 
             "condition": null, 
@@ -879,7 +928,7 @@
             "library_type": 1, 
             "made_by": "Lorian", 
             "affiliations": [
-                18
+                4
             ], 
             "replicate": 1, 
             "condition": null, 
@@ -919,7 +968,7 @@
             "library_type": 1, 
             "made_by": "Lorian", 
             "affiliations": [
-                26
+                5
             ], 
             "replicate": 1, 
             "condition": null, 
@@ -959,7 +1008,7 @@
             "library_type": 2, 
             "made_by": "Igor", 
             "affiliations": [
-                40
+                1
             ], 
             "replicate": 1, 
             "condition": 1, 
@@ -999,7 +1048,7 @@
             "library_type": 2, 
             "made_by": "Yuling Jiao", 
             "affiliations": [
-                29
+                2
             ], 
             "replicate": 1, 
             "condition": null, 
@@ -1039,7 +1088,7 @@
             "library_type": 2, 
             "made_by": "Yuling Jiao", 
             "affiliations": [
-                29
+                3
             ], 
             "replicate": 1, 
             "condition": null, 
@@ -1055,4 +1104,5 @@
             "antibody": null
         }
      }
+
 ]

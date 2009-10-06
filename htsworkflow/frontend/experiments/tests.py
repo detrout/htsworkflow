@@ -2,7 +2,9 @@ try:
     import json
 except ImportError, e:
     import simplejson as json
-    
+import sys
+
+from django.core import mail
 from django.test import TestCase
 from htsworkflow.frontend.experiments import models
 from htsworkflow.frontend.experiments import experiments
@@ -92,5 +94,34 @@ class ExperimentsTestCases(TestCase):
 
         self.failUnlessEqual(library_sl039['library_id'], 'SL039')
 
-#class RetriveConfigTestCases(TestCase):
-#    fixtures = ['test_flowcells.json']
+class TestEmailNotify(TestCase):
+    fixtures = ['test_flowcells.json']
+
+    def test_started_email_not_logged_in(self):
+        response = self.client.get('/experiments/started/153/')
+        self.failUnlessEqual(response.status_code, 302)
+
+    def test_started_email_logged_in_user(self):
+        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
+        response = self.client.get('/experiments/started/153/')
+        self.failUnlessEqual(response.status_code, 302)
+        
+    def test_started_email_logged_in_staff(self):
+        self.client.login(username='admintest', password='BJOKL5kAj6aFZ6A5') 
+        response = self.client.get('/experiments/started/153/')
+        self.failUnlessEqual(response.status_code, 200)
+
+    def test_started_email_send(self):
+        self.client.login(username='admintest', password='BJOKL5kAj6aFZ6A5') 
+        response = self.client.get('/experiments/started/153/')
+        self.failUnlessEqual(response.status_code, 200)
+        
+        self.failUnless('pk1@example.com' in response.content)
+        self.failUnless('Lane #8 : (11064) Paired ends 104' in response.content)
+
+        response = self.client.get('/experiments/started/153/', {'send':'1','bcc':'on'})
+        self.failUnlessEqual(response.status_code, 200)
+        self.failUnlessEqual(len(mail.outbox), 4)
+        print >>sys.stderr, "outbox:", mail.outbox
+        for m in mail.outbox:
+            self.failUnless(len(m.body) > 0)
