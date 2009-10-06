@@ -74,6 +74,11 @@ class FlowCell(models.Model):
 
   class Meta:
     ordering = ["-run_date"]
+
+  def get_admin_url(self):
+    # that's the django way... except it didn't work
+    #return urlresolvers.reverse('admin_experiments_FlowCell_change', args=(self.id,))
+    return '/admin/experiments/flowcell/%s/' % (self.id,)
   
 ### -----------------------
 class DataRun(models.Model):

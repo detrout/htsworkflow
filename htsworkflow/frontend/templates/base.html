@@ -1,8 +1,7 @@
 {% load i18n %}
 
 <!-- Container -->
-    <!--
-    {% if not is_popup %}
+   {% if not is_popup %}
     
     <div id="header">
         <div id="branding">
@@ -17,8 +16,7 @@
     
     {% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Home' %}</a>{% if title %} &rsaquo; {{ title }}{% endif %}</div>{% endblock %}
     {% endif %}
-    -->
-        {% if messages %}
+       {% if messages %}
         <ul  class="djangocss" class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
         {% endif %}
 

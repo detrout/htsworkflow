@@ -1,3 +1,4 @@
+import re
 try:
     import json
 except ImportError, e:
@@ -124,3 +125,15 @@ class TestEmailNotify(TestCase):
         self.failUnlessEqual(len(mail.outbox), 4)
         for m in mail.outbox:
             self.failUnless(len(m.body) > 0)
+
+    def test_email_navigation(self):
+        """
+        Can we navigate between the flowcell and email forms properly?
+        """
+        self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5') 
+        response = self.client.get('/experiments/started/153/')
+        self.failUnlessEqual(response.status_code, 200)
+        self.failUnless(re.search('Flowcell 303TUAAXX', response.content))
+        # require that navigation back to the admin page exists
+        self.failUnless(re.search('<a href="/admin/experiments/flowcell/153/">[^<]+</a>', response.content))
+        

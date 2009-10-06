@@ -1,13 +1,24 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<html> <head>
-<title></title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="/admin">{% trans 'Home' %}</a> &rsaquo;
+  <a href="/admin/experiments">Experiments</a> &rsaquo;
+  <a href="/admin/experiments/flowcell">flowcell</a> &rsaquo;
+  <a href="{{ flowcell.get_admin_url }}">{{ flowcell.flowcell_id }}</a>
+</div>  
+{% endblock %}
+
+{% block content %}
+{% if warnings %}
+<hr/>
 <p>
 {% for user_admin_url, username in warnings %}
 Warning: User <a href="{{ user_admin_url}}">{{ username }}</a> has no
 email address <br/>
 {% endfor %}
+{% endif %}
 </p>
 {% for to, subject, body, sending in emails %}
 <hr/>
@@ -24,5 +35,4 @@ email address <br/>
 <input type="checkbox" id="bcc" name="bcc" checked="on"/><br/>
 <input type="hidden" name="send" value="1"/>
 <input type="submit" value="Send Email"/>
-</body>
-</html>
+{% endblock %}

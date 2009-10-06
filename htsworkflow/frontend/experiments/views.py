@@ -90,7 +90,7 @@ def startedEmail(request, pk):
                   })
 
         # build view
-        subject = "Flowcell  %s" % ( fc.flowcell_id )
+        subject = "Flowcell %s" % ( fc.flowcell_id )
         body = email_template.render(context)
 
         if send:
@@ -102,11 +102,13 @@ def startedEmail(request, pk):
         emails.append((user_email, subject, body, sending))
 
     verify_context = Context({
-        'send': send,
-        'warnings': warnings,
         'emails': emails,
+        'flowcell': fc,
         'from': sender,
+        'send': send,
         'site_managers': settings.MANAGERS,
+        'title': fc.flowcell_id,
+        'warnings': warnings,
         })
     return HttpResponse(email_verify.render(verify_context))
     
