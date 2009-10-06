@@ -122,6 +122,5 @@ class TestEmailNotify(TestCase):
         response = self.client.get('/experiments/started/153/', {'send':'1','bcc':'on'})
         self.failUnlessEqual(response.status_code, 200)
         self.failUnlessEqual(len(mail.outbox), 4)
-        print >>sys.stderr, "outbox:", mail.outbox
         for m in mail.outbox:
             self.failUnless(len(m.body) > 0)
