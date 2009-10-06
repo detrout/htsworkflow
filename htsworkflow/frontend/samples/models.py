@@ -134,6 +134,8 @@ class Library(models.Model):
   library_species = models.ForeignKey(Species)
   # new field 2008 Mar 5, alter table samples_library add column "hidden" NOT NULL default 0;
   hidden = models.BooleanField()
+  # new field 2009 Oct 6, alter table samples_library add column "account_number" varchar(100) NULL
+  account_number = models.CharField(max_length=100, null=True, blank=True)
   cell_line = models.ForeignKey(Cellline, blank=True, null=True, verbose_name="Background")
   condition = models.ForeignKey(Condition, blank=True, null=True)
   antibody = models.ForeignKey(Antibody,blank=True,null=True)

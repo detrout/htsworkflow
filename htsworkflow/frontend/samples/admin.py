@@ -86,6 +86,11 @@ class LibraryTypeOptions(admin.ModelAdmin):
     model = LibraryType
 
 class LibraryOptions(admin.ModelAdmin):
+    class Media:
+        css = {
+            "all": ("css/wide_account_number.css",)
+            }
+        
     date_hierarchy = "creation_date"
     save_as = True
     save_on_top = True
@@ -138,7 +143,7 @@ class LibraryOptions(admin.ModelAdmin):
           ('cell_line','condition','antibody'),)
          }),
          ('Creation Information:', {
-             'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('avg_lib_size','undiluted_concentration', 'ten_nM_dilution', 'successful_pM'), 'notes',)
+             'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('avg_lib_size','undiluted_concentration', 'ten_nM_dilution', 'successful_pM'), 'account_number', 'notes',)
          }),
          ('Library/Project Affiliation:', {
              'fields' : (('affiliations'), ('tags'),)
