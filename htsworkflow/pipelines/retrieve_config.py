@@ -116,13 +116,15 @@ def format_gerald_config(options, flowcell_info, genome_map):
     Generate a GERALD config file
     """
     # so we can add nothing or _pair if we're a paired end run
-    run_type_suffix = { False: "", True: "_pair" }
+    eland_analysis_suffix = { False: "_extended", True: "_pair" }
+    sequence_analysis_suffix = { False: "", True: "_pair" }
 
     # it's convienent to have helpful information describing the flowcell
     # in the config file... things like which lane is which library.
     config = [format_gerald_header(flowcell_info)]
 
-    analysis_suffix = run_type_suffix[flowcell_info['paired_end']]
+    analysis_suffix = eland_analysis_suffix[flowcell_info['paired_end']]
+    sequence_suffix = sequence_analysis_suffix[flowcell_info['paired_end']]
     lane_groups = group_lane_parameters(flowcell_info)
     for lane_index, lane_numbers in lane_groups.items():
         # lane_index is return value of group_lane_parameters
@@ -137,11 +139,11 @@ def format_gerald_config(options, flowcell_info, genome_map):
             logging.warning(no_genome_msg % (lane_numbers, species))
             is_sequencing = True
             
-        if not is_sequencing:
+        if is_sequencing:
+            config += ['%s:ANALYSIS sequence%s' % (lane_prefix, analysis_suffix)]
+        else:
             config += ['%s:ANALYSIS eland%s' % (lane_prefix, analysis_suffix)]
             config += ['%s:ELAND_GENOME %s' % (lane_prefix, species_path) ]
-        else:
-            config += ['%s:ANALYSIS sequence%s' % (lane_prefix, analysis_suffix)]
         #config += ['%s:READ_LENGTH %s' % ( lane_prefix, read_length ) ]
         config += ['%s:USE_BASES Y%s' % ( lane_prefix, read_length ) ]
 

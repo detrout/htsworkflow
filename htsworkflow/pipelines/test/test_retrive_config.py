@@ -35,8 +35,10 @@ class RetrieveTestCases(TestCase):
         human = [ line for line in config_lines if re.search('hg18', line) ]
         self.failUnlessEqual(len(human), 1)
         self.failUnlessEqual(human[0], '345678:ELAND_GENOME /tmp/hg18')
-        unknown = [ line for line in config_lines if re.search('Unknown', line) ]
-        self.failUnlessEqual(len(unknown), 2)
+        # we changed the api to force unknown genomes to be sequencing
+        sequencing = [ line for line in config_lines if re.search('sequence_pair', line) ]
+        self.failUnlessEqual(len(sequencing), 2)
+
                   
 
         
