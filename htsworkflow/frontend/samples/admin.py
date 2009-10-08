@@ -156,11 +156,12 @@ class LibraryOptions(admin.ModelAdmin):
     # some post 1.0.2 version of django has formfield_overrides 
     # which would replace this code with:
     # formfield_overrids = {
-    #   models.ManyToMany: { 'widget': widgets.FilteredSelectMultiple }
-    # }
+    #    models.ManyToMany: { 'widget': widgets.FilteredSelectMultiple }
+    #}
     def formfield_for_dbfield(self, db_field, **kwargs):
-      if db_field.name == 'affiliations':
-        kwargs['widget'] = widgets.FilteredSelectMultiple(db_field.verbose_name, (db_field.name in self.filter_vertical))
+      if db_field.name in ('affiliations', 'tags'):
+        kwargs['widget'] = widgets.FilteredSelectMultiple(db_field.verbose_name,
+                                                          (db_field.name in self.filter_vertical))
       rv = super(LibraryOptions, self).formfield_for_dbfield(db_field, **kwargs)
       return rv
 
