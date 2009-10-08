@@ -1,22 +1,10 @@
 from htsworkflow.frontend.experiments.models import FlowCell, DataRun, ClusterStation, Sequencer, Lane
 from django.contrib import admin
+from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms import ModelForm
-from django.forms.fields import CharField
+from django.forms.fields import Field, CharField
 from django.forms.widgets import TextInput
 from django.utils.translation import ugettext_lazy as _
-
-
-class LaneForm(ModelForm):
-    comment = CharField(widget=TextInput(attrs={'size':'80'}), required=False)
-    
-    class Meta:
-        model = Lane
-
-class LaneInline(admin.StackedInline):
-  model = Lane
-  max_num = 8
-  extra = 8
-  form = LaneForm
 
 class DataRunOptions(admin.ModelAdmin):
   search_fields = [
@@ -48,6 +36,49 @@ class DataRunOptions(admin.ModelAdmin):
   ]
   list_filter = ('run_status', 'run_start_time')
 
+# lane form setup needs to come before Flowcell form config
+# as flowcell refers to the LaneInline class
+class LaneForm(ModelForm):
+    comment = CharField(widget=TextInput(attrs={'size':'80'}), required=False)
+    
+    class Meta:
+        model = Lane
+
+class LaneInline(admin.StackedInline):
+    """
+    Controls display of Lanes on the Flowcell form.
+    """
+    model = Lane
+    max_num = 8
+    extra = 8
+    form = LaneForm
+    raw_id_fields = ('library',)
+    fieldsets = (
+      (None, {
+        'fields': ('lane_number', 'flowcell',
+                   ('library',),
+                   ('pM', 'cluster_estimate'),
+                   'comment',)
+      }),
+    )
+
+class LaneOptions(admin.ModelAdmin):
+    """
+    Controls display of Lane browser
+    """
+    list_display = ('flowcell', 'lane_number', 'library', 'comment')
+    fieldsets = (
+      (None, {
+        'fields': ('lane_number', 'flowcell',
+                   ('library'),
+                   ('pM', 'cluster_estimate'))
+      }),
+      ('Optional', {
+        'classes': ('collapse', ),
+        'fields': ('comment', )
+      }),
+    )
+    
 class FlowCellOptions(admin.ModelAdmin):
     date_hierarchy = "run_date"
     save_on_top = True
@@ -78,18 +109,6 @@ class ClusterStationOptions(admin.ModelAdmin):
 class SequencerOptions(admin.ModelAdmin):
     list_display = ('name', )
     fieldsets = ( ( None, { 'fields': ( 'name', ) } ), )
-    
-class LaneOptions(admin.ModelAdmin):
-    list_display = ('flowcell', 'lane_number', 'library', 'comment')
-    fieldsets = (
-      (None, {
-        'fields': ('lane_number', 'flowcell', 'library', 'pM', 'cluster_estimate')
-      }),
-      ('Optional', {
-        'classes': ('collapse', ),
-        'fields': ('comment', )
-      }),
-    )
     
 
 admin.site.register(DataRun, DataRunOptions)
