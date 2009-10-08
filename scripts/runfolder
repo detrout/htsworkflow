@@ -70,8 +70,8 @@ def make_parser():
     parser.add_option('--run-xml', dest='run_xml',
            default=None,
            help='specify a run_<FlowCell>.xml file for summary reports')
-    parser.add_option('--site', default='individual',
-                      help='specify the site name for srf files')
+    parser.add_option('--site', default=None,
+                      help='create srf files tagged with the provided site name')
     parser.add_option('-u', '--use-run', dest='use_run', default=None,
                       help='Specify which run to use instead of autoscanning '
                            'the runfolder. You do this by providing the final '

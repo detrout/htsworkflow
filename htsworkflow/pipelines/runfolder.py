@@ -489,10 +489,11 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1):
       compress_eland_results(g, cycle_dir)
       
       # build srf commands
-      lanes = range(1,9)
-      run_name = srf.pathname_to_run_name(r.pathname)
-      srf_cmds = srf.make_commands(run_name, lanes, site, cycle_dir)
-      srf.run_srf_commands(r.bustard.pathname, srf_cmds, 2)
+      if site is not None:
+        lanes = range(1,9)
+        run_name = srf.pathname_to_run_name(r.pathname)
+        srf_cmds = srf.make_commands(run_name, lanes, site, cycle_dir)
+        srf.run_srf_commands(r.bustard.pathname, srf_cmds, 2)
       
 def rm_list(files, dry_run=True):
     for f in files:
