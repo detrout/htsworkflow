@@ -14,7 +14,12 @@ def normalize_url(url, scheme='http'):
     'http://foo.com/a/b/c/d/e/f.html'
     >>> normalize_url("foo.com", "https")
     'https://foo.com'
+    >>> normalize_url(None)
     """
+    # not much to do with None except avoid an exception
+    if url is None:
+        return None
+    
     scheme_sep = '://'
     if url.find(scheme_sep) != -1:
         return url
