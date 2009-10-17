@@ -149,7 +149,8 @@ def format_gerald_config(options, flowcell_info, genome_map):
 
     # add in option for running script after 
     if options.post_run is not None:
-        post_run = options.post_run  % {'runfolder': options.runfolder}
+        runfolder = os.path.abspath(options.runfolder)
+        post_run = options.post_run  % {'runfolder': runfolder}
         config += ['POST_RUN_COMMAND %s' % (post_run,) ]
         
     config += [''] # force trailing newline
@@ -203,8 +204,9 @@ Config File:
   Example Config File:
   
     [%s]
-    config_host=http://somewhere.domain:port
-    genome_dir=/path to search for genomes
+    config_host: http://somewhere.domain:port
+    genome_dir: /path to search for genomes
+    post_run: runfolder -o <destdir> %%(runfolder)s
     
 """ % (CONFIG_SYSTEM, CONFIG_USER, GERALD_CONFIG_SECTION)
   
