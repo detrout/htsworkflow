@@ -95,14 +95,14 @@ class LibraryOptions(admin.ModelAdmin):
     save_as = True
     save_on_top = True
     search_fields = (
-        'library_id',
+        'id',
         'library_name',
         'cell_line__cellline_name',
         'library_species__scientific_name',
         'library_species__common_name',
     )
     list_display = (
-        'library_id',
+        'id',
         #'aligned_reads',
         #'DataRun',
         'library_name',
@@ -133,11 +133,11 @@ class LibraryOptions(admin.ModelAdmin):
         'condition',
         'stopping_point',
         'hidden')
-    list_display_links = ('library_id', 'library_name',)
+    list_display_links = ('id', 'library_name',)
     fieldsets = (
       (None, {
         'fields': (
-          ('library_id','library_name','hidden'),
+          ('id','library_name','hidden'),
           ('library_species'),
           ('library_type', 'experiment_type', 'replicate'),
           ('cell_line','condition','antibody'),)

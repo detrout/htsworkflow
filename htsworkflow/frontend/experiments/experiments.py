@@ -37,7 +37,7 @@ def flowcell_information(flowcell_id):
             'flowcell': lane.flowcell.flowcell_id,
             'lane_number': int(lane.lane_number),
             'library_name': lane.library.library_name,
-            'library_id': lane.library.library_id,
+            'library_id': lane.library.id,
             'library_species': lane.library.library_species.scientific_name,
             'pM': float(lane.pM),
             'read_length': fc.read_length
@@ -225,14 +225,14 @@ def getLaneLibs(req):
         mydate = year+month+day
         outputfile = '<?xml version="1.0" ?>'
         outputfile += '\n<SolexaResult Date="'+mydate+'" Flowcell="'+fcid+'" Client="'+settings.ALLOWED_IPS[ClIP]+'">'
-        outputfile += '\n<Lane Index="1" Name="'+rec.lane_1_library.library_name+'" Library="'+rec.lane_1_library.library_id+'" Genome="'+rec.lane_1_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
-        outputfile += '\n<Lane Index="2" Name="'+rec.lane_2_library.library_name+'" Library="'+rec.lane_2_library.library_id+'" Genome="'+rec.lane_2_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
-        outputfile += '\n<Lane Index="3" Name="'+rec.lane_3_library.library_name+'" Library="'+rec.lane_3_library.library_id+'" Genome="'+rec.lane_3_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
-        outputfile += '\n<Lane Index="4" Name="'+rec.lane_4_library.library_name+'" Library="'+rec.lane_4_library.library_id+'" Genome="'+rec.lane_4_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
-        outputfile += '\n<Lane Index="5" Name="'+rec.lane_5_library.library_name+'" Library="'+rec.lane_5_library.library_id+'" Genome="'+rec.lane_5_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
-        outputfile += '\n<Lane Index="6" Name="'+rec.lane_6_library.library_name+'" Library="'+rec.lane_6_library.library_id+'" Genome="'+rec.lane_6_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
-        outputfile += '\n<Lane Index="7" Name="'+rec.lane_7_library.library_name+'" Library="'+rec.lane_7_library.library_id+'" Genome="'+rec.lane_7_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
-        outputfile += '\n<Lane Index="8" Name="'+rec.lane_8_library.library_name+'" Library="'+rec.lane_8_library.library_id+'" Genome="'+rec.lane_8_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
+        outputfile += '\n<Lane Index="1" Name="'+rec.lane_1_library.library_name+'" Library="'+rec.lane_1_library.id+'" Genome="'+rec.lane_1_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
+        outputfile += '\n<Lane Index="2" Name="'+rec.lane_2_library.library_name+'" Library="'+rec.lane_2_library.id+'" Genome="'+rec.lane_2_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
+        outputfile += '\n<Lane Index="3" Name="'+rec.lane_3_library.library_name+'" Library="'+rec.lane_3_library.id+'" Genome="'+rec.lane_3_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
+        outputfile += '\n<Lane Index="4" Name="'+rec.lane_4_library.library_name+'" Library="'+rec.lane_4_library.id+'" Genome="'+rec.lane_4_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
+        outputfile += '\n<Lane Index="5" Name="'+rec.lane_5_library.library_name+'" Library="'+rec.lane_5_library.id+'" Genome="'+rec.lane_5_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
+        outputfile += '\n<Lane Index="6" Name="'+rec.lane_6_library.library_name+'" Library="'+rec.lane_6_library.id+'" Genome="'+rec.lane_6_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
+        outputfile += '\n<Lane Index="7" Name="'+rec.lane_7_library.library_name+'" Library="'+rec.lane_7_library.id+'" Genome="'+rec.lane_7_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
+        outputfile += '\n<Lane Index="8" Name="'+rec.lane_8_library.library_name+'" Library="'+rec.lane_8_library.id+'" Genome="'+rec.lane_8_library.library_species.use_genome_build+'" PrimerName="" PrimerSeq=""/>'
         outputfile += '\n</SolexaResult>'
       except ObjectDoesNotExist:
         outputfile = 'Flowcell entry not found for: '+fcid

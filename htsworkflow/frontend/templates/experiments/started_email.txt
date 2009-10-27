@@ -3,8 +3,8 @@ which is a {{ flowcell.read_length }} base pair {% if flowcell.paired_end %}pair
 
 Lane : (Library Id) Library Name (Cluster Estimate)
 {% for lane in lanes %}
-Lane #{{ lane.lane_number }} : ({{ lane.library.library_id }}) {{ lane.library.library_name }} ({{ lane.cluster_estimate }})
-     http://jumpgate.caltech.edu/library/{{ lane.library.library_id }}
+Lane #{{ lane.lane_number }} : ({{ lane.library.id }}) {{ lane.library.library_name }} ({{ lane.cluster_estimate }})
+     http://jumpgate.caltech.edu/library/{{ lane.library.id }}
 {% endfor %}
 
 The raw data should be available at the following link when

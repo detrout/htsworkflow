@@ -41,11 +41,11 @@ def create_library_context(cl):
     #for lib in library_items.object_list:
     for lib in cl.result_list:
        summary = {}
-       summary['library_id'] = lib.library_id
+       summary['library_id'] = lib.id
        summary['library_name'] = lib.library_name
        summary['species_name' ] = lib.library_species.scientific_name
        if lib.amplified_from_sample is not None:
-           summary['amplified_from'] = lib.amplified_from_sample.library_id
+           summary['amplified_from'] = lib.amplified_from_sample.id
        else:
            summary['amplified_from'] = ''
        lanes_run = 0
@@ -63,7 +63,7 @@ def library(request):
    # build changelist
     fcl = ChangeList(request, Library,
         list_filter=['affiliations', 'library_species'],
-        search_fields=['library_id', 'library_name', 'amplified_from_sample__library_id'],
+        search_fields=['id', 'library_name', 'amplified_from_sample__id'],
         list_per_page=200,
         queryset=Library.objects.filter(hidden__exact=0)
     )
@@ -90,7 +90,7 @@ def library_to_flowcells(request, lib_id):
     """
     
     try:
-      lib = Library.objects.get(library_id=lib_id)
+      lib = Library.objects.get(id=lib_id)
     except:
       return HttpResponse("Library %s does not exist" % (lib_id))
    
@@ -446,7 +446,7 @@ def _files(flowcell_id, lane):
     return '(' + '|'.join(output) + ')'
 
 def library_id_to_admin_url(request, lib_id):
-    lib = Library.objects.get(library_id=lib_id)
+    lib = Library.objects.get(id=lib_id)
     return HttpResponseRedirect('/admin/samples/library/%s' % (lib.id,))
 
 def library_dict(library_id):
@@ -455,7 +455,7 @@ def library_dict(library_id):
     return None if nothing was found
     """
     try:
-        lib = Library.objects.get(library_id = library_id)
+        lib = Library.objects.get(id = library_id)
     except Library.DoesNotExist, e:
         return None
 
@@ -472,7 +472,7 @@ def library_dict(library_id):
         'experiment_type': lib.experiment_type.name,
         'experiment_type_id': lib.experiment_type_id,
         'id': lib.id,
-        'library_id': lib.library_id,
+        'library_id': lib.id,
         'library_name': lib.library_name,
         'library_species': lib.library_species.scientific_name,
         'library_species_id': lib.library_species_id,

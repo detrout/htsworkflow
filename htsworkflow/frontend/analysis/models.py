@@ -67,9 +67,9 @@ class Project(models.Model):
       tstr += '<table><tr><th>Tasks</th><th>Job Status</th>'
       isregistered = False
       for t in ptasks:
-        taskdesc = t.task_name+'<div style="font-size:80%">Details: '+t.apply_calc+' on '+t.subject1.library_id
+        taskdesc = t.task_name+'<div style="font-size:80%">Details: '+t.apply_calc+' on '+t.subject1.id
         if t.subject2 is not None:
-          taskdesc += ' and '+t.subject2.library_id
+          taskdesc += ' and '+t.subject2.id
         taskdesc += ' (TaskId:'+t.id.__str__()+')'
         tstr += '<tr><td width=250>%s</td><td>%s</td></tr>'  % (taskdesc,replace(t.task_status,'Complete','<span style="color:green;font-weight:bolder">Complete</span>'))
         if t.task_status != 'defined': isregistered = True

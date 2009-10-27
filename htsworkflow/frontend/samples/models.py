@@ -128,8 +128,7 @@ class LibraryType(models.Model):
     return unicode(self.name)
 
 class Library(models.Model):
-  id = models.AutoField(primary_key=True)
-  library_id = models.CharField(max_length=30, db_index=True, unique=True)
+  id = models.CharField(max_length=10, primary_key=True)
   library_name = models.CharField(max_length=100, unique=True)
   library_species = models.ForeignKey(Species)
   # new field 2008 Mar 5, alter table samples_library add column "hidden" NOT NULL default 0;
@@ -178,12 +177,12 @@ class Library(models.Model):
   notes = models.TextField(blank=True)
   
   def __unicode__(self):
-    return u'#%s: %s' % (self.library_id, self.library_name)
+    return u'#%s: %s' % (self.id, self.library_name)
   
   class Meta:
     verbose_name_plural = "libraries"
     #ordering = ["-creation_date"] 
-    ordering = ["-library_id"]
+    ordering = ["-id"]
   
   def antibody_name(self):
     str ='<a target=_self href="/admin/samples/antibody/'+self.antibody.id.__str__()+'/" title="'+self.antibody.__str__()+'">'+self.antibody.nickname+'</a>' 
@@ -218,15 +217,15 @@ class Library(models.Model):
     return u'%s' % ( ", ".join(ar))
 
   def DataRun(self):
-    str ='<a target=_self href="/admin/experiments/datarun/?q='+self.library_id+'" title="Check All Data Runs for This Specific Library ..." ">Data Run</a>' 
+    str ='<a target=_self href="/admin/experiments/datarun/?q='+self.id+'" title="Check All Data Runs for This Specific Library ..." ">Data Run</a>' 
     return str
   DataRun.allow_tags = True
 
   def aligned_m_reads(self):
-    return getLibReads(self.library_id)
+    return getLibReads(self.id)
 
   def aligned_reads(self):
-    res = getLibReads(self.library_id)
+    res = getLibReads(self.id)
 
     # Check data sanity
     if res[2] != "OK":
@@ -263,7 +262,7 @@ class Library(models.Model):
 
   @models.permalink
   def get_absolute_url(self):
-    return ('htsworkflow.frontend.samples.views.library_to_flowcells', [str(self.library_id)])
+    return ('htsworkflow.frontend.samples.views.library_to_flowcells', [str(self.id)])
 
 class HTSUser(User):
     """

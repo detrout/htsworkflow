@@ -1,4 +1,5 @@
 import re
+from BeautifulSoup import BeautifulSoup
 try:
     import json
 except ImportError, e:
@@ -10,6 +11,8 @@ from django.test import TestCase
 from htsworkflow.frontend.experiments import models
 from htsworkflow.frontend.experiments import experiments
 from htsworkflow.frontend.auth import apidata
+
+LANE_SET = range(1,9)
 
 class ExperimentsTestCases(TestCase):
     fixtures = ['test_flowcells.json']
@@ -38,7 +41,7 @@ class ExperimentsTestCases(TestCase):
                 self.failUnlessEqual(lane_dict['flowcell'], lane.flowcell.flowcell_id)
                 self.failUnlessEqual(lane_dict['lane_number'], lane.lane_number)
                 self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
-                self.failUnlessEqual(lane_dict['library_id'], lane.library.library_id)
+                self.failUnlessEqual(lane_dict['library_id'], lane.library.id)
                 self.failUnlessAlmostEqual(lane_dict['pM'], float(lane.pM))
                 self.failUnlessEqual(lane_dict['library_species'],
                                      lane.library.library_species.scientific_name)
@@ -60,7 +63,7 @@ class ExperimentsTestCases(TestCase):
                 self.failUnlessEqual(lane_dict['flowcell'], lane.flowcell.flowcell_id)
                 self.failUnlessEqual(lane_dict['lane_number'], lane.lane_number)
                 self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
-                self.failUnlessEqual(lane_dict['library_id'], lane.library.library_id)
+                self.failUnlessEqual(lane_dict['library_id'], lane.library.id)
                 self.failUnlessAlmostEqual(lane_dict['pM'], float(lane.pM))
                 self.failUnlessEqual(lane_dict['library_species'],
                                      lane.library.library_species.scientific_name)
@@ -94,6 +97,32 @@ class ExperimentsTestCases(TestCase):
         library_sl039 = json.loads(response.content)
 
         self.failUnlessEqual(library_sl039['library_id'], 'SL039')
+
+    def test_raw_id_field(self):
+        """
+        Test ticket:147
+
+        Library's have IDs, libraries also have primary keys,
+        we eventually had enough libraries that the drop down combo box was too
+        hard to filter through, unfortnately we want a field that uses our library
+        id and not the internal primary key, and raw_id_field uses primary keys.
+
+        This tests to make sure that the value entered in the raw library id field matches
+        the library id looked up.
+        """
+        expected_ids = [u'10981',u'11016',u'SL039',u'11060',
+                        u'11061',u'11062',u'11063',u'11064']
+        self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5')
+        response = self.client.get('/admin/experiments/flowcell/153/')
+        soup = BeautifulSoup(response.content)
+        for i in range(0,8):
+            input_field = soup.find(id='id_lane_set-%d-library' % (i,))
+            library_field = input_field.findNext('strong')
+            library_id, library_name = library_field.string.split(':')
+            # strip leading '#' sign from name
+            library_id = library_id[1:]
+            self.failUnlessEqual(library_id, expected_ids[i])
+            self.failUnlessEqual(input_field['value'], library_id)
 
 class TestEmailNotify(TestCase):
     fixtures = ['test_flowcells.json']

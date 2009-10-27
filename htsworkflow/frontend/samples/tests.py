@@ -71,7 +71,7 @@ def create_db(obj):
 
     Library.objects.all().delete()
     obj.library_10001 = Library(
-        library_id = 10001,
+        id = "10001",
         library_name = 'C2C12 named poorly',
         library_species = obj.species_human,
         experiment_type = obj.experiment_rna_seq,
@@ -83,7 +83,7 @@ def create_db(obj):
     )
     obj.library_10001.save()
     obj.library_10002 = Library(
-        library_id = 10002,
+        id = "10002",
         library_name = 'Worm named poorly',
         library_species = obj.species_human,
         experiment_type = obj.experiment_rna_seq,
@@ -124,15 +124,15 @@ class SampleWebTestCase(TestCase):
     def test_library_info(self):
 
         for lib in Library.objects.all():
-            lib_dict = library_dict(lib.library_id)
-            url = '/samples/library/%s/json' % (lib.library_id,)
+            lib_dict = library_dict(lib.id)
+            url = '/samples/library/%s/json' % (lib.id,)
             lib_response = self.client.get(url, apidata)
             self.failUnlessEqual(lib_response.status_code, 200)
             lib_json = json.loads(lib_response.content)
 
             for d in [lib_dict, lib_json]:
                 # amplified_from_sample is a link to the library table,
-                # I want to use the "library_id" for the data lookups not
+                # I want to use the "id" for the data lookups not
                 # the embedded primary key.
                 # It gets slightly confusing on how to implement sending the right id
                 # since amplified_from_sample can be null
@@ -144,7 +144,6 @@ class SampleWebTestCase(TestCase):
                 self.failUnlessEqual(d['experiment_type'], lib.experiment_type.name)
                 self.failUnlessEqual(d['experiment_type_id'], lib.experiment_type_id)
                 self.failUnlessEqual(d['id'], lib.id)
-                self.failUnlessEqual(d['library_id'], lib.library_id)
                 self.failUnlessEqual(d['library_name'], lib.library_name)
                 self.failUnlessEqual(d['library_species'], lib.library_species.scientific_name)
                 self.failUnlessEqual(d['library_species_id'], lib.library_species_id)

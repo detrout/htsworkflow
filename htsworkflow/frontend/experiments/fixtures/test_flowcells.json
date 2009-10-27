@@ -109,16 +109,15 @@
   {"pk": 1193, "model": "experiments.lane",
    "fields": {
        "comment": "No change in cluster numbers, despite slight increase in pM",
-       "library": 10984,
+       "library": "10981",
        "cluster_estimate": 129000,
        "flowcell": 153,
        "lane_number": 1,
        "pM": "8"
        }
    }, 
-  {"pk": 10984, "model": "samples.library", 
+  {"pk": "10981", "model": "samples.library", 
         "fields": {
-            "library_id": "10981", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 400, 
             "library_name": "Paired End Multiplexed Sp-BAC", 
@@ -147,7 +146,7 @@
   {"pk": 1194, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11019,
+       "library": "11016",
        "cluster_estimate": 152000,
        "flowcell": 153,
        "lane_number": 2,
@@ -155,10 +154,9 @@
        }
    }, 
     {
-        "pk": 11019, 
+        "pk": "11016", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11016", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 325, 
             "library_name": "Paired End Pfl #3 MP 7/24/9 a", 
@@ -187,7 +185,7 @@
   {"pk": 1195, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11042,
+       "library": "SL039",
        "cluster_estimate": 162000,
        "flowcell": 153,
        "lane_number": 3,
@@ -195,10 +193,9 @@
        }
    },  
     {
-        "pk": 11042, 
+        "pk": "SL039", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "SL039", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 99 GM12892", 
@@ -227,7 +224,7 @@
   {"pk": 1196, "model": "experiments.lane",
    "fields": {
        "comment": "This lane's library had the second lowest concentration of all the libraries built at the same time (2.05ng/ul)",
-       "library": 11063,
+       "library": "11060",
        "cluster_estimate": 24000,
        "flowcell": 153,
        "lane_number": 4,
@@ -235,10 +232,9 @@
        }
    }, 
     {
-        "pk": 11063, 
+        "pk": "11060", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11060", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 100 VC_CN_4_M_MBB1185_s1", 
@@ -267,7 +263,7 @@
   {"pk": 1197, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11064,
+       "library": "11061",
        "cluster_estimate": 140000,
        "flowcell": 153,
        "lane_number": 5,
@@ -275,10 +271,9 @@
        }
    }, 
     {
-        "pk": 11064, 
+        "pk": "11061", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11061", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 101 VC_CN_4_M_MBB1185_s2", 
@@ -307,7 +302,7 @@
   {"pk": 1198, "model": "experiments.lane",
    "fields": {
        "comment": "This lane's library had the lowest concentration of all the libraries built at the same time (1.2ng/ul)",
-       "library": 11065,
+       "library": "11062",
        "cluster_estimate": 2000,
        "flowcell": 153,
        "lane_number": 6,
@@ -315,10 +310,9 @@
        }
    }, 
     {
-        "pk": 11065, 
+        "pk": "11062", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11062", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 102 VC_AU_8_M_MBB4721_s1", 
@@ -347,7 +341,7 @@
   {"pk": 1199, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11066,
+       "library": "11063",
        "cluster_estimate": 120000,
        "flowcell": 153,
        "lane_number": 7,
@@ -355,10 +349,9 @@
        }
    }, 
     {
-        "pk": 11066, 
+        "pk": "11063", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11063", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 103 VC_AU_8_M_MBB4721_s2", 
@@ -387,7 +380,7 @@
   {"pk": 1200, "model": "experiments.lane",
    "fields": {
        "comment": "This lane's library had the third lowest concentration of all the libraries built at the same time (5.21ng/ul), but gave perfectly normal cluster numbers",
-       "library": 11067,
+       "library": "11064",
        "cluster_estimate": 157000,
        "flowcell": 153,
        "lane_number": 8,
@@ -395,10 +388,9 @@
        }
    },
     {
-        "pk": 11067, 
+        "pk": "11064", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11064", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 104 VC_CN_7_M_MBB4898_s1", 
@@ -440,7 +432,7 @@
   {"pk": 1185, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11038,
+       "library": "11035",
        "cluster_estimate": 174000,
        "flowcell": 152,
        "lane_number": 1,
@@ -448,10 +440,9 @@
        }
    },
     {
-        "pk": 11038, 
+        "pk": "11035", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11035", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 95 Gilberto_d3_control_LTA", 
@@ -480,7 +471,7 @@
   {"pk": 1186, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11040,
+       "library": "11037",
        "cluster_estimate": 173000,
        "flowcell": 152,
        "lane_number": 2,
@@ -488,10 +479,9 @@
        }
    },
     {
-        "pk": 11040, 
+        "pk": "11037", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11037", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 97 Kuntz_PDHT", 
@@ -520,7 +510,7 @@
   {"pk": 1187, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11048,
+       "library": "11045",
        "cluster_estimate": 198000,
        "flowcell": 152,
        "lane_number": 3,
@@ -528,10 +518,9 @@
        }
    },
     {
-        "pk": 11048, 
+        "pk": "11045", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11045", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 250, 
             "library_name": "FLDN1 8/3/9 anti-AcH3 chip B6 a", 
@@ -560,17 +549,16 @@
   {"pk": 1188, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11049,
+       "library": "11046",
        "cluster_estimate": 212000,
        "flowcell": 152,
        "lane_number": 4,
        "pM": "7"}
    },
     {
-        "pk": 11049, 
+        "pk": "11046", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11046", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 250, 
             "library_name": "FLDN1 7/8/9 anti-DiMeH3K4 chip B6 a", 
@@ -599,7 +587,7 @@
   {"pk": 1189, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11057,
+       "library": "11054",
        "cluster_estimate": 49000,
        "flowcell": 152,
        "lane_number": 5,
@@ -607,10 +595,9 @@
        }
    }, 
     {
-        "pk": 11057, 
+        "pk": "11054", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11054", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 225, 
             "library_name": "HNDHT HLH hnd-1 strain HT115 fed anti-hlh-1 2% fix plate a", 
@@ -639,7 +626,7 @@
   {"pk": 1190, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11059,
+       "library": "11056",
        "cluster_estimate": 48000,
        "flowcell": 152,
        "lane_number": 6,
@@ -647,10 +634,9 @@
        }
    },
     {
-        "pk": 11059, 
+        "pk": "11056", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11056", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 225, 
             "library_name": "HNDM3 HLH hnd-1 strain mex-3 fed anti-hlh-1 2% fix plate a", 
@@ -679,7 +665,7 @@
   {"pk": 1191, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11060,
+       "library": "11057",
        "cluster_estimate": 4000,
        "flowcell": 152,
        "lane_number": 7,
@@ -687,10 +673,9 @@
        }
    }, 
     {
-        "pk": 11060, 
+        "pk": "11057", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11057", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 225, 
             "library_name": "HNDM3 4H8 hnd-1 strain mex-3 fed 4H8 2% fix plate a", 
@@ -719,7 +704,7 @@
   {"pk": 1192, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11068,
+       "library": "11065",
        "cluster_estimate": 5000,
        "flowcell": 152,
        "lane_number": 8,
@@ -727,10 +712,9 @@
        }
    }, 
     {
-        "pk": 11068, 
+        "pk": "11065", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11065", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 105 Kuntz PDM3", 
@@ -772,7 +756,7 @@
   {"pk": 1177, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11037,
+       "library": "11034",
        "cluster_estimate": 177000,
        "flowcell": 151,
        "lane_number": 1,
@@ -782,7 +766,7 @@
   {"pk": 1178, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11039,
+       "library": "11036",
        "cluster_estimate": 169000,
        "flowcell": 151,
        "lane_number": 2,
@@ -790,10 +774,9 @@
        }
    }, 
     {
-        "pk": 11039, 
+        "pk": "11036", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11036", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 96 Kuntz_PDE1", 
@@ -820,10 +803,9 @@
         }
     }, 
     {
-        "pk": 11037, 
+        "pk": "11034", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11034", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 94 Gilberto_d3_denerv_LTA", 
@@ -850,10 +832,9 @@
         }
     }, 
     {
-        "pk": 11047, 
+        "pk": "11044", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11044", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 225, 
             "library_name": "p300 60h C2 FA KF 12/22/8 a", 
@@ -883,7 +864,7 @@
    "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11047,
+       "library": "11044",
        "cluster_estimate": 196000,
        "flowcell": 151,
        "lane_number": 3,
@@ -891,10 +872,9 @@
        }
    }, 
     {
-        "pk": 11047, 
+        "pk": "11044", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11044", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 225, 
             "library_name": "p300 60h C2 FA KF 12/22/8 a", 
@@ -923,7 +903,7 @@
   {"pk": 1180, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11050,
+       "library": "11047",
        "cluster_estimate": 200000,
        "flowcell": 151,
        "lane_number": 4,
@@ -931,10 +911,9 @@
        }
    }, 
     {
-        "pk": 11050, 
+        "pk": "11047", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11047", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 250, 
             "library_name": "FLDN1 7/8/9 anti-TriMeH3K27 chip B6 a", 
@@ -963,7 +942,7 @@
   {"pk": 1181, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11058,
+       "library": "11055",
        "cluster_estimate": 104000,
        "flowcell": 151,
        "lane_number": 5,
@@ -971,10 +950,9 @@
        }
    }, 
     {
-        "pk": 11058, 
+        "pk": "11055", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11055", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 225, 
             "library_name": "HNDHT 4H8 hnd-1 strain HT115 fed 4H8 2% fix plate a", 
@@ -1003,7 +981,7 @@
   {"pk": 1182, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11070,
+       "library": "11067",
        "cluster_estimate": 168000,
        "flowcell": 151,
        "lane_number": 6,
@@ -1011,10 +989,9 @@
        }
    }, 
     {
-        "pk": 11070, 
+        "pk": "11067", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11067", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 325, 
             "library_name": "Paired End SP-BAC Barcoding test 250-300 bp", 
@@ -1043,7 +1020,7 @@
   {"pk": 1183, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11072,
+       "library": "11069",
        "cluster_estimate": 184000,
        "flowcell": 151,
        "lane_number": 7,
@@ -1051,10 +1028,9 @@
        }
    }, 
     {
-        "pk": 11072, 
+        "pk": "11069", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11069", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired End AG-3d-1 AG domain of floral meristem day 3, rep 1", 
@@ -1083,7 +1059,7 @@
   {"pk": 1184, "model": "experiments.lane",
    "fields": {
        "comment": "",
-       "library": 11073,
+       "library": "11070",
        "cluster_estimate": 182000,
        "flowcell": 151,
        "lane_number": 8,
@@ -1091,10 +1067,9 @@
        }
    },
     {
-        "pk": 11073, 
+        "pk": "11070", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11070", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired End AG-5d-1 AG domain of floral meristem day 5, rep 1", 

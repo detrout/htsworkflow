@@ -4,8 +4,8 @@ which is a {{ flowcell.read_length }} base pair {% if flowcell.paired_end %}pair
 </p>
 <p>{% for lane in lanes %}
 Lane #{{ lane.lane_number }} : 
-<a href="https://jumpgate.caltech.edu/library/{{lane.library.library_id}}">
-{{ lane.library.library_id }}</a>
+<a href="https://jumpgate.caltech.edu/library/{{lane.library.id}}">
+{{ lane.library.id }}</a>
 {{ lane.library.library_name }}<br/>
 {% endfor %}</p>
 <p>

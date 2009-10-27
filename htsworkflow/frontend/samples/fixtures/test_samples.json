@@ -15,9 +15,8 @@
        "date_joined": "2009-01-01 00:01:01"
        }
    },
-  {"pk": 10984, "model": "samples.library", 
+  {"pk": "10981", "model": "samples.library", 
         "fields": {
-            "library_id": "10981", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 400, 
             "library_name": "Paired End Multiplexed Sp-BAC", 
@@ -44,10 +43,9 @@
         }
     }, 
     {
-        "pk": 11019, 
+        "pk": "11016", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11016", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 325, 
             "library_name": "Paired End Pfl #3 MP 7/24/9 a", 
@@ -74,10 +72,9 @@
         }
     }, 
     {
-        "pk": 11042, 
+        "pk": "11039", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11039", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 300, 
             "library_name": "Paired ends 99 GM12892", 
@@ -106,10 +103,9 @@
         }
     },
     {
-        "pk": 11006, 
+        "pk": "11003", 
         "model": "samples.library", 
         "fields": {
-            "library_id": "11003", 
             "ten_nM_dilution": false, 
             "avg_lib_size": 325, 
             "library_name": "Paired End Pfl #3 MP 7/24/9", 

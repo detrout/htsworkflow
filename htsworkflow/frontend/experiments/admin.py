@@ -11,14 +11,14 @@ class DataRunOptions(admin.ModelAdmin):
       'run_folder',
       'run_note',
       'config_params',
-      '=fcid__lane_1_library__library_id',
-      '=fcid__lane_2_library__library_id',
-      '=fcid__lane_3_library__library_id',
-      '=fcid__lane_4_library__library_id',
-      '=fcid__lane_5_library__library_id',
-      '=fcid__lane_6_library__library_id',
-      '=fcid__lane_7_library__library_id',
-      '=fcid__lane_8_library__library_id'
+      '=fcid__lane_1_library__id',
+      '=fcid__lane_2_library__id',
+      '=fcid__lane_3_library__id',
+      '=fcid__lane_4_library__id',
+      '=fcid__lane_5_library__id',
+      '=fcid__lane_6_library__id',
+      '=fcid__lane_7_library__id',
+      '=fcid__lane_8_library__id'
       'fcid__lane_1_library__library_name',
       'fcid__lane_2_library__library_name',
       'fcid__lane_3_library__library_name',
@@ -85,7 +85,7 @@ class FlowCellOptions(admin.ModelAdmin):
     search_fields = ('flowcell_id',
         'sequencer__name',
         'cluster_station__name',
-        '=lane__library__library_id',
+        '=lane__library__id',
         'lane__library__library_name')
     list_display = ('flowcell_id','run_date','Lanes')
     list_filter = ('sequencer','cluster_station')
@@ -94,7 +94,7 @@ class FlowCellOptions(admin.ModelAdmin):
             'fields': ('run_date', ('flowcell_id','cluster_station','sequencer'), ('read_length', 'control_lane', 'paired_end'),)
         }),
         #('Lanes:', {
-        #   'fields' : (('lane__library__library_id', 'lane__pM', 'lane__cluster_estimate'),)
+        #   'fields' : (('lane__library__id', 'lane__pM', 'lane__cluster_estimate'),)
         #}),
         ('Notes:', { 'fields': ('notes',),}),
     )
