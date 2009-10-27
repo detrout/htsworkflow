@@ -43,7 +43,7 @@
         <script>
                 var lts_data = [
                 {% for lts in item.longtermstorage_set.all %}
-                        {% for lib in lts.libraries.iterator %}[ "{{ lts.flowcell.flowcell_id }}","{{ lib.library_id }}","{% for sd in lts.storage_devices.iterator %}{{ sd }}{% if forloop.last %}"{% else %}|{% endif %}{% endfor %}{% if forloop.parentloop.last %}{% if forloop.last %}]{% else %}],{% endif %}{% else %}],{% endif %}
+                        {% for lib in lts.libraries.iterator %}[ "{{ lts.flowcell.flowcell_id }}","{{ lib.id }}","{% for sd in lts.storage_devices.iterator %}{{ sd }}{% if forloop.last %}"{% else %}|{% endif %}{% endfor %}{% if forloop.parentloop.last %}{% if forloop.last %}]{% else %}],{% endif %}{% else %}],{% endif %}
                         {% endfor %}
                 {% endfor %}
                 ];
