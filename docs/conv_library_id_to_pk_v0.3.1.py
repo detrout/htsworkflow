@@ -1,3 +1,4 @@
+import optparse
 import sqlite3
 
 def map_library_ids(c):
@@ -186,8 +187,19 @@ def convert_library_id(db_path):
     
     conn.commit()
 
-def main():
-    db_path = '/Users/diane/proj/solexa/gaworkflow/svn/woldlab.db'
+def make_parser():
+    usage = '%prog: database_filename'
+    parser = optparse.OptionParser(usage)
+    return parser
+
+def main(cmdline=None):
+    parser = make_parser()
+    opts, args = parser.parse_args(cmdline)
+    if len(args) != 1:
+       parser.error('requires path to sqlite database file')
+
+    db_path = args[0]
+
     convert_library_id(db_path)
 
 if __name__ == "__main__":
