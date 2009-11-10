@@ -1,4 +1,6 @@
 # Create your views here.
+from datetime import datetime
+
 #from django.template import Context, loader
 #shortcut to the above modules
 from django.contrib.auth.decorators import user_passes_test
@@ -12,6 +14,8 @@ from django.template.loader import get_template
 from htsworkflow.frontend.experiments.models import *
 from htsworkflow.frontend.experiments.experiments import \
      estimateFlowcellDuration, \
+     estimateFlowcellTimeRemaining, \
+     roundToDays, \
      getUsersForFlowcell, \
      makeEmailLaneMap
 
@@ -64,7 +68,8 @@ def startedEmail(request, pk):
 
     email_lane = makeEmailLaneMap(fc)
     flowcell_users = getUsersForFlowcell(fc)
-    estimate_low, estimate_high = estimateFlowcellDuration(fc)
+    estimate = estimateFlowcellTimeRemaining(fc)
+    estimate_low, estimate_high = roundToDays(estimate)
     email_verify = get_template('experiments/email_preview.html')
     email_template = get_template('experiments/started_email.txt')
     sender = settings.NOTIFICATION_SENDER
@@ -87,6 +92,7 @@ def startedEmail(request, pk):
                    u'runfolder': 'blank',
                    u'finish_low': estimate_low,
                    u'finish_high': estimate_high,
+                   u'now': datetime.now(),        
                   })
 
         # build view

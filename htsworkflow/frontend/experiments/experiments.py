@@ -256,10 +256,26 @@ def estimateFlowcellDuration(flowcell):
     sequencing_time = timedelta(0, cycles * sequencing_seconds_per_cycle)
     analysis_time = timedelta(0, cycles * pipeline_seconds_per_cycle)
     estimate_mid = sequencing_time + analysis_time
+
+    return estimate_mid
+
+def estimateFlowcellTimeRemaining(flowcell):
+    estimate_mid = estimateFlowcellDuration(flowcell)
+    
+    # offset for how long we've been running
+    running_time = datetime.now() - flowcell.run_date
+    estimate_mid -= running_time
+
+    return estimate_mid
+
+def roundToDays(estimate):
+    """
+    Given a time estimate round up and down in days
+    """
     # floor estimate_mid
-    estimate_low = timedelta(estimate_mid.days, 0)
+    estimate_low = timedelta(estimate.days, 0)
     # floor estimate_mid and add a day
-    estimate_high = timedelta(estimate_mid.days+1, 0)
+    estimate_high = timedelta(estimate.days+1, 0)
     
     return (estimate_low, estimate_high)
     

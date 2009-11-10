@@ -10,8 +10,8 @@ Lane #{{ lane.lane_number }} :
 {% endfor %}</p>
 <p>
 The data should be available at the following link when
-the pipeline finishes, probably in about
-{{ finish_low.days }} to {{ finish_high.days }} days after the flowcell is started.
+the pipeline finishes, probably in about {{ finish_low.days }} to {{ finish_high.days }} 
+days from {{ now|date:"D, M d Y" }}
 </p>
 <p>
 <a href="https://jumpgate.caltech.edu/runfolders/cellcenter/">
