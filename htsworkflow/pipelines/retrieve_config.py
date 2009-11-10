@@ -148,7 +148,7 @@ def format_gerald_config(options, flowcell_info, genome_map):
         config += ['%s:USE_BASES Y%s' % ( lane_prefix, read_length ) ]
 
     # add in option for running script after 
-    if options.post_run is not None:
+    if not (options.post_run is None or options.runfolder is None):
         runfolder = os.path.abspath(options.runfolder)
         post_run = options.post_run  % {'runfolder': runfolder}
         config += ['POST_RUN_COMMAND %s' % (post_run,) ]
