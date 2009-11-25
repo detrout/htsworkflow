@@ -69,16 +69,16 @@ class WatcherEvent(object):
         return u"<WatchEvent: %s %s %s>" % (time.ctime(self.time), self.event_root, complete)
 
 class Handler(pyinotify.ProcessEvent):
-    def __init__(self, watchmanager, bot, completion_file=None):
+    def __init__(self, watchmanager, bot, completion_files=None):
         """
         Completion file contains current "completion" filename
         """
         self.last_event = {}
         self.watchmanager = watchmanager
         self.bot = bot
-        if completion_file is not None:
-            completion_file = completion_file.lower()
-        self.completion_file = completion_file
+        if completion_files is not None:
+            completion_files = [ x.lower() for x in completion_files ]
+        self.completion_files = completion_files
 
     def process_IN_CREATE(self, event):
         for wdd in self.bot.wdds:
@@ -114,7 +114,8 @@ class Handler(pyinotify.ProcessEvent):
                     # main analysis, which means this completion code might get tripped because of it
                     # so we need to make sure we're getting the completion file in the root of the
                     # runfolder
-                    if (self.completion_file == event.name.lower() and event.path == runfolder) \
+                    event_name = event.name.lower()
+                    if (event_name in self.completion_files and event.path == runfolder) \
                       or run_already_complete:
                         self.last_event[watch_path][target].complete = True
                         msg += "(completed)"
@@ -150,7 +151,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
     #    `write_timeout` - how many seconds to wait for writes to finish to
     #                      the spool
     #    `notify_timeout` - how often to timeout from notify
-    #    `completion_file` - what file indicates we've finished sequencing
+    #    `completion_files` - what files indicates we've finished sequencing
     #                        defaults to: netcopy_complete.txt
     
     def __init__(self, section=None, configfile=None):
@@ -162,7 +163,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         self.cfg['write_timeout'] = 10
         self.cfg['notify_users'] = None
         self.cfg['notify_runner'] = None
-        self.cfg['completion_file'] = 'netcopy_complete.txt'
+        self.cfg['completion_files'] = 'ImageAnalysis_Netcopy_complete_READ2.txt ImageAnalysis_Netcopy_complete_SINGLEREAD.txt'
        
         self.watchdirs = []
         self.watchdir_url_map = {}
@@ -192,7 +193,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
             self.watchdir_url_map[watchdir] = self.cfg.get(watchdir, watchdir)
 
         self.write_timeout = int(self.cfg['write_timeout'])
-        self.completion_file = self.cfg['completion_file']
+        self.completion_files = shlex.split(self.cfg['completion_files'])
         
         self.notify_users = self._parse_user_list(self.cfg['notify_users'])
         try:
@@ -214,7 +215,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         # create the watch managers if we need them
         if self.wm is None:
             self.wm = pyinotify.WatchManager()
-            self.handler = Handler(self.wm, self, self.completion_file)
+            self.handler = Handler(self.wm, self, self.completion_files)
             self.notifier = pyinotify.Notifier(self.wm, self.handler)
 
         # the one tree limit is mostly because self.wdd is a single item
