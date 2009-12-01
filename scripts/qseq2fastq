@@ -56,13 +56,14 @@ def qseq2fastq(destination, qseqs, trim=None):
             
             pass_qc = record[10]
 
-            destination.write('@%s_%s:%s:%s:%s:%s pf=%s%s' % ( \
+            destination.write('@%s_%s:%s:%s:%s:%s/%s pf=%s%s' % ( \
                 machine_name,
                 run_number,
                 lane_number,
                 tile,
                 x,
                 y,
+                read,
                 pass_qc,
                 os.linesep))
             destination.write(sequence[trim])
