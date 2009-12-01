@@ -6,7 +6,7 @@ import os
 import sys
 
 from htsworkflow.pipelines import runfolder
-from htsworkflow.pipelines.srf import make_commands, run_srf_commands
+from htsworkflow.pipelines.srf import make_commands, run_srf_commands, pathname_to_run_name
 from htsworkflow.pipelines.srf import ILLUMINA2SRF10, ILLUMINA2SRF11, SOLEXA2SRF
 
 def make_parser():
@@ -106,7 +106,7 @@ def main(cmdline=None):
 
     if not opts.dry_run:
       for cwd, cmd_list in cmds.items():
-        run_srf_command(cwd, cmd_list, opts.jobs)
+        run_srf_commands(cwd, cmd_list, opts.jobs)
     else:
       for cwd, cmd_list in cmds.items():
         print cwd
