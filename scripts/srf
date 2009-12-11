@@ -6,7 +6,8 @@ import os
 import sys
 
 from htsworkflow.pipelines import runfolder
-from htsworkflow.pipelines.srf import make_commands, run_srf_commands, pathname_to_run_name
+from htsworkflow.pipelines.srf import make_srf_commands, make_qseq_commands, \
+                                      run_commands, pathname_to_run_name
 from htsworkflow.pipelines.srf import ILLUMINA2SRF10, ILLUMINA2SRF11, SOLEXA2SRF
 
 def make_parser():
@@ -84,7 +85,8 @@ def main(cmdline=None):
         parser.error(
           "Number of lane arguments must match number of runfolders"
         )
-    
+
+    make_commands = make_qseq_commands
     # build list of commands
     cmds = {}
     for runfolder_path, lanes in zip(args, lanes_list):
@@ -99,14 +101,19 @@ def main(cmdline=None):
           return 1
         elif len(runs) == 1:
           bustard_dir = runs[0].bustard.pathname
-          cmds[bustard_dir] = make_commands(run_name, lanes, opts.site, opts.dest_dir, opts.runfolder_version)
+          cmds[bustard_dir] = make_commands(run_name,
+                                            bustard_dir,
+                                            lanes,
+                                            opts.site,
+                                            opts.dest_dir,
+                                            opts.runfolder_version)
         else:
           print "ERROR: Couldn't find a bustard directory in", runfolder_path
           return 1
 
     if not opts.dry_run:
       for cwd, cmd_list in cmds.items():
-        run_srf_commands(cwd, cmd_list, opts.jobs)
+        run_commands(cwd, cmd_list, opts.jobs)
     else:
       for cwd, cmd_list in cmds.items():
         print cwd

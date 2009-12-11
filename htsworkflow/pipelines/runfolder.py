@@ -26,6 +26,7 @@ LANE_LIST = range(1, LANES_PER_FLOWCELL+1)
 
 from htsworkflow.util.alphanum import alphanum
 from htsworkflow.util.ethelp import indent, flatten
+from htsworkflow.util.queuecommands import QueueCommands
 
 from htsworkflow.pipelines import srf
 
@@ -377,16 +378,57 @@ def is_compressed(filename):
     else:
         return False
 
-def save_summary_file(gerald_object, cycle_dir):
-      # Copy Summary.htm
-      summary_path = os.path.join(gerald_object.pathname, 'Summary.htm')
-      if os.path.exists(summary_path):
-          logging.info('Copying %s to %s' % (summary_path, cycle_dir))
-          shutil.copy(summary_path, cycle_dir)
-      else:
-          logging.info('Summary file %s was not found' % (summary_path,))
+def save_flowcell_reports(data_dir, cycle_dir):
+    """
+    Save the flowcell quality reports
+    """
+    data_dir = os.path.abspath(data_dir)
+    status_file = os.path.join(data_dir, 'Status.xml')
+    reports_dir = os.path.join(data_dir, 'reports')
+    reports_dest = os.path.join(cycle_dir, 'flowcell-reports.tar.bz2')
+    if os.path.exists(reports_dir):
+        cmd_list = [ 'tar', 'cjvf', reports_dest, 'reports/' ]
+        if os.path.exists(status_file):
+            cmd_list.extend(['Status.xml', 'Status.xsl'])
+        logging.info("Saving reports from " + reports_dir)
+        cwd = os.getcwd()
+        os.chdir(data_dir)
+        q = QueueCommands([" ".join(cmd_list)])
+        q.run()
+        os.chdir(cwd)
 
-    
+
+def save_summary_file(gerald_object, cycle_dir):
+    # Copy Summary.htm
+    summary_path = os.path.join(gerald_object.pathname, 'Summary.htm')
+    if os.path.exists(summary_path):
+        logging.info('Copying %s to %s' % (summary_path, cycle_dir))
+        shutil.copy(summary_path, cycle_dir)
+    else:
+        logging.info('Summary file %s was not found' % (summary_path,))
+
+def save_ivc_plot(bustard_object, cycle_dir):
+    """
+    Save the IVC page and its supporting images
+    """
+    plot_html = os.path.join(bustard_object.pathname, 'IVC.htm')
+    plot_image_path = os.path.join(bustard_object.pathname, 'Plots')
+    plot_images = os.path.join(plot_image_path, 's_?_[a-z]*.png')
+
+    plot_target_path = os.path.join(cycle_dir, 'Plots')
+
+    if os.path.exists(plot_html):
+        logging.debug("Saving %s" % ( plot_html, ))
+        logging.debug("Saving %s" % ( plot_images, ))
+        shutil.copy(plot_html, cycle_dir)
+        if not os.path.exists(plot_target_path):
+            os.mkdir(plot_target_path)    
+        for plot_file in glob(plot_images):
+            shutil.copy(plot_file, plot_target_path)
+    else:
+        logging.warning('Missing IVC.html file, not archiving')
+
+
 def compress_score_files(bustard_object, cycle_dir):
     """
     Compress score files into our result directory
@@ -419,11 +461,13 @@ def compress_score_files(bustard_object, cycle_dir):
     tar.wait()
 
 
-def compress_eland_results(gerald_object, cycle_dir):
+def compress_eland_results(gerald_object, cycle_dir, num_jobs=1):
     """
     Compress eland result files into the archive directory
     """
     # copy & bzip eland files
+    bz_commands = []
+    
     for lanes_dictionary in gerald_object.eland_results.results:
         for eland_lane in lanes_dictionary.values():
             source_name = eland_lane.pathname
@@ -438,12 +482,18 @@ def compress_eland_results(gerald_object, cycle_dir):
             else:
               # not compressed
               dest_name += '.bz2'
-              args = ['bzip2', '-9', '-c', source_name]
-              logging.info('Running: %s' % ( " ".join(args) ))
-              bzip_dest = open(dest_name, 'w')
-              bzip = subprocess.Popen(args, stdout=bzip_dest)
-              logging.info('Saving to %s' % (dest_name, ))
-              bzip.wait()
+              args = ['bzip2', '-9', '-c', source_name, '>', dest_name ]
+              bz_commands.append(" ".join(args))
+              #logging.info('Running: %s' % ( " ".join(args) ))
+              #bzip_dest = open(dest_name, 'w')
+              #bzip = subprocess.Popen(args, stdout=bzip_dest)
+              #logging.info('Saving to %s' % (dest_name, ))
+              #bzip.wait()
+              
+    if len(bz_commands) > 0:
+      q = QueueCommands(bz_commands, num_jobs)
+      q.run()
+      
     
 def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1):
     """
@@ -473,27 +523,36 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1):
       else:
         os.mkdir(cycle_dir)
 
-      # copy stuff out of the main run
-      g = r.gerald
-
       # save run file
       r.save(cycle_dir)
+
+      # save illumina flowcell status report
+      save_flowcell_reports( os.path.join(r.image_analysis.pathname, '..'), cycle_dir )
+      
+      # save stuff from bustard
+      # grab IVC plot
+      save_ivc_plot(r.bustard, cycle_dir)
+
+      # build base call saving commands
+      if site is not None:
+        lanes = range(1,9)
+        run_name = srf.pathname_to_run_name(r.pathname)
+        srf_cmds = srf.make_qseq_commands(run_name, r.bustard.pathname, lanes, site, cycle_dir)
+        srf.run_commands(r.bustard.pathname, srf_cmds, num_jobs)
+
+      # save stuff from GERALD
+      # copy stuff out of the main run
+      g = r.gerald
 
       # save summary file
       save_summary_file(g, cycle_dir)
       
-      # tar score files
-      compress_score_files(r.bustard, cycle_dir)
-
       # compress eland result files
-      compress_eland_results(g, cycle_dir)
+      compress_eland_results(g, cycle_dir, num_jobs)
       
-      # build srf commands
-      if site is not None:
-        lanes = range(1,9)
-        run_name = srf.pathname_to_run_name(r.pathname)
-        srf_cmds = srf.make_commands(run_name, lanes, site, cycle_dir)
-        srf.run_srf_commands(r.bustard.pathname, srf_cmds, 2)
+      # md5 all the compressed files once we're done
+      md5_commands = srf.make_md5_commands(cycle_dir)
+      srf.run_commands(cycle_dir, md5_commands, num_jobs)
       
 def rm_list(files, dry_run=True):
     for f in files:
