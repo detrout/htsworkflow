@@ -64,6 +64,7 @@
   <table>
   <thead>
     <tr>
+      <td>Run Start Date</td>
       <td>Cycle</td>
       <td>Flowcell</td>
       <td>Lane</td>
@@ -74,6 +75,7 @@
     </tr>
   {% for result in eland_results %}
   <tr>
+    <td>{{ result.run_date|date }}</td>
     <td>{{ result.cycle }}</td>
     <td>{{ result.flowcell_id }}</td>
     <td>{{ result.lane }}</td>
