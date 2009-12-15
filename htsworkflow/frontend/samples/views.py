@@ -382,6 +382,7 @@ def _make_eland_results(flowcell_id, lane, interesting_flowcells):
         result_path = cur_fc[cycle]['eland_results'].get(lane, None)
         result_link = make_result_link(fc_id, cycle, lane, result_path)
         results.append({'flowcell_id': fc_id,
+                        'run_date': flowcell.run_date,
                         'cycle': cycle, 
                         'lane': lane, 
                         'summary_url': make_summary_url(flowcell_id, cycle),

@@ -104,7 +104,7 @@ class Affiliation(models.Model):
   name = models.CharField(max_length=256, db_index=True, verbose_name='Name')
   contact = models.CharField(max_length=256, null=True, blank=True,verbose_name='Lab Name')  
   email = models.EmailField(null=True,blank=True)
-  users = models.ManyToManyField('HTSUser', null=True)
+  users = models.ManyToManyField('HTSUser', null=True, blank=True)
   users.admin_order_field = "username"
   
   def __unicode__(self):
@@ -275,6 +275,9 @@ class HTSUser(User):
 
     def admin_url(self):
         return '/admin/%s/%s/%d' % (self._meta.app_label, self._meta.module_name, self.id)
+
+    def __unicode__(self):
+        return unicode(self.username) + u" (" + unicode(self.get_full_name()) + u")"
     
 def HTSUserInsertID(sender, instance, **kwargs):
     """
