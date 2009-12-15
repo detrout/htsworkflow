@@ -2,6 +2,8 @@
 import StringIO
 import logging
 import os
+import sys
+
 try:
     import json
 except ImportError, e:
@@ -95,25 +97,21 @@ def library_to_flowcells(request, lib_id):
       return HttpResponse("Library %s does not exist" % (lib_id))
    
     flowcell_list = []
-    interesting_flowcells = {} # aka flowcells we're looking at
-    #for lane in LANE_LIST:
+    flowcell_run_results = {} # aka flowcells we're looking at
     for lane in lib.lane_set.all():
-        #lane_library = getattr(lib, 'lane_%d_library' % (lane,))
-        #for fc in lane_library.all():
         fc = lane.flowcell
         flowcell_id, id = parse_flowcell_id(fc.flowcell_id)
-        if flowcell_id not in interesting_flowcells:
-            interesting_flowcells[flowcell_id] = get_flowcell_result_dict(flowcell_id)
+        if flowcell_id not in flowcell_run_results:
+            flowcell_run_results[flowcell_id] = get_flowcell_result_dict(flowcell_id)
         flowcell_list.append((fc.flowcell_id, lane.lane_number))
 
     flowcell_list.sort()
-    
     lane_summary_list = []
     eland_results = []
     for fc, lane_number in flowcell_list:
         lane_summary, err_list = _summary_stats(fc, lane_number)
 
-        eland_results.extend(_make_eland_results(fc, lane_number, interesting_flowcells))
+        eland_results.extend(_make_eland_results(fc, lane_number, flowcell_run_results))
         lane_summary_list.extend(lane_summary)
 
     context = {
@@ -310,9 +308,9 @@ def _summary_stats_old(flowcell_id, lane):
             summary_list.append("Summary report needs to be updated.")
             logging.error("Exception: " + str(e))
        
-        print "----------------------------------"
-        print "-- DOES NOT SUPPORT PAIRED END ---"
-        print "----------------------------------"
+        print >>sys.stderr, "----------------------------------"
+        print >>sys.stderr, "-- DOES NOT SUPPORT PAIRED END ---"
+        print >>sys.stderr, "----------------------------------"
         lane_results = results.gerald.summary[0][lane]
         lrs = lane_results
         
@@ -460,6 +458,12 @@ def library_dict(library_id):
     except Library.DoesNotExist, e:
         return None
 
+    #lane_info = lane_information(lib.lane_set)
+    lane_info = []
+    for lane in lib.lane_set.all():
+        lane_info.append( {'flowcell':lane.flowcell.flowcell_id,
+                           'lane_number': lane.lane_number} )
+        
     info = {
         # 'affiliations'?
         # 'aligned_reads': lib.aligned_reads,
@@ -473,6 +477,7 @@ def library_dict(library_id):
         'experiment_type': lib.experiment_type.name,
         'experiment_type_id': lib.experiment_type_id,
         'id': lib.id,
+        'lane_set': lane_info,
         'library_id': lib.id,
         'library_name': lib.library_name,
         'library_species': lib.library_species.scientific_name,
@@ -484,7 +489,7 @@ def library_dict(library_id):
         'notes': lib.notes,
         'replicate': lib.replicate,
         'stopping_point': lib.stopping_point,
-        'successful_pM': lib.successful_pM,
+        'successful_pM': unicode(lib.successful_pM),
         'undiluted_concentration': unicode(lib.undiluted_concentration)
         }
     if lib.library_type_id is None:

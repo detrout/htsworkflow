@@ -39,14 +39,20 @@ def flowcell_information(flowcell_id):
             'library_name': lane.library.library_name,
             'library_id': lane.library.id,
             'library_species': lane.library.library_species.scientific_name,
-            'pM': float(lane.pM),
-            'read_length': fc.read_length
+            'pM': unicode(lane.pM),
+            'read_length': lane.flowcell.read_length
         }
+
+    if fc.control_lane is None:
+        control_lane = None
+    else:
+        control_lane = int(fc.control_lane)
+        
     info = {
         'advanced_run': fc.advanced_run,
         'cluster_station_id': fc.cluster_station_id,
         'cluster_station': fc.cluster_station.name,
-        'control_lane': int(fc.control_lane),
+        'control_lane': control_lane,
         # 'datarun_set': how should this be represented?,
         'flowcell_id': fc.flowcell_id,
         'id': fc.id,
