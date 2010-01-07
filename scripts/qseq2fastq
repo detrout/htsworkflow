@@ -56,7 +56,8 @@ def qseq2fastq(destination, qseqs, trim=None, pf=False):
             destination.write(os.linesep)
 
 def make_parser():
-    parser = OptionParser()
+    usage = "%prog: [options] *_qseq.txt"
+    parser = OptionParser(usage)
     parser.add_option('-o', '--output', help='output fastq file', default=None)
     parser.add_option('-s', '--slice',
                       help='specify python slice, e.g. 0:75, 0:-1',
