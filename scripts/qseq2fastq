@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
+from glob import glob
 import os
 from optparse import OptionParser
 import numpy
 import sys
+import tarfile
 
 def qseq2fastq(destination, qseqs, trim=None, pf=False):
-    for q in qseqs:
-        for line in open(q):
+    for qstream in qseqs:
+        for line in qstream:
             # parse line
             record = line.strip().split('\t')
             machine_name = record[0]
@@ -55,9 +57,21 @@ def qseq2fastq(destination, qseqs, trim=None, pf=False):
             destination.write(quality[trim].tostring())
             destination.write(os.linesep)
 
+def file_generator(pattern_list):
+    for pattern in pattern_list:
+        for filename in glob(pattern):
+            yield open(filename,'r')
+
+def tarfile_generator(tarfilename):
+    archive = tarfile.open(tarfilename,'r|*')
+    for tarinfo in archive:
+        yield archive.extractfile(tarinfo)
+    
 def make_parser():
     usage = "%prog: [options] *_qseq.txt"
     parser = OptionParser(usage)
+    parser.add_option('-i', '--infile', default=None,
+      help='source tar file (if reading from an archive instead of a directory)')
     parser.add_option('-o', '--output', help='output fastq file', default=None)
     parser.add_option('-s', '--slice',
                       help='specify python slice, e.g. 0:75, 0:-1',
@@ -85,6 +99,11 @@ def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
 
+    if opts.infile is not None:
+        qseq_generator = tarfile_generator(opts.infile)
+    else:
+        qseq_generator = file_generator(args)
+        
     if opts.output is not None:
         dest = open(opts.output, 'w')
     else:
@@ -92,7 +111,7 @@ def main(cmdline=None):
 
     subseq = parse_slice(opts.slice)
 
-    qseq2fastq(dest, args, subseq, opts.pf)
+    qseq2fastq(dest, qseq_generator, subseq, opts.pf)
     
     return 0
 
