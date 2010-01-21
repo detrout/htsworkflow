@@ -42,7 +42,7 @@ class ExperimentsTestCases(TestCase):
                 self.failUnlessEqual(lane_dict['lane_number'], lane.lane_number)
                 self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
                 self.failUnlessEqual(lane_dict['library_id'], lane.library.id)
-                self.failUnlessAlmostEqual(lane_dict['pM'], float(lane.pM))
+                self.failUnlessAlmostEqual(float(lane_dict['pM']), float(lane.pM))
                 self.failUnlessEqual(lane_dict['library_species'],
                                      lane.library.library_species.scientific_name)
                     
@@ -64,7 +64,7 @@ class ExperimentsTestCases(TestCase):
                 self.failUnlessEqual(lane_dict['lane_number'], lane.lane_number)
                 self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
                 self.failUnlessEqual(lane_dict['library_id'], lane.library.id)
-                self.failUnlessAlmostEqual(lane_dict['pM'], float(lane.pM))
+                self.failUnlessAlmostEqual(float(lane_dict['pM']), float(lane.pM))
                 self.failUnlessEqual(lane_dict['library_species'],
                                      lane.library.library_species.scientific_name)
 

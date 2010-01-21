@@ -19,6 +19,7 @@ from htsworkflow.frontend.samples.views import \
      library_json
 
 from htsworkflow.frontend.auth import apidata
+from htsworkflow.util.conversion import unicode_or_none
 
 # The django test runner flushes the database between test suites not cases,
 # so to be more compatible with running via nose we flush the database tables
@@ -139,8 +140,8 @@ class SampleWebTestCase(TestCase):
                 #self.failUnlessEqual(d['amplified_from_sample'], lib.amplified_from_sample)
                 self.failUnlessEqual(d['antibody_id'], lib.antibody_id)
                 self.failUnlessEqual(d['avg_lib_size'], lib.avg_lib_size)
-                self.failUnlessEqual(d['cell_line'], lib.cell_line.cellline_name)
                 self.failUnlessEqual(d['cell_line_id'], lib.cell_line_id)
+                self.failUnlessEqual(d['cell_line'], unicode_or_none(lib.cell_line))
                 self.failUnlessEqual(d['experiment_type'], lib.experiment_type.name)
                 self.failUnlessEqual(d['experiment_type_id'], lib.experiment_type_id)
                 self.failUnlessEqual(d['id'], lib.id)

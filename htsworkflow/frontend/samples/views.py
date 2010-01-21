@@ -19,8 +19,10 @@ from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.eland import ResultLane
 from htsworkflow.frontend import settings
+from htsworkflow.util.conversion import unicode_or_none
 from htsworkflow.util import makebed
 from htsworkflow.util import opener
+
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -472,8 +474,8 @@ def library_dict(library_id):
         #'antibody_name': lib.antibody_name(), # we have no antibodies.
         'antibody_id': lib.antibody_id,
         'avg_lib_size': lib.avg_lib_size,
-        'cell_line': lib.cell_line.cellline_name,
         'cell_line_id': lib.cell_line_id,
+        'cell_line': unicode_or_none(lib.cell_line),
         'experiment_type': lib.experiment_type.name,
         'experiment_type_id': lib.experiment_type_id,
         'id': lib.id,
@@ -489,8 +491,8 @@ def library_dict(library_id):
         'notes': lib.notes,
         'replicate': lib.replicate,
         'stopping_point': lib.stopping_point,
-        'successful_pM': unicode(lib.successful_pM),
-        'undiluted_concentration': unicode(lib.undiluted_concentration)
+        'successful_pM': unicode_or_none(lib.successful_pM),
+        'undiluted_concentration': unicode_or_none(lib.undiluted_concentration)
         }
     if lib.library_type_id is None:
         info['library_type'] = None

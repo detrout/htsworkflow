@@ -130,5 +130,34 @@
             "experiment_type": 8, 
             "antibody": null
         }
+    },
+    {
+        "pk": "11005", 
+        "model": "samples.library", 
+        "fields": {
+            "ten_nM_dilution": false, 
+            "avg_lib_size": 325, 
+            "library_name": "null cell line", 
+            "creation_date": "2009-08-05", 
+            "cell_line": null, 
+            "library_species": 8, 
+            "library_type": 2, 
+            "made_by": "Lorian", 
+            "affiliations": [
+                41
+            ], 
+            "replicate": 1, 
+            "condition": 1, 
+            "hidden": true, 
+            "stopping_point": "1A", 
+            "tags": [], 
+            "made_for": "", 
+            "amplified_from_sample": null, 
+            "notes": "7/31/2009 16:08:22\tColor: Blue", 
+            "undiluted_concentration": null, 
+            "successful_pM": null, 
+            "experiment_type": 8, 
+            "antibody": null
+        }
     }
 ]
