@@ -64,7 +64,7 @@ class ExperimentTypeOptions(admin.ModelAdmin):
 class HTSUserCreationForm(UserCreationForm):
     class Meta:
         model = HTSUser
-        fields = ("username",)
+        fields = ("username",'first_name','last_name')
 
 class HTSUserChangeForm(UserChangeForm):
     class Meta:
@@ -73,7 +73,6 @@ class HTSUserChangeForm(UserChangeForm):
 class HTSUserOptions(UserAdmin):
     form = HTSUserChangeForm
     add_form = HTSUserCreationForm
-    
 
 class LaneLibraryInline(admin.StackedInline):
   model = Lane

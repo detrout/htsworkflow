@@ -271,13 +271,14 @@ class HTSUser(User):
     #objects = UserManager()
 
     class Meta:
-        ordering = ['username']
+        ordering = ['first_name', 'last_name', 'username']
 
     def admin_url(self):
         return '/admin/%s/%s/%d' % (self._meta.app_label, self._meta.module_name, self.id)
 
     def __unicode__(self):
-        return unicode(self.username) + u" (" + unicode(self.get_full_name()) + u")"
+        #return unicode(self.username) + u" (" + unicode(self.get_full_name()) + u")"
+        return unicode(self.get_full_name()) + u' (' + unicode(self.username) + ')'
     
 def HTSUserInsertID(sender, instance, **kwargs):
     """
