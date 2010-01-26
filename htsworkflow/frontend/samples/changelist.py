@@ -28,7 +28,7 @@ class ChangeList(object):
         self.opts = model._meta
         self.lookup_opts = self.opts
         if queryset is None:
-            self.root_query_set = model.objects
+            self.root_query_set = model.objects.all()
         else:
             self.root_query_set = queryset
         self.list_display =  []

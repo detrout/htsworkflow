@@ -1,0 +1,70 @@
+{% extends "base_site.html" %}
+{# extends "app_base.html" #}
+{% load adminmedia admin_list i18n %}
+
+{% block bodyclass %}change-list{% endblock %}
+{% block coltype %}flex{% endblock %}
+
+{% block content %}
+<div id="lanes-index-div" class="djangocss">
+  <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+    {% block search %}{% search_form lanes %}{% endblock %}
+
+    {% block filters %}
+    {% if lanes.has_filters %}
+    <div id="changelist-filter">
+      <h2 class="djangocss">{% trans 'Filter' %}</h2>
+      {% for spec in lanes.filter_specs %}
+         {% admin_list_filter lanes spec %}
+         {% endfor %}
+       </div>
+       {% endif %}
+       {% endblock %}
+
+  
+ {% block pagination %}{% pagination lanes %}{% endblock %}
+
+{% block body %}
+<table class="djangocss">
+  <thead class="djangocss">
+    <tr class="djangocss">
+      <td class="djangocss">Run Date</td>
+      <td class="djangocss">Flowcell Type</td>
+      <td class="djangocss">Cycles</td>
+      <td class="djangocss">Flowcell ID</td>
+      <td class="djangocss">Lane</td>
+      <td class="djangocss">Library ID</td>
+      <td class="djangocss">Library Name</td>
+  </tr>
+  </thead>
+  <tbody class="djangocss">
+    {% for lane in lanes.query_set %}
+    <tr class="djangocss">
+      <td class="djangocss">
+        {{ lane.flowcell.run_date|date:"Y-M-d" }}
+      </td>
+      <td class="djangocss">
+        {{ lane.flowcell.flowcell_type }}
+      </td>
+      <td class="djangocss">
+        {{ lane.flowcell.read_length }}
+      </td>
+      <td class="djangocss">
+        {{ lane.flowcell.flowcell_id }}
+      </td>
+      <td class="djangocss">
+        {{ lane.lane_number }}
+      </td>
+      <td class="djangocss">
+        <a href="/library/{{ lane.library_id }}">{{ lane.library_id }}</a>
+      </td>
+      <td class="djangocss">
+        <a href="/library/{{ lane.library_id }}">{{ lane.library.library_name }}</a>
+      </td>
+   </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}
+{% endblock %}

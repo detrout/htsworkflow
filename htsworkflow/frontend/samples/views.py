@@ -10,9 +10,9 @@ except ImportError, e:
     import simplejson as json
 
 from htsworkflow.frontend.auth import require_api_key
-from htsworkflow.frontend.experiments.models import FlowCell
+from htsworkflow.frontend.experiments.models import FlowCell, Lane
 from htsworkflow.frontend.samples.changelist import ChangeList
-from htsworkflow.frontend.samples.models import Library
+from htsworkflow.frontend.samples.models import Library, HTSUser
 from htsworkflow.frontend.samples.results import get_flowcell_result_dict, parse_flowcell_id
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
@@ -37,6 +37,29 @@ SAMPLES_CONTEXT_DEFAULTS = {
     'bcmagic': BarcodeMagicForm()
 }
 
+def count_lanes(lane_set):
+    single = 0
+    paired = 1
+    short_read = 0
+    medium_read = 1
+    long_read = 2
+    counts = [[0,0,0,],[0,0,0]]
+    
+    for lane in lane_set.all():
+        if lane.flowcell.paired_end:
+            lane_type = paired
+        else:
+            lane_type = single
+        if lane.flowcell.read_length < 40:
+            read_type = short_read
+        elif lane.flowcell.read_length < 100:
+            read_type = medium_read
+        else:
+            read_type = long_read
+        counts[lane_type][read_type] += 1
+        
+    return counts
+
 def create_library_context(cl):
     """
     Create a list of libraries that includes how many lanes were run
@@ -52,11 +75,12 @@ def create_library_context(cl):
            summary['amplified_from'] = lib.amplified_from_sample.id
        else:
            summary['amplified_from'] = ''
-       lanes_run = 0
-       #for lane_id in LANE_LIST:
-       #    lane = getattr(lib, 'lane_%d_library' % (lane_id,))
-       #    lanes_run += len( lane.all() )
-       lanes_run = lib.lane_set.count()
+       lanes_run = count_lanes(lib.lane_set)
+       # suppress zeros
+       for row in xrange(len(lanes_run)):
+           for col in xrange(len(lanes_run[row])):
+               if lanes_run[row][col] == 0:
+                   lanes_run[row][col] = ''
        summary['lanes_run'] = lanes_run
        summary['is_archived'] = lib.is_archived()
        records.append(summary)
@@ -129,6 +153,31 @@ def library_to_flowcells(request, lib_id):
         context,
         context_instance = RequestContext(request))
 
+def lanes_for(request, username=None):
+    """
+    Generate a report of recent activity for a user
+    """
+    query = {}
+    if username is not None:
+        user = HTSUser.objects.get(username=username)
+        query.update({'library__affiliations__users__id':user.id})
+    print query, username
+    fcl = ChangeList(request, Lane,
+        list_filter=[],
+        search_fields=['flowcell__flowcell_id', 'library__id', 'library__library_name'],
+        list_per_page=200,
+        queryset=Lane.objects.filter(**query)
+    )
+
+    context = { 'lanes': fcl, 'title': 'Lane Index'}
+
+    return render_to_response(
+        'samples/lanes_for.html',
+        context,
+        context_instance = RequestContext(request)
+    )
+          
+    
 def summaryhtm_fc_cnm(request, flowcell_id, cnm):
     """
     returns a Summary.htm file if it exists.
@@ -519,7 +568,7 @@ def species_json(request, species_id):
     Return information about a species.
     """
     raise Http404
-    
+
 @login_required
 def user_profile(request):
     """

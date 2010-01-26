@@ -1,5 +1,20 @@
 {% load i18n %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+    <title>{% block title %}{{ app_name }} - {{ page_name }}{% endblock %}</title>
 
+{% block additional_css %}
+    {% load adminmedia %}
+    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% admin_media_prefix %}css/rtl.css{% endblock %}" />{% endif %}
+    {% block extrastyle %}{% endblock %}
+    {% block extrahead %}{% endblock %}
+    {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/data-browse-index.css" />
+{% endblock %}
+
+</head>
+<body>
 <!-- Container -->
    {% if not is_popup %}
     
@@ -35,3 +50,5 @@
 
     {% block footer %}<div id="footer" class="djangocss"></div>{% endblock %}
 <!-- END Container -->
+</body>
+</html>

@@ -35,6 +35,8 @@ urlpatterns = patterns('',
     (r'^library/$', 'htsworkflow.frontend.samples.views.library'),
     (r'^library/(?P<lib_id>\w+)/$', 
       'htsworkflow.frontend.samples.views.library_to_flowcells'),
+    (r'^lanes_for/$', 'htsworkflow.frontend.samples.views.lanes_for'),
+    (r'^lanes_for/(?P<username>\w+)', 'htsworkflow.frontend.samples.views.lanes_for'),
     # library id to admin url
     (r'^library_id_to_admin_url/(?P<lib_id>\w+)/$',
      'htsworkflow.frontend.samples.views.library_id_to_admin_url'),
