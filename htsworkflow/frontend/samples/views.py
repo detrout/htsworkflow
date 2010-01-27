@@ -161,7 +161,6 @@ def lanes_for(request, username=None):
     if username is not None:
         user = HTSUser.objects.get(username=username)
         query.update({'library__affiliations__users__id':user.id})
-    print query, username
     fcl = ChangeList(request, Lane,
         list_filter=[],
         search_fields=['flowcell__flowcell_id', 'library__id', 'library__library_name'],
