@@ -13,10 +13,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail, mail_admins
 from django.http import HttpResponse, Http404
 
-from htsworkflow.frontend import settings
-from htsworkflow.frontend.experiments.models import FlowCell, DataRun
-from htsworkflow.frontend.samples.models import Library
 from htsworkflow.frontend.auth import require_api_key
+from htsworkflow.frontend import settings
+from htsworkflow.frontend.experiments.models import FlowCell, DataRun, Lane
+from htsworkflow.frontend.samples.models import Library, HTSUser
 
 def flowcell_information(flowcell_id):
     """
@@ -80,7 +80,43 @@ def flowcell_json(request, fc_id):
     
     fc_json = json.dumps(fc_dict)
     return HttpResponse(fc_json, mimetype = 'application/json')
+
+def lanes_for(username=None):
+    """
+    Given a user id try to return recent lanes as a list of dictionaries
+    """
+    query = {}
+    if username is not None:
+        user = HTSUser.objects.get(username=username)        
+        query.update({'library__affiliations__users__id': user.id})
+        
+    lanes = Lane.objects.filter(**query).order_by('-flowcell__run_date')
     
+    result = []
+    for l in lanes:
+        result.append({ 'flowcell': l.flowcell.flowcell_id,
+                        'run_date': l.flowcell.run_date.isoformat(),
+                        'lane_number': l.lane_number,
+                        'library': l.library.id,
+                        'comment': l.comment})
+    return result
+
+def lanes_for_json(request, username):
+    """
+    Format lanes for a user
+    """
+    require_api_key(request)
+
+    try:
+        result = lanes_for(username)
+    except ObjectDoesNotExist, e:
+        raise Http404
+    
+    #convert query set to python structure
+    
+    result_json = json.dumps(result)
+    return HttpResponse(result_json, mimetype='application/json')
+                 
 def updStatus(request):
     output=''
     user = 'none'

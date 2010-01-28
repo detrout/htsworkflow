@@ -7,6 +7,7 @@ except ImportError, e:
 import sys
 
 from django.core import mail
+from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from htsworkflow.frontend.experiments import models
 from htsworkflow.frontend.experiments import experiments
@@ -123,6 +124,45 @@ class ExperimentsTestCases(TestCase):
             library_id = library_id[1:]
             self.failUnlessEqual(library_id, expected_ids[i])
             self.failUnlessEqual(input_field['value'], library_id)
+
+    def test_lanes_for(self):
+        """
+        Check the code that packs the django objects into simple types.
+        """
+        user = 'test'
+        lanes = experiments.lanes_for(user)
+        self.failUnlessEqual(len(lanes), 5)
+
+        response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
+        lanes_json = json.loads(response.content)
+        self.failUnlessEqual(len(lanes), len(lanes_json))
+        for i in range(len(lanes)):
+            self.failUnlessEqual(lanes[i]['comment'], lanes_json[i]['comment'])
+            self.failUnlessEqual(lanes[i]['lane_number'], lanes_json[i]['lane_number'])
+            self.failUnlessEqual(lanes[i]['flowcell'], lanes_json[i]['flowcell'])
+            self.failUnlessEqual(lanes[i]['run_date'], lanes_json[i]['run_date'])
+            
+    def test_lanes_for_no_lanes(self):
+        """
+        Do we get something meaningful back when the user isn't attached to anything?
+        """
+        user = 'supertest'
+        lanes = experiments.lanes_for(user)
+        self.failUnlessEqual(len(lanes), 0)
+
+        response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
+        lanes_json = json.loads(response.content)
+
+    def test_lanes_for_no_user(self):
+        """
+        Do we get something meaningful back when its the wrong user
+        """
+        user = 'not a real user'
+        self.failUnlessRaises(ObjectDoesNotExist, experiments.lanes_for, user)
+
+        response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
+        self.failUnlessEqual(response.status_code, 404)
+
 
 class TestEmailNotify(TestCase):
     fixtures = ['test_flowcells.json']

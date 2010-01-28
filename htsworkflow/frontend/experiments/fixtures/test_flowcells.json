@@ -1,7 +1,64 @@
 [
-    {"pk": 1, "model": "samples.affiliation",
+    {"pk": 5, "model": "auth.user", 
+   "fields": {
+       "username": "test",
+       "first_name": "",
+       "last_name": "",
+       "is_active": true,
+       "is_superuser": false,
+       "is_staff": false,
+       "last_login": "2009-01-01 00:00:01",
+       "groups": [],
+       "user_permissions": [],
+       "password": "sha1$foo$5e4eefec1144a04becfb7da79244f07c487fc345",
+       "email": "",
+       "date_joined": "2009-01-01 00:01:01"
+       }
+   },
+   {"pk": 5, "model": "samples.htsuser",
+    "fields" : {}
+   },
+   {"pk": 6, "model": "auth.user", 
+   "fields": {
+       "username": "admintest",
+       "first_name": "",
+       "last_name": "",
+       "is_active": true,
+       "is_superuser": false,
+       "is_staff": true,
+       "last_login": "2009-01-01 00:00:01",
+       "groups": [],
+       "user_permissions": [],
+       "password": "sha1$foo$5e4eefec1144a04becfb7da79244f07c487fc345",
+       "email": "",
+       "date_joined": "2009-01-01 00:01:01"
+       }
+   },
+   {"pk": 6, "model": "samples.htsuser",
+    "fields" : {}
+   },
+   {"pk": 7, "model": "auth.user", 
+   "fields": {
+       "username": "supertest",
+       "first_name": "",
+       "last_name": "",
+       "is_active": true,
+       "is_superuser": true,
+       "is_staff": true,
+       "last_login": "2009-01-01 00:00:01",
+       "groups": [],
+       "user_permissions": [],
+       "password": "sha1$foo$5e4eefec1144a04becfb7da79244f07c487fc345",
+       "email": "",
+       "date_joined": "2009-01-01 00:01:01"
+       }
+   },
+   {"pk": 7, "model": "samples.htsuser",
+    "fields" : {}
+   },
+   {"pk": 1, "model": "samples.affiliation",
      "fields": {
-         "users": [],
+         "users": [5],
          "contact": "group 1",
          "name": "affiliation 1",
          "email": "pk1@example.com"
@@ -9,7 +66,7 @@
      },
     {"pk": 2, "model": "samples.affiliation",
      "fields": {
-         "users": [],
+         "users": [6],
          "contact": "group 2",
          "name": "affiliation 2",
          "email": "pk2@example.com"
@@ -39,54 +96,6 @@
          "email": "pk5@example.com"
          }
      },
-    {"pk": 5, "model": "auth.user", 
-   "fields": {
-       "username": "test",
-       "first_name": "",
-       "last_name": "",
-       "is_active": true,
-       "is_superuser": false,
-       "is_staff": false,
-       "last_login": "2009-01-01 00:00:01",
-       "groups": [],
-       "user_permissions": [],
-       "password": "sha1$foo$5e4eefec1144a04becfb7da79244f07c487fc345",
-       "email": "",
-       "date_joined": "2009-01-01 00:01:01"
-       }
-   },
-  {"pk": 6, "model": "auth.user", 
-   "fields": {
-       "username": "admintest",
-       "first_name": "",
-       "last_name": "",
-       "is_active": true,
-       "is_superuser": false,
-       "is_staff": true,
-       "last_login": "2009-01-01 00:00:01",
-       "groups": [],
-       "user_permissions": [],
-       "password": "sha1$foo$5e4eefec1144a04becfb7da79244f07c487fc345",
-       "email": "",
-       "date_joined": "2009-01-01 00:01:01"
-       }
-   },
-  {"pk": 7, "model": "auth.user", 
-   "fields": {
-       "username": "supertest",
-       "first_name": "",
-       "last_name": "",
-       "is_active": true,
-       "is_superuser": true,
-       "is_staff": true,
-       "last_login": "2009-01-01 00:00:01",
-       "groups": [],
-       "user_permissions": [],
-       "password": "sha1$foo$5e4eefec1144a04becfb7da79244f07c487fc345",
-       "email": "",
-       "date_joined": "2009-01-01 00:01:01"
-       }
-   },
  {"pk": 1, "model": "experiments.clusterstation", "fields": {"name": "old"}}, 
  {"pk": 2, "model": "experiments.clusterstation", "fields": {"name": "loaner"}}, 
  {"pk": 3, "model": "experiments.clusterstation", "fields": {"name": "new"}}, 
