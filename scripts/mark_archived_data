@@ -1,39 +1,46 @@
 #!/usr/bin/env python
 
-#import os
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.frontend.settings'
-
 from htsworkflow.util.hdquery import get_hd_serial_num
 from htsworkflow.frontend import settings
 
-#from django.conf import settings
 from optparse import OptionParser
-
+import os
+import re
 import sys
 import urllib2
+import urlparse
 
+runfolder_pattern = re.compile(r'[0-9]{6}_[-A-Za-z\d]+_\d+_(?P<flowcell>[A-Z\d]+)\.tgz')
 
-
+def extract_flowcell(runfolder_name):
+    path, basename = os.path.split(runfolder_name)
+    match = runfolder_pattern.match(basename)
+    if match is not None:
+        return match.group('flowcell')
+    else:
+        return None
+    
 def construct_parser():
     """
     """
-    parser = OptionParser("usage: %prog -f <flowcell> -d </dev/sdX> OR\n\t %prog -f <flowcell> -s <dev_serial_num>")
-    parser.add_option("-f", "--flowcell", action="store", type="string", dest="flowcell",
-                      help="flowcell being archived")
-    parser.add_option("-d", "--device", action="store", type="string", dest="device",
+    msg = "usage: %prog [-d </dev/sdX> | -s <serial_number] [-f <flowcell>] [archived dirs]"
+    parser = OptionParser()
+    parser.add_option('-u', '--url', default=None,
+                      help="Alternate url for marking archived flowcells")
+    parser.add_option("-f", "--flowcell",  type="string", help="flowcell being archived")
+    parser.add_option("-d", "--device", type="string",
                       help="device flowcell is being archived to")
-    parser.add_option("-s", "--serial", action="store", type="string", dest="serial",
-                      help="serial num. of archive device")
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False)
+    parser.add_option("-s", "--serial", type="string", help="serial num. of archive device")
+    parser.add_option("-v", "--verbose", action="store_true", default=False)
     
     return parser
 
 
-def update_db(flowcell, serial, debug=False):
+def update_db(root_url, flowcell, serial, debug=False):
     """
     Creates link between flowcell and storage device over http
     """
-    url = settings.LINK_FLOWCELL_STORAGE_DEVICE_URL+'%s/%s/' % (flowcell, serial)
+    url = urlparse.urljoin(root_url, '%s/%s/' % (flowcell, serial))
     
     req = urllib2.Request(url)
     try:
@@ -58,31 +65,47 @@ def process_args(parser):
     
     # Only provide device or serial
     if options.device is not None and options.serial is not None:
-        print "ERROR: Please only provide --device or --serial.\n" \
-              "  The serial number is extracted automatically if the device is provided."
-        sys.exit(2)
-    
-    print 'Flowcell:', options.flowcell
-    print '  Device:', options.device
-    print '  Serial:', options.serial
-    
-    if options.flowcell is None:
-        msg.append("  --flowcell required")
-    
+        parser.error("Please provide only --device or --serial.\n"\
+                     "The serial number is extracted automatically if the"\
+                     "device is provided.")
+
+    # allow user to override the default destination URL
+    if options.url is not None:
+        root_url = options.url
+    else:
+        root_url = settings.LINK_FLOWCELL_STORAGE_DEVICE_URL
+
     # if device and serial missing:
     if options.device is None and options.serial is None:
-        msg.append("  --device OR --serial required")
+        parser.error('One of --device or --serial is required')
+
+    flowcells = []
     
-    if len(msg) > 0:
-        print '\n'.join(msg)
-        sys.exit(3)
+    # sanitize args    
+    for runfolder in args:
+        flowcell_id = extract_flowcell(runfolder)
+        if flowcell_id is None:
+            parser.error('archive names must look like YYMMDD_MACHINE_RUN_FLOWCELLID.tgz\n'\
+                         '(got %s)' % (runfolder,))
+        else:
+            flowcells.append(flowcell_id)
+            
+    if options.flowcell is not None:
+        flowcells.append(options.flowcell)
+        
+    if len(flowcells) == 0:
+        parser.error('please specify a  --flowcell or list of runfolder archives\n'\
+                     'for archival. I need something to do.')
+
+    print flowcells
+    sys.exit(1)
     
     # Update db records
     if options.device is not None:
         serial = get_hd_serial_num(options.device)
-        update_db(flowcell=options.flowcell, serial=serial, debug=options.verbose)
+        update_db(root_url, flowcells, serial=serial, debug=options.verbose)
     elif options.serial is not None:
-        update_db(flowcell=options.flowcell, serial=options.serial, debug=options.verbose)
+        update_db(root_url, flowcells, serial=options.serial, debug=options.verbose)
     else:
         msg ="FATAL should not happen error occured; i.e. the best kind!"
         raise ValueError, msg

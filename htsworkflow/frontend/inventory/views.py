@@ -48,7 +48,7 @@ def __expand_longtermstorage_context(context, item):
     for lts in item.longtermstorage_set.all():
         flowcell_list.append(lts.flowcell)
         flowcell_id_list.append(lts.flowcell.flowcell_id)
-        library_id_list.extend([ lib.library_id for lib in lts.libraries.all() ])
+        library_id_list.extend([ lib.id for lib in lts.libraries.all() ])
 
     flowcell_list.sort(__flowcell_rundate_sort)
     context['oldest_rundate'] = flowcell_list[0].run_date
@@ -295,47 +295,11 @@ def link_flowcell_and_device(request, flowcell, serial):
     
     ###########################################
     # Add Library Links to LTS
-    
-    if fc.lane_1_library not in lts.libraries.all():
-        lts.libraries.add(fc.lane_1_library)
-        LIBRARY_UPDATED = True
-        #print 1
-    
-    if fc.lane_2_library not in lts.libraries.all():
-        lts.libraries.add(fc.lane_2_library)
-        LIBRARY_UPDATED = True
-        #print 2
-    
-    if fc.lane_3_library not in lts.libraries.all():
-        lts.libraries.add(fc.lane_3_library)
-        LIBRARY_UPDATED = True
-        #print 3
-    
-    if fc.lane_4_library not in lts.libraries.all():
-        lts.libraries.add(fc.lane_4_library)
-        LIBRARY_UPDATED = True
-        #print 4
-    
-    
-    if fc.lane_5_library not in lts.libraries.all():
-        lts.libraries.add(fc.lane_5_library)
-        LIBRARY_UPDATED = True
-        #print 5
-    
-    if fc.lane_6_library not in lts.libraries.all():
-        lts.libraries.add(fc.lane_6_library)
-        LIBRARY_UPDATED = True
-        #print 6
-    
-    if fc.lane_7_library not in lts.libraries.all():
-        lts.libraries.add(fc.lane_7_library)
-        LIBRARY_UPDATED = True
-        #print 7
-    
-    if fc.lane_8_library not in lts.libraries.all():
-        lts.libraries.add(fc.lane_8_library)
-        LIBRARY_UPDATED = True
-        #print 8
+
+    for lane in fc.lane_set.all():
+        if lane.library not in lts.libraries.all():
+            lts.libraries.add(lane.library)
+            LIBRARY_UPDATED = True        
         
     # Save Changes
     lts.save()
