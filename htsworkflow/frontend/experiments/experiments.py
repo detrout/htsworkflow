@@ -91,14 +91,19 @@ def lanes_for(username=None):
         query.update({'library__affiliations__users__id': user.id})
         
     lanes = Lane.objects.filter(**query).order_by('-flowcell__run_date')
+
     
     result = []
     for l in lanes:
+        affiliations = l.library.affiliations.all()
+        affiliations_list = [(a.id, a.name) for a in affiliations]
         result.append({ 'flowcell': l.flowcell.flowcell_id,
                         'run_date': l.flowcell.run_date.isoformat(),
                         'lane_number': l.lane_number,
                         'library': l.library.id,
-                        'comment': l.comment})
+                        'library_name': l.library.library_name,
+                        'comment': l.comment,
+                        'affiliations': affiliations_list})
     return result
 
 def lanes_for_json(request, username):
