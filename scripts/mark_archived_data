@@ -36,24 +36,25 @@ def construct_parser():
     return parser
 
 
-def update_db(root_url, flowcell, serial, debug=False):
+def update_db(root_url, flowcells, serial, debug=False):
     """
     Creates link between flowcell and storage device over http
     """
-    url = urlparse.urljoin(root_url, '%s/%s/' % (flowcell, serial))
+    for fc in flowcells:
+        url = urlparse.urljoin(root_url, '%s/%s/' % (fc, serial))
+        
+        req = urllib2.Request(url)
+        try:
+            response = urllib2.urlopen(req)
+        except urllib2.URLError, e:
+            print 'ERROR - HTTP OUTPUT (Return Code: %s); use -v/--verbose for more details.' % (e.code)
+            if debug:
+                print e.read()
+            sys.exit(e.code)
+        
+        print "DB Update of %s & %s succeeded" % (fc, serial)
+        print response.read()
     
-    req = urllib2.Request(url)
-    try:
-        response = urllib2.urlopen(req)
-    except urllib2.URLError, e:
-        print 'ERROR - HTTP OUTPUT (Return Code: %s); use -v/--verbose for more details.' % (e.code)
-        if debug:
-            print e.read()
-        sys.exit(e.code)
-    
-    print "DB Update of %s & %s succeeded" % (flowcell, serial)
-    print response.read()
-
 
 def process_args(parser):
     """
@@ -97,9 +98,6 @@ def process_args(parser):
         parser.error('please specify a  --flowcell or list of runfolder archives\n'\
                      'for archival. I need something to do.')
 
-    print flowcells
-    sys.exit(1)
-    
     # Update db records
     if options.device is not None:
         serial = get_hd_serial_num(options.device)
