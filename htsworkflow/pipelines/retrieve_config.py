@@ -140,7 +140,7 @@ def format_gerald_config(options, flowcell_info, genome_map):
             is_sequencing = True
             
         if is_sequencing:
-            config += ['%s:ANALYSIS sequence%s' % (lane_prefix, analysis_suffix)]
+            config += ['%s:ANALYSIS sequence%s' % (lane_prefix, sequence_suffix)]
         else:
             config += ['%s:ANALYSIS eland%s' % (lane_prefix, analysis_suffix)]
             config += ['%s:ELAND_GENOME %s' % (lane_prefix, species_path) ]
