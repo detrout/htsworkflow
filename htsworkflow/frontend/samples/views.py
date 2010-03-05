@@ -526,6 +526,7 @@ def library_dict(library_id):
         'cell_line': unicode_or_none(lib.cell_line),
         'experiment_type': lib.experiment_type.name,
         'experiment_type_id': lib.experiment_type_id,
+        'hidden': lib.hidden,
         'id': lib.id,
         'lane_set': lane_info,
         'library_id': lib.id,

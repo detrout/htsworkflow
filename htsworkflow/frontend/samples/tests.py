@@ -81,6 +81,7 @@ def create_db(obj):
         made_by = 'microfludics system 7321',
         stopping_point = '2A',
         undiluted_concentration = '5.01',
+        hidden = False,
     )
     obj.library_10001.save()
     obj.library_10002 = Library(
@@ -93,6 +94,7 @@ def create_db(obj):
         made_by = 'microfludics system 7321',
         stopping_point = '2A',
         undiluted_concentration = '5.01',
+        hidden = False,
     )
     obj.library_10002.save()
  
@@ -144,6 +146,7 @@ class SampleWebTestCase(TestCase):
                 self.failUnlessEqual(d['cell_line'], unicode_or_none(lib.cell_line))
                 self.failUnlessEqual(d['experiment_type'], lib.experiment_type.name)
                 self.failUnlessEqual(d['experiment_type_id'], lib.experiment_type_id)
+                self.failUnlessEqual(d['hidden'], lib.hidden)
                 self.failUnlessEqual(d['id'], lib.id)
                 self.failUnlessEqual(d['library_name'], lib.library_name)
                 self.failUnlessEqual(d['library_species'], lib.library_species.scientific_name)
@@ -160,7 +163,8 @@ class SampleWebTestCase(TestCase):
                     self.failUnlessEqual(d['stopping_point'], lib.stopping_point)
                     self.failUnlessEqual(d['successful_pM'], lib.successful_pM)
                     self.failUnlessEqual(d['undiluted_concentration'],
-                                         unicode(lib.undiluted_concentration))                                 
+                                         unicode(lib.undiluted_concentration))
+
     def test_invalid_library(self):
         """
         Make sure we get a 404 if we request an invalid library id
