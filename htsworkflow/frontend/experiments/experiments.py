@@ -23,7 +23,7 @@ def flowcell_information(flowcell_id):
     Return a dictionary describing a flowcell
     """
     try:
-        fc = FlowCell.objects.get(flowcell_id=flowcell_id)
+        fc = FlowCell.objects.get(flowcell_id__startswith=flowcell_id)
     except FlowCell.DoesNotExist, e:
         return None
 
