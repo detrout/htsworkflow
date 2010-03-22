@@ -7,56 +7,78 @@ import numpy
 import sys
 import tarfile
 
-def qseq2fastq(destination, qseqs, trim=None, pf=False):
-    for qstream in qseqs:
-        for line in qstream:
-            # parse line
-            record = line.strip().split('\t')
-            machine_name = record[0]
-            run_number = record[1]
-            lane_number = record[2]
-            tile = record[3]
-            x = record[4]
-            y = record[5]
-            index = record[6]
-            read = record[7]
-            sequence = record[8].replace('.','N')
-            # Illumina scores are Phred + 64
-            # Fastq scores are Phread + 33
-            # the following code grabs the string, converts to short ints and
-            # subtracts 31 (64-33) to convert between the two score formats.
-            # The numpy solution is twice as fast as some of my other
-            # ideas for the conversion.
-            # sorry about the uglyness in changing from character, to 8-bit int
-            # and back to a character array
-            quality = numpy.asarray(record[9],'c')
-            quality.dtype = numpy.uint8
-            quality -= 31
-            quality.dtype = '|S1' # I'd like to know what the real numpy char type is
+class Qseq2Fastq(object):
+    def __init__(self, sources, pass_destination, nopass_destination=None):
+        self.sources = sources
+        self.pass_destination = pass_destination
+        if nopass_destination is not None:
+            self.nopass_destination = nopass_destination
+        else:
+            self.nopass_destination = pass_destination
+        
+        self.trim = slice(None)
+        self.reportFilter = False
 
-            if pf:
-                pass_qc = record[10]
-                pass_qc_msg = " pf=%s" % (pass_qc)
-            else:
-                pass_qc_msg = ""
+    def run(self):
+        for qstream in self.sources:
+            for line in qstream:
+                # parse line
+                record = line.rstrip().split('\t')
+                machine_name = record[0]
+                run_number = record[1]
+                lane_number = record[2]
+                tile = record[3]
+                x = record[4]
+                y = record[5]
+                index = record[6]
+                read = record[7]
+                sequence = record[8].replace('.','N')
+                # Illumina scores are Phred + 64
+                # Fastq scores are Phread + 33
+                # the following code grabs the string, converts to short ints and
+                # subtracts 31 (64-33) to convert between the two score formats.
+                # The numpy solution is twice as fast as some of my other
+                # ideas for the conversion.
+                # sorry about the uglyness in changing from character, to 8-bit int
+                # and back to a character array
+                quality = numpy.asarray(record[9],'c')
+                quality.dtype = numpy.uint8
+                quality -= 31
+                quality.dtype = '|S1' # I'd like to know what the real numpy char type is
+
+                # add pass qc filter if we want it
+                pass_qc = int(record[10])
+                if self.reportFilter:
+                    pass_qc_msg = " pf=%s" % (pass_qc)
+                else:
+                    pass_qc_msg = ""
+
+                header = '@%s_%s:%s:%s:%s:%s/%s%s%s' % ( \
+                    machine_name,
+                    run_number,
+                    lane_number,
+                    tile,
+                    x,
+                    y,
+                    read,
+                    pass_qc_msg,
+                    os.linesep)
+
+
+                # if we passed the filter write to the "good" file
+                if pass_qc:
+                    destination = self.pass_destination
+                else:
+                    destination = self.nopass_destination
                 
-            destination.write('@%s_%s:%s:%s:%s:%s/%s%s%s' % ( \
-                machine_name,
-                run_number,
-                lane_number,
-                tile,
-                x,
-                y,
-                read,
-                pass_qc_msg,
-                os.linesep))
-            destination.write(sequence[trim])
-            destination.write(os.linesep)
-            destination.write('+')
-            destination.write(os.linesep)
-            destination.write(quality[trim].tostring())
-            destination.write(os.linesep)
-
+                destination.write(header)
+                destination.write(sequence[self.trim])
+                destination.write(os.linesep)
+                destination.write('+')
+                destination.write(os.linesep)
+                destination.write(quality[self.trim].tostring())
+                destination.write(os.linesep)
+            
 def file_generator(pattern_list):
     for pattern in pattern_list:
         for filename in glob(pattern):
@@ -67,18 +89,6 @@ def tarfile_generator(tarfilename):
     for tarinfo in archive:
         yield archive.extractfile(tarinfo)
     
-def make_parser():
-    usage = "%prog: [options] *_qseq.txt"
-    parser = OptionParser(usage)
-    parser.add_option('-i', '--infile', default=None,
-      help='source tar file (if reading from an archive instead of a directory)')
-    parser.add_option('-o', '--output', help='output fastq file', default=None)
-    parser.add_option('-s', '--slice',
-                      help='specify python slice, e.g. 0:75, 0:-1',
-                      default=None)
-    parser.add_option('--pf', help="report pass filter flag", default=False,
-                      action="store_true")
-    return parser
 
 def parse_slice(slice_text):
     if slice_text is None or len(slice_text) == 0:
@@ -94,6 +104,22 @@ def parse_slice(slice_text):
 
     return slice(*slice_data)
         
+def make_parser():
+    usage = "%prog: [options] *_qseq.txt"
+    parser = OptionParser(usage)
+    parser.add_option('-i', '--infile', default=None,
+      help='source tar file (if reading from an archive instead of a directory)')
+    parser.add_option('-o', '--output', default=None,
+                      help='output fastq file')
+    parser.add_option('-n', '--nopass-output', default=None,
+                      help='if provided send files that failed illumina filter '\
+                           'to a differentfile')
+    parser.add_option('-s', '--slice',
+                      help='specify python slice, e.g. 0:75, 0:-1',
+                      default=None)
+    parser.add_option('--pf', help="report pass filter flag", default=False,
+                      action="store_true")
+    return parser
 
 def main(cmdline=None):
     parser = make_parser()
@@ -105,15 +131,21 @@ def main(cmdline=None):
         qseq_generator = file_generator(args)
         
     if opts.output is not None:
-        dest = open(opts.output, 'w')
+        output = open(opts.output, 'w')
     else:
-        dest = sys.stdout
+        output = sys.stdout
 
-    subseq = parse_slice(opts.slice)
+    if opts.nopass_output is not None:
+        nopass_output = open(opts.nopass_output, 'w')
+    else:
+        nopass_output = None
+        
 
-    qseq2fastq(dest, qseq_generator, subseq, opts.pf)
-    
-    return 0
+    qseq_parser = Qseq2Fastq(qseq_generator, output, nopass_output)
+    qseq_parser.trim = parse_slice(opts.slice)
+    qseq_parser.reportFilter = opts.pf
+
+    qseq_parser.run()
 
 if __name__ == "__main__":
     main()
