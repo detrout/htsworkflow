@@ -6,23 +6,36 @@ from django.contrib.admin.options import IncorrectLookupParameters
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db import models
 from django.db.models.query import QuerySet
-from django.utils.encoding import smart_str
+from django.utils.encoding import force_unicode, smart_str
+from django.utils.translation import ugettext
 from django.utils.http import urlencode
-
 import operator
 
+try:
+    set
+except NameError:
+    from sets import Set as set   # Python 2.3 fallback
+
+# The system will display a "Show all" link on the change list only if the
+# total result count is less than or equal to this setting.
 MAX_SHOW_ALL_ALLOWED = 20000
 
-#change list settings
+# Changelist settings
 ALL_VAR = 'all'
 ORDER_VAR = 'o'
 ORDER_TYPE_VAR = 'ot'
 PAGE_VAR = 'p'
 SEARCH_VAR = 'q'
+TO_FIELD_VAR = 't'
 IS_POPUP_VAR = 'pop'
 ERROR_FLAG = 'e'
 
+# Text to display within change-list table cells if the value is blank.
+EMPTY_CHANGELIST_VALUE = '(None)'
+
 class ChangeList(object):
+    
+    #def __init__(self, request, model, list_display, list_display_links, list_filter, date_hierarchy, search_fields, list_select_related, list_per_page, list_editable, model_admin):
     def __init__(self, request, model, list_filter, search_fields, list_per_page, queryset=None):
         self.model = model
         self.opts = model._meta
@@ -34,35 +47,40 @@ class ChangeList(object):
         self.list_display =  []
         self.list_display_links = None
         self.list_filter = list_filter
-
+        #self.date_hierarchy = date_hierarchy
         self.search_fields = search_fields
         self.list_select_related = None
         self.list_per_page = list_per_page
+        #self.list_editable = list_editable
         self.model_admin = None
 
+        # Get search parameters from the query string.
         try:
-            self.page_num = int(request.GET.get(PAGE_VAR,'0'))
+            self.page_num = int(request.GET.get(PAGE_VAR, '0'))
         except ValueError:
             self.page_num = 0
         self.show_all = 'all' in request.GET
+        #self.is_popup = IS_POPUP_VAR in request.GET
+        #self.to_field = request.GET.get(TO_FIELD_VAR)
         self.params = dict(request.GET.items())
         if PAGE_VAR in self.params:
             del self.params[PAGE_VAR]
+        #if TO_FIELD_VAR in self.params:
+        #    del self.params[TO_FIELD_VAR]
         if ERROR_FLAG in self.params:
             del self.params[ERROR_FLAG]
-
+            
         self.multi_page = True
         self.can_show_all = False
-      
+
         self.order_field, self.order_type = self.get_ordering()
         self.query = request.GET.get(SEARCH_VAR, '')
         self.query_set = self.get_query_set()
         self.get_results(request)
+        #self.title = (self.is_popup and ugettext('Select %s') % force_unicode(self.opts.verbose_name) or ugettext('Select %s to change') % force_unicode(self.opts.verbose_name))
         self.filter_specs, self.has_filters = self.get_filters(request)
+        #self.pk_attname = self.lookup_opts.pk.attname
 
-        #self.result_count = 'result count'
-        #self.full_result_count = 'full result count'
- 
     def get_filters(self, request):
         filter_specs = []
         if self.list_filter:
@@ -108,7 +126,7 @@ class ChangeList(object):
 
         # Get the list of objects to display on this page.
         if (self.show_all and can_show_all) or not multi_page:
-            result_list = list(self.query_set)
+            result_list = self.query_set._clone()
         else:
             try:
                 result_list = paginator.page(self.page_num+1).object_list
@@ -128,7 +146,7 @@ class ChangeList(object):
         # options, then check the object's default ordering. If neither of
         # those exist, order descending by ID by default. Finally, look for
         # manually-specified ordering from the query string.
-        ordering = lookup_opts.ordering or ['-' + lookup_opts.pk.name] 
+        ordering = lookup_opts.ordering or ['-' + lookup_opts.pk.name]
 
         if ordering[0].startswith('-'):
             order_field, order_type = ordering[0][1:], 'desc'
@@ -183,26 +201,27 @@ class ChangeList(object):
         # Naked except! Because we don't have any other way of validating "params".
         # They might be invalid if the keyword arguments are incorrect, or if the
         # values are not in the correct type, so we might get FieldError, ValueError,
-        # ValicationError, or ? from a custom field that raises yet something else
+        # ValicationError, or ? from a custom field that raises yet something else 
         # when handed impossible data.
-        except Exception, e:
-            print e
+        except:
             raise IncorrectLookupParameters
 
         # Use select_related() if one of the list_display options is a field
-        # with a relationship.
-        if self.list_select_related:
-            qs = qs.select_related()
-        else:
-            for field_name in self.list_display:
-                try:
-                    f = self.lookup_opts.get_field(field_name)
-                except models.FieldDoesNotExist:
-                    pass
-                else:
-                    if isinstance(f.rel, models.ManyToOneRel):
-                        qs = qs.select_related()
-                        break
+        # with a relationship and the provided queryset doesn't already have
+        # select_related defined.
+        if not qs.query.select_related:
+            if self.list_select_related:
+                qs = qs.select_related()
+            else:
+                for field_name in self.list_display:
+                    try:
+                        f = self.lookup_opts.get_field(field_name)
+                    except models.FieldDoesNotExist:
+                        pass
+                    else:
+                        if isinstance(f.rel, models.ManyToOneRel):
+                            qs = qs.select_related()
+                            break
 
         # Set ordering.
         if self.order_field:
@@ -221,19 +240,14 @@ class ChangeList(object):
 
         if self.search_fields and self.query:
             for bit in self.query.split():
-                or_queries = [models.Q(**{construct_search(field_name): bit}) for field_name in self.search_fields]
-                other_qs = QuerySet(self.model)
-                other_qs.dup_select_related(qs)
-                other_qs = other_qs.filter(reduce(operator.or_, or_queries))
-                qs = qs & other_qs
+                or_queries = [models.Q(**{construct_search(str(field_name)): bit}) for field_name in self.search_fields]
+                qs = qs.filter(reduce(operator.or_, or_queries))
             for field_name in self.search_fields:
                 if '__' in field_name:
                     qs = qs.distinct()
                     break
 
-        if self.opts.one_to_one_field:
-            qs = qs.complex_filter(self.opts.one_to_one_field.rel.limit_choices_to)
-
         return qs
 
-
+    #def url_for_result(self, result):
+    #    return "%s/" % quote(getattr(result, self.pk_attname))

@@ -53,7 +53,7 @@ options = ConfigParser.SafeConfigParser(
              'email_port': '25', 
              'database_engine': 'sqlite3',
              'database_name': 
-               os.path.abspath('/htsworkflow/htswfrontend/dev_fctracker.db'),
+               os.path.abspath('../../fctracker.db'),
              'time_zone': 'America/Los_Angeles',
              'default_pm': '5',
              'link_flowcell_storage_device_url': "http://localhost:8000/inventory/lts/link/",
@@ -164,6 +164,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    '/usr/lib/pymodules/python2.6/django/contrib/admin/templates/',
     os.path.join(os.path.split(__file__)[0], 'templates'),
 )
 
