@@ -8,6 +8,9 @@ import sys
 import tarfile
 
 class Qseq2Fastq(object):
+    """
+    Convert qseq files to fastq (or fasta) files.
+    """
     def __init__(self, sources, pass_destination, nopass_destination=None):
         self.sources = sources
         self.pass_destination = pass_destination
@@ -16,10 +19,43 @@ class Qseq2Fastq(object):
         else:
             self.nopass_destination = pass_destination
         
+        self.fastq = True
+        self.flowcell_id = ''
         self.trim = slice(None)
         self.reportFilter = False
 
+    def _format_flowcell_id(self):
+        """
+        Return formatted flowcell ID
+        """
+        return self.flowcell_id+"_"
+    
+    def _convert_illumina_quality(self, illumina_quality):
+        """
+        Convert an Illumina ASCII encoded quality score to a Phred ASCII quality score.
+        """
+        # Illumina scores are Phred + 64
+        # Fastq scores are Phread + 33
+        # the following code grabs the string, converts to short ints and
+        # subtracts 31 (64-33) to convert between the two score formats.
+        # The numpy solution is twice as fast as some of my other
+        # ideas for the conversion.
+        # sorry about the uglyness in changing from character, to 8-bit int
+        # and back to a character array
+        quality = numpy.asarray(illumina_quality,'c')
+        quality.dtype = numpy.uint8
+        quality -= 31
+        quality.dtype = '|S1' # I'd like to know what the real numpy char type is
+        return quality
+        
     def run(self):
+        if self.fastq:
+            header_template = '@' 
+        else:
+            # fasta case
+            header_template = '>'
+        header_template += self._format_flowcell_id() + '%s_%s:%s:%s:%s:%s/%s%s%s'
+        
         for qstream in self.sources:
             for line in qstream:
                 # parse line
@@ -33,18 +69,7 @@ class Qseq2Fastq(object):
                 index = record[6]
                 read = record[7]
                 sequence = record[8].replace('.','N')
-                # Illumina scores are Phred + 64
-                # Fastq scores are Phread + 33
-                # the following code grabs the string, converts to short ints and
-                # subtracts 31 (64-33) to convert between the two score formats.
-                # The numpy solution is twice as fast as some of my other
-                # ideas for the conversion.
-                # sorry about the uglyness in changing from character, to 8-bit int
-                # and back to a character array
-                quality = numpy.asarray(record[9],'c')
-                quality.dtype = numpy.uint8
-                quality -= 31
-                quality.dtype = '|S1' # I'd like to know what the real numpy char type is
+                quality = self._convert_illumina_quality(record[9])
 
                 # add pass qc filter if we want it
                 pass_qc = int(record[10])
@@ -53,7 +78,7 @@ class Qseq2Fastq(object):
                 else:
                     pass_qc_msg = ""
 
-                header = '@%s_%s:%s:%s:%s:%s/%s%s%s' % ( \
+                header = header_template  % ( \
                     machine_name,
                     run_number,
                     lane_number,
@@ -74,10 +99,11 @@ class Qseq2Fastq(object):
                 destination.write(header)
                 destination.write(sequence[self.trim])
                 destination.write(os.linesep)
-                destination.write('+')
-                destination.write(os.linesep)
-                destination.write(quality[self.trim].tostring())
-                destination.write(os.linesep)
+                if self.fastq:
+                    destination.write('+')
+                    destination.write(os.linesep)
+                    destination.write(quality[self.trim].tostring())
+                    destination.write(os.linesep)
             
 def file_generator(pattern_list):
     for pattern in pattern_list:
@@ -107,6 +133,10 @@ def parse_slice(slice_text):
 def make_parser():
     usage = "%prog: [options] *_qseq.txt"
     parser = OptionParser(usage)
+    parser.add_option('-a', '--fasta', default=False, action="store_true",
+                      help="produce fasta files instead of fastq files")
+    parser.add_option('-f', '--flowcell', default='', 
+                      help="Set flowcell ID for output file")
     parser.add_option('-i', '--infile', default=None,
       help='source tar file (if reading from an archive instead of a directory)')
     parser.add_option('-o', '--output', default=None,
@@ -127,8 +157,11 @@ def main(cmdline=None):
 
     if opts.infile is not None:
         qseq_generator = tarfile_generator(opts.infile)
-    else:
+    elif len(args) > 0:
         qseq_generator = file_generator(args)
+    else:
+        qseq_generator = [sys.stdin]
+    
         
     if opts.output is not None:
         output = open(opts.output, 'w')
@@ -139,9 +172,10 @@ def main(cmdline=None):
         nopass_output = open(opts.nopass_output, 'w')
     else:
         nopass_output = None
-        
 
     qseq_parser = Qseq2Fastq(qseq_generator, output, nopass_output)
+    qseq_parser.fastq = not opts.fasta
+    qseq_parser.flowcell_id = opts.flowcell
     qseq_parser.trim = parse_slice(opts.slice)
     qseq_parser.reportFilter = opts.pf
 
