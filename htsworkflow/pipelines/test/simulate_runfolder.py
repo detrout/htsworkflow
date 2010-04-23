@@ -207,6 +207,11 @@ def make_summary_ipar130_htm(gerald_dir):
     destination = os.path.join(gerald_dir, 'Summary.htm')
     shutil.copy(source, destination)
 
+def make_summary_rta160_xml(gerald_dir):
+    source = os.path.join(TESTDATA_DIR, 'Summary-rta160.xml')
+    destination = os.path.join(gerald_dir, 'Summary.xml')
+    shutil.copy(source, destination)
+
 def make_eland_results(gerald_dir):
     eland_result = """>HWI-EAS229_24_207BTAAXX:1:7:599:759    ACATAGNCACAGACATAAACATAGACATAGAC U0      1       1       3       chrUextra.fa    28189829        R       D.
 >HWI-EAS229_24_207BTAAXX:1:7:205:842    AAACAANNCTCCCAAACACGTAAACTGGAAAA  U1      0       1       0       chr2L.fa        8796855 R       DD      24T

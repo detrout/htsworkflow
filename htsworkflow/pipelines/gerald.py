@@ -194,8 +194,12 @@ def gerald(pathname):
     g.tree = ElementTree.parse(config_pathname).getroot()
 
     # parse Summary.htm file
-    logging.info("Parsing Summary.htm")
-    summary_pathname = os.path.join(g.pathname, 'Summary.htm')
+    summary_pathname = os.path.join(g.pathname, 'Summary.xml')
+    if os.path.exists(summary_pathname):
+        logging.info("Parsing Summary.xml")
+    else:
+        summary_pathname = os.path.join(g.pathname, 'Summary.htm')
+        logging.info("Parsing Summary.htm")
     g.summary = Summary(summary_pathname)
     # parse eland files
     g.eland_results = eland(g.pathname, g)

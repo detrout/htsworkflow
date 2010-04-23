@@ -34,6 +34,18 @@ class Summary(object):
           'AverageAlignmentScore': 'average_alignment_score',
           'PercentErrorRate': 'percent_error_rate'
         }
+        # These are tags that have mean/stdev as found in the GERALD Summary.xml file
+        GERALD_TAGS = {
+          #'laneYield': 'lane_yield', #this is just a number
+          'clusterCountRaw': 'cluster', # Raw
+          'clusterCountPF': 'cluster_pass_filter',
+          'oneSig': 'average_first_cycle_intensity',
+          'signal20AsPctOf1': 'percent_intensity_after_20_cycles',
+          'percentClustersPF': 'percent_pass_filter_clusters',
+          'percentUniquelyAlignedPF': 'percent_pass_filter_align',
+          'averageAlignScorePF': 'average_alignment_score',
+          'errorPF': 'percent_error_rate'
+        }
 
         def __init__(self, html=None, xml=None):
             self.lane = None
@@ -83,10 +95,21 @@ class Summary(object):
                 self.average_alignment_score = parsed_data[6]
                 self.percent_error_rate = parsed_data[7]
 
+        def set_elements_from_gerald_xml(self, read, element):
+            self.lane = int(element.find('laneNumber').text)
+            self.end = read
+            self.lane_yield = int(element.find('laneYield').text)
+
+            for GeraldName, LRSName in Summary.LaneResultSummary.GERALD_TAGS.items():
+                node = element.find(GeraldName)
+                if node is None:
+                    logging.info("Couldn't find %s" % (GeraldName))
+                setattr(self, LRSName, parse_xml_mean_range(node))
+                                                                      
         def get_elements(self):
             lane_result = ElementTree.Element(
                             Summary.LaneResultSummary.LANE_RESULT_SUMMARY,
-                            {'lane': str(self.lane), 'end': str(self.end)})
+                            {'lane': unicode(self.lane), 'end': unicode(self.end)})
             for tag, variable_name in Summary.LaneResultSummary.TAGS.items():
                 value = getattr(self, variable_name)
                 if value is None:
@@ -100,7 +123,7 @@ class Summary(object):
                     )
                 else:
                     element = ElementTree.SubElement(lane_result, tag)
-                    element.text = value
+                    element.text = unicode(value)
             return lane_result
 
         def set_elements(self, tree):
@@ -154,6 +177,15 @@ class Summary(object):
             data.append(self._flattened_row(r))
         return data
 
+    def _extract_lane_results(self, pathname):
+        """
+        Extract just the lane results.
+        Currently those are the only ones we care about.
+        """
+        
+        tables = self._extract_named_tables(pathname)
+
+
     def _extract_named_tables(self, pathname):
         """
         extract all the 'named' tables from a Summary.htm file
@@ -168,6 +200,48 @@ class Summary(object):
         file_body = open(pathname).read()
         file_body = file_body.replace('CHASTITY<=', 'CHASTITY&lt;=')
         tree = ElementTree.fromstring(file_body)
+
+        # are we reading the xml or the html version of the Summary file?
+        if tree.tag.lower() == 'summary':
+            # summary version
+            tables = self._extract_named_tables_from_gerald_xml(tree)
+        elif tree.tag.lower() == 'html':
+            # html version
+            tables = self._extract_named_tables_from_html(tree)
+            table_names = [ ('Lane Results Summary', 0),
+                            ('Lane Results Summary : Read 1', 0),
+                            ('Lane Results Summary : Read 2', 1),]
+            for name, end in table_names:
+                if tables.has_key(name):
+                    self._extract_lane_results_for_end(tables, name, end)
+
+        if len(self.lane_results[0])  == 0:
+            logging.warning("No Lane Results Summary Found in %s" % (pathname,))
+
+    def _extract_named_tables_from_gerald_xml(self, tree):
+        """
+        Extract useful named tables from a gerald created Summary.xml file
+        """
+        # using the function to convert to lower instead of just writing it
+        # makes the tag easier to read (IMO)
+        useful_tables = ['LaneResultsSummary'.lower(),]
+
+        tables ={}
+        for child in tree.getchildren():
+            if child.tag.lower() in  useful_tables:
+                read_tree = child.find('Read')
+                # we want 0 based.
+                read = int(read_tree.find('readNumber').text)-1
+                for element in read_tree.getchildren():
+                    if element.tag.lower() == "lane":
+                        lrs = Summary.LaneResultSummary()
+                        lrs.set_elements_from_gerald_xml(read, element)
+                        self.lane_results[lrs.end][lrs.lane] = lrs
+        # probably not useful
+        return tables
+        
+    ###### START HTML Table Extraction ########
+    def _extract_named_tables_from_html(self, tree):
         body = tree.find('body')
         tables = {}
         for i in range(len(body)):
@@ -178,17 +252,6 @@ class Summary(object):
                 data = self._parse_table(table)
                 tables[name] = data
         return tables
-
-    def _extract_lane_results(self, pathname):
-        tables = self._extract_named_tables(pathname)
-        table_names = [ ('Lane Results Summary', 0),
-                        ('Lane Results Summary : Read 1', 0),
-                        ('Lane Results Summary : Read 2', 1),]
-        for name, end in table_names:
-          if tables.has_key(name):
-            self._extract_lane_results_for_end(tables, name, end)
-        else:
-            logging.warning("No Lane Results Summary Found in %s" % (pathname,))
 
     def _extract_lane_results_for_end(self, tables, table_name, end):
         """
@@ -219,6 +282,7 @@ class Summary(object):
             lrs = Summary.LaneResultSummary(html=r)
             lrs.end = end
             self.lane_results[lrs.end][lrs.lane] = lrs
+    ###### END HTML Table Extraction ########
 
     def get_elements(self):
         summary = ElementTree.Element(Summary.SUMMARY,
@@ -248,7 +312,8 @@ class Summary(object):
         """
         Debugging function, report current object
         """
-        pass
+        tree = self.get_elements()
+        print ElementTree.tostring(tree)
 
 def tonumber(v):
     """
@@ -303,3 +368,29 @@ def parse_summary_element(element):
         return parse_mean_range_element(element)
     else:
         return element.text
+
+def parse_xml_mean_range(element):
+    """
+    Extract mean/stddev children from an element as a tuple
+    """
+    if element is None:
+        return None
+    
+    mean = element.find('mean')
+    stddev = element.find('stdev')
+    if mean is None or stddev is None:
+        raise RuntimeError("Summary.xml file format changed, expected mean/stddev tags")
+
+    return (tonumber(mean.text), tonumber(stddev.text))
+
+if __name__ == "__main__":
+    # test code
+    from optparse import OptionParser
+    parser = OptionParser('%prog [Summary.xml/Summary.htm]+')
+    opts, args = parser.parse_args()
+    if len(args) == 0:
+        parser.error('need at least one xml/html file')
+    for fname in args:
+        s = Summary(fname)
+        s.dump()
+        
