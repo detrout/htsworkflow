@@ -3,11 +3,14 @@ from django.contrib.admin import widgets
 from django.contrib.admin.models import User
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.template import Context, Template
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from htsworkflow.frontend.samples.models import Antibody, Cellline, Condition, ExperimentType, HTSUser, LibraryType, Species, Affiliation, Library, Tag
 from htsworkflow.frontend.experiments.models import Lane
+from htsworkflow.frontend.inventory.models import PrinterTemplate
+from htsworkflow.frontend.bcmagic.utils import print_zpl_socket
 
 class AffiliationOptions(admin.ModelAdmin):
     list_display = ('name','contact','email')
@@ -151,6 +154,47 @@ class LibraryOptions(admin.ModelAdmin):
     inlines = [
       LaneLibraryInline,
     ]
+    actions = ['action_print_library_labels']
+    
+    
+    def action_print_library_labels(self, request, queryset):
+        """
+        Django action which prints labels for the selected set of labels from the
+        Django Admin interface.
+        """
+        
+        #Probably should ask if the user really meant to print all selected
+        # libraries if the count is above X. X=10 maybe?
+        
+        # Grab the library template
+        #FIXME: Hardcoding library template name. Not a good idea... *sigh*.
+        EVIL_HARDCODED_LIBRARY_TEMPLATE_NAME = "Library"
+        
+        try:
+            template = PrinterTemplate.objects.get(item_type__name=EVIL_HARDCODED_LIBRARY_TEMPLATE_NAME)
+        except PrinterTemplate.DoesNotExist:
+            self.message_user(request, "Could not find a library template with ItemType.name of '%s'" % \
+                              (EVIL_HARDCODED_LIBRARY_TEMPLATE_NAME))
+            return
+        
+        # ZPL Template
+        t = Template(template.template)
+        
+        #Iterate over selected labels to print
+        for library in queryset.all():
+            
+            # Django Template Context
+            c = Context({'library': library})
+            
+            # Send rendered template to the printer that the template
+            #  object has been attached to in the database.
+            print_zpl_socket(t.render(c), host=template.printer.ip_address)
+    
+        self.message_user(request, "%s labels printed." % (len(queryset)))
+                          
+    action_print_library_labels.short_description = "Print Labels"
+
+
 
     # some post 1.0.2 version of django has formfield_overrides 
     # which would replace this code with:

@@ -127,6 +127,7 @@ class LibraryType(models.Model):
   def __unicode__(self):
     return unicode(self.name)
 
+
 class Library(models.Model):
   id = models.CharField(max_length=10, primary_key=True)
   library_name = models.CharField(max_length=100, unique=True)
@@ -253,16 +254,20 @@ class Library(models.Model):
     else: tstr = 'not processed yet' 
     return tstr
   aligned_reads.allow_tags = True
-
+  
   def public(self):
     SITE_ROOT = '/'
     summary_url = self.get_absolute_url()
     return '<a href="%s">S</a>' % (summary_url,)
   public.allow_tags = True
-
+    
   @models.permalink
   def get_absolute_url(self):
     return ('htsworkflow.frontend.samples.views.library_to_flowcells', [str(self.id)])
+    
+  
+    
+
 
 class HTSUser(User):
     """
