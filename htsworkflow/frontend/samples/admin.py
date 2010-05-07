@@ -12,6 +12,9 @@ from htsworkflow.frontend.experiments.models import Lane
 from htsworkflow.frontend.inventory.models import PrinterTemplate
 from htsworkflow.frontend.bcmagic.utils import print_zpl_socket
 
+# Let's disable those pesky delete everything by accident features.
+admin.site.disable_action('delete_selected')
+
 class AffiliationOptions(admin.ModelAdmin):
     list_display = ('name','contact','email')
     fieldsets = (
