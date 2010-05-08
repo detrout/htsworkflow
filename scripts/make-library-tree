@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
 from ConfigParser import SafeConfigParser
-import json
+# try to deal with python <2.6
+try:
+  import json
+except ImportError:
+  import simplejson as json
+
 import logging
 import os
 from optparse import OptionParser
@@ -193,8 +198,9 @@ def carefully_make_hardlink(source, destination, dry_run=False):
             logging.debug('SAME: %s -> %s' % (source, destination))
             return 0
         else:
-            raise IOError('%s and %s are different files' % \
-                           (source, destination))
+            logging.error('%s and %s are different files, skipping' % \
+                          (source, destination)) 
+            return 0
     logging.debug('Linking: %s -> %s' % (source, destination))
 
     # we would do something by this part
