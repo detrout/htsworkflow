@@ -98,7 +98,7 @@ def make_bed_from_multi_eland_stream(
       outstream.write(lane)
 
 def make_bed_from_multi_eland_generator(instream, name, description, chr_prefix, max_reads=255):
-  loc_pattern = '(?P<fullloc>(?P<start>[0-9]+)(?P<dir>[FR])(?P<count>[0-9]+))'
+  loc_pattern = '(?P<fullloc>(?P<start>[0-9]+)(?P<dir>[FR])(?P<count>[0-9AGCT]+))'
   other_pattern = '(?P<chr>[^:,]+)'
   split_re = re.compile('(%s|%s)' % (loc_pattern, other_pattern))
 
