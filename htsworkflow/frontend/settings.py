@@ -164,7 +164,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/usr/lib/pymodules/python2.6/django/contrib/admin/templates/',
+    '/usr/share/python-support/python-django/django/contrib/admin/templates',
+    #'/usr/lib/pymodules/python2.6/django/contrib/admin/templates/',
     os.path.join(os.path.split(__file__)[0], 'templates'),
 )
 
