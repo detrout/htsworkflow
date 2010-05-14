@@ -183,6 +183,7 @@ class LibraryOptions(admin.ModelAdmin):
         # ZPL Template
         t = Template(template.template)
         
+        zpl_list = []
         #Iterate over selected labels to print
         for library in queryset.all():
             
@@ -191,7 +192,9 @@ class LibraryOptions(admin.ModelAdmin):
             
             # Send rendered template to the printer that the template
             #  object has been attached to in the database.
-            print_zpl_socket(t.render(c), host=template.printer.ip_address)
+            zpl_list.append(t.render(c))
+        
+        print_zpl_socket(zpl_list, host=template.printer.ip_address)
     
         self.message_user(request, "%s labels printed." % (len(queryset)))
                           
