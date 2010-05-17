@@ -23,6 +23,7 @@ setup(
         'scripts/gerald2bed.py',
         'scripts/library.py',
         'scripts/makebed',
+        'scripts/qseq2fastq',
         'scripts/rerun_eland.py',
         'scripts/retrieve_config',
         'scripts/runfolder',
