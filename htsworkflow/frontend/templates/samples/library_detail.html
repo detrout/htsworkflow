@@ -53,6 +53,9 @@
   <b>Library ID</b>: {{ lib.id }}<br/>
   <b>Name</b>: {{ lib.library_name }}<br/>
   <b>Species</b>: {{ lib.library_species.scientific_name }}<br/>
+  <b>Concentration</b>: {{ lib.undiluted_concentration }} ng/µl<br/>
+  <b>Gel Cut Size</b>: {{ lib.avg_lib_size }}<br/>
+  <b>Made By</b>: {{ lib.made_by }} <br/>
   <b>Affiliations</b>:
   <ul>
     {% for individual in lib.affiliations.all %}
@@ -153,6 +156,24 @@
         <td>{{ lane.repeat_reads|intcomma }}</td>
       </tr>
       {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Flowcell Notes</h2>
+  <table>
+    <thead>
+      <tr>
+	<td>Flowcell ID</td>
+	<td>Lane</td>
+	<td>Comment</td>
+    </thead>
+    <tbody>
+      {% for lane in lib.lane_set.all %}
+      <tr>
+	<td>{{ lane.flowcell.flowcell_id }}</td>
+	<td>{{ lane.lane_number }}</td>
+	<td>{{ lane.comment }}</td>
+	{% endfor %}
     </tbody>
   </table>
   <br/>
