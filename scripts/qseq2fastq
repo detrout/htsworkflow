@@ -20,7 +20,7 @@ class Qseq2Fastq(object):
             self.nopass_destination = pass_destination
         
         self.fastq = True
-        self.flowcell_id = ''
+        self.flowcell_id = None
         self.trim = slice(None)
         self.reportFilter = False
 
@@ -28,7 +28,10 @@ class Qseq2Fastq(object):
         """
         Return formatted flowcell ID
         """
-        return self.flowcell_id+"_"
+        if self.flowcell_id is not None:
+            return self.flowcell_id+"_"
+        else:
+            return ""
     
     def _convert_illumina_quality(self, illumina_quality):
         """
@@ -135,7 +138,7 @@ def make_parser():
     parser = OptionParser(usage)
     parser.add_option('-a', '--fasta', default=False, action="store_true",
                       help="produce fasta files instead of fastq files")
-    parser.add_option('-f', '--flowcell', default='', 
+    parser.add_option('-f', '--flowcell', default=None, 
                       help="Set flowcell ID for output file")
     parser.add_option('-i', '--infile', default=None,
       help='source tar file (if reading from an archive instead of a directory)')
