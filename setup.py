@@ -24,7 +24,7 @@ setup(
         'scripts/library.py',
         'scripts/makebed',
 	'scripts/make-library-tree',
-        'scripts/mark_archived_data'
+        'scripts/mark_archived_data',
         'scripts/qseq2fastq',
         'scripts/rerun_eland.py',
         'scripts/retrieve_config',
