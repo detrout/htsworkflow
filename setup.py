@@ -23,6 +23,8 @@ setup(
         'scripts/gerald2bed.py',
         'scripts/library.py',
         'scripts/makebed',
+	'scripts/make-library-tree',
+        'scripts/mark_archived_data'
         'scripts/qseq2fastq',
         'scripts/rerun_eland.py',
         'scripts/retrieve_config',
@@ -30,6 +32,5 @@ setup(
         'scripts/runner',
         'scripts/spoolwatcher', 
         'scripts/srf',
-        'scripts/mark_archived_data'
         ],
 )
