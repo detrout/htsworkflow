@@ -6,8 +6,26 @@ import os
 import re
 
 eland_re = re.compile('s_(?P<lane>\d)(_(?P<read>\d))?_eland_')
-raw_seq_re = re.compile('woldlab_[0-9]{6}_[^_]+_[\d]+_[\dA-Z]+')
-qseq_re = re.compile('woldlab_[0-9]{6}_[^_]+_[\d]+_[\dA-Z]+_l[\d]_r[\d].tar.bz2')
+raw_seq_re = re.compile('woldlab_[0-9]{6}_[^_]+_[\d]+_[\dA-Za-z]+')
+qseq_re = re.compile('woldlab_[0-9]{6}_[^_]+_[\d]+_[\dA-Za-z]+_l[\d]_r[\d].tar.bz2')
+
+SEQUENCE_TABLE_NAME = "sequences"
+def create_sequence_table(cursor):
+    """
+    Create a SQL table to hold  SequenceFile entries
+    """
+    sql = """
+CREATE TABLE %(table)s (
+  filetype   CHAR(8),
+  path       TEXT,
+  flowcell   CHAR(8),
+  lane       INTEGER,
+  read       INTEGER,
+  pf         BOOLEAN,
+  cycle      CHAR(8)
+);
+""" %( {'table': SEQUENCE_TABLE_NAME} )
+    return cursor.execute(sql)
 
 class SequenceFile(object):
     """
@@ -63,25 +81,82 @@ class SequenceFile(object):
         # all the other file types have names that include flowcell/lane
         # information and thus are unique so we don't have to do anything
         return os.path.join(root, basename)
+
+    def save(self, cursor):
+        """
+        Add this entry to a DB2.0 database.
+        """
+        #FIXME: NEEDS SQL ESCAPING
+        header_macro = {'table': SEQUENCE_TABLE_NAME } 
+        sql_header = "insert into %(table)s (" % header_macro
+        sql_columns = ['filetype','path','flowcell','lane']
+        sql_middle = ") values ("
+        sql_values = [self.filetype, self.path, self.flowcell, self.lane]
+        sql_footer = ");"
+        for name in ['read', 'pf', 'cycle']:
+            value = getattr(self, name)
+            if value is not None:
+                sql_columns.append(name)
+                sql_values.append(value)
+
+        sql = " ".join([sql_header,
+                        ", ".join(sql_columns),
+                        sql_middle,
+                        # note the following makes a string like ?,?,?
+                        ",".join(["?"] * len(sql_values)),
+                        sql_footer])
+
+        return cursor.execute(sql, sql_values)
+
+def get_flowcell_cycle(path):
+    """
+    Extract flowcell, cycle from pathname
+    """
+    rest, cycle = os.path.split(path)
+    rest, flowcell = os.path.split(rest)
+    cycle_match = re.match("C(?P<start>[0-9]+)-(?P<stop>[0-9]+)", cycle)
+    if cycle_match is None:
+        raise ValueError("Expected .../flowcell/cycle/ directory structure")
+    start = cycle_match.group('start')
+    if start is not None:
+        start = int(start)
+    stop = cycle_match.group('stop')
+    if stop is not None:
+        stop = int(stop)
+    
+    return flowcell, start, stop
         
 def parse_srf(path, filename):
+    flowcell_dir, start, stop = get_flowcell_cycle(path)
     basename, ext = os.path.splitext(filename)
     records = basename.split('_')
     flowcell = records[4]
     lane = int(records[5][0])
     fullpath = os.path.join(path, filename)
-    return SequenceFile('srf', fullpath, flowcell, lane)
+
+    if flowcell_dir != flowcell:
+        logging.warn("flowcell %s found in wrong directory %s" % \
+                         (flowcell, path))
+
+    return SequenceFile('srf', fullpath, flowcell, lane, cycle=stop)
 
 def parse_qseq(path, filename):
+    flowcell_dir, start, stop = get_flowcell_cycle(path)
     basename, ext = os.path.splitext(filename)
     records = basename.split('_')
     fullpath = os.path.join(path, filename)
     flowcell = records[4]
     lane = int(records[5][1])
     read = int(records[6][1])
-    return SequenceFile('qseq', fullpath, flowcell, lane, read)
+
+    if flowcell_dir != flowcell:
+        logging.warn("flowcell %s found in wrong directory %s" % \
+                         (flowcell, path))
+
+    return SequenceFile('qseq', fullpath, flowcell, lane, read, cycle=stop)
 
 def parse_fastq(path, filename):
+    flowcell_dir, start, stop = get_flowcell_cycle(path)
     basename, ext = os.path.splitext(filename)
     records = basename.split('_')
     fullpath = os.path.join(path, filename)
@@ -95,14 +170,17 @@ def parse_fastq(path, filename):
     else:
         raise ValueError("Unrecognized fastq name")
         
-    return SequenceFile('fastq', fullpath, flowcell, lane, read, pf=pf)
+    if flowcell_dir != flowcell:
+        logging.warn("flowcell %s found in wrong directory %s" % \
+                         (flowcell, path))
+
+    return SequenceFile('fastq', fullpath, flowcell, lane, read, pf=pf, cycle=stop)
 
 def parse_eland(path, filename, eland_match=None):
     if eland_match is None:
         eland_match = eland_re.match(filename)
     fullpath = os.path.join(path, filename)
-    rest, cycle = os.path.split(path)
-    rest, flowcell = os.path.split(rest)
+    flowcell, start, stop = get_flowcell_cycle(path)
     if eland_match.group('lane'):
         lane = int(eland_match.group('lane'))
     else:
@@ -111,16 +189,12 @@ def parse_eland(path, filename, eland_match=None):
         read = int(eland_match.group('read'))
     else:
         read = None
-    return SequenceFile('eland', fullpath, flowcell, lane, read, cycle=cycle)
+    return SequenceFile('eland', fullpath, flowcell, lane, read, cycle=stop)
     
 def scan_for_sequences(dirs):
     """
     Scan through a list of directories for sequence like files
     """
-    # be forgiving if someone just gives us a string
-    if type(dirs) != type([]):
-        dirs = [dirs]
-
     sequences = []
     for d in dirs:
         logging.info("Scanning %s for sequences" % (d,))
