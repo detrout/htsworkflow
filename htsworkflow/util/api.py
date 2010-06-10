@@ -2,6 +2,8 @@
 Common functions for accessing the HTS Workflow REST API
 
 """
+import logging
+
 # try to deal with python <2.6
 try:
   import json
