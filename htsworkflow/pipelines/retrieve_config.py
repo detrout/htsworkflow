@@ -14,6 +14,7 @@ except ImportError, e:
     import simplejson as json
 
 from htsworkflow.frontend.auth import apidata
+from htsworkflow.util import api
 from htsworkflow.util.url import normalize_url
 from htsworkflow.pipelines.genome_mapper import getAvailableGenomes
 from htsworkflow.pipelines.genome_mapper import constructMapperDict
@@ -36,7 +37,7 @@ def retrieve_flowcell_info(base_host_url, flowcell):
     """
     Return a dictionary describing a 
     """
-    url = base_host_url + '/experiments/config/%s/json' % (flowcell)
+    url = api.flowcell_url(base_host_url, flowcell)
   
     try:
         apipayload = urllib.urlencode(apidata)

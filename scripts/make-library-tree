@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 
 from ConfigParser import SafeConfigParser
-# try to deal with python <2.6
-try:
-  import json
-except ImportError:
-  import simplejson as json
 
 import logging
 import os
@@ -13,9 +8,8 @@ from optparse import OptionParser
 import stat
 import re
 import shelve
-import urllib
-import urllib2
-import urlparse
+
+from htsworkflow.util import api
 
 eland_re = re.compile('s_(?P<lane>\d)(?P<read>_\d)?_eland_')
 raw_seq_re = re.compile('woldlab_[0-9]{6}_[^_]+_[\d]+_[\dA-Z]+')
@@ -127,25 +121,6 @@ def scan_for_sequences(dirs):
                     
     return sequences
 
-def retrieve_info(url, apidata):
-    """
-    Return a dictionary from the HTSworkflow API
-    """
-    try:
-        apipayload = urllib.urlencode(apidata)
-        web = urllib2.urlopen(url, apipayload)
-    except urllib2.URLError, e:
-        if e.code == 404:
-            logging.info("%s was not found" % (url,))
-            return None
-        else:
-            errmsg = 'URLError: %d %s' % (e.code, e.msg)
-            raise IOError(errmsg)
-    
-    contents = web.read()
-    headers = web.info()
-
-    return json.loads(contents)
 
 def build_flowcell_db(fcdb_filename, sequences, baseurl, apiid, apikey):
     """
@@ -161,8 +136,8 @@ def build_flowcell_db(fcdb_filename, sequences, baseurl, apiid, apikey):
 
         # get info about flowcell from server or shelf
         if not fcdb.has_key(flowcell):
-            url = urlparse.urljoin(baseurl, 'experiments/config/%s/json' % (flowcell,))
-            flowcell_info = retrieve_info(url, apidata)
+            url = api.flowcell_url(baseurl, flowcell)
+            flowcell_info = api.retrieve_info(url, apidata)
             if flowcell_info is not None:
                 fcdb[flowcell] = flowcell_info
         else:
@@ -273,6 +248,7 @@ def configure_opts(opts):
     if opts.sequence_archive is None and \
        config_file.has_option(SECTION_NAME, ARCHIVE_OPT):
         opts.sequence_archive = config_file.get(SECTION_NAME, ARCHIVE_OPT)
+        opts.sequence_archive = os.path.expanduser(opts.sequence_archive)
 
     opts.sequence_archive = os.path.abspath(opts.sequence_archive)
     opts.library_tree = os.path.join(opts.sequence_archive, 'libraries')
