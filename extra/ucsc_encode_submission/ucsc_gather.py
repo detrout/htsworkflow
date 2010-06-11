@@ -5,11 +5,12 @@ import json
 import logging
 from optparse import OptionParser
 import os
-from pprint import pprint
+from pprint import pprint, pformat
 import shlex
 from StringIO import StringIO
 import time
 import sys
+import types
 import urllib
 import urllib2
 import urlparse
@@ -35,6 +36,32 @@ def make_condor_name(pathname):
     name, ext = os.path.splitext(base)
     return name + '.condor'
     
+def make_submit_script(target, header, body_list):
+    """
+    write out a text file
+
+    this was intended for condor submit scripts
+    
+    Args:
+      target (str or stream): 
+        if target is a string, we will open and close the file
+        if target is a stream, the caller is responsible.
+
+      header (str);
+        header to write at the beginning of the file
+      body_list (list of strs):
+        a list of blocks to add to the file.
+    """
+    if type(target) in types.StringTypes:
+        f = open(target,'w')
+    else:
+        f = target
+    f.write(header)
+    for entry in body_list:
+        f.write(entry)
+    if type(target) in types.StringTypes:
+        f.close()
+
 def parse_filelist(file_string):
     return file_string.split(',')
 
@@ -200,13 +227,22 @@ def find_archive_sequence_files(host, apidata, sequences_path,
     
     return lib_db
 
-def build_fastqs(host, apidata, sequences_path, library_result_map):
+def build_fastqs(host, apidata, sequences_path, library_result_map, 
+                 paired=True ):
     """
     Generate condor scripts to build any needed fastq files
+    
+    Args:
+      host (str): root of the htsworkflow api server
+      apidata (dict): id & key to post to the server
+      sequences_path (str): root of the directory tree to scan for files
+      library_result_map (list):  [(library_id, destination directory), ...]
+      paired: should we assume that we are processing paired end records?
+              if False, we will treat this as single ended.
     """
     qseq_condor_header = """
 Universe=vanilla
-executable=/home/diane/proj/gaworkflow/scripts/qseq2fastq
+executable=/woldlab/rattus/lvol0/mus/home/diane/proj/gaworkflow/scripts/qseq2fastq
 error=qseqfastq.err.$(process).log
 output=qseqfastq.out.$(process).log
 log=qseqfastq.log
@@ -215,8 +251,9 @@ log=qseqfastq.log
     qseq_condor_entries = []
     srf_condor_header = """
 Universe=vanilla
-executable=/home/diane/bin/srf2fastq
-error=srffastq.err.$(process)
+executable=/woldlab/rattus/lvol0/mus/home/diane/bin/srf2fastq
+output=srf2fastq.out.$(process).log
+error=srf2fastq.err.$(process).log
 log=srffastq.log
 
 """
@@ -234,9 +271,6 @@ log=srffastq.log
         lib = lib_db[lib_id]
         for lane_key, sequences in lib['lanes'].items():
             for seq in sequences:
-                # skip srfs for the moment
-                if seq.filetype == 'srf':
-                    continue
                 filename_attributes = { 
                     'flowcell': seq.flowcell,
                     'lib_id': lib_id,
@@ -253,7 +287,7 @@ log=srffastq.log
                     continue
 
                 # end filters
-                if seq.read is not None:
+                if paired:
                     target_name = fastq_paired_template % filename_attributes
                 else:
                     target_name = fastq_single_template % filename_attributes
@@ -264,28 +298,35 @@ log=srffastq.log
                     t[seq.filetype] = seq
                     
     for target_pathname, available_sources in needed_targets.items():
+        logging.debug(' target : %s' % (target_pathname,))
+        logging.debug(' candidate sources: %s' % (available_sources,))
         if available_sources.has_key('qseq'):
             source = available_sources['qseq']
             qseq_condor_entries.append(
                 condor_qseq_to_fastq(source.path, target_pathname)
             )
-        #elif available_sources.has_key('srf'):
-        #    srf_condor_entries.append(condor_srf_to_fastq(source, target))
+        elif available_sources.has_key('srf'):
+            source = available_sources['srf']
+            if source.read is not None:
+                logging.warn(
+                    "srf -> fastq paired end doesn't work yet: %s" % (source,)
+                )
+            else:
+                srf_condor_entries.append(
+                    condor_srf_to_fastq(source.path, target_pathname)
+                )
         else:
             print " need file", target_pathname
 
-#
-#        f = open('srf.fastq.condor','w')
-#        f.write(srf_condor)
-#        f.close()
+    if len(srf_condor_entries) > 0:
+        make_submit_script('srf.fastq.condor', 
+                           srf_condor_header,
+                           srf_condor_entries)
 
     if len(qseq_condor_entries) > 0:
-        #f = sys.stdout
-        f = open('qseq.fastq.condor','w')
-        f.write(qseq_condor_header)
-        for entry in qseq_condor_entries:
-            f.write(entry)
-        f.close()
+        make_submit_script('qseq.fastq.condor', 
+                           qseq_condor_header,
+                           qseq_condor_entries)
 
 def find_best_extension(extension_map, filename):
     """
@@ -436,6 +477,7 @@ def make_parser():
 
     parser = OptionParser()
 
+    # commands
     parser.add_option('--fastq', help="generate scripts for making fastq files",
                       default=False, action="store_true")
 
@@ -446,17 +488,37 @@ def make_parser():
                       action="store_true")
     
     parser.add_option('--daf', default=None, help='specify daf name')
-    parser.add_option('--sequence', help="sequence repository", default=sequence_archive)
-    parser.add_option('--host', help="specify HTSWorkflow host", default=apihost)
-    parser.add_option('--apiid', help="Specify API ID", default=apiid)
-    parser.add_option('--apikey', help="Specify API KEY", default=apikey)
-    
+
+    # configuration options
+    parser.add_option('--apiid', default=apiid, help="Specify API ID")
+    parser.add_option('--apikey', default=apikey, help="Specify API KEY")
+    parser.add_option('--host',  default=apihost,
+                      help="specify HTSWorkflow host",)
+    parser.add_option('--sequence', default=sequence_archive,
+                      help="sequence repository")
+    parser.add_option('--single', default=False, action="store_true", 
+                      help="treat the sequences as single ended runs")
+
+    # debugging
+    parser.add_option('--verbose', default=False, action="store_true",
+                      help='verbose logging')
+    parser.add_option('--debug', default=False, action="store_true",
+                      help='debug logging')
+
     return parser
 
 def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
-
+    
+    if opts.debug:
+        logging.basicConfig(level = logging.DEBUG )
+    elif opts.verbose:
+        logging.basicConfig(level = logging.INFO )
+    else:
+        logging.basicConfig(level = logging.WARNING )
+        
+    
     apidata = {'apiid': opts.apiid, 'apikey': opts.apikey }
 
     if opts.host is None or opts.apiid is None or opts.apikey is None:
@@ -473,7 +535,11 @@ def main(cmdline=None):
         link_daf(opts.daf, library_result_map)
 
     if opts.fastq:
-        build_fastqs(opts.host, apidata, opts.sequence, library_result_map)
+        build_fastqs(opts.host, 
+                     apidata, 
+                     opts.sequence, 
+                     library_result_map,
+                     not opts.single)
 
     if opts.ini:
         make_submission_ini(opts.host, apidata, library_result_map)
@@ -482,6 +548,4 @@ def main(cmdline=None):
         make_all_ddfs(library_result_map, opts.daf)
         
 if __name__ == "__main__":
-    #logging.basicConfig(level = logging.WARNING )
-    logging.basicConfig(level = logging.DEBUG )
     main()
