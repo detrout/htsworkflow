@@ -164,8 +164,9 @@ def read_library_result_map(filename):
 
     results = []
     for line in stream:
-        library_id, result_dir = line.strip().split()
-        results.append((library_id, result_dir))
+        if not line.startswith('#'):
+            library_id, result_dir = line.strip().split()
+            results.append((library_id, result_dir))
     return results
 
 def condor_srf_to_fastq(srf_file, target_pathname):
@@ -348,7 +349,7 @@ def find_best_extension(extension_map, filename):
                 best_ext = ext
     return best_ext
 
-def add_submission_section(line_counter, files, standard_attributes, file_attributes):
+def make_submission_section(line_counter, files, standard_attributes, file_attributes):
     """
     Create a section in the submission ini file
     """
@@ -366,22 +367,25 @@ def make_submission_ini(host, apidata, library_result_map):
     attributes = {
         '.bai':                   {'view': None}, # bam index
         '.bam':                   {'view': 'Signal'},
+        '.splices.bam':           {'view': 'Splices'},
+        '.bed':                   {'view': 'TopHatJunctions'},
+        '.bigwig':                {'view': 'RawSigna'},
+        '.tar.bz2':               {'view': None},
         '.condor':                {'view': None},
         '.daf':                   {'view': None},
         '.ddf':                   {'view': None},
-        '.splices.bam':           {'view': 'Splices'},
-        '.bed':                   {'view': 'TopHatJunctions'},
-        '.ini':                   {'view': None},
-        '.log':                   {'view': None},
-        '_r1.fastq':              {'view': 'FastqRd1'},
-        '_r2.fastq':              {'view': 'FastqRd2'},
-        '.tar.bz2':               {'view': None},
         'novel.genes.expr':       {'view': 'GeneDeNovoFPKM'},
         'novel.transcripts.expr': {'view': 'TranscriptDeNovoFPKM'},
         '.genes.expr':            {'view': 'GeneFPKM'},
         '.transcripts.expr':      {'view': 'TranscriptFPKM'},
-        '.stats.txt':             {'view': 'InsLength'},
+        '.fastq':                 {'view': 'Fastq' },
+        '_r1.fastq':              {'view': 'FastqRd1'},
+        '_r2.fastq':              {'view': 'FastqRd2'},
         '.gtf':                   {'view': 'CufflinksGeneModel'},
+        '.ini':                   {'view': None},
+        '.log':                   {'view': None},
+        '.stats.txt':             {'view': 'InsLength'},
+        '.srf':                   {'view': None},
         '.wig':                   {'view': 'RawSignal'},
     }
    
@@ -395,50 +399,57 @@ def make_submission_ini(host, apidata, library_result_map):
         lib_info = get_library_info(host, apidata, lib_id)
         result_ini = os.path.join(result_dir, result_dir+'.ini')
 
+        if lib_info['cell_line'].lower() == 'unknown':
+            logging.warn("Library %s missing cell_line" % (lib_id,))
+
         standard_attributes = {'cell': lib_info['cell_line'],
-                               'insertLength': '200', # ali
+                               'insertLength': '200', 
                                'labVersion': 'TopHat',
                                'localization': 'cell',
                                'mapAlgorithm': 'TopHat',
-                               'readType': '2x75', #ali
+                               'readType': '2x75', 
                                'replicate': lib_info['replicate'],
                                'rnaExtract': 'longPolyA',
                                }
 
-        # write fastq line
-        #fastqs = []
-        #for lane in lib_info['lane_set']:
-        #    target_name = "%s_%s_%s.fastq" % (lane['flowcell'], lib_id, lane['lane_number'])
-        #    fastqs.append(target_name)
-        #inifile.extend(
-        #    make_run_block(line_counter, fastqs, standard_attributes, attributes['.fastq'])
-        #)
-        #inifile += ['']
-        #line_counter += 1
-
         # write other lines
         submission_files = os.listdir(result_dir)
+        fastqs = {}
         for f in submission_files:
             best_ext = find_best_extension(attributes, f)
 
             if best_ext is not None:
                if attributes[best_ext]['view'] is None:
+                   
                    continue
-               inifile.extend(
-                   add_submission_section(line_counter,
-                                          [f],
-                                          standard_attributes,
-                                          attributes[best_ext]
-                   )
-               )
-               inifile += ['']
-               line_counter += 1
+               elif best_ext.endswith('fastq'):
+                   fastqs.setdefault(best_ext, set()).add(f)
+               else:
+                   inifile.extend(
+                       make_submission_section(line_counter,
+                                               [f],
+                                               standard_attributes,
+                                               attributes[best_ext]
+                                               )
+                       )
+                   inifile += ['']
+                   line_counter += 1
             else:
                 raise ValueError("Unrecognized file: %s" % (f,))
 
+        # add in fastqs on a single line.
+        for extension, fastq_set in fastqs.items():
+            inifile.extend(
+                make_submission_section(line_counter, 
+                                        fastq_set,
+                                        standard_attributes,
+                                        attributes[extension])
+            )
+            inifile += ['']
+            line_counter += 1
+            
         f = open(result_ini,'w')
         f.write(os.linesep.join(inifile))
-        f.close()
 
 def link_daf(daf_path, library_result_map):
     if not os.path.exists(daf_path):
