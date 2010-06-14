@@ -148,7 +148,7 @@ class LibraryOptions(admin.ModelAdmin):
           ('cell_line','condition','antibody'),)
          }),
          ('Creation Information:', {
-             'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('avg_lib_size','undiluted_concentration', 'ten_nM_dilution', 'successful_pM'), 'account_number', 'notes',)
+             'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('gel_cut_size', 'insert_size', 'undiluted_concentration', 'ten_nM_dilution', 'successful_pM'), 'account_number', 'notes',)
          }),
          ('Library/Project Affiliation:', {
              'fields' : (('affiliations'), ('tags'),)

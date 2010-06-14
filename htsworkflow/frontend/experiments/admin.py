@@ -57,7 +57,7 @@ class LaneInline(admin.StackedInline):
       (None, {
         'fields': ('lane_number', 'flowcell',
                    ('library',),
-                   ('pM', 'cluster_estimate'),
+                   ('pM', 'cluster_estimate', 'status'),
                    'comment',)
       }),
     )

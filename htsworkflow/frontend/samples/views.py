@@ -10,7 +10,7 @@ except ImportError, e:
     import simplejson as json
 
 from htsworkflow.frontend.auth import require_api_key
-from htsworkflow.frontend.experiments.models import FlowCell, Lane
+from htsworkflow.frontend.experiments.models import FlowCell, Lane, LANE_STATUS_MAP
 from htsworkflow.frontend.samples.changelist import ChangeList
 from htsworkflow.frontend.samples.models import Library, HTSUser
 from htsworkflow.frontend.samples.results import get_flowcell_result_dict, parse_flowcell_id
@@ -512,7 +512,9 @@ def library_dict(library_id):
     lane_info = []
     for lane in lib.lane_set.all():
         lane_info.append( {'flowcell':lane.flowcell.flowcell_id,
-                           'lane_number': lane.lane_number} )
+                           'lane_number': lane.lane_number,
+                           'status_code': lane.status,
+                           'status': LANE_STATUS_MAP[lane.status]} )
         
     info = {
         # 'affiliations'?
@@ -521,13 +523,14 @@ def library_dict(library_id):
         #'amplified_from_sample_id': lib.amplified_from_sample, 
         #'antibody_name': lib.antibody_name(), # we have no antibodies.
         'antibody_id': lib.antibody_id,
-        'avg_lib_size': lib.avg_lib_size,
         'cell_line_id': lib.cell_line_id,
         'cell_line': unicode_or_none(lib.cell_line),
         'experiment_type': lib.experiment_type.name,
         'experiment_type_id': lib.experiment_type_id,
+        'gel_cut_size': lib.gel_cut_size,
         'hidden': lib.hidden,
         'id': lib.id,
+        'insert_size': lib.insert_size,
         'lane_set': lane_info,
         'library_id': lib.id,
         'library_name': lib.library_name,

@@ -15,10 +15,44 @@
        "date_joined": "2009-01-01 00:01:01"
        }
    },
+ {"pk": 153, "model": "experiments.flowcell", 
+  "fields": {
+      "paired_end": true, 
+      "run_date": "2009-09-11 22:12:13", 
+      "read_length": 75, 
+      "notes": "",
+      "advanced_run": false,
+      "control_lane": 2,
+      "cluster_station": 3,
+      "sequencer": 2,
+      "flowcell_id": "303TUAAXX"
+      }
+  }, 
+  {"pk": 1193, "model": "experiments.lane",
+   "fields": {
+       "comment": "No change in cluster numbers, despite slight increase in pM",
+       "library": "10981",
+       "cluster_estimate": 129000,
+       "flowcell": 153,
+       "lane_number": 1,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 1197, "model": "experiments.lane",
+   "fields": {
+       "comment": "stuff",
+       "library": "11016",
+       "cluster_estimate": 140000,
+       "flowcell": 153,
+       "lane_number": 5,
+       "pM": "7",
+       "status": 2
+       }
+   }, 
   {"pk": "10981", "model": "samples.library", 
         "fields": {
             "ten_nM_dilution": false, 
-            "avg_lib_size": 400, 
+            "gel_cut_size": 400, 
             "library_name": "Paired End Multiplexed Sp-BAC", 
             "creation_date": "2009-07-21", 
             "cell_line": 1, 
@@ -47,7 +81,7 @@
         "model": "samples.library", 
         "fields": {
             "ten_nM_dilution": false, 
-            "avg_lib_size": 325, 
+            "gel_cut_size": 325, 
             "library_name": "Paired End Pfl #3 MP 7/24/9 a", 
             "creation_date": "2009-08-06", 
             "cell_line": 1, 
@@ -76,7 +110,7 @@
         "model": "samples.library", 
         "fields": {
             "ten_nM_dilution": false, 
-            "avg_lib_size": 300, 
+            "gel_cut_size": 300, 
             "library_name": "Paired ends 99 GM12892", 
             "creation_date": "2009-08-25", 
             "cell_line": 1, 
@@ -107,7 +141,7 @@
         "model": "samples.library", 
         "fields": {
             "ten_nM_dilution": false, 
-            "avg_lib_size": 325, 
+            "gel_cut_size": 325, 
             "library_name": "Paired End Pfl #3 MP 7/24/9", 
             "creation_date": "2009-08-05", 
             "cell_line": 1, 
@@ -136,7 +170,7 @@
         "model": "samples.library", 
         "fields": {
             "ten_nM_dilution": false, 
-            "avg_lib_size": 325, 
+            "gel_cut_size": 325, 
             "library_name": "null cell line", 
             "creation_date": "2009-08-05", 
             "cell_line": null, 

@@ -143,11 +143,17 @@ class DataRun(models.Model):
     return str
   Flowcell_Info.allow_tags = True
 
+LANE_STATUS_CODES = [(0, 'Failed'),
+                    (1, 'Marginal'),
+                    (2, 'Good'),]
+LANE_STATUS_MAP = dict((int(k),v) for k,v in LANE_STATUS_CODES )
+LANE_STATUS_MAP[None] = "Unknown"
 
 class Lane(models.Model):
   flowcell = models.ForeignKey(FlowCell)
   lane_number = models.IntegerField(choices=[(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8)])
   library = models.ForeignKey(Library)
   pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
-  cluster_estimate = models.IntegerField(blank=True, null=True)
+  cluster_estimate = models.IntegerField(blank=True, null=True)                                       
+  status = models.IntegerField(choices=LANE_STATUS_CODES, null=True, blank=True) 
   comment = models.TextField(null=True, blank=True)

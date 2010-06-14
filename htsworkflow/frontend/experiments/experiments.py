@@ -15,7 +15,11 @@ from django.http import HttpResponse, Http404
 
 from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend import settings
-from htsworkflow.frontend.experiments.models import FlowCell, DataRun, Lane
+from htsworkflow.frontend.experiments.models import \
+    FlowCell, \
+    DataRun, \
+    Lane, \
+    LANE_STATUS_MAP
 from htsworkflow.frontend.samples.models import Library, HTSUser
 
 def flowcell_information(flowcell_id):
@@ -40,7 +44,9 @@ def flowcell_information(flowcell_id):
             'library_id': lane.library.id,
             'library_species': lane.library.library_species.scientific_name,
             'pM': unicode(lane.pM),
-            'read_length': lane.flowcell.read_length
+            'read_length': lane.flowcell.read_length,
+            'status_code': lane.status,
+            'status': LANE_STATUS_MAP[lane.status]
         }
 
     if fc.control_lane is None:

@@ -21,6 +21,105 @@ from htsworkflow.frontend.samples.views import \
 from htsworkflow.frontend.auth import apidata
 from htsworkflow.util.conversion import unicode_or_none
 
+
+class LibraryTestCase(TestCase):
+    def setUp(self):
+        create_db(self)
+               
+    def testOrganism(self):
+        self.assertEquals(self.library_10001.organism(), 'human')
+
+    def testAffiliations(self):
+        self.library_10001.affiliations.add(self.affiliation_alice)
+        self.library_10002.affiliations.add(
+                self.affiliation_alice, 
+                self.affiliation_bob
+        )
+        self.failUnless(len(self.library_10001.affiliations.all()), 1)
+        self.failUnless(self.library_10001.affiliation(), 'Alice')
+
+        self.failUnless(len(self.library_10002.affiliations.all()), 2)
+        self.failUnless(self.library_10001.affiliation(), 'Alice, Bob')
+
+
+class SampleWebTestCase(TestCase):
+    """
+    Test returning data from our database in rest like ways.
+    (like returning json objects)
+    """
+    fixtures = ['test_samples.json']
+
+    def test_library_info(self):
+
+        for lib in Library.objects.all():
+            lib_dict = library_dict(lib.id)
+            url = '/samples/library/%s/json' % (lib.id,)
+            lib_response = self.client.get(url, apidata)
+            self.failUnlessEqual(lib_response.status_code, 200)
+            lib_json = json.loads(lib_response.content)
+            print lib_json
+
+            for d in [lib_dict, lib_json]:
+                # amplified_from_sample is a link to the library table,
+                # I want to use the "id" for the data lookups not
+                # the embedded primary key.
+                # It gets slightly confusing on how to implement sending the right id
+                # since amplified_from_sample can be null
+                #self.failUnlessEqual(d['amplified_from_sample'], lib.amplified_from_sample)
+                self.failUnlessEqual(d['antibody_id'], lib.antibody_id)
+                self.failUnlessEqual(d['cell_line_id'], lib.cell_line_id)
+                self.failUnlessEqual(d['cell_line'], unicode_or_none(lib.cell_line))
+                self.failUnlessEqual(d['experiment_type'], lib.experiment_type.name)
+                self.failUnlessEqual(d['experiment_type_id'], lib.experiment_type_id)
+                self.failUnlessEqual(d['gel_cut_size'], lib.gel_cut_size)
+                self.failUnlessEqual(d['hidden'], lib.hidden)
+                self.failUnlessEqual(d['id'], lib.id)
+                self.failUnlessEqual(d['insert_size'], lib.insert_size)
+                self.failUnlessEqual(d['library_name'], lib.library_name)
+                self.failUnlessEqual(d['library_species'], lib.library_species.scientific_name)
+                self.failUnlessEqual(d['library_species_id'], lib.library_species_id)
+                self.failUnlessEqual(d['library_type_id'], lib.library_type_id)
+                if lib.library_type_id is not None:
+                    self.failUnlessEqual(d['library_type'], lib.library_type.name)
+                else:
+                    self.failUnlessEqual(d['library_type'], None)
+                    self.failUnlessEqual(d['made_for'], lib.made_for)
+                    self.failUnlessEqual(d['made_by'], lib.made_by)
+                    self.failUnlessEqual(d['notes'], lib.notes)
+                    self.failUnlessEqual(d['replicate'], lib.replicate)
+                    self.failUnlessEqual(d['stopping_point'], lib.stopping_point)
+                    self.failUnlessEqual(d['successful_pM'], lib.successful_pM)
+                    self.failUnlessEqual(d['undiluted_concentration'],
+                                         unicode(lib.undiluted_concentration))
+                # some specific tests
+                if lib.id == '10981':
+                    # test a case where there is no known status
+                    lane_set = {u'status': u'Unknown', u'lane_number': 1, u'flowcell': u'303TUAAXX', u'status_code': None}
+                    self.failUnlessEqual(len(d['lane_set']), 1)
+                    self.failUnlessEqual(d['lane_set'][0], lane_set)
+                elif lib.id == '11016':
+                    # test a case where there is a status
+                    lane_set = {'status': 'Good', 'lane_number': 5, 'flowcell': u'303TUAAXX', 'status_code': 2}
+                    self.failUnlessEqual(len(d['lane_set']), 1)
+                    self.failUnlessEqual(d['lane_set'][0], lane_set)
+
+    def test_invalid_library(self):
+        """
+        Make sure we get a 404 if we request an invalid library id
+        """
+        response = self.client.get('/samples/library/nottheone/json', apidata)
+        self.failUnlessEqual(response.status_code, 404)
+
+            
+    def test_library_no_key(self):
+        """
+        Make sure we get a 302 if we're not logged in
+        """
+        response = self.client.get('/samples/library/10981/json')
+        self.failUnlessEqual(response.status_code, 403)
+        response = self.client.get('/samples/library/10981/json', apidata)
+        self.failUnlessEqual(response.status_code, 200)
+
 # The django test runner flushes the database between test suites not cases,
 # so to be more compatible with running via nose we flush the database tables
 # of interest before creating our sample data.
@@ -98,86 +197,3 @@ def create_db(obj):
     )
     obj.library_10002.save()
  
-class LibraryTestCase(TestCase):
-    def setUp(self):
-        create_db(self)
-               
-    def testOrganism(self):
-        self.assertEquals(self.library_10001.organism(), 'human')
-
-    def testAffiliations(self):
-        self.library_10001.affiliations.add(self.affiliation_alice)
-        self.library_10002.affiliations.add(
-                self.affiliation_alice, 
-                self.affiliation_bob
-        )
-        self.failUnless(len(self.library_10001.affiliations.all()), 1)
-        self.failUnless(self.library_10001.affiliation(), 'Alice')
-
-        self.failUnless(len(self.library_10002.affiliations.all()), 2)
-        self.failUnless(self.library_10001.affiliation(), 'Alice, Bob')
-
-class SampleWebTestCase(TestCase):
-    """
-    Test returning data from our database in rest like ways.
-    (like returning json objects)
-    """
-    fixtures = ['test_samples.json']
-
-    def test_library_info(self):
-
-        for lib in Library.objects.all():
-            lib_dict = library_dict(lib.id)
-            url = '/samples/library/%s/json' % (lib.id,)
-            lib_response = self.client.get(url, apidata)
-            self.failUnlessEqual(lib_response.status_code, 200)
-            lib_json = json.loads(lib_response.content)
-
-            for d in [lib_dict, lib_json]:
-                # amplified_from_sample is a link to the library table,
-                # I want to use the "id" for the data lookups not
-                # the embedded primary key.
-                # It gets slightly confusing on how to implement sending the right id
-                # since amplified_from_sample can be null
-                #self.failUnlessEqual(d['amplified_from_sample'], lib.amplified_from_sample)
-                self.failUnlessEqual(d['antibody_id'], lib.antibody_id)
-                self.failUnlessEqual(d['avg_lib_size'], lib.avg_lib_size)
-                self.failUnlessEqual(d['cell_line_id'], lib.cell_line_id)
-                self.failUnlessEqual(d['cell_line'], unicode_or_none(lib.cell_line))
-                self.failUnlessEqual(d['experiment_type'], lib.experiment_type.name)
-                self.failUnlessEqual(d['experiment_type_id'], lib.experiment_type_id)
-                self.failUnlessEqual(d['hidden'], lib.hidden)
-                self.failUnlessEqual(d['id'], lib.id)
-                self.failUnlessEqual(d['library_name'], lib.library_name)
-                self.failUnlessEqual(d['library_species'], lib.library_species.scientific_name)
-                self.failUnlessEqual(d['library_species_id'], lib.library_species_id)
-                self.failUnlessEqual(d['library_type_id'], lib.library_type_id)
-                if lib.library_type_id is not None:
-                    self.failUnlessEqual(d['library_type'], lib.library_type.name)
-                else:
-                    self.failUnlessEqual(d['library_type'], None)
-                    self.failUnlessEqual(d['made_for'], lib.made_for)
-                    self.failUnlessEqual(d['made_by'], lib.made_by)
-                    self.failUnlessEqual(d['notes'], lib.notes)
-                    self.failUnlessEqual(d['replicate'], lib.replicate)
-                    self.failUnlessEqual(d['stopping_point'], lib.stopping_point)
-                    self.failUnlessEqual(d['successful_pM'], lib.successful_pM)
-                    self.failUnlessEqual(d['undiluted_concentration'],
-                                         unicode(lib.undiluted_concentration))
-
-    def test_invalid_library(self):
-        """
-        Make sure we get a 404 if we request an invalid library id
-        """
-        response = self.client.get('/samples/library/nottheone/json', apidata)
-        self.failUnlessEqual(response.status_code, 404)
-
-            
-    def test_library_no_key(self):
-        """
-        Make sure we get a 302 if we're not logged in
-        """
-        response = self.client.get('/samples/library/10981/json')
-        self.failUnlessEqual(response.status_code, 403)
-        response = self.client.get('/samples/library/10981/json', apidata)
-        self.failUnlessEqual(response.status_code, 200)
