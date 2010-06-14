@@ -1,7 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
 
-{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css" />{% endblock %}
 
 {% block coltype %}colMS{% endblock %}
 
@@ -45,74 +45,7 @@
     <p>{% trans "You don't have permission to edit anything." %}</p>
 {% endif %}
 </div>
-
-      <div class="module">
-        <table>
-          <caption><span style="color:red">New!</span> Reports <span style="color:black;font-size:80%">(Note: Some features currently work only on Firefox)</span></caption>
-            <tr>
-             <th scope="row"><a href="/reports/report" target=_self>ChIP-Seq Reports</a></th>
-             <th scope="row"></th><td></td><td>&nbsp;</td><td></td><td>&nbsp;</td>
-            </tr>
-            <tr>
-             <th scope="row"><a href="/reports/report_RM" target=_self>RNA-Seq Reports</a></th>
-             <th scope="row"></th><td></td><td>&nbsp;</td><td></td><td>&nbsp;</td>
-            </tr>
-            <tr>
-             <th scope="row"><a href="/reports/report_RM?exp=Methyl-seq" target=_self>Methyl-Seq Reports</a></th>
-             <th scope="row"></th><td></td><td>&nbsp;</td><td></td><td>&nbsp;</td>
-            </tr>
-       </table>
-       </div>
-       <div class="module">
-        <table>
-          <caption>Docs & Tools</caption>
-            <tr>
-             <th scope="row"><a href="http://illumina-mac.stanford.edu/SequencingSummaries/SequencingSummary.html" target=_blank>Sequencing Summary Page</a></th>
-             <th scope="row"></th>
-             <td></td>
-             <td>&nbsp;</td>
-             <td></td>
-             <td>&nbsp;</td>
-            </tr>
-            <tr>
-             <th scope="row"><a href="http://m304-apple-server.stanford.edu/PrimerDesign" target=_blank>ChIP QC Primer Design</a>&nbsp;&nbsp;
-             <a href="http://m304-apple-server.stanford.edu/ValidationDesign/" target=_blank>ChIP Validation Design</a>
-             </th>
-             <th scope="row"></th>
-             <td></td>
-             <td>&nbsp;</td>
-             <td></td>
-             <td>&nbsp;</td>
-            </tr>
-            <tr>
-             <th scope="row"><a href="http://myers.hudsonalpha.org/content/protocols.html" target=_blank>Protocols - Myers Lab</a></th>
-             <th scope="row"></th>
-             <td></td>
-             <td>&nbsp;</td>
-             <td></td>
-             <td>&nbsp;</td>
-            </tr>
-	     <tr>
-             <th scope="row"><a href="https://woldlab.caltech.edu/html/protocols" target=_blank>Protocols - Wold Lab</a></th>             
-             <th scope="row"></th>
-             <td></td>
-             <td>&nbsp;</td>
-	     <td></td>
-             <td>&nbsp;</td>
-            </tr>
-	    <tr>
-             <th scope="row"><a href="http://www.ncbi.nlm.nih.gov/pubmed/18711362" target=_blank>QuEST</a></th>
-             <th scope="row"></th>
-             <td></td>
-             <td>&nbsp;</td>
-	    <td></td>
-            <td>&nbsp;</td>
-            </tr>
-        </table>
-        </div>
-</div>
 {% endblock %}
-
 
 {% block sidebar %}
 <div id="content-related">
@@ -126,7 +59,19 @@
             {% else %}
             <ul class="actionlist">
             {% for entry in admin_log %}
-            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">{% if not entry.is_deletion %}<a href="{{ entry.get_admin_url }}">{% endif %}{{ entry.object_repr }}{% if not entry.is_deletion %}</a>{% endif %}<br /><span class="mini quiet">{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}</span></li>
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                {% if entry.is_deletion %}
+                    {{ entry.object_repr }}
+                {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                {% endif %}
+                <br/>
+                {% if entry.content_type %}
+                    <span class="mini quiet">{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}</span>
+                {% else %}
+                    <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                {% endif %}
+            </li>
             {% endfor %}
             </ul>
             {% endif %}
