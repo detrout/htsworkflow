@@ -32,5 +32,6 @@ setup(
         'scripts/runner',
         'scripts/spoolwatcher', 
         'scripts/srf',
+	'scripts/srf2named_fastq.py'
         ],
 )
