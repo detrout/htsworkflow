@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import logging
 from optparse import OptionParser
 import os
 from subprocess import Popen, PIPE
@@ -13,6 +14,11 @@ def main(cmdline=None):
 
     if len(args) != 1:
         parser.error("Requires one argument")
+
+    if opts.verbose:
+        logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARN)
 
     if opts.flowcell is not None:
         header = "%s_" % (opts.flowcell,)
@@ -58,6 +64,8 @@ You can also force the flowcell ID to be added to the header.""")
                       help='actual sequence mid point')
     parser.add_option('-s','--single', default=None,
                       help="single fastq target name")
+    parser.add_option('-v', '--verbose', default=False, action="store_true",
+                      help="show information about what we're doing.")
     return parser
 
 
@@ -70,7 +78,8 @@ def srf_open(filename, cnf1=False):
     if cnf1:
         cmd.append('-c')
     cmd.append(filename)
-        
+      
+    logging.info('srf command: %s' % (" ".join(cmd),))
     p = Popen(cmd, stdout=PIPE)
     return p.stdout
     
@@ -109,7 +118,7 @@ def convert_single_to_two_fastq(instream, target1, target2, mid=None, header='')
             target2.write('@')
             target2.write(header)
             target2.write(line[1:])
-            target2.write("/1")
+            target2.write("/2")
             target2.write(os.linesep)
 
         # quality header
