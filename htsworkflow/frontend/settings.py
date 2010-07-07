@@ -198,7 +198,7 @@ options_to_dict(ALLOWED_ANALYS_IPS, 'allowed_analysis_hosts')
 #UPLOADTO_CONFIG_FILE = os.path.join(UPLOADTO_HOME, 'eland_config')
 #UPLOADTO_ELAND_RESULT_PACKS = os.path.join(UPLOADTO_HOME, 'eland_results')
 #UPLOADTO_BED_PACKS = os.path.join(UPLOADTO_HOME, 'bed_packs')
-RESULT_HOME_DIR='/Users/diane/proj/solexa/results/flowcells'
+RESULT_HOME_DIR=os.path.expanduser('~/proj/solexa/results/flowcells')
 
 LINK_FLOWCELL_STORAGE_DEVICE_URL = options.get('frontend', 'link_flowcell_storage_device_url')
 # PORT 9100 is default for Zebra tabletop/desktop printers
