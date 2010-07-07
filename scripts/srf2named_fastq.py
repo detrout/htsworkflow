@@ -7,6 +7,12 @@ import sys
 
 from htsworkflow.util.opener import autoopen
 
+# constants for our fastq finite state machine
+FASTQ_HEADER = 0
+FASTQ_SEQUENCE = 1
+FASTQ_SEQUENCE_HEADER = 2
+FASTQ_QUALITY = 3
+
 
 def main(cmdline=None):
     parser = make_parser()
@@ -85,55 +91,90 @@ def srf_open(filename, cnf1=False):
     
 
 def convert_single_to_fastq(instream, target1, header=''):
-    for line in instream:
-        # sequence header
-        if line[0] == '@':
-            line = line.strip()
-            target1.write('@')
-            target1.write(header)
-            target1.write(line[1:])
-            target1.write(os.linesep)
 
+    state = FASTQ_HEADER
+    for line in instream:
+        line = line.strip()
+        # sequence header
+        if state == FASTQ_HEADER:
+            write_header(target1, header, line)
+            state = FASTQ_SEQUENCE
+        # sequence
+        elif state == FASTQ_SEQUENCE:
+            write_sequence(target1, line)
+            state = FASTQ_SEQUENCE_HEADER
         # quality header
-        elif line[0] == '+':
-            target1.write(line)
+        elif state == FASTQ_SEQUENCE_HEADER:
+            # the sequence header isn't really sequence, but 
+            # we're just passing it through
+            write_sequence(target1, line)
+            state = FASTQ_QUALITY
         # sequence or quality data
+        elif state == FASTQ_QUALITY:
+            write_sequence(target1, line)
+            state = FASTQ_HEADER
         else:
-            target1.write(line)
+            raise RuntimeError("Unrecognized STATE in fastq split")
+
+
         
 def convert_single_to_two_fastq(instream, target1, target2, mid=None, header=''):
+    """
+    read a fastq file where two paired ends have been run together into 
+    two halves.
+
+    instream is the source stream
+    target1 and target2 are the destination streams
+    """
     if mid is not None:
         mid = int(mid)
 
+    state = FASTQ_HEADER
     for line in instream:
+        line = line.strip()
         # sequence header
-        if line[0] == '@':
-            line = line.strip()
-            target1.write('@')
-            target1.write(header)
-            target1.write(line[1:])
-            target1.write("/1")
-            target1.write(os.linesep)
-
-            target2.write('@')
-            target2.write(header)
-            target2.write(line[1:])
-            target2.write("/2")
-            target2.write(os.linesep)
-
-        # quality header
-        elif line[0] == '+':
-            target1.write(line)
-            target2.write(line)
-        # sequence or quality data
-        else:
-            line = line.strip()
+        if state == FASTQ_HEADER:
+            write_header(target1, header, line, "/1")
+            write_header(target2, header, line, "/2")
+            state = FASTQ_SEQUENCE
+        # sequence
+        elif state == FASTQ_SEQUENCE:
             if mid is None:
                 mid = len(line)/2
-            target1.write(line[:mid])
-            target1.write(os.linesep)
-            target2.write(line[mid:])
-            target2.write(os.linesep)
+            write_split_sequence(target1, target2, line, mid)
+            state = FASTQ_SEQUENCE_HEADER
+        # quality header
+        elif state == FASTQ_SEQUENCE_HEADER:
+            # the sequence header isn't really sequence, but 
+            # we're just passing it through
+            write_sequence(target1, line)
+            write_sequence(target2, line)
+
+            state = FASTQ_QUALITY
+        # sequence or quality data
+        elif state == FASTQ_QUALITY:
+            write_split_sequence(target1, target2, line, mid)
+            state = FASTQ_HEADER
+        else:
+            raise RuntimeError("Unrecognized STATE in fastq split")
+
+def write_header(target, prefix, line, suffix=''):
+    target.write('@')
+    target.write(prefix)
+    target.write(line[1:])
+    target.write(suffix)
+    target.write(os.linesep)
+
+def write_sequence(target, line):
+    target.write(line)
+    target.write(os.linesep)
+
+def write_split_sequence(target1, target2, line, mid):
+    target1.write(line[:mid])
+    target1.write(os.linesep)
+
+    target2.write(line[mid:])
+    target2.write(os.linesep)
 
 def is_srf(filename):
     """
