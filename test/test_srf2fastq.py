@@ -111,6 +111,27 @@ IIIIB+++
         self.failUnlessEqual(lines1[2].rstrip(), '+')
         self.failUnlessEqual(lines1[3].rstrip(), '@IIIB+++')
 
+    def test_is_srf(self):        
+        cnf4_srf = 'woldlab_070829_USI-EAS44_0017_FC11055_1.srf'
+        cnf4_path = os.path.join(_module_path, cnf4_srf)
+        cnf1_srf = 'woldlab_090512_HWI-EAS229_0114_428NNAAXX_5.srf'
+        cnf1_path = os.path.join(_module_path, cnf1_srf)
+        
+        is_srf = srf2named_fastq.is_srf
+        self.failUnlessEqual(is_srf(__file__), False)
+        self.failUnlessEqual(is_srf(cnf4_path), True)
+        self.failUnlessEqual(is_srf(cnf1_path), True)
+
+    def test_is_cnf1(self):        
+        cnf4_srf = 'woldlab_070829_USI-EAS44_0017_FC11055_1.srf'
+        cnf4_path = os.path.join(_module_path, cnf4_srf)
+        cnf1_srf = 'woldlab_090512_HWI-EAS229_0114_428NNAAXX_5.srf'
+        cnf1_path = os.path.join(_module_path, cnf1_srf)
+        
+        is_cnf1 = srf2named_fastq.is_cnf1
+        self.failUnlessRaises(ValueError, is_cnf1, __file__)
+        self.failUnlessEqual(is_cnf1(cnf4_path), False)
+        self.failUnlessEqual(is_cnf1(cnf1_path), True)
 
 def suite():
     return unittest.makeSuite(testSrf2Fastq,'test')

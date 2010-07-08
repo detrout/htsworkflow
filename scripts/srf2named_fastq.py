@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import logging
+import mmap
 from optparse import OptionParser
 import os
 from subprocess import Popen, PIPE
@@ -19,7 +20,7 @@ def main(cmdline=None):
     opts, args = parser.parse_args(cmdline)
 
     if len(args) != 1:
-        parser.error("Requires one argument")
+        parser.error("Requires one argument, got: %s" % (str(args)))
 
     if opts.verbose:
         logging.basicConfig(level=logging.INFO)
@@ -39,7 +40,7 @@ def main(cmdline=None):
     
     # open the srf, fastq, or compressed fastq
     if is_srf(args[0]):
-        source = srf_open(args[0], opts.cnf1)
+        source = srf_open(args[0])
     else:
         source = autoopen(args[0])
 
@@ -55,9 +56,7 @@ def make_parser():
 
 file can be either a fastq file or a srf file.
 You can also force the flowcell ID to be added to the header.""")
-    parser.add_option('-c','--cnf1',default=False, action="store_true",
-      help="pass -c to srf2fastq, needed for calibrated quality values"
-    )
+
     parser.add_option('--force', default=False, action="store_true",
                       help="overwrite existing files.")
     parser.add_option('--flowcell', default=None,
@@ -81,7 +80,7 @@ def srf_open(filename, cnf1=False):
     """
     
     cmd = ['srf2fastq']
-    if cnf1:
+    if is_cnf1(filename):
         cmd.append('-c')
     cmd.append(filename)
       
@@ -184,6 +183,31 @@ def is_srf(filename):
     header = f.read(4)
     f.close()
     return header == "SSRF"
+
+def is_cnf1(filename):
+    """
+    Brute force detection if a SRF file is using CNF1/CNF4 records
+    """
+    max_header = 1024 ** 2
+    PROGRAM_ID = 'PROGRAM_ID\000'
+
+    if not is_srf(filename):
+        raise ValueError("%s must be a srf file" % (filename,))
+
+    fd = os.open(filename, os.O_RDONLY)
+    f = mmap.mmap(fd, 0, access=mmap.ACCESS_READ)
+    # alas the max search length requires python 2.6+
+    program_id_location = f.find(PROGRAM_ID, 0) #, max_header)
+    program_header_start = program_id_location+len(PROGRAM_ID)
+    next_null = f.find('\000', program_header_start) #, max_header)
+    program_id_header = f[program_header_start:next_null]
+    f.close()
+    os.close(fd)
+
+    if program_id_header == "solexa2srf v1.4":
+        return False
+    else:
+        return True
 
 def open_write(filename, force=False):
     """
