@@ -54,7 +54,8 @@ def main(cmdline=None):
                      apidata, 
                      opts.sequence, 
                      library_result_map,
-                     not opts.single)
+                     not opts.single,
+                     force=opts.force)
 
     if opts.ini:
         make_submission_ini(opts.host, apidata, library_result_map, not opts.single)
@@ -92,6 +93,8 @@ def make_parser():
                       action="store_true")
     
     parser.add_option('--daf', default=None, help='specify daf name')
+    parser.add_option('--force', default=False, action="store_true",
+                      help="Force regenerating fastqs")
 
     # configuration options
     parser.add_option('--apiid', default=apiid, help="Specify API ID")
@@ -112,7 +115,7 @@ def make_parser():
     return parser
 
 def build_fastqs(host, apidata, sequences_path, library_result_map, 
-                 paired=True ):
+                 paired=True, force=False ):
     """
     Generate condor scripts to build any needed fastq files
     
@@ -184,10 +187,10 @@ environment="PYTHONPATH=/home/diane/lib/python2.6/site-packages:/home/diane/proj
                     target_name = fastq_single_template % filename_attributes
 
                 target_pathname = os.path.join(result_dir, target_name)
-                if not os.path.exists(target_pathname):
+                if force or not os.path.exists(target_pathname):
                     t = needed_targets.setdefault(target_pathname, {})
                     t[seq.filetype] = seq
-                    
+
     for target_pathname, available_sources in needed_targets.items():
         logging.debug(' target : %s' % (target_pathname,))
         logging.debug(' candidate sources: %s' % (available_sources,))
@@ -196,7 +199,8 @@ environment="PYTHONPATH=/home/diane/lib/python2.6/site-packages:/home/diane/proj
             qseq_condor_entries.append(
                 condor_qseq_to_fastq(source.path, 
                                      target_pathname, 
-                                     source.flowcell)
+                                     source.flowcell,
+                                     force=force)
             )
         elif available_sources.has_key('srf'):
             source = available_sources['srf']
@@ -206,7 +210,8 @@ environment="PYTHONPATH=/home/diane/lib/python2.6/site-packages:/home/diane/proj
                                     target_pathname,
                                     paired,
                                     source.flowcell,
-                                    mid)
+                                    mid,
+                                    force=force)
             )
         else:
             print " need file", target_pathname
@@ -512,7 +517,7 @@ def get_library_info(host, apidata, library_id):
     return contents
 
 def condor_srf_to_fastq(srf_file, target_pathname, paired, flowcell=None,
-                        mid=None):
+                        mid=None, force=False):
     args = ['-c', srf_file, ]
     if paired:
         args.extend(['--left', target_pathname])
@@ -534,6 +539,9 @@ def condor_srf_to_fastq(srf_file, target_pathname, paired, flowcell=None,
     if mid is not None:
         args.extend(['-m', str(mid)])
 
+    if force:
+        args.extend(['--force'])
+
     script = """
 arguments="%s"
 queue
@@ -541,7 +549,7 @@ queue
     
     return  script 
 
-def condor_qseq_to_fastq(qseq_file, target_pathname, flowcell=None):
+def condor_qseq_to_fastq(qseq_file, target_pathname, flowcell=None, force=False):
     args = ['-i', qseq_file, '-o', target_pathname ]
     if flowcell is not None:
         args.extend(['-f', flowcell])
