@@ -518,7 +518,7 @@ def get_library_info(host, apidata, library_id):
 
 def condor_srf_to_fastq(srf_file, target_pathname, paired, flowcell=None,
                         mid=None, force=False):
-    args = ['-c', srf_file, ]
+    args = [ srf_file, ]
     if paired:
         args.extend(['--left', target_pathname])
         # this is ugly. I did it because I was pregenerating the target
