@@ -54,11 +54,10 @@ def main(cmdline=None):
                      apidata, 
                      opts.sequence, 
                      library_result_map,
-                     not opts.single,
                      force=opts.force)
 
     if opts.ini:
-        make_submission_ini(opts.host, apidata, library_result_map, not opts.single)
+        make_submission_ini(opts.host, apidata, library_result_map)
 
     if opts.makeddf:
         make_all_ddfs(library_result_map, opts.daf)
@@ -103,8 +102,6 @@ def make_parser():
                       help="specify HTSWorkflow host",)
     parser.add_option('--sequence', default=sequence_archive,
                       help="sequence repository")
-    parser.add_option('--single', default=False, action="store_true", 
-                      help="treat the sequences as single ended runs")
 
     # debugging
     parser.add_option('--verbose', default=False, action="store_true",
@@ -115,7 +112,7 @@ def make_parser():
     return parser
 
 def build_fastqs(host, apidata, sequences_path, library_result_map, 
-                 paired=True, force=False ):
+                 force=False ):
     """
     Generate condor scripts to build any needed fastq files
     
@@ -124,8 +121,6 @@ def build_fastqs(host, apidata, sequences_path, library_result_map,
       apidata (dict): id & key to post to the server
       sequences_path (str): root of the directory tree to scan for files
       library_result_map (list):  [(library_id, destination directory), ...]
-      paired: should we assume that we are processing paired end records?
-              if False, we will treat this as single ended.
     """
     qseq_condor_header = """
 Universe=vanilla
@@ -157,8 +152,11 @@ environment="PYTHONPATH=/home/diane/lib/python2.6/site-packages:/home/diane/proj
     needed_targets = {}
     for lib_id, result_dir in library_result_map:
         lib = lib_db[lib_id]
+        lane_dict = make_lane_dict(lib_db, lib_id)
+
         for lane_key, sequences in lib['lanes'].items():
             for seq in sequences:
+                paired = lane_dict[seq.flowcell]['paired_end']
                 if paired and seq.read is None:
                     seq.read = 1
                 filename_attributes = { 
@@ -345,6 +343,15 @@ def make_submission_ini(host, apidata, library_result_map, paired=True):
         f = open(result_ini,'w')
         f.write(os.linesep.join(inifile))
 
+def make_lane_dict(lib_db, lib_id):
+    """
+    Convert the lane_set in a lib_db to a dictionary
+    indexed by flowcell ID
+    """
+    result = []
+    for lane in lib_db[lib_id]['lane_set']:
+        result.append((lane['flowcell'], lane))
+    return dict(result)
 
 def make_all_ddfs(library_result_map, daf_name, make_condor=True):
     dag_fragment = []
