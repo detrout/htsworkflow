@@ -94,12 +94,12 @@ class SampleWebTestCase(TestCase):
                 # some specific tests
                 if lib.id == '10981':
                     # test a case where there is no known status
-                    lane_set = {u'status': u'Unknown', u'lane_number': 1, u'flowcell': u'303TUAAXX', u'status_code': None}
+                    lane_set = {u'status': u'Unknown', u'paired_end': True, u'read_length': 75, u'lane_number': 1, u'flowcell': u'303TUAAXX', u'status_code': None}
                     self.failUnlessEqual(len(d['lane_set']), 1)
                     self.failUnlessEqual(d['lane_set'][0], lane_set)
                 elif lib.id == '11016':
                     # test a case where there is a status
-                    lane_set = {'status': 'Good', 'lane_number': 5, 'flowcell': u'303TUAAXX', 'status_code': 2}
+                    lane_set = {u'status': 'Good', u'paired_end': True, u'read_length': 75, u'lane_number': 5, u'flowcell': u'303TUAAXX', u'status_code': 2}
                     self.failUnlessEqual(len(d['lane_set']), 1)
                     self.failUnlessEqual(d['lane_set'][0], lane_set)
 

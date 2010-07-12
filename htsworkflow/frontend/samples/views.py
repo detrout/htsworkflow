@@ -513,6 +513,8 @@ def library_dict(library_id):
     for lane in lib.lane_set.all():
         lane_info.append( {'flowcell':lane.flowcell.flowcell_id,
                            'lane_number': lane.lane_number,
+                           'paired_end': lane.flowcell.paired_end,
+                           'read_length': lane.flowcell.read_length,
                            'status_code': lane.status,
                            'status': LANE_STATUS_MAP[lane.status]} )
         
