@@ -10,23 +10,7 @@ class DataRunOptions(admin.ModelAdmin):
   search_fields = [
       'run_folder',
       'run_note',
-      'config_params',
-      '=fcid__lane_1_library__id',
-      '=fcid__lane_2_library__id',
-      '=fcid__lane_3_library__id',
-      '=fcid__lane_4_library__id',
-      '=fcid__lane_5_library__id',
-      '=fcid__lane_6_library__id',
-      '=fcid__lane_7_library__id',
-      '=fcid__lane_8_library__id'
-      'fcid__lane_1_library__library_name',
-      'fcid__lane_2_library__library_name',
-      'fcid__lane_3_library__library_name',
-      'fcid__lane_4_library__library_name',
-      'fcid__lane_5_library__library_name',
-      'fcid__lane_6_library__library_name',
-      'fcid__lane_7_library__library_name',
-      'fcid__lane_8_library__library_name'  ]
+      'config_params', ]
   list_display = [
       'run_folder', 
       'Flowcell_Info', 
@@ -66,6 +50,7 @@ class LaneOptions(admin.ModelAdmin):
     """
     Controls display of Lane browser
     """
+    search_fields = ('=flowcell__flowcell_id', 'library__id', 'library__library_name' )
     list_display = ('flowcell', 'lane_number', 'library', 'comment')
     fieldsets = (
       (None, {
