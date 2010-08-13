@@ -177,6 +177,12 @@ class Library(models.Model):
   gel_cut_size = models.IntegerField(default=225, blank=True, null=True)
   insert_size = models.IntegerField(blank=True, null=True)
   notes = models.TextField(blank=True)
+
+  bioanalyzer_summary = models.TextField(blank=True,default="")
+  bioanalyzer_concentration = models.DecimalField(max_digits=5, 
+                                decimal_places=2, blank=True, null=True,
+                                help_text=u"(ng/\u00b5l)")
+  bioanalyzer_image_url = models.URLField(blank=True,default="")
   
   def __unicode__(self):
     return u'#%s: %s' % (self.id, self.library_name)

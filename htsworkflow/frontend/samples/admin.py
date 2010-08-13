@@ -148,7 +148,14 @@ class LibraryOptions(admin.ModelAdmin):
           ('cell_line','condition','antibody'),)
          }),
          ('Creation Information:', {
-             'fields' : (('made_for', 'made_by', 'creation_date'), ('stopping_point', 'amplified_from_sample'), ('gel_cut_size', 'insert_size', 'undiluted_concentration', 'ten_nM_dilution', 'successful_pM'), 'account_number', 'notes',)
+             'fields' : (('made_for', 'made_by', 'creation_date'), 
+                         ('stopping_point', 'amplified_from_sample'), 
+                         ('gel_cut_size', 'insert_size', 
+                          'undiluted_concentration', 'ten_nM_dilution', 
+                          'successful_pM'), 
+                         ('bioanalyzer_concentration','bioanalyzer_image_url'),
+                         ('bioanalyzer_summary'), 
+                         ('account_number', 'notes',))
          }),
          ('Library/Project Affiliation:', {
              'fields' : (('affiliations'), ('tags'),)
@@ -158,7 +165,6 @@ class LibraryOptions(admin.ModelAdmin):
       LaneLibraryInline,
     ]
     actions = ['action_print_library_labels']
-    
     
     def action_print_library_labels(self, request, queryset):
         """
@@ -200,19 +206,20 @@ class LibraryOptions(admin.ModelAdmin):
                           
     action_print_library_labels.short_description = "Print Labels"
 
-
-
-    # some post 1.0.2 version of django has formfield_overrides 
-    # which would replace this code with:
-    # formfield_overrids = {
-    #    models.ManyToMany: { 'widget': widgets.FilteredSelectMultiple }
-    #}
     def formfield_for_dbfield(self, db_field, **kwargs):
-      if db_field.name in ('affiliations', 'tags'):
-        kwargs['widget'] = widgets.FilteredSelectMultiple(db_field.verbose_name,
-                                                          (db_field.name in self.filter_vertical))
-      rv = super(LibraryOptions, self).formfield_for_dbfield(db_field, **kwargs)
-      return rv
+        # Override Field type
+        if db_field.name in ('affiliations', 'tags'):
+            kwargs['widget'] = widgets.FilteredSelectMultiple(
+                db_field.verbose_name,
+                (db_field.name in self.filter_vertical)
+            )
+        field = super(LibraryOptions, self).formfield_for_dbfield(db_field,
+                                                                  **kwargs)
+        # Override field attributes
+        if db_field.name == "bioanalyzer_summary":
+            print field.widget.attrs.items()
+            field.widget.attrs["rows"] = "5"
+        return field
 
 class SpeciesOptions(admin.ModelAdmin):
     fieldsets = (
