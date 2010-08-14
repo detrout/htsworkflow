@@ -76,16 +76,22 @@ class FlowCellOptions(admin.ModelAdmin):
     list_filter = ('sequencer','cluster_station')
     fieldsets = (
         (None, {
-            'fields': ('run_date', ('flowcell_id','cluster_station','sequencer'), ('read_length', 'control_lane', 'paired_end'),)
+          'fields': ('run_date', ('flowcell_id','cluster_station','sequencer'),
+                    ('read_length', 'control_lane', 'paired_end'),)
         }),
-        #('Lanes:', {
-        #   'fields' : (('lane__library__id', 'lane__pM', 'lane__cluster_estimate'),)
-        #}),
         ('Notes:', { 'fields': ('notes',),}),
     )
     inlines = [
       LaneInline,
     ]
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        field = super(FlowCellOptions, self).formfield_for_dbfield(db_field,
+                                                                   **kwargs)
+        # Override field attributes
+        if db_field.name == "notes":
+            field.widget.attrs["rows"] = "3"
+        return field
 
 class ClusterStationOptions(admin.ModelAdmin):
     list_display = ('name', )
