@@ -217,8 +217,7 @@ class LibraryOptions(admin.ModelAdmin):
                                                                   **kwargs)
         # Override field attributes
         if db_field.name == "bioanalyzer_summary":
-            print field.widget.attrs.items()
-            field.widget.attrs["rows"] = "5"
+            field.widget.attrs["rows"] = "3"
         return field
 
 class SpeciesOptions(admin.ModelAdmin):
