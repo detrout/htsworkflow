@@ -63,10 +63,10 @@ You can also force the flowcell ID to be added to the header.""")
                       help="add flowcell id header to sequence")
     parser.add_option('-l','--left', default="r1.fastq",
                       help='left side filename')
-    parser.add_option('-r','--right', default="r2.fastq",
-                      help='right side filename')
     parser.add_option('-m','--mid', default=None, 
                       help='actual sequence mid point')
+    parser.add_option('-r','--right', default="r2.fastq",
+                      help='right side filename')
     parser.add_option('-s','--single', default=None,
                       help="single fastq target name")
     parser.add_option('-v', '--verbose', default=False, action="store_true",
@@ -190,6 +190,8 @@ def is_cnf1(filename):
     """
     max_header = 1024 ** 2
     PROGRAM_ID = 'PROGRAM_ID\000'
+    cnf4_apps = set(("solexa2srf v1.4", 
+                    "illumina2srf v1.11.5.Illumina.1.3"))
 
     if not is_srf(filename):
         raise ValueError("%s must be a srf file" % (filename,))
@@ -204,7 +206,7 @@ def is_cnf1(filename):
     f.close()
     os.close(fd)
 
-    if program_id_header == "solexa2srf v1.4":
+    if program_id_header in cnf4_apps:
         return False
     else:
         return True
