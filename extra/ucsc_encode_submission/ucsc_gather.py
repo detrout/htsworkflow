@@ -21,7 +21,6 @@ from htsworkflow.pipelines.sequences import \
     create_sequence_table, \
     scan_for_sequences
 
-
 def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
@@ -141,53 +140,12 @@ environment="PYTHONPATH=/home/diane/lib/python2.6/site-packages:/home/diane/proj
 
 """
     srf_condor_entries = []
-    fastq_paired_template = '%(lib_id)s_%(flowcell)s_c%(cycle)s_l%(lane)s_r%(read)s.fastq'
-    fastq_single_template = '%(lib_id)s_%(flowcell)s_c%(cycle)s_l%(lane)s.fastq'
     lib_db = find_archive_sequence_files(host, 
                                          apidata, 
                                          sequences_path, 
                                          library_result_map)
 
-    # find what targets we're missing
-    needed_targets = {}
-    for lib_id, result_dir in library_result_map:
-        lib = lib_db[lib_id]
-        lane_dict = make_lane_dict(lib_db, lib_id)
-
-        for lane_key, sequences in lib['lanes'].items():
-            for seq in sequences:
-                paired = lane_dict[seq.flowcell]['paired_end']
-                if paired and seq.read is None:
-                    seq.read = 1
-                filename_attributes = { 
-                    'flowcell': seq.flowcell,
-                    'lib_id': lib_id,
-                    'lane': seq.lane,
-                    'read': seq.read,
-                    'cycle': seq.cycle
-                    }
-                # throw out test runs
-                # FIXME: this should probably be configurable
-                if seq.cycle < 50:
-                    continue
-                if seq.flowcell == '30CUUAAXX':
-                    # 30CUUAAXX run sucked
-                    continue
-                if seq.flowcell == '30DY0AAXX':
-                    # 30DY0 only ran for 151 bases instead of 152
-                    # it is actually 76 1st read, 75 2nd read
-                    seq.mid_point = 76
-
-                # end filters
-                if paired:
-                    target_name = fastq_paired_template % filename_attributes
-                else:
-                    target_name = fastq_single_template % filename_attributes
-
-                target_pathname = os.path.join(result_dir, target_name)
-                if force or not os.path.exists(target_pathname):
-                    t = needed_targets.setdefault(target_pathname, {})
-                    t[seq.filetype] = seq
+    needed_targets = find_missing_targets(library_result_map, lib_db, force)
 
     for target_pathname, available_sources in needed_targets.items():
         logging.debug(' target : %s' % (target_pathname,))
@@ -206,7 +164,7 @@ environment="PYTHONPATH=/home/diane/lib/python2.6/site-packages:/home/diane/proj
             srf_condor_entries.append(
                 condor_srf_to_fastq(source.path, 
                                     target_pathname,
-                                    paired,
+                                    source.paired,
                                     source.flowcell,
                                     mid,
                                     force=force)
@@ -223,6 +181,57 @@ environment="PYTHONPATH=/home/diane/lib/python2.6/site-packages:/home/diane/proj
         make_submit_script('qseq.fastq.condor', 
                            qseq_condor_header,
                            qseq_condor_entries)
+
+def find_missing_targets(library_result_map, lib_db, force=False):
+    """
+    Check if the sequence file exists.
+    This requires computing what the sequence name is and checking
+    to see if it can be found in the sequence location.
+
+    Adds seq.paired flag to sequences listed in lib_db[*]['lanes']
+    """
+    fastq_paired_template = '%(lib_id)s_%(flowcell)s_c%(cycle)s_l%(lane)s_r%(read)s.fastq'
+    fastq_single_template = '%(lib_id)s_%(flowcell)s_c%(cycle)s_l%(lane)s.fastq'
+    # find what targets we're missing
+    needed_targets = {}
+    for lib_id, result_dir in library_result_map:
+        lib = lib_db[lib_id]
+        lane_dict = make_lane_dict(lib_db, lib_id)
+        
+        for lane_key, sequences in lib['lanes'].items():
+            for seq in sequences:
+                seq.paired = lane_dict[seq.flowcell]['paired_end']
+                lane_status = lane_dict[seq.flowcell]['status']
+
+                if seq.paired and seq.read is None:
+                    seq.read = 1
+                filename_attributes = { 
+                    'flowcell': seq.flowcell,
+                    'lib_id': lib_id,
+                    'lane': seq.lane,
+                    'read': seq.read,
+                    'cycle': seq.cycle
+                    }
+                # skip bad runs
+                if lane_status == 'Failed':
+                    continue
+                if seq.flowcell == '30DY0AAXX':
+                    # 30DY0 only ran for 151 bases instead of 152
+                    # it is actually 76 1st read, 75 2nd read
+                    seq.mid_point = 76
+
+                # end filters
+                if seq.paired:
+                    target_name = fastq_paired_template % filename_attributes
+                else:
+                    target_name = fastq_single_template % filename_attributes
+
+                target_pathname = os.path.join(result_dir, target_name)
+                if force or not os.path.exists(target_pathname):
+                    t = needed_targets.setdefault(target_pathname, {})
+                    t[seq.filetype] = seq
+
+    return needed_targets
 
 def link_daf(daf_path, library_result_map):
     if not os.path.exists(daf_path):
@@ -451,8 +460,9 @@ def read_library_result_map(filename):
 
     results = []
     for line in stream:
-        if not line.startswith('#'):
-            library_id, result_dir = line.strip().split()
+        line = line.rstrip()
+        if not line.startswith('#') and len(line) > 0 :
+            library_id, result_dir = line.split()
             results.append((library_id, result_dir))
     return results
             
