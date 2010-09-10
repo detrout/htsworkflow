@@ -77,6 +77,32 @@ def make_rta_basecalls_1460(intensities_dir):
 
     return basecalls_dir
 
+def make_rta_intensities_1870(data_dir, version='1.8.70.0'):
+    """
+    Construct an artificial RTA Intensities parameter file and directory
+    """
+    intensities_dir = os.path.join(data_dir, 'Intensities')
+    if not os.path.exists(intensities_dir):
+      os.mkdir(intensities_dir)
+ 
+    param_file = os.path.join(TESTDATA_DIR, 'rta_intensities_config_1870.xml')
+    shutil.copy(param_file, os.path.join(intensities_dir, 'config.xml'))
+
+    return intensities_dir
+
+def make_rta_basecalls_1870(intensities_dir):
+    """
+    Construct an artificial RTA Intensities parameter file and directory
+    """
+    basecalls_dir = os.path.join(intensities_dir, 'BaseCalls')
+    if not os.path.exists(basecalls_dir):
+      os.mkdir(basecalls_dir)
+ 
+    param_file = os.path.join(TESTDATA_DIR, 'rta_basecalls_config_1870.xml')
+    shutil.copy(param_file, os.path.join(basecalls_dir, 'config.xml'))
+
+    return basecalls_dir
+
 def make_qseqs(bustard_dir, in_temp=True):
     """
     Fill gerald directory with qseq files
@@ -151,6 +177,19 @@ def make_matrix(matrix_filename):
     f.write(contents)
     f.close()
 
+def make_matrix_dir_rta160(bustard_dir):
+    """
+    Create several matrix files in <bustard_dir>/Matrix/
+    """
+    destdir = os.path.join(bustard_dir, 'Matrix')
+    if not os.path.isdir(destdir):
+        os.mkdir(destdir)
+        
+    source = os.path.join(TESTDATA_DIR, '61MMFAAXX_4_1_matrix.txt')
+    for lane in LANE_LIST:
+        destination = os.path.join(destdir, 's_%d_1_matrix.txt' % ( lane, ))
+        shutil.copy(source, destination)
+        
 def make_phasing_dir(bustard_dir):
     """
     Create several phasing files in <bustard_dir>/Phasing/
@@ -255,6 +294,15 @@ def make_eland_multi(gerald_dir, paired=False, lane_list=LANE_LIST):
             f = open(pathname, 'w')
             f.write(eland_multi[0])
             f.close()
+
+def make_eland_export(gerald_dir, paired=False, lane_list=LANE_LIST):
+    source = os.path.join(TESTDATA_DIR, 'casava_1.7_export.txt')
+
+    for i in lane_list:
+        destination = os.path.join(gerald_dir,
+                                   's_%d_export.txt' % (i,))
+        shutil.copy(source, destination)
+
 
 def make_scarf(gerald_dir, lane_list=LANE_LIST):
     seq = """HWI-EAS229_92_30VNBAAXX:1:1:0:161:NCAATTACACGACGCTAGCCCTAAAGCTATTTCGAGG:E[aaaabb^a\a_^^a[S`ba_WZUXaaaaaaUKPER

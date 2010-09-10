@@ -7,6 +7,7 @@ import logging
 import os
 import re
 import stat
+import sys
 
 from htsworkflow.pipelines.runfolder import ElementTree, LANE_LIST
 from htsworkflow.util.ethelp import indent, flatten
@@ -29,7 +30,6 @@ ELAND_SINGLE = 0
 ELAND_MULTI = 1
 ELAND_EXTENDED = 2
 ELAND_EXPORT = 3
-
 
 class ResultLane(object):
     """
@@ -82,6 +82,12 @@ class ElandLane(ResultLane):
     """
     XML_VERSION = 2
     LANE = "ElandLane"
+    MATCH_COUNTS_RE = re.compile("([\d]+):([\d]+):([\d]+)")
+    DESCRIPTOR_MISMATCH_RE = re.compile("[AGCT]")
+    DESCRIPTOR_INDEL_RE = re.compile("^[\dAGCT]$")
+    SCORE_UNRECOGNIZED = 0
+    SCORE_QC = 1
+    SCORE_READ = 2
 
     def __init__(self, pathname=None, lane_id=None, end=None, genome_map=None, eland_type=None, xml=None):
         super(ElandLane, self).__init__(pathname, lane_id, end)
@@ -125,16 +131,19 @@ class ElandLane(ResultLane):
 
         logging.info("summarizing results for %s" % (self.pathname))
 
+        stream = autoopen(self.pathname, 'r')
         if self.eland_type == ELAND_SINGLE:
-          result = self._update_eland_result(self.pathname)
+            result = self._update_eland_result(stream)
         elif self.eland_type == ELAND_MULTI or \
              self.eland_type == ELAND_EXTENDED:
-          result = self._update_eland_multi(self.pathname)
+            result = self._update_eland_multi(stream)
+        elif self.eland_type == ELAND_EXPORT:
+            result = self._update_eland_export(stream)
         else:
           raise NotImplementedError("Only support single/multi/extended eland files")
         self._match_codes, self._mapped_reads, self._reads = result
 
-    def _update_eland_result(self, pathname):
+    def _update_eland_result(self, instream):
         reads = 0
         mapped_reads = {}
 
@@ -142,7 +151,7 @@ class ElandLane(ResultLane):
                        'U0':0, 'U1':0, 'U2':0,
                        'R0':0, 'R1':0, 'R2':0,
                       }
-        for line in autoopen(pathname,'r'):
+        for line in instream:
             reads += 1
             fields = line.split()
             # code = fields[2]
@@ -156,7 +165,10 @@ class ElandLane(ResultLane):
             mapped_reads[fasta] = mapped_reads.setdefault(fasta, 0) + 1
         return match_codes, mapped_reads, reads
 
-    def _update_eland_multi(self, pathname):
+    def _update_eland_multi(self, instream):
+        """Summarize an eland_extend."""
+        MATCH_INDEX = 2
+        LOCATION_INDEX = 3
         reads = 0
         mapped_reads = {}
 
@@ -164,50 +176,133 @@ class ElandLane(ResultLane):
                        'U0':0, 'U1':0, 'U2':0,
                        'R0':0, 'R1':0, 'R2':0,
                       }
-        match_counts_re = re.compile("([\d]+):([\d]+):([\d]+)")
-        for line in autoopen(pathname,'r'):
+        for line in instream:
             reads += 1
             fields = line.split()
             # fields[2] = QC/NM/or number of matches
-            groups = match_counts_re.match(fields[2])
-            if groups is None:
-                match_codes[fields[2]] += 1
-            else:
-                # when there are too many hit, eland  writes a - where
+            score_type = self._score_mapped_mismatches(fields[MATCH_INDEX], 
+                                                       match_codes)
+            if score_type == ElandLane.SCORE_READ:
+                # when there are too many hits, eland  writes a - where
                 # it would have put the list of hits.
                 # or in a different version of eland, it just leaves
                 # that column blank, and only outputs 3 fields.     
-                if len(fields) < 4 or fields[3] == '-':
+                if len(fields) < 4 or fields[LOCATION_INDEX] == '-':
                   continue
-                zero_mismatches = int(groups.group(1))
-                if zero_mismatches == 1:
-                  match_codes['U0'] += 1
-                elif zero_mismatches < 255:
-                  match_codes['R0'] += zero_mismatches
 
-                one_mismatches = int(groups.group(2))
-                if one_mismatches == 1:
-                  match_codes['U1'] += 1
-                elif one_mismatches < 255:
-                  match_codes['R1'] += one_mismatches
+                self._count_mapped_multireads(mapped_reads, fields[LOCATION_INDEX])
 
-                two_mismatches = int(groups.group(3))
-                if two_mismatches == 1:
-                  match_codes['U2'] += 1
-                elif two_mismatches < 255:
-                  match_codes['R2'] += two_mismatches
-
-                chromo = None
-                for match in fields[3].split(','):
-                  match_fragment = match.split(':')
-                  if len(match_fragment) == 2:
-                      chromo = match_fragment[0]
-                      pos = match_fragment[1]
-
-                  fasta = self.genome_map.get(chromo, chromo)
-                  assert fasta is not None
-                  mapped_reads[fasta] = mapped_reads.setdefault(fasta, 0) + 1
         return match_codes, mapped_reads, reads
+
+    def _update_eland_export(self, instream):
+        """Summarize a gerald export file."""
+        MATCH_INDEX = 10
+        LOCATION_INDEX = 10
+        DESCRIPTOR_INDEX= 13
+        reads = 0
+        mapped_reads = {}
+
+        match_codes = {'NM':0, 'QC':0, 'RM':0,
+                       'U0':0, 'U1':0, 'U2':0,
+                       'R0':0, 'R1':0, 'R2':0,
+                      }
+
+        for line in instream:
+            reads += 1
+            fields = line.split()
+            # fields[2] = QC/NM/or number of matches
+            score_type = self._score_mapped_mismatches(fields[MATCH_INDEX], 
+                                                       match_codes)
+            if score_type == ElandLane.SCORE_UNRECOGNIZED:
+                # export files have three states for the match field
+                # QC code, count of multi-reads, or a single 
+                # read location. The score_mapped_mismatches function
+                # only understands the first two types.
+                # if we get unrecognized, that implies the field is probably
+                # a location.
+                code = self._count_mapped_export(mapped_reads, 
+                                                 fields[LOCATION_INDEX],
+                                                 fields[DESCRIPTOR_INDEX])
+                match_codes[code] += 1
+
+        return match_codes, mapped_reads, reads
+
+
+    def _score_mapped_mismatches(self, match, match_codes):
+        """Update match_codes with eland map counts, or failure code.
+        
+        Returns True if the read mapped, false if it was an error code.
+        """
+        groups = ElandLane.MATCH_COUNTS_RE.match(match)
+        if groups is None:
+            # match is not of the form [\d]+:[\d]+:[\d]+
+            if match_codes.has_key(match):
+                # match is one quality control codes QC/NM etc
+                match_codes[match] += 1
+                return ElandLane.SCORE_QC
+            else:
+                return ElandLane.SCORE_UNRECOGNIZED
+        else:
+            # match is of the form [\d]+:[\d]+:[\d]+
+            # AKA Multiread
+            zero_mismatches = int(groups.group(1))
+            one_mismatches = int(groups.group(2))
+            two_mismatches = int(groups.group(3))
+
+            if zero_mismatches == 1:
+                match_codes['U0'] += 1
+            elif zero_mismatches < 255:
+                match_codes['R0'] += zero_mismatches
+
+            if one_mismatches == 1:
+                match_codes['U1'] += 1
+            elif one_mismatches < 255:
+                match_codes['R1'] += one_mismatches
+    
+            if two_mismatches == 1:
+                match_codes['U2'] += 1
+            elif two_mismatches < 255:
+                match_codes['R2'] += two_mismatches
+                
+            return ElandLane.SCORE_READ
+
+
+    def _count_mapped_multireads(self, mapped_reads, match_string):
+        chromo = None
+        for match in match_string.split(','):
+            match_fragment = match.split(':')
+            if len(match_fragment) == 2:
+                chromo = match_fragment[0]
+                pos = match_fragment[1]
+
+            fasta = self.genome_map.get(chromo, chromo)
+            assert fasta is not None
+            mapped_reads[fasta] = mapped_reads.setdefault(fasta, 0) + 1
+
+
+    def _count_mapped_export(self, mapped_reads, match_string, descriptor):
+        """Count a read as defined in an export file
+        
+        match_string contains the chromosome
+        descriptor contains the an ecoding of bases that match, mismatch, 
+                   and have indels.
+        returns the "best" match code
+
+        Currently "best" match code is ignoring the possibility of in-dels
+        """
+        chromo = match_string
+        fasta = self.genome_map.get(chromo, chromo)
+        assert fasta is not None
+        mapped_reads[fasta] = mapped_reads.setdefault(fasta, 0) + 1
+
+        mismatch_bases = ElandLane.DESCRIPTOR_MISMATCH_RE.findall(descriptor)
+        if len(mismatch_bases) == 0:
+            return 'U0'
+        elif len(mismatch_bases) == 1:
+            return 'U1'
+        else:
+            return 'U2'
+
 
     def _get_mapped_reads(self):
         if self._mapped_reads is None:
@@ -482,6 +577,7 @@ def check_for_eland_file(basedir, pattern, lane_id, end):
       full_lane_id = "%d_%d" % ( lane_id, end )
 
    basename = pattern % (full_lane_id,)
+   logging.info("Eland pattern: %s" %(basename,))
    pathname = os.path.join(basedir, basename)
    if os.path.exists(pathname):
        logging.info('found eland file in %s' % (pathname,))
@@ -558,6 +654,9 @@ def eland(gerald_dir, gerald=None, genome_maps=None):
                 ('s_%s_eland_multi.txt', MAPPED_ELAND),
                 ('s_%s_eland_multi.txt.bz2', MAPPED_ELAND),
                 ('s_%s_eland_multi.txt.gz', MAPPED_ELAND),
+                ('s_%s_export.txt', MAPPED_ELAND),
+                ('s_%s_export.txt.bz2', MAPPED_ELAND),
+                ('s_%s_export.txt.gz', MAPPED_ELAND),
                 ('s_%s_sequence.txt', SEQUENCE),]
 
     for basedir in basedirs:
@@ -608,3 +707,21 @@ def extract_eland_sequence(instream, outstream, start, end):
             result = [record[0][start:end]]
         outstream.write("\t".join(result))
         outstream.write(os.linesep)
+
+
+def main(cmdline=None):
+    """Run eland extraction against the specified gerald directory"""
+    from optparse import OptionParser
+    parser = OptionParser("%prog: <gerald dir>+")
+    opts, args = parser.parse_args(cmdline)
+    logging.basicConfig(level=logging.DEBUG)
+    for a in args:
+        logging.info("Starting scan of %s" % (a,))
+        e = eland(a)
+        print e.get_elements()
+
+    return 
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

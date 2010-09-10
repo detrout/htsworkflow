@@ -85,14 +85,19 @@ class CrosstalkMatrix(object):
     def _initialize_from_file(self, pathname):
         data = open(pathname).readlines()
         auto_header = '# Auto-generated frequency response matrix'
-        if data[0].strip() != auto_header or len(data) != 9:
+        if data[0].strip() == auto_header and len(data) == 9:
+            # skip over lines 1,2,3,4 which contain the 4 bases
+            self.base['A'] = [ float(v) for v in data[5].split() ]
+            self.base['C'] = [ float(v) for v in data[6].split() ]
+            self.base['G'] = [ float(v) for v in data[7].split() ]
+            self.base['T'] = [ float(v) for v in data[8].split() ]
+        elif len(data) == 16:
+            self.base['A'] = [ float(v) for v in data[:4] ]
+            self.base['C'] = [ float(v) for v in data[4:8] ]
+            self.base['G'] = [ float(v) for v in data[8:12] ]
+            self.base['T'] = [ float(v) for v in data[12:16] ]            
+        else:
             raise RuntimeError("matrix file %s is unusual" % (pathname,))
-        # skip over lines 1,2,3,4 which contain the 4 bases
-        self.base['A'] = [ float(v) for v in data[5].split() ]
-        self.base['C'] = [ float(v) for v in data[6].split() ]
-        self.base['G'] = [ float(v) for v in data[7].split() ]
-        self.base['T'] = [ float(v) for v in data[8].split() ]
-
     def get_elements(self):
         root = ElementTree.Element(CrosstalkMatrix.CROSSTALK)
         root.tail = os.linesep
@@ -162,7 +167,12 @@ def crosstalk_matrix_from_bustard_config(bustard_path, bustard_config_tree):
     if matrix_auto_flag:
         # we estimated the matrix from something in this run.
         # though we don't really care which lane it was
-        matrix_path = os.path.join(bustard_path, 'Matrix', 's_02_matrix.txt')
+        if matrix_auto_lane == 0:
+            matrix_path = os.path.join(bustard_path, 
+                                       'Matrix', 's_02_matrix.txt')
+        else:
+            matrix_path = os.path.join(bustard_path, 'Matrix',
+                           's_%d_1_matrix.txt' % (matrix_auto_lane,))
         crosstalk = CrosstalkMatrix(matrix_path)
     else:
         matrix_elements = call_parameters.find('MatrixElements')
