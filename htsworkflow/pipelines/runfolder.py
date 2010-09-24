@@ -471,25 +471,29 @@ def compress_eland_results(gerald_object, cycle_dir, num_jobs=1):
     for lanes_dictionary in gerald_object.eland_results.results:
         for eland_lane in lanes_dictionary.values():
             source_name = eland_lane.pathname
-            path, name = os.path.split(eland_lane.pathname)
-            dest_name = os.path.join(cycle_dir, name)
-            logging.info("Saving eland file %s to %s" % \
+            if source_name is None:
+              logging.info(
+                "Lane ID %s does not have a filename." % (eland_lane.lane_id,))
+            else:
+              path, name = os.path.split(source_name)
+              dest_name = os.path.join(cycle_dir, name)
+              logging.info("Saving eland file %s to %s" % \
                          (source_name, dest_name))
             
-            if is_compressed(name):
-              logging.info('Already compressed, Saving to %s' % (dest_name, ))
-              shutil.copy(source_name, dest_name)
-            else:
-              # not compressed
-              dest_name += '.bz2'
-              args = ['bzip2', '-9', '-c', source_name, '>', dest_name ]
-              bz_commands.append(" ".join(args))
-              #logging.info('Running: %s' % ( " ".join(args) ))
-              #bzip_dest = open(dest_name, 'w')
-              #bzip = subprocess.Popen(args, stdout=bzip_dest)
-              #logging.info('Saving to %s' % (dest_name, ))
-              #bzip.wait()
-              
+              if is_compressed(name):
+                logging.info('Already compressed, Saving to %s' % (dest_name, ))
+                shutil.copy(source_name, dest_name)
+              else:
+                # not compressed
+                dest_name += '.bz2'
+                args = ['bzip2', '-9', '-c', source_name, '>', dest_name ]
+                bz_commands.append(" ".join(args))
+                #logging.info('Running: %s' % ( " ".join(args) ))
+                #bzip_dest = open(dest_name, 'w')
+                #bzip = subprocess.Popen(args, stdout=bzip_dest)
+                #logging.info('Saving to %s' % (dest_name, ))
+                #bzip.wait()
+                
     if len(bz_commands) > 0:
       q = QueueCommands(bz_commands, num_jobs)
       q.run()
@@ -517,6 +521,7 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1):
       cycle = "C%d-%d" % (r.image_analysis.start, r.image_analysis.stop)
       logging.info("Filling in %s" % (cycle,))
       cycle_dir = os.path.join(result_dir, cycle)
+      cycle_dir = os.path.abspath(cycle_dir)
       if os.path.exists(cycle_dir):
         logging.error("%s already exists, not overwriting" % (cycle_dir,))
         continue
@@ -535,7 +540,11 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1):
 
       # build base call saving commands
       if site is not None:
-        lanes = range(1,9)
+        lanes = []
+        for lane in range(1,9):
+          if r.gerald.lanes[lane].analysis != 'none':
+            lanes.append(lane)
+
         run_name = srf.pathname_to_run_name(r.pathname)
         srf_cmds = srf.make_qseq_commands(run_name, r.bustard.pathname, lanes, site, cycle_dir)
         srf.run_commands(r.bustard.pathname, srf_cmds, num_jobs)

@@ -75,6 +75,8 @@ class ResultLane(object):
         return self._reads
     reads = property(_get_reads)
 
+    def get_elements(self):
+        return None
 
 class ElandLane(ResultLane):
     """
@@ -552,9 +554,10 @@ class ELAND(object):
            end_results = self.results[end]
            for lane_id, lane in end_results.items():
                 eland_lane = lane.get_elements()
-                eland_lane.attrib[ELAND.END] = unicode (end)
-                eland_lane.attrib[ELAND.LANE_ID] = unicode(lane_id)
-                root.append(eland_lane)
+                if eland_lane is not None:
+                    eland_lane.attrib[ELAND.END] = unicode (end)
+                    eland_lane.attrib[ELAND.LANE_ID] = unicode(lane_id)
+                    root.append(eland_lane)
         return root
 
     def set_elements(self, tree):

@@ -98,7 +98,11 @@ class Summary(object):
         def set_elements_from_gerald_xml(self, read, element):
             self.lane = int(element.find('laneNumber').text)
             self.end = read
-            self.lane_yield = int(element.find('laneYield').text)
+            lane_yield_node = element.find('laneYield')
+            if lane_yield_node is not None:
+                self.lane_yield = int(lane_yield_node.text)
+            else:
+                self.lane_yield = None
 
             for GeraldName, LRSName in Summary.LaneResultSummary.GERALD_TAGS.items():
                 node = element.find(GeraldName)
@@ -380,8 +384,18 @@ def parse_xml_mean_range(element):
     stddev = element.find('stdev')
     if mean is None or stddev is None:
         raise RuntimeError("Summary.xml file format changed, expected mean/stddev tags")
+    if mean.text is None: 
+        mean_value = float('nan')
+    else:
+        mean_value = tonumber(mean.text)
 
-    return (tonumber(mean.text), tonumber(stddev.text))
+    if stddev.text is None: 
+        stddev_value = float('nan')
+    else:
+        stddev_value = tonumber(stddev.text)
+
+
+    return (mean_value, stddev_value)
 
 if __name__ == "__main__":
     # test code
