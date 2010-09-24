@@ -121,7 +121,12 @@ def main(cmdlist=None):
             runfolder.extract_run_parameters(runs)
             command_run = True
         if opt.extract_results:
-            runfolder.extract_results(runs, opt.output_dir, opt.site, opt.max_jobs)
+            if opt.dry_run:
+                parser.error("Dry-run is not supported for extract-results")
+            runfolder.extract_results(runs, 
+                                      opt.output_dir, 
+                                      opt.site, 
+                                      opt.max_jobs)
             command_run = True
         if opt.clean:
             runfolder.clean_runs(runs, opt.dry_run)
