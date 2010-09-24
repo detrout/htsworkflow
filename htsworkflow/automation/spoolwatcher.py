@@ -11,6 +11,8 @@ from htsworkflow.util import mount
 # this uses pyinotify
 import pyinotify
 from pyinotify import EventsCodes
+IN_CREATE = EventsCodes.ALL_FLAGS['IN_CREATE']
+IN_UNMOUNT = EventsCodes.ALL_FLAGS['IN_UNMOUNT']
 
 from benderjab import rpc
 
@@ -223,7 +225,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         if watchdirs is None:
             watchdirs = self.watchdirs
 
-        mask = EventsCodes.IN_CREATE | EventsCodes.IN_UNMOUNT
+        mask = IN_CREATE | IN_UNMOUNT
         # rec traverses the tree and adds all the directories that are there
         # at the start.
         # auto_add will add in new directories as they are created
