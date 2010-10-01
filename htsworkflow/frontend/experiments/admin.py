@@ -102,7 +102,7 @@ class SequencerOptions(admin.ModelAdmin):
     fieldsets = ( ( None, { 'fields': ( 'name', ) } ), )
     
 
-admin.site.register(DataRun, DataRunOptions)
+#admin.site.register(DataRun, DataRunOptions)
 admin.site.register(FlowCell, FlowCellOptions)
 admin.site.register(ClusterStation, ClusterStationOptions)
 admin.site.register(Sequencer, SequencerOptions)
