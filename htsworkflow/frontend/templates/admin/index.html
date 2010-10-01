@@ -12,6 +12,19 @@
 {% block content %}
 <div id="content-main">
 
+<div class='module'>
+<table>
+<caption>Frequently Used</caption>
+<tr>
+<th scope="row"><a href="/admin/samples/library/">Libraries</a></th>
+<td><a href="/admin/samples/library/add/" class="addlink">{% trans 'Add' %}</a></td>
+</tr>
+<tr>
+<th scope="row"><a href="/admin/experiments/flowcell/">Flowcells</a></th>
+<td><a href="/admin/experiments/flowcell/add/" class="addlink">{% trans 'Add' %}</a></td>
+</tr>
+</table></div><BR>
+
 {% if app_list %}
     {% for app in app_list %}
         <div class="module">
@@ -27,12 +40,6 @@
 
             {% if model.perms.add %}
                 <td><a href="{{ model.admin_url }}add/" class="addlink">{% trans 'Add' %}</a></td>
-            {% else %}
-                <td>&nbsp;</td>
-            {% endif %}
-
-            {% if model.perms.change %}
-                <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
             {% else %}
                 <td>&nbsp;</td>
             {% endif %}
