@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.template import Context, Template
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.forms import TextInput, Textarea
 
 from htsworkflow.frontend.samples.models import Antibody, Cellline, Condition, ExperimentType, HTSUser, LibraryType, Species, Affiliation, Library, Tag
 from htsworkflow.frontend.experiments.models import Lane
@@ -108,29 +109,17 @@ class LibraryOptions(admin.ModelAdmin):
     )
     list_display = (
         'id',
-        #'aligned_reads',
-        #'DataRun',
         'library_name',
         'public',
-        #'experiment_type',
-        #'organism',
-        #'antibody_name',
-        #'cell_line',
-        #'libtags',
-        #'made_for',
         'affiliation',
-        #'made_by',
         'undiluted_concentration',
         'creation_date',
         'stopping_point',
-        #'condition',
-
     )
     list_filter = (
         'experiment_type', 
         'library_species', 
         'tags',
-        #'made_for',
         'affiliations',
         'made_by', 
         'antibody',
@@ -143,22 +132,20 @@ class LibraryOptions(admin.ModelAdmin):
       (None, {
         'fields': (
           ('id','library_name','hidden'),
-          ('library_species'),
-          ('library_type', 'experiment_type', 'replicate'),
-          ('cell_line','condition','antibody'),)
+          ('library_species', 'cell_line', 'replicate'),
+          ('library_type', 'experiment_type'))
          }),
          ('Creation Information:', {
-             'fields' : (('made_for', 'made_by', 'creation_date'), 
-                         ('stopping_point', 'amplified_from_sample'), 
+             'fields' : (('made_by', 'creation_date', 'stopping_point'), 
+                         ('amplified_from_sample'), 
                          ('gel_cut_size', 'insert_size', 
-                          'undiluted_concentration', 'ten_nM_dilution', 
-                          'successful_pM'), 
+                          'undiluted_concentration'), 
                          ('bioanalyzer_concentration','bioanalyzer_image_url'),
                          ('bioanalyzer_summary'), 
-                         ('account_number', 'notes',))
+                         ('notes'))
          }),
          ('Library/Project Affiliation:', {
-             'fields' : (('affiliations'), ('tags'),)
+             'fields' : (('account_number', 'affiliations'),)
          }),
          )
     inlines = [
@@ -235,13 +222,13 @@ class TagOptions(admin.ModelAdmin):
           }),
         )
 
-admin.site.register(Affiliation, AffiliationOptions)
-admin.site.register(Antibody, AntibodyOptions)
-admin.site.register(Cellline, CelllineOptions)
-admin.site.register(Condition, ConditionOptions)
-admin.site.register(ExperimentType, ExperimentTypeOptions)
-admin.site.register(HTSUser, HTSUserOptions)
-admin.site.register(LibraryType, LibraryTypeOptions)
 admin.site.register(Library, LibraryOptions)
+admin.site.register(Affiliation, AffiliationOptions)
+#admin.site.register(Antibody, AntibodyOptions)
+admin.site.register(Cellline, CelllineOptions)
+#admin.site.register(Condition, ConditionOptions)
+admin.site.register(ExperimentType, ExperimentTypeOptions)
+#admin.site.register(HTSUser, HTSUserOptions)
+admin.site.register(LibraryType, LibraryTypeOptions)
 admin.site.register(Species, SpeciesOptions)
-admin.site.register(Tag, TagOptions)
+#admin.site.register(Tag, TagOptions)
