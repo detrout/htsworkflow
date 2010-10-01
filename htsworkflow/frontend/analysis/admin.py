@@ -26,6 +26,6 @@ class TaskOptions(admin.ModelAdmin):
         }),
       )
 
-admin.site.register(Project, ProjectOptions)
-admin.site.register(Task, TaskOptions)
+#admin.site.register(Project, ProjectOptions)
+#admin.site.register(Task, TaskOptions)
 
