@@ -113,20 +113,17 @@ class LibraryOptions(admin.ModelAdmin):
         'public',
         'affiliation',
         'undiluted_concentration',
+        'gel_cut_size',
         'creation_date',
-        'stopping_point',
     )
     list_filter = (
-        'experiment_type', 
-        'library_species', 
-        'tags',
+        'hidden',
         'affiliations',
+        'library_species', 
+        'experiment_type', 
         'made_by', 
-        'antibody',
         'cell_line',
-        'condition',
-        'stopping_point',
-        'hidden')
+        'stopping_point',)
     list_display_links = ('id', 'library_name',)
     fieldsets = (
       (None, {
