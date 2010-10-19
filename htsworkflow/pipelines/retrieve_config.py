@@ -126,6 +126,7 @@ def format_gerald_config(options, flowcell_info, genome_map):
     config += ['SEQUENCE_FORMAT --fastq']
     config += ['ELAND_SET_SIZE 20']
     config += ['WITH_SEQUENCE TRUE']
+    config += ['12345678:WITH_SEQUENCE TRUE']
     analysis_suffix = eland_analysis_suffix[flowcell_info['paired_end']]
     sequence_suffix = sequence_analysis_suffix[flowcell_info['paired_end']]
     lane_groups = group_lane_parameters(flowcell_info)
