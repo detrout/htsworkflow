@@ -6,7 +6,7 @@ import unittest
 _module_path, _module_name = os.path.split(__file__)
 sys.path.append(os.path.join(_module_path, '..', 'scripts'))
 
-import srf2named_fastq
+from htsworkflow.pipelines import srf2fastq
 
 class testSrf2Fastq(unittest.TestCase):
     def test_split_good(self):
@@ -18,7 +18,7 @@ IIIIB+++
         target1 = StringIO()
         target2 = StringIO()
 
-        srf2named_fastq.convert_single_to_two_fastq(source, target1, target2)
+        srf2fastq.convert_single_to_two_fastq(source, target1, target2)
 
         target1.seek(0)
         lines1 = target1.readlines()
@@ -49,7 +49,7 @@ IIIIB+++
         target1 = StringIO()
         target2 = StringIO()
 
-        srf2named_fastq.convert_single_to_two_fastq(source, target1, target2, header="foo_")
+        srf2fastq.convert_single_to_two_fastq(source, target1, target2, header="foo_")
 
         target1.seek(0)
         lines1 = target1.readlines()
@@ -79,7 +79,7 @@ IIIIB+++
 """)
         target1 = StringIO()
 
-        srf2named_fastq.convert_single_to_fastq(source, target1)
+        srf2fastq.convert_single_to_fastq(source, target1)
 
         target1.seek(0)
         lines1 = target1.readlines()
@@ -101,7 +101,7 @@ IIIIB+++
 """)
         target1 = StringIO()
 
-        srf2named_fastq.convert_single_to_fastq(source, target1, header="foo_")
+        srf2fastq.convert_single_to_fastq(source, target1, header="foo_")
 
         target1.seek(0)
         lines1 = target1.readlines()
@@ -117,7 +117,7 @@ IIIIB+++
         cnf1_srf = 'woldlab_090512_HWI-EAS229_0114_428NNAAXX_5.srf'
         cnf1_path = os.path.join(_module_path, cnf1_srf)
         
-        is_srf = srf2named_fastq.is_srf
+        is_srf = srf2fastq.is_srf
         self.failUnlessEqual(is_srf(__file__), False)
         self.failUnlessEqual(is_srf(cnf4_path), True)
         self.failUnlessEqual(is_srf(cnf1_path), True)
@@ -128,7 +128,7 @@ IIIIB+++
         cnf1_srf = 'woldlab_090512_HWI-EAS229_0114_428NNAAXX_5.srf'
         cnf1_path = os.path.join(_module_path, cnf1_srf)
         
-        is_cnf1 = srf2named_fastq.is_cnf1
+        is_cnf1 = srf2fastq.is_cnf1
         self.failUnlessRaises(ValueError, is_cnf1, __file__)
         self.failUnlessEqual(is_cnf1(cnf4_path), False)
         self.failUnlessEqual(is_cnf1(cnf1_path), True)

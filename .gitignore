@@ -1,3 +1,5 @@
 *.py[co~]
 .coverage
 *.egg-info
+dist
+RELEASE-VERSION

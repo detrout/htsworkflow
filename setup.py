@@ -1,37 +1,37 @@
 from setuptools import setup
+from version import get_git_version
 
 setup(
-  name="htsworkflow",
-  description="some bots and other utilities to help deal with data from an illumina sequencer",
-  author="Diane Trout & Brandon King",
-  author_email="diane@caltech.edu",
-  packages=["htsworkflow", 
-            "htsworkflow.pipelines",
-            "htsworkflow.frontend",
-            "htsworkflow.frontend.analysis",
-            "htsworkflow.frontend.eland_config",
-            "htsworkflow.frontend.experiments",
-            "htsworkflow.frontend.inventory",
-            "htsworkflow.frontend.reports",
-            "htsworkflow.frontend.samples",
-            "htsworkflow.automation",
-            "htsworkflow.util"
-             ],
-  scripts=[
-        'scripts/configure_pipeline',
+    name="htsworkflow",
+    version=get_git_version(),
+    description="Utilities to help manage high-through-put sequencing",
+    author="Diane Trout, Brandon King",
+    author_email="diane@caltech.edu",
+    packages=["htsworkflow", 
+              "htsworkflow.automation",
+              "htsworkflow.pipelines",
+              "htsworkflow.util",
+              # django site
+              "htsworkflow.frontend",
+              "htsworkflow.frontend.analysis",
+              "htsworkflow.frontend.eland_config",
+              "htsworkflow.frontend.experiments",
+              "htsworkflow.frontend.inventory",
+              "htsworkflow.frontend.reports",
+              "htsworkflow.frontend.samples",
+              ],
+    scripts=[
         'scripts/copier',
-        'scripts/gerald2bed.py',
         'scripts/library.py',
         'scripts/makebed',
-	'scripts/make-library-tree',
+        'scripts/make-library-tree',
         'scripts/mark_archived_data',
         'scripts/qseq2fastq',
-        'scripts/rerun_eland.py',
         'scripts/retrieve_config',
         'scripts/runfolder',
         'scripts/runner',
         'scripts/spoolwatcher', 
         'scripts/srf',
-	'scripts/srf2named_fastq.py'
+        'scripts/srf2fastq'
         ],
-)
+    )

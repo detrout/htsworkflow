@@ -7,6 +7,7 @@ from subprocess import Popen, PIPE
 import sys
 
 from htsworkflow.util.opener import autoopen
+from htsworkflow.version import version
 
 # constants for our fastq finite state machine
 FASTQ_HEADER = 0
@@ -14,18 +15,21 @@ FASTQ_SEQUENCE = 1
 FASTQ_SEQUENCE_HEADER = 2
 FASTQ_QUALITY = 3
 
-
 def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
-
-    if len(args) != 1:
-        parser.error("Requires one argument, got: %s" % (str(args)))
 
     if opts.verbose:
         logging.basicConfig(level=logging.INFO)
     else:
         logging.basicConfig(level=logging.WARN)
+
+    if opts.version:
+        print version()
+        return 0
+
+    if len(args) != 1:
+        parser.error("Requires one argument, got: %s" % (str(args)))
 
     if opts.flowcell is not None:
         header = "%s_" % (opts.flowcell,)
@@ -71,6 +75,8 @@ You can also force the flowcell ID to be added to the header.""")
                       help="single fastq target name")
     parser.add_option('-v', '--verbose', default=False, action="store_true",
                       help="show information about what we're doing.")
+    parser.add_option('--version', default=False, action="store_true",
+                      help="Report software version")
     return parser
 
 
@@ -78,7 +84,6 @@ def srf_open(filename, cnf1=False):
     """
     Make a stream from srf file using srf2fastq
     """
-    
     cmd = ['srf2fastq']
     if is_cnf1(filename):
         cmd.append('-c')
@@ -236,7 +241,6 @@ def foo():
     instream = open(filename,'r')
     target1 = open(target1_name,'w')
     target2 = open(target2_name,'w')
-
 
 
 if __name__ == "__main__":
