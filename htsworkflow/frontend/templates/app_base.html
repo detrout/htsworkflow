@@ -9,95 +9,20 @@
     
     <!-- App Stuff -->
     <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
-    <link rel="stylesheet" type="text/css" href="/static/js/ext-3.0.0/resources/css/ext-all.css" />
-    <script type="text/javascript" src="/static/js/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="/static/js/ext-3.0.0/adapter/jquery/ext-jquery-adapter.js"></script>
-    <script type="text/javascript" src="/static/js/ext-3.0.0/ext-all.js"></script>
-    <!--<script type="text/javascript" src="/static/js/menu.js"></script>-->
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
     
     {% block additional_javascript %}
     {% endblock %}
     
     <script type="text/javascript" src="/static/js/htsw.js"></script>
-    <!--{{ media }}-->
-    <!--
-        Barcode Magic Media should probably go last if you want
-        the barcode magic input to be selected upon page load.
-    -->
-    {{ bcmagic.media }}
 </head>
 <body>
-    <div id="header">
-        <h1>HTSWorkflow: {{ app_name }} - {{ page_name }}</h1>
-    </div>
-    
-    <!-- West Dynamic Panels -->
-    <div id="west_panel_items" class="x-hidden">
-        {% block dynamic_panels %}
-        <ul id="Freezers" class="x-hidden">
-                <li>
-                    <img src="/static/img/s.gif" class="icon-show-all" />
-                    <a href="#">Index</a><br />
-                </li>
-                <li>
-                    <img src="/static/img/s.gif" class="icon-show-all" />
-                    <a href="#">Add</a><br />
-                </li>
-        </ul>
-        {% endblock %}
-    </div>
-    
-    <!-- Barcode Magic Div -->
-    <!--
-    <div id="bcmagic_div" class="x-hidden">
-        {% include "bcmagic/magic.html" %}
-    </div>
-    -->
-    
-    {% block east_region %}
-    <div id="east_region_config" class="x-hidden">{% if east_region_config_div %}{{ east_region_config_div }}{% endif %}</div>
-    {% endblock %}
-    <div id="east_region_config_error" class="x-hidden">Check contents of div w/ id east_region_config, as the id supplied in text block does not exist.</div>
-    
-    <!-- Left side tool bar -->
-    <div id="left_tbar_data" class="x-hidden">
-        {% block left_tbar_menu %}
-        <div id="Flowcells-Libraries Tracker" href="{% url htsworkflow.frontend.samples.views.library %}"></div>
-        <div id="Inventory Tracker" href="{% url htsworkflow.frontend.inventory.views.index %}">{% if user.is_authenticated %}{% else %}disabled{% endif %}</div>
-        {% endblock %}
-    </div>
-    
-    <!-- Right side tool bar -->
-    <div id="right_tbar_data" class="x-hidden">
-        {% block right_tbar_menu %}
-        <!--<div id="spacer"></div>-->
-        <div id="Admin" href="/admin/"></div>
-        <div id="Profile" href="{% url htsworkflow.frontend.samples.views.user_profile %}"></div>
-        <div id="Password Change" href="{% url django.contrib.auth.views.password_change %}"></div>
-        {% endblock %}
-    </div>
-    
-    <!-- Required login info stuff -->
-    <div id="login_info" class="x-hidden" authenticated="{{ user.is_authenticated|lower }}" user="{{ user.username }}" loginurl="{% url django.contrib.auth.views.login %}" logouturl="{% url django.contrib.auth.views.logout_then_login %}"></div>
-    
-    <!-- App specific toolbar setup -->
-    <div id="app_toolbar_west">
-        {% block app_toolbar_west %}
-        {% endblock %}
-    </div>
-    <div id="app_toolbar_east">
-        {% block app_toolbar_east %}
-        {% endblock %}
-    </div>
-    
     <!-- Main Content -->
-    <div id="body_content" class="">
-        {% block msg %}
-        <div class="msg">{{ msg }}</div>
-        {% endblock %}
-        {% block content %}
-        {{ body }}
-        {% endblock %}
-    </div>
+    {% block msg %}
+    <div class="msg">{{ msg }}</div>
+    {% endblock %}
+    {% block content %}
+    {{ body }}
+    {% endblock %}
 </body>
 </html>

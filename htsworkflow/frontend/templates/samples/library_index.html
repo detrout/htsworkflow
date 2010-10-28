@@ -1,41 +1,52 @@
 {% extends "base_site.html" %}
 {% load adminmedia admin_list i18n %}
-
+{% block extrahead %}
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $(window).resize(function() {
+           var window_height = $(window).height();
+           var position = $("#changelist table").position();
+           height = window_height - position.top;
+           $("#changelist table.filtered").height(height);
+           $("#changelist-filter").height(height);
+        });
+        $(window).resize();
+      });
+    </script>
+{% endblock %}
 {% block bodyclass %}change-list{% endblock %}
 {% block coltype %}flex{% endblock %}
 
 {% block content %}
-<div id="library-index-div" class="djangocss">
+<div id="library-index-div" >
   <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
     {% block search %}{% search_form cl %}{% endblock %}
+ 
+    {% block pagination %}{% pagination cl %}{% endblock %}
 
     {% block filters %}
     {% if cl.has_filters %}
     <div id="changelist-filter">
-      <h2 class="djangocss">{% trans 'Filter' %}</h2>
+      <h2 >{% trans 'Filter' %}</h2>
       {% for spec in cl.filter_specs %}
          {% admin_list_filter cl spec %}
          {% endfor %}
        </div>
-       {% endif %}
-       {% endblock %}
-
-  
- {% block pagination %}{% pagination cl %}{% endblock %}
-
+    {% endif %}
+    {% endblock %}
 {% block summary_stats %}
-<table class="djangocss">
-  <thead class="djangocss">
-    <tr class="djangocss">
-      <td class="djangocss">Parent</td>
-      <td class="djangocss">Library ID</td>
-      <td class="djangocss">Species</td>
-      <td class="djangocss">Library Name</td>
-      <td colspan="3" class="djangocss">Single</td>
-      <td colspan="3" class="djangocss">Paired</td>
-      <td class="djangocss">HD</td>
+<table class="{% if cl.has_filters %} filtered{% endif %}">
+  <thead >
+    <tr >
+      <td >Parent</td>
+      <td >Library ID</td>
+      <td >Species</td>
+      <td >Library Name</td>
+      <td colspan="3" >Single</td>
+      <td colspan="3" >Paired</td>
+      <td >HD</td>
     </tr>
-    <tr class="djangocss">
+    <tr >
       <td colspan="4"></td>
       <td>&lt;40</td>
       <td>&lt;100</td>
@@ -46,28 +57,29 @@
       <td></td>
     </tr>
   </thead>
-  <tbody class="djangocss">
+  <tbody >
     {% for lib in library_list %}
-    <tr class="djangocss">
-      <td class="djangocss"><a href="/library/{{ lib.library_id }}">{{ lib.amplified_from }}</a></td>
-      <td class="djangocss"><a href="/library/{{ lib.library_id }}">{{ lib.library_id }}</a></td>
-      <td class="djangocss"><a href="/library/{{ lib.library_id }}">{{ lib.species_name }}</a></td>
-      <td class="djangocss"><a href="/library/{{ lib.library_id }}">{{ lib.library_name }}</a></td>
-      <td class="djangocss" bgcolor="#00BFFF">{{ lib.lanes_run.0.0 }}</td>      
-      <td class="djangocss" bgcolor="#00BFFF">{{ lib.lanes_run.0.1 }}</td>      
-      <td class="djangocss" bgcolor="#00BFFF">{{ lib.lanes_run.0.2 }}</td>      
-      <td class="djangocss" bgcolor="#66CDAA">{{ lib.lanes_run.1.0 }}</td>
-      <td class="djangocss" bgcolor="#66CDAA">{{ lib.lanes_run.1.1 }}</td>      
-      <td class="djangocss" bgcolor="#66CDAA">{{ lib.lanes_run.1.2 }}</td>      
+    <tr >
+      <td ><a href="/library/{{ lib.library_id }}">{{ lib.amplified_from }}</a></td>
+      <td ><a href="/library/{{ lib.library_id }}">{{ lib.library_id }}</a></td>
+      <td ><a href="/library/{{ lib.library_id }}">{{ lib.species_name }}</a></td>
+      <td ><a href="/library/{{ lib.library_id }}">{{ lib.library_name }}</a></td>
+      <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.0 }}</td>      
+      <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.1 }}</td>      
+      <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.2 }}</td>      
+      <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.0 }}</td>
+      <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.1 }}</td>      
+      <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.2 }}</td>      
       {% if lib.is_archived %}
-        <td class="djangocss"><img src="/static/img/hdd_unmount.png" alt="Archived" /></td>
+        <td ><img src="/static/img/hdd_unmount.png" alt="Archived" /></td>
       {% else %}
-        <td class="djangocss"></td>
+        <td ></td>
       {% endif %}
     </tr>
     {% endfor %}
   </tbody>
 </table>
 </div>
+
 {% endblock %}
 {% endblock %}

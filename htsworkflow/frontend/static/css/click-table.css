@@ -1,19 +1,19 @@
-table.djangocss, td.djangocss {
+table, td {
   border-style: solid;
 }
-table.djangocss {
+table {
   border-width: 0 0 1px 1px;
   border-spacing: 0;
   border-collapse: collapse;
 }
-thead.djangocss {
+thead {
   text-align: center;
 }
-td.djangocss {
+td {
   margin: 0;
   padding: 4px;
   border-width: 1px 1px 0 0;
 }
-td.djangocss a {
+td a {
   display: block;
 }

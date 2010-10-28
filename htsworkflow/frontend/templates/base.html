@@ -32,13 +32,13 @@
     {% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Home' %}</a>{% if title %} &rsaquo; {{ title }}{% endif %}</div>{% endblock %}
     {% endif %}
        {% if messages %}
-        <ul  class="djangocss" class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+        <ul class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
         {% endif %}
 
     <!-- Content -->
-    <div id="content"  class="djangocss" class="{% block coltype %}colM{% endblock %}">
+    <div id="content" class="{% block coltype %}colM{% endblock %}">
         {% block pretitle %}{% endblock %}
-        {% block content_title %}{% if title %}<h1 class="djangocss">{{ title }}</h1>{% endif %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
         {% block content %}
         {% block object-tools %}{% endblock %}
         {{ content }}
@@ -48,7 +48,7 @@
     </div>
     <!-- END Content -->
 
-    {% block footer %}<div id="footer" class="djangocss"></div>{% endblock %}
+    {% block footer %}<div id="footer"></div>{% endblock %}
 <!-- END Container -->
 </body>
 </html>

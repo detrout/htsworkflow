@@ -1,12 +1,13 @@
 @import url('base.css');
 
 /* CHANGELISTS */
-#changelist { position:relative; width:100%; }
-#changelist table { width:100%; }
+#changelist {  margin-bottom: 0pm; }
+#changelist table { display: block; }
+#changelist table.filtered { margin-right: 21em; overflow-y: scroll; }
 .change-list .filtered table { border-right:1px solid #ddd;  }
 .change-list .filtered { min-height:400px; }
 .change-list .filtered { background:white url(../img/changelist-bg.gif) top right repeat-y !important; }
-.change-list .filtered table, .change-list .filtered .paginator, .filtered #toolbar, .filtered div.xfull { margin-right:160px !important; width:auto !important; }
+.change-list .filtered table, .change-list .filtered .paginator, .filtered #toolbar, .filtered div.xfull { width:auto !important; }
 .change-list .filtered table tbody th { padding-right:1em; }
 #changelist .toplinks { border-bottom:1px solid #ccc !important; }
 #changelist .paginator { color:#666; border-top:1px solid #eee; border-bottom:1px solid #eee; background:white url(../img/nav-bg.gif) 0 180% repeat-x; overflow:hidden; }
@@ -14,8 +15,9 @@
 
 /*  CHANGELIST TABLES  */
 #changelist table thead th { white-space:nowrap; }
-#changelist table tbody td { border-left: 1px solid #ddd; }
+#changelist table tbody td { border-left: 1px solid #ddd;  }
 #changelist table tfoot { color: #666; }
+#changelist tbody { }
 
 /*  TOOLBAR  */
 #changelist #toolbar { padding:3px; border-bottom:1px solid #ddd; background:#e1e1e1 url(../img/nav-bg.gif) top left repeat-x; color:#666; }
@@ -24,7 +26,12 @@
 #changelist #changelist-search img { vertical-align:middle; }
 
 /*  FILTER COLUMN  */
-#changelist-filter { position:absolute; top:0; right:0; z-index:1000; width:160px; border-left:1px solid #ddd; background:#efefef; margin:0; }
+/*position:absolute; top:0; right:0; z-index:1000; */
+#changelist-filter { float: right;
+                     width: 20em;
+                     border-left:1px solid #ddd; margin:0; 
+                     background:#efefef; 
+                     overflow-y: scroll; }
 #changelist-filter h2 { font-size:11px; padding:2px 5px; border-bottom:1px solid #ddd; }
 #changelist-filter h3 { font-size:12px; margin-bottom:0; }
 #changelist-filter ul { padding-left:0;margin-left:10px; }
