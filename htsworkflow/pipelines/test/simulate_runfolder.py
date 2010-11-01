@@ -186,8 +186,9 @@ def make_matrix_dir_rta160(bustard_dir):
         os.mkdir(destdir)
         
     source = os.path.join(TESTDATA_DIR, '61MMFAAXX_4_1_matrix.txt')
-    for lane in LANE_LIST:
-        destination = os.path.join(destdir, 's_%d_1_matrix.txt' % ( lane, ))
+    lane_fragments = [ "_%d" % (l,) for l in LANE_LIST]
+    for fragment in lane_fragments:
+        destination = os.path.join(destdir, 's%s_1_matrix.txt' % ( fragment, ))
         shutil.copy(source, destination)
         
 def make_phasing_dir(bustard_dir):

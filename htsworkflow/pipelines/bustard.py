@@ -168,11 +168,20 @@ def crosstalk_matrix_from_bustard_config(bustard_path, bustard_config_tree):
         # we estimated the matrix from something in this run.
         # though we don't really care which lane it was
         if matrix_auto_lane == 0:
-            matrix_path = os.path.join(bustard_path, 
-                                       'Matrix', 's_02_matrix.txt')
+            auto_lane_fragment = ""
         else:
-            matrix_path = os.path.join(bustard_path, 'Matrix',
-                           's_%d_1_matrix.txt' % (matrix_auto_lane,))
+            auto_lane_fragment = "_%d" % ( matrix_auto_lane,)
+            
+        for matrix_name in ['s%s_02_matrix.txt' % (auto_lane_fragment,),
+                            's%s_1_matrix.txt' % (auto_lane_fragment,),
+                            ]:
+            matrix_path = os.path.join(bustard_path, 'Matrix', matrix_name)
+            if os.path.exists(matrix_path):
+                break
+        else:
+            raise RuntimeError("Couldn't find matrix for lane %d" % \
+                               (matrix_auto_lane,))
+
         crosstalk = CrosstalkMatrix(matrix_path)
     else:
         matrix_elements = call_parameters.find('MatrixElements')
