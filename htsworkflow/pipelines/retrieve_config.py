@@ -137,7 +137,7 @@ def format_gerald_config(options, flowcell_info, genome_map):
         
         species_path = genome_map.get(species, None)
         logging.debug("Looked for genome '%s' got location '%s'" % (species, species_path))
-        if species_path is None:
+        if not is_sequencing and species_path is None:
             no_genome_msg = "Forcing lanes %s to sequencing as there is no genome for %s"
             logging.warning(no_genome_msg % (lane_numbers, species))
             is_sequencing = True
