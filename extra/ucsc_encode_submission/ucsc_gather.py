@@ -15,7 +15,6 @@ import urllib
 import urllib2
 import urlparse
 
-
 from htsworkflow.util import api
 from htsworkflow.pipelines.sequences import \
     create_sequence_table, \
@@ -30,8 +29,7 @@ def main(cmdline=None):
     elif opts.verbose:
         logging.basicConfig(level = logging.INFO )
     else:
-        logging.basicConfig(level = logging.WARNING )
-        
+        logging.basicConfig(level = logging.WARNING )        
     
     apidata = {'apiid': opts.apiid, 'apikey': opts.apikey }
 
@@ -60,6 +58,7 @@ def main(cmdline=None):
 
     if opts.makeddf:
         make_all_ddfs(library_result_map, opts.daf)
+
 
 def make_parser():
     # Load defaults from the config files
@@ -109,6 +108,7 @@ def make_parser():
                       help='debug logging')
 
     return parser
+
 
 def build_fastqs(host, apidata, sequences_path, library_result_map, 
                  force=False ):
@@ -182,6 +182,7 @@ environment="PYTHONPATH=/home/diane/lib/python2.6/site-packages:/home/diane/proj
                            qseq_condor_header,
                            qseq_condor_entries)
 
+
 def find_missing_targets(library_result_map, lib_db, force=False):
     """
     Check if the sequence file exists.
@@ -233,6 +234,7 @@ def find_missing_targets(library_result_map, lib_db, force=False):
 
     return needed_targets
 
+
 def link_daf(daf_path, library_result_map):
     if not os.path.exists(daf_path):
         raise RuntimeError("%s does not exist, how can I link to it?" % (daf_path,))
@@ -243,6 +245,7 @@ def link_daf(daf_path, library_result_map):
         submission_daf = os.path.join(result_dir, base_daf)
         if not os.path.exists(submission_daf):
             os.link(daf_path, submission_daf)
+
 
 def make_submission_ini(host, apidata, library_result_map, paired=True):
     # ma is "map algorithm"
@@ -355,6 +358,7 @@ def make_submission_ini(host, apidata, library_result_map, paired=True):
         f = open(result_ini,'w')
         f.write(os.linesep.join(inifile))
 
+
 def make_lane_dict(lib_db, lib_id):
     """
     Convert the lane_set in a lib_db to a dictionary
@@ -364,6 +368,7 @@ def make_lane_dict(lib_db, lib_id):
     for lane in lib_db[lib_id]['lane_set']:
         result.append((lane['flowcell'], lane))
     return dict(result)
+
 
 def make_all_ddfs(library_result_map, daf_name, make_condor=True):
     dag_fragment = []
@@ -419,6 +424,7 @@ def make_ddf(ininame,  daf_name, guess_ddf=False, make_condor=False, outdir=None
     
     return dag_fragments
 
+
 def read_ddf_ini(filename, output=sys.stdout):
     """
     Read a ini file and dump out a tab delmited text file
@@ -447,7 +453,8 @@ def read_ddf_ini(filename, output=sys.stdout):
         output.write("\t".join(values))
         output.write(os.linesep)
     return file_list
-    
+
+
 def read_library_result_map(filename):
     """
     Read a file that maps library id to result directory.
@@ -465,7 +472,8 @@ def read_library_result_map(filename):
             library_id, result_dir = line.split()
             results.append((library_id, result_dir))
     return results
-            
+
+
 def make_condor_archive_script(ininame, files):
     script = """Universe = vanilla
 
@@ -493,6 +501,7 @@ queue
     condor_stream.close()
     return condor_script
 
+
 def make_condor_upload_script(ininame):
     script = """Universe = vanilla
 
@@ -515,6 +524,7 @@ queue
     condor_stream.close()
     return condor_script
 
+
 def make_dag_fragment(ininame, archive_condor, upload_condor):
     """
     Make the couple of fragments compress and then upload the data.
@@ -531,10 +541,12 @@ def make_dag_fragment(ininame, archive_condor, upload_condor):
 
     return fragments
 
+
 def get_library_info(host, apidata, library_id):
     url = api.library_url(host, library_id)
     contents = api.retrieve_info(url, apidata)
     return contents
+
 
 def condor_srf_to_fastq(srf_file, target_pathname, paired, flowcell=None,
                         mid=None, force=False):
@@ -568,6 +580,7 @@ queue
 """ % (" ".join(args),)
     
     return  script 
+
 
 def condor_qseq_to_fastq(qseq_file, target_pathname, flowcell=None, force=False):
     args = ['-i', qseq_file, '-o', target_pathname ]
@@ -619,6 +632,7 @@ def find_archive_sequence_files(host, apidata, sequences_path,
     
     return lib_db
 
+
 def find_best_extension(extension_map, filename):
     """
     Search through extension_map looking for the best extension
@@ -638,7 +652,8 @@ def find_best_extension(extension_map, filename):
             elif len(ext) > len(best_ext):
                 best_ext = ext
     return best_ext
-    
+
+
 def make_submission_section(line_counter, files, standard_attributes, file_attributes):
     """
     Create a section in the submission ini file
@@ -653,18 +668,22 @@ def make_submission_section(line_counter, files, standard_attributes, file_attri
         inifile += ["%s=%s" % (k,v)]
     return inifile
 
+
 def make_base_name(pathname):
     base = os.path.basename(pathname)
     name, ext = os.path.splitext(base)
     return name
 
+
 def make_submission_name(ininame):
     name = make_base_name(ininame)
     return name + '.tgz'
 
+
 def make_ddf_name(pathname):
     name = make_base_name(pathname)
     return name + '.ddf'
+
 
 def make_condor_name(pathname, run_type=None):
     name = make_base_name(pathname)
@@ -673,6 +692,7 @@ def make_condor_name(pathname, run_type=None):
         elements.append(run_type)
     elements.append('condor')
     return ".".join(elements)
+
     
 def make_submit_script(target, header, body_list):
     """
@@ -703,6 +723,7 @@ def make_submit_script(target, header, body_list):
 def parse_filelist(file_string):
     return file_string.split(',')
 
+
 def validate_filelist(files):
     """
     Die if a file doesn't exist in a file list
@@ -710,6 +731,7 @@ def validate_filelist(files):
     for f in files:
         if not os.path.exists(f):
             raise RuntimeError("%s does not exist" % (f,))
-        
+
+
 if __name__ == "__main__":
     main()
