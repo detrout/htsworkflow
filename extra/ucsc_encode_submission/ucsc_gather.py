@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from ConfigParser import SafeConfigParser
+import fnmatch
 from glob import glob
 import json
 import logging
@@ -57,7 +58,7 @@ def main(cmdline=None):
         make_submission_ini(opts.host, apidata, library_result_map)
 
     if opts.makeddf:
-        make_all_ddfs(library_result_map, opts.daf)
+        make_all_ddfs(library_result_map, opts.daf, force=opts.force)
 
 
 def make_parser():
@@ -248,46 +249,9 @@ def link_daf(daf_path, library_result_map):
 
 
 def make_submission_ini(host, apidata, library_result_map, paired=True):
-    # ma is "map algorithm"
-    ma = 'TH1014'
-
-    if paired:
-        aligns = "Paired"
-    else:
-        aligns = "Aligns"
-
-    attributes = {
-      # bam index
-     '.bai':                   {'view': None, 'MapAlgorithm': 'NA'},
-     '.bam':                   {'view': aligns, 'MapAlgorithm': ma},
-     '.splices.bam':           {'view': 'Splices', 'MapAlgorithm': ma},
-     '.jnct':                  {'view': 'Junctions', 'MapAlgorithm': ma},
-     '.plus.bigwig':           {'view': 'PlusSignal', 'MapAlgorithm': ma},
-     '.minus.bigwig':          {'view': 'MinusSignal', 'MapAlgorithm': ma},
-     '.bigwig':                {'view': 'Signal', 'MapAlgorithm': ma},
-     '.tar.bz2':               {'view': None},
-     '.condor':                {'view': None},
-     '.daf':                   {'view': None},
-     '.ddf':                   {'view': None},
-     'denovo.genes.expr':       {'view': 'GeneDeNovo', 'MapAlgorithm': ma},
-     'denovo.transcripts.expr': {'view': 'TranscriptDeNovo', 'MapAlgorithm': ma},
-     'novel.genes.expr':       {'view': 'GeneDeNovo', 'MapAlgorithm': ma},
-     'novel.transcripts.expr': {'view': 'TranscriptDeNovo', 'MapAlgorithm': ma},
-     '.genes.expr':            {'view': 'GeneFPKM', 'MapAlgorithm': ma},
-     '.transcripts.expr':      {'view': 'TranscriptFPKM', 'MapAlgorithm': ma},
-     '.transcript.expr':       {'view': 'TranscriptFPKM', 'MapAlgorithm': ma},
-     '.fastq':                 {'view': 'Fastq', 'MapAlgorithm': 'NA' },
-     '_r1.fastq':              {'view': 'FastqRd1', 'MapAlgorithm': 'NA'},
-     '_r2.fastq':              {'view': 'FastqRd2', 'MapAlgorithm': 'NA'},
-     '.gtf':                   {'view': 'GeneModel', 'MapAlgorithm': ma},
-     '.ini':                   {'view': None},
-     '.log':                   {'view': None},
-     '.stats.txt':             {'view': 'InsLength', 'MapAlgorithm': ma},
-     '.srf':                   {'view': None},
-     '.wig':                   {'view': None},
-     '.zip':                   {'view': None},
-    }
-   
+    #attributes = get_filename_attribute_map(paired)
+    view_map = NameToViewMap(host, apidata)
+    
     candidate_fastq_src = {}
 
     for lib_id, result_dir in library_result_map:
@@ -297,59 +261,36 @@ def make_submission_ini(host, apidata, library_result_map, paired=True):
         inifile += [" ".join(order_by)]
         inifile += ['']
         line_counter = 1
-        lib_info = get_library_info(host, apidata, lib_id)
         result_ini = os.path.join(result_dir, result_dir+'.ini')
-
-        if lib_info['cell_line'].lower() == 'unknown':
-            logging.warn("Library %s missing cell_line" % (lib_id,))
-
-        standard_attributes = {'cell': lib_info['cell_line'],
-                               'replicate': lib_info['replicate'],
-                               }
-        if paired:
-            if lib_info['insert_size'] is None:
-                errmsg = "Library %s is missing insert_size, assuming 200"
-                logging.warn(errmsg % (lib_id,))
-                insert_size = 200
-            else:
-                insert_size = lib_info['insert_size']
-            standard_attributes['insertLength'] = insert_size
-            standard_attributes['readType'] = '2x75'
-        else:
-            standard_attributes['insertLength'] = 'ilNA'
-            standard_attributes['readType'] = '1x75D'
 
         # write other lines
         submission_files = os.listdir(result_dir)
         fastqs = {}
         for f in submission_files:
-            best_ext = find_best_extension(attributes, f)
-
-            if best_ext is not None:
-               if attributes[best_ext]['view'] is None:
-                   
-                   continue
-               elif best_ext.endswith('fastq'):
-                   fastqs.setdefault(best_ext, set()).add(f)
-               else:
-                   inifile.extend(
-                       make_submission_section(line_counter,
-                                               [f],
-                                               standard_attributes,
-                                               attributes[best_ext]
-                                               )
-                       )
-                   inifile += ['']
-                   line_counter += 1
-            else:
+            attributes = view_map.find_attributes(f, lib_id)
+            if attributes is None:
                 raise ValueError("Unrecognized file: %s" % (f,))
+            
+            ext = attributes["extension"]
+            if attributes['view'] is None:                   
+                continue               
+            elif attributes.get("type", None) == 'fastq':
+                fastqs.setdefault(ext, set()).add(f)
+            else:
+                inifile.extend(
+                    make_submission_section(line_counter,
+                                            [f],
+                                            attributes
+                                            )
+                    )
+                inifile += ['']
+                line_counter += 1
 
         # add in fastqs on a single line.
         for extension, fastq_set in fastqs.items():
             inifile.extend(
                 make_submission_section(line_counter, 
                                         fastq_set,
-                                        standard_attributes,
                                         attributes[extension])
             )
             inifile += ['']
@@ -358,7 +299,7 @@ def make_submission_ini(host, apidata, library_result_map, paired=True):
         f = open(result_ini,'w')
         f.write(os.linesep.join(inifile))
 
-
+        
 def make_lane_dict(lib_db, lib_id):
     """
     Convert the lane_set in a lib_db to a dictionary
@@ -370,7 +311,7 @@ def make_lane_dict(lib_db, lib_id):
     return dict(result)
 
 
-def make_all_ddfs(library_result_map, daf_name, make_condor=True):
+def make_all_ddfs(library_result_map, daf_name, make_condor=True, force=False):
     dag_fragment = []
     for lib_id, result_dir in library_result_map:
         ininame = result_dir+'.ini'
@@ -382,7 +323,7 @@ def make_all_ddfs(library_result_map, daf_name, make_condor=True):
 
     if make_condor and len(dag_fragment) > 0:
         dag_filename = 'submission.dagman'
-        if os.path.exists(dag_filename):
+        if not force and os.path.exists(dag_filename):
             logging.warn("%s exists, please delete" % (dag_filename,))
         else:
             f = open(dag_filename,'w')
@@ -607,6 +548,7 @@ def find_archive_sequence_files(host, apidata, sequences_path,
     candidate_lanes = {}
     for lib_id, result_dir in library_result_map:
         lib_info = get_library_info(host, apidata, lib_id)
+        lib_info['lanes'] = {}
         lib_db[lib_id] = lib_info
 
         for lane in lib_info['lane_set']:
@@ -627,44 +569,172 @@ def find_archive_sequence_files(host, apidata, sequences_path,
         lib_id = candidate_lanes.get(lane_key, None)
         if lib_id is not None:
             lib_info = lib_db[lib_id]
-            lanes = lib_info.setdefault('lanes', {})
-            lanes.setdefault(lane_key, set()).add(seq)
+            lib_info['lanes'].setdefault(lane_key, set()).add(seq)
     
     return lib_db
 
 
-def find_best_extension(extension_map, filename):
+class NameToViewMap(object):
+    """Determine view attributes for a given submission file name
     """
-    Search through extension_map looking for the best extension
-    The 'best' is the longest match
+    def __init__(self, root_url, apidata):
+        self.root_url = root_url
+        self.apidata = apidata
+        
+        self.lib_cache = {}
+        # ma is "map algorithm"
+        ma = 'TH1014'
 
-    :Args:
-      extension_map (dict): '.ext' -> { 'view': 'name' or None }
-      filename (str): the filename whose extention we are about to examine
-    """
-    best_ext = None
-    path, last_ext = os.path.splitext(filename)
+        self.patterns = [
+            ('*.bai',                   None),
+            ('*.bam',                   self._guess_bam_view),
+            ('*.splices.bam',           'Splices'),
+            ('*.jnct',                  'Junctions'),
+            ('*.plus.bigwig',           'PlusSignal'),
+            ('*.minus.bigwig',          'MinusSignal'),
+            ('*.bigwig',                'Signal'),
+            ('*.tar.bz2',               None),
+            ('*.condor',                None),
+            ('*.daf',                   None),
+            ('*.ddf',                   None),
+            ('*denovo.genes.expr',      'GeneDeNovo'),
+            ('*denovo.transcripts.expr','TranscriptDeNovo'),
+            ('*novel.genes.expr',       'GeneDeNovo'),
+            ('*novel.transcripts.expr', 'TranscriptDeNovo'),
+            ('*genes.expr',            'GeneFPKM'),
+            ('*transcripts.expr',      'TranscriptFPKM'),
+            ('*transcript.expr',       'TranscriptFPKM'),
+            ('*_r1.fastq',              'FastqRd1'),
+            ('*_r2.fastq',              'FastqRd2'),
+            ('*.fastq',                 'Fastq'),
+            ('*.gtf',                   'GeneModel'),
+            ('*.ini',                   None),
+            ('*.log',                   None),
+            ('*.stats.txt',             'InsLength'),
+            ('*.srf',                   None),
+            ('*.wig',                   None),
+            ('*.zip',                   None),
+            ]
 
-    for ext in extension_map.keys():
-        if filename.endswith(ext):
-            if best_ext is None:
-                best_ext = ext
-            elif len(ext) > len(best_ext):
-                best_ext = ext
-    return best_ext
+        self.views = {
+            None: {"MapAlgorithm": "NA"},
+            "Paired": {"MapAlgorithm": ma},
+            "Single": {"MapAlgorithm": ma},
+            "Splices": {"MapAlgorithm": ma},
+            "Junctions": {"MapAlgorithm": ma},
+            "PlusSignal": {"MapAlgorithm": ma},
+            "MinusSignal": {"MapAlgorithm": ma},
+            "Signal": {"MapAlgorithm": ma},
+            "GeneDeNovo": {"MapAlgorithm": ma},
+            "TranscriptDeNovo": {"MapAlgorithm": ma},
+            "GeneDeNovo": {"MapAlgorithm": ma},
+            "TranscriptDeNovo": {"MapAlgorithm": ma},
+            "GeneFPKM": {"MapAlgorithm": ma},
+            "TranscriptFPKM": {"MapAlgorithm": ma},
+            "TranscriptFPKM": {"MapAlgorithm": ma},
+            "FastqRd1": {"MapAlgorithm": "NA", "type": "fastq"},
+            "FastqRd2": {"MapAlgorithm": "NA", "type": "fastq"},
+            "Fastq": {"MapAlgorithm": "NA", "type": "fastq" },
+            "GeneModel": {"MapAlgorithm": ma},
+            "InsLength": {"MapAlgorithm": ma},
+            }
+        # view name is one of the attributes
+        for v in self.views.keys():
+            self.views[v]['view'] = v
+            
+    def find_attributes(self, pathname, lib_id):
+        """Looking for the best extension
+        The 'best' is the longest match
+        
+        :Args:
+        filename (str): the filename whose extention we are about to examine
+        """
+        path, filename = os.path.splitext(pathname)
+        if not self.lib_cache.has_key(lib_id):
+            self.lib_cache[lib_id] = get_library_info(self.root_url,
+                                                      self.apidata, lib_id)
+
+        lib_info = self.lib_cache[lib_id]
+        if lib_info['cell_line'].lower() == 'unknown':
+            logging.warn("Library %s missing cell_line" % (lib_id,))
+        attributes = {
+            'cell': lib_info['cell_line'],
+            'replicate': lib_info['replicate'],
+            }
+        is_paired = self._is_paired(lib_info)
+        
+        if is_paired:
+            attributes.update(self.get_paired_attributes(lib_info))
+        else:
+            attributes.update(self.get_single_attributes(lib_info))
+            
+        for pattern, view in self.patterns:
+            if fnmatch.fnmatch(pathname, pattern):
+                if callable(view):
+                    view = view(is_paired=is_paired)
+                    
+                attributes.update(self.views[view])
+                attributes["extension"] = pattern
+                return attributes
 
 
-def make_submission_section(line_counter, files, standard_attributes, file_attributes):
+    def _guess_bam_view(self, is_paired=True):
+        """Guess a view name based on library attributes
+        """
+        if is_paired:
+            return "Paired"
+        else:
+            return "Align"
+
+
+    def _is_paired(self, lib_info):
+        """Determine if a library is paired end"""
+        if len(lib_info["lane_set"]) == 0:
+            return False
+        
+        is_paired = 0
+        isnot_paired = 0
+        # check to see if all the flowcells are the same.
+        # otherwise we might need to do something complicated
+        for flowcell in lib_info["lane_set"]:
+            if flowcell["paired_end"]:
+                is_paired += 1
+            else:
+                isnot_paired += 1
+
+        logging.debug("Library %s: %d were, %d were not paired" % \
+                     (lib_info["library_id"], is_paired, isnot_paired))
+
+        if is_paired > isnot_paired:
+            return True
+        elif is_paired < isnot_paired:
+            return False
+        else:
+            raise RuntimeError("Assumptions about paired vs not paired are wrong")
+
+    def get_paired_attributes(self, lib_info):
+        if lib_info['insert_size'] is None:
+            errmsg = "Library %s is missing insert_size, assuming 200"
+            logging.warn(errmsg % (lib_info["library_id"],))
+            insert_size = 200
+        else:
+            insert_size = lib_info['insert_size']
+        return {'insertLength': insert_size,
+                'readType': '2x75'}
+
+    def get_single_attributes(self, lib_info):
+        return {'insertLength':'ilNA',
+                'readType': '1x75D'
+                }
+
+def make_submission_section(line_counter, files, attributes):
     """
     Create a section in the submission ini file
     """
-    inifile = [ '[line%s]' % (line_counter,) ]
+    inifile = [ "[line%s]" % (line_counter,) ]
     inifile += ["files=%s" % (",".join(files))]
-    cur_attributes = {}
-    cur_attributes.update(standard_attributes)
-    cur_attributes.update(file_attributes)
-    
-    for k,v in cur_attributes.items():
+
+    for k,v in attributes.items():
         inifile += ["%s=%s" % (k,v)]
     return inifile
 
@@ -677,12 +747,12 @@ def make_base_name(pathname):
 
 def make_submission_name(ininame):
     name = make_base_name(ininame)
-    return name + '.tgz'
+    return name + ".tgz"
 
 
 def make_ddf_name(pathname):
     name = make_base_name(pathname)
-    return name + '.ddf'
+    return name + ".ddf"
 
 
 def make_condor_name(pathname, run_type=None):
@@ -690,16 +760,16 @@ def make_condor_name(pathname, run_type=None):
     elements = [name]
     if run_type is not None:
         elements.append(run_type)
-    elements.append('condor')
+    elements.append("condor")
     return ".".join(elements)
 
-    
+
 def make_submit_script(target, header, body_list):
     """
     write out a text file
 
     this was intended for condor submit scripts
-    
+
     Args:
       target (str or stream): 
         if target is a string, we will open and close the file
@@ -711,7 +781,7 @@ def make_submit_script(target, header, body_list):
         a list of blocks to add to the file.
     """
     if type(target) in types.StringTypes:
-        f = open(target,'w')
+        f = open(target,"w")
     else:
         f = target
     f.write(header)
@@ -721,7 +791,7 @@ def make_submit_script(target, header, body_list):
         f.close()
 
 def parse_filelist(file_string):
-    return file_string.split(',')
+    return file_string.split(",")
 
 
 def validate_filelist(files):
