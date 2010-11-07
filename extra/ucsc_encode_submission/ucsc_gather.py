@@ -423,7 +423,7 @@ arguments = czvf ../%(archivename)s %(filelist)s
 
 Error = compress.err.$(Process).log
 Output = compress.out.$(Process).log
-Log = /tmp/submission-compress.log
+Log = /tmp/submission-compress-%(user)s.log
 initialdir = %(initialdir)s
 
 queue 
@@ -434,7 +434,8 @@ queue
 
     context = {'archivename': make_submission_name(ininame),
                'filelist': " ".join(files),
-               'initialdir': os.getcwd()}
+               'initialdir': os.getcwd(),
+               'user': os.getlogin()}
 
     condor_script = make_condor_name(ininame, 'archive')
     condor_stream = open(condor_script,'w')
@@ -447,17 +448,18 @@ def make_condor_upload_script(ininame):
     script = """Universe = vanilla
 
 Executable = /usr/bin/lftp
-arguments = -c put ../%(archivename)s -o ftp://detrout@encodeftp.cse.ucsc.edu/
+arguments = -c put ../%(archivename)s -o ftp://detrout@encodeftp.cse.ucsc.edu/%(archivename)s
 
 Error = upload.err.$(Process).log
 Output = upload.out.$(Process).log
-Log = /tmp/submission-upload.log
+Log = /tmp/submission-upload-%(user)s.log
 initialdir = %(initialdir)s
 
 queue 
 """
     context = {'archivename': make_submission_name(ininame),
-               'initialdir': os.getcwd()}
+               'initialdir': os.getcwd(),
+               'user': os.getlogin()}
 
     condor_script = make_condor_name(ininame, 'upload')
     condor_stream = open(condor_script,'w')
@@ -597,13 +599,14 @@ class NameToViewMap(object):
             ('*.condor',                None),
             ('*.daf',                   None),
             ('*.ddf',                   None),
-            ('*denovo.genes.expr',      'GeneDeNovo'),
-            ('*denovo.transcripts.expr','TranscriptDeNovo'),
-            ('*novel.genes.expr',       'GeneDeNovo'),
-            ('*novel.transcripts.expr', 'TranscriptDeNovo'),
-            ('*genes.expr',            'GeneFPKM'),
-            ('*transcripts.expr',      'TranscriptFPKM'),
-            ('*transcript.expr',       'TranscriptFPKM'),
+            ('cufflinks-0.9.0-genes.expr',       'GeneDeNovo'),
+            ('cufflinks-0.9.0-transcripts.expr', 'TranscriptDeNovo'),
+            ('cufflinks-0.9.0-transcripts.gtf',  'GeneModel'),
+            ('GENCODE-v3c-genes.expr',       'GeneGencV3c'),
+            ('GENCODE-v3c-transcripts.expr', 'TranscriptGencV3c'),
+            ('GENCODE-v4-genes.expr',       'GeneGencV4'),
+            ('GENCODE-v4-transcripts.expr', 'TranscriptGencV4'),
+            ('GENCODE-v4-transcript.expr', 'TranscriptGencV4'),
             ('*_r1.fastq',              'FastqRd1'),
             ('*_r2.fastq',              'FastqRd2'),
             ('*.fastq',                 'Fastq'),
@@ -625,13 +628,13 @@ class NameToViewMap(object):
             "PlusSignal": {"MapAlgorithm": ma},
             "MinusSignal": {"MapAlgorithm": ma},
             "Signal": {"MapAlgorithm": ma},
+            "GeneModel": {"MapAlgorithm": ma},
             "GeneDeNovo": {"MapAlgorithm": ma},
             "TranscriptDeNovo": {"MapAlgorithm": ma},
-            "GeneDeNovo": {"MapAlgorithm": ma},
-            "TranscriptDeNovo": {"MapAlgorithm": ma},
-            "GeneFPKM": {"MapAlgorithm": ma},
-            "TranscriptFPKM": {"MapAlgorithm": ma},
-            "TranscriptFPKM": {"MapAlgorithm": ma},
+            "GeneGencV3c": {"MapAlgorithm": ma},
+            "TranscriptGencV3c": {"MapAlgorithm": ma},
+            "GeneGencV4": {"MapAlgorithm": ma},
+            "TranscriptGencV4": {"MapAlgorithm": ma},
             "FastqRd1": {"MapAlgorithm": "NA", "type": "fastq"},
             "FastqRd2": {"MapAlgorithm": "NA", "type": "fastq"},
             "Fastq": {"MapAlgorithm": "NA", "type": "fastq" },
