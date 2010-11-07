@@ -1,3 +1,4 @@
+from htsworkflow.frontend.samples.changelist import ChangeList
 from htsworkflow.frontend.inventory.models import Item, LongTermStorage, ItemType
 from htsworkflow.frontend.inventory.bcmagic import item_search
 from htsworkflow.frontend.bcmagic.plugin import register_search_plugin
@@ -137,7 +138,16 @@ def index(request):
     """
     Inventory Index View
     """
+    # build changelist
+    item_changelist = ChangeList(request, Item,
+        list_filter=[],                 
+        search_fields=[],
+        list_per_page=200,
+        queryset=Item.objects.all()
+    )
+
     context_dict = {
+        'item_changelist': item_changelist,
         'page_name': 'Inventory Index'
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)

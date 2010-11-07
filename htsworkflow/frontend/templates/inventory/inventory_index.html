@@ -1,10 +1,69 @@
-{% extends "inventory/inventory_app.html" %}
-
-{% block additional_javascript %}
-<script type="text/javascript" src="/static/js/htsw-inventory.js"></script>
+{% extends "base_site.html" %}
+{% load adminmedia admin_list i18n %}
+{% block extrahead %}
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $(window).resize(function() {
+           var window_height = $(window).height();
+           var position = $("#changelist table").position();
+           height = window_height - position.top;
+           $("#changelist table.filtered").height(height);
+           $("#changelist-filter").height(height);
+        });
+        $(window).resize();
+      });
+    </script>
 {% endblock %}
-
+{% block bodyclass %}change-list{% endblock %}
+{% block coltype %}flex{% endblock %}
 {% block content %}
-<div id="grid_target"></div>
+<div id="inventory-index-div" >
+  <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+    {% block search %}{% search_form item_changelist %}{% endblock %}
+ 
+    {% block pagination %}{% pagination item_changelist %}{% endblock %}
+
+    {% block filters %}
+    {% if item_changelist.has_filters %}
+    <div id="changelist-filter">
+      <h2 >{% trans 'Filter' %}</h2>
+      {% for spec in item_changelist.filter_specs %}
+         {% admin_list_filter cl spec %}
+         {% endfor %}
+       </div>
+    {% endif %}
+    {% endblock %}
+  {% block summary_stats %}
+  <table class="{% if cl.has_filters %} filtered{% endif %}">
+    <thead >
+      <tr >
+        <td >UUID</td>
+        <td >Barcode ID</td>
+        <td >Location</td>
+        <td >Model</td>
+        <td >Vendor</td>
+        <td >Created</td>
+        <td >Contains</td>
+      </tr>
+    </thead>
+    <tbody >
+      {% for item in item_changelist.get_query_set %}
+      <tr >
+        <td >{{ item.uuid }}</td>
+        <td >{{ item.barcode_id}}</td>
+        <td >{{ item.location }}</td>
+        <td >{{ item.item_type }}</td>
+        <td ></td>      
+        <td >{{ item.creation_date }}</td>      
+        <td >
+          {% for content in item.longtermstorage_set.all %}
+          {{ content.flowcell }}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endblock %}
+</div>
 {% endblock %}
-    
