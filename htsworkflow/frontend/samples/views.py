@@ -62,7 +62,7 @@ def count_lanes(lane_set):
 
 def create_library_context(cl):
     """
-    Create a list of libraries that includes how many lanes were run
+     Create a list of libraries that includes how many lanes were run
     """
     records = []
     #for lib in library_items.object_list:
@@ -88,7 +88,7 @@ def create_library_context(cl):
     return {'library_list': records }
 
 def library(request):
-   # build changelist
+    # build changelist
     fcl = ChangeList(request, Library,
         list_filter=['affiliations', 'library_species'],
         search_fields=['id', 'library_name', 'amplified_from_sample__id'],
@@ -103,7 +103,6 @@ def library(request):
     
     app_context = {
         'page_name': 'Library Index',
-        'east_region_config_div': 'changelist-filter',
         'body': t.render(c)
     }
     app_context.update(SAMPLES_CONTEXT_DEFAULTS)
