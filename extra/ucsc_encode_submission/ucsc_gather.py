@@ -584,6 +584,7 @@ class NameToViewMap(object):
         self.apidata = apidata
         
         self.lib_cache = {}
+        self.lib_paired = {}
         # ma is "map algorithm"
         ma = 'TH1014'
 
@@ -664,7 +665,7 @@ class NameToViewMap(object):
             'cell': lib_info['cell_line'],
             'replicate': lib_info['replicate'],
             }
-        is_paired = self._is_paired(lib_info)
+        is_paired = self._is_paired(lib_id, lib_info)
         
         if is_paired:
             attributes.update(self.get_paired_attributes(lib_info))
@@ -690,30 +691,41 @@ class NameToViewMap(object):
             return "Align"
 
 
-    def _is_paired(self, lib_info):
+    def _is_paired(self, lib_id, lib_info):
         """Determine if a library is paired end"""
         if len(lib_info["lane_set"]) == 0:
             return False
-        
-        is_paired = 0
-        isnot_paired = 0
-        # check to see if all the flowcells are the same.
-        # otherwise we might need to do something complicated
-        for flowcell in lib_info["lane_set"]:
-            if flowcell["paired_end"]:
-                is_paired += 1
+
+        if not self.lib_paired.has_key(lib_id):
+            is_paired = 0
+            isnot_paired = 0
+            failed = 0
+            # check to see if all the flowcells are the same.
+            # otherwise we might need to do something complicated
+            for flowcell in lib_info["lane_set"]:
+                # yes there's also a status code, but this comparison 
+                # is easier to read
+                if flowcell["status"].lower() == "failed":
+                    # ignore failed flowcell
+                    failed += 1
+                    pass
+                elif flowcell["paired_end"]:
+                    is_paired += 1
+                else:
+                    isnot_paired += 1
+                    
+            logging.debug("Library %s: %d paired, %d single, %d failed" % \
+                     (lib_info["library_id"], is_paired, isnot_paired, failed))
+
+            if is_paired > isnot_paired:
+                self.lib_paired[lib_id] = True
+            elif is_paired < isnot_paired:
+                self.lib_paired[lib_id] = False
             else:
-                isnot_paired += 1
-
-        logging.debug("Library %s: %d were, %d were not paired" % \
-                     (lib_info["library_id"], is_paired, isnot_paired))
-
-        if is_paired > isnot_paired:
-            return True
-        elif is_paired < isnot_paired:
-            return False
-        else:
-            raise RuntimeError("Assumptions about paired vs not paired are wrong")
+                raise RuntimeError("Equal number of paired & unpaired lanes."\
+                                   "Can't guess library paired status")
+            
+        return self.lib_paired[lib_id]
 
     def get_paired_attributes(self, lib_info):
         if lib_info['insert_size'] is None:
