@@ -20,6 +20,8 @@ from htsworkflow.util import api
 from htsworkflow.pipelines.sequences import \
     create_sequence_table, \
     scan_for_sequences
+from htsworkflow.pipelines import qseq2fastq
+from htsworkflow.pipelines import srf2fastq
 
 def main(cmdline=None):
     parser = make_parser()
@@ -124,22 +126,22 @@ def build_fastqs(host, apidata, sequences_path, library_result_map,
     """
     qseq_condor_header = """
 Universe=vanilla
-executable=/woldlab/rattus/lvol0/mus/home/diane/proj/solexa/gaworkflow/scripts/qseq2fastq
+executable=%(exe)s
 error=log/qseq2fastq.err.$(process).log
 output=log/qseq2fastq.out.$(process).log
 log=log/qseq2fastq.log
 
-"""
+""" % {'exe': sys.executable }
     qseq_condor_entries = []
     srf_condor_header = """
 Universe=vanilla
-executable=/woldlab/rattus/lvol0/mus/home/diane/proj/solexa/gaworkflow/scripts/srf2fastq
+executable=%(exe)s
 output=log/srf_pair_fastq.out.$(process).log
 error=log/srf_pair_fastq.err.$(process).log
 log=log/srf_pair_fastq.log
 environment="PYTHONPATH=/home/diane/lib/python2.6/site-packages:/home/diane/proj/solexa/gaworkflow PATH=/woldlab/rattus/lvol0/mus/home/diane/bin:/usr/bin:/bin"
 
-"""
+""" % {'exe': sys.executable }
     srf_condor_entries = []
     lib_db = find_archive_sequence_files(host, 
                                          apidata, 
@@ -493,7 +495,8 @@ def get_library_info(host, apidata, library_id):
 
 def condor_srf_to_fastq(srf_file, target_pathname, paired, flowcell=None,
                         mid=None, force=False):
-    args = [ srf_file, ]
+    py = srf2fastq.__file__
+    args = [ py, srf_file, ]
     if paired:
         args.extend(['--left', target_pathname])
         # this is ugly. I did it because I was pregenerating the target
@@ -526,7 +529,8 @@ queue
 
 
 def condor_qseq_to_fastq(qseq_file, target_pathname, flowcell=None, force=False):
-    args = ['-i', qseq_file, '-o', target_pathname ]
+    py = qseq2fastq.__file__
+    args = [py, '-i', qseq_file, '-o', target_pathname ]
     if flowcell is not None:
         args.extend(['-f', flowcell])
     script = """
