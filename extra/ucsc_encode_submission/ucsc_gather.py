@@ -596,6 +596,7 @@ class NameToViewMap(object):
             ('*.bai',                   None),
             ('*.bam',                   self._guess_bam_view),
             ('*.splices.bam',           'Splices'),
+            ('junctions.bed',           'Junctions'),
             ('*.jnct',                  'Junctions'),
             ('*.plus.bigwig',           'PlusSignal'),
             ('*.minus.bigwig',          'MinusSignal'),
