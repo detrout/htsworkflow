@@ -268,6 +268,7 @@ def make_submission_ini(host, apidata, library_result_map, paired=True):
         # write other lines
         submission_files = os.listdir(result_dir)
         fastqs = {}
+        fastq_attributes = {}
         for f in submission_files:
             attributes = view_map.find_attributes(f, lib_id)
             if attributes is None:
@@ -278,6 +279,7 @@ def make_submission_ini(host, apidata, library_result_map, paired=True):
                 continue               
             elif attributes.get("type", None) == 'fastq':
                 fastqs.setdefault(ext, set()).add(f)
+                fastq_attributes[ext] = attributes
             else:
                 inifile.extend(
                     make_submission_section(line_counter,
@@ -287,13 +289,13 @@ def make_submission_ini(host, apidata, library_result_map, paired=True):
                     )
                 inifile += ['']
                 line_counter += 1
+                # add in fastqs on a single line.
 
-        # add in fastqs on a single line.
-        for extension, fastq_set in fastqs.items():
+        for extension, fastq_files in fastqs.items():
             inifile.extend(
                 make_submission_section(line_counter, 
-                                        fastq_set,
-                                        attributes[extension])
+                                        fastq_files,
+                                        fastq_attributes[extension])
             )
             inifile += ['']
             line_counter += 1
