@@ -103,6 +103,7 @@ def startedEmail(request, pk):
             email = EmailMessage(subject, body, sender, to=[user_email])
             if bcc_managers:
                 email.bcc = settings.MANAGERS
+            email.bcc.append(settings.NOTIFICATION_BCC)
             email.send()
 
         emails.append((user_email, subject, body, sending))

@@ -96,6 +96,8 @@ if options.has_option('frontend', 'notification_sender'):
     NOTIFICATION_SENDER = options.get('frontend', 'notification_sender')
 else:
     NOTIFICATION_SENDER = "noreply@example.com"
+NOTIFICATION_BCC = []
+options_to_list(options, NOTIFICATION_BCC, 'frontend', 'notification_bcc')
 
 # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
 DATABASE_ENGINE = options.get('frontend', 'database_engine')
