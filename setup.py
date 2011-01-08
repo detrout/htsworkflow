@@ -34,5 +34,6 @@ setup(
         "scripts/htsw-srf",
         "scripts/htsw-srf2fastq",
         "scripts/htsw-update-archive",
+        "scripts/htsw-validate",
         ],
     )
