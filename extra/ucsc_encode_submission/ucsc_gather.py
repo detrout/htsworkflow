@@ -46,6 +46,9 @@ def main(cmdline=None):
     for a in args:
         library_result_map.extend(read_library_result_map(a))
 
+    if opts.make_tree_from is not None:
+        make_tree_from(opts.make_tree_from, library_result_map)
+            
     if opts.daf is not None:
         link_daf(opts.daf, library_result_map)
 
@@ -83,6 +86,9 @@ def make_parser():
     parser = OptionParser()
 
     # commands
+    parser.add_option('--make-tree-from',
+                      help="create directories & link data files",
+                      default=None)
     parser.add_option('--fastq', help="generate scripts for making fastq files",
                       default=False, action="store_true")
 
@@ -113,6 +119,26 @@ def make_parser():
     return parser
 
 
+def make_tree_from(source_path, library_result_map):
+    """Create a tree using data files from source path.
+    """
+    for lib_id, lib_path in library_result_map:
+        if not os.path.exists(lib_path):
+            logging.info("Making dir {0}".format(lib_path))
+            os.mkdir(lib_path)
+        source_lib_dir = os.path.join(source_path, lib_path)
+        if os.path.exists(source_lib_dir):
+            pass
+        for filename in os.listdir(source_lib_dir):
+            source_pathname = os.path.join(source_lib_dir, filename)
+            target_pathname = os.path.join(lib_path, filename)
+            if not os.path.exists(source_pathname):
+                raise IOError("{0} does not exist".format(source_pathname))
+            if not os.path.exists(target_pathname):
+                os.symlink(source_pathname, target_pathname)
+                logging.info(
+                    'LINK {0} to {1}'.format(source_pathname, target_pathname))
+    
 def build_fastqs(host, apidata, sequences_path, library_result_map, 
                  force=False ):
     """
@@ -423,12 +449,14 @@ def make_condor_archive_script(ininame, files):
     script = """Universe = vanilla
 
 Executable = /bin/tar
-arguments = czvf ../%(archivename)s %(filelist)s
+arguments = czvhf ../%(archivename)s %(filelist)s
 
 Error = compress.err.$(Process).log
 Output = compress.out.$(Process).log
 Log = /tmp/submission-compress-%(user)s.log
 initialdir = %(initialdir)s
+environment="GZIP=-3"
+request_memory = 20
 
 queue 
 """
@@ -596,10 +624,11 @@ class NameToViewMap(object):
 
         self.patterns = [
             ('*.bai',                   None),
-            ('*.bam',                   self._guess_bam_view),
             ('*.splices.bam',           'Splices'),
+            ('*.bam',                   self._guess_bam_view),
             ('junctions.bed',           'Junctions'),
             ('*.jnct',                  'Junctions'),
+            ('*.unique.bigwig',         None),
             ('*.plus.bigwig',           'PlusSignal'),
             ('*.minus.bigwig',          'MinusSignal'),
             ('*.bigwig',                'Signal'),
@@ -607,21 +636,25 @@ class NameToViewMap(object):
             ('*.condor',                None),
             ('*.daf',                   None),
             ('*.ddf',                   None),
-            ('cufflinks-0.9.0-genes.expr',       'GeneDeNovo'),
-            ('cufflinks-0.9.0-transcripts.expr', 'TranscriptDeNovo'),
-            ('cufflinks-0.9.0-transcripts.gtf',  'GeneModel'),
-            ('GENCODE-v3c-genes.expr',       'GeneGencV3c'),
-            ('GENCODE-v3c-transcripts.expr', 'TranscriptGencV3c'),
-            ('GENCODE-v4-genes.expr',       'GeneGencV4'),
-            ('GENCODE-v4-transcripts.expr', 'TranscriptGencV4'),
-            ('GENCODE-v4-transcript.expr', 'TranscriptGencV4'),
+            ('*.?ufflinks-0.9.0?genes.expr',       'GeneDeNovo'),
+            ('*.?ufflinks-0.9.0?transcripts.expr', 'TranscriptDeNovo'),
+            ('*.?ufflinks-0.9.0?transcripts.gtf',  'GeneModel'),
+            ('*.GENCODE-v3c?genes.expr',       'GeneGCV3c'),
+            ('*.GENCODE-v3c?transcript*.expr', 'TranscriptGCV3c'),
+            ('*.GENCODE-v3c?transcript*.gtf',  'TranscriptGencV3c'),
+            ('*.GENCODE-v4?genes.expr',        None), #'GeneGCV4'),
+            ('*.GENCODE-v4?transcript*.expr',  None), #'TranscriptGCV4'),
+            ('*.GENCODE-v4?transcript*.gtf',   None), #'TranscriptGencV4'),
+            ('*_1.75mers.fastq',              'FastqRd1'),
+            ('*_2.75mers.fastq',              'FastqRd2'),
             ('*_r1.fastq',              'FastqRd1'),
             ('*_r2.fastq',              'FastqRd2'),
             ('*.fastq',                 'Fastq'),
             ('*.gtf',                   'GeneModel'),
             ('*.ini',                   None),
             ('*.log',                   None),
-            ('*.stats.txt',             'InsLength'),
+            ('paired-end-distribution*', 'InsLength'),
+            ('*.stats.txt',              'InsLength'),
             ('*.srf',                   None),
             ('*.wig',                   None),
             ('*.zip',                   None),
@@ -630,6 +663,7 @@ class NameToViewMap(object):
         self.views = {
             None: {"MapAlgorithm": "NA"},
             "Paired": {"MapAlgorithm": ma},
+            "Aligns": {"MapAlgorithm": ma},
             "Single": {"MapAlgorithm": ma},
             "Splices": {"MapAlgorithm": ma},
             "Junctions": {"MapAlgorithm": ma},
@@ -639,14 +673,14 @@ class NameToViewMap(object):
             "GeneModel": {"MapAlgorithm": ma},
             "GeneDeNovo": {"MapAlgorithm": ma},
             "TranscriptDeNovo": {"MapAlgorithm": ma},
-            "GeneGencV3c": {"MapAlgorithm": ma},
+            "GeneGCV3c": {"MapAlgorithm": ma},
+            "TranscriptGCV3c": {"MapAlgorithm": ma},
             "TranscriptGencV3c": {"MapAlgorithm": ma},
-            "GeneGencV4": {"MapAlgorithm": ma},
-            "TranscriptGencV4": {"MapAlgorithm": ma},
+            "GeneGCV4": {"MapAlgorithm": ma},
+            "TranscriptGCV4": {"MapAlgorithm": ma},
             "FastqRd1": {"MapAlgorithm": "NA", "type": "fastq"},
             "FastqRd2": {"MapAlgorithm": "NA", "type": "fastq"},
             "Fastq": {"MapAlgorithm": "NA", "type": "fastq" },
-            "GeneModel": {"MapAlgorithm": ma},
             "InsLength": {"MapAlgorithm": ma},
             }
         # view name is one of the attributes
@@ -695,7 +729,7 @@ class NameToViewMap(object):
         if is_paired:
             return "Paired"
         else:
-            return "Align"
+            return "Aligns"
 
 
     def _is_paired(self, lib_id, lib_info):

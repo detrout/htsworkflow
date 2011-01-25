@@ -16,13 +16,20 @@
     
     <script type="text/javascript" src="/static/js/htsw.js"></script>
 </head>
-<body>
-    <!-- Main Content -->
-    {% block msg %}
-    <div class="msg">{{ msg }}</div>
-    {% endblock %}
-    {% block content %}
-    {{ body }}
-    {% endblock %}
+<body class="{% block bodyclass %}{% endblock %}">
+    <!-- Content -->
+    <div id="content" class="{% block coltype %}colM{% endblock %}">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+        {% block content %}
+        {% block object-tools %}{% endblock %}
+        {{ body }}
+        {% endblock %}
+        {% block sidebar %}{% endblock %}
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    {% block footer %}<div id="footer"></div>{% endblock %}
 </body>
 </html>

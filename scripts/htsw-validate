@@ -1,0 +1,6 @@
+import sys
+
+from htsworkflow.util import validate
+
+if __name__ == "__main__":
+    sys.exit(validate.main(sys.argv))
