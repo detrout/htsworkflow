@@ -161,7 +161,8 @@ class Library(models.Model):
       ('1A', 'Ligation, then gel'),
       ('PCR', 'Ligation, then PCR'),
       ('1Ab', 'Ligation, PCR, then gel'),
-      ('1Aa', 'Ligation, gel, then PCR'),
+      ('1Ac', 'Ligation, gel, then 12x PCR'),
+      ('1Aa', 'Ligation, gel, then 18x PCR'),
       ('2A', 'Ligation, PCR, gel, PCR'),
       ('Done', 'Completed'),
     )
