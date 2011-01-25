@@ -164,7 +164,7 @@ class ElandTests(unittest.TestCase):
 
 
 def suite():
-    return unittest.makeSquite(ElandTests, 'test')
+    return unittest.makeSuite(ElandTests, 'test')
 
 if __name__ == "__main__":
     unittest.main(defaultTest="suite")
