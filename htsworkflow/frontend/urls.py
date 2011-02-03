@@ -43,9 +43,9 @@ urlpatterns = patterns('',
     # sample / library information
     (r'^samples/', include('htsworkflow.frontend.samples.urls')),                   
     # Raw result files
-    (r'^results/(?P<flowcell_id>\w+)/(?P<cnm>C[1-9]-[0-9]+)/summary/',
+    (r'^results/(?P<flowcell_id>\w+)/(?P<cnm>C[0-9]+-[0-9]+)/summary/',
       'htsworkflow.frontend.samples.views.summaryhtm_fc_cnm'),
-    (r'^results/(?P<flowcell_id>\w+)/(?P<cnm>C[1-9]-[0-9]+)/eland_result/(?P<lane>[1-8])',
+    (r'^results/(?P<flowcell_id>\w+)/(?P<cnm>C[0-9]+-[0-9]+)/eland_result/(?P<lane>[1-8])',
       'htsworkflow.frontend.samples.views.result_fc_cnm_eland_lane'),
     (r'^results/(?P<fc_id>\w+)/(?P<cnm>C[1-9]-[0-9]+)/bedfile/(?P<lane>[1-8])/ucsc',
       'htsworkflow.frontend.samples.views.bedfile_fc_cnm_eland_lane_ucsc'),
