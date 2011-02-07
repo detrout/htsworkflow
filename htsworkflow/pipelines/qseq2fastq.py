@@ -43,7 +43,7 @@ def main(cmdline=None):
 
 
 def make_parser():
-    usage = "%prog: [options] *_qseq.txt"
+    usage = "%prog: [options] *_qseq.txt\nProduces Phred33 files by default"
     parser = OptionParser(usage)
     parser.add_option("-a", "--fasta", default=False, action="store_true",
                       help="produce fasta files instead of fastq files")
