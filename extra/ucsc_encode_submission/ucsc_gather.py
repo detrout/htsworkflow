@@ -4,13 +4,16 @@ import fnmatch
 from glob import glob
 import json
 import logging
+import netrc
 from optparse import OptionParser
 import os
 from pprint import pprint, pformat
 import shlex
 from StringIO import StringIO
-import time
+import stat
+from subprocess import Popen, PIPE
 import sys
+import time
 import types
 import urllib
 import urllib2
@@ -38,6 +41,9 @@ def main(cmdline=None):
 
     if opts.host is None or opts.apiid is None or opts.apikey is None:
         parser.error("Please specify host url, apiid, apikey")
+
+    if opts.makeddf and opts.daf is None:
+        parser.error("Please specify your daf when making ddf files")
 
     if len(args) == 0:
         parser.error("I need at least one library submission-dir input file")
@@ -271,8 +277,12 @@ def link_daf(daf_path, library_result_map):
     base_daf = os.path.basename(daf_path)
     
     for lib_id, result_dir in library_result_map:
+        if not os.path.exists(result_dir):
+            raise RuntimeError("Couldn't find target directory %s" %(result_dir,))
         submission_daf = os.path.join(result_dir, base_daf)
         if not os.path.exists(submission_daf):
+            if not os.path.exists(daf_path):
+                raise RuntimeError("Couldn't find daf: %s" %(daf_path,))
             os.link(daf_path, submission_daf)
 
 
@@ -284,7 +294,7 @@ def make_submission_ini(host, apidata, library_result_map, paired=True):
 
     for lib_id, result_dir in library_result_map:
         order_by = ['order_by=files', 'view', 'replicate', 'cell', 
-                    'readType', 'mapAlgorithm', 'insertLength' ]
+                    'readType', 'mapAlgorithm', 'insertLength', 'md5sum' ]
         inifile =  ['[config]']
         inifile += [" ".join(order_by)]
         inifile += ['']
@@ -297,6 +307,7 @@ def make_submission_ini(host, apidata, library_result_map, paired=True):
         fastq_attributes = {}
         for f in submission_files:
             attributes = view_map.find_attributes(f, lib_id)
+            attributes['md5sum'] = "None"
             if attributes is None:
                 raise ValueError("Unrecognized file: %s" % (f,))
             
@@ -307,6 +318,9 @@ def make_submission_ini(host, apidata, library_result_map, paired=True):
                 fastqs.setdefault(ext, set()).add(f)
                 fastq_attributes[ext] = attributes
             else:
+                md5sum = make_md5sum(os.path.join(result_dir,f))
+                if md5sum is not None:
+                    attributes['md5sum']=md5sum
                 inifile.extend(
                     make_submission_section(line_counter,
                                             [f],
@@ -378,6 +392,9 @@ def make_ddf(ininame,  daf_name, guess_ddf=False, make_condor=False, outdir=None
         output = open(ddf_name,'w')
 
     file_list = read_ddf_ini(ininame, output)
+    logging.info(
+        "Read config {0}, found files: {1}".format(
+            ininame, ", ".join(file_list)))
 
     file_list.append(daf_name)
     if ddf_name is not None:
@@ -480,7 +497,7 @@ def make_condor_upload_script(ininame):
     script = """Universe = vanilla
 
 Executable = /usr/bin/lftp
-arguments = -c put ../%(archivename)s -o ftp://detrout@encodeftp.cse.ucsc.edu/%(archivename)s
+arguments = -c put ../%(archivename)s -o ftp://%(ftpuser)s:%(ftppassword)s@%(ftphost)s/%(archivename)s
 
 Error = upload.err.$(Process).log
 Output = upload.out.$(Process).log
@@ -489,14 +506,24 @@ initialdir = %(initialdir)s
 
 queue 
 """
+    auth = netrc.netrc(os.path.expanduser("~diane/.netrc"))
+    
+    encodeftp = 'encodeftp.cse.ucsc.edu'
+    ftpuser = auth.hosts[encodeftp][0]
+    ftppassword = auth.hosts[encodeftp][2]
     context = {'archivename': make_submission_name(ininame),
                'initialdir': os.getcwd(),
-               'user': os.getlogin()}
+               'user': os.getlogin(),
+               'ftpuser': ftpuser,
+               'ftppassword': ftppassword,
+               'ftphost': encodeftp}
 
     condor_script = make_condor_name(ininame, 'upload')
     condor_stream = open(condor_script,'w')
     condor_stream.write(script % context)
     condor_stream.close()
+    os.chmod(condor_script, stat.S_IREAD|stat.S_IWRITE)
+
     return condor_script
 
 
@@ -653,6 +680,7 @@ class NameToViewMap(object):
             ('*.gtf',                   'GeneModel'),
             ('*.ini',                   None),
             ('*.log',                   None),
+            ('*.md5',                   None),
             ('paired-end-distribution*', 'InsLength'),
             ('*.stats.txt',              'InsLength'),
             ('*.srf',                   None),
@@ -858,6 +886,46 @@ def validate_filelist(files):
         if not os.path.exists(f):
             raise RuntimeError("%s does not exist" % (f,))
 
+def make_md5sum(filename):
+    """Quickly find the md5sum of a file
+    """
+    md5_cache = os.path.join(filename+".md5")
+    print md5_cache
+    if os.path.exists(md5_cache):
+        logging.debug("Found md5sum in {0}".format(md5_cache))
+        stream = open(md5_cache,'r')
+        lines = stream.readlines()
+        md5sum = parse_md5sum_line(lines, filename)
+    else:
+        md5sum = make_md5sum_unix(filename, md5_cache)
+    return md5sum
+    
+def make_md5sum_unix(filename, md5_cache):
+    cmd = ["md5sum", filename]
+    logging.debug("Running {0}".format(" ".join(cmd)))
+    p = Popen(cmd, stdout=PIPE)
+    stdin, stdout = p.communicate()
+    retcode = p.wait()
+    logging.debug("Finished {0} retcode {1}".format(" ".join(cmd), retcode))
+    if retcode != 0:
+        logging.error("Trouble with md5sum for {0}".format(filename))
+        return None
+    lines = stdin.split(os.linesep)
+    md5sum = parse_md5sum_line(lines, filename)
+    if md5sum is not None:
+        logging.debug("Caching sum in {0}".format(md5_cache))
+        stream = open(md5_cache, "w")
+        stream.write(stdin)
+        stream.close()
+    return md5sum
+
+def parse_md5sum_line(lines, filename):
+    md5sum, md5sum_filename = lines[0].split()
+    if md5sum_filename != filename:
+        errmsg = "MD5sum and I disagre about filename. {0} != {1}"
+        logging.error(errmsg.format(filename, md5sum_filename))
+        return None
+    return md5sum
 
 if __name__ == "__main__":
     main()
