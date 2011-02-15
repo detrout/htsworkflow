@@ -307,9 +307,9 @@ def make_submission_ini(host, apidata, library_result_map, paired=True):
         fastq_attributes = {}
         for f in submission_files:
             attributes = view_map.find_attributes(f, lib_id)
-            attributes['md5sum'] = "None"
             if attributes is None:
                 raise ValueError("Unrecognized file: %s" % (f,))
+            attributes['md5sum'] = "None"
             
             ext = attributes["extension"]
             if attributes['view'] is None:                   
@@ -655,9 +655,9 @@ class NameToViewMap(object):
             ('*.bam',                   self._guess_bam_view),
             ('junctions.bed',           'Junctions'),
             ('*.jnct',                  'Junctions'),
-            ('*.unique.bigwig',         None),
-            ('*.plus.bigwig',           'PlusSignal'),
-            ('*.minus.bigwig',          'MinusSignal'),
+            ('*unique.bigwig',         None),
+            ('*plus.bigwig',           'PlusSignal'),
+            ('*minus.bigwig',          'MinusSignal'),
             ('*.bigwig',                'Signal'),
             ('*.tar.bz2',               None),
             ('*.condor',                None),
