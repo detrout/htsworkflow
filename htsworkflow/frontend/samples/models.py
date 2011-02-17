@@ -1,3 +1,4 @@
+import logging
 import urlparse
 from django.db import models
 from django.contrib.auth.models import User, UserManager
@@ -6,7 +7,9 @@ from django.db import connection
 from htsworkflow.frontend import settings
 from htsworkflow.frontend.reports.libinfopar import *
 
+
 # Create your models here.
+logger = logging.getLogger(__name__)
 
 class Antibody(models.Model):
     antigene = models.CharField(max_length=500, db_index=True)
@@ -166,6 +169,8 @@ class Library(models.Model):
       ('2A', 'Ligation, PCR, gel, PCR'),
       ('Done', 'Completed'),
     )
+  PROTOCOL_END_POINTS_DICT = dict(PROTOCOL_END_POINTS)
+  
   stopping_point = models.CharField(max_length=25, choices=PROTOCOL_END_POINTS, default='Done')
   amplified_from_sample = models.ForeignKey('self', blank=True, null=True, related_name='amplified_into_sample')  
   
@@ -189,9 +194,9 @@ class Library(models.Model):
     return u'#%s: %s' % (self.id, self.library_name)
   
   class Meta:
-    verbose_name_plural = "libraries"
-    #ordering = ["-creation_date"] 
-    ordering = ["-id"]
+      verbose_name_plural = "libraries"
+      #ordering = ["-creation_date"] 
+      ordering = ["-id"]
   
   def antibody_name(self):
     str ='<a target=_self href="/admin/samples/antibody/'+self.antibody.id.__str__()+'/" title="'+self.antibody.__str__()+'">'+self.antibody.nickname+'</a>' 
@@ -217,6 +222,15 @@ class Library(models.Model):
         return True
     else:
         return False
+
+  def stopping_point_name(self):
+      end_points = Library.PROTOCOL_END_POINTS_DICT
+      name = end_points.get(self.stopping_point, None)
+      if name is None:
+          name = "Lookup Error"
+          logger.error("protocol stopping point in database didn't match names in library model")
+      return name
+      
 
   def libtags(self):
     affs = self.tags.all().order_by('tag_name')

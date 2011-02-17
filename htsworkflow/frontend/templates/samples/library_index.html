@@ -1,6 +1,12 @@
 {% extends "base_site.html" %}
 {% load adminmedia admin_list i18n %}
 {% block extrahead %}
+    <!-- App Stuff -->
+    <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
+    
+    {% block additional_javascript %}    
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/htsw.js"></script>
     <script type="text/javascript">
       $(document).ready(function() {
         $(window).resize(function() {
@@ -13,9 +19,11 @@
         $(window).resize();
       });
     </script>
+    {% endblock %}
 {% endblock %}
 {% block bodyclass %}change-list{% endblock %}
 {% block coltype %}flex{% endblock %}
+
 {% block content %}
 <div id="library-index-div" >
   <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
@@ -30,7 +38,7 @@
       {% for spec in cl.filter_specs %}
          {% admin_list_filter cl spec %}
          {% endfor %}
-       </div>
+    </div>
     {% endif %}
     {% endblock %}
   {% block summary_stats %}
@@ -58,11 +66,11 @@
     </thead>
     <tbody >
       {% for lib in library_list %}
-      <tr >
+      <tr about="/library/{{lib.library_id}}">
         <td ><a href="/library/{{ lib.library_id }}">{{ lib.amplified_from }}</a></td>
-        <td ><a href="/library/{{ lib.library_id }}">{{ lib.library_id }}</a></td>
-        <td ><a href="/library/{{ lib.library_id }}">{{ lib.species_name }}</a></td>
-        <td ><a href="/library/{{ lib.library_id }}">{{ lib.library_name }}</a></td>
+        <td ><a href="/library/{{ lib.library_id }}" property="libns:library_id">{{ lib.library_id }}</a></td>
+        <td ><a href="/library/{{ lib.library_id }}" property="libns:species_name">{{ lib.species_name }}</a></td>
+        <td ><a href="/library/{{ lib.library_id }}" property="libns:library_name">{{ lib.library_name }}</a></td>
         <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.0 }}</td>      
         <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.1 }}</td>      
         <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.2 }}</td>      
@@ -78,6 +86,7 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
   {% endblock %}
 </div>
 {% endblock %}
