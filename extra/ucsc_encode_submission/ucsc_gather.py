@@ -638,9 +638,19 @@ class NameToViewMap(object):
             ('*.condor',                None),
             ('*.daf',                   None),
             ('*.ddf',                   None),
+
+            ('*ufflinks?0.9.3.genes.gtf',       'GeneDeNovo'),
+            ('*ufflinks?0.9.3.transcripts.gtf', 'TranscriptDeNovo'),
+            ('*GENCODE-v3c.exonFPKM.gtf',        'ExonsGencV3c'),
+            ('*GENCODE-v3c.genes.gtf',           'GeneGencV3c'),
+            ('*GENCODE-v3c.transcripts.gtf',     'TranscriptGencV3c'),
+            ('*GENCODE-v3c.TSS.gtf',             'TSS'),
+            ('*.junctions.bed6+3',                'Junctions'),
+            
             ('*.?ufflinks-0.9.0?genes.expr',       'GeneDeNovo'),
             ('*.?ufflinks-0.9.0?transcripts.expr', 'TranscriptDeNovo'),
             ('*.?ufflinks-0.9.0?transcripts.gtf',  'GeneModel'),
+
             ('*.GENCODE-v3c?genes.expr',       'GeneGCV3c'),
             ('*.GENCODE-v3c?transcript*.expr', 'TranscriptGCV3c'),
             ('*.GENCODE-v3c?transcript*.gtf',  'TranscriptGencV3c'),
@@ -661,6 +671,7 @@ class NameToViewMap(object):
             ('*.srf',                   None),
             ('*.wig',                   None),
             ('*.zip',                   None),
+            ('transfer_log',            None),
             ]
 
         self.views = {
@@ -676,6 +687,9 @@ class NameToViewMap(object):
             "GeneModel": {"MapAlgorithm": ma},
             "GeneDeNovo": {"MapAlgorithm": ma},
             "TranscriptDeNovo": {"MapAlgorithm": ma},
+            "ExonsGencV3c": {"MapAlgorithm": ma},
+            "GeneGencV3c": {"MapAlgorithm": ma},
+            "TSS": {"MapAlgorithm": ma},
             "GeneGCV3c": {"MapAlgorithm": ma},
             "TranscriptGCV3c": {"MapAlgorithm": ma},
             "TranscriptGencV3c": {"MapAlgorithm": ma},

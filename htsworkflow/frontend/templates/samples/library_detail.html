@@ -98,7 +98,7 @@
     <span property="libns:made_by">{{ lib.made_by }}</span>
   <br/>
   <b>Creation Date</b>
-    <span property="libns:creation_date">{{ lib.creation_date }}</span>
+    <span property="libns:date" content="{{lib.creation_date|date:'Y-m-d'}}T00:00:00" datatype="xsd:dateTime">{{ lib.creation_date }}</span>
   <br/> 
   <b>Protocol Stopping Point</b>
     <span property="libns:stopping_point">{{ lib.stopping_point_name }}</span>
@@ -129,7 +129,7 @@
   <tbody>
     {% for result in eland_results %}
     <tr about="/flowcell/{{result.flowcell_id}}/lane/{{result.lane}}">
-      <td property="libns:run_date" contents="{{result.run_date}}" datatype="xmls:datetime">{{ result.run_date|date}}</td>
+      <td property="libns:date" content="{{result.run_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ result.run_date|date}}</td>
       <td>{{ result.cycle }}</td>
       <td property="libns:flowcell_id">{{ result.flowcell_id }}</td>
       <td property="libns:lane">{{ result.lane }}</td>
@@ -201,7 +201,7 @@
         <td>{{ lane.match_codes.U0|intcomma }}</td>
         <td>{{ lane.match_codes.U1|intcomma }}</td>
         <td>{{ lane.match_codes.U2|intcomma }}</td>
-        <td property="libns:sequence_unique_location" contents="{{lane.unique_reads}}" datatype="xmls:decimal">{{ lane.unique_reads|intcomma }}</td>
+        <td {% if lane.unique_reads %}property="libns:total_unique_locations" content="{{lane.unique_reads}}" datatype="xsd:decimal"{% endif %}>{{ lane.unique_reads|intcomma }}</td>
         <td>{{ lane.match_codes.R0|intcomma }}</td>
         <td>{{ lane.match_codes.R1|intcomma }}</td>
         <td>{{ lane.match_codes.R2|intcomma }}</td>
