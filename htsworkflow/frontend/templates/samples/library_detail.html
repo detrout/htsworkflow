@@ -1,7 +1,13 @@
-{% extends "flowcell_libraries_app.html" %}
-{% load humanize %}
+{% extends "base_site.html" %}
+{% load adminmedia humanize i18n %}
+{% block extrahead %}
+    <!-- App Stuff -->
+    <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    
+    {% block additional_javascript %}
+    {% endblock %}
 
-{% block additional_css %}
 <style type="text/css">
   /* <![CDATA[ */
   div#librarydetail {
@@ -61,17 +67,48 @@
 <div id="librarydetail">
   <h2>About this library</h2>
   <b>Library ID</b>: {{ lib.id }}<br/>
-  <b>Name</b>: {{ lib.library_name }}<br/>
-  <b>Species</b>: {{ lib.library_species.scientific_name }}<br/>
-  <b>Concentration</b>: {{ lib.undiluted_concentration }} ng/µl<br/>
-  <b>Gel Cut Size</b>: {{ lib.gel_cut_size }}<br/>
-  <b>Insert Size</b>: {{ lib.insert_size }}<br/>
-  <b>Replicate</b>: {{ lib.replicate }}<br/>
-  <b>Made By</b>: {{ lib.made_by }} <br/>
+  <b>Name</b>: 
+    <span property="libns:name">{{ lib.library_name }}</span>
+  <br/>
+  <b>Species</b>: 
+    <span property="libns:species">{{ lib.library_species.scientific_name }}</span>
+  <br/>
+  <b>Concentration</b>: 
+    <span property="libns:concentration">{{ lib.undiluted_concentration }} ng/µl</span>
+  <br/>
+  <b>Gel Cut Size</b>: 
+    <span property="libns:gel_cut">{{ lib.gel_cut_size }}</span>
+  <br/>
+  <b>Insert Size</b>: 
+    <span property="libns:insert_size">{{ lib.insert_size }}</span>
+  <br/>
+  <b>Background or Cell Line</b>:
+     <span property="libns:cell_line">{{ lib.cell_line }}</span>
+  <br/>
+  <b>Replicate</b>: 
+     <span property="libns:replicate">{{ lib.replicate }}</span>
+  <br/>
+  <b>Library Type</b>:
+     <span property="libns:library_type">{{ lib.library_type }}</span>
+  <br/>
+  <b>Experiment Type</b>:
+     <span property="libns:experiment_type">{{ lib.experiment_type }}</span>
+  <br/>
+  <b>Made By</b>: 
+    <span property="libns:made_by">{{ lib.made_by }}</span>
+  <br/>
+  <b>Creation Date</b>
+    <span property="libns:creation_date">{{ lib.creation_date }}</span>
+  <br/> 
+  <b>Protocol Stopping Point</b>
+    <span property="libns:stopping_point">{{ lib.stopping_point_name }}</span>
+  <br/> 
   <b>Affiliations</b>:
   <ul>
     {% for individual in lib.affiliations.all %}
-      <li>{{ individual.name }} ( {{ individual.contact }} )</li>
+      <li property="libns:affliation" content="{{individual.name}}">
+        {{ individual.name }} ( {{ individual.contact }} )
+      </li>
     {% endfor %}
   </ul>
   
@@ -88,26 +125,29 @@
       <td>Bed</td>
       <td>Archived</td>
     </tr>
-  {% for result in eland_results %}
-  <tr>
-    <td>{{ result.run_date|date }}</td>
-    <td>{{ result.cycle }}</td>
-    <td>{{ result.flowcell_id }}</td>
-    <td>{{ result.lane }}</td>
-    <td><a href="{{ result.summary_url }}">Summary</a></td>
-    <td><a href="{{ result.result_url }}">{{ result.result_label }}</a></td>
-    <td>
-    {% if result.bed_url %}
-      <a href="{{ result.bed_url }}">Bed</a>
-    {% endif %}
-    </td>
-    <td>
-      {% if result.storage_ids %}
-        {{ result.storage_ids|safe }}
+  </thead>
+  <tbody>
+    {% for result in eland_results %}
+    <tr about="/flowcell/{{result.flowcell_id}}/lane/{{result.lane}}">
+      <td property="libns:run_date" contents="{{result.run_date}}" datatype="xmls:datetime">{{ result.run_date|date}}</td>
+      <td>{{ result.cycle }}</td>
+      <td property="libns:flowcell_id">{{ result.flowcell_id }}</td>
+      <td property="libns:lane">{{ result.lane }}</td>
+      <td><a href="{{ result.summary_url }}">Summary</a></td>
+      <td><a href="{{ result.result_url }}">{{ result.result_label }}</a></td>
+      <td>
+      {% if result.bed_url %}
+        <a href="{{ result.bed_url }}">Bed</a>
       {% endif %}
-    </td>
-  </tr>
-  {% endfor %}
+      </td>
+      <td>
+        {% if result.storage_ids %}
+          {{ result.storage_ids|safe }}
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
   </table>
   
   <h2>Lane Summary Statistics</h2>
@@ -146,7 +186,7 @@
     <tbody>
   
       {% for lane in lane_summary_list %}
-      <tr>
+      <tr about="/flowcell/{{lane.flowcell_id}}/lane/{{lane.lane_id}}/end/{% if lane.end %}{{ lane.end }}{% endif %}">
         <td>{{ lane.cycle_width }}</td>
         <td>{{ lane.flowcell_id }}</td>
         <td>{{ lane.lane_id }}</td>
@@ -161,7 +201,7 @@
         <td>{{ lane.match_codes.U0|intcomma }}</td>
         <td>{{ lane.match_codes.U1|intcomma }}</td>
         <td>{{ lane.match_codes.U2|intcomma }}</td>
-        <td>{{ lane.unique_reads|intcomma }}</td>
+        <td property="libns:sequence_unique_location" contents="{{lane.unique_reads}}" datatype="xmls:decimal">{{ lane.unique_reads|intcomma }}</td>
         <td>{{ lane.match_codes.R0|intcomma }}</td>
         <td>{{ lane.match_codes.R1|intcomma }}</td>
         <td>{{ lane.match_codes.R2|intcomma }}</td>
@@ -175,17 +215,19 @@
   <table>
     <thead>
       <tr>
-	<td>Flowcell ID</td>
-	<td>Lane</td>
-	<td>Comment</td>
+    	<td>Flowcell ID</td>
+    	<td>Lane</td>
+    	<td>Comment</td>
+      </tr>
     </thead>
     <tbody>
       {% for lane in lib.lane_set.all %}
       <tr>
-	<td>{{ lane.flowcell.flowcell_id }}</td>
-	<td>{{ lane.lane_number }}</td>
-	<td>{{ lane.comment }}</td>
-	{% endfor %}
+        <td>{{ lane.flowcell.flowcell_id }}</td>
+        <td>{{ lane.lane_number }}</td>
+        <td>{{ lane.comment }}</td>
+      </tr>
+	  {% endfor %}
     </tbody>
   </table>
   <br/>

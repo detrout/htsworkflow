@@ -1,6 +1,15 @@
-{% load i18n %}
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en">
+{% load i18n %}<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
+    "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      version="XHTML+RDFa 1.0"
+      xmlns:xml="http://www.w3.org/1999/xhtml"
+      xmlns:dc="http://purl.org/dc/elements/1.1/"
+      xmlns:xmls="http://www.w3.org/2001/XMLSchema#"
+      xmlns:libns="http://jumpgate.caltech.edu/wiki/LibraryOntology#"
+      xml:lang="en"
+>
+<!--base.html-->
 <head>
     <title>{% block title %}{{ app_name }} - {{ page_name }}{% endblock %}</title>
 
@@ -23,13 +32,11 @@
         {% block branding %}{% endblock %}
         </div>
         {% if user.is_authenticated and user.is_staff %}
-        <div id="user-tools">{% trans 'Welcome,' %} <strong>{% firstof user.first_name user.username %}</strong>. {% block userlinks %}{% url django-admindocs-docroot as docsroot %}{% if docsroot %}<a href="{{ docsroot }}">{% trans 'Documentation' %}</a> / {% endif %}<a href="{{ root_path }}password_change/">{% trans 'Change password' %}</a> / <a href="{{ root_path }}logout/">{% trans 'Log out' %}</a>{% endblock %} 
+        <div id="user-tools">{% trans 'Welcome,' %} <strong>{% firstof user.first_name user.username %}</strong>. {% block userlinks %}{% url django-admindocs-docroot as docsroot %}{% if docsroot %}<a href="{{ docsroot }}">{% trans 'Documentation' %}</a> / {% endif %}<a href="/admin/password_change/">{% trans 'Change password' %}</a> / <a href="/admin/logout/">{% trans 'Log out' %}</a>{% endblock %} 
         </div>
         {% endif %}
         {% block nav-global %}{% endblock %}
     </div>
-    
-    {% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Home' %}</a>{% if title %} &rsaquo; {{ title }}{% endif %}</div>{% endblock %}
     {% endif %}
        {% if messages %}
         <ul class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>

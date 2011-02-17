@@ -84,7 +84,7 @@ def create_library_context(cl):
        summary['lanes_run'] = lanes_run
        summary['is_archived'] = lib.is_archived()
        records.append(summary)
-    cl.result_count = unicode(cl.paginator._count) + u" libraries"
+    cl.result_count = unicode(cl.paginator._count)
     return {'library_list': records }
 
 def library(request):
@@ -100,16 +100,8 @@ def library(request):
     context.update(create_library_context(fcl))
     t = get_template('samples/library_index.html')
     c = RequestContext(request, context)
+    return HttpResponse( t.render(c) )
     
-    app_context = {
-        'page_name': 'Library Index',
-        'body': t.render(c)
-    }
-    app_context.update(SAMPLES_CONTEXT_DEFAULTS)
-    
-    app_t = get_template('flowcell_libraries_app.html')
-    app_c = RequestContext(request, app_context)
-    return HttpResponse( app_t.render(app_c) )
 
 def library_to_flowcells(request, lib_id):
     """

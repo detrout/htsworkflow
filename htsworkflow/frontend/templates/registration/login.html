@@ -1,10 +1,11 @@
-{% extends "app_base.html" %}
+{% extends "base_site.html" %}
 {% load i18n %}
 
 {% block additional_css %}{% load adminmedia %}{{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/base.css" />
 <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/login.css" />
 {% endblock %}
+
 {% block title %}Login{% endblock %}
 {% block bodyclass %}login{% endblock %}
 
@@ -13,9 +14,7 @@
 <p class="errornote">{{ error_message }}</p>
 {% endif %}
 <div id="container">
-  <div id="header">
     <h1>Login</h1>
-  </div>
 <form action="{{ app_path }}" method="post" id="login-form">
   <div class="form-row">
     <label for="id_username">{% trans 'Username:' %}</label> <input type="text" name="username" id="id_username" />
