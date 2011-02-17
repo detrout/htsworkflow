@@ -4,7 +4,7 @@ from BeautifulSoup import BeautifulSoup
 from datetime import datetime
 import httplib2
 from operator import attrgetter
-from optparse import OptionParser
+from optparse import OptionParser, OptionGroup
 # python keyring
 import keyring
 import logging
@@ -15,38 +15,373 @@ import RDF
 import sys
 import urllib
 
+from htsworkflow.util import api
+
+logger = logging.getLogger("encode_find")
+
 libraryNS = RDF.NS("http://jumpgate.caltech.edu/library/")
 submissionNS = RDF.NS("http://encodesubmit.ucsc.edu/pipeline/show/")
-submitNS = RDF.NS("http://jumpgate.caltech.edu/wiki/EncodeSubmit#")
+submitOntologyNS = RDF.NS("http://jumpgate.caltech.edu/wiki/UCSCSubmissionOntology#")
+ddfNS = RDF.NS("http://encodesubmit.ucsc.edu/pipeline/download_ddf#")
+libOntNS = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
+
 dublinCoreNS = RDF.NS("http://purl.org/dc/elements/1.1/")
 rdfNS = RDF.NS("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 rdfsNS= RDF.NS("http://www.w3.org/2000/01/rdf-schema#")
+xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
 
 LOGIN_URL = 'http://encodesubmit.ucsc.edu/account/login'
 USER_URL = 'http://encodesubmit.ucsc.edu/pipeline/show_user'
-DETAIL_URL = 'http://encodesubmit.ucsc.edu/pipeline/show/{0}'
-LIBRARY_URL = 'http://jumpgate.caltech.edu/library/{0}'
+
 USERNAME = 'detrout'
+CHARSET = 'utf-8'
 
 def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
 
-    cookie = login()
-    if cookie is None:
-        print "Failed to login"
+    if opts.verbose:
+        logging.basicConfig(level=logging.INFO)
 
-    submissions = my_submissions(cookie)
-    for s in submissions:
-        for t in s.triples():
-            print t
-            
+    htsw_authdata = api.make_auth_from_opts(opts, parser)
+    htswapi = api.HtswApi(opts.host, htsw_authdata)
+    
+    cookie = None
+    model = get_model(opts.load_model)
+    
+    if opts.load_rdf is not None:
+        load_into_model(model, opts.rdf_parser_name, opts.load_rdf)
+        
+    if opts.update:
+        cookie = login(cookie=cookie)
+        load_my_submissions(model, cookie=cookie)
+        update_submission_detail(model, cookie=cookie)
+        load_libraries(model, htswapi)
+
+    if opts.sparql is not None:
+        sparql_query(model, opts.sparql)
+
+    if opts.find_submission_with_no_library:
+        missing = find_submissions_with_no_library(model)
+                
+    if opts.print_rdf:
+        serializer = RDF.Serializer(name=opts.rdf_parser_name)
+        print serializer.serialize_model_to_string(model)
+
+
 def make_parser():
     parser = OptionParser()
+    commands = OptionGroup(parser, "Commands")
+    commands.add_option('--load-model', default=None,
+      help="Load model database")
+    commands.add_option('--load-rdf', default=None,
+      help="load rdf statements into model")
+    commands.add_option('--print-rdf', action="store_true", default=False,
+      help="print ending model state")
+    commands.add_option('--update', action="store_true", default=False,
+      help="Query remote data sources and update our database")
+    #commands.add_option('--update-ucsc-status', default=None,
+    #  help="download status from ucsc, requires filename for extra rules")
+    #commands.add_option('--update-ddfs', action="store_true", default=False,
+    #  help="download ddf information for known submission")
+    #commands.add_option('--update-library', default=None,
+    #  help="download library info from htsw, requires filename for extra rules")
+    parser.add_option_group(commands)
+                      
+    queries = OptionGroup(parser, "Queries")
+    queries.add_option('--sparql', default=None,
+      help="execute arbitrary sparql query")
+    queries.add_option('--find-submission-with-no-library', default=False,
+      action="store_true",
+      help="find submissions with no library ID")    
+    parser.add_option_group(queries)
+
+    options = OptionGroup(parser, "Options")
+    options.add_option("--rdf-parser-name", default="turtle",
+      help="set rdf file parser type")
+    options.add_option("-v", "--verbose", action="store_true", default=False)
+    parser.add_option_group(options)
+    
+    api.add_auth_options(parser)
+
     return parser
 
+def get_model(model_name=None):
+    if model_name is None:
+        storage = RDF.MemoryStorage()
+    else:
+        storage = RDF.HashStorage(model_name, options="hash-type='bdb',dir='/tmp'")
+    model = RDF.Model(storage)
+    return model
+        
+def load_my_submissions(model, cookie=None):
+    if cookie is None:
+        cookie = login()
+        
+    soup = get_url_as_soup(USER_URL, 'GET', cookie)
+    p = soup.find('table', attrs={'id':'projects'})
+    tr = p.findNext('tr')
+    # first record is header
+    tr = tr.findNext()
+    ClassP = rdfsNS['Class']
+    NameP = submitOntologyNS['name']
+    StatusP = submitOntologyNS['status']
+    LastModifyP = submitOntologyNS['last_modify_date']
+    SpeciesP = submitOntologyNS['species']
+    LibraryURN = submitOntologyNS['library_urn']
+    # typing saving
+    add_stmt = model.add_statement
+    Stmt = RDF.Statement
+    while tr is not None:
+        td = tr.findAll('td')
+        if td is not None and len(td) > 1:
+            subIdText = td[0].contents[0].contents[0].encode(CHARSET)
+            subId = submissionNS[subIdText]
+            submission_stmt = Stmt(subId, ClassP,
+                                   submitOntologyNS['Submission'])
+            if model.contains_statement(submission_stmt):
+                logger.debug("Have {0}".format(str(submission_stmt)))
+            else:
+                logger.info("New submission {0}".format(str(submission_stmt)))
+                add_stmt(submission_stmt)
+                
+                name = get_contents(td[4])
+                add_stmt(Stmt(subId, NameP, name))
+                
+                status = get_contents(td[6]).strip()
+                add_stmt(Stmt(subId, StatusP, status))
+                         
+                last_mod_datetime = get_date_contents(td[8])
+                last_mod = last_mod_datetime.isoformat()
+                add_stmt(Stmt(subId, LastModifyP, last_mod))
+    
+                species = get_contents(td[2])
+                if species is not None:
+                    add_stmt(Stmt(subId, SpeciesP, species))
+    
+                library_id = get_library_id(name)
+                if library_id is not None:
+                    add_submission_to_library_urn(model,
+                                                  subId,
+                                                  LibraryURN,
+                                                  library_id)
 
-def login():
+        tr = tr.findNext('tr')
+
+
+def add_submission_to_library_urn(model, submissionUrn, predicate, library_id):
+    """Add a link from a UCSC submission to woldlab library if needed
+    """
+    libraryUrn = libraryNS[library_id]
+    query = RDF.Statement(submissionUrn, predicate, libraryUrn)
+    if not model.contains_statement(query):
+        link = RDF.Statement(submissionUrn, predicate, libraryNS[library_id])
+        logger.info("Adding Sub -> Lib link: {0}".format(link))
+        model.add_statement(link)
+    else:
+        logger.info("Found: {0}".format(str(result[0])))
+
+    
+def find_submissions_with_no_library(model):
+    p = os.path.abspath(__file__)
+    sourcedir = os.path.dirname(p)
+    no_lib = open(os.path.join(sourcedir, "no-lib.sparql"),'r').read()
+    query = RDF.SPARQLQuery(no_lib)
+    results = query.execute(model)
+    for row in results:
+        subid = row['subid']
+        name = row['name']
+        print "# {0}".format(name)
+        print "<{0}>".format(subid.uri)
+        print "  encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/> ."
+        print ""
+    
+def update_submission_detail(model, cookie=None):
+    """Look for submission IDs in our model and go get their ddfs
+    """
+    submissions = model.get_sources(rdfsNS['Class'],
+                                    submitOntologyNS['Submission'])
+    for subUrn in submissions:
+        logging.info("Updating detail for: {0}".format(str(subUrn)))
+        update_submission_creation_date(model, subUrn, cookie)
+        download_ddf(model, subUrn, cookie=cookie)
+
+
+def update_submission_creation_date(model, subUrn, cookie):
+    # in theory the submission page might have more information on it.
+    creationDateP = libNS['date']
+    dateTimeType = xsdNS['dateTime']
+    query = RDF.Statement(subUrn, creationDateP, None)
+    creation_dates = list(model.find_statements(query))
+    if len(creation_dates) == 0:
+        logger.info("Getting creation date for: {0}".format(str(subUrn)))
+        soup = get_url_as_soup(str(subUrn.uri), 'GET', cookie)
+        created_label = soup.find(text="Created: ")
+        if created_label:
+            created_date = get_date_contents(created_label.next)
+            created_date_node = RDF.Node(literal=created_date.isoformat(),
+                                         datatype=dateTimeType.uri)
+            model.add_statement(
+                RDF.Statement(subUrn, creationDateP, created_date_node)
+            )
+
+    
+def download_ddf(model, subId, cookie=None):
+    """Read a DDF 
+    """
+    if cookie is None:
+        cookie = login()
+        
+    download_ddf_url = str(subId).replace('show', 'download_ddf')
+    ddf = get_url_as_text(download_ddf_url, 'GET', cookie)
+    ddfUrn = RDF.Uri(download_ddf_url)
+    query = RDF.Statement(ddfUrn, rdfsNS['Class'], ddfNS['ddf'])
+    if not model.contains_statement(query):
+        statements = parse_ddf(subId, ddf)
+        for s in statements:
+            model.add_statement(s)
+
+
+def parse_ddf(subId, ddf_blob):
+    """Convert a ddf text file into RDF Statements
+    """
+    ddf_data = ddf_blob.split('\n')
+    # first line is header
+    header = ddf_data[0].split()
+    attributes = [ ddfNS[x] for x in header ]
+    statements = []
+    subIdUri = str(subId.uri)
+    # force it to look like a namespace
+    if subIdUri[-1] != '/':
+        subIdUri += '/'
+    subIdNS = RDF.NS(subIdUri)
+    for ddf_line in ddf_data[1:]:
+        ddf_line = ddf_line.strip()
+        if len(ddf_line) == 0:
+            continue
+        if ddf_line.startswith("#"):
+            continue
+        
+        ddf_records = ddf_line.split('\t')
+        files = ddf_records[0].split(',')
+        file_attributes = ddf_records[1:]
+
+        for f in files:
+            blank = RDF.Node()
+            statements += [RDF.Statement(subId,
+                                         submitOntologyNS['has_file'],
+                                         blank)]
+            statements += [RDF.Statement(blank, rdfsNS['Class'],
+                                         submitOntologyNS['File'])]
+            statements += [RDF.Statement(blank, ddfNS['filename'], f)]
+            file_uri_list = [ blank ] * len(file_attributes)
+            for s,p,o in zip(file_uri_list, attributes[1:], file_attributes):
+                statements += [RDF.Statement(s,p,o)]
+
+    return statements
+
+def load_libraries(model, htswapi):
+    """
+    """
+    query = RDF.SPARQLQuery("""
+    SELECT distinct ?library_urn
+    WHERE {
+      ?subid <http://jumpgate.caltech.edu/wiki/EncodeSubmit#library_urn> ?library_urn .
+    }""")
+    results = query.execute(model)
+    #newmodel = get_model()
+    newmodel = model
+    for row in results:
+        lib_id = row['library_urn']
+        lib_uri = str(row['library_urn'].uri)
+        short_lib_id = lib_uri.replace(libraryNS._prefix,"")
+        logging.info("Loading library info: {0}".format(short_lib_id))
+        if short_lib_id.startswith("SL"):
+            continue
+        lib_info = htswapi.get_library(short_lib_id)
+
+        for lib_k, lib_v in lib_info.items():
+            if lib_k != 'lane_set':
+                attribute = lib_k.encode(CHARSET)
+                newmodel.append(
+                    RDF.Statement(lib_id,
+                                  submitOntologyNS[attribute],
+                                  str(lib_v)))
+            else:
+                for flowcell in lib_v:
+                    blank = RDF.Node()
+                    newmodel.append(
+                        RDF.Statement(lib_id,
+                                      submitOntologyNS['has_lane'],
+                                      blank))
+                    for fc_k, fc_v in flowcell.items():
+                        newmodel.append(
+                            RDF.Statement(blank,
+                                          submitOntologyNS[fc_k.encode(CHARSET)],
+                                          str(fc_v)))
+                    
+    #serializer = RDF.Serializer('turtle')
+    #print serializer.serialize_model_to_string(newmodel)
+    
+def get_library_id(name):
+    """Guess library ID from library name
+    """
+    match = re.search(r"[ -](?P<id>([\d]{5})|(SL[\d]{4}))", name)
+    library_id = None
+    if match is not None:
+        library_id = match.group('id')
+    return library_id
+
+
+def get_contents(element):
+    """Return contents or none.
+    """
+    if len(element.contents) == 0:
+        return None
+
+    a = element.find('a')
+    if a is not None:
+        return a.contents[0].encode(CHARSET)
+
+    return element.contents[0].encode(CHARSET)
+    
+    
+def get_date_contents(element):
+    data = get_contents(element)
+    if data:
+        return datetime.strptime(data, "%Y-%m-%d %H:%M")
+    else:
+        return None
+
+def sparql_query(model, query_filename):
+    """Execute sparql query from file
+    """
+    query_body = open(query_filename,'r').read()
+    query = RDF.SPARQLQuery(query_body)
+    results = query.execute(model)
+    for row in results:
+        output = []
+        for k,v in row.items()[::-1]:
+            print "{0}: {1}".format(k,v)
+        print 
+
+        
+def load_into_model(model, parser_name, filename):
+    if not os.path.exists(filename):
+        raise IOError("Can't find {0}".format(filename))
+    
+    data = open(filename, 'r').read()
+    rdf_parser = RDF.Parser(name=parser_name)
+    ns_uri = submitOntologyNS[''].uri
+    rdf_parser.parse_string_into_model(model, data, ns_uri)
+
+    
+def login(cookie=None):
+    """Login if we don't have a cookie
+    """
+    if cookie is not None:
+        return cookie
+    
     keys = keyring.get_keyring()
     password = keys.get_password(LOGIN_URL, USERNAME)
     credentials = {'login': USERNAME,
@@ -61,49 +396,43 @@ def login():
                                                     response['status']))
     
     cookie = response.get('set-cookie', None)
+    if cookie is None:
+        raise RuntimeError("Wasn't able to log into: {0}".format(LOGIN_URL))
     return cookie
 
-def my_submissions(cookie):
-    soup = get_url_as_soup(USER_URL, 'GET', cookie)
-    p = soup.find('table', attrs={'id':'projects'})
-    tr = p.findNext('tr')
-    # first record is header
-    tr = tr.findNext()
-    submissions = []
-    while tr is not None:
-        td = tr.findAll('td')
-        if td is not None and len(td) > 1:
-            subid = td[0].contents[0].contents[0]
-            species = get_contents(td[2])
-            name = get_contents(td[4])
-            status = get_contents(td[6]).strip()
-            date = get_date_contents(td[8])
-            age = get_contents(td[10])
-            submissions.append(
-                Submission(subid, species, name, status, date, age, cookie)
-            )
-        tr = tr.findNext('tr')
-    return submissions
-
-def get_contents(element):
-    """Return contents or none.
-    """
-    if len(element.contents) == 0:
-        return None
-
-    a = element.find('a')
-    if a is not None:
-        return a.contents[0]
-
-    return element.contents[0]
-
-def get_date_contents(element):
-    data = get_contents(element)
-    if data:
-        return datetime.strptime(data, "%Y-%m-%d %H:%M")
+                
+def get_url_as_soup(url, method, cookie=None):
+    http = httplib2.Http()
+    headers = {}
+    if cookie is not None:
+        headers['Cookie'] = cookie
+    response, content = http.request(url, method, headers=headers)
+    if response['status'] == '200':
+        soup = BeautifulSoup(content,
+                             fromEncoding="utf-8", # should read from header
+                             convertEntities=BeautifulSoup.HTML_ENTITIES
+                             )
+        return soup
     else:
-        return None
+        msg = "error accessing {0}, status {1}"
+        msg = msg.format(url, response['status'])
+        e = httplib2.HttpLib2ErrorWithResponse(msg, response, content)
 
+def get_url_as_text(url, method, cookie=None):
+    http = httplib2.Http()
+    headers = {}
+    if cookie is not None:
+        headers['Cookie'] = cookie
+    response, content = http.request(url, method, headers=headers)
+    if response['status'] == '200':
+        return content
+    else:
+        msg = "error accessing {0}, status {1}"
+        msg = msg.format(url, response['status'])
+        e = httplib2.HttpLib2ErrorWithResponse(msg, response, content)
+    
+################
+#  old stuff
 SUBMISSIONS_LACKING_LIBID = [
     ('1x75-Directional-HeLa-Rep1',    '11208'),
     ('1x75-Directional-HeLa-Rep2',    '11207'),
@@ -116,73 +445,10 @@ SUBMISSIONS_LACKING_LIBID = [
     ('1x75-Directional-K562-Rep1',    '11008'),
     ('1x75-Directional-K562-Rep2',    '11007'),
     ('1x75-Directional-NHEK-Rep1',    '11204'),
+    ('1x75-Directional-GM12878-Rep1', '11011'),
+    ('1x75-Directional-GM12878-Rep2', '11010'),
     ]
 
-class Submission(object):
-    def __init__(self, subid, species, name, status, date, age, cookie=None):
-        self.cookie = cookie
-        self.subid = subid
-        self.species = species
-        self.name = name
-        self.status = status
-        self.date = date
-        self.age = age
-        self._library_id = None
-        self._created_date = None
-
-    def triples(self):
-        subNode = submissionNS[self.subid.encode('utf-8')]
-        dateNode = self.date.strftime("%Y-%m-%d")
-        s = [RDF.Statement(subNode, submitNS['name'],
-                           self.name.encode('utf-8')),
-             RDF.Statement(subNode, submitNS['status'],
-                           self.status.encode('utf-8')),
-             RDF.Statement(subNode, submitNS['last_modify_date'], dateNode),
-             ]
-        if self.species is not None:
-            s.append(RDF.Statement(subNode, submitNS['species'],
-                                   self.species.encode('utf-8')))
-        if self.library_id is not None:
-             libId = libraryNS[self.library_id.encode('utf-8')]
-             s.append(RDF.Statement(subNode, rdfsNS['seeAlso'], libId))
-        
-        return s
-        
-
-    def _get_library_id(self):
-        if self._library_id is None:
-            match = re.search(r"[ -](?P<id>([\d]{5})|(SL[\d]{4}))", self.name)
-            if match is not None:
-                self._library_id = match.group('id')
-            else:
-                for dir_lib_name, lib_id in SUBMISSIONS_LACKING_LIBID:
-                    if dir_lib_name in self.name:
-                        self._library_id = lib_id
-                        break
-            
-        return self._library_id
-    
-    library_id = property(_get_library_id)
-
-    def _get_detail(self):
-        detail = DETAIL_URL.format(self.subid)
-        soup = get_url_as_soup(detail, 'GET', self.cookie)
-
-        created_label = soup.find(text="Created: ")
-        if created_label:
-            self._created_date = get_date_contents(created_label.next)
-            
-    def _get_created_date(self):
-        if self._created_date is None:
-            self._get_detail()
-        return self._created_date
-    created_date = property(_get_created_date)
-    
-    def __unicode__(self):
-        return u"{0}\t{1}\t{2}".format(self.subid, self.library_id, self.name)
-
-    def __repr__(self):
-        return u"<Submission ({0}) '{1}'>".format(self.subid, self.name)
 
 
 def select_by_library_id(submission_list):
@@ -218,7 +484,7 @@ def library_to_freeze(selected_libraries):
     report.append('<tbody>')
     for lib_id in lib_ids:
         report.append('<tr>')
-        lib_url = LIBRARY_URL.format(lib_id)
+        lib_url = libraryNS[lib_id].uri
         report.append('<td><a href="{0}">{1}</a></td>'.format(lib_url, lib_id))
         submissions = selected_libraries[lib_id]
         report.append('<td>{0}</td>'.format(submissions[0].name))
@@ -230,7 +496,8 @@ def library_to_freeze(selected_libraries):
         for d in freezes:
             report.append('<td>')
             for s in batched.get(d, []):
-                subid = '<a href="http://encodesubmit.ucsc.edu/pipeline/show/{0}">{0}</a>'.format(s.subid)
+                show_url = submissionNS[s.subid].uri
+                subid = '<a href="{0}">{1}</a>'.format(show_url, s.subid)
                 report.append("{0}:{1}".format(subid, s.status))
             report.append('</td>')
         else:
@@ -251,24 +518,6 @@ def date_to_freeze(d):
             return name
     else:
         return None
-    
-                
-def get_url_as_soup(url, method, cookie=None):
-    http = httplib2.Http()
-    headers = {}
-    if cookie is not None:
-        headers['Cookie'] = cookie
-    response, content = http.request(url, method, headers=headers)
-    if response['status'] == '200':
-        soup = BeautifulSoup(content,
-                             fromEncoding="utf-8", # should read from header
-                             convertEntities=BeautifulSoup.HTML_ENTITIES
-                             )
-        return soup
-    else:
-        msg = "error accessing {0}, status {1}"
-        msg = msg.format(url, response['status'])
-        e = httplib2.HttpLib2ErrorWithResponse(msg, response, content)
 
 if __name__ == "__main__":
     main()

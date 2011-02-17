@@ -1,0 +1,18 @@
+## Find submissions that don't have a library_id 
+##
+## The code to generate names scans the name for the ID
+## and some of the older names lack an included library ID
+## 
+## So I need some manual way of adding in the submission to 
+## our library_id map
+
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX encodeSubmit:<http://jumpgate.caltech.edu/wiki/EncodeSubmit#>
+
+SELECT 
+ ?subid ?name
+WHERE {
+  ?subid encodeSubmit:name ?name
+  OPTIONAL { ?subid encodeSubmit:library_urn ?libid }
+  FILTER  (!bound(?libid))
+} 

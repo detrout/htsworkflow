@@ -37,10 +37,7 @@ def main(cmdline=None):
     else:
         logging.basicConfig(level = logging.WARNING )        
     
-    apidata = {'apiid': opts.apiid, 'apikey': opts.apikey }
-
-    if opts.host is None or opts.apiid is None or opts.apikey is None:
-        parser.error("Please specify host url, apiid, apikey")
+    apidata = api.make_auth_from_opts(opts, parser)
 
     if opts.makeddf and opts.daf is None:
         parser.error("Please specify your daf when making ddf files")
@@ -73,22 +70,6 @@ def main(cmdline=None):
 
 
 def make_parser():
-    # Load defaults from the config files
-    config = SafeConfigParser()
-    config.read([os.path.expanduser('~/.htsworkflow.ini'), '/etc/htsworkflow.ini'])
-    
-    sequence_archive = None
-    apiid = None
-    apikey = None
-    apihost = None
-    SECTION = 'sequence_archive'
-    if config.has_section(SECTION):
-        sequence_archive = config.get(SECTION, 'sequence_archive',sequence_archive)
-        sequence_archive = os.path.expanduser(sequence_archive)
-        apiid = config.get(SECTION, 'apiid', apiid)
-        apikey = config.get(SECTION, 'apikey', apikey)
-        apihost = config.get(SECTION, 'host', apihost)
-
     parser = OptionParser()
 
     # commands
@@ -108,20 +89,14 @@ def make_parser():
     parser.add_option('--force', default=False, action="store_true",
                       help="Force regenerating fastqs")
 
-    # configuration options
-    parser.add_option('--apiid', default=apiid, help="Specify API ID")
-    parser.add_option('--apikey', default=apikey, help="Specify API KEY")
-    parser.add_option('--host',  default=apihost,
-                      help="specify HTSWorkflow host",)
-    parser.add_option('--sequence', default=sequence_archive,
-                      help="sequence repository")
-
     # debugging
     parser.add_option('--verbose', default=False, action="store_true",
                       help='verbose logging')
     parser.add_option('--debug', default=False, action="store_true",
                       help='debug logging')
 
+    api.add_auth_options(parser)
+    
     return parser
 
 
