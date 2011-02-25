@@ -1,0 +1,22 @@
+##
+## Find submissions that are currently "failed"
+##
+
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX submitOnt:<http://jumpgate.caltech.edu/wiki/UCSCSubmissionOntology#>
+PREFIX libOntNS:<http://jumpgate.caltech.edu/wiki/LibraryOntology#">
+
+#libraryNS = RDF.NS("http://jumpgate.caltech.edu/library/")
+#submissionNS = RDF.NS("http://encodesubmit.ucsc.edu/pipeline/show/")
+#ddfNS = RDF.NS("http://encodesubmit.ucsc.edu/pipeline/download_ddf#")
+
+SELECT 
+ ?subid ?subname ?liburn ?status
+WHERE {
+  ?subid submitOnt:name ?subname .
+  ?subid submitOnt:library_urn ?liburn .
+  ?subid submitOnt:has_status ?statusNode .
+  ?statusNode submitOnt:status ?status .
+  ?statusNode submitOnt:last_modify_date ?last_modify .
+  FILTER (regex(?status, "failed", "i"))
+} 

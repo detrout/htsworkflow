@@ -55,8 +55,7 @@ def main(cmdline=None):
     if opts.update:
         cookie = login(cookie=cookie)
         load_my_submissions(model, cookie=cookie)
-        update_submission_detail(model, cookie=cookie)
-        load_libraries(model, htswapi)
+        load_encode_libraries(model, htswapi)
 
     if opts.sparql is not None:
         sparql_query(model, opts.sparql)
@@ -123,49 +122,44 @@ def load_my_submissions(model, cookie=None):
     tr = p.findNext('tr')
     # first record is header
     tr = tr.findNext()
-    ClassP = rdfsNS['Class']
-    NameP = submitOntologyNS['name']
-    StatusP = submitOntologyNS['status']
-    LastModifyP = submitOntologyNS['last_modify_date']
-    SpeciesP = submitOntologyNS['species']
+    TypeN = rdfsNS['type']
+    NameN = submitOntologyNS['name']
+    SpeciesN = submitOntologyNS['species']
     LibraryURN = submitOntologyNS['library_urn']
-    # typing saving
-    add_stmt = model.add_statement
-    Stmt = RDF.Statement
+
     while tr is not None:
         td = tr.findAll('td')
         if td is not None and len(td) > 1:
-            subIdText = td[0].contents[0].contents[0].encode(CHARSET)
-            subId = submissionNS[subIdText]
-            submission_stmt = Stmt(subId, ClassP,
-                                   submitOntologyNS['Submission'])
-            if model.contains_statement(submission_stmt):
-                logger.debug("Have {0}".format(str(submission_stmt)))
-            else:
-                logger.info("New submission {0}".format(str(submission_stmt)))
-                add_stmt(submission_stmt)
-                
-                name = get_contents(td[4])
-                add_stmt(Stmt(subId, NameP, name))
-                
-                status = get_contents(td[6]).strip()
-                add_stmt(Stmt(subId, StatusP, status))
-                         
-                last_mod_datetime = get_date_contents(td[8])
-                last_mod = last_mod_datetime.isoformat()
-                add_stmt(Stmt(subId, LastModifyP, last_mod))
-    
-                species = get_contents(td[2])
-                if species is not None:
-                    add_stmt(Stmt(subId, SpeciesP, species))
-    
-                library_id = get_library_id(name)
-                if library_id is not None:
-                    add_submission_to_library_urn(model,
-                                                  subId,
-                                                  LibraryURN,
-                                                  library_id)
+            subUrnText = td[0].contents[0].contents[0].encode(CHARSET)
+            subUrn = submissionNS[subUrnText]
 
+            add_stmt(model, subUrn, TypeN, submitOntologyNS['Submission'])
+                
+            name = get_contents(td[4])
+            add_stmt(model, subUrn, NameN, name)
+                
+            species = get_contents(td[2])
+            if species is not None:
+                add_stmt(model, subUrn, SpeciesN, species)
+
+            library_id = get_library_id(name)
+            if library_id is not None:
+                add_submission_to_library_urn(model,
+                                              subUrn,
+                                              LibraryURN,
+                                              library_id)
+
+            add_submission_creation_date(model, subUrn, cookie)
+
+            # grab changing atttributes
+            status = get_contents(td[6]).strip()
+            last_mod_datetime = get_date_contents(td[8])
+            last_mod = last_mod_datetime.isoformat()
+
+            update_submission_detail(model, subUrn, status, last_mod, cookie=cookie)
+
+            logging.info("Processed {0}".format( subUrn))
+            
         tr = tr.findNext('tr')
 
 
@@ -179,15 +173,23 @@ def add_submission_to_library_urn(model, submissionUrn, predicate, library_id):
         logger.info("Adding Sub -> Lib link: {0}".format(link))
         model.add_statement(link)
     else:
-        logger.info("Found: {0}".format(str(result[0])))
+        logger.debug("Found: {0}".format(str(query)))
 
     
 def find_submissions_with_no_library(model):
-    p = os.path.abspath(__file__)
-    sourcedir = os.path.dirname(p)
-    no_lib = open(os.path.join(sourcedir, "no-lib.sparql"),'r').read()
-    query = RDF.SPARQLQuery(no_lib)
-    results = query.execute(model)
+    missing_lib_query = RDF.SPARQLQuery("""
+PREFIX submissionOntology:<{submissionOntology}>
+
+SELECT 
+ ?subid ?name
+WHERE {{
+  ?subid submissionOntology:name ?name
+  OPTIONAL {{ ?subid submissionOntology:library_urn ?libid }}
+  FILTER  (!bound(?libid))
+}}""".format(submissionOntology=submitOntologyNS[''].uri)
+)    
+
+    results = missing_lib_query.execute(model)
     for row in results:
         subid = row['subid']
         name = row['name']
@@ -196,22 +198,12 @@ def find_submissions_with_no_library(model):
         print "  encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/> ."
         print ""
     
-def update_submission_detail(model, cookie=None):
-    """Look for submission IDs in our model and go get their ddfs
-    """
-    submissions = model.get_sources(rdfsNS['Class'],
-                                    submitOntologyNS['Submission'])
-    for subUrn in submissions:
-        logging.info("Updating detail for: {0}".format(str(subUrn)))
-        update_submission_creation_date(model, subUrn, cookie)
-        download_ddf(model, subUrn, cookie=cookie)
 
-
-def update_submission_creation_date(model, subUrn, cookie):
+def add_submission_creation_date(model, subUrn, cookie):
     # in theory the submission page might have more information on it.
-    creationDateP = libNS['date']
+    creationDateN = libOntNS['date']
     dateTimeType = xsdNS['dateTime']
-    query = RDF.Statement(subUrn, creationDateP, None)
+    query = RDF.Statement(subUrn, creationDateN, None)
     creation_dates = list(model.find_statements(query))
     if len(creation_dates) == 0:
         logger.info("Getting creation date for: {0}".format(str(subUrn)))
@@ -221,108 +213,113 @@ def update_submission_creation_date(model, subUrn, cookie):
             created_date = get_date_contents(created_label.next)
             created_date_node = RDF.Node(literal=created_date.isoformat(),
                                          datatype=dateTimeType.uri)
-            model.add_statement(
-                RDF.Statement(subUrn, creationDateP, created_date_node)
-            )
+            add_stmt(model, subUrn, creationDateN, created_date_node)
+    else:
+        logger.debug("Found creation date for: {0}".format(str(subUrn)))
+
+def update_submission_detail(model, subUrn, status, recent_update, cookie):
+    HasStatusN = submitOntologyNS['has_status']
+    StatusN = submitOntologyNS['status']
+    LastModifyN = submitOntologyNS['last_modify_date']
+
+    status_nodes_query = RDF.Statement(subUrn, HasStatusN, None)
+    status_nodes = list(model.find_statements(status_nodes_query))
+
+    if len(status_nodes) == 0:
+        # has no status node, add one
+        logging.info("Adding status node to {0}".format(subUrn))
+        status_blank = RDF.Node()
+        add_stmt(model, subUrn, HasStatusN, status_blank)
+        add_stmt(model, status_blank, rdfs['type'], StatusT)
+        add_stmt(model, status_blank, StatusN, status)
+        add_stmt(model, status_blank, LastModifyN, recent_update)
+        update_ddf(model, subUrn, status_blank, cookie=cookie)
+    else:
+        logging.info("Found {0} status blanks".format(len(status_nodes)))
+        for status_statement in status_nodes:
+            status_blank = status_statement.object
+            last_modified_query = RDF.Statement(status_blank, LastModifyN, None)
+            last_mod_nodes = model.find_statements(last_modified_query)
+            for last_mod_statement in last_mod_nodes:
+                last_mod_date = str(last_mod_statement.object)
+                if recent_update == str(last_mod_date):
+                    update_ddf(model, subUrn, status_blank, cookie=cookie)
+                    break
+
 
     
-def download_ddf(model, subId, cookie=None):
-    """Read a DDF 
-    """
-    if cookie is None:
-        cookie = login()
-        
-    download_ddf_url = str(subId).replace('show', 'download_ddf')
-    ddf = get_url_as_text(download_ddf_url, 'GET', cookie)
+def update_ddf(model, subUrn, statusNode, cookie):
+    TypeN = rdfsNS['type']
+    
+    download_ddf_url = str(subUrn).replace('show', 'download_ddf')
     ddfUrn = RDF.Uri(download_ddf_url)
-    query = RDF.Statement(ddfUrn, rdfsNS['Class'], ddfNS['ddf'])
-    if not model.contains_statement(query):
-        statements = parse_ddf(subId, ddf)
-        for s in statements:
-            model.add_statement(s)
+    
+    status_is_ddf = RDF.Statement(statusNode, TypeN, ddfNS['ddf'])
+    if not model.contains_statement(status_is_ddf):
+        logging.info('Adding ddf to {0}, {1}'.format(subUrn, statusNode))
+        ddf_text = get_url_as_text(download_ddf_url, 'GET', cookie)
+        add_ddf_statements(model, statusNode, ddf_text)
+        model.add_statement(status_is_ddf)
 
 
-def parse_ddf(subId, ddf_blob):
+def add_ddf_statements(model, statusNode, ddf_string):
     """Convert a ddf text file into RDF Statements
     """
-    ddf_data = ddf_blob.split('\n')
+    ddf_lines = ddf_string.split('\n')
     # first line is header
-    header = ddf_data[0].split()
+    header = ddf_lines[0].split()
     attributes = [ ddfNS[x] for x in header ]
     statements = []
-    subIdUri = str(subId.uri)
-    # force it to look like a namespace
-    if subIdUri[-1] != '/':
-        subIdUri += '/'
-    subIdNS = RDF.NS(subIdUri)
-    for ddf_line in ddf_data[1:]:
+
+    for ddf_line in ddf_lines[1:]:
         ddf_line = ddf_line.strip()
         if len(ddf_line) == 0:
             continue
         if ddf_line.startswith("#"):
             continue
         
-        ddf_records = ddf_line.split('\t')
-        files = ddf_records[0].split(',')
-        file_attributes = ddf_records[1:]
+        ddf_record = ddf_line.split('\t')
+        files = ddf_record[0].split(',')
+        file_attributes = ddf_record[1:]
 
         for f in files:
-            blank = RDF.Node()
-            statements += [RDF.Statement(subId,
-                                         submitOntologyNS['has_file'],
-                                         blank)]
-            statements += [RDF.Statement(blank, rdfsNS['Class'],
-                                         submitOntologyNS['File'])]
-            statements += [RDF.Statement(blank, ddfNS['filename'], f)]
-            file_uri_list = [ blank ] * len(file_attributes)
-            for s,p,o in zip(file_uri_list, attributes[1:], file_attributes):
-                statements += [RDF.Statement(s,p,o)]
+            fileNode = RDF.Node()
+            add_stmt(model, statusNode, submitOntologyNS['has_file'], fileNode)
+            add_stmt(model, fileNode, rdfsNS['type'], ddfNS['file'])
+            add_stmt(model, fileNode, ddfNS['filename'], f)
 
-    return statements
+            for predicate, object in zip( attributes[1:], file_attributes):
+                add_stmt(model, fileNode, predicate, object)
 
-def load_libraries(model, htswapi):
+
+def load_encode_libraries(model, htswapi):
+    """Get libraries associated with encode.
     """
-    """
-    query = RDF.SPARQLQuery("""
-    SELECT distinct ?library_urn
-    WHERE {
-      ?subid <http://jumpgate.caltech.edu/wiki/EncodeSubmit#library_urn> ?library_urn .
-    }""")
-    results = query.execute(model)
-    #newmodel = get_model()
-    newmodel = model
-    for row in results:
-        lib_id = row['library_urn']
-        lib_uri = str(row['library_urn'].uri)
-        short_lib_id = lib_uri.replace(libraryNS._prefix,"")
-        logging.info("Loading library info: {0}".format(short_lib_id))
-        if short_lib_id.startswith("SL"):
-            continue
-        lib_info = htswapi.get_library(short_lib_id)
+    encodeUrl = os.path.join(htswapi.root_url + "/library/?affiliations__id__exact=44")
+    rdfaParser = RDF.Parser(name='rdfa')
+    print encodeUrl
+    rdfaParser.parse_into_model(model, encodeUrl)
+    query = RDF.Statement(None, libOntNS['library_id'], None)
+    libraries = model.find_statements(query)
+    for statement in libraries:
+        libraryUrn = statement.subject
+        load_library_detail(model, libraryUrn)
 
-        for lib_k, lib_v in lib_info.items():
-            if lib_k != 'lane_set':
-                attribute = lib_k.encode(CHARSET)
-                newmodel.append(
-                    RDF.Statement(lib_id,
-                                  submitOntologyNS[attribute],
-                                  str(lib_v)))
-            else:
-                for flowcell in lib_v:
-                    blank = RDF.Node()
-                    newmodel.append(
-                        RDF.Statement(lib_id,
-                                      submitOntologyNS['has_lane'],
-                                      blank))
-                    for fc_k, fc_v in flowcell.items():
-                        newmodel.append(
-                            RDF.Statement(blank,
-                                          submitOntologyNS[fc_k.encode(CHARSET)],
-                                          str(fc_v)))
-                    
-    #serializer = RDF.Serializer('turtle')
-    #print serializer.serialize_model_to_string(newmodel)
-    
+
+def load_library_detail(model, libraryUrn):
+    """Grab detail information from library page
+    """
+    rdfaParser = RDF.Parser(name='rdfa')
+    query = RDF.Statement(libraryUrn, libOntNS['date'], None)
+    results = list(model.find_statements(query))
+    if len(results) == 0:
+        logger.info("Loading {0}".format(str(libraryUrn)))
+        rdfaParser.parse_into_model(model, libraryUrn.uri)
+    elif len(results) == 1:
+        pass # Assuming that a loaded dataset has one record
+    else:
+        logging.warning("Many dates for {0}".format(libraryUrn))
+                        
 def get_library_id(name):
     """Guess library ID from library name
     """
@@ -375,7 +372,13 @@ def load_into_model(model, parser_name, filename):
     ns_uri = submitOntologyNS[''].uri
     rdf_parser.parse_string_into_model(model, data, ns_uri)
 
-    
+def add_stmt(model, subject, predicate, object):
+    """Convienence create RDF Statement and add to a model
+    """
+    return model.add_statement(
+        RDF.Statement(subject, predicate, object)
+    )
+
 def login(cookie=None):
     """Login if we don't have a cookie
     """
