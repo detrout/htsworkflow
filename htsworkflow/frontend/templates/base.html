@@ -25,7 +25,7 @@
 </head>
 <body>
 <!-- Container -->
-   {% if not is_popup %}
+    {% if not is_popup %}
     
     <div id="header">
         <div id="branding">
@@ -38,10 +38,11 @@
         {% block nav-global %}{% endblock %}
     </div>
     {% endif %}
-       {% if messages %}
+    {% block breadcrumbs %}{% endblock %}
+    {% if messages %}
         <ul class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
-        {% endif %}
-
+    {% endif %}
+        
     <!-- Content -->
     <div id="content" class="{% block coltype %}colM{% endblock %}">
         {% block pretitle %}{% endblock %}
