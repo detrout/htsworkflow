@@ -2,15 +2,9 @@ import unittest
 
 from StringIO import StringIO
 from htsworkflow.automation import copier
+from htsworkflow.automation.solexa import is_runfolder
 
-class testCopier(unittest.TestCase):
-    def test_runfolder_validate(self):
-        self.failUnlessEqual(copier.runfolder_validate(""), False)
-        self.failUnlessEqual(copier.runfolder_validate("1345_23"), False)
-        self.failUnlessEqual(copier.runfolder_validate("123456_asdf-$23'"), False)
-        self.failUnlessEqual(copier.runfolder_validate("123456_USI-EAS44"), True)
-        self.failUnlessEqual(copier.runfolder_validate("123456_USI-EAS44 "), False)
-        
+class testCopier(unittest.TestCase):        
     def test_empty_config(self):
         cfg = StringIO("""[fake]
 something: unrelated

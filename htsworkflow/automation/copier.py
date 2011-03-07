@@ -13,14 +13,7 @@ import urlparse
 
 from benderjab import rpc
 
-def runfolder_validate(fname):
-    """
-    Return True if fname looks like a runfolder name
-    """
-    if re.match("^[0-9]{6}_[-A-Za-z0-9_]*$", fname):
-        return True
-    else:
-        return False
+from htsworkflow.automation.solexa import is_runfolder
     
 class rsync(object):
   def __init__(self, sources, dest, pwfile):
@@ -240,7 +233,7 @@ class CopierBot(rpc.XmlRpcBot):
         self.rsync.poll()
         
         # see if we're still copying
-        if runfolder_validate(runDir):
+        if is_runfolder(runDir):
             logging.info("recevied sequencing finshed for %s" % (runDir))
             self.pending.append(runDir)
             self.startCopy()
