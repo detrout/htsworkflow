@@ -17,7 +17,6 @@ IN_UNMOUNT = EventsCodes.ALL_FLAGS['IN_UNMOUNT']
 
 from benderjab import rpc
 
-
 class WatcherEvent(object):
     """
     Track information about a file event
@@ -44,6 +43,7 @@ class Handler(pyinotify.ProcessEvent):
         self.last_event = {}
         self.watchmanager = watchmanager
         self.bot = bot
+        self.log = bot.log
         if completion_files is not None:
             completion_files = [ x.lower() for x in completion_files ]
         self.completion_files = completion_files
@@ -62,7 +62,7 @@ class Handler(pyinotify.ProcessEvent):
                     runfolder = os.path.join(watch_path, target)
 
                     if not is_runfolder(target):
-                        logging.debug("Skipping %s, not a runfolder" % (target,))
+                        self.log.debug("Skipping %s, not a runfolder" % (target,))
                         continue
                     
                     # grab the previous events for this watch path
@@ -88,15 +88,15 @@ class Handler(pyinotify.ProcessEvent):
                         self.last_event[watch_path][target].complete = True
                         msg += "(completed)"
 
-                    logging.debug(msg)
+                    self.log.debug(msg)
 
     def process_IN_DELETE(self, event):
-        logging.debug("Remove: %s" %  os.path.join(event.path, event.name))
+        self.log.debug("Remove: %s" %  os.path.join(event.path, event.name))
         pass
 
     def process_IN_UNMOUNT(self, event):
         pathname = os.path.join(event.path, event.name)
-        logging.debug("IN_UNMOUNT: %s" % (pathname,))
+        self.log.debug("IN_UNMOUNT: %s" % (pathname,))
         self.bot.unmount_watch(event.path)
 
 class SpoolWatcher(rpc.XmlRpcBot):
@@ -203,7 +203,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
                 mounts.append(w)
                 self.mounts_to_watches[mount_location] = mounts
 
-            logging.info(u"Watching:"+unicode(w))
+            self.log.info(u"Watching:"+unicode(w))
             self.wdds.append(self.wm.add_watch(w, mask, rec=True, auto_add=True))
 
     def unmount_watch(self, event_path):
@@ -211,7 +211,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         # the list getting shorter
         for i in range(len(self.wdds),0, -1):
             wdd = self.wdds[i]
-            logging.info(u'unmounting: '+unicode(wdd.items()))
+            self.log.info(u'unmounting: '+unicode(wdd.items()))
             self.wm.rm_watch(wdd.values())
             del self.wdds[i]
         self.mounted = False
@@ -221,7 +221,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         if root_copy_url[-1] != '/':
             root_copy_url += '/'
         copy_url = root_copy_url + list_event_dir
-        logging.debug('Copy url: %s' % (copy_url,))
+        self.log.debug('Copy url: %s' % (copy_url,))
         return copy_url
                   
     def process_notify(self, *args):
@@ -254,7 +254,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
                 # restart the watch
                 for watch in self.mounts_to_watches[mount_point]:
                     self.add_watch(watch)
-                    logging.info(
+                    self.logg.info(
                         "%s was remounted, restarting watch" % \
                             (mount_point)
                     )
@@ -301,7 +301,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         super(SpoolWatcher, self).stop()
     
     def startCopy(self, copy_url=None):
-        logging.debug("writes seem to have stopped")
+        self.log.debug("writes seem to have stopped")
         if self.notify_runner is not None:
             for r in self.notify_runner:
                 self.rpc_send(r, tuple([copy_url]), 'startCopy')
@@ -311,7 +311,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         
     def sequencingFinished(self, run_dir):
         # need to strip off self.watchdirs from rundir I suspect.
-        logging.info("run.completed in " + str(run_dir))
+        self.log.info("run.completed in " + str(run_dir))
         for watch in self.watchdirs:
             if not run_dir.startswith(watch):
                 print "%s didn't start with %s" % (run_dir, watch)
@@ -322,7 +322,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         else:
             stripped_run_dir = run_dir
 
-        logging.debug("stripped to " + stripped_run_dir)
+        self.log.debug("stripped to " + stripped_run_dir)
         if self.notify_users is not None:
             for u in self.notify_users:
                 self.send(u, 'Sequencing run %s finished' % \
