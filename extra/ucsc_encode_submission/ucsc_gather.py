@@ -625,6 +625,18 @@ class NameToViewMap(object):
         ma = 'TH1014'
 
         self.patterns = [
+            # for 2011 Feb 18 elements submission
+            ('final_Cufflinks_genes_*gtf',       'GeneDeNovo'),
+            ('final_Cufflinks_transcripts_*gtf', 'TranscriptDeNovo'),
+            ('final_exonFPKM-Cufflinks-0.9.3-GENCODE-v3c-*.gtf',       
+             'ExonsGencV3c'),
+            ('final_GENCODE-v3-Cufflinks-0.9.3.genes-*gtf',          
+             'GeneGencV3c'),
+            ('final_GENCODE-v3-Cufflinks-0.9.3.transcripts-*gtf',    
+             'TranscriptGencV3c'),
+            ('final_TSS-Cufflinks-0.9.3-GENCODE-v3c-*.gtf', 'TSS'),
+            ('final_junctions-*.bed6+3',                    'Junctions'),
+            
             ('*.bai',                   None),
             ('*.splices.bam',           'Splices'),
             ('*.bam',                   self._guess_bam_view),
@@ -751,8 +763,14 @@ class NameToViewMap(object):
 
     def _is_paired(self, lib_id, lib_info):
         """Determine if a library is paired end"""
+        # TODO: encode this information in the library type page.
+        single = (1,3,6)
         if len(lib_info["lane_set"]) == 0:
-            return False
+            # we haven't sequenced anything so guess based on library type
+            if lib_info['library_type_id'] in single:
+                return False
+            else:
+                return True
 
         if not self.lib_paired.has_key(lib_id):
             is_paired = 0
