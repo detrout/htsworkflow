@@ -130,10 +130,6 @@ def finishedEmail(request, pk):
 def flowcell_detail(request, flowcell_id):
     fc = get_object_or_404(FlowCell, flowcell_id=flowcell_id)
 
-    print unicode(fc.get_absolute_url())
-    for lane in fc.lane_set.all():
-        print unicode(lane.get_absolute_url())
-        
     context = RequestContext(request,
                              {'flowcell': fc})
     
