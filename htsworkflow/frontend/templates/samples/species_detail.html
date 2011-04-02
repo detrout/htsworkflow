@@ -1,0 +1,20 @@
+{% extends "base_site.html" %}
+{% load adminmedia humanize i18n %}
+{% block extrahead %}
+    <!-- App Stuff -->
+    <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    
+    {% block additional_javascript %}
+    {% endblock %}
+{% endblock %}
+
+{% block content %}
+<div id="genome_detail">
+  <h2>About this Genome</h2>
+  <b>Common Name</b>: 
+     <span property="libns:species">{{ species.common_name}}</span><br/>
+  <b>Scientific Name</b>: 
+     <span property="libns:species">{{ species.scientific_name}}</span><br/>
+</div>  
+{% endblock %}

@@ -8,70 +8,18 @@
     {% block additional_javascript %}
     {% endblock %}
 
-<style type="text/css">
-  /* <![CDATA[ */
-  div#librarydetail {
-    margin: 0;
-    padding: 0;
-  }
-  div#librarydetail table, div#librarydetail td {
-    border-style: solid;
-  }
-  div#librarydetail table {
-    border-width: 0 0 1px 1px;
-    border-spacing: 0;
-    border-collapse: collapse;
-  }
-  div#librarydetail td {
-    margin: 0;
-    padding: 3px;
-    border-width: 1px 1px 0 0;
-  }
-  div#librarydetail thead {
-    text-align: center;
-    }
-  div#librarydetail tbody {
-    text-align: right;
-  }
-  div#librarydetail h1,
-  div#librarydetail h2
-  {
-    font-size: 150%;
-  }
-
-  div#librarydetail h3 {
-     font-size: 125%;
-     margin: 0;
-  }
-
-  div#librarydetail h4,
-  div#librarydetail h5,
-  div#librarydetail ul,
-  div#librarydetail ol,
-  div#librarydetail li
-  {
-    list-style: none;
-    margin: 0;   
-  }
-
-  div#librarydetail ul,
-  div#librarydetail ol
-  {
-    margin-bottom: .5em;
-  }
- /* ]]> */
-</style>
 {% endblock %}
 
 {% block content %}
-<div id="librarydetail">
+<div id="library_detail">
   <h2>About this library</h2>
   <b>Library ID</b>: {{ lib.id }}<br/>
   <b>Name</b>: 
     <span property="libns:name">{{ lib.library_name }}</span>
   <br/>
   <b>Species</b>: 
-    <span property="libns:species">{{ lib.library_species.scientific_name }}</span>
+    <a href="{{lib.library_species.get_absolute_url}}" rel="libns:species">
+    <span property="libns:species_name">{{ lib.library_species.scientific_name }}</span></a>
   <br/>
   <b>Concentration</b>: 
     <span property="libns:concentration">{{ lib.undiluted_concentration }} ng/µl</span>
@@ -111,7 +59,7 @@
       </li>
     {% endfor %}
   </ul>
-  
+  <div class="htswdetail">
   <h2>Raw Result Files</h2>
   <table>
   <thead>
@@ -128,11 +76,11 @@
   </thead>
   <tbody>
     {% for result in eland_results %}
-    <tr about="/flowcell/{{result.flowcell_id}}/lane/{{result.lane}}">
+    <tr about="{{result.flowcell.get_absolute_url}}">
       <td property="libns:date" content="{{result.run_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ result.run_date|date}}</td>
       <td>{{ result.cycle }}</td>
-      <td property="libns:flowcell_id">{{ result.flowcell_id }}</td>
-      <td property="libns:lane">{{ result.lane }}</td>
+      <td><a href="{{result.flowcell.get_absolute_url}}"><span property="libns:flowcell_id">{{ result.flowcell_id }}</span></a></td>
+      <td><a href="{{result.lane.get_absolute_url}}" rel="libns:has_lane"><span property="libns:lane_number" datatype="xsd:decimal">{{ result.lane.lane_number }}</span></a></td>
       <td><a href="{{ result.summary_url }}">Summary</a></td>
       <td><a href="{{ result.result_url }}">{{ result.result_label }}</a></td>
       <td>
@@ -186,7 +134,7 @@
     <tbody>
   
       {% for lane in lane_summary_list %}
-      <tr about="/flowcell/{{lane.flowcell_id}}/lane/{{lane.lane_id}}/end/{% if lane.end %}{{ lane.end }}{% endif %}">
+      <tr about="/flowcell/{{lane.flowcell_id}}/{{lane.lane_id}}/{% if lane.end %}#end{{ lane.end }}{% endif %}">
         <td>{{ lane.cycle_width }}</td>
         <td>{{ lane.flowcell_id }}</td>
         <td>{{ lane.lane_id }}</td>
@@ -222,30 +170,18 @@
     </thead>
     <tbody>
       {% for lane in lib.lane_set.all %}
-      <tr>
-        <td>{{ lane.flowcell.flowcell_id }}</td>
-        <td>{{ lane.lane_number }}</td>
+      <tr rel="libns:has_lane" resource="{{lane.get_absolute_url}}">
+        <td><a href="{{lane.flowcell.get_absolute_url}}" rel="libns:flowcell">
+            <span property="libns:flowcell_id">{{ lane.flowcell.flowcell_id }}</span></a></td>
+        <td><a href="{{lane.get_absolute_url}}"> 
+            <span property="libns:lane_number"  datatype="xsd:decimal"
+               >{{ lane.lane_number }}</span></a></td>
         <td>{{ lane.comment }}</td>
       </tr>
 	  {% endfor %}
     </tbody>
   </table>
-  <br/>
-  <hr/>
-  <h2>Count of multi-reads</h2>
-  {% for lane in lane_summary_list %}
-    {% if lane.summarized_reads %}
-    <h3>
-      {{lane.cycle_width}} {{ lane.flowcell_id }} lane {{ lane.lane_id }} 
-      {% if lane.end %} end {{ lane.end }}{% endif %}
-    </h3>
-    <ul>
-      {% for name, counts in lane.summarized_reads.items %}
-      <li><b>{{ name }}</b>: {{ counts|intcomma }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
-  {% endfor %}
   {% endblock %}
+  </div>
 </div>
 {% endblock %}

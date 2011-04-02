@@ -88,6 +88,11 @@ class FlowCell(models.Model):
       return u"Paired"
     else:
       return u"Single"
+
+  @models.permalink
+  def get_absolute_url(self):
+      return ('htsworkflow.frontend.experiments.views.flowcell_detail',
+              [str(self.flowcell_id)])
     
 ### -----------------------
 class DataRun(models.Model):
@@ -157,3 +162,8 @@ class Lane(models.Model):
   cluster_estimate = models.IntegerField(blank=True, null=True)                                       
   status = models.IntegerField(choices=LANE_STATUS_CODES, null=True, blank=True) 
   comment = models.TextField(null=True, blank=True)
+
+  @models.permalink
+  def get_absolute_url(self):
+       return ('htsworkflow.frontend.experiments.views.flowcell_lane_detail',
+               [str(self.flowcell.flowcell_id), str(self.lane_number)])

@@ -12,7 +12,7 @@ except ImportError, e:
 from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend.experiments.models import FlowCell, Lane, LANE_STATUS_MAP
 from htsworkflow.frontend.samples.changelist import ChangeList
-from htsworkflow.frontend.samples.models import Library, HTSUser
+from htsworkflow.frontend.samples.models import Library, Species, HTSUser
 from htsworkflow.frontend.samples.results import get_flowcell_result_dict, parse_flowcell_id
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
@@ -26,7 +26,7 @@ from htsworkflow.util import opener
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
@@ -68,6 +68,7 @@ def create_library_context(cl):
     #for lib in library_items.object_list:
     for lib in cl.result_list:
        summary = {}
+       summary['library'] = lib
        summary['library_id'] = lib.id
        summary['library_name'] = lib.library_name
        summary['species_name' ] = lib.library_species.scientific_name
@@ -391,13 +392,14 @@ def get_eland_result_type(pathname):
     else:
         return 'unknown'
 
-def _make_eland_results(flowcell_id, lane, interesting_flowcells):
+def _make_eland_results(flowcell_id, lane_number, interesting_flowcells):
     fc_id, status = parse_flowcell_id(flowcell_id)
     cur_fc = interesting_flowcells.get(fc_id, None)
     if cur_fc is None:
       return []
 
     flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
+    lane = flowcell.lane_set.get(lane_number=lane_number)
     # Loop throw storage devices if a result has been archived
     storage_id_list = []
     if cur_fc is not None:
@@ -421,6 +423,7 @@ def _make_eland_results(flowcell_id, lane, interesting_flowcells):
         result_path = cur_fc[cycle]['eland_results'].get(lane, None)
         result_link = make_result_link(fc_id, cycle, lane, result_path)
         results.append({'flowcell_id': fc_id,
+                        'flowcell': flowcell,
                         'run_date': flowcell.run_date,
                         'cycle': cycle, 
                         'lane': lane, 
@@ -552,9 +555,7 @@ def library_json(request, library_id):
     require_api_key(request)
     # what validation should we do on library_id?
     
-    lib = library_dict(library_id)
-    if lib is None:
-        raise Http404
+    lib = get_object_or_404(Library, library_id=library_id)
 
     lib_json = json.dumps(lib)
     return HttpResponse(lib_json, mimetype='application/json')
@@ -564,6 +565,14 @@ def species_json(request, species_id):
     Return information about a species.
     """
     raise Http404
+
+def species(request, species_id):
+    species = get_object_or_404(Species, id=species_id)
+    
+    context = RequestContext(request,
+                             { 'species': species })
+
+    return render_to_response("samples/species_detail.html", context)
 
 @login_required
 def user_profile(request):

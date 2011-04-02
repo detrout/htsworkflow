@@ -25,6 +25,11 @@ urlpatterns = patterns('',
     #(r'^admin/(.*)', admin.site.root),
     # Experiments:
     (r'^experiments/', include('htsworkflow.frontend.experiments.urls')),
+    # Flowcell:
+    (r'^flowcell/(?P<flowcell_id>\w+)/(?P<lane_number>\w+)/',
+     'htsworkflow.frontend.experiments.views.flowcell_lane_detail'),
+    (r'^flowcell/(?P<flowcell_id>\w+)/',
+     'htsworkflow.frontend.experiments.views.flowcell_detail'),
     # AnalysTrack:
     #(r'^analysis/', include('htsworkflow.frontend.analysis.urls')),
     # Inventory urls

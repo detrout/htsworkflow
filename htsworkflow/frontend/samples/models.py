@@ -102,6 +102,10 @@ class Species(models.Model):
   class Meta:
     verbose_name_plural = "species"
     ordering = ["scientific_name"]
+
+  @models.permalink
+  def get_absolute_url(self):
+    return ('htsworkflow.frontend.samples.views.species', [str(self.id)])
   
 class Affiliation(models.Model):
   name = models.CharField(max_length=256, db_index=True, verbose_name='Name')
@@ -286,9 +290,6 @@ class Library(models.Model):
   @models.permalink
   def get_absolute_url(self):
     return ('htsworkflow.frontend.samples.views.library_to_flowcells', [str(self.id)])
-    
-  
-    
 
 
 class HTSUser(User):

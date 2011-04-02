@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage, mail_managers
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
-from django.template import Context
+from django.template import RequestContext
 from django.template.loader import get_template
 
 from htsworkflow.frontend.experiments.models import *
@@ -87,13 +87,14 @@ def startedEmail(request, pk):
     for user_email in email_lane.keys():
         sending = ""
         # build body
-        context = Context({u'flowcell': fc,
-                   u'lanes': email_lane[user_email],
-                   u'runfolder': 'blank',
-                   u'finish_low': estimate_low,
-                   u'finish_high': estimate_high,
-                   u'now': datetime.now(),        
-                  })
+        context = RequestContext(request,
+                                 {u'flowcell': fc,
+                                  u'lanes': email_lane[user_email],
+                                  u'runfolder': 'blank',
+                                  u'finish_low': estimate_low,
+                                  u'finish_high': estimate_high,
+                                  u'now': datetime.now(),        
+                                  })
 
         # build view
         subject = "Flowcell %s" % ( fc.flowcell_id )
@@ -108,14 +109,15 @@ def startedEmail(request, pk):
 
         emails.append((user_email, subject, body, sending))
 
-    verify_context = Context({
-        'emails': emails,
-        'flowcell': fc,
-        'from': sender,
-        'send': send,
-        'site_managers': settings.MANAGERS,
-        'title': fc.flowcell_id,
-        'warnings': warnings,
+    verify_context = RequestContext(
+        request,
+        { 'emails': emails,
+          'flowcell': fc,
+          'from': sender,
+          'send': send,
+          'site_managers': settings.MANAGERS,
+          'title': fc.flowcell_id,
+          'warnings': warnings,
         })
     return HttpResponse(email_verify.render(verify_context))
     
@@ -123,3 +125,29 @@ def finishedEmail(request, pk):
     """
     """
     return HttpResponse("I've got nothing.")
+
+
+def flowcell_detail(request, flowcell_id):
+    fc = get_object_or_404(FlowCell, flowcell_id=flowcell_id)
+
+    print unicode(fc.get_absolute_url())
+    for lane in fc.lane_set.all():
+        print unicode(lane.get_absolute_url())
+        
+    context = RequestContext(request,
+                             {'flowcell': fc})
+    
+    return render_to_response('experiments/flowcell_detail.html',
+                              context)
+
+def flowcell_lane_detail(request, flowcell_id, lane_number):
+    fc = get_object_or_404(FlowCell, flowcell_id=flowcell_id)
+    lane = get_object_or_404(fc.lane_set, lane_number=lane_number)
+
+    context = RequestContext(request,
+                             {'lib': lane.library,
+                              'lane': lane,
+                              'flowcell': fc})
+    
+    return render_to_response('experiments/flowcell_lane_detail.html',
+                              context)

@@ -31,3 +31,55 @@ div.msg {
     color: white;
     background: #880000;
 }
+
+div.htswdetail {
+    margin: 0;
+    padding: 0;
+}
+div.htswdetail table, div.htswdetail td {
+    border-style: solid;
+}
+div.htswdetail table {
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+div.htswdetail td {
+    margin: 0;
+    padding: 3px;
+    border-width: 1px 1px 0 0;
+}
+div.htswdetail thead {
+    text-align: center;
+}
+div.htswdetail tbody {
+    text-align: left;
+  }
+div.htswdetail h1,
+div.htswdetail h2
+{
+    font-size: 150%;
+}
+
+div.htswdetail h3 {
+     font-size: 125%;
+     margin: 0;
+}
+
+  div.htswdetail h4,
+  div.htswdetail h5,
+  div.htswdetail ul,
+  div.htswdetail ol,
+  div.htswdetail li
+  {
+    list-style: none;
+    margin: 0;   
+  }
+
+  div.htswdetail ul,
+  div.htswdetail ol
+  {
+    margin-bottom: .5em;
+  }
+ /* ]]> */
+</style>
