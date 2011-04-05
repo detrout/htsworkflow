@@ -57,7 +57,6 @@ class SampleWebTestCase(TestCase):
             lib_response = self.client.get(url, apidata)
             self.failUnlessEqual(lib_response.status_code, 200)
             lib_json = json.loads(lib_response.content)
-            print lib_json
 
             for d in [lib_dict, lib_json]:
                 # amplified_from_sample is a link to the library table,
