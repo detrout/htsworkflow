@@ -86,7 +86,8 @@ options_to_list(options, ADMINS, 'frontend', 'admins')
 MANAGERS = []
 options_to_list(options, MANAGERS, 'frontend', 'managers')
 
-AUTHENTICATION_BACKENDS = ( 'samples.auth_backend.HTSUserModelBackend', )
+AUTHENTICATION_BACKENDS = ( 
+  'htsworkflow.frontend.samples.auth_backend.HTSUserModelBackend', )
 CUSTOM_USER_MODEL = 'samples.HTSUser' 
 
 EMAIL_HOST = options.get('frontend', 'email_host')
@@ -168,7 +169,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     '/usr/share/python-support/python-django/django/contrib/admin/templates',
     #'/usr/lib/pymodules/python2.6/django/contrib/admin/templates/',
-    os.path.join(os.path.split(__file__)[0], 'templates'),
+    os.path.join(os.path.split(__file__)[0], 'frontend','templates'),
 )
 
 INSTALLED_APPS = (
@@ -178,6 +179,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django_nose',
     'htsworkflow.frontend.eland_config',
     'htsworkflow.frontend.samples',
     # modules from htsworkflow branch
@@ -213,3 +215,5 @@ BCPRINTER_PRINTER1_HOST = options.get('bcprinter', 'printer1_host')
 BCPRINTER_PRINTER1_PORT = int(options.get('bcprinter', 'printer1_port'))
 BCPRINTER_PRINTER2_HOST = options.get('bcprinter', 'printer2_host')
 BCPRINTER_PRINTER2_PORT = int(options.get('bcprinter', 'printer2_port'))
+
+TEST_RUNNER='django_nose.NoseTestSuiteRunner'
