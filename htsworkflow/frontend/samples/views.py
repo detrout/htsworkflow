@@ -555,7 +555,9 @@ def library_json(request, library_id):
     require_api_key(request)
     # what validation should we do on library_id?
     
-    lib = get_object_or_404(Library, library_id=library_id)
+    lib = library_dict(library_id)
+    if lib is None:
+        raise Http404
 
     lib_json = json.dumps(lib)
     return HttpResponse(lib_json, mimetype='application/json')
