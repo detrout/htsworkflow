@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
-from htsworkflow.util.hdquery import get_hd_serial_num
-from htsworkflow.frontend import settings
-
 from optparse import OptionParser
 import os
 import re
 import sys
 import urllib2
 import urlparse
+
+from django.conf import settings
+
+from htsworkflow.util.hdquery import get_hd_serial_num
 
 runfolder_pattern = re.compile(r'[0-9]{6}_[-A-Za-z\d]+_\d+_(?P<flowcell>[A-Z\d]+)\.tgz')
 

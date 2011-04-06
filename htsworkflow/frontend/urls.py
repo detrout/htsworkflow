@@ -9,7 +9,7 @@ admin.autodiscover()
 #databrowse.site.register(Library)
 #databrowse.site.register(FlowCell)
 
-from htsworkflow.frontend import settings
+from django.conf import settings
 
 
 urlpatterns = patterns('',

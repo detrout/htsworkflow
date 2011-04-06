@@ -1,9 +1,9 @@
+from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
 
 from htsworkflow.frontend.eland_config import forms
-from htsworkflow.frontend import settings
 from htsworkflow.frontend.experiments import models
 
 import os

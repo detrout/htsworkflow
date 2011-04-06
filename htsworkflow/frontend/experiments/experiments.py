@@ -12,9 +12,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail, mail_admins
 from django.http import HttpResponse, Http404
+from django.conf import settings
 
 from htsworkflow.frontend.auth import require_api_key
-from htsworkflow.frontend import settings
 from htsworkflow.frontend.experiments.models import \
     FlowCell, \
     DataRun, \

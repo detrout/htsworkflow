@@ -5,7 +5,8 @@ from django.core import urlresolvers
 from django.db import models
 
 from htsworkflow.frontend.samples.models import *
-from htsworkflow.frontend.settings import options
+#from htsworkflow.frontend.settings import options
+from django.conf import settings
 
 class ClusterStation(models.Model):
   name = models.CharField(max_length=50, unique=True)
@@ -21,7 +22,7 @@ class Sequencer(models.Model):
 
 default_pM = 5
 try:
-  default_pM = int(options.get('frontend', 'default_pm'))
+  default_pM = int(settings.DEFAULT_PM)
 except ValueError,e:
   logging.error("invalid value for frontend.default_pm")
 

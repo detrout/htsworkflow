@@ -4,7 +4,6 @@ from django.db import models
 from django.contrib.auth.models import User, UserManager
 from django.db.models.signals import pre_save, post_save
 from django.db import connection
-from htsworkflow.frontend import settings
 from htsworkflow.frontend.reports.libinfopar import *
 
 

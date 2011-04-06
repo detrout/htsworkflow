@@ -4,6 +4,7 @@ try:
     import json
 except ImportError, e:
     import simplejson as json
+import os
 import sys
 
 from django.core import mail
@@ -206,3 +207,4 @@ class TestEmailNotify(TestCase):
         # require that navigation back to the admin page exists
         self.failUnless(re.search('<a href="/admin/experiments/flowcell/153/">[^<]+</a>', response.content))
         
+

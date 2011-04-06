@@ -18,7 +18,6 @@ from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.eland import ResultLane
-from htsworkflow.frontend import settings
 from htsworkflow.util.conversion import unicode_or_none
 from htsworkflow.util import makebed
 from htsworkflow.util import opener
@@ -30,6 +29,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 LANE_LIST = [1,2,3,4,5,6,7,8]
 SAMPLES_CONTEXT_DEFAULTS = {

@@ -5,15 +5,14 @@ from htsworkflow.frontend.bcmagic.plugin import register_search_plugin
 from htsworkflow.frontend.experiments.models import FlowCell
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.frontend.bcmagic.utils import print_zpl_socket
-from htsworkflow.frontend import settings
-#from htsworkflow.util.jsonutil import encode_json
 
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext, Template
 from django.template.loader import get_template
-from django.contrib.auth.decorators import login_required
 
 register_search_plugin('Inventory Item', item_search)
 
