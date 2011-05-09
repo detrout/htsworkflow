@@ -86,6 +86,8 @@ options_to_list(options, ADMINS, 'frontend', 'admins')
 MANAGERS = []
 options_to_list(options, MANAGERS, 'frontend', 'managers')
 
+DEFAULT_PM=int(options.get('frontend', 'default_pm'))
+
 AUTHENTICATION_BACKENDS = ( 
   'htsworkflow.frontend.samples.auth_backend.HTSUserModelBackend', )
 CUSTOM_USER_MODEL = 'samples.HTSUser' 
@@ -216,4 +218,3 @@ BCPRINTER_PRINTER1_PORT = int(options.get('bcprinter', 'printer1_port'))
 BCPRINTER_PRINTER2_HOST = options.get('bcprinter', 'printer2_host')
 BCPRINTER_PRINTER2_PORT = int(options.get('bcprinter', 'printer2_port'))
 
-DEFAULT_PM=int(options.get('frontend', 'default_pm'))
