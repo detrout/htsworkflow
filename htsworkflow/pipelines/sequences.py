@@ -216,6 +216,10 @@ def scan_for_sequences(dirs):
     sequences = []
     for d in dirs:
         logging.info("Scanning %s for sequences" % (d,))
+        if not os.path.exists(d):
+            logging.warn("Flowcell directory %s does not exist" % (d,))
+            continue
+        
         for path, dirname, filenames in os.walk(d):
             for f in filenames:
                 seq = None
