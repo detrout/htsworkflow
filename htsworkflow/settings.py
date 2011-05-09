@@ -170,7 +170,7 @@ TEMPLATE_DIRS = (
     '/usr/share/python-support/python-django/django/contrib/admin/templates',
     #'/usr/lib/pymodules/python2.6/django/contrib/admin/templates/',
     os.path.join(os.path.split(__file__)[0],
-                 'htsworkflow', 'frontend','templates'),
+                 'frontend','templates'),
 )
 
 INSTALLED_APPS = (
