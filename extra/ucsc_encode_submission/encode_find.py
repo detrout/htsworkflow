@@ -17,6 +17,8 @@ import urllib
 
 from htsworkflow.util import api
 
+DBDIR = os.path.expanduser("~diane/proj/submission")
+
 logger = logging.getLogger("encode_find")
 
 libraryNS = RDF.NS("http://jumpgate.caltech.edu/library/")
@@ -109,7 +111,8 @@ def get_model(model_name=None):
     if model_name is None:
         storage = RDF.MemoryStorage()
     else:
-        storage = RDF.HashStorage(model_name, options="hash-type='bdb',dir='/tmp'")
+        storage = RDF.HashStorage(model_name,
+                      options="hash-type='bdb',dir='{0}'".format(DBDIR))
     model = RDF.Model(storage)
     return model
         
@@ -230,7 +233,7 @@ def update_submission_detail(model, subUrn, status, recent_update, cookie):
         logging.info("Adding status node to {0}".format(subUrn))
         status_blank = RDF.Node()
         add_stmt(model, subUrn, HasStatusN, status_blank)
-        add_stmt(model, status_blank, rdfs['type'], StatusT)
+        add_stmt(model, status_blank, rdfsNS['type'], StatusN)
         add_stmt(model, status_blank, StatusN, status)
         add_stmt(model, status_blank, LastModifyN, recent_update)
         update_ddf(model, subUrn, status_blank, cookie=cookie)
