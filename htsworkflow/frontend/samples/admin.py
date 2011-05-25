@@ -47,11 +47,11 @@ class AntibodyOptions(admin.ModelAdmin):
      )
 
 class CelllineOptions(admin.ModelAdmin):
-    list_display = ('cellline_name', 'nickname', 'notes')
+    list_display = ('cellline_name', 'notes')
     search_fields = ('cellline_name', 'nickname', 'notes')
     fieldsets = (
       (None, {
-          'fields': (('cellline_name'),('notes'),)
+          'fields': (('cellline_name','nickname',),('notes'),)
       }),
      )
 
@@ -129,9 +129,16 @@ class LibraryOptions(admin.ModelAdmin):
       (None, {
         'fields': (
           ('id','library_name','hidden'),
-          ('library_species', 'cell_line', 'replicate'),
-          ('library_type', 'experiment_type'))
+          ('library_species', 'library_type', 'experiment_type'),
+          )
          }),
+         ('Experiment Detail:', {
+            'fields': (('cell_line', 'replicate',),
+                       ('condition',),
+                       ('antibody', ),
+                       ),
+            'classes': ('collapse',),
+            }),
          ('Creation Information:', {
              'fields' : (('made_by', 'creation_date', 'stopping_point'), 
                          ('amplified_from_sample'), 
@@ -221,9 +228,9 @@ class TagOptions(admin.ModelAdmin):
 
 admin.site.register(Library, LibraryOptions)
 admin.site.register(Affiliation, AffiliationOptions)
-#admin.site.register(Antibody, AntibodyOptions)
+admin.site.register(Antibody, AntibodyOptions)
 admin.site.register(Cellline, CelllineOptions)
-#admin.site.register(Condition, ConditionOptions)
+admin.site.register(Condition, ConditionOptions)
 admin.site.register(ExperimentType, ExperimentTypeOptions)
 #admin.site.register(HTSUser, HTSUserOptions)
 admin.site.register(LibraryType, LibraryTypeOptions)
