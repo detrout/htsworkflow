@@ -19,8 +19,7 @@ class Antibody(models.Model):
         max_length=20,
         blank=True,
         null=True, 
-        db_index=True,
-        verbose_name = 'Short Name'
+        db_index=True
     )
     catalog = models.CharField(max_length=50, unique=True, db_index=True)
     antibodies = models.CharField(max_length=500, db_index=True)
@@ -38,8 +37,8 @@ class Cellline(models.Model):
     nickname = models.CharField(max_length=20,
         blank=True,
         null=True, 
-        db_index=True,
-        verbose_name = 'Short Name')
+        db_index=True)
+    
     notes = models.TextField(blank=True)
     def __unicode__(self):
         return unicode(self.cellline_name)
@@ -152,7 +151,7 @@ class Library(models.Model):
   # New field Aug/19/08
   # SQL to add column: alter table fctracker_library add column "replicate" smallint unsigned NULL;
   REPLICATE_NUM = ((1,1),(2,2),(3,3),(4,4))
-  replicate =  models.PositiveSmallIntegerField(choices=REPLICATE_NUM,default=1) 
+  replicate =  models.PositiveSmallIntegerField(choices=REPLICATE_NUM,blank=True,null=True) 
   experiment_type = models.ForeignKey(ExperimentType)
   library_type = models.ForeignKey(LibraryType, blank=True, null=True)
   creation_date = models.DateField(blank=True, null=True)
@@ -202,7 +201,7 @@ class Library(models.Model):
       ordering = ["-id"]
   
   def antibody_name(self):
-    str ='<a target=_self href="/admin/samples/antibody/'+self.antibody.id.__str__()+'/" title="'+self.antibody.__str__()+'">'+self.antibody.nickname+'</a>' 
+    str ='<a target=_self href="/admin/samples/antibody/'+self.antibody.id.__str__()+'/" title="'+self.antibody.__str__()+'">'+self.antibody.label+'</a>' 
     return str
   antibody_name.allow_tags = True
 

@@ -8,58 +8,152 @@
     {% block additional_javascript %}
     {% endblock %}
 
+<style type="text/css">
+  /* <![CDATA[ */
+  div#librarydetail {
+    margin: 0;
+    padding: 0;
+  }
+  div#librarydetail table, div#librarydetail td {
+    border-style: solid;
+  }
+  div#librarydetail table {
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+  div#librarydetail td {
+    margin: 0;
+    padding: 3px;
+    border-width: 1px 1px 0 0;
+  }
+  div#librarydetail thead {
+    text-align: center;
+    }
+  div#librarydetail tbody {
+    text-align: right;
+  }
+  div#librarydetail h1,
+  div#librarydetail h2
+  {
+    font-size: 150%;
+  }
+
+  div#librarydetail h3 {
+     font-size: 125%;
+     margin: 0;
+  }
+
+  div#librarydetail h4,
+  div#librarydetail h5,
+  div#librarydetail ul,
+  div#librarydetail ol,
+  div#librarydetail li
+  {
+    list-style: none;
+    margin: 0;   
+  }
+
+  div#librarydetail ul,
+  div#librarydetail ol
+  {
+    margin-bottom: .5em;
+  }
+
+  div.library_identity { 
+    float: left; margin: 5px; }
+  div.library_sample_detail { float: left; margin: 5px; }
+  div.library_library_detail { float: left; margin: 5px; }
+  div.library_statistics { clear: both; border: 1px; }
+ /* ]]> */
+</style>
 {% endblock %}
 
 {% block content %}
-<div id="library_detail">
-  <h2>About this library</h2>
-  <b>Library ID</b>: {{ lib.id }}<br/>
-  <b>Name</b>: 
-    <span property="libns:name">{{ lib.library_name }}</span>
-  <br/>
-  <b>Species</b>: 
-    <a href="{{lib.library_species.get_absolute_url}}" rel="libns:species">
-    <span property="libns:species_name">{{ lib.library_species.scientific_name }}</span></a>
-  <br/>
-  <b>Concentration</b>: 
-    <span property="libns:concentration">{{ lib.undiluted_concentration }} ng/µl</span>
-  <br/>
-  <b>Gel Cut Size</b>: 
-    <span property="libns:gel_cut">{{ lib.gel_cut_size }}</span>
-  <br/>
-  <b>Insert Size</b>: 
-    <span property="libns:insert_size">{{ lib.insert_size }}</span>
-  <br/>
-  <b>Background or Cell Line</b>:
-     <span property="libns:cell_line">{{ lib.cell_line }}</span>
-  <br/>
-  <b>Replicate</b>: 
-     <span property="libns:replicate">{{ lib.replicate }}</span>
-  <br/>
-  <b>Library Type</b>:
-     <span property="libns:library_type">{{ lib.library_type }}</span>
-  <br/>
-  <b>Experiment Type</b>:
-     <span property="libns:experiment_type">{{ lib.experiment_type }}</span>
-  <br/>
-  <b>Made By</b>: 
-    <span property="libns:made_by">{{ lib.made_by }}</span>
-  <br/>
-  <b>Creation Date</b>
-    <span property="libns:date" content="{{lib.creation_date|date:'Y-m-d'}}T00:00:00" datatype="xsd:dateTime">{{ lib.creation_date }}</span>
-  <br/> 
-  <b>Protocol Stopping Point</b>
-    <span property="libns:stopping_point">{{ lib.stopping_point_name }}</span>
-  <br/> 
-  <b>Affiliations</b>:
-  <ul>
-    {% for individual in lib.affiliations.all %}
-      <li property="libns:affliation" content="{{individual.name}}">
-        {{ individual.name }} ( {{ individual.contact }} )
-      </li>
-    {% endfor %}
-  </ul>
-  <div class="htswdetail">
+<div id="librarydetail">
+  <div class="library_identity">
+    <h2>Library Name</h2>  
+    <b>Library ID</b>: {{ lib.id }}<br/>
+    <b>Name</b>: 
+      <span property="libns:name">{{ lib.library_name }}</span>
+    <br/>
+    <b>Affiliations</b>:
+    <ul>
+      {% for individual in lib.affiliations.all %}
+        <li property="libns:affliation" content="{{individual.name}}">
+          {{ individual.name }} ( {{ individual.contact }} )
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="library_sample_detail">
+    <h2>Sample Details</h2>
+    <b>Species</b>: 
+      <span property="libns:species">{{ lib.library_species.scientific_name }}</span>
+    <br/>
+    <b>Experiment Type</b>:
+       <span property="libns:experiment_type">{{ lib.experiment_type }}</span>
+    <br/>
+    {% if lib.antibody %}
+    <b>Antibody</b>:
+       <span property="libns:antibody">{{ lib.antibody.antibodies }}</span>
+       {% if lib.antibody.antibodies.nuckname %}
+       (<span property="libns:antibody_term">{{ lib.antibody.nickname }}</span>)
+       {% endif %}
+    <br/>
+    {% endif %}
+    {% if lib.cell_line %}
+    <b>Background or Cell Line</b>:
+       <span property="libns:cell_line">{{ lib.cell_line }}</span>
+    <br/>
+    {% endif %}
+    {% if lib.condition %}
+    <b>Condition</b>:
+       <span property="libns:condition">{{ lib.condition.condition_name }}</span>
+       {% if lib.condition.nickname %}
+       (<span property="libns:condition_term">{{ lib.condition.nickname }}</span>)
+       {% endif %}
+    <br/>
+    {% endif %}
+    {% if lib.replicate %}
+    <b>Replicate</b>: 
+       <span property="libns:replicate">{{ lib.replicate }}</span>
+    <br/>
+    {% endif %}
+  </div>
+  <div class="library_library_detail">
+    <h2>Library Details</h2>
+    <b>Library Type</b>:
+       <span property="libns:library_type">{{ lib.library_type }}</span>
+    <br/>
+    <b>Creation Date</b>
+      <span property="libns:date" content="{{lib.creation_date|date:'Y-m-d'}}T00:00:00" datatype="xsd:dateTime">{{ lib.creation_date }}</span>
+    <br/> 
+    <b>Made By</b>: 
+      <span property="libns:made_by">{{ lib.made_by }}</span>
+    <br/>
+    {% if lib.gel_cut_size %}
+    <b>Gel Cut Size</b>: 
+      <span property="libns:gel_cut">{{ lib.gel_cut_size }}</span>
+    <br/>
+    {% endif %}
+    {% if lib.insert_size %}
+    <b>Insert Size</b>: 
+      <span property="libns:insert_size">{{ lib.insert_size }}</span>
+    <br/>
+    {% endif %}
+    {% if lib.undiluted_concentration %}
+    <b>Concentration</b>: 
+      <span property="libns:concentration">{{ lib.undiluted_concentration }} ng/µl</span>
+    <br/>
+    {% endif %}
+    {% if lib.stopping_point_name %}
+    <b>Protocol Stopping Point</b>
+      <span property="libns:stopping_point">{{ lib.stopping_point_name }}</span>
+    <br/>
+    {% endif %}
+  </div>
+  <div class="library_statistics">
   <h2>Raw Result Files</h2>
   <table>
   <thead>
