@@ -80,7 +80,7 @@
     <b>Affiliations</b>:
     <ul>
       {% for individual in lib.affiliations.all %}
-        <li property="libns:affliation" content="{{individual.name}}">
+        <li property="libns:affiliation" content="{{individual.name}}">
           {{ individual.name }} ( {{ individual.contact }} )
         </li>
       {% endfor %}
