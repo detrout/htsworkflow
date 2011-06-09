@@ -75,6 +75,13 @@ class PipelineRun(object):
         return self._flowcell_id
     flowcell_id = property(_get_flowcell_id)
 
+    def _get_runfolder_name(self):
+        if self.gerald is None:
+            return None
+        else:
+            return self.gerald.runfolder_name
+    runfolder_name = property(_get_runfolder_name)
+    
     def get_elements(self):
         """
         make one master xml file from all of our sub-components.
