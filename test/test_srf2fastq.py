@@ -6,6 +6,8 @@ import unittest
 _module_path, _module_name = os.path.split(__file__)
 sys.path.append(os.path.join(_module_path, '..', 'scripts'))
 
+from htsworkflow.pipelines.test.simulate_runfolder import TESTDATA_DIR
+
 from htsworkflow.pipelines import srf2fastq
 
 class testSrf2Fastq(unittest.TestCase):
@@ -113,9 +115,9 @@ IIIIB+++
 
     def test_is_srf(self):        
         cnf4_srf = 'woldlab_070829_USI-EAS44_0017_FC11055_1.srf'
-        cnf4_path = os.path.join(_module_path, cnf4_srf)
+        cnf4_path = os.path.join(TESTDATA_DIR, cnf4_srf)
         cnf1_srf = 'woldlab_090512_HWI-EAS229_0114_428NNAAXX_5.srf'
-        cnf1_path = os.path.join(_module_path, cnf1_srf)
+        cnf1_path = os.path.join(TESTDATA_DIR, cnf1_srf)
         
         is_srf = srf2fastq.is_srf
         self.failUnlessEqual(is_srf(__file__), False)
@@ -124,9 +126,9 @@ IIIIB+++
 
     def test_is_cnf1(self):        
         cnf4_srf = 'woldlab_070829_USI-EAS44_0017_FC11055_1.srf'
-        cnf4_path = os.path.join(_module_path, cnf4_srf)
+        cnf4_path = os.path.join(TESTDATA_DIR, cnf4_srf)
         cnf1_srf = 'woldlab_090512_HWI-EAS229_0114_428NNAAXX_5.srf'
-        cnf1_path = os.path.join(_module_path, cnf1_srf)
+        cnf1_path = os.path.join(TESTDATA_DIR, cnf1_srf)
         
         is_cnf1 = srf2fastq.is_cnf1
         self.failUnlessRaises(ValueError, is_cnf1, __file__)
