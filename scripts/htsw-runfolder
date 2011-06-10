@@ -35,7 +35,7 @@ import sys
 
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.runfolder import ElementTree
-        
+
 def make_parser():
     usage = 'usage: %prog [options] runfolder_root_dir'
     parser = optparse.OptionParser(usage)
@@ -78,6 +78,10 @@ def make_parser():
                            ' GERALD directory, and it assumes the parent '
                            'directories are the bustard and image processing '
                            'directories.')
+    parser.add_option('--raw-format', dest="raw_format", default='qseq',
+                      choices=['qseq', 'srf'],
+                      help='Specify which type of raw format to use. '
+                           'Currently supported options: qseq, srf')
 
     return parser
 
@@ -123,20 +127,21 @@ def main(cmdlist=None):
         if opt.extract_results:
             if opt.dry_run:
                 parser.error("Dry-run is not supported for extract-results")
-            runfolder.extract_results(runs, 
-                                      opt.output_dir, 
-                                      opt.site, 
-                                      opt.max_jobs)
+            runfolder.extract_results(runs,
+                                      opt.output_dir,
+                                      opt.site,
+                                      opt.max_jobs,
+                                      opt.raw_format)
             command_run = True
         if opt.clean:
             runfolder.clean_runs(runs, opt.dry_run)
             command_run = True
 
         if command_run == False:
-            print "You need to specify a command."+os.linesep
+            print "You need to specify a command." + os.linesep
             parser.print_help()
     else:
-        print "You need to specify some run folders to process..."+os.linesep
+        print "You need to specify some run folders to process..." + os.linesep
         parser.print_help()
 
     return 0

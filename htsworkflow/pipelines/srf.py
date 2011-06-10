@@ -46,8 +46,8 @@ def make_srf_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel
   destdir - where to write all the srf files
   """
   # clean up pathname
-  logging.info("run_name %s" % ( run_name, ))
-  
+  logging.info("run_name %s" % (run_name,))
+
   cmd_list = []
   for lane in lanes:
     name_prefix = '%s_%%l_%%t_' % (run_name,)
@@ -57,19 +57,19 @@ def make_srf_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel
     seq_pattern = 's_%d_*_seq.txt' % (lane,)
 
     if cmdlevel == SOLEXA2SRF:
-        cmd = ['solexa2srf', 
+        cmd = ['solexa2srf',
                '-N', name_prefix,
-               '-n', '%3x:%3y', 
-               '-o', dest_path, 
+               '-n', '%t:%3x:%3y',
+               '-o', dest_path,
                seq_pattern]
     elif cmdlevel == ILLUMINA2SRF10:
-        cmd = ['illumina2srf', 
+        cmd = ['illumina2srf',
                '-v1.0',
                '-o', dest_path,
                seq_pattern]
     elif cmdlevel == ILLUMINA2SRF11:
         seq_pattern = 's_%d_*_qseq.txt' % (lane,)
-        cmd = ['illumina2srf', 
+        cmd = ['illumina2srf',
                '-o', dest_path,
                seq_pattern]
     else:
@@ -88,7 +88,7 @@ def create_qseq_patterns(bustard_dir):
   qseqs = [ os.path.split(x)[-1] for x in qseqs ]
   if len(qseqs[0].split('_')) == 4:
     # single ended
-    return [(None,"s_%d_[0-9][0-9][0-9][0-9]_qseq.txt")]
+    return [(None, "s_%d_[0-9][0-9][0-9][0-9]_qseq.txt")]
   elif len(qseqs[0].split('_')) == 5:
     # more than 1 read
     # build a dictionary of read numbers by lane
@@ -108,7 +108,7 @@ def create_qseq_patterns(bustard_dir):
     return qseq_patterns
   else:
     raise RuntimeError('unrecognized qseq pattern, not a single or multiple read pattern')
-  
+
 def make_qseq_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel=ILLUMINA2SRF11):
   """
   make a subprocess-friendly list of command line arguments to run solexa2srf
@@ -122,8 +122,8 @@ def make_qseq_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdleve
   destdir - where to write all the srf files
   """
   # clean up pathname
-  logging.info("run_name %s" % ( run_name, ))
-  
+  logging.info("run_name %s" % (run_name,))
+
   cmd_list = []
   for lane in lanes:
     name_prefix = '%s_%%l_%%t_' % (run_name,)
@@ -137,11 +137,11 @@ def make_qseq_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdleve
       else:
         destname = '%s_%s_l%d_r%d.tar.bz2' % (site_name, run_name, lane, read)
         dest_path = os.path.join(destdir, destname)
-        
+
       cmd = " ".join(['tar', 'cjf', dest_path, pattern % (lane,) ])
       logging.info("Generated command: " + cmd)
       cmd_list.append(cmd)
-      
+
   return cmd_list
 
 def run_commands(new_dir, cmd_list, num_jobs):
@@ -151,22 +151,22 @@ def run_commands(new_dir, cmd_list, num_jobs):
     q = queuecommands.QueueCommands(cmd_list, num_jobs)
     q.run()
     os.chdir(curdir)
-    
+
 def make_md5_commands(destdir):
   """
   Scan the cycle dir and create md5s for the contents
   """
   cmd_list = []
   destdir = os.path.abspath(destdir)
-  bz2s = glob(os.path.join(destdir,"*.bz2"))
-  gzs = glob(os.path.join(destdir,"*gz"))
-  srfs = glob(os.path.join(destdir,"*.srf"))
+  bz2s = glob(os.path.join(destdir, "*.bz2"))
+  gzs = glob(os.path.join(destdir, "*gz"))
+  srfs = glob(os.path.join(destdir, "*.srf"))
 
   file_list = bz2s + gzs + srfs
 
   for f in file_list:
-      cmd = " ".join(['md5sum', f, '>', f+'.md5'])
-      logging.info('generated command: '+cmd)
+      cmd = " ".join(['md5sum', f, '>', f + '.md5'])
+      logging.info('generated command: ' + cmd)
       cmd_list.append(cmd)
 
   return cmd_list
