@@ -16,11 +16,12 @@ from htsworkflow.frontend.samples.models import Library
 from htsworkflow.frontend.samples.results import parse_flowcell_id
 from htsworkflow.pipelines import runfolder
 
+logger = logging.getLogger(__name__)
 default_pM = 5
 try:
   default_pM = int(settings.DEFAULT_PM)
 except ValueError,e:
-  logging.error("invalid value for frontend.default_pm")
+  logger.error("invalid value for frontend.default_pm")
 
 RUN_STATUS_CHOICES = (
     (0, 'Sequencer running'), ##Solexa Data Pipeline Not Yet Started'),
@@ -114,7 +115,7 @@ class FlowCell(models.Model):
       result_root = self.get_raw_data_directory()
       if result_root is None:
           return
-  
+
       result_home_dir = os.path.join(settings.RESULT_HOME_DIR,'')
       run_xml_re = re.compile(glob.fnmatch.translate('run*.xml'))
       
@@ -144,10 +145,12 @@ class FlowCell(models.Model):
       run.cycle_start = run_xml_data.image_analysis.start
       run.cycle_stop = run_xml_data.image_analysis.stop
       run.run_start_time = run_xml_data.image_analysis.date
+
       run.last_update_time = datetime.datetime.now()
       run.save()
 
       run.update_result_files()
+
       
 # FIXME: should we automatically update dataruns?
 #        Or should we expect someone to call update_data_runs?
@@ -198,7 +201,7 @@ class DataRun(models.Model):
 
     def update_result_files(self):
         abs_result_dir = get_absolute_pathname(self.result_dir)
-        
+
         for dirname, dirnames, filenames in os.walk(abs_result_dir):
             for filename in filenames:
                 pathname = os.path.join(dirname, filename)
@@ -288,12 +291,15 @@ class FileType(models.Model):
         #return u"<FileType: %s>" % (self.name,)
         return self.name
 
+def str_uuid():
+    """Helper function to set default UUID in DataFile"""
+    return str(uuid.uuid1())
 
 class DataFile(models.Model):
     """Store map from random ID to filename"""
-    random_key = models.CharField(max_length=16,
+    random_key = models.CharField(max_length=64,
                                   db_index=True,
-                                  default=uuid.uuid1)
+                                  default=str_uuid)
     data_run = models.ForeignKey(DataRun, db_index=True)
     library = models.ForeignKey(Library, db_index=True, null=True, blank=True)
     file_type = models.ForeignKey(FileType)
