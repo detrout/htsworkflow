@@ -1,0 +1,109 @@
+[
+  { "model": "experiments.FileType",
+    "pk": 1,
+    "fields": {
+      "name": "run_xml",
+      "mimetype": "application/vnd.htsworkflow-run-xml",
+      "regex": "run.*\\.xml\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 2,
+    "fields": {
+      "name": "Summary.htm",
+      "mimetype": "text/html",
+      "regex": "Summary\\.htm\\Z(?ms)"
+    }
+  },
+
+  { "model": "experiments.FileType",
+    "pk": 3,
+    "fields": {
+      "name": "IVC All",
+      "mimetype": "image/png",
+      "regex": "s_(?P<lane>[0-9])_all\\.png\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 4,
+    "fields": {
+      "name": "IVC Call",
+      "mimetype": "image/png",
+      "regex": "s_(?P<lane>[0-9])_call\\.png\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 5,
+    "fields": {
+      "name": "IVC Percent All",
+      "mimetype": "image/png",
+      "regex": "s_(?P<lane>[0-9])_percent_all\\.png\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 6,
+    "fields": {
+      "name": "IVC Percent Base",
+      "mimetype": "image/png",
+      "regex": "s_(?P<lane>[0-9])_percent_base\\.png\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 7,
+    "fields": {
+      "name": "IVC Percent Call",
+      "mimetype": "image/png",
+      "regex": "s_(?P<lane>[0-9])_percent_call\\.png\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 8,
+    "fields": {
+      "name": "GERALD Scores",
+      "regex": "scores\\.tar\\.bz2\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 9,
+    "fields": {
+      "name": "ELAND Result",
+      "regex": "s_(?P<lane>[0-9])((?P<end>[1-4])_)?_eland_result\\.txt\\.bz2\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 10,
+    "fields": {
+      "name": "ELAND Multi",
+      "regex": "s_(?P<lane>[0-9])((?P<end>[1-4])_)?_eland_multi\\.txt\\.bz2\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 11,
+    "fields": {
+      "name": "ELAND Extended",
+      "regex": "s_(?P<lane>[0-9])((?P<end>[1-4])_)?_eland_extended\\.txt\\.bz2\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 12,
+    "fields": {
+      "name": "ELAND Export",
+      "regex": "s_(?P<lane>[0-9])((?P<end>[1-4])_)?_export\\.txt\\.bz2\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 13,
+    "fields": {
+      "name": "SRF",
+      "regex": ".*_(?P<lane>[1-8])\\.srf\\Z(?ms)"
+    }
+  },
+  { "model": "experiments.FileType",
+    "pk": 14,
+    "fields": {
+      "name": "QSEQ tarfile",
+      "regex": ".*_l(?P<lane>[1-8])_r(?P<end>[1-4])\\.tar\\.bz2\\Z(?ms)"
+    }
+  }
+
+]

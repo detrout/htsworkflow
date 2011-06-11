@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     # Flowcell:
     (r'^flowcell/(?P<flowcell_id>\w+)/(?P<lane_number>\w+)/',
      'htsworkflow.frontend.experiments.views.flowcell_lane_detail'),
-    (r'^flowcell/(?P<flowcell_id>\w+)/',
+    (r'^flowcell/(?P<flowcell_id>\w+)/$',
      'htsworkflow.frontend.experiments.views.flowcell_detail'),
     # AnalysTrack:
     #(r'^analysis/', include('htsworkflow.frontend.analysis.urls')),

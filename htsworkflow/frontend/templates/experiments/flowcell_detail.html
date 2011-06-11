@@ -24,7 +24,7 @@
     <span property="libns:control_lane">{{flowcell.control_lane}}</span><br/>
 
   <b>Notes</b>:
-    <p property="libns:flowcell_notes">{{flowcell.notes}}</p>
+    <pre property="libns:flowcell_notes">{{flowcell.notes}}</pre>
   <div class="htswdetail">
     <h2>Lanes</h2>
     <table>
@@ -53,6 +53,53 @@
       {% endfor %}
       </tbody>
     </table>
+    </div>
+    <div class="htsw_flowcell_ivc">
+    {% for run in flowcell.datarun_set.all %}
+       <h2>Run {{ run.runfolder_name }}</h2>
+       <table>
+         <thead>
+           <tr>
+             <td>Lane</td>
+             <td>IVC All</td>
+             <td>IVC Call</td>
+             <td>IVC Percent Base</td>
+             <td>IVC Percent Base All</td>
+             <td>IVC Percent Base Called</td>
+         </thead>
+         <tbody>
+            {% for lane_id, lane_file_set in run.lane_files.items %}
+            <tr>
+              <td>{{ lane_id }}</td>
+              <td>
+                <a href="{{ lane_file_set.ivc_all.get_absolute_url }}">
+                <img height="84" width="126" src="{{ lane_file_set.ivc_all.get_absolute_url }}"/></a>
+              </td>
+              <td>
+                <a href="{{ lane_file_set.ivc_call.get_absolute_url }}">
+                <img height="84" width="126" src="{{ lane_file_set.ivc_call.get_absolute_url }}"/>
+                </a>
+              </td>
+              <td>
+                <a href="{{ lane_file_set.ivc_percent_base.get_absolute_url }}">
+                <img height="84" width="126" src="{{ lane_file_set.ivc_percent_base.get_absolute_url }}"/>
+                </a>
+              </td>
+              <td>
+                <a href="{{ lane_file_set.ivc_percent_all.get_absolute_url }}">
+                <img height="84" width="126" src="{{ lane_file_set.ivc_percent_all.get_absolute_url }}"/>
+                </a>
+              </td>
+              <td>
+                <a href="{{ lane_file_set.ivc_percent_call.get_absolute_url }}">
+                <img height="84" width="126" src="{{ lane_file_set.ivc_percent_call.get_absolute_url }}"/>
+                </a>
+              </td>
+            </tr>
+            {% endfor %} 
+         </tbody>
+       </table>
+    {% endfor %}
     </div>
 </div>  
 {% endblock %}

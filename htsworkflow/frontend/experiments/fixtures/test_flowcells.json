@@ -105,14 +105,14 @@
  {"pk": 153, "model": "experiments.flowcell", 
   "fields": {
       "paired_end": true, 
-      "run_date": "2009-09-11 22:12:13", 
-      "read_length": 75, 
+      "run_date": "2007-09-27 22:12:13", 
+      "read_length": 36, 
       "notes": "",
       "advanced_run": false,
       "control_lane": 2,
       "cluster_station": 3,
       "sequencer": 2,
-      "flowcell_id": "303TUAAXX"
+      "flowcell_id": "FC12150"
       }
   }, 
   {"pk": 1193, "model": "experiments.lane",

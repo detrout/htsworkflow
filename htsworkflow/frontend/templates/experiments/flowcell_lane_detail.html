@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="lane_detail">
+<div id="lane_detail" class="htswdetail">
   <h2>About this lane</h2>
   <div rel="libns:flowcell" resource="{{flowcell.get_absolute_url}}">
   <b>Flowcell</b>: 
@@ -22,6 +22,8 @@
   </div>
   <b>Lane</b>: 
     <span property="libns:lane_number" datatype="xsd:decimal">{{lane.lane_number}}</span><br/>
+  <b>Cycles</b>: 
+    <span property="libns:read_length">{{lane.flowcell.read_length}}</span><br/>
   <b>pM</b>
     <span property="libns:pM" datatype="xsd:decimal">{{ lane.pM }}</span><br/>
   <b>Cluster Estimate</b>
@@ -31,56 +33,56 @@
     <span property="libns:status">{{ lane.status }}</span><br/>
   <b>Comment</b>: 
     <span property="libns:comment">{{ lane.comment }}</span><br/>
-
-
-  <div rel="libns:library" resource="{{lib.get_absolute_url}}">
-  <h2>About the library</h2>
-  <b>Library ID</b>: 
-    <a href="{{lib.get_absolute_url}}" property="libns:library_id">{{ lib.id }}</a><br/>
-  <b>Name</b>: 
-    <span property="libns:name">{{ lib.library_name }}</span>
-  <br/>
-  <b>Species</b>: 
-    <a href="{{lib.library_species.get_absolute_url}}" rel="libns:species"><span property="libns:species_name">{{ lib.library_species.scientific_name }}</span></a>
-  <br/>
-  <b>Concentration</b>: 
-    <span property="libns:concentration">{{ lib.undiluted_concentration }} ng/µl</span>
-  <br/>
-  <b>Gel Cut Size</b>: 
-    <span property="libns:gel_cut">{{ lib.gel_cut_size }}</span>
-  <br/>
-  <b>Insert Size</b>: 
-    <span property="libns:insert_size">{{ lib.insert_size }}</span>
-  <br/>
-  <b>Background or Cell Line</b>:
-     <span property="libns:cell_line">{{ lib.cell_line }}</span>
-  <br/>
-  <b>Replicate</b>: 
-     <span property="libns:replicate">{{ lib.replicate }}</span>
-  <br/>
-  <b>Library Type</b>:
-     <span property="libns:library_type">{{ lib.library_type }}</span>
-  <br/>
-  <b>Experiment Type</b>:
-     <span property="libns:experiment_type">{{ lib.experiment_type }}</span>
-  <br/>
-  <b>Made By</b>: 
-    <span property="libns:made_by">{{ lib.made_by }}</span>
-  <br/>
-  <b>Creation Date</b>
-    <span property="libns:date" content="{{lib.creation_date|date:'Y-m-d'}}T00:00:00" datatype="xsd:dateTime">{{ lib.creation_date }}</span>
-  <br/> 
-  <b>Protocol Stopping Point</b>
-    <span property="libns:stopping_point">{{ lib.stopping_point_name }}</span>
-  <br/> 
-  <b>Affiliations</b>:
-  <ul>
-    {% for individual in lib.affiliations.all %}
-      <li property="libns:affliation" content="{{individual.name}}">
-        {{ individual.name }} ( {{ individual.contact }} )
-      </li>
-    {% endfor %}
-  </ul>
+  <hr/>
+  {% include "sample_header.html" %}
+  <hr/>
+  <div class="htsw_flowcell_ivc">
+  {% for run in flowcell.datarun_set.all %}
+     <h2>Run {{ run.runfolder_name }}</h2>
+     <table>
+       <thead>
+         <tr>
+           <td>Lane</td>
+           <td>IVC All</td>
+           <td>IVC Call</td>
+           <td>IVC Percent Base</td>
+           <td>IVC Percent Base All</td>
+           <td>IVC Percent Base Called</td>
+       </thead>
+       <tbody>
+          {% for lane_id, lane_file_set in run.lane_files.items %}
+          {% if lane_id == lane.lane_number %}
+          <tr>
+            <td>{{lane_id}}</td>
+            <td>
+              <a href="{{ lane_file_set.ivc_all.get_absolute_url }}">
+              <img height="84" width="126" src="{{ lane_file_set.ivc_all.get_absolute_url }}"/></a>
+            </td>
+            <td>
+              <a href="{{ lane_file_set.ivc_call.get_absolute_url }}">
+              <img height="84" width="126" src="{{ lane_file_set.ivc_call.get_absolute_url }}"/>
+              </a>
+            </td>
+            <td>
+              <a href="{{ lane_file_set.ivc_percent_base.get_absolute_url }}">
+              <img height="84" width="126" src="{{ lane_file_set.ivc_percent_base.get_absolute_url }}"/>
+              </a>
+            </td>
+            <td>
+              <a href="{{ lane_file_set.ivc_percent_all.get_absolute_url }}">
+              <img height="84" width="126" src="{{ lane_file_set.ivc_percent_all.get_absolute_url }}"/>
+              </a>
+            </td>
+            <td>
+              <a href="{{ lane_file_set.ivc_percent_call.get_absolute_url }}">
+              <img height="84" width="126" src="{{ lane_file_set.ivc_percent_call.get_absolute_url }}"/>
+              </a>
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %} 
+       </tbody>
+     </table>
+  {% endfor %}
   </div>
-</div>  
 {% endblock %}

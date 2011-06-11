@@ -128,9 +128,9 @@ def library_to_flowcells(request, lib_id):
     eland_results = []
     for fc, lane_number in flowcell_list:
         lane_summary, err_list = _summary_stats(fc, lane_number)
-
-        eland_results.extend(_make_eland_results(fc, lane_number, flowcell_run_results))
         lane_summary_list.extend(lane_summary)
+        
+        eland_results.extend(_make_eland_results(fc, lane_number, flowcell_run_results))
 
     context = {
         'page_name': 'Library Details',
@@ -308,7 +308,8 @@ def _summary_stats(flowcell_id, lane_id):
             flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
             #pm_field = 'lane_%d_pM' % (lane_id)
             lane_obj = flowcell.lane_set.get(lane_number=lane_id)
-            eland_summary.successful_pm = lane_obj.pM
+            eland_summary.flowcell = flowcell
+            eland_summary.lane = lane_obj
 
             summary_list.append(eland_summary)
 
@@ -318,65 +319,6 @@ def _summary_stats(flowcell_id, lane_id):
     
     return (summary_list, err_list)
 
-def _summary_stats_old(flowcell_id, lane):
-    """
-    return a dictionary of summary stats for a given flowcell_id & lane.
-    """
-    fc_id, status = parse_flowcell_id(flowcell_id)
-    fc_result_dict = get_flowcell_result_dict(fc_id)
-    
-    dict_list = []
-    err_list = []
-    summary_list = []
-    
-    if fc_result_dict is None:
-        err_list.append('Results for Flowcell %s not found.' % (fc_id))
-        return (dict_list, err_list, summary_list)
-    
-    for cnm in fc_result_dict:
-    
-        xmlpath = fc_result_dict[cnm]['run_xml']
-        
-        if xmlpath is None:
-            err_list.append('Run xml for Flowcell %s(%s) not found.' % (fc_id, cnm))
-            continue
-        
-        tree = ElementTree.parse(xmlpath).getroot()
-        results = runfolder.PipelineRun(pathname='', xml=tree)
-        try:
-            lane_report = runfolder.summarize_lane(results.gerald, lane)
-            summary_list.append(os.linesep.join(lane_report))
-        except Exception, e:
-            summary_list.append("Summary report needs to be updated.")
-            logging.error("Exception: " + str(e))
-       
-        print >>sys.stderr, "----------------------------------"
-        print >>sys.stderr, "-- DOES NOT SUPPORT PAIRED END ---"
-        print >>sys.stderr, "----------------------------------"
-        lane_results = results.gerald.summary[0][lane]
-        lrs = lane_results
-        
-        d = {}
-        
-        d['average_alignment_score'] = lrs.average_alignment_score
-        d['average_first_cycle_intensity'] = lrs.average_first_cycle_intensity
-        d['cluster'] = lrs.cluster
-        d['lane'] = lrs.lane
-        d['flowcell'] = flowcell_id
-        d['cnm'] = cnm
-        d['percent_error_rate'] = lrs.percent_error_rate
-        d['percent_intensity_after_20_cycles'] = lrs.percent_intensity_after_20_cycles
-        d['percent_pass_filter_align'] = lrs.percent_pass_filter_align
-        d['percent_pass_filter_clusters'] = lrs.percent_pass_filter_clusters
-        
-        #FIXME: function finished, but need to take advantage of
-        #   may need to take in a list of lanes so we only have to
-        #   load the xml file once per flowcell rather than once
-        #   per lane.
-        dict_list.append(d)
-    
-    return (dict_list, err_list, summary_list)
-    
     
 def get_eland_result_type(pathname):
     """

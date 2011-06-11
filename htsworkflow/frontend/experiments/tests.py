@@ -5,8 +5,11 @@ try:
 except ImportError, e:
     import simplejson as json
 import os
+import shutil
 import sys
+import tempfile
 
+from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
@@ -14,19 +17,47 @@ from htsworkflow.frontend.experiments import models
 from htsworkflow.frontend.experiments import experiments
 from htsworkflow.frontend.auth import apidata
 
+from htsworkflow.pipelines.test.simulate_runfolder import TESTDATA_DIR
+
 LANE_SET = range(1,9)
 
 class ExperimentsTestCases(TestCase):
     fixtures = ['test_flowcells.json']
 
     def setUp(self):
-        pass
+        self.tempdir = tempfile.mkdtemp(prefix='htsw-test-experiments-')
+        settings.RESULT_HOME_DIR = self.tempdir
+
+        self.fc1_id = 'FC12150'
+        self.fc1_root = os.path.join(self.tempdir, self.fc1_id)
+        os.mkdir(self.fc1_root)
+        self.fc1_dir = os.path.join(self.fc1_root, 'C1-37')
+        os.mkdir(self.fc1_dir)
+        runxml = 'run_FC12150_2007-09-27.xml'
+        shutil.copy(os.path.join(TESTDATA_DIR, runxml),
+                    os.path.join(self.fc1_dir, runxml))
+        for i in range(1,9):
+            shutil.copy(
+                os.path.join(TESTDATA_DIR,
+                             'woldlab_070829_USI-EAS44_0017_FC11055_1.srf'),
+                os.path.join(self.fc1_dir,
+                             'woldlab_070829_SERIAL_FC12150_%d.srf' %(i,))
+                )
+        
+        self.fc2_dir = os.path.join(self.tempdir, '42JTNAAXX')
+        os.mkdir(self.fc2_dir)
+        os.mkdir(os.path.join(self.fc2_dir, 'C1-25'))
+        os.mkdir(os.path.join(self.fc2_dir, 'C1-37'))
+        os.mkdir(os.path.join(self.fc2_dir, 'C1-37', 'Plots'))
+
+    def tearDown(self):
+        shutil.rmtree(self.tempdir)
 
     def test_flowcell_information(self):
         """
         Check the code that packs the django objects into simple types.
         """
-        for fc_id in [u'303TUAAXX', u"42JTNAAXX", "42JU1AAXX"]:
+        for fc_id in [u'FC12150', u"42JTNAAXX", "42JU1AAXX"]:
             fc_dict = experiments.flowcell_information(fc_id)
             fc_django = models.FlowCell.objects.get(flowcell_id=fc_id)
             self.failUnlessEqual(fc_dict['flowcell_id'], fc_id)
@@ -81,14 +112,14 @@ class ExperimentsTestCases(TestCase):
         """
         Require logging in to retrieve meta data
         """
-        response = self.client.get(u'/experiments/config/303TUAAXX/json')
+        response = self.client.get(u'/experiments/config/FC12150/json')
         self.failUnlessEqual(response.status_code, 403)
 
     def test_library_id(self):
         """
         Library IDs should be flexible, so make sure we can retrive a non-numeric ID
         """
-        response = self.client.get('/experiments/config/303TUAAXX/json', apidata)
+        response = self.client.get('/experiments/config/FC12150/json', apidata)
         self.failUnlessEqual(response.status_code, 200)
         flowcell = json.loads(response.content)
 
@@ -165,6 +196,128 @@ class ExperimentsTestCases(TestCase):
         self.failUnlessEqual(response.status_code, 404)
 
 
+    def test_raw_data_dir(self):
+        """Raw data path generator check"""
+        flowcell_id = self.fc1_id
+        raw_dir = os.path.join(settings.RESULT_HOME_DIR, flowcell_id)
+        
+        fc = models.FlowCell.objects.get(flowcell_id=flowcell_id)
+        self.failUnlessEqual(fc.get_raw_data_directory(), raw_dir)
+
+        fc.flowcell_id = flowcell_id + " (failed)"
+        self.failUnlessEqual(fc.get_raw_data_directory(), raw_dir)
+
+
+    def test_data_run_import(self):
+        srf_file_type = models.FileType.objects.get(name='SRF')
+        runxml_file_type = models.FileType.objects.get(name='run_xml')
+        flowcell_id = self.fc1_id
+        flowcell = models.FlowCell.objects.get(flowcell_id=flowcell_id)
+        flowcell.update_data_runs()
+        self.failUnlessEqual(len(flowcell.datarun_set.all()), 1)
+
+        run = flowcell.datarun_set.all()[0]
+        result_files = run.datafile_set.all()
+        result_dict = dict(((rf.relative_pathname, rf) for rf in result_files))
+
+        srf4 = result_dict['FC12150/C1-37/woldlab_070829_SERIAL_FC12150_4.srf']
+        self.failUnlessEqual(srf4.file_type, srf_file_type)
+        self.failUnlessEqual(srf4.library_id, '11060')
+        self.failUnlessEqual(srf4.data_run.flowcell.flowcell_id, 'FC12150')
+        self.failUnlessEqual(
+            srf4.data_run.flowcell.lane_set.get(lane_number=4).library_id,
+            '11060')
+        self.failUnlessEqual(
+            srf4.pathname,
+            os.path.join(settings.RESULT_HOME_DIR, srf4.relative_pathname))
+
+        lane_files = run.lane_files()
+        self.failUnlessEqual(lane_files[4]['srf'], srf4)
+
+        runxml= result_dict['FC12150/C1-37/run_FC12150_2007-09-27.xml']
+        self.failUnlessEqual(runxml.file_type, runxml_file_type)
+        self.failUnlessEqual(runxml.library_id, None)
+            
+
+    def test_read_result_file(self):
+        """make sure we can return a result file
+        """
+        flowcell_id = self.fc1_id
+        flowcell = models.FlowCell.objects.get(flowcell_id=flowcell_id)
+        flowcell.update_data_runs()
+        
+        #self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5') 
+
+        result_files = flowcell.datarun_set.all()[0].datafile_set.all()
+        for f in result_files:
+            url = '/experiments/file/%s' % ( f.random_key,)
+            response = self.client.get(url)
+            self.failUnlessEqual(response.status_code, 200)
+            mimetype = f.file_type.mimetype
+            if mimetype is None:
+                mimetype = 'application/octet-stream'
+            
+            self.failUnlessEqual(mimetype, response['content-type'])
+        
+class TestFileType(TestCase):
+    def test_file_type_unicode(self):
+        file_type_objects = models.FileType.objects
+        name = 'QSEQ tarfile'
+        file_type_object = file_type_objects.get(name=name)
+        self.failUnlessEqual(u"<FileType: QSEQ tarfile>",
+                             unicode(file_type_object))
+    
+class TestFileType(TestCase):
+    def test_find_file_type(self):
+        file_type_objects = models.FileType.objects
+        cases = [('woldlab_090921_HWUSI-EAS627_0009_42FC3AAXX_l7_r1.tar.bz2',
+                  'QSEQ tarfile', 7, 1),
+                 ('woldlab_091005_HWUSI-EAS627_0010_42JT2AAXX_1.srf',
+                  'SRF', 1, None),
+                 ('s_1_eland_extended.txt.bz2','ELAND Extended', 1, None),
+                 ('s_7_eland_multi.txt.bz2', 'ELAND Multi', 7, None),
+                 ('s_3_eland_result.txt.bz2','ELAND Result', 3, None),
+                 ('s_1_export.txt.bz2','ELAND Export', 1, None),
+                 ('s_1_percent_call.png', 'IVC Percent Call', 1, None),
+                 ('s_2_percent_base.png', 'IVC Percent Base', 2, None),
+                 ('s_3_percent_all.png', 'IVC Percent All', 3, None),
+                 ('s_4_call.png', 'IVC Call', 4, None),
+                 ('s_5_all.png', 'IVC All', 5, None),
+                 ('Summary.htm', 'Summary.htm', None, None),
+                 ('run_42JT2AAXX_2009-10-07.xml', 'run_xml', None, None),
+         ]
+        for filename, typename, lane, end in cases:
+            ft = models.find_file_type_metadata_from_filename(filename)
+            self.failUnlessEqual(ft['file_type'],
+                                 file_type_objects.get(name=typename))
+            self.failUnlessEqual(ft.get('lane', None), lane)
+            self.failUnlessEqual(ft.get('end', None), end)
+
+    def test_assign_file_type_complex_path(self):
+        file_type_objects = models.FileType.objects
+        cases = [('/a/b/c/woldlab_090921_HWUSI-EAS627_0009_42FC3AAXX_l7_r1.tar.bz2',
+                  'QSEQ tarfile', 7, 1),
+                 ('foo/woldlab_091005_HWUSI-EAS627_0010_42JT2AAXX_1.srf',
+                  'SRF', 1, None),
+                 ('../s_1_eland_extended.txt.bz2','ELAND Extended', 1, None),
+                 ('/bleem/s_7_eland_multi.txt.bz2', 'ELAND Multi', 7, None),
+                 ('/qwer/s_3_eland_result.txt.bz2','ELAND Result', 3, None),
+                 ('/ty///1/s_1_export.txt.bz2','ELAND Export', 1, None),
+                 ('/help/s_1_percent_call.png', 'IVC Percent Call', 1, None),
+                 ('/bored/s_2_percent_base.png', 'IVC Percent Base', 2, None),
+                 ('/example1/s_3_percent_all.png', 'IVC Percent All', 3, None),
+                 ('amonkey/s_4_call.png', 'IVC Call', 4, None),
+                 ('fishie/s_5_all.png', 'IVC All', 5, None),
+                 ('/random/Summary.htm', 'Summary.htm', None, None),
+                 ('/notrandom/run_42JT2AAXX_2009-10-07.xml', 'run_xml', None, None),
+         ]
+        for filename, typename, lane, end in cases:
+            result = models.find_file_type_metadata_from_filename(filename)
+            self.failUnlessEqual(result['file_type'],
+                                 file_type_objects.get(name=typename))
+            self.failUnlessEqual(result.get('lane',None), lane)
+            self.failUnlessEqual(result.get('end', None), end)
+                             
 class TestEmailNotify(TestCase):
     fixtures = ['test_flowcells.json']
 
@@ -203,7 +356,7 @@ class TestEmailNotify(TestCase):
         self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5') 
         response = self.client.get('/experiments/started/153/')
         self.failUnlessEqual(response.status_code, 200)
-        self.failUnless(re.search('Flowcell 303TUAAXX', response.content))
+        self.failUnless(re.search('Flowcell FC12150', response.content))
         # require that navigation back to the admin page exists
         self.failUnless(re.search('<a href="/admin/experiments/flowcell/153/">[^<]+</a>', response.content))
         

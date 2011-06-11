@@ -1,9 +1,11 @@
 # Create your views here.
 from datetime import datetime
+import os
 
 #from django.template import Context, loader
 #shortcut to the above modules
 from django.contrib.auth.decorators import user_passes_test
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage, mail_managers
 from django.http import HttpResponse
@@ -11,7 +13,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
 
-from htsworkflow.frontend.experiments.models import *
+from htsworkflow.frontend.experiments.models import DataRun, DataFile, FlowCell
 from htsworkflow.frontend.experiments.experiments import \
      estimateFlowcellDuration, \
      estimateFlowcellTimeRemaining, \
@@ -129,6 +131,7 @@ def finishedEmail(request, pk):
 
 def flowcell_detail(request, flowcell_id):
     fc = get_object_or_404(FlowCell, flowcell_id=flowcell_id)
+    fc.update_data_runs()
 
     context = RequestContext(request,
                              {'flowcell': fc})
@@ -139,6 +142,8 @@ def flowcell_detail(request, flowcell_id):
 def flowcell_lane_detail(request, flowcell_id, lane_number):
     fc = get_object_or_404(FlowCell, flowcell_id=flowcell_id)
     lane = get_object_or_404(fc.lane_set, lane_number=lane_number)
+    
+    fc.update_data_runs()
 
     context = RequestContext(request,
                              {'lib': lane.library,
@@ -147,3 +152,20 @@ def flowcell_lane_detail(request, flowcell_id, lane_number):
     
     return render_to_response('experiments/flowcell_lane_detail.html',
                               context)
+
+def read_result_file(self, key):
+    """Return the contents of filename if everything is approved
+    """
+    data_file = get_object_or_404(DataFile, random_key = key)
+    
+    mimetype = 'application/octet-stream'
+    if data_file.file_type.mimetype is not None:
+        mimetype = data_file.file_type.mimetype
+
+    if os.path.exists(data_file.pathname):
+        return HttpResponse(open(data_file.pathname,'r'),
+                            mimetype=mimetype)
+
+    raise Http404
+      
+  

@@ -2,12 +2,11 @@ import logging
 import urlparse
 from django.db import models
 from django.contrib.auth.models import User, UserManager
+from django.core import urlresolvers
 from django.db.models.signals import pre_save, post_save
 from django.db import connection
 from htsworkflow.frontend.reports.libinfopar import *
 
-
-# Create your models here.
 logger = logging.getLogger(__name__)
 
 class Antibody(models.Model):
@@ -289,6 +288,9 @@ class Library(models.Model):
   def get_absolute_url(self):
     return ('htsworkflow.frontend.samples.views.library_to_flowcells', [str(self.id)])
 
+  def get_admin_url(self):
+      return urlresolvers.reverse('admin:samples_library_change',
+                                  args=(self.id,))
 
 class HTSUser(User):
     """
