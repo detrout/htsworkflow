@@ -160,6 +160,7 @@ class ExperimentsTestCases(TestCase):
     def test_library_to_flowcell_link(self):
         """
         Make sure the library page includes links to the flowcell pages.
+        That work with flowcell IDs that have parenthetical comments.
         """
         self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5')
         response = self.client.get('/library/11070/')
@@ -169,6 +170,11 @@ class ExperimentsTestCases(TestCase):
         # make sure some of our RDF made it.
         self.failUnlessEqual(failed_fc_a.get('rel'), 'libns:flowcell')
         self.failUnlessEqual(failed_fc_a.get('href'), '/flowcell/30012AAXX/')
+        fc_response = self.client.get(failed_fc_a.get('href'))
+        self.failUnlessEqual(fc_response.status_code, 200)
+        fc_lane_response = self.client.get('/flowcell/30012AAXX/8/')
+        self.failUnlessEqual(fc_lane_response.status_code, 200)
+        
         
 
     def test_lanes_for(self):

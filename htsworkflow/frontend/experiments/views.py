@@ -130,7 +130,7 @@ def finishedEmail(request, pk):
 
 
 def flowcell_detail(request, flowcell_id):
-    fc = get_object_or_404(FlowCell, flowcell_id=flowcell_id)
+    fc = get_object_or_404(FlowCell, flowcell_id__startswith=flowcell_id)
     fc.update_data_runs()
 
     context = RequestContext(request,
@@ -140,7 +140,7 @@ def flowcell_detail(request, flowcell_id):
                               context)
 
 def flowcell_lane_detail(request, flowcell_id, lane_number):
-    fc = get_object_or_404(FlowCell, flowcell_id=flowcell_id)
+    fc = get_object_or_404(FlowCell, flowcell_id__startswith=flowcell_id)
     lane = get_object_or_404(fc.lane_set, lane_number=lane_number)
     
     fc.update_data_runs()
