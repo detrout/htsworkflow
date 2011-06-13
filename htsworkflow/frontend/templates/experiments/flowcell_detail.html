@@ -69,6 +69,7 @@
          </thead>
          <tbody>
             {% for lane_id, lane_file_set in run.lane_files.items %}
+	    {% if lane_file_set.ivc_all %}
             <tr>
               <td>{{ lane_id }}</td>
               <td>
@@ -96,6 +97,7 @@
                 </a>
               </td>
             </tr>
+            {% endif %}
             {% endfor %} 
          </tbody>
        </table>

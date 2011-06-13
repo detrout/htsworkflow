@@ -145,10 +145,15 @@ def flowcell_lane_detail(request, flowcell_id, lane_number):
     
     fc.update_data_runs()
 
+    dataruns = []
+    for run in fc.datarun_set.all():
+        dataruns.append((run, lane.lane_number, run.lane_files()[lane.lane_number]))
+        
     context = RequestContext(request,
                              {'lib': lane.library,
                               'lane': lane,
-                              'flowcell': fc})
+                              'flowcell': fc,
+                              'filtered_dataruns': dataruns})
     
     return render_to_response('experiments/flowcell_lane_detail.html',
                               context)

@@ -183,8 +183,9 @@ class Lane(models.Model):
 
   @models.permalink
   def get_absolute_url(self):
+       flowcell_id, status = parse_flowcell_id(self.flowcell.flowcell_id)
        return ('htsworkflow.frontend.experiments.views.flowcell_lane_detail',
-               [str(self.flowcell.flowcell_id), str(self.lane_number)])
+               [str(flowcell_id), str(self.lane_number)])
 
                         
 ### -----------------------

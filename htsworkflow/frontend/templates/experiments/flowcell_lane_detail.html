@@ -50,10 +50,10 @@
            <td>IVC Percent Base Called</td>
        </thead>
        <tbody>
-          {% for lane_id, lane_file_set in run.lane_files.items %}
-          {% if lane_id == lane.lane_number %}
+          {% for run, lane_number, lane_file_set in filtered_dataruns %}
+          {% if lane_file_set.ivc_all %}
           <tr>
-            <td>{{lane_id}}</td>
+            <td>{{lane_number}}</td>
             <td>
               <a href="{{ lane_file_set.ivc_all.get_absolute_url }}">
               <img height="84" width="126" src="{{ lane_file_set.ivc_all.get_absolute_url }}"/></a>
