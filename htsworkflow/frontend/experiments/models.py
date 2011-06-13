@@ -102,8 +102,9 @@ class FlowCell(models.Model):
 
   @models.permalink
   def get_absolute_url(self):
+      flowcell_id, status = parse_flowcell_id(self.flowcell_id)
       return ('htsworkflow.frontend.experiments.views.flowcell_detail',
-              [str(self.flowcell_id)])
+              [str(flowcell_id)])
     
   def get_raw_data_directory(self):
       """Return location of where the raw data is stored"""

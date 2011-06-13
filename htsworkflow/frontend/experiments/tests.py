@@ -157,6 +157,20 @@ class ExperimentsTestCases(TestCase):
             self.failUnlessEqual(library_id, expected_ids[i])
             self.failUnlessEqual(input_field['value'], library_id)
 
+    def test_library_to_flowcell_link(self):
+        """
+        Make sure the library page includes links to the flowcell pages.
+        """
+        self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5')
+        response = self.client.get('/library/11070/')
+        soup = BeautifulSoup(response.content)
+        failed_fc_span = soup.find(text='30012AAXX (failed)')
+        failed_fc_a = failed_fc_span.findPrevious('a')
+        # make sure some of our RDF made it.
+        self.failUnlessEqual(failed_fc_a.get('rel'), 'libns:flowcell')
+        self.failUnlessEqual(failed_fc_a.get('href'), '/flowcell/30012AAXX/')
+        
+
     def test_lanes_for(self):
         """
         Check the code that packs the django objects into simple types.
