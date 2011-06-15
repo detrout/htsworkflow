@@ -16,21 +16,24 @@ import sys
 import urllib
 
 from htsworkflow.util import api
+from htsworkflow.util.rdfhelp import \
+     dublinCoreNS, \
+     submitOntology, \
+     libraryOntology, \
+     rdfNS, \
+     rdfsNS, \
+     xsdNS
 
+# URL mappings
+libraryNS = RDF.NS("http://jumpgate.caltech.edu/library/")
+
+
+from htsworkflow.submission.ucsc import submission_view_url, UCSCEncodePipeline
+ddfNS = RDF.NS(RDF.Uri(UCSCEncodePipeline + "/download_ddf#"))
+               
 DBDIR = os.path.expanduser("~diane/proj/submission")
 
 logger = logging.getLogger("encode_find")
-
-libraryNS = RDF.NS("http://jumpgate.caltech.edu/library/")
-submissionNS = RDF.NS("http://encodesubmit.ucsc.edu/pipeline/show/")
-submitOntologyNS = RDF.NS("http://jumpgate.caltech.edu/wiki/UCSCSubmissionOntology#")
-ddfNS = RDF.NS("http://encodesubmit.ucsc.edu/pipeline/download_ddf#")
-libOntNS = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
-
-dublinCoreNS = RDF.NS("http://purl.org/dc/elements/1.1/")
-rdfNS = RDF.NS("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-rdfsNS= RDF.NS("http://www.w3.org/2000/01/rdf-schema#")
-xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
 
 LOGIN_URL = 'http://encodesubmit.ucsc.edu/account/login'
 USER_URL = 'http://encodesubmit.ucsc.edu/pipeline/show_user'
@@ -126,17 +129,17 @@ def load_my_submissions(model, cookie=None):
     # first record is header
     tr = tr.findNext()
     TypeN = rdfsNS['type']
-    NameN = submitOntologyNS['name']
-    SpeciesN = submitOntologyNS['species']
-    LibraryURN = submitOntologyNS['library_urn']
+    NameN = submitOntology['name']
+    SpeciesN = submitOntology['species']
+    LibraryURN = submitOntology['library_urn']
 
     while tr is not None:
         td = tr.findAll('td')
         if td is not None and len(td) > 1:
             subUrnText = td[0].contents[0].contents[0].encode(CHARSET)
-            subUrn = submissionNS[subUrnText]
+            subUrn = RDF.Uri(submission_view_url(subUrnText))
 
-            add_stmt(model, subUrn, TypeN, submitOntologyNS['Submission'])
+            add_stmt(model, subUrn, TypeN, submitOntology['Submission'])
                 
             name = get_contents(td[4])
             add_stmt(model, subUrn, NameN, name)
@@ -189,7 +192,7 @@ WHERE {{
   ?subid submissionOntology:name ?name
   OPTIONAL {{ ?subid submissionOntology:library_urn ?libid }}
   FILTER  (!bound(?libid))
-}}""".format(submissionOntology=submitOntologyNS[''].uri)
+}}""".format(submissionOntology=submitOntology[''].uri)
 )    
 
     results = missing_lib_query.execute(model)
@@ -204,7 +207,7 @@ WHERE {{
 
 def add_submission_creation_date(model, subUrn, cookie):
     # in theory the submission page might have more information on it.
-    creationDateN = libOntNS['date']
+    creationDateN = libraryOntology['date']
     dateTimeType = xsdNS['dateTime']
     query = RDF.Statement(subUrn, creationDateN, None)
     creation_dates = list(model.find_statements(query))
@@ -221,9 +224,9 @@ def add_submission_creation_date(model, subUrn, cookie):
         logger.debug("Found creation date for: {0}".format(str(subUrn)))
 
 def update_submission_detail(model, subUrn, status, recent_update, cookie):
-    HasStatusN = submitOntologyNS['has_status']
-    StatusN = submitOntologyNS['status']
-    LastModifyN = submitOntologyNS['last_modify_date']
+    HasStatusN = submitOntology['has_status']
+    StatusN = submitOntology['status']
+    LastModifyN = submitOntology['last_modify_date']
 
     status_nodes_query = RDF.Statement(subUrn, HasStatusN, None)
     status_nodes = list(model.find_statements(status_nodes_query))
@@ -287,7 +290,7 @@ def add_ddf_statements(model, statusNode, ddf_string):
 
         for f in files:
             fileNode = RDF.Node()
-            add_stmt(model, statusNode, submitOntologyNS['has_file'], fileNode)
+            add_stmt(model, statusNode, submitOntology['has_file'], fileNode)
             add_stmt(model, fileNode, rdfsNS['type'], ddfNS['file'])
             add_stmt(model, fileNode, ddfNS['filename'], f)
 
@@ -302,7 +305,7 @@ def load_encode_libraries(model, htswapi):
     rdfaParser = RDF.Parser(name='rdfa')
     print encodeUrl
     rdfaParser.parse_into_model(model, encodeUrl)
-    query = RDF.Statement(None, libOntNS['library_id'], None)
+    query = RDF.Statement(None, libraryOntology['library_id'], None)
     libraries = model.find_statements(query)
     for statement in libraries:
         libraryUrn = statement.subject
@@ -313,7 +316,7 @@ def load_library_detail(model, libraryUrn):
     """Grab detail information from library page
     """
     rdfaParser = RDF.Parser(name='rdfa')
-    query = RDF.Statement(libraryUrn, libOntNS['date'], None)
+    query = RDF.Statement(libraryUrn, libraryOntology['date'], None)
     results = list(model.find_statements(query))
     if len(results) == 0:
         logger.info("Loading {0}".format(str(libraryUrn)))
@@ -372,7 +375,7 @@ def load_into_model(model, parser_name, filename):
     
     data = open(filename, 'r').read()
     rdf_parser = RDF.Parser(name=parser_name)
-    ns_uri = submitOntologyNS[''].uri
+    ns_uri = submitOntology[''].uri
     rdf_parser.parse_string_into_model(model, data, ns_uri)
 
 def add_stmt(model, subject, predicate, object):
@@ -502,7 +505,7 @@ def library_to_freeze(selected_libraries):
         for d in freezes:
             report.append('<td>')
             for s in batched.get(d, []):
-                show_url = submissionNS[s.subid].uri
+                show_url = submission_view_url(s.subid)
                 subid = '<a href="{0}">{1}</a>'.format(show_url, s.subid)
                 report.append("{0}:{1}".format(subid, s.status))
             report.append('</td>')

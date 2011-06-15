@@ -3,7 +3,15 @@
 import RDF
 import types
 
+# standard ontology namespaces
+dublinCoreNS = RDF.NS("http://purl.org/dc/elements/1.1/")
+rdfNS = RDF.NS("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+rdfsNS= RDF.NS("http://www.w3.org/2000/01/rdf-schema#")
 xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
+
+# internal ontologies
+submitOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/UCSCSubmissionOntology#")
+libraryOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
 
 def blankOrUri(value=None):
     node = None
