@@ -126,7 +126,7 @@
       {% for lane in lib.lane_set.all %}
       <tr rel="libns:has_lane" resource="{{lane.get_absolute_url}}">
         <td><a href="{{lane.flowcell.get_absolute_url}}" rel="libns:flowcell"
-            >{{ lane.flowcell.flowcell_id }}</a></td>
+            ><span property="libns:flowcell_id">{{ lane.flowcell.flowcell_id }}</span></a></td>
         <td><a href="{{lane.get_absolute_url}}"> 
             <span property="libns:lane_number"  datatype="xsd:decimal"
                >{{ lane.lane_number }}</span></a></td>
