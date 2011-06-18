@@ -1,7 +1,7 @@
-<div id="librarydetail">
+<div id="librarydetail"  about="{{lib.get_absolute_url}}">
   <div class="library_identity">
     <h2>Library Name</h2>  
-    <b>Library ID</b>: <a href="{{lib.get_absolute_url}}">{{ lib.id }}</a><br/>
+    <b>Library ID</b>: <a href="{{lib.get_absolute_url}}"><span property="libns:library_id">{{ lib.id }}</span></a><br/>
     <b>Name</b>: 
       <span property="libns:name">{{ lib.library_name }}</span>
     <br/>
