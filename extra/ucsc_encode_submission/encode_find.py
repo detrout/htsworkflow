@@ -14,12 +14,16 @@ import re
 import RDF 
 import sys
 import urllib
+import urlparse
 
 from htsworkflow.util import api
 from htsworkflow.util.rdfhelp import \
      dublinCoreNS, \
+     get_model, \
+     get_serializer, \
      submitOntology, \
      libraryOntology, \
+     load_into_model, \
      rdfNS, \
      rdfsNS, \
      xsdNS
@@ -29,7 +33,8 @@ libraryNS = RDF.NS("http://jumpgate.caltech.edu/library/")
 
 
 from htsworkflow.submission.ucsc import submission_view_url, UCSCEncodePipeline
-ddfNS = RDF.NS(RDF.Uri(UCSCEncodePipeline + "/download_ddf#"))
+download_ddf = urlparse.urljoin(UCSCEncodePipeline, "download_ddf#", allow_fragments=True)
+ddfNS = RDF.NS(download_ddf)
                
 DBDIR = os.path.expanduser("~diane/proj/submission")
 
@@ -52,10 +57,11 @@ def main(cmdline=None):
     htswapi = api.HtswApi(opts.host, htsw_authdata)
     
     cookie = None
-    model = get_model(opts.load_model)
+    model = get_model(opts.load_model, DBDIR)
     
     if opts.load_rdf is not None:
-        load_into_model(model, opts.rdf_parser_name, opts.load_rdf)
+        ns_uri = submitOntology[''].uri
+        load_into_model(model, opts.rdf_parser_name, opts.load_rdf, ns_uri)
         
     if opts.update:
         cookie = login(cookie=cookie)
@@ -69,7 +75,7 @@ def main(cmdline=None):
         missing = find_submissions_with_no_library(model)
                 
     if opts.print_rdf:
-        serializer = RDF.Serializer(name=opts.rdf_parser_name)
+        serializer = get_serializer(name=opts.rdf_parser_name)
         print serializer.serialize_model_to_string(model)
 
 
@@ -110,15 +116,6 @@ def make_parser():
 
     return parser
 
-def get_model(model_name=None):
-    if model_name is None:
-        storage = RDF.MemoryStorage()
-    else:
-        storage = RDF.HashStorage(model_name,
-                      options="hash-type='bdb',dir='{0}'".format(DBDIR))
-    model = RDF.Model(storage)
-    return model
-        
 def load_my_submissions(model, cookie=None):
     if cookie is None:
         cookie = login()
@@ -375,7 +372,6 @@ def load_into_model(model, parser_name, filename):
     
     data = open(filename, 'r').read()
     rdf_parser = RDF.Parser(name=parser_name)
-    ns_uri = submitOntology[''].uri
     rdf_parser.parse_string_into_model(model, data, ns_uri)
 
 def add_stmt(model, subject, predicate, object):

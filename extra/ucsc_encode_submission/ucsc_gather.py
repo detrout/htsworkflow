@@ -20,7 +20,17 @@ import urllib2
 import urlparse
 
 from htsworkflow.util import api
+from htsworkflow.util.rdfhelp import \
+     dafTermOntology, \
+     fromTypedNode, \
+     get_model, \
+     get_serializer, \
+     load_into_model, \
+     submissionOntology 
+from htsworkflow.submission.daf import DAFMapper, get_submission_uri
 from htsworkflow.submission.condorfastq import CondorFastqExtract
+
+logger = logging.getLogger('ucsc_gather')
 
 def main(cmdline=None):
     parser = make_parser()
@@ -35,6 +45,12 @@ def main(cmdline=None):
     
     apidata = api.make_auth_from_opts(opts, parser)
 
+    model = get_model(opts.load_model)
+    mapper = DAFMapper(opts.name, opts.daf,  model)
+    submission_uri = get_submission_uri(opts.name)
+    if opts.load_rdf is not None:
+        load_into_model(model, 'turtle', opts.load_rdf, submission_uri)
+
     if opts.makeddf and opts.daf is None:
         parser.error("Please specify your daf when making ddf files")
 
@@ -48,23 +64,35 @@ def main(cmdline=None):
     if opts.make_tree_from is not None:
         make_tree_from(opts.make_tree_from, library_result_map)
             
-    if opts.daf is not None:
-        link_daf(opts.daf, library_result_map)
+    #if opts.daf is not None:
+    #    link_daf(opts.daf, library_result_map)
 
     if opts.fastq:
         extractor = CondorFastqExtract(opts.host, apidata, opts.sequence,
                                        force=opts.force)
         extractor.build_fastqs(library_result_map)
 
-    if opts.ini:
-        make_submission_ini(opts.host, apidata, library_result_map)
+    if opts.scan_submission:
+        scan_submission_dirs(mapper, library_result_map)
 
     if opts.makeddf:
-        make_all_ddfs(library_result_map, opts.daf, force=opts.force)
+        make_all_ddfs(mapper, library_result_map, force=opts.force)
 
+    if opts.print_rdf:
+        writer = get_serializer()
+        print writer.serialize_model_to_string(model)
 
+        
 def make_parser():
     parser = OptionParser()
+
+    parser.add_option('--name', help="Set submission name")
+    parser.add_option('--load-model', default=None,
+      help="Load model database")
+    parser.add_option('--load-rdf', default=None,
+      help="load rdf statements into model")
+    parser.add_option('--print-rdf', action="store_true", default=False,
+      help="print ending model state")
 
     # commands
     parser.add_option('--make-tree-from',
@@ -73,9 +101,9 @@ def make_parser():
     parser.add_option('--fastq', help="generate scripts for making fastq files",
                       default=False, action="store_true")
 
-    parser.add_option('--ini', help="generate submission ini file", default=False,
-                      action="store_true")
-
+    parser.add_option('--scan-submission', default=False, action="store_true",
+                      help="Import metadata for submission into our model")
+    
     parser.add_option('--makeddf', help='make the ddfs', default=False,
                       action="store_true")
     
@@ -92,7 +120,6 @@ def make_parser():
     api.add_auth_options(parser)
     
     return parser
-
 
 def make_tree_from(source_path, library_result_map):
     """Create a tree using data files from source path.
@@ -131,73 +158,19 @@ def link_daf(daf_path, library_result_map):
             os.link(daf_path, submission_daf)
 
 
-def make_submission_ini(host, apidata, library_result_map, paired=True):
-    #attributes = get_filename_attribute_map(paired)
-    view_map = NameToViewMap(host, apidata)
-    
-    candidate_fastq_src = {}
-
+def scan_submission_dirs(view_map, library_result_map):
+    """Look through our submission directories and collect needed information
+    """
     for lib_id, result_dir in library_result_map:
-        order_by = ['order_by=files', 'view', 'replicate', 'cell', 
-                    'readType', 'mapAlgorithm', 'insertLength', 'md5sum' ]
-        inifile =  ['[config]']
-        inifile += [" ".join(order_by)]
-        inifile += ['']
-        line_counter = 1
-        result_ini = os.path.join(result_dir, result_dir+'.ini')
-
-        # write other lines
-        submission_files = os.listdir(result_dir)
-        fastqs = {}
-        fastq_attributes = {}
-        for f in submission_files:
-            attributes = view_map.find_attributes(f, lib_id)
-            if attributes is None:
-                raise ValueError("Unrecognized file: %s" % (f,))
-            attributes['md5sum'] = "None"
-            
-            ext = attributes["extension"]
-            if attributes['view'] is None:                   
-                continue               
-            elif attributes.get("type", None) == 'fastq':
-                fastqs.setdefault(ext, set()).add(f)
-                fastq_attributes[ext] = attributes
-            else:
-                md5sum = make_md5sum(os.path.join(result_dir,f))
-                if md5sum is not None:
-                    attributes['md5sum']=md5sum
-                inifile.extend(
-                    make_submission_section(line_counter,
-                                            [f],
-                                            attributes
-                                            )
-                    )
-                inifile += ['']
-                line_counter += 1
-                # add in fastqs on a single line.
-
-        for extension, fastq_files in fastqs.items():
-            inifile.extend(
-                make_submission_section(line_counter, 
-                                        fastq_files,
-                                        fastq_attributes[extension])
-            )
-            inifile += ['']
-            line_counter += 1
-            
-        f = open(result_ini,'w')
-        f.write(os.linesep.join(inifile))
-
+        view_map.import_submission_dir(result_dir, lib_id)
         
-def make_all_ddfs(library_result_map, daf_name, make_condor=True, force=False):
+def make_all_ddfs(view_map, library_result_map, make_condor=True, force=False):
     dag_fragment = []
     for lib_id, result_dir in library_result_map:
-        ininame = result_dir+'.ini'
-        inipathname = os.path.join(result_dir, ininame)
-        if os.path.exists(inipathname):
-            dag_fragment.extend(
-                make_ddf(ininame, daf_name, True, make_condor, result_dir)
-            )
+        submissionNode = view_map.get_submission_node(result_dir)
+        dag_fragment.extend(
+            make_ddf(view_map, submissionNode, make_condor, result_dir)
+        )
 
     if make_condor and len(dag_fragment) > 0:
         dag_filename = 'submission.dagman'
@@ -210,7 +183,7 @@ def make_all_ddfs(library_result_map, daf_name, make_condor=True, force=False):
             f.close()
             
 
-def make_ddf(ininame,  daf_name, guess_ddf=False, make_condor=False, outdir=None):
+def make_ddf(view_map, submissionNode, make_condor=False, outdir=None):
     """
     Make ddf files, and bonus condor file
     """
@@ -219,62 +192,60 @@ def make_ddf(ininame,  daf_name, guess_ddf=False, make_condor=False, outdir=None
     if outdir is not None:
         os.chdir(outdir)
     output = sys.stdout
-    ddf_name = None
-    if guess_ddf:
-        ddf_name = make_ddf_name(ininame)
-        print ddf_name
-        output = open(ddf_name,'w')
 
-    file_list = read_ddf_ini(ininame, output)
+    name = fromTypedNode(view_map.model.get_target(submissionNode, submissionOntology['name']))
+    if name is None:
+        logging.error("Need name for %s" % (str(submissionNode)))
+        return []
+    
+    ddf_name = name + '.ddf'
+    output = sys.stdout
+    # output = open(ddf_name,'w')
+
+    # filename goes first
+    variables = ['filename']
+    variables.extend(view_map.get_daf_variables())
+    output.write('\t'.join(variables))
+    output.write(os.linesep)
+    
+    submission_views = view_map.model.get_targets(submissionNode, submissionOntology['has_view'])
+    file_list = []
+    for viewNode in submission_views:
+        record = []
+        for variable_name in variables:
+            varNode = dafTermOntology[variable_name]
+            values = [fromTypedNode(v) for v in list(view_map.model.get_targets(viewNode, varNode))]
+            if variable_name == 'filename':
+                file_list.extend(values)
+            if len(values) == 0:
+                attribute = "#None#"
+            elif len(values) == 1:
+                attribute = values[0]
+            else:
+                attribute = ",".join(values)
+            record.append(attribute)
+        output.write('\t'.join(record))
+        output.write(os.linesep)
+            
     logging.info(
-        "Read config {0}, found files: {1}".format(
-            ininame, ", ".join(file_list)))
+        "Examined {0}, found files: {1}".format(
+            str(submissionNode), ", ".join(file_list)))
 
-    file_list.append(daf_name)
-    if ddf_name is not None:
-        file_list.append(ddf_name)
-
-    if make_condor:
-        archive_condor = make_condor_archive_script(ininame, file_list)
-        upload_condor = make_condor_upload_script(ininame)
-        
-        dag_fragments.extend( 
-            make_dag_fragment(ininame, archive_condor, upload_condor)
-        ) 
+    #file_list.append(daf_name)
+    #if ddf_name is not None:
+    #    file_list.append(ddf_name)
+    #
+    #if make_condor:
+    #    archive_condor = make_condor_archive_script(ininame, file_list)
+    #    upload_condor = make_condor_upload_script(ininame)
+    #    
+    #    dag_fragments.extend( 
+    #        make_dag_fragment(ininame, archive_condor, upload_condor)
+    #    ) 
         
     os.chdir(curdir)
     
     return dag_fragments
-
-
-def read_ddf_ini(filename, output=sys.stdout):
-    """
-    Read a ini file and dump out a tab delmited text file
-    """
-    file_list = []
-    config = SafeConfigParser()
-    config.read(filename)
-
-    order_by = shlex.split(config.get("config", "order_by"))
-
-    output.write("\t".join(order_by))
-    output.write(os.linesep)
-    sections = config.sections()
-    sections.sort()
-    for section in sections:
-        if section == "config":
-            # skip the config block
-            continue
-        values = []
-        for key in order_by:
-            v = config.get(section, key)
-            values.append(v)
-            if key == 'files':
-                file_list.extend(parse_filelist(v))
-                
-        output.write("\t".join(values))
-        output.write(os.linesep)
-    return file_list
 
 
 def read_library_result_map(filename):
@@ -383,212 +354,6 @@ def get_library_info(host, apidata, library_id):
     contents = api.retrieve_info(url, apidata)
     return contents
 
-
-class NameToViewMap(object):
-    """Determine view attributes for a given submission file name
-    """
-    def __init__(self, root_url, apidata):
-        self.root_url = root_url
-        self.apidata = apidata
-        
-        self.lib_cache = {}
-        self.lib_paired = {}
-        # ma is "map algorithm"
-        ma = 'TH1014'
-
-        self.patterns = [
-            # for 2011 Feb 18 elements submission
-            ('final_Cufflinks_genes_*gtf',       'GeneDeNovo'),
-            ('final_Cufflinks_transcripts_*gtf', 'TranscriptDeNovo'),
-            ('final_exonFPKM-Cufflinks-0.9.3-GENCODE-v3c-*.gtf',       
-             'ExonsGencV3c'),
-            ('final_GENCODE-v3-Cufflinks-0.9.3.genes-*gtf',          
-             'GeneGencV3c'),
-            ('final_GENCODE-v3-Cufflinks-0.9.3.transcripts-*gtf',    
-             'TranscriptGencV3c'),
-            ('final_TSS-Cufflinks-0.9.3-GENCODE-v3c-*.gtf', 'TSS'),
-            ('final_junctions-*.bed6+3',                    'Junctions'),
-            
-            ('*.bai',                   None),
-            ('*.splices.bam',           'Splices'),
-            ('*.bam',                   self._guess_bam_view),
-            ('junctions.bed',           'Junctions'),
-            ('*.jnct',                  'Junctions'),
-            ('*unique.bigwig',         None),
-            ('*plus.bigwig',           'PlusSignal'),
-            ('*minus.bigwig',          'MinusSignal'),
-            ('*.bigwig',                'Signal'),
-            ('*.tar.bz2',               None),
-            ('*.condor',                None),
-            ('*.daf',                   None),
-            ('*.ddf',                   None),
-
-            ('*ufflinks?0.9.3.genes.gtf',       'GeneDeNovo'),
-            ('*ufflinks?0.9.3.transcripts.gtf', 'TranscriptDeNovo'),
-            ('*GENCODE-v3c.exonFPKM.gtf',        'ExonsGencV3c'),
-            ('*GENCODE-v3c.genes.gtf',           'GeneGencV3c'),
-            ('*GENCODE-v3c.transcripts.gtf',     'TranscriptGencV3c'),
-            ('*GENCODE-v3c.TSS.gtf',             'TSS'),
-            ('*.junctions.bed6+3',                'Junctions'),
-            
-            ('*.?ufflinks-0.9.0?genes.expr',       'GeneDeNovo'),
-            ('*.?ufflinks-0.9.0?transcripts.expr', 'TranscriptDeNovo'),
-            ('*.?ufflinks-0.9.0?transcripts.gtf',  'GeneModel'),
-
-            ('*.GENCODE-v3c?genes.expr',       'GeneGCV3c'),
-            ('*.GENCODE-v3c?transcript*.expr', 'TranscriptGCV3c'),
-            ('*.GENCODE-v3c?transcript*.gtf',  'TranscriptGencV3c'),
-            ('*.GENCODE-v4?genes.expr',        None), #'GeneGCV4'),
-            ('*.GENCODE-v4?transcript*.expr',  None), #'TranscriptGCV4'),
-            ('*.GENCODE-v4?transcript*.gtf',   None), #'TranscriptGencV4'),
-            ('*_1.75mers.fastq',              'FastqRd1'),
-            ('*_2.75mers.fastq',              'FastqRd2'),
-            ('*_r1.fastq',              'FastqRd1'),
-            ('*_r2.fastq',              'FastqRd2'),
-            ('*.fastq',                 'Fastq'),
-            ('*.gtf',                   'GeneModel'),
-            ('*.ini',                   None),
-            ('*.log',                   None),
-            ('*.md5',                   None),
-            ('paired-end-distribution*', 'InsLength'),
-            ('*.stats.txt',              'InsLength'),
-            ('*.srf',                   None),
-            ('*.wig',                   None),
-            ('*.zip',                   None),
-            ('transfer_log',            None),
-            ]
-
-        self.views = {
-            None: {"MapAlgorithm": "NA"},
-            "Paired": {"MapAlgorithm": ma},
-            "Aligns": {"MapAlgorithm": ma},
-            "Single": {"MapAlgorithm": ma},
-            "Splices": {"MapAlgorithm": ma},
-            "Junctions": {"MapAlgorithm": ma},
-            "PlusSignal": {"MapAlgorithm": ma},
-            "MinusSignal": {"MapAlgorithm": ma},
-            "Signal": {"MapAlgorithm": ma},
-            "GeneModel": {"MapAlgorithm": ma},
-            "GeneDeNovo": {"MapAlgorithm": ma},
-            "TranscriptDeNovo": {"MapAlgorithm": ma},
-            "ExonsGencV3c": {"MapAlgorithm": ma},
-            "GeneGencV3c": {"MapAlgorithm": ma},
-            "TSS": {"MapAlgorithm": ma},
-            "GeneGCV3c": {"MapAlgorithm": ma},
-            "TranscriptGCV3c": {"MapAlgorithm": ma},
-            "TranscriptGencV3c": {"MapAlgorithm": ma},
-            "GeneGCV4": {"MapAlgorithm": ma},
-            "TranscriptGCV4": {"MapAlgorithm": ma},
-            "FastqRd1": {"MapAlgorithm": "NA", "type": "fastq"},
-            "FastqRd2": {"MapAlgorithm": "NA", "type": "fastq"},
-            "Fastq": {"MapAlgorithm": "NA", "type": "fastq" },
-            "InsLength": {"MapAlgorithm": ma},
-            }
-        # view name is one of the attributes
-        for v in self.views.keys():
-            self.views[v]['view'] = v
-            
-    def find_attributes(self, pathname, lib_id):
-        """Looking for the best extension
-        The 'best' is the longest match
-        
-        :Args:
-        filename (str): the filename whose extention we are about to examine
-        """
-        path, filename = os.path.splitext(pathname)
-        if not self.lib_cache.has_key(lib_id):
-            self.lib_cache[lib_id] = get_library_info(self.root_url,
-                                                      self.apidata, lib_id)
-
-        lib_info = self.lib_cache[lib_id]
-        if lib_info['cell_line'].lower() == 'unknown':
-            logging.warn("Library %s missing cell_line" % (lib_id,))
-        attributes = {
-            'cell': lib_info['cell_line'],
-            'replicate': lib_info['replicate'],
-            }
-        is_paired = self._is_paired(lib_id, lib_info)
-        
-        if is_paired:
-            attributes.update(self.get_paired_attributes(lib_info))
-        else:
-            attributes.update(self.get_single_attributes(lib_info))
-            
-        for pattern, view in self.patterns:
-            if fnmatch.fnmatch(pathname, pattern):
-                if callable(view):
-                    view = view(is_paired=is_paired)
-                    
-                attributes.update(self.views[view])
-                attributes["extension"] = pattern
-                return attributes
-
-
-    def _guess_bam_view(self, is_paired=True):
-        """Guess a view name based on library attributes
-        """
-        if is_paired:
-            return "Paired"
-        else:
-            return "Aligns"
-
-
-    def _is_paired(self, lib_id, lib_info):
-        """Determine if a library is paired end"""
-        # TODO: encode this information in the library type page.
-        single = (1,3,6)
-        if len(lib_info["lane_set"]) == 0:
-            # we haven't sequenced anything so guess based on library type
-            if lib_info['library_type_id'] in single:
-                return False
-            else:
-                return True
-
-        if not self.lib_paired.has_key(lib_id):
-            is_paired = 0
-            isnot_paired = 0
-            failed = 0
-            # check to see if all the flowcells are the same.
-            # otherwise we might need to do something complicated
-            for flowcell in lib_info["lane_set"]:
-                # yes there's also a status code, but this comparison 
-                # is easier to read
-                if flowcell["status"].lower() == "failed":
-                    # ignore failed flowcell
-                    failed += 1
-                    pass
-                elif flowcell["paired_end"]:
-                    is_paired += 1
-                else:
-                    isnot_paired += 1
-                    
-            logging.debug("Library %s: %d paired, %d single, %d failed" % \
-                     (lib_info["library_id"], is_paired, isnot_paired, failed))
-
-            if is_paired > isnot_paired:
-                self.lib_paired[lib_id] = True
-            elif is_paired < isnot_paired:
-                self.lib_paired[lib_id] = False
-            else:
-                raise RuntimeError("Equal number of paired & unpaired lanes."\
-                                   "Can't guess library paired status")
-            
-        return self.lib_paired[lib_id]
-
-    def get_paired_attributes(self, lib_info):
-        if lib_info['insert_size'] is None:
-            errmsg = "Library %s is missing insert_size, assuming 200"
-            logging.warn(errmsg % (lib_info["library_id"],))
-            insert_size = 200
-        else:
-            insert_size = lib_info['insert_size']
-        return {'insertLength': insert_size,
-                'readType': '2x75'}
-
-    def get_single_attributes(self, lib_info):
-        return {'insertLength':'ilNA',
-                'readType': '1x75D'
-                }
 
 def make_submission_section(line_counter, files, attributes):
     """
