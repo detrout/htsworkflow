@@ -4,6 +4,7 @@ import unittest
 from htsworkflow.submission import daf
 from htsworkflow.util.rdfhelp import \
      dafTermOntology, \
+     fromTypedNode, \
      rdfNS, \
      submissionLog, \
      submissionOntology, \
@@ -65,17 +66,30 @@ class TestDAF(unittest.TestCase):
         daf.add_to_model(model, parsed, name)
 
         signal_view_node = RDF.Node(subNS['/view/Signal'].uri)
+
         writer = get_serializer()
         turtle =  writer.serialize_model_to_string(model)
-        #print turtle
-        
         self.failUnless(str(signal_view_node) in turtle)
 
         statements = list(model.find_statements(
             RDF.Statement(
                 signal_view_node, None, None)))
-        self.failUnlessEqual(len(statements), 5)
+        self.failUnlessEqual(len(statements), 6)
+        name = model.get_target(signal_view_node, dafTermOntology['name'])
+        self.failUnlessEqual(fromTypedNode(name), u'Signal')
 
+def load_daf_mapper(name, extra_statements=None):
+    """Load test model in
+    """
+    model = get_model()
+    if extra_statements is not None:
+        parser = RDF.Parser(name='turtle')
+        parser.parse_string_into_model(model, extra_statements,
+                                       'http://extra.extra')
+        
+    test_daf_stream = StringIO(test_daf)
+    mapper = daf.DAFMapper(name, daf_file = test_daf_stream, model=model)
+    return mapper
 
 def dump_model(model):
     writer = get_serializer()
@@ -85,8 +99,7 @@ def dump_model(model):
 class TestDAFMapper(unittest.TestCase):
     def test_create_mapper_add_pattern(self):
         name = 'testsub'
-        test_daf_stream = StringIO(test_daf)
-        mapper = daf.DAFMapper(name, daf_file=test_daf_stream)
+        mapper = load_daf_mapper(name)
         pattern = '.bam\Z(?ms)'
         mapper.add_pattern('Signal', pattern)
 
@@ -102,19 +115,13 @@ class TestDAFMapper(unittest.TestCase):
         #self.failUnlessEqual(search[0].object.literal_value['string'], pattern)
 
     def test_find_one_view(self):
-        model = get_model()
-
-        parser = RDF.Parser(name='turtle')
-        parser.parse_string_into_model(model, '''
-@prefix dafTerm:<http://jumpgate.caltech.edu/wiki/UcscDaf#> .
+        extra = '''@prefix dafTerm:<http://jumpgate.caltech.edu/wiki/UcscDaf#> .
 
 <%(submissionLog)s/testfind/view/Signal> dafTerm:filename_re ".*\\\\.bam" .
 <%(submissionLog)s/testfind/view/FastqRd1> dafTerm:filename_re ".*_r1\\\\.fastq" .
-''' % {'submissionLog': 'http://jumpgate.caltech.edu/wiki/SubmissionsLog'},
-        'http://blank')
-        name = 'testfind'
-        test_stream = StringIO(test_daf)
-        daf_mapper = daf.DAFMapper(name, daf_file=test_stream, model=model)
+''' % {'submissionLog': 'http://jumpgate.caltech.edu/wiki/SubmissionsLog'}
+
+        daf_mapper = load_daf_mapper('testfind', extra_statements = extra)
 
         view = daf_mapper.find_view('filename_r1.fastq')
         self.failUnlessEqual(str(view),
@@ -125,19 +132,13 @@ class TestDAFMapper(unittest.TestCase):
         #print turtle
 
     def test_find_overlapping_view(self):
-        model = get_model()
-
-        parser = RDF.Parser(name='turtle')
-        parser.parse_string_into_model(model, '''
-@prefix dafTerm:<http://jumpgate.caltech.edu/wiki/UcscDaf#> .
+        extra = '''@prefix dafTerm:<http://jumpgate.caltech.edu/wiki/UcscDaf#> .
 
 <%(submissionLog)s/testfind/view/fastq> dafTerm:filename_re ".*\\\\.fastq" .
 <%(submissionLog)s/testfind/view/FastqRd1> dafTerm:filename_re ".*_r1\\\\.fastq" .
-''' % {'submissionLog': 'http://jumpgate.caltech.edu/wiki/SubmissionsLog'},
-        'http://blank')
-        name = 'testfind'
-        test_stream = StringIO(test_daf)
-        daf_mapper = daf.DAFMapper(name, daf_file=test_stream, model=model)
+''' % {'submissionLog': 'http://jumpgate.caltech.edu/wiki/SubmissionsLog'}
+
+        daf_mapper = load_daf_mapper('testfind', extra_statements = extra)
 
         self.failUnlessRaises(daf.ModelException,
                               daf_mapper.find_view,
@@ -146,11 +147,7 @@ class TestDAFMapper(unittest.TestCase):
     def test_find_attributes(self):
         lib_id = '11204'
         lib_url = 'http://jumpgate.caltech.edu/library/%s' %(lib_id)
-        model = get_model()
-
-        parser = RDF.Parser(name='turtle')
-        parser.parse_string_into_model(model, '''
-@prefix dafTerm: <http://jumpgate.caltech.edu/wiki/UcscDaf#> .
+        extra = '''@prefix dafTerm: <http://jumpgate.caltech.edu/wiki/UcscDaf#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <%(submissionLog)s/testfind/view/Signal> dafTerm:filename_re ".*\\\\.bam" .
@@ -158,11 +155,9 @@ class TestDAFMapper(unittest.TestCase):
 <%(libUrl)s> <%(libraryOntology)sgel_cut> "100"^^xsd:decimal . 
 ''' % {'submissionLog': 'http://jumpgate.caltech.edu/wiki/SubmissionsLog',
        'libraryOntology': 'http://jumpgate.caltech.edu/wiki/LibraryOntology#',
-       'libUrl': lib_url},
-       'http://blank')
-        name = 'testfind'
-        test_stream = StringIO(test_daf)
-        daf_mapper = daf.DAFMapper(name, daf_file=test_stream, model=model)
+       'libUrl': lib_url}
+
+        daf_mapper = load_daf_mapper('testfind', extra)
         libNode = RDF.Node(RDF.Uri(lib_url))
         daf_mapper._add_library_details_to_model(libNode)
         gel_cut = daf_mapper._get_library_attribute(libNode, 'gel_cut')
@@ -177,7 +172,17 @@ class TestDAFMapper(unittest.TestCase):
         source = daf_mapper.model.get_source(rdfNS['type'], submissionOntology['submission'])
         self.failUnlessEqual(str(source), "<http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/analysis1>")
         view = daf_mapper.model.get_target(source, submissionOntology['has_view'])
-        self.failUnlessEqual(str(view), "<http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/view/Signal>")
+        self.failUnlessEqual(str(view), "<http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/analysis1/Signal>")
+
+
+    def test_library_url(self):
+        daf_mapper = load_daf_mapper('urltest')
+
+        self.failUnlessEqual(daf_mapper.library_url,
+                             'http://jumpgate.caltech.edu/library/')
+        daf_mapper.library_url = 'http://google.com'
+        self.failUnlessEqual(daf_mapper.library_url, 'http://google.com' )
+        
 
 def suite():
     suite = unittest.makeSuite(TestDAF, 'test')
