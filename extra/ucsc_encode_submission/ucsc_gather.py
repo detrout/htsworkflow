@@ -46,8 +46,10 @@ def main(cmdline=None):
     apidata = api.make_auth_from_opts(opts, parser)
 
     model = get_model(opts.load_model)
-    mapper = DAFMapper(opts.name, opts.daf,  model)
-    submission_uri = get_submission_uri(opts.name)
+    if opts.name:
+        mapper = DAFMapper(opts.name, opts.daf,  model)
+        submission_uri = get_submission_uri(opts.name)
+        
     if opts.load_rdf is not None:
         load_into_model(model, 'turtle', opts.load_rdf, submission_uri)
 
