@@ -169,8 +169,6 @@ except ImportError,e:
     HAVE_RDF = False
 
     
-@unittest.skipIf(not HAVE_RDF,
-                 'Install python librdf to test RDFa encoded in pages')
 class TestRDFaLibrary(TestCase):
     fixtures = ['test_samples.json']
 

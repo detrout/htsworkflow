@@ -68,8 +68,8 @@ class TestDAF(unittest.TestCase):
         writer = get_serializer()
         turtle =  writer.serialize_model_to_string(model)
         #print turtle
-        
-        self.failUnless(str(signal_view_node) in turtle)
+
+        self.failUnless(str(signal_view_node.uri) in turtle)
 
         statements = list(model.find_statements(
             RDF.Statement(
@@ -175,9 +175,9 @@ class TestDAFMapper(unittest.TestCase):
         
         daf_mapper.construct_file_attributes('/tmp/analysis1', libNode, 'filename.bam')
         source = daf_mapper.model.get_source(rdfNS['type'], submissionOntology['submission'])
-        self.failUnlessEqual(str(source), "<http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/analysis1>")
+        self.failUnlessEqual(str(source.uri), "http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/analysis1")
         view = daf_mapper.model.get_target(source, submissionOntology['has_view'])
-        self.failUnlessEqual(str(view), "<http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/view/Signal>")
+        self.failUnlessEqual(str(view.uri), "http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/view/Signal")
 
 def suite():
     suite = unittest.makeSuite(TestDAF, 'test')
