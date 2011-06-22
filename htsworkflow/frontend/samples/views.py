@@ -13,12 +13,12 @@ from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend.experiments.models import FlowCell, Lane, LANE_STATUS_MAP
 from htsworkflow.frontend.samples.changelist import ChangeList
 from htsworkflow.frontend.samples.models import Library, Species, HTSUser
-from htsworkflow.frontend.samples.results import get_flowcell_result_dict, parse_flowcell_id
+from htsworkflow.frontend.samples.results import get_flowcell_result_dict
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.eland import ResultLane
-from htsworkflow.util.conversion import unicode_or_none
+from htsworkflow.util.conversion import unicode_or_none, parse_flowcell_id
 from htsworkflow.util import makebed
 from htsworkflow.util import opener
 

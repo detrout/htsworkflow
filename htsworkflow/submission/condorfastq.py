@@ -5,11 +5,11 @@ import os
 import sys
 import types
 
-from htsworkflow.frontend.samples.results import parse_flowcell_id
 from htsworkflow.pipelines.sequences import scan_for_sequences
 from htsworkflow.pipelines import qseq2fastq
 from htsworkflow.pipelines import srf2fastq
 from htsworkflow.util.api import HtswApi
+from htsworkflow.util.conversion import parse_flowcell_id
 
 logger = logging.getLogger(__name__)
 
@@ -83,8 +83,8 @@ class CondorFastqExtract(object):
     def get_qseq_condor_header(self):
         return """Universe=vanilla
 executable=%(exe)s
-error=%(log)s/qseq2fastq.err.$(process).log
-output=%(log)s/qseq2fastq.out.$(process).log
+error=%(log)s/qseq2fastq.$(process).out
+output=%(log)s/qseq2fastq.$(process).out
 log=%(log)s/qseq2fastq.log
 
 """ % {'exe': sys.executable,
@@ -93,10 +93,10 @@ log=%(log)s/qseq2fastq.log
     def get_srf_condor_header(self):
         return """Universe=vanilla
 executable=%(exe)s
-output=%(log)s/srf_pair_fastq.out.$(process).log
-error=%(log)s/srf_pair_fastq.err.$(process).log
+output=%(log)s/srf_pair_fastq.$(process).out
+error=%(log)s/srf_pair_fastq.$(process).out
 log=%(log)s/srf_pair_fastq.log
-environment="%(env)s"
+environment="PYTHONPATH=%(env)s"
     
 """ % {'exe': sys.executable,
            'log': self.log_path,
@@ -198,7 +198,7 @@ environment="%(env)s"
                             flowcell=None,
                             mid=None):
         py = srf2fastq.__file__
-        args = [ py, srf_file, ]
+        args = [ py, srf_file, '--verbose']
         if paired:
             args.extend(['--left', target_pathname])
             # this is ugly. I did it because I was pregenerating the target

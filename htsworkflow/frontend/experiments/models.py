@@ -13,7 +13,7 @@ from django.db import models
 from django.db.models.signals import post_init
 
 from htsworkflow.frontend.samples.models import Library
-from htsworkflow.frontend.samples.results import parse_flowcell_id
+from htsworkflow.util.conversion import parse_flowcell_id
 from htsworkflow.pipelines import runfolder
 
 logger = logging.getLogger(__name__)

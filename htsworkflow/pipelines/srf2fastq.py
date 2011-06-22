@@ -44,7 +44,7 @@ def main(cmdline=None):
     
     # open the srf, fastq, or compressed fastq
     if is_srf(args[0]):
-        source = srf_open(args[0])
+        source = srf_open(args[0], opts.cnf1)
     else:
         source = autoopen(args[0])
 
@@ -77,6 +77,8 @@ You can also force the flowcell ID to be added to the header.""")
                       help="show information about what we're doing.")
     parser.add_option('--version', default=False, action="store_true",
                       help="Report software version")
+    parser.add_option('--cnf1', default=False, action="store_true",
+                      help="Force cnf1 mode in srf2fastq")
     return parser
 
 
@@ -85,7 +87,7 @@ def srf_open(filename, cnf1=False):
     Make a stream from srf file using srf2fastq
     """
     cmd = ['srf2fastq']
-    if is_cnf1(filename):
+    if cnf1 or is_cnf1(filename):
         cmd.append('-c')
     cmd.append(filename)
       
