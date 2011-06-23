@@ -25,7 +25,10 @@ logger = logging.getLogger(__name__)
 
 #
 class ModelException(RuntimeError): pass
-    
+class MetadataLookupException(RuntimeError):
+    """Problem accessing metadata"""
+    pass
+
 # STATES
 DAF_HEADER = 1
 DAF_VIEW = 2
@@ -154,6 +157,8 @@ def _views_to_statements(name, dafNS, views):
         view_attributes = views[view_name]
         viewSubject = viewNS[view_name]
         statements.append(RDF.Statement(subject, dafNS['views'], viewSubject))
+        statements.append(
+            RDF.Statement(viewSubject, dafNS['name'], toTypedNode(view_name)))
         for view_attribute_name in view_attributes:
             predicate = dafNS[view_attribute_name]
             obj = toTypedNode(view_attributes[view_attribute_name])
@@ -263,22 +268,28 @@ class DAFMapper(object):
         if str(view) == str(libraryOntology['ignore']):
             return None
 
-        submissionName = toTypedNode(self.make_submission_name(submission_dir))
+        submission_name = self.make_submission_name(submission_dir)
         submissionNode = self.get_submission_node(submission_dir)
+        submission_uri = str(submissionNode.uri)
+        view_name = fromTypedNode(self.model.get_target(view, dafTermOntology['name']))
+        submissionView = RDF.Node(RDF.Uri(submission_uri + '/' + view_name))
+
         self.model.add_statement(
             RDF.Statement(self.submissionSet, dafTermOntology['has_submission'], submissionNode))
 
-        fileNode = RDF.Node(RDF.Uri(str(submissionNode.uri) + '/' +filename))
-        self.model.add_statement(RDF.Statement(submissionNode, submissionOntology['has_view'], view))
-        self.model.add_statement(RDF.Statement(submissionNode, submissionOntology['name'], submissionName))
+        self.model.add_statement(RDF.Statement(submissionNode, submissionOntology['has_view'], submissionView))
+        self.model.add_statement(RDF.Statement(submissionNode, submissionOntology['name'], toTypedNode(submission_name)))
         self.model.add_statement(RDF.Statement(submissionNode, rdfNS['type'], submissionOntology['submission']))
 
+
         self.model.add_statement(
-            RDF.Statement(view, dafTermOntology['filename'], toTypedNode(filename)))
+            RDF.Statement(submissionView, dafTermOntology['filename'], toTypedNode(filename)))
         self.model.add_statement(
-            RDF.Statement(view, dafTermOntology['paired'], toTypedNode(self._is_paired(libNode))))
+            RDF.Statement(submissionView, dafTermOntology['view'], view))
         self.model.add_statement(
-            RDF.Statement(view, dafTermOntology['submission'], submissionNode))
+            RDF.Statement(submissionView, dafTermOntology['paired'], toTypedNode(self._is_paired(libNode))))
+        self.model.add_statement(
+            RDF.Statement(submissionView, dafTermOntology['submission'], submissionNode))
             
         # extra information 
         terms = [dafTermOntology['type'],
@@ -290,7 +301,7 @@ class DAFMapper(object):
         for term in terms:
             value = self._get_library_attribute(libNode, term)
             if value is not None:
-                self.model.add_statement(RDF.Statement(view, term, value))
+                self.model.add_statement(RDF.Statement(submissionView, term, value))
 
             
     def _add_library_details_to_model(self, libNode):
@@ -324,7 +335,7 @@ class DAFMapper(object):
             raise RuntimeError(
                 "Submission dir name too short: %s" %(submission_dir,))
         return submission_dir_name
-    
+        
     def get_submission_node(self, submission_dir):
         """Convert a submission directory name to a submission node
         """
@@ -423,4 +434,12 @@ class DAFMapper(object):
         elif library_type in paired:
             return True
         else:
-            raise RuntimeError("Unrecognized library type %s" % (library_type,))
+            raise MetadataLookupException(
+                "Unrecognized library type %s for %s" % \
+                (library_type, str(libNode)))
+
+    def _get_library_url(self):
+        return str(self.libraryNS[''].uri)
+    def _set_library_url(self, value):
+        self.libraryNS = RDF.NS(str(value))
+    library_url = property(_get_library_url, _set_library_url)

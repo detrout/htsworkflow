@@ -5,7 +5,7 @@ from glob import glob
 import json
 import logging
 import netrc
-from optparse import OptionParser
+from optparse import OptionParser, OptionGroup
 import os
 from pprint import pprint, pformat
 import shlex
@@ -27,7 +27,10 @@ from htsworkflow.util.rdfhelp import \
      get_serializer, \
      load_into_model, \
      submissionOntology 
-from htsworkflow.submission.daf import DAFMapper, get_submission_uri
+from htsworkflow.submission.daf import \
+     DAFMapper, \
+     MetadataLookupException, \
+     get_submission_uri
 from htsworkflow.submission.condorfastq import CondorFastqExtract
 
 logger = logging.getLogger('ucsc_gather')
@@ -49,11 +52,14 @@ def main(cmdline=None):
     if opts.name:
         mapper = DAFMapper(opts.name, opts.daf,  model)
         submission_uri = get_submission_uri(opts.name)
+
+    if opts.library_url is not None:
+        mapper.library_url = opts.library_url
         
     if opts.load_rdf is not None:
         load_into_model(model, 'turtle', opts.load_rdf, submission_uri)
 
-    if opts.makeddf and opts.daf is None:
+    if opts.make_ddf and opts.daf is None:
         parser.error("Please specify your daf when making ddf files")
 
     if len(args) == 0:
@@ -66,8 +72,8 @@ def main(cmdline=None):
     if opts.make_tree_from is not None:
         make_tree_from(opts.make_tree_from, library_result_map)
             
-    #if opts.daf is not None:
-    #    link_daf(opts.daf, library_result_map)
+    if opts.link_daf:
+        link_daf(opts.daf, library_result_map)
 
     if opts.fastq:
         extractor = CondorFastqExtract(opts.host, apidata, opts.sequence,
@@ -77,8 +83,8 @@ def main(cmdline=None):
     if opts.scan_submission:
         scan_submission_dirs(mapper, library_result_map)
 
-    if opts.makeddf:
-        make_all_ddfs(mapper, library_result_map, force=opts.force)
+    if opts.make_ddf:
+        make_all_ddfs(mapper, library_result_map, opts.daf, force=opts.force)
 
     if opts.print_rdf:
         writer = get_serializer()
@@ -88,31 +94,35 @@ def main(cmdline=None):
 def make_parser():
     parser = OptionParser()
 
-    parser.add_option('--name', help="Set submission name")
-    parser.add_option('--load-model', default=None,
+    model = OptionGroup(parser, 'model')
+    model.add_option('--name', help="Set submission name")
+    model.add_option('--load-model', default=None,
       help="Load model database")
-    parser.add_option('--load-rdf', default=None,
+    model.add_option('--load-rdf', default=None,
       help="load rdf statements into model")
-    parser.add_option('--print-rdf', action="store_true", default=False,
+    model.add_option('--print-rdf', action="store_true", default=False,
       help="print ending model state")
-
+    parser.add_option_group(model)
     # commands
-    parser.add_option('--make-tree-from',
+    commands = OptionGroup(parser, 'commands')
+    commands.add_option('--make-tree-from',
                       help="create directories & link data files",
                       default=None)
-    parser.add_option('--fastq', help="generate scripts for making fastq files",
-                      default=False, action="store_true")
-
-    parser.add_option('--scan-submission', default=False, action="store_true",
+    commands.add_option('--fastq', default=False, action="store_true",
+                        help="generate scripts for making fastq files")
+    commands.add_option('--scan-submission', default=False, action="store_true",
                       help="Import metadata for submission into our model")
-    
-    parser.add_option('--makeddf', help='make the ddfs', default=False,
+    commands.add_option('--link-daf', default=False, action="store_true",
+                        help="link daf into submission directories")
+    commands.add_option('--make-ddf', help='make the ddfs', default=False,
                       action="store_true")
+    parser.add_option_group(commands)
     
-    parser.add_option('--daf', default=None, help='specify daf name')
     parser.add_option('--force', default=False, action="store_true",
                       help="Force regenerating fastqs")
-
+    parser.add_option('--daf', default=None, help='specify daf name')
+    parser.add_option('--library-url', default=None,
+                      help="specify an alternate source for library information")
     # debugging
     parser.add_option('--verbose', default=False, action="store_true",
                       help='verbose logging')
@@ -130,7 +140,7 @@ def make_tree_from(source_path, library_result_map):
         if not os.path.exists(lib_path):
             logging.info("Making dir {0}".format(lib_path))
             os.mkdir(lib_path)
-        source_lib_dir = os.path.join(source_path, lib_path)
+        source_lib_dir = os.path.abspath(os.path.join(source_path, lib_path))
         if os.path.exists(source_lib_dir):
             pass
         for filename in os.listdir(source_lib_dir):
@@ -164,14 +174,18 @@ def scan_submission_dirs(view_map, library_result_map):
     """Look through our submission directories and collect needed information
     """
     for lib_id, result_dir in library_result_map:
-        view_map.import_submission_dir(result_dir, lib_id)
+        logging.info("Importing %s from %s" % (lib_id, result_dir))
+        try:
+            view_map.import_submission_dir(result_dir, lib_id)
+        except MetadataLookupException, e:
+            logging.error("Skipping %s: %s" % (lib_id, str(e)))
         
-def make_all_ddfs(view_map, library_result_map, make_condor=True, force=False):
+def make_all_ddfs(view_map, library_result_map, daf_name, make_condor=True, force=False):
     dag_fragment = []
     for lib_id, result_dir in library_result_map:
         submissionNode = view_map.get_submission_node(result_dir)
         dag_fragment.extend(
-            make_ddf(view_map, submissionNode, make_condor, result_dir)
+            make_ddf(view_map, submissionNode, daf_name, make_condor, result_dir)
         )
 
     if make_condor and len(dag_fragment) > 0:
@@ -185,40 +199,48 @@ def make_all_ddfs(view_map, library_result_map, make_condor=True, force=False):
             f.close()
             
 
-def make_ddf(view_map, submissionNode, make_condor=False, outdir=None):
+def make_ddf(view_map, submissionNode, daf_name, make_condor=False, outdir=None):
     """
     Make ddf files, and bonus condor file
     """
     dag_fragments = []
-    curdir = os.getcwd()
-    if outdir is not None:
-        os.chdir(outdir)
-    output = sys.stdout
 
     name = fromTypedNode(view_map.model.get_target(submissionNode, submissionOntology['name']))
     if name is None:
         logging.error("Need name for %s" % (str(submissionNode)))
         return []
-    
-    ddf_name = name + '.ddf'
-    output = sys.stdout
-    # output = open(ddf_name,'w')
 
+    ddf_name = name + '.ddf'
+    if outdir is not None:
+        outfile = os.path.join(outdir, ddf_name)
+        output = open(outfile,'w')
+    else:
+        output = sys.stdout
+    
     # filename goes first
     variables = ['filename']
     variables.extend(view_map.get_daf_variables())
     output.write('\t'.join(variables))
     output.write(os.linesep)
     
+    nameTerm = dafTermOntology['name']
+
     submission_views = view_map.model.get_targets(submissionNode, submissionOntology['has_view'])
     file_list = []
     for viewNode in submission_views:
         record = []
         for variable_name in variables:
             varNode = dafTermOntology[variable_name]
-            values = [fromTypedNode(v) for v in list(view_map.model.get_targets(viewNode, varNode))]
-            if variable_name == 'filename':
-                file_list.extend(values)
+            values = list(view_map.model.get_targets(viewNode, varNode))
+            
+            if variable_name == 'view':
+                nameNode = view_map.model.get_target(values[0], nameTerm)
+                values = [fromTypedNode(nameNode)]
+            else:
+                values = [ fromTypedNode(v) for v in values ]
+                if variable_name == 'filename':
+                    file_list.extend(values)
+                              
             if len(values) == 0:
                 attribute = "#None#"
             elif len(values) == 1:
@@ -233,20 +255,18 @@ def make_ddf(view_map, submissionNode, make_condor=False, outdir=None):
         "Examined {0}, found files: {1}".format(
             str(submissionNode), ", ".join(file_list)))
 
-    #file_list.append(daf_name)
-    #if ddf_name is not None:
-    #    file_list.append(ddf_name)
-    #
-    #if make_condor:
-    #    archive_condor = make_condor_archive_script(ininame, file_list)
-    #    upload_condor = make_condor_upload_script(ininame)
-    #    
-    #    dag_fragments.extend( 
-    #        make_dag_fragment(ininame, archive_condor, upload_condor)
-    #    ) 
-        
-    os.chdir(curdir)
+    file_list.append(daf_name)
+    file_list.append(ddf_name)
     
+    if make_condor:
+        print name, file_list
+        archive_condor = make_condor_archive_script(name, file_list, outdir)
+        upload_condor = make_condor_upload_script(name, outdir)
+        
+        dag_fragments.extend( 
+            make_dag_fragment(name, archive_condor, upload_condor)
+        ) 
+        
     return dag_fragments
 
 
@@ -269,7 +289,7 @@ def read_library_result_map(filename):
     return results
 
 
-def make_condor_archive_script(ininame, files):
+def make_condor_archive_script(name, files, outdir=None):
     script = """Universe = vanilla
 
 Executable = /bin/tar
@@ -284,23 +304,26 @@ request_memory = 20
 
 queue 
 """
+    if outdir is None:
+        outdir = os.getcwd()
     for f in files:
-        if not os.path.exists(f):
+        pathname = os.path.join(outdir, f)
+        if not os.path.exists(pathname):
             raise RuntimeError("Missing %s" % (f,))
 
-    context = {'archivename': make_submission_name(ininame),
+    context = {'archivename': make_submission_name(name),
                'filelist': " ".join(files),
                'initialdir': os.getcwd(),
                'user': os.getlogin()}
 
-    condor_script = make_condor_name(ininame, 'archive')
+    condor_script = os.path.join(outdir, make_condor_name(name, 'archive'))
     condor_stream = open(condor_script,'w')
     condor_stream.write(script % context)
     condor_stream.close()
     return condor_script
 
 
-def make_condor_upload_script(ininame):
+def make_condor_upload_script(name, outdir=None):
     script = """Universe = vanilla
 
 Executable = /usr/bin/lftp
@@ -313,19 +336,22 @@ initialdir = %(initialdir)s
 
 queue 
 """
+    if outdir is None:
+        outdir = os.getcwd()
+        
     auth = netrc.netrc(os.path.expanduser("~diane/.netrc"))
     
     encodeftp = 'encodeftp.cse.ucsc.edu'
     ftpuser = auth.hosts[encodeftp][0]
     ftppassword = auth.hosts[encodeftp][2]
-    context = {'archivename': make_submission_name(ininame),
-               'initialdir': os.getcwd(),
+    context = {'archivename': make_submission_name(name),
+               'initialdir': outdir,
                'user': os.getlogin(),
                'ftpuser': ftpuser,
                'ftppassword': ftppassword,
                'ftphost': encodeftp}
 
-    condor_script = make_condor_name(ininame, 'upload')
+    condor_script = os.path.join(outdir, make_condor_name(name, 'upload'))
     condor_stream = open(condor_script,'w')
     condor_stream.write(script % context)
     condor_stream.close()

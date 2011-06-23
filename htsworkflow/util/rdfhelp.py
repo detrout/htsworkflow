@@ -54,7 +54,7 @@ def toTypedNode(value):
 def fromTypedNode(node):
     if node is None:
         return None
-    
+
     value_type = str(node.literal_value['datatype'])
     # chop off xml schema declaration
     value_type = value_type.replace(str(xsdNS[''].uri),'')
