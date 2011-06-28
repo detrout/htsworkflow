@@ -13,7 +13,11 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
 
-from htsworkflow.frontend.experiments.models import DataRun, DataFile, FlowCell
+from htsworkflow.frontend.experiments.models import \
+     DataRun, \
+     DataFile, \
+     FlowCell, \
+     Lane
 from htsworkflow.frontend.experiments.experiments import \
      estimateFlowcellDuration, \
      estimateFlowcellTimeRemaining, \
@@ -129,30 +133,35 @@ def finishedEmail(request, pk):
     return HttpResponse("I've got nothing.")
 
 
-def flowcell_detail(request, flowcell_id):
+def flowcell_detail(request, flowcell_id, lane_number=None):
     fc = get_object_or_404(FlowCell, flowcell_id__startswith=flowcell_id)
     fc.update_data_runs()
 
+    
+    if lane_number is not None:
+        lanes = fc.lane_set.filter(lane_number=lane_number)
+    else:
+        lanes = fc.lane_set.all()
+
     context = RequestContext(request,
-                             {'flowcell': fc})
+                             {'flowcell': fc,
+                              'lanes': lanes})
     
     return render_to_response('experiments/flowcell_detail.html',
                               context)
 
-def flowcell_lane_detail(request, flowcell_id, lane_number):
-    fc = get_object_or_404(FlowCell, flowcell_id__startswith=flowcell_id)
-    lane = get_object_or_404(fc.lane_set, lane_number=lane_number)
-    
-    fc.update_data_runs()
+def flowcell_lane_detail(request, lane_pk):
+    lane = get_object_or_404(Lane, id=lane_pk)
+    lane.flowcell.update_data_runs()
 
     dataruns = []
-    for run in fc.datarun_set.all():
+    for run in lane.flowcell.datarun_set.all():
         dataruns.append((run, lane.lane_number, run.lane_files()[lane.lane_number]))
         
     context = RequestContext(request,
                              {'lib': lane.library,
                               'lane': lane,
-                              'flowcell': fc,
+                              'flowcell': lane.flowcell,
                               'filtered_dataruns': dataruns})
     
     return render_to_response('experiments/flowcell_lane_detail.html',

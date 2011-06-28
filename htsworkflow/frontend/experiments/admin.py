@@ -59,7 +59,6 @@ class LaneInline(admin.StackedInline):
     Controls display of Lanes on the Flowcell form.
     """
     model = Lane
-    max_num = 8
     extra = 8
     form = LaneForm
     raw_id_fields = ('library',)

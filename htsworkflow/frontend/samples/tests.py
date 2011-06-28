@@ -191,7 +191,7 @@ class TestRDFaLibrary(TestCase):
         self.check_literal_object(model, ['Drosophila melanogaster'], p=libNS['species'])
 
         self.check_uri_object(model,
-                              [u'http://localhost/flowcell/303TUAAXX/1/'],
+                              [u'http://localhost/lane/1193'],
                               p=libNS['has_lane'])
 
         self.check_literal_object(model,

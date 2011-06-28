@@ -172,9 +172,15 @@ LANE_STATUS_CODES = [(0, 'Failed'),
 LANE_STATUS_MAP = dict((int(k),v) for k,v in LANE_STATUS_CODES )
 LANE_STATUS_MAP[None] = "Unknown"
 
+def is_valid_lane(value):
+    if value >= 1 and value <= 8:
+        return True
+    else:
+          return False
+
 class Lane(models.Model):
   flowcell = models.ForeignKey(FlowCell)
-  lane_number = models.IntegerField(choices=[(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8)])
+  lane_number = models.IntegerField(validators=[is_valid_lane])
   library = models.ForeignKey(Library)
   pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
   cluster_estimate = models.IntegerField(blank=True, null=True)                                       
@@ -183,10 +189,11 @@ class Lane(models.Model):
 
   @models.permalink
   def get_absolute_url(self):
-       flowcell_id, status = parse_flowcell_id(self.flowcell.flowcell_id)
        return ('htsworkflow.frontend.experiments.views.flowcell_lane_detail',
-               [str(flowcell_id), str(self.lane_number)])
+               [str(self.id)])
 
+  def __unicode__(self):
+    return self.flowcell.flowcell_id + ':' + unicode(self.lane_number)
                         
 ### -----------------------
 class DataRun(models.Model):

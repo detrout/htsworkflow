@@ -38,7 +38,7 @@
        </tr>
       </thead>
       <tbody>
-      {% for lane in flowcell.lane_set.all %}
+      {% for lane in lanes %}
         <tr rel="libns:has_lane" resource="{{lane.get_absolute_url}}" >
           <td><a href="{{lane.get_absolute_url}}"> 
               <span property="libns:lane_number">{{lane.lane_number}}</span></a></td>

@@ -125,6 +125,17 @@
        "pM": "8"
        }
    }, 
+   {"pk": 1192, "model": "experiments.lane",
+    "fields": {
+        "comment": "Other library",
+        "library": "11070",
+        "cluster_estimate": 132000,
+        "flowcell": 153,
+        "lane_number": 1,
+        "pM": "7"
+        }
+    }, 
+
   {"pk": "10981", "model": "samples.library", 
         "fields": {
             "ten_nM_dilution": false, 
