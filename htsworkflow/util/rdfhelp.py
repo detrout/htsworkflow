@@ -18,6 +18,19 @@ dafTermOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/UcscDaf#")
 libraryOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
 submissionLog = RDF.NS("http://jumpgate.caltech.edu/wiki/SubmissionsLog/")
 
+def sparql_query(model, query_filename):
+    """Execute sparql query from file
+    """
+    query_body = open(query_filename,'r').read()
+    query = RDF.SPARQLQuery(query_body)
+    results = query.execute(model)
+    for row in results:
+        output = []
+        for k,v in row.items()[::-1]:
+            print "{0}: {1}".format(k,v)
+        print 
+
+
 def blankOrUri(value=None):
     node = None
     if value is None:

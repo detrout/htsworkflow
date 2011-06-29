@@ -1,4 +1,8 @@
+from contextlib import contextmanager
+import os
 from StringIO import StringIO
+import shutil
+import tempfile
 import unittest
 
 from htsworkflow.submission import daf
@@ -168,12 +172,24 @@ class TestDAFMapper(unittest.TestCase):
         
         species = daf_mapper._get_library_attribute(libNode, 'species')
         self.failUnlessEqual(species, "Homo sapiens")
-        
-        daf_mapper.construct_file_attributes('/tmp/analysis1', libNode, 'filename.bam')
+
+        with mktempdir('analysis') as analysis_dir:
+            path, analysis_name = os.path.split(analysis_dir)
+            with mktempfile('.bam', dir=analysis_dir) as filename:
+                print 'dir', os.listdir(analysis_dir)
+                daf_mapper.construct_file_attributes(analysis_dir,
+                                                     libNode,
+                                                     filename)
+            
+        sub_root = "http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/"
+        submission_name = sub_root + analysis_name
         source = daf_mapper.model.get_source(rdfNS['type'], submissionOntology['submission'])
-        self.failUnlessEqual(str(source.uri), "http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/analysis1")
+
+        self.failUnlessEqual(str(source.uri), submission_name)
+
+        view_name = submission_name + '/Signal'
         view = daf_mapper.model.get_target(source, submissionOntology['has_view'])
-        self.failUnlessEqual(str(view.uri), "http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/analysis1/Signal")
+        self.failUnlessEqual(str(view.uri), view_name)
 
     def test_library_url(self):
         daf_mapper = load_daf_mapper('urltest')
@@ -182,7 +198,24 @@ class TestDAFMapper(unittest.TestCase):
                              'http://jumpgate.caltech.edu/library/')
         daf_mapper.library_url = 'http://google.com'
         self.failUnlessEqual(daf_mapper.library_url, 'http://google.com' )
-        
+
+@contextmanager
+def mktempdir(prefix='tmp'):
+    d = tempfile.mkdtemp(prefix=prefix)
+    print "made", d
+    yield d
+    shutil.rmtree(d)
+    print "unmade", d
+
+@contextmanager
+def mktempfile(suffix='', prefix='tmp', dir=None):
+    fd, pathname = tempfile.mkstemp(suffix=suffix, prefix=prefix, dir=dir)
+    yield pathname
+    print "made", pathname
+    os.close(fd)
+    os.unlink(pathname)
+    print "unmade", pathname
+    
 def suite():
     suite = unittest.makeSuite(TestDAF, 'test')
     suite.addTest(unittest.makeSuite(TestDAFMapper, 'test'))

@@ -20,6 +20,7 @@ from htsworkflow.util.rdfhelp import \
      submissionOntology, \
      toTypedNode, \
      fromTypedNode
+from htsworkflow.util.hashfile import make_md5sum
 
 logger = logging.getLogger(__name__)
 
@@ -239,18 +240,6 @@ class DAFMapper(object):
         for f in submission_files:
             self.construct_file_attributes(submission_dir, libNode, f)
 
-            #attributes['md5sum'] = "None"
-            #
-            #ext = attributes["filename_re"]
-            #if attributes.get("type", None) == 'fastq':
-            #    fastqs.setdefault(ext, set()).add(f)
-            #    fastq_attributes[ext] = attributes
-            #else:
-            #    md5sum = make_md5sum(os.path.join(result_dir,f))
-            #    if md5sum is not None:
-            #        attributes['md5sum']=md5sum
-            #print attributes
-            
         
     def construct_file_attributes(self, submission_dir, libNode, pathname):
         """Looking for the best extension
@@ -280,17 +269,16 @@ class DAFMapper(object):
         self.model.add_statement(RDF.Statement(submissionNode, submissionOntology['has_view'], submissionView))
         self.model.add_statement(RDF.Statement(submissionNode, submissionOntology['name'], toTypedNode(submission_name)))
         self.model.add_statement(RDF.Statement(submissionNode, rdfNS['type'], submissionOntology['submission']))
-
-
-        self.model.add_statement(
-            RDF.Statement(submissionView, dafTermOntology['filename'], toTypedNode(filename)))
+        self.model.add_statement(RDF.Statement(submissionNode, submissionOntology['library'], libNode))
+        
+        # add trac specific information
         self.model.add_statement(
             RDF.Statement(submissionView, dafTermOntology['view'], view))
         self.model.add_statement(
             RDF.Statement(submissionView, dafTermOntology['paired'], toTypedNode(self._is_paired(libNode))))
         self.model.add_statement(
             RDF.Statement(submissionView, dafTermOntology['submission'], submissionNode))
-            
+
         # extra information 
         terms = [dafTermOntology['type'],
                  dafTermOntology['filename_re'],
@@ -302,6 +290,21 @@ class DAFMapper(object):
             value = self._get_library_attribute(libNode, term)
             if value is not None:
                 self.model.add_statement(RDF.Statement(submissionView, term, value))
+
+        # add file specific information
+        fileNode = RDF.Node(RDF.Uri(submission_uri + '/' + filename))
+        submission_pathname = os.path.join(submission_dir, filename)
+        md5 = make_md5sum(submission_pathname)
+        self.model.add_statement(
+            RDF.Statement(submissionView, dafTermOntology['has_file'], fileNode))
+        self.model.add_statement(
+            RDF.Statement(fileNode, dafTermOntology['filename'], filename))
+
+        if md5 is None:
+            logging.warning("Unable to produce md5sum for %s" % ( submission_pathname))
+        else:
+            self.model.add_statement(
+                RDF.Statement(fileNode, dafTermOntology['md5sum'], md5))
 
             
     def _add_library_details_to_model(self, libNode):
