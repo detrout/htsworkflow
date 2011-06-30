@@ -260,7 +260,7 @@ class DAFMapper(object):
         submission_name = self.make_submission_name(submission_dir)
         submissionNode = self.get_submission_node(submission_dir)
         submission_uri = str(submissionNode.uri)
-        view_name = fromTypedNode(self.model.get_target(view, dafTermOntology['name']))
+        view_name = str(fromTypedNode(self.model.get_target(view, dafTermOntology['name'])))
         submissionView = RDF.Node(RDF.Uri(submission_uri + '/' + view_name))
 
         self.model.add_statement(
@@ -287,7 +287,7 @@ class DAFMapper(object):
 
         # Add everything I can find
         for term in terms:
-            value = self._get_library_attribute(libNode, term)
+            value = str(self._get_library_attribute(libNode, term))
             if value is not None:
                 self.model.add_statement(RDF.Statement(submissionView, term, value))
 

@@ -180,7 +180,7 @@ def is_valid_lane(value):
 
 class Lane(models.Model):
   flowcell = models.ForeignKey(FlowCell)
-  lane_number = models.IntegerField(validators=[is_valid_lane])
+  lane_number = models.IntegerField() 
   library = models.ForeignKey(Library)
   pM = models.DecimalField(max_digits=5, decimal_places=2,blank=False, null=False,default=default_pM)
   cluster_estimate = models.IntegerField(blank=True, null=True)                                       
@@ -193,8 +193,8 @@ class Lane(models.Model):
                [str(self.id)])
 
   def __unicode__(self):
-    return self.flowcell.flowcell_id + ':' + unicode(self.lane_number)
-                        
+      return self.flowcell.flowcell_id + ':' + unicode(self.lane_number)
+
 ### -----------------------
 class DataRun(models.Model):
     flowcell = models.ForeignKey(FlowCell,verbose_name="Flowcell Id")
