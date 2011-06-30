@@ -25,23 +25,27 @@
 </head>
 <body>
 <!-- Container -->
-   {% if not is_popup %}
+    {% if not is_popup %}
     
     <div id="header">
         <div id="branding">
         {% block branding %}{% endblock %}
         </div>
-        {% if user.is_authenticated and user.is_staff %}
-        <div id="user-tools">{% trans 'Welcome,' %} <strong>{% firstof user.first_name user.username %}</strong>. {% block userlinks %}{% url django-admindocs-docroot as docsroot %}{% if docsroot %}<a href="{{ docsroot }}">{% trans 'Documentation' %}</a> / {% endif %}<a href="/admin/password_change/">{% trans 'Change password' %}</a> / <a href="/admin/logout/">{% trans 'Log out' %}</a>{% endblock %} 
-        </div>
+        <div id="user-tools">
+        {% if user.is_authenticated %}
+        {% trans 'Welcome,' %} <strong>{% firstof user.first_name user.username %}</strong>. {% block userlinks %}{% url django-admindocs-docroot as docsroot %}{% if docsroot %}<a href="{{ docsroot }}">{% trans 'Documentation' %}</a> / {% endif %}<a href="/admin/password_change/">{% trans 'Change password' %}</a> / <a href="/admin/logout/">{% trans 'Log out' %}</a>{% endblock %} 
+        {% else %}
+        <a href="/admin/login/">{% trans 'Log in' %}</a>
         {% endif %}
+        </div>
         {% block nav-global %}{% endblock %}
     </div>
     {% endif %}
-       {% if messages %}
+    {% block breadcrumbs %}{% endblock %}
+    {% if messages %}
         <ul class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
-        {% endif %}
-
+    {% endif %}
+        
     <!-- Content -->
     <div id="content" class="{% block coltype %}colM{% endblock %}">
         {% block pretitle %}{% endblock %}

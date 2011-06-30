@@ -12,24 +12,24 @@ except ImportError, e:
 from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend.experiments.models import FlowCell, Lane, LANE_STATUS_MAP
 from htsworkflow.frontend.samples.changelist import ChangeList
-from htsworkflow.frontend.samples.models import Library, HTSUser
-from htsworkflow.frontend.samples.results import get_flowcell_result_dict, parse_flowcell_id
+from htsworkflow.frontend.samples.models import Library, Species, HTSUser
+from htsworkflow.frontend.samples.results import get_flowcell_result_dict
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.eland import ResultLane
-from htsworkflow.frontend import settings
-from htsworkflow.util.conversion import unicode_or_none
+from htsworkflow.util.conversion import unicode_or_none, parse_flowcell_id
 from htsworkflow.util import makebed
 from htsworkflow.util import opener
 
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 LANE_LIST = [1,2,3,4,5,6,7,8]
 SAMPLES_CONTEXT_DEFAULTS = {
@@ -68,6 +68,7 @@ def create_library_context(cl):
     #for lib in library_items.object_list:
     for lib in cl.result_list:
        summary = {}
+       summary['library'] = lib
        summary['library_id'] = lib.id
        summary['library_name'] = lib.library_name
        summary['species_name' ] = lib.library_species.scientific_name
@@ -127,9 +128,9 @@ def library_to_flowcells(request, lib_id):
     eland_results = []
     for fc, lane_number in flowcell_list:
         lane_summary, err_list = _summary_stats(fc, lane_number)
-
-        eland_results.extend(_make_eland_results(fc, lane_number, flowcell_run_results))
         lane_summary_list.extend(lane_summary)
+        
+        eland_results.extend(_make_eland_results(fc, lane_number, flowcell_run_results))
 
     context = {
         'page_name': 'Library Details',
@@ -307,7 +308,8 @@ def _summary_stats(flowcell_id, lane_id):
             flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
             #pm_field = 'lane_%d_pM' % (lane_id)
             lane_obj = flowcell.lane_set.get(lane_number=lane_id)
-            eland_summary.successful_pm = lane_obj.pM
+            eland_summary.flowcell = flowcell
+            eland_summary.lane = lane_obj
 
             summary_list.append(eland_summary)
 
@@ -317,65 +319,6 @@ def _summary_stats(flowcell_id, lane_id):
     
     return (summary_list, err_list)
 
-def _summary_stats_old(flowcell_id, lane):
-    """
-    return a dictionary of summary stats for a given flowcell_id & lane.
-    """
-    fc_id, status = parse_flowcell_id(flowcell_id)
-    fc_result_dict = get_flowcell_result_dict(fc_id)
-    
-    dict_list = []
-    err_list = []
-    summary_list = []
-    
-    if fc_result_dict is None:
-        err_list.append('Results for Flowcell %s not found.' % (fc_id))
-        return (dict_list, err_list, summary_list)
-    
-    for cnm in fc_result_dict:
-    
-        xmlpath = fc_result_dict[cnm]['run_xml']
-        
-        if xmlpath is None:
-            err_list.append('Run xml for Flowcell %s(%s) not found.' % (fc_id, cnm))
-            continue
-        
-        tree = ElementTree.parse(xmlpath).getroot()
-        results = runfolder.PipelineRun(pathname='', xml=tree)
-        try:
-            lane_report = runfolder.summarize_lane(results.gerald, lane)
-            summary_list.append(os.linesep.join(lane_report))
-        except Exception, e:
-            summary_list.append("Summary report needs to be updated.")
-            logging.error("Exception: " + str(e))
-       
-        print >>sys.stderr, "----------------------------------"
-        print >>sys.stderr, "-- DOES NOT SUPPORT PAIRED END ---"
-        print >>sys.stderr, "----------------------------------"
-        lane_results = results.gerald.summary[0][lane]
-        lrs = lane_results
-        
-        d = {}
-        
-        d['average_alignment_score'] = lrs.average_alignment_score
-        d['average_first_cycle_intensity'] = lrs.average_first_cycle_intensity
-        d['cluster'] = lrs.cluster
-        d['lane'] = lrs.lane
-        d['flowcell'] = flowcell_id
-        d['cnm'] = cnm
-        d['percent_error_rate'] = lrs.percent_error_rate
-        d['percent_intensity_after_20_cycles'] = lrs.percent_intensity_after_20_cycles
-        d['percent_pass_filter_align'] = lrs.percent_pass_filter_align
-        d['percent_pass_filter_clusters'] = lrs.percent_pass_filter_clusters
-        
-        #FIXME: function finished, but need to take advantage of
-        #   may need to take in a list of lanes so we only have to
-        #   load the xml file once per flowcell rather than once
-        #   per lane.
-        dict_list.append(d)
-    
-    return (dict_list, err_list, summary_list)
-    
     
 def get_eland_result_type(pathname):
     """
@@ -391,13 +334,14 @@ def get_eland_result_type(pathname):
     else:
         return 'unknown'
 
-def _make_eland_results(flowcell_id, lane, interesting_flowcells):
+def _make_eland_results(flowcell_id, lane_number, interesting_flowcells):
     fc_id, status = parse_flowcell_id(flowcell_id)
     cur_fc = interesting_flowcells.get(fc_id, None)
     if cur_fc is None:
       return []
 
     flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
+    lane = flowcell.lane_set.get(lane_number=lane_number)
     # Loop throw storage devices if a result has been archived
     storage_id_list = []
     if cur_fc is not None:
@@ -421,6 +365,7 @@ def _make_eland_results(flowcell_id, lane, interesting_flowcells):
         result_path = cur_fc[cycle]['eland_results'].get(lane, None)
         result_link = make_result_link(fc_id, cycle, lane, result_path)
         results.append({'flowcell_id': fc_id,
+                        'flowcell': flowcell,
                         'run_date': flowcell.run_date,
                         'cycle': cycle, 
                         'lane': lane, 
@@ -564,6 +509,14 @@ def species_json(request, species_id):
     Return information about a species.
     """
     raise Http404
+
+def species(request, species_id):
+    species = get_object_or_404(Species, id=species_id)
+    
+    context = RequestContext(request,
+                             { 'species': species })
+
+    return render_to_response("samples/species_detail.html", context)
 
 @login_required
 def user_profile(request):

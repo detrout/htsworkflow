@@ -140,6 +140,32 @@ class Gerald(object):
         return time.mktime(self.date.timetuple())
     time = property(_get_time, doc='return run time as seconds since epoch')
 
+    def _get_experiment_root(self):
+        if self.tree is None:
+            return None
+        return self.tree.findtext('ChipWideRunParameters/EXPT_DIR_ROOT')
+
+    def _get_runfolder_name(self):
+        if self.tree is None:
+            return None
+
+        root = self._get_experiment_root()
+        if root is None:
+            root = ''
+        else:
+            root = os.path.join(root,'')
+            
+        experiment_dir = self.tree.findtext('ChipWideRunParameters/EXPT_DIR')
+        if experiment_dir is None:
+            return None
+        experiment_dir = experiment_dir.replace(root, '')
+        if len(experiment_dir) == 0:
+            return None
+
+        dirnames = experiment_dir.split(os.path.sep)
+        return dirnames[0]
+    runfolder_name = property(_get_runfolder_name)
+    
     def _get_version(self):
         if self.tree is None:
             return None

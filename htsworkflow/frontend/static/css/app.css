@@ -31,3 +31,111 @@ div.msg {
     color: white;
     background: #880000;
 }
+
+div.htswdetail {
+    margin: 0;
+    padding: 0;
+}
+div.htswdetail table, div.htswdetail td {
+    border-style: solid;
+}
+div.htswdetail table {
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+div.htswdetail td {
+    margin: 0;
+    padding: 3px;
+    border-width: 1px 1px 0 0;
+}
+div.htswdetail thead {
+    text-align: center;
+}
+div.htswdetail tbody {
+    text-align: left;
+  }
+div.htswdetail h1,
+div.htswdetail h2
+{
+    font-size: 150%;
+}
+
+div.htswdetail h3 {
+     font-size: 125%;
+     margin: 0;
+}
+
+div.htswdetail h4,
+div.htswdetail h5,
+div.htswdetail ul,
+div.htswdetail ol,
+div.htswdetail li
+{
+  list-style: none;
+  margin: 0;   
+}
+
+div.htswdetail ul,
+div.htswdetail ol
+{
+  margin-bottom: .5em;
+}
+
+/* style library detail headers */ 
+div#librarydetail {
+  margin: 0;
+  padding: 0;
+}
+div#librarydetail table, div#librarydetail td {
+  border-style: solid;
+}
+div#librarydetail table {
+  border-width: 0 0 1px 1px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+div#librarydetail td {
+  margin: 0;
+  padding: 3px;
+  border-width: 1px 1px 0 0;
+}
+div#librarydetail thead {
+  text-align: center;
+  }
+div#librarydetail tbody {
+  text-align: right;
+}
+div#librarydetail h1,
+div#librarydetail h2
+{
+  font-size: 150%;
+}
+
+div#librarydetail h3 {
+   font-size: 125%;
+   margin: 0;
+}
+
+div#librarydetail h4,
+div#librarydetail h5,
+div#librarydetail ul,
+div#librarydetail ol,
+div#librarydetail li
+{
+  list-style: none;
+  margin: 0;   
+}
+
+div#librarydetail ul,
+div#librarydetail ol
+{
+  margin-bottom: .5em;
+}
+
+div.library_identity { 
+  float: left; margin: 5px; }
+div.library_sample_detail { float: left; margin: 5px; }
+div.library_library_detail { float: left; margin: 5px; }
+div.library_statistics { clear: both; border: 1px; }
+

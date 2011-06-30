@@ -105,14 +105,14 @@
  {"pk": 153, "model": "experiments.flowcell", 
   "fields": {
       "paired_end": true, 
-      "run_date": "2009-09-11 22:12:13", 
-      "read_length": 75, 
+      "run_date": "2007-09-27 22:12:13", 
+      "read_length": 36, 
       "notes": "",
       "advanced_run": false,
       "control_lane": 2,
       "cluster_station": 3,
       "sequencer": 2,
-      "flowcell_id": "303TUAAXX"
+      "flowcell_id": "FC12150"
       }
   }, 
   {"pk": 1193, "model": "experiments.lane",
@@ -125,6 +125,17 @@
        "pM": "8"
        }
    }, 
+   {"pk": 1192, "model": "experiments.lane",
+    "fields": {
+        "comment": "Other library",
+        "library": "11070",
+        "cluster_estimate": 132000,
+        "flowcell": 153,
+        "lane_number": 1,
+        "pM": "7"
+        }
+    }, 
+
   {"pk": "10981", "model": "samples.library", 
         "fields": {
             "ten_nM_dilution": false, 
@@ -1105,6 +1116,28 @@
             "experiment_type": 4, 
             "antibody": null
         }
-     }
-
+     },
+ {"pk": 200, "model": "experiments.flowcell", 
+  "fields": {
+      "paired_end": true, 
+      "run_date": "2007-09-27 22:12:13", 
+      "read_length": 36, 
+      "notes": "",
+      "advanced_run": false,
+      "control_lane": 2,
+      "cluster_station": 3,
+      "sequencer": 2,
+      "flowcell_id": "30012AAXX (failed)"
+      }
+  },
+  {"pk": 201, "model": "experiments.lane",
+   "fields": {
+       "comment": "",
+       "library": "11070",
+       "cluster_estimate": 182000,
+       "flowcell": 200,
+       "lane_number": 8,
+       "pM": "7"
+       }
+   }
 ]

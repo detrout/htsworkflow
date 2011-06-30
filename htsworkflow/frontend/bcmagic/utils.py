@@ -1,4 +1,4 @@
-from htsworkflow.frontend import settings
+from django.conf import settings
 
 import ftplib
 import socket

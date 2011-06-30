@@ -1,17 +1,23 @@
 # Create your views here.
 from datetime import datetime
+import os
 
 #from django.template import Context, loader
 #shortcut to the above modules
 from django.contrib.auth.decorators import user_passes_test
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage, mail_managers
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
-from django.template import Context
+from django.template import RequestContext
 from django.template.loader import get_template
 
-from htsworkflow.frontend.experiments.models import *
+from htsworkflow.frontend.experiments.models import \
+     DataRun, \
+     DataFile, \
+     FlowCell, \
+     Lane
 from htsworkflow.frontend.experiments.experiments import \
      estimateFlowcellDuration, \
      estimateFlowcellTimeRemaining, \
@@ -87,13 +93,14 @@ def startedEmail(request, pk):
     for user_email in email_lane.keys():
         sending = ""
         # build body
-        context = Context({u'flowcell': fc,
-                   u'lanes': email_lane[user_email],
-                   u'runfolder': 'blank',
-                   u'finish_low': estimate_low,
-                   u'finish_high': estimate_high,
-                   u'now': datetime.now(),        
-                  })
+        context = RequestContext(request,
+                                 {u'flowcell': fc,
+                                  u'lanes': email_lane[user_email],
+                                  u'runfolder': 'blank',
+                                  u'finish_low': estimate_low,
+                                  u'finish_high': estimate_high,
+                                  u'now': datetime.now(),        
+                                  })
 
         # build view
         subject = "Flowcell %s" % ( fc.flowcell_id )
@@ -108,14 +115,15 @@ def startedEmail(request, pk):
 
         emails.append((user_email, subject, body, sending))
 
-    verify_context = Context({
-        'emails': emails,
-        'flowcell': fc,
-        'from': sender,
-        'send': send,
-        'site_managers': settings.MANAGERS,
-        'title': fc.flowcell_id,
-        'warnings': warnings,
+    verify_context = RequestContext(
+        request,
+        { 'emails': emails,
+          'flowcell': fc,
+          'from': sender,
+          'send': send,
+          'site_managers': settings.MANAGERS,
+          'title': fc.flowcell_id,
+          'warnings': warnings,
         })
     return HttpResponse(email_verify.render(verify_context))
     
@@ -123,3 +131,55 @@ def finishedEmail(request, pk):
     """
     """
     return HttpResponse("I've got nothing.")
+
+
+def flowcell_detail(request, flowcell_id, lane_number=None):
+    fc = get_object_or_404(FlowCell, flowcell_id__startswith=flowcell_id)
+    fc.update_data_runs()
+
+    
+    if lane_number is not None:
+        lanes = fc.lane_set.filter(lane_number=lane_number)
+    else:
+        lanes = fc.lane_set.all()
+
+    context = RequestContext(request,
+                             {'flowcell': fc,
+                              'lanes': lanes})
+    
+    return render_to_response('experiments/flowcell_detail.html',
+                              context)
+
+def flowcell_lane_detail(request, lane_pk):
+    lane = get_object_or_404(Lane, id=lane_pk)
+    lane.flowcell.update_data_runs()
+
+    dataruns = []
+    for run in lane.flowcell.datarun_set.all():
+        dataruns.append((run, lane.lane_number, run.lane_files()[lane.lane_number]))
+        
+    context = RequestContext(request,
+                             {'lib': lane.library,
+                              'lane': lane,
+                              'flowcell': lane.flowcell,
+                              'filtered_dataruns': dataruns})
+    
+    return render_to_response('experiments/flowcell_lane_detail.html',
+                              context)
+
+def read_result_file(self, key):
+    """Return the contents of filename if everything is approved
+    """
+    data_file = get_object_or_404(DataFile, random_key = key)
+    
+    mimetype = 'application/octet-stream'
+    if data_file.file_type.mimetype is not None:
+        mimetype = data_file.file_type.mimetype
+
+    if os.path.exists(data_file.pathname):
+        return HttpResponse(open(data_file.pathname,'r'),
+                            mimetype=mimetype)
+
+    raise Http404
+      
+  

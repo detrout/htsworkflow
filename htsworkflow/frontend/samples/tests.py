@@ -23,6 +23,8 @@ from htsworkflow.util.conversion import unicode_or_none
 
 
 class LibraryTestCase(TestCase):
+    fixtures = ['test_samples.json']
+
     def setUp(self):
         create_db(self)
                
@@ -57,7 +59,6 @@ class SampleWebTestCase(TestCase):
             lib_response = self.client.get(url, apidata)
             self.failUnlessEqual(lib_response.status_code, 200)
             lib_json = json.loads(lib_response.content)
-            print lib_json
 
             for d in [lib_dict, lib_json]:
                 # amplified_from_sample is a link to the library table,
@@ -124,51 +125,11 @@ class SampleWebTestCase(TestCase):
 # so to be more compatible with running via nose we flush the database tables
 # of interest before creating our sample data.
 def create_db(obj):
-    Species.objects.all().delete()
-    obj.species_human = Species(
-        scientific_name = 'Homo Sapeins',
-        common_name = 'human',
-    )
-    obj.species_human.save()
-    obj.species_worm = Species(
-        scientific_name = 'C. Elegans',
-        common_name = 'worm',
-    )
-    obj.species_worm.save()
-    obj.species_phix = Species(
-        scientific_name = 'PhiX',
-        common_name = 'PhiX'
-    )
-    obj.species_phix.save()
-
-    ExperimentType.objects.all().delete()
-    obj.experiment_de_novo = ExperimentType(
-        name = 'De Novo',
-    )
-    obj.experiment_de_novo.save()
-    obj.experiment_chip_seq = ExperimentType(
-        name = 'ChIP-Seq'
-    )
-    obj.experiment_chip_seq.save()
-    obj.experiment_rna_seq = ExperimentType(
-        name = 'RNA-Seq'
-    )
-    obj.experiment_rna_seq.save()
-
-    Affiliation.objects.all().delete()
-    obj.affiliation_alice = Affiliation(
-        name = 'Alice',
-        contact = 'Lab Boss',
-        email = 'alice@some.where.else.'
-    )
-    obj.affiliation_alice.save()
-    obj.affiliation_bob = Affiliation(
-        name = 'Bob',
-        contact = 'Other Lab Boss',
-        email = 'bob@some.where.else',
-    )
-    obj.affiliation_bob.save()
-
+    obj.species_human = Species.objects.get(pk=8)
+    obj.experiment_rna_seq = ExperimentType.objects.get(pk=4)
+    obj.affiliation_alice = Affiliation.objects.get(pk=1)
+    obj.affiliation_bob = Affiliation.objects.get(pk=2)
+    
     Library.objects.all().delete()
     obj.library_10001 = Library(
         id = "10001",
@@ -197,3 +158,67 @@ def create_db(obj):
     )
     obj.library_10002.save()
  
+try:
+    import RDF
+    HAVE_RDF = True
+
+    rdfNS = RDF.NS("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
+    libNS = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
+except ImportError,e:
+    HAVE_RDF = False
+
+    
+class TestRDFaLibrary(TestCase):
+    fixtures = ['test_samples.json']
+
+    def test_parse_rdfa(self):
+        model = get_rdf_memory_model()
+        parser = RDF.Parser(name='rdfa')
+        url = '/library/10981/'
+        lib_response = self.client.get(url)
+        self.failIfEqual(len(lib_response.content), 0)
+        
+        parser.parse_string_into_model(model,
+                                       lib_response.content,
+                                       'http://localhost'+url)
+        # http://jumpgate.caltech.edu/wiki/LibraryOntology#affiliation>
+        self.check_literal_object(model, ['Bob'], p=libNS['affiliation'])
+        self.check_literal_object(model, ['Multiplexed'], p=libNS['experiment_type'])
+        self.check_literal_object(model, ['400'], p=libNS['gel_cut'])
+        self.check_literal_object(model, ['Igor'], p=libNS['made_by'])
+        self.check_literal_object(model, ['Paired End Multiplexed Sp-BAC'], p=libNS['name'])
+        self.check_literal_object(model, ['Drosophila melanogaster'], p=libNS['species'])
+
+        self.check_uri_object(model,
+                              [u'http://localhost/lane/1193'],
+                              p=libNS['has_lane'])
+
+        self.check_literal_object(model,
+                                  [u"303TUAAXX"],
+                                  s=RDF.Uri('http://localhost/flowcell/303TUAAXX/'))
+                                  
+    def check_literal_object(self, model, values, s=None, p=None, o=None):
+        statements = list(model.find_statements(
+            RDF.Statement(s,p,o)))
+        self.failUnlessEqual(len(statements), len(values),
+                        "Couln't find %s %s %s" % (s,p,o))
+        for s in statements:
+            self.failUnless(s.object.literal_value['string'] in values)
+
+
+    def check_uri_object(self, model, values, s=None, p=None, o=None):
+        statements = list(model.find_statements(
+            RDF.Statement(s,p,o)))
+        self.failUnlessEqual(len(statements), len(values),
+                        "Couln't find %s %s %s" % (s,p,o))
+        for s in statements:
+            self.failUnless(unicode(s.object.uri) in values)
+
+
+
+def get_rdf_memory_model():
+    storage = RDF.MemoryStorage()
+    model = RDF.Model(storage)
+    return model
+

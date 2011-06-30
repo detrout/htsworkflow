@@ -1,0 +1,88 @@
+{% extends "base_site.html" %}
+{% load adminmedia humanize i18n %}
+{% block extrahead %}
+    <!-- App Stuff -->
+    <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    
+    {% block additional_javascript %}
+    {% endblock %}
+{% endblock %}
+
+{% block content %}
+<div id="lane_detail" class="htswdetail">
+  <h2>About this lane</h2>
+  <div rel="libns:flowcell" resource="{{flowcell.get_absolute_url}}">
+  <b>Flowcell</b>: 
+    <a href="{{flowcell.get_absolute_url}}">{{flowcell.flowcell_id}}</a><br/>
+  <b>Run Date</b>:
+    <span property="libns:date" content="{{flowcell.run_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ flowcell.run_date }}</span><br/>
+  <b>Type</b>: 
+    <span property="libns:flowcell_type">{{flowcell.flowcell_type}}</span><br/>
+  </div>
+  <b>Lane</b>: 
+    <span property="libns:lane_number" datatype="xsd:decimal">{{lane.lane_number}}</span><br/>
+  <b>Cycles</b>: 
+    <span property="libns:read_length">{{lane.flowcell.read_length}}</span><br/>
+  <b>pM</b>
+    <span property="libns:pM" datatype="xsd:decimal">{{ lane.pM }}</span><br/>
+  <b>Cluster Estimate</b>
+    <span property="libns:cluster_estimate" datatype="xsd:decimal"
+          content="{{lane.cluster_estimate}}">{{ lane.cluster_estimate|intcomma }}</span><br/>
+  <b>Lane Status</b>: 
+    <span property="libns:status">{{ lane.status }}</span><br/>
+  <b>Comment</b>: 
+    <span property="libns:comment">{{ lane.comment }}</span><br/>
+  <hr/>
+  {% include "sample_header.html" %}
+  <hr/>
+  <div class="htsw_flowcell_ivc">
+  {% for run in flowcell.datarun_set.all %}
+     <h2>Run {{ run.runfolder_name }}</h2>
+     <table>
+       <thead>
+         <tr>
+           <td>Lane</td>
+           <td>IVC All</td>
+           <td>IVC Call</td>
+           <td>IVC Percent Base</td>
+           <td>IVC Percent Base All</td>
+           <td>IVC Percent Base Called</td>
+       </thead>
+       <tbody>
+          {% for run, lane_number, lane_file_set in filtered_dataruns %}
+          {% if lane_file_set.ivc_all %}
+          <tr>
+            <td>{{lane_number}}</td>
+            <td>
+              <a href="{{ lane_file_set.ivc_all.get_absolute_url }}">
+              <img height="84" width="126" src="{{ lane_file_set.ivc_all.get_absolute_url }}"/></a>
+            </td>
+            <td>
+              <a href="{{ lane_file_set.ivc_call.get_absolute_url }}">
+              <img height="84" width="126" src="{{ lane_file_set.ivc_call.get_absolute_url }}"/>
+              </a>
+            </td>
+            <td>
+              <a href="{{ lane_file_set.ivc_percent_base.get_absolute_url }}">
+              <img height="84" width="126" src="{{ lane_file_set.ivc_percent_base.get_absolute_url }}"/>
+              </a>
+            </td>
+            <td>
+              <a href="{{ lane_file_set.ivc_percent_all.get_absolute_url }}">
+              <img height="84" width="126" src="{{ lane_file_set.ivc_percent_all.get_absolute_url }}"/>
+              </a>
+            </td>
+            <td>
+              <a href="{{ lane_file_set.ivc_percent_call.get_absolute_url }}">
+              <img height="84" width="126" src="{{ lane_file_set.ivc_percent_call.get_absolute_url }}"/>
+              </a>
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %} 
+       </tbody>
+     </table>
+  {% endfor %}
+  </div>
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.db import models
+from django.conf import settings
 from datetime import datetime
-from htsworkflow.frontend import settings
 from htsworkflow.frontend.samples.models import Library 
 from string import *
 

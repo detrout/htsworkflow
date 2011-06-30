@@ -6,14 +6,8 @@ urlpatterns = patterns('',
     #(r'^(?P<run_folder>.+)/$', 'gaworkflow.frontend.experiments.views.detail'),
     (r'^config/(?P<fc_id>.+)/json$', 'htsworkflow.frontend.experiments.experiments.flowcell_json'),
     (r'^lanes_for/(?P<username>.+)/json$', 'htsworkflow.frontend.experiments.experiments.lanes_for_json'),
-    (r'^fcsheet/(?P<fcid>.+)/$', 'htsworkflow.frontend.experiments.views.makeFCSheet'),
-    (r'^updStatus$', 'htsworkflow.frontend.experiments.experiments.updStatus'),
-    (r'^getConfile$', 'htsworkflow.frontend.experiments.experiments.getConfile'),
-    (r'^getLanesNames$', 'htsworkflow.frontend.experiments.experiments.getLaneLibs'),
-    # for the following two URLS I have to pass in the primary key
-    # because I link to the page from an overridden version of the admin change_form
-    # which only makes the object primary key available in the form.
-    # (Or at least as far as I could tell)
+    (r'^file/(?P<key>.+)/?$', 'htsworkflow.frontend.experiments.views.read_result_file'),
     (r'^started/(?P<pk>.+)/$', 'htsworkflow.frontend.experiments.views.startedEmail'),
     (r'^finished/(?P<pk>.+)/$', 'htsworkflow.frontend.experiments.views.finishedEmail'),
+                        
 )

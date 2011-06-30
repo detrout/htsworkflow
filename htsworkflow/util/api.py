@@ -1,7 +1,6 @@
+"""Common functions for accessing the HTS Workflow REST API
 """
-Common functions for accessing the HTS Workflow REST API
-
-"""
+from ConfigParser import SafeConfigParser
 import logging
 
 # try to deal with python <2.6
@@ -10,9 +9,52 @@ try:
 except ImportError:
   import simplejson as json
 
+import os
+from optparse import OptionGroup
 import urllib
 import urllib2
 import urlparse
+
+
+def add_auth_options(parser):
+    """Add options OptParser configure authentication options
+    """
+    # Load defaults from the config files
+    config = SafeConfigParser()
+    config.read([os.path.expanduser('~/.htsworkflow.ini'),
+                 '/etc/htsworkflow.ini'
+                 ])
+    
+    sequence_archive = None
+    apiid = None
+    apikey = None
+    apihost = None
+    SECTION = 'sequence_archive'
+    if config.has_section(SECTION):
+        sequence_archive = config.get(SECTION, 'sequence_archive',sequence_archive)
+        sequence_archive = os.path.expanduser(sequence_archive)
+        apiid = config.get(SECTION, 'apiid', apiid)
+        apikey = config.get(SECTION, 'apikey', apikey)
+        apihost = config.get(SECTION, 'host', apihost)
+
+    # configuration options
+    group = OptionGroup(parser, "htsw api authentication")
+    group.add_option('--apiid', default=apiid, help="Specify API ID")
+    group.add_option('--apikey', default=apikey, help="Specify API KEY")
+    group.add_option('--host',  default=apihost,
+                     help="specify HTSWorkflow host",)
+    group.add_option('--sequence', default=sequence_archive,
+                     help="sequence repository")
+    parser.add_option_group(group)
+
+def make_auth_from_opts(opts, parser):
+    """Create htsw auth info dictionary from optparse info
+    """
+    if opts.host is None or opts.apiid is None or opts.apikey is None:
+        parser.error("Please specify host url, apiid, apikey")
+        
+    return {'apiid': opts.apiid, 'apikey': opts.apikey }
+
 
 def library_url(root_url, library_id):
     """
@@ -94,3 +136,24 @@ def retrieve_info(url, apidata):
     headers = web.info()
 
     return json.loads(contents)
+
+class HtswApi(object):
+  def __init__(self, root_url, authdata):
+    self.root_url = root_url
+    self.authdata = authdata
+
+  def get_flowcell(self, flowcellId):
+    url = flowcell_url(self.root_url, flowcellId)
+    return retrieve_info(url, self.authdata)
+
+  def get_library(self, libraryId):
+    url = library_url(self.root_url, libraryId)
+    return retrieve_info(url, self.authdata)
+
+  def get_lanes_for_user(self, user):
+    url = lanes_for_user(self.root_url, user)
+    return retrieve_info(url, self.authdata)
+
+  def get_url(self, url):
+    return retrieve_info(url, self.authdata)
+    

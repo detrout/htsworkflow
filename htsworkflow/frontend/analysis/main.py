@@ -1,11 +1,14 @@
 # some core functions of analysis manager module
-from django.http import HttpResponse
+
 from datetime import datetime
 from string import *
 import re
-from htsworkflow.frontend import settings
-from htsworkflow.frontend.analysis.models import Task, Project
+
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
+
+from htsworkflow.frontend.analysis.models import Task, Project
 
 def updStatus(request):
     ClIP = request.META['REMOTE_ADDR']

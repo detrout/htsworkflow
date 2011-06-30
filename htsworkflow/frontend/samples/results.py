@@ -1,4 +1,4 @@
-from htsworkflow.frontend import settings
+from django.conf import settings
 
 import glob
 import os
@@ -120,19 +120,3 @@ def cn_mTobp(cn_m):
     pass
 
 
-def parse_flowcell_id(flowcell_id):
-    """
-    Return flowcell id and any status encoded in the id
-  
-    We stored the status information in the flowcell id name.
-    this was dumb, but database schemas are hard to update.
-    """
-    fields = flowcell_id.split()
-    fcid = None
-    status = None
-    if len(fields) > 0:
-        fcid = fields[0]
-    if len(fields) > 1:
-        status = fields[1]
-    return fcid, status
-    

@@ -27,6 +27,9 @@ The options understood by this module are (with their defaults):
 import ConfigParser
 import os
 import shlex
+import htsworkflow
+
+HTSWORKFLOW_ROOT = os.path.abspath(os.path.split(htsworkflow.__file__)[0])
 
 # make epydoc happy
 __docformat__ = "restructuredtext en"
@@ -53,7 +56,7 @@ options = ConfigParser.SafeConfigParser(
              'email_port': '25', 
              'database_engine': 'sqlite3',
              'database_name': 
-               os.path.abspath('../../fctracker.db'),
+                  os.path.join(HTSWORKFLOW_ROOT, '..', 'fctracker.db'),
              'time_zone': 'America/Los_Angeles',
              'default_pm': '5',
              'link_flowcell_storage_device_url': "http://localhost:8000/inventory/lts/link/",
@@ -86,7 +89,10 @@ options_to_list(options, ADMINS, 'frontend', 'admins')
 MANAGERS = []
 options_to_list(options, MANAGERS, 'frontend', 'managers')
 
-AUTHENTICATION_BACKENDS = ( 'samples.auth_backend.HTSUserModelBackend', )
+DEFAULT_PM=int(options.get('frontend', 'default_pm'))
+
+AUTHENTICATION_BACKENDS = ( 
+  'htsworkflow.frontend.samples.auth_backend.HTSUserModelBackend', )
 CUSTOM_USER_MODEL = 'samples.HTSUser' 
 
 EMAIL_HOST = options.get('frontend', 'email_host')
@@ -99,15 +105,27 @@ else:
 NOTIFICATION_BCC = []
 options_to_list(options, NOTIFICATION_BCC, 'frontend', 'notification_bcc')
 
-# 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_ENGINE = options.get('frontend', 'database_engine')
+database_section = options.get('frontend', 'database', 'database')
 
-# Or path to database file if using sqlite3.
-DATABASE_NAME = options.get('frontend', 'database_name' )
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+if not options.has_section(database_section):
+    raise ConfigParser.NoSectionError(
+        "No database=<database_section_name> defined")
+    
+# 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
+DATABASE_ENGINE = options.get(database_section, 'engine')
+DATABASE_NAME = options.get(database_section, 'name')
+if options.has_option(database_section, 'user'):
+    DATABASE_USER = options.get(database_section, 'user')
+if options.has_option(database_section, 'host'):
+    DATABASE_HOST = options.get(database_section, 'host')
+if options.has_option(database_section, 'port'):
+    DATABASE_PORT = options.get(database_section, 'port')
+
+if options.has_option(database_section, 'password_file'):
+    password_file = options.get(database_section, 'password_file')
+    DATABASE_PASSWORD = open(password_file,'r').readline()
+elif options.has_option(database_section, 'password'):
+    DATABASE_PASSWORD = options.get(database_section, 'password')
 
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
@@ -129,7 +147,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.abspath(os.path.split(__file__)[0]) + '/static/'
+MEDIA_ROOT = os.path.join(HTSWORKFLOW_ROOT, 'frontend', 'static', '')
 
 # URL that handles the media served from MEDIA_ROOT.
 # Example: "http://media.lawrence.com"
@@ -168,7 +186,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     '/usr/share/python-support/python-django/django/contrib/admin/templates',
     #'/usr/lib/pymodules/python2.6/django/contrib/admin/templates/',
-    os.path.join(os.path.split(__file__)[0], 'templates'),
+    os.path.join(HTSWORKFLOW_ROOT, 'frontend','templates'),
 )
 
 INSTALLED_APPS = (
@@ -186,6 +204,7 @@ INSTALLED_APPS = (
     'htsworkflow.frontend.reports',
     'htsworkflow.frontend.inventory',
     'htsworkflow.frontend.bcmagic',
+    'htsworkflow.frontend.labels',
     'django.contrib.databrowse',
 )
 
@@ -213,3 +232,4 @@ BCPRINTER_PRINTER1_HOST = options.get('bcprinter', 'printer1_host')
 BCPRINTER_PRINTER1_PORT = int(options.get('bcprinter', 'printer1_port'))
 BCPRINTER_PRINTER2_HOST = options.get('bcprinter', 'printer2_host')
 BCPRINTER_PRINTER2_PORT = int(options.get('bcprinter', 'printer2_port'))
+

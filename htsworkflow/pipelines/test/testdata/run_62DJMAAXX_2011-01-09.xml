@@ -1,0 +1,4297 @@
+<PipelineRun>
+  <FlowcellID>62DJMAAXX</FlowcellID>
+  <IPAR version="1">
+    <timestamp>1294547631</timestamp>
+    <Run Name="Intensities">
+      <Cycles First="1" Last="152" Number="152" />
+      <ImageParameters>
+        <AutoOffsetFlag>0</AutoOffsetFlag>
+        <AutoSizeFlag>0</AutoSizeFlag>
+        <Fwhm>0</Fwhm>
+        <RemappingDistance>0</RemappingDistance>
+        <Threshold>0</Threshold>
+      </ImageParameters>
+      <RunParameters>
+        <AutoCycleFlag>0</AutoCycleFlag>
+        <BasecallFlag>0</BasecallFlag>
+        <Deblocked>0</Deblocked>
+        <DebugFlag>0</DebugFlag>
+        <FirstRunOnlyFlag>0</FirstRunOnlyFlag>
+        <ImagingReads Index="1">
+          <FirstCycle>1</FirstCycle>
+          <LastCycle>76</LastCycle>
+          <RunFolder>101229_ILLUMINA-EC5D15_00026_62DJMAAXX</RunFolder>
+        </ImagingReads>
+        <ImagingReads Index="2">
+          <FirstCycle>77</FirstCycle>
+          <LastCycle>152</LastCycle>
+          <RunFolder>101229_ILLUMINA-EC5D15_00026_62DJMAAXX</RunFolder>
+        </ImagingReads>
+        <Instrument>ILLUMINA-EC5D15</Instrument>
+        <IterativeMatrixFlag>0</IterativeMatrixFlag>
+        <MakeFlag>0</MakeFlag>
+        <MaxCycle>0</MaxCycle>
+        <MinCycle>0</MinCycle>
+        <Reads Index="1">
+          <FirstCycle>1</FirstCycle>
+          <LastCycle>76</LastCycle>
+          <RunFolder>101229_ILLUMINA-EC5D15_00026_62DJMAAXX</RunFolder>
+        </Reads>
+        <Reads Index="2">
+          <FirstCycle>77</FirstCycle>
+          <LastCycle>152</LastCycle>
+          <RunFolder>101229_ILLUMINA-EC5D15_00026_62DJMAAXX</RunFolder>
+        </Reads>
+        <RunFolder>101229_ILLUMINA-EC5D15_00026_62DJMAAXX</RunFolder>
+        <RunFolderDate>101229</RunFolderDate>
+        <RunFolderId>00026</RunFolderId>
+        <QTableVersion>PL14</QTableVersion>
+      </RunParameters>
+      <Software Name="RTA" Version="1.8.70.0" />
+      <TileSelection>
+        <Lane Index="1">
+          <Sample>s</Sample>
+          <Tile>1</Tile>
+          <Tile>4</Tile>
+          <Tile>7</Tile>
+          <Tile>10</Tile>
+          <Tile>3</Tile>
+          <Tile>2</Tile>
+          <Tile>13</Tile>
+          <Tile>6</Tile>
+          <Tile>5</Tile>
+          <Tile>16</Tile>
+          <Tile>9</Tile>
+          <Tile>8</Tile>
+          <Tile>19</Tile>
+          <Tile>12</Tile>
+          <Tile>11</Tile>
+          <Tile>22</Tile>
+          <Tile>15</Tile>
+          <Tile>14</Tile>
+          <Tile>25</Tile>
+          <Tile>18</Tile>
+          <Tile>17</Tile>
+          <Tile>28</Tile>
+          <Tile>21</Tile>
+          <Tile>20</Tile>
+          <Tile>31</Tile>
+          <Tile>24</Tile>
+          <Tile>23</Tile>
+          <Tile>34</Tile>
+          <Tile>27</Tile>
+          <Tile>26</Tile>
+          <Tile>37</Tile>
+          <Tile>30</Tile>
+          <Tile>29</Tile>
+          <Tile>40</Tile>
+          <Tile>33</Tile>
+          <Tile>32</Tile>
+          <Tile>43</Tile>
+          <Tile>36</Tile>
+          <Tile>35</Tile>
+          <Tile>46</Tile>
+          <Tile>39</Tile>
+          <Tile>38</Tile>
+          <Tile>49</Tile>
+          <Tile>42</Tile>
+          <Tile>41</Tile>
+          <Tile>52</Tile>
+          <Tile>45</Tile>
+          <Tile>44</Tile>
+          <Tile>55</Tile>
+          <Tile>48</Tile>
+          <Tile>47</Tile>
+          <Tile>58</Tile>
+          <Tile>51</Tile>
+          <Tile>50</Tile>
+          <Tile>61</Tile>
+          <Tile>54</Tile>
+          <Tile>53</Tile>
+          <Tile>64</Tile>
+          <Tile>57</Tile>
+          <Tile>56</Tile>
+          <Tile>67</Tile>
+          <Tile>60</Tile>
+          <Tile>59</Tile>
+          <Tile>70</Tile>
+          <Tile>63</Tile>
+          <Tile>62</Tile>
+          <Tile>73</Tile>
+          <Tile>66</Tile>
+          <Tile>65</Tile>
+          <Tile>76</Tile>
+          <Tile>69</Tile>
+          <Tile>68</Tile>
+          <Tile>79</Tile>
+          <Tile>72</Tile>
+          <Tile>71</Tile>
+          <Tile>82</Tile>
+          <Tile>75</Tile>
+          <Tile>85</Tile>
+          <Tile>74</Tile>
+          <Tile>78</Tile>
+          <Tile>88</Tile>
+          <Tile>77</Tile>
+          <Tile>81</Tile>
+          <Tile>91</Tile>
+          <Tile>80</Tile>
+          <Tile>84</Tile>
+          <Tile>94</Tile>
+          <Tile>83</Tile>
+          <Tile>87</Tile>
+          <Tile>97</Tile>
+          <Tile>86</Tile>
+          <Tile>90</Tile>
+          <Tile>100</Tile>
+          <Tile>89</Tile>
+          <Tile>93</Tile>
+          <Tile>92</Tile>
+          <Tile>103</Tile>
+          <Tile>96</Tile>
+          <Tile>95</Tile>
+          <Tile>99</Tile>
+          <Tile>106</Tile>
+          <Tile>98</Tile>
+          <Tile>102</Tile>
+          <Tile>109</Tile>
+          <Tile>101</Tile>
+          <Tile>105</Tile>
+          <Tile>112</Tile>
+          <Tile>104</Tile>
+          <Tile>115</Tile>
+          <Tile>108</Tile>
+          <Tile>107</Tile>
+          <Tile>118</Tile>
+          <Tile>111</Tile>
+          <Tile>110</Tile>
+          <Tile>114</Tile>
+          <Tile>113</Tile>
+          <Tile>117</Tile>
+          <Tile>116</Tile>
+          <Tile>120</Tile>
+          <Tile>119</Tile>
+        </Lane>
+        <Lane Index="2">
+          <Sample>s</Sample>
+          <Tile>1</Tile>
+          <Tile>4</Tile>
+          <Tile>7</Tile>
+          <Tile>10</Tile>
+          <Tile>3</Tile>
+          <Tile>2</Tile>
+          <Tile>13</Tile>
+          <Tile>6</Tile>
+          <Tile>5</Tile>
+          <Tile>16</Tile>
+          <Tile>9</Tile>
+          <Tile>8</Tile>
+          <Tile>19</Tile>
+          <Tile>12</Tile>
+          <Tile>11</Tile>
+          <Tile>15</Tile>
+          <Tile>22</Tile>
+          <Tile>18</Tile>
+          <Tile>14</Tile>
+          <Tile>25</Tile>
+          <Tile>21</Tile>
+          <Tile>17</Tile>
+          <Tile>28</Tile>
+          <Tile>24</Tile>
+          <Tile>20</Tile>
+          <Tile>31</Tile>
+          <Tile>27</Tile>
+          <Tile>23</Tile>
+          <Tile>34</Tile>
+          <Tile>30</Tile>
+          <Tile>26</Tile>
+          <Tile>37</Tile>
+          <Tile>29</Tile>
+          <Tile>33</Tile>
+          <Tile>40</Tile>
+          <Tile>36</Tile>
+          <Tile>32</Tile>
+          <Tile>43</Tile>
+          <Tile>39</Tile>
+          <Tile>35</Tile>
+          <Tile>46</Tile>
+          <Tile>42</Tile>
+          <Tile>38</Tile>
+          <Tile>49</Tile>
+          <Tile>45</Tile>
+          <Tile>52</Tile>
+          <Tile>41</Tile>
+          <Tile>48</Tile>
+          <Tile>55</Tile>
+          <Tile>44</Tile>
+          <Tile>51</Tile>
+          <Tile>58</Tile>
+          <Tile>47</Tile>
+          <Tile>54</Tile>
+          <Tile>61</Tile>
+          <Tile>50</Tile>
+          <Tile>57</Tile>
+          <Tile>64</Tile>
+          <Tile>53</Tile>
+          <Tile>60</Tile>
+          <Tile>67</Tile>
+          <Tile>56</Tile>
+          <Tile>63</Tile>
+          <Tile>70</Tile>
+          <Tile>59</Tile>
+          <Tile>66</Tile>
+          <Tile>73</Tile>
+          <Tile>62</Tile>
+          <Tile>69</Tile>
+          <Tile>76</Tile>
+          <Tile>65</Tile>
+          <Tile>72</Tile>
+          <Tile>79</Tile>
+          <Tile>68</Tile>
+          <Tile>75</Tile>
+          <Tile>82</Tile>
+          <Tile>71</Tile>
+          <Tile>78</Tile>
+          <Tile>85</Tile>
+          <Tile>74</Tile>
+          <Tile>81</Tile>
+          <Tile>88</Tile>
+          <Tile>77</Tile>
+          <Tile>84</Tile>
+          <Tile>80</Tile>
+          <Tile>91</Tile>
+          <Tile>87</Tile>
+          <Tile>83</Tile>
+          <Tile>94</Tile>
+          <Tile>90</Tile>
+          <Tile>86</Tile>
+          <Tile>97</Tile>
+          <Tile>93</Tile>
+          <Tile>89</Tile>
+          <Tile>100</Tile>
+          <Tile>96</Tile>
+          <Tile>92</Tile>
+          <Tile>103</Tile>
+          <Tile>99</Tile>
+          <Tile>95</Tile>
+          <Tile>106</Tile>
+          <Tile>102</Tile>
+          <Tile>98</Tile>
+          <Tile>109</Tile>
+          <Tile>105</Tile>
+          <Tile>101</Tile>
+          <Tile>112</Tile>
+          <Tile>108</Tile>
+          <Tile>104</Tile>
+          <Tile>115</Tile>
+          <Tile>111</Tile>
+          <Tile>118</Tile>
+          <Tile>107</Tile>
+          <Tile>114</Tile>
+          <Tile>110</Tile>
+          <Tile>117</Tile>
+          <Tile>113</Tile>
+          <Tile>120</Tile>
+          <Tile>116</Tile>
+          <Tile>119</Tile>
+        </Lane>
+        <Lane Index="3">
+          <Sample>s</Sample>
+          <Tile>1</Tile>
+          <Tile>4</Tile>
+          <Tile>7</Tile>
+          <Tile>3</Tile>
+          <Tile>10</Tile>
+          <Tile>6</Tile>
+          <Tile>13</Tile>
+          <Tile>2</Tile>
+          <Tile>9</Tile>
+          <Tile>16</Tile>
+          <Tile>5</Tile>
+          <Tile>12</Tile>
+          <Tile>19</Tile>
+          <Tile>8</Tile>
+          <Tile>15</Tile>
+          <Tile>22</Tile>
+          <Tile>11</Tile>
+          <Tile>18</Tile>
+          <Tile>25</Tile>
+          <Tile>14</Tile>
+          <Tile>21</Tile>
+          <Tile>28</Tile>
+          <Tile>17</Tile>
+          <Tile>24</Tile>
+          <Tile>31</Tile>
+          <Tile>20</Tile>
+          <Tile>27</Tile>
+          <Tile>34</Tile>
+          <Tile>23</Tile>
+          <Tile>30</Tile>
+          <Tile>37</Tile>
+          <Tile>26</Tile>
+          <Tile>33</Tile>
+          <Tile>40</Tile>
+          <Tile>29</Tile>
+          <Tile>36</Tile>
+          <Tile>43</Tile>
+          <Tile>32</Tile>
+          <Tile>39</Tile>
+          <Tile>46</Tile>
+          <Tile>35</Tile>
+          <Tile>42</Tile>
+          <Tile>49</Tile>
+          <Tile>38</Tile>
+          <Tile>45</Tile>
+          <Tile>52</Tile>
+          <Tile>41</Tile>
+          <Tile>48</Tile>
+          <Tile>55</Tile>
+          <Tile>44</Tile>
+          <Tile>51</Tile>
+          <Tile>58</Tile>
+          <Tile>47</Tile>
+          <Tile>54</Tile>
+          <Tile>61</Tile>
+          <Tile>50</Tile>
+          <Tile>57</Tile>
+          <Tile>64</Tile>
+          <Tile>53</Tile>
+          <Tile>60</Tile>
+          <Tile>67</Tile>
+          <Tile>56</Tile>
+          <Tile>63</Tile>
+          <Tile>70</Tile>
+          <Tile>59</Tile>
+          <Tile>66</Tile>
+          <Tile>62</Tile>
+          <Tile>73</Tile>
+          <Tile>69</Tile>
+          <Tile>65</Tile>
+          <Tile>76</Tile>
+          <Tile>72</Tile>
+          <Tile>68</Tile>
+          <Tile>79</Tile>
+          <Tile>71</Tile>
+          <Tile>75</Tile>
+          <Tile>82</Tile>
+          <Tile>74</Tile>
+          <Tile>78</Tile>
+          <Tile>85</Tile>
+          <Tile>77</Tile>
+          <Tile>81</Tile>
+          <Tile>88</Tile>
+          <Tile>80</Tile>
+          <Tile>84</Tile>
+          <Tile>91</Tile>
+          <Tile>83</Tile>
+          <Tile>87</Tile>
+          <Tile>94</Tile>
+          <Tile>86</Tile>
+          <Tile>90</Tile>
+          <Tile>97</Tile>
+          <Tile>89</Tile>
+          <Tile>93</Tile>
+          <Tile>100</Tile>
+          <Tile>92</Tile>
+          <Tile>96</Tile>
+          <Tile>103</Tile>
+          <Tile>95</Tile>
+          <Tile>99</Tile>
+          <Tile>106</Tile>
+          <Tile>98</Tile>
+          <Tile>102</Tile>
+          <Tile>109</Tile>
+          <Tile>101</Tile>
+          <Tile>105</Tile>
+          <Tile>112</Tile>
+          <Tile>104</Tile>
+          <Tile>108</Tile>
+          <Tile>115</Tile>
+          <Tile>107</Tile>
+          <Tile>111</Tile>
+          <Tile>118</Tile>
+          <Tile>110</Tile>
+          <Tile>114</Tile>
+          <Tile>113</Tile>
+          <Tile>117</Tile>
+          <Tile>116</Tile>
+          <Tile>120</Tile>
+          <Tile>119</Tile>
+        </Lane>
+        <Lane Index="4">
+          <Sample>s</Sample>
+          <Tile>1</Tile>
+          <Tile>4</Tile>
+          <Tile>7</Tile>
+          <Tile>3</Tile>
+          <Tile>10</Tile>
+          <Tile>6</Tile>
+          <Tile>2</Tile>
+          <Tile>13</Tile>
+          <Tile>9</Tile>
+          <Tile>5</Tile>
+          <Tile>16</Tile>
+          <Tile>12</Tile>
+          <Tile>8</Tile>
+          <Tile>19</Tile>
+          <Tile>11</Tile>
+          <Tile>15</Tile>
+          <Tile>22</Tile>
+          <Tile>14</Tile>
+          <Tile>18</Tile>
+          <Tile>25</Tile>
+          <Tile>17</Tile>
+          <Tile>21</Tile>
+          <Tile>28</Tile>
+          <Tile>20</Tile>
+          <Tile>24</Tile>
+          <Tile>31</Tile>
+          <Tile>23</Tile>
+          <Tile>27</Tile>
+          <Tile>34</Tile>
+          <Tile>30</Tile>
+          <Tile>26</Tile>
+          <Tile>37</Tile>
+          <Tile>33</Tile>
+          <Tile>29</Tile>
+          <Tile>40</Tile>
+          <Tile>36</Tile>
+          <Tile>32</Tile>
+          <Tile>43</Tile>
+          <Tile>35</Tile>
+          <Tile>39</Tile>
+          <Tile>46</Tile>
+          <Tile>38</Tile>
+          <Tile>42</Tile>
+          <Tile>49</Tile>
+          <Tile>45</Tile>
+          <Tile>41</Tile>
+          <Tile>52</Tile>
+          <Tile>48</Tile>
+          <Tile>44</Tile>
+          <Tile>55</Tile>
+          <Tile>51</Tile>
+          <Tile>47</Tile>
+          <Tile>58</Tile>
+          <Tile>54</Tile>
+          <Tile>50</Tile>
+          <Tile>61</Tile>
+          <Tile>57</Tile>
+          <Tile>53</Tile>
+          <Tile>64</Tile>
+          <Tile>60</Tile>
+          <Tile>56</Tile>
+          <Tile>67</Tile>
+          <Tile>63</Tile>
+          <Tile>59</Tile>
+          <Tile>70</Tile>
+          <Tile>66</Tile>
+          <Tile>62</Tile>
+          <Tile>73</Tile>
+          <Tile>69</Tile>
+          <Tile>65</Tile>
+          <Tile>76</Tile>
+          <Tile>72</Tile>
+          <Tile>68</Tile>
+          <Tile>79</Tile>
+          <Tile>75</Tile>
+          <Tile>71</Tile>
+          <Tile>82</Tile>
+          <Tile>78</Tile>
+          <Tile>74</Tile>
+          <Tile>85</Tile>
+          <Tile>81</Tile>
+          <Tile>77</Tile>
+          <Tile>88</Tile>
+          <Tile>84</Tile>
+          <Tile>80</Tile>
+          <Tile>91</Tile>
+          <Tile>87</Tile>
+          <Tile>83</Tile>
+          <Tile>94</Tile>
+          <Tile>90</Tile>
+          <Tile>86</Tile>
+          <Tile>97</Tile>
+          <Tile>93</Tile>
+          <Tile>89</Tile>
+          <Tile>100</Tile>
+          <Tile>96</Tile>
+          <Tile>92</Tile>
+          <Tile>103</Tile>
+          <Tile>99</Tile>
+          <Tile>95</Tile>
+          <Tile>106</Tile>
+          <Tile>102</Tile>
+          <Tile>98</Tile>
+          <Tile>109</Tile>
+          <Tile>105</Tile>
+          <Tile>101</Tile>
+          <Tile>112</Tile>
+          <Tile>108</Tile>
+          <Tile>104</Tile>
+          <Tile>115</Tile>
+          <Tile>111</Tile>
+          <Tile>107</Tile>
+          <Tile>118</Tile>
+          <Tile>114</Tile>
+          <Tile>110</Tile>
+          <Tile>117</Tile>
+          <Tile>113</Tile>
+          <Tile>120</Tile>
+          <Tile>116</Tile>
+          <Tile>119</Tile>
+        </Lane>
+        <Lane Index="5">
+          <Sample>s</Sample>
+          <Tile>1</Tile>
+          <Tile>4</Tile>
+          <Tile>7</Tile>
+          <Tile>3</Tile>
+          <Tile>10</Tile>
+          <Tile>6</Tile>
+          <Tile>2</Tile>
+          <Tile>13</Tile>
+          <Tile>9</Tile>
+          <Tile>5</Tile>
+          <Tile>16</Tile>
+          <Tile>12</Tile>
+          <Tile>8</Tile>
+          <Tile>19</Tile>
+          <Tile>15</Tile>
+          <Tile>11</Tile>
+          <Tile>22</Tile>
+          <Tile>18</Tile>
+          <Tile>14</Tile>
+          <Tile>25</Tile>
+          <Tile>17</Tile>
+          <Tile>21</Tile>
+          <Tile>28</Tile>
+          <Tile>20</Tile>
+          <Tile>24</Tile>
+          <Tile>31</Tile>
+          <Tile>23</Tile>
+          <Tile>27</Tile>
+          <Tile>34</Tile>
+          <Tile>26</Tile>
+          <Tile>30</Tile>
+          <Tile>37</Tile>
+          <Tile>29</Tile>
+          <Tile>33</Tile>
+          <Tile>40</Tile>
+          <Tile>32</Tile>
+          <Tile>36</Tile>
+          <Tile>43</Tile>
+          <Tile>35</Tile>
+          <Tile>46</Tile>
+          <Tile>39</Tile>
+          <Tile>38</Tile>
+          <Tile>49</Tile>
+          <Tile>42</Tile>
+          <Tile>41</Tile>
+          <Tile>52</Tile>
+          <Tile>45</Tile>
+          <Tile>44</Tile>
+          <Tile>55</Tile>
+          <Tile>48</Tile>
+          <Tile>47</Tile>
+          <Tile>58</Tile>
+          <Tile>51</Tile>
+          <Tile>50</Tile>
+          <Tile>61</Tile>
+          <Tile>54</Tile>
+          <Tile>53</Tile>
+          <Tile>64</Tile>
+          <Tile>57</Tile>
+          <Tile>56</Tile>
+          <Tile>67</Tile>
+          <Tile>60</Tile>
+          <Tile>59</Tile>
+          <Tile>70</Tile>
+          <Tile>63</Tile>
+          <Tile>62</Tile>
+          <Tile>73</Tile>
+          <Tile>66</Tile>
+          <Tile>65</Tile>
+          <Tile>69</Tile>
+          <Tile>76</Tile>
+          <Tile>68</Tile>
+          <Tile>72</Tile>
+          <Tile>79</Tile>
+          <Tile>71</Tile>
+          <Tile>75</Tile>
+          <Tile>82</Tile>
+          <Tile>74</Tile>
+          <Tile>78</Tile>
+          <Tile>85</Tile>
+          <Tile>77</Tile>
+          <Tile>81</Tile>
+          <Tile>88</Tile>
+          <Tile>80</Tile>
+          <Tile>84</Tile>
+          <Tile>91</Tile>
+          <Tile>83</Tile>
+          <Tile>87</Tile>
+          <Tile>94</Tile>
+          <Tile>86</Tile>
+          <Tile>90</Tile>
+          <Tile>97</Tile>
+          <Tile>89</Tile>
+          <Tile>93</Tile>
+          <Tile>100</Tile>
+          <Tile>96</Tile>
+          <Tile>92</Tile>
+          <Tile>103</Tile>
+          <Tile>99</Tile>
+          <Tile>95</Tile>
+          <Tile>106</Tile>
+          <Tile>102</Tile>
+          <Tile>109</Tile>
+          <Tile>98</Tile>
+          <Tile>105</Tile>
+          <Tile>112</Tile>
+          <Tile>101</Tile>
+          <Tile>108</Tile>
+          <Tile>115</Tile>
+          <Tile>104</Tile>
+          <Tile>111</Tile>
+          <Tile>118</Tile>
+          <Tile>107</Tile>
+          <Tile>114</Tile>
+          <Tile>110</Tile>
+          <Tile>117</Tile>
+          <Tile>113</Tile>
+          <Tile>120</Tile>
+          <Tile>116</Tile>
+          <Tile>119</Tile>
+        </Lane>
+        <Lane Index="6">
+          <Sample>s</Sample>
+          <Tile>1</Tile>
+          <Tile>4</Tile>
+          <Tile>7</Tile>
+          <Tile>3</Tile>
+          <Tile>10</Tile>
+          <Tile>6</Tile>
+          <Tile>13</Tile>
+          <Tile>2</Tile>
+          <Tile>9</Tile>
+          <Tile>16</Tile>
+          <Tile>5</Tile>
+          <Tile>12</Tile>
+          <Tile>19</Tile>
+          <Tile>8</Tile>
+          <Tile>15</Tile>
+          <Tile>22</Tile>
+          <Tile>11</Tile>
+          <Tile>18</Tile>
+          <Tile>25</Tile>
+          <Tile>14</Tile>
+          <Tile>21</Tile>
+          <Tile>28</Tile>
+          <Tile>17</Tile>
+          <Tile>24</Tile>
+          <Tile>31</Tile>
+          <Tile>20</Tile>
+          <Tile>27</Tile>
+          <Tile>34</Tile>
+          <Tile>23</Tile>
+          <Tile>30</Tile>
+          <Tile>37</Tile>
+          <Tile>26</Tile>
+          <Tile>33</Tile>
+          <Tile>40</Tile>
+          <Tile>29</Tile>
+          <Tile>36</Tile>
+          <Tile>43</Tile>
+          <Tile>32</Tile>
+          <Tile>39</Tile>
+          <Tile>46</Tile>
+          <Tile>35</Tile>
+          <Tile>42</Tile>
+          <Tile>49</Tile>
+          <Tile>38</Tile>
+          <Tile>52</Tile>
+          <Tile>45</Tile>
+          <Tile>41</Tile>
+          <Tile>55</Tile>
+          <Tile>48</Tile>
+          <Tile>44</Tile>
+          <Tile>58</Tile>
+          <Tile>51</Tile>
+          <Tile>47</Tile>
+          <Tile>61</Tile>
+          <Tile>54</Tile>
+          <Tile>50</Tile>
+          <Tile>64</Tile>
+          <Tile>57</Tile>
+          <Tile>53</Tile>
+          <Tile>67</Tile>
+          <Tile>60</Tile>
+          <Tile>56</Tile>
+          <Tile>70</Tile>
+          <Tile>63</Tile>
+          <Tile>59</Tile>
+          <Tile>73</Tile>
+          <Tile>66</Tile>
+          <Tile>62</Tile>
+          <Tile>76</Tile>
+          <Tile>69</Tile>
+          <Tile>65</Tile>
+          <Tile>79</Tile>
+          <Tile>72</Tile>
+          <Tile>68</Tile>
+          <Tile>82</Tile>
+          <Tile>75</Tile>
+          <Tile>71</Tile>
+          <Tile>85</Tile>
+          <Tile>78</Tile>
+          <Tile>74</Tile>
+          <Tile>88</Tile>
+          <Tile>81</Tile>
+          <Tile>77</Tile>
+          <Tile>91</Tile>
+          <Tile>84</Tile>
+          <Tile>80</Tile>
+          <Tile>94</Tile>
+          <Tile>87</Tile>
+          <Tile>83</Tile>
+          <Tile>97</Tile>
+          <Tile>90</Tile>
+          <Tile>86</Tile>
+          <Tile>100</Tile>
+          <Tile>93</Tile>
+          <Tile>89</Tile>
+          <Tile>96</Tile>
+          <Tile>103</Tile>
+          <Tile>92</Tile>
+          <Tile>99</Tile>
+          <Tile>106</Tile>
+          <Tile>95</Tile>
+          <Tile>102</Tile>
+          <Tile>109</Tile>
+          <Tile>98</Tile>
+          <Tile>105</Tile>
+          <Tile>112</Tile>
+          <Tile>101</Tile>
+          <Tile>108</Tile>
+          <Tile>115</Tile>
+          <Tile>104</Tile>
+          <Tile>111</Tile>
+          <Tile>118</Tile>
+          <Tile>107</Tile>
+          <Tile>114</Tile>
+          <Tile>110</Tile>
+          <Tile>117</Tile>
+          <Tile>113</Tile>
+          <Tile>120</Tile>
+          <Tile>116</Tile>
+          <Tile>119</Tile>
+        </Lane>
+        <Lane Index="7">
+          <Sample>s</Sample>
+          <Tile>1</Tile>
+          <Tile>4</Tile>
+          <Tile>7</Tile>
+          <Tile>3</Tile>
+          <Tile>10</Tile>
+          <Tile>6</Tile>
+          <Tile>2</Tile>
+          <Tile>13</Tile>
+          <Tile>9</Tile>
+          <Tile>5</Tile>
+          <Tile>16</Tile>
+          <Tile>12</Tile>
+          <Tile>8</Tile>
+          <Tile>19</Tile>
+          <Tile>15</Tile>
+          <Tile>11</Tile>
+          <Tile>22</Tile>
+          <Tile>18</Tile>
+          <Tile>14</Tile>
+          <Tile>25</Tile>
+          <Tile>21</Tile>
+          <Tile>17</Tile>
+          <Tile>28</Tile>
+          <Tile>24</Tile>
+          <Tile>20</Tile>
+          <Tile>31</Tile>
+          <Tile>27</Tile>
+          <Tile>23</Tile>
+          <Tile>34</Tile>
+          <Tile>30</Tile>
+          <Tile>26</Tile>
+          <Tile>37</Tile>
+          <Tile>33</Tile>
+          <Tile>29</Tile>
+          <Tile>40</Tile>
+          <Tile>32</Tile>
+          <Tile>36</Tile>
+          <Tile>43</Tile>
+          <Tile>35</Tile>
+          <Tile>39</Tile>
+          <Tile>46</Tile>
+          <Tile>38</Tile>
+          <Tile>42</Tile>
+          <Tile>49</Tile>
+          <Tile>41</Tile>
+          <Tile>45</Tile>
+          <Tile>52</Tile>
+          <Tile>44</Tile>
+          <Tile>48</Tile>
+          <Tile>55</Tile>
+          <Tile>47</Tile>
+          <Tile>51</Tile>
+          <Tile>58</Tile>
+          <Tile>50</Tile>
+          <Tile>54</Tile>
+          <Tile>61</Tile>
+          <Tile>53</Tile>
+          <Tile>57</Tile>
+          <Tile>64</Tile>
+          <Tile>56</Tile>
+          <Tile>60</Tile>
+          <Tile>67</Tile>
+          <Tile>59</Tile>
+          <Tile>63</Tile>
+          <Tile>70</Tile>
+          <Tile>62</Tile>
+          <Tile>66</Tile>
+          <Tile>73</Tile>
+          <Tile>65</Tile>
+          <Tile>69</Tile>
+          <Tile>76</Tile>
+          <Tile>68</Tile>
+          <Tile>72</Tile>
+          <Tile>79</Tile>
+          <Tile>71</Tile>
+          <Tile>75</Tile>
+          <Tile>82</Tile>
+          <Tile>74</Tile>
+          <Tile>78</Tile>
+          <Tile>85</Tile>
+          <Tile>77</Tile>
+          <Tile>81</Tile>
+          <Tile>88</Tile>
+          <Tile>80</Tile>
+          <Tile>84</Tile>
+          <Tile>91</Tile>
+          <Tile>83</Tile>
+          <Tile>87</Tile>
+          <Tile>94</Tile>
+          <Tile>86</Tile>
+          <Tile>90</Tile>
+          <Tile>97</Tile>
+          <Tile>89</Tile>
+          <Tile>93</Tile>
+          <Tile>100</Tile>
+          <Tile>92</Tile>
+          <Tile>96</Tile>
+          <Tile>103</Tile>
+          <Tile>95</Tile>
+          <Tile>99</Tile>
+          <Tile>106</Tile>
+          <Tile>98</Tile>
+          <Tile>102</Tile>
+          <Tile>109</Tile>
+          <Tile>101</Tile>
+          <Tile>105</Tile>
+          <Tile>112</Tile>
+          <Tile>104</Tile>
+          <Tile>108</Tile>
+          <Tile>115</Tile>
+          <Tile>107</Tile>
+          <Tile>111</Tile>
+          <Tile>118</Tile>
+          <Tile>110</Tile>
+          <Tile>114</Tile>
+          <Tile>113</Tile>
+          <Tile>117</Tile>
+          <Tile>116</Tile>
+          <Tile>120</Tile>
+          <Tile>119</Tile>
+        </Lane>
+        <Lane Index="8">
+          <Sample>s</Sample>
+          <Tile>1</Tile>
+          <Tile>4</Tile>
+          <Tile>7</Tile>
+          <Tile>3</Tile>
+          <Tile>10</Tile>
+          <Tile>2</Tile>
+          <Tile>6</Tile>
+          <Tile>13</Tile>
+          <Tile>5</Tile>
+          <Tile>9</Tile>
+          <Tile>16</Tile>
+          <Tile>8</Tile>
+          <Tile>12</Tile>
+          <Tile>19</Tile>
+          <Tile>11</Tile>
+          <Tile>15</Tile>
+          <Tile>22</Tile>
+          <Tile>14</Tile>
+          <Tile>18</Tile>
+          <Tile>25</Tile>
+          <Tile>17</Tile>
+          <Tile>21</Tile>
+          <Tile>28</Tile>
+          <Tile>20</Tile>
+          <Tile>24</Tile>
+          <Tile>31</Tile>
+          <Tile>23</Tile>
+          <Tile>27</Tile>
+          <Tile>34</Tile>
+          <Tile>26</Tile>
+          <Tile>30</Tile>
+          <Tile>37</Tile>
+          <Tile>29</Tile>
+          <Tile>33</Tile>
+          <Tile>40</Tile>
+          <Tile>32</Tile>
+          <Tile>36</Tile>
+          <Tile>43</Tile>
+          <Tile>35</Tile>
+          <Tile>39</Tile>
+          <Tile>46</Tile>
+          <Tile>38</Tile>
+          <Tile>42</Tile>
+          <Tile>49</Tile>
+          <Tile>41</Tile>
+          <Tile>45</Tile>
+          <Tile>52</Tile>
+          <Tile>44</Tile>
+          <Tile>48</Tile>
+          <Tile>55</Tile>
+          <Tile>47</Tile>
+          <Tile>51</Tile>
+          <Tile>58</Tile>
+          <Tile>50</Tile>
+          <Tile>54</Tile>
+          <Tile>61</Tile>
+          <Tile>53</Tile>
+          <Tile>57</Tile>
+          <Tile>64</Tile>
+          <Tile>56</Tile>
+          <Tile>60</Tile>
+          <Tile>67</Tile>
+          <Tile>59</Tile>
+          <Tile>63</Tile>
+          <Tile>70</Tile>
+          <Tile>62</Tile>
+          <Tile>66</Tile>
+          <Tile>73</Tile>
+          <Tile>65</Tile>
+          <Tile>69</Tile>
+          <Tile>76</Tile>
+          <Tile>68</Tile>
+          <Tile>72</Tile>
+          <Tile>79</Tile>
+          <Tile>71</Tile>
+          <Tile>75</Tile>
+          <Tile>82</Tile>
+          <Tile>74</Tile>
+          <Tile>78</Tile>
+          <Tile>85</Tile>
+          <Tile>77</Tile>
+          <Tile>81</Tile>
+          <Tile>88</Tile>
+          <Tile>80</Tile>
+          <Tile>84</Tile>
+          <Tile>91</Tile>
+          <Tile>83</Tile>
+          <Tile>87</Tile>
+          <Tile>94</Tile>
+          <Tile>86</Tile>
+          <Tile>90</Tile>
+          <Tile>97</Tile>
+          <Tile>89</Tile>
+          <Tile>93</Tile>
+          <Tile>100</Tile>
+          <Tile>92</Tile>
+          <Tile>96</Tile>
+          <Tile>103</Tile>
+          <Tile>95</Tile>
+          <Tile>99</Tile>
+          <Tile>106</Tile>
+          <Tile>98</Tile>
+          <Tile>102</Tile>
+          <Tile>109</Tile>
+          <Tile>101</Tile>
+          <Tile>105</Tile>
+          <Tile>112</Tile>
+          <Tile>104</Tile>
+          <Tile>108</Tile>
+          <Tile>115</Tile>
+          <Tile>107</Tile>
+          <Tile>111</Tile>
+          <Tile>118</Tile>
+          <Tile>110</Tile>
+          <Tile>114</Tile>
+          <Tile>113</Tile>
+          <Tile>117</Tile>
+          <Tile>116</Tile>
+          <Tile>120</Tile>
+          <Tile>119</Tile>
+        </Lane>
+      </TileSelection>
+      <Time />
+      <User />
+    </Run>
+    <matrix />
+  </IPAR>
+  <Bustard version="2">
+    <version>1.8.70.0</version>
+    <Parameters />
+    <MatrixElements>
+      <Base>A</Base>
+      <Base>C</Base>
+      <Base>G</Base>
+      <Base>T</Base>
+      <Element>1.05223</Element>
+      <Element>0.1357753</Element>
+      <Element>0.0</Element>
+      <Element>0.0</Element>
+      <Element>0.8848184</Element>
+      <Element>0.6870167</Element>
+      <Element>0.0</Element>
+      <Element>0.0</Element>
+      <Element>0.0</Element>
+      <Element>0.0</Element>
+      <Element>1.814581</Element>
+      <Element>0.04488774</Element>
+      <Element>0.0</Element>
+      <Element>0.0</Element>
+      <Element>0.7050906</Element>
+      <Element>0.9331109</Element>
+    </MatrixElements>
+    <BaseCallAnalysis>
+      <Run Name="BaseCalls">
+        <BaseCallParameters>
+          <ChastityThreshold>0.6</ChastityThreshold>
+          <Matrix Path="">
+            <AutoFlag>1</AutoFlag>
+            <AutoLane>5</AutoLane>
+            <Cycle>1</Cycle>
+            <CycleOffset>0</CycleOffset>
+            <FirstCycle>1</FirstCycle>
+            <LastCycle>76</LastCycle>
+            <Read>1</Read>
+          </Matrix>
+          <Matrix Path="">
+            <AutoFlag>1</AutoFlag>
+            <AutoLane>5</AutoLane>
+            <Cycle>77</Cycle>
+            <CycleOffset>0</CycleOffset>
+            <FirstCycle>77</FirstCycle>
+            <LastCycle>152</LastCycle>
+            <Read>2</Read>
+          </Matrix>
+          <Phasing Path="">
+            <AutoFlag>1</AutoFlag>
+            <AutoLane>5</AutoLane>
+            <Cycle>2</Cycle>
+            <CycleOffset>1</CycleOffset>
+            <FirstCycle>1</FirstCycle>
+            <LastCycle>76</LastCycle>
+            <Read>1</Read>
+            <PhasingRate>0</PhasingRate>
+            <PrephasingRate>0</PrephasingRate>
+          </Phasing>
+          <Phasing Path="">
+            <AutoFlag>1</AutoFlag>
+            <AutoLane>5</AutoLane>
+            <Cycle>78</Cycle>
+            <CycleOffset>1</CycleOffset>
+            <FirstCycle>77</FirstCycle>
+            <LastCycle>152</LastCycle>
+            <Read>2</Read>
+            <PhasingRate>0</PhasingRate>
+            <PrephasingRate>0</PrephasingRate>
+          </Phasing>
+          <PureBases>0</PureBases>
+          <SmtFilter>failed-chastity</SmtFilter>
+          <SmtRelation>le</SmtRelation>
+          <SmtThreshold>1.0</SmtThreshold>
+        </BaseCallParameters>
+        <Cycles First="1" Last="152" Number="152" />
+        <Input />
+        <RunParameters>
+          <AutoCycleFlag>0</AutoCycleFlag>
+          <BasecallFlag>0</BasecallFlag>
+          <Deblocked>0</Deblocked>
+          <DebugFlag>0</DebugFlag>
+          <FirstRunOnlyFlag>0</FirstRunOnlyFlag>
+          <ImagingReads Index="1">
+            <FirstCycle>1</FirstCycle>
+            <LastCycle>76</LastCycle>
+          </ImagingReads>
+          <ImagingReads Index="2">
+            <FirstCycle>77</FirstCycle>
+            <LastCycle>152</LastCycle>
+            <RunFolder>101229_ILLUMINA-EC5D15_00026_62DJMAAXX</RunFolder>
+          </ImagingReads>
+          <Instrument>ILLUMINA-EC5D15</Instrument>
+          <IterativeMatrixFlag>0</IterativeMatrixFlag>
+          <MakeFlag>0</MakeFlag>
+          <MaxCycle>0</MaxCycle>
+          <MinCycle>0</MinCycle>
+          <Reads Index="1">
+            <FirstCycle>1</FirstCycle>
+            <LastCycle>76</LastCycle>
+          </Reads>
+          <Reads Index="2">
+            <FirstCycle>77</FirstCycle>
+            <LastCycle>152</LastCycle>
+            <RunFolder>101229_ILLUMINA-EC5D15_00026_62DJMAAXX</RunFolder>
+          </Reads>
+          <RunFolder>101229_ILLUMINA-EC5D15_00026_62DJMAAXX</RunFolder>
+          <RunFolderDate>101229</RunFolderDate>
+          <RunFolderId>00026</RunFolderId>
+          <QTableVersion>PL14</QTableVersion>
+        </RunParameters>
+        <Software Name="RTA" Version="1.8.70.0" />
+        <TileSelection>
+          <Lane Index="1">
+            <Sample>s</Sample>
+            <Tile>1</Tile>
+            <Tile>3</Tile>
+            <Tile>2</Tile>
+            <Tile>5</Tile>
+            <Tile>4</Tile>
+            <Tile>6</Tile>
+            <Tile>8</Tile>
+            <Tile>9</Tile>
+            <Tile>7</Tile>
+            <Tile>11</Tile>
+            <Tile>10</Tile>
+            <Tile>12</Tile>
+            <Tile>14</Tile>
+            <Tile>15</Tile>
+            <Tile>13</Tile>
+            <Tile>17</Tile>
+            <Tile>18</Tile>
+            <Tile>16</Tile>
+            <Tile>20</Tile>
+            <Tile>21</Tile>
+            <Tile>19</Tile>
+            <Tile>23</Tile>
+            <Tile>24</Tile>
+            <Tile>22</Tile>
+            <Tile>26</Tile>
+            <Tile>27</Tile>
+            <Tile>25</Tile>
+            <Tile>29</Tile>
+            <Tile>30</Tile>
+            <Tile>28</Tile>
+            <Tile>32</Tile>
+            <Tile>33</Tile>
+            <Tile>31</Tile>
+            <Tile>35</Tile>
+            <Tile>36</Tile>
+            <Tile>34</Tile>
+            <Tile>39</Tile>
+            <Tile>38</Tile>
+            <Tile>37</Tile>
+            <Tile>42</Tile>
+            <Tile>41</Tile>
+            <Tile>40</Tile>
+            <Tile>45</Tile>
+            <Tile>44</Tile>
+            <Tile>43</Tile>
+            <Tile>48</Tile>
+            <Tile>47</Tile>
+            <Tile>46</Tile>
+            <Tile>49</Tile>
+            <Tile>50</Tile>
+            <Tile>51</Tile>
+            <Tile>52</Tile>
+            <Tile>53</Tile>
+            <Tile>54</Tile>
+            <Tile>55</Tile>
+            <Tile>56</Tile>
+            <Tile>57</Tile>
+            <Tile>58</Tile>
+            <Tile>59</Tile>
+            <Tile>60</Tile>
+            <Tile>61</Tile>
+            <Tile>62</Tile>
+            <Tile>63</Tile>
+            <Tile>64</Tile>
+            <Tile>65</Tile>
+            <Tile>66</Tile>
+            <Tile>67</Tile>
+            <Tile>68</Tile>
+            <Tile>69</Tile>
+            <Tile>70</Tile>
+            <Tile>71</Tile>
+            <Tile>72</Tile>
+            <Tile>73</Tile>
+            <Tile>74</Tile>
+            <Tile>75</Tile>
+            <Tile>76</Tile>
+            <Tile>77</Tile>
+            <Tile>78</Tile>
+            <Tile>79</Tile>
+            <Tile>80</Tile>
+            <Tile>81</Tile>
+            <Tile>82</Tile>
+            <Tile>84</Tile>
+            <Tile>83</Tile>
+            <Tile>85</Tile>
+            <Tile>87</Tile>
+            <Tile>86</Tile>
+            <Tile>88</Tile>
+            <Tile>89</Tile>
+            <Tile>90</Tile>
+            <Tile>93</Tile>
+            <Tile>91</Tile>
+            <Tile>92</Tile>
+            <Tile>96</Tile>
+            <Tile>94</Tile>
+            <Tile>95</Tile>
+            <Tile>99</Tile>
+            <Tile>97</Tile>
+            <Tile>98</Tile>
+            <Tile>100</Tile>
+            <Tile>102</Tile>
+            <Tile>101</Tile>
+            <Tile>103</Tile>
+            <Tile>104</Tile>
+            <Tile>105</Tile>
+            <Tile>106</Tile>
+            <Tile>107</Tile>
+            <Tile>108</Tile>
+            <Tile>110</Tile>
+            <Tile>109</Tile>
+            <Tile>111</Tile>
+            <Tile>113</Tile>
+            <Tile>112</Tile>
+            <Tile>114</Tile>
+            <Tile>116</Tile>
+            <Tile>117</Tile>
+            <Tile>115</Tile>
+            <Tile>119</Tile>
+            <Tile>120</Tile>
+            <Tile>118</Tile>
+          </Lane>
+          <Lane Index="2">
+            <Sample>s</Sample>
+            <Tile>2</Tile>
+            <Tile>3</Tile>
+            <Tile>1</Tile>
+            <Tile>5</Tile>
+            <Tile>4</Tile>
+            <Tile>6</Tile>
+            <Tile>8</Tile>
+            <Tile>7</Tile>
+            <Tile>9</Tile>
+            <Tile>11</Tile>
+            <Tile>12</Tile>
+            <Tile>10</Tile>
+            <Tile>13</Tile>
+            <Tile>14</Tile>
+            <Tile>15</Tile>
+            <Tile>17</Tile>
+            <Tile>16</Tile>
+            <Tile>18</Tile>
+            <Tile>19</Tile>
+            <Tile>20</Tile>
+            <Tile>21</Tile>
+            <Tile>22</Tile>
+            <Tile>23</Tile>
+            <Tile>24</Tile>
+            <Tile>26</Tile>
+            <Tile>25</Tile>
+            <Tile>27</Tile>
+            <Tile>28</Tile>
+            <Tile>29</Tile>
+            <Tile>30</Tile>
+            <Tile>31</Tile>
+            <Tile>32</Tile>
+            <Tile>33</Tile>
+            <Tile>34</Tile>
+            <Tile>35</Tile>
+            <Tile>36</Tile>
+            <Tile>37</Tile>
+            <Tile>38</Tile>
+            <Tile>39</Tile>
+            <Tile>40</Tile>
+            <Tile>41</Tile>
+            <Tile>42</Tile>
+            <Tile>43</Tile>
+            <Tile>45</Tile>
+            <Tile>44</Tile>
+            <Tile>46</Tile>
+            <Tile>48</Tile>
+            <Tile>47</Tile>
+            <Tile>49</Tile>
+            <Tile>50</Tile>
+            <Tile>51</Tile>
+            <Tile>52</Tile>
+            <Tile>53</Tile>
+            <Tile>54</Tile>
+            <Tile>55</Tile>
+            <Tile>56</Tile>
+            <Tile>57</Tile>
+            <Tile>59</Tile>
+            <Tile>60</Tile>
+            <Tile>58</Tile>
+            <Tile>62</Tile>
+            <Tile>63</Tile>
+            <Tile>61</Tile>
+            <Tile>65</Tile>
+            <Tile>66</Tile>
+            <Tile>64</Tile>
+            <Tile>68</Tile>
+            <Tile>69</Tile>
+            <Tile>67</Tile>
+            <Tile>71</Tile>
+            <Tile>72</Tile>
+            <Tile>70</Tile>
+            <Tile>74</Tile>
+            <Tile>75</Tile>
+            <Tile>73</Tile>
+            <Tile>77</Tile>
+            <Tile>76</Tile>
+            <Tile>78</Tile>
+            <Tile>80</Tile>
+            <Tile>79</Tile>
+            <Tile>81</Tile>
+            <Tile>83</Tile>
+            <Tile>84</Tile>
+            <Tile>82</Tile>
+            <Tile>86</Tile>
+            <Tile>87</Tile>
+            <Tile>85</Tile>
+            <Tile>89</Tile>
+            <Tile>88</Tile>
+            <Tile>90</Tile>
+            <Tile>92</Tile>
+            <Tile>91</Tile>
+            <Tile>93</Tile>
+            <Tile>95</Tile>
+            <Tile>94</Tile>
+            <Tile>96</Tile>
+            <Tile>98</Tile>
+            <Tile>97</Tile>
+            <Tile>99</Tile>
+            <Tile>101</Tile>
+            <Tile>100</Tile>
+            <Tile>102</Tile>
+            <Tile>104</Tile>
+            <Tile>103</Tile>
+            <Tile>105</Tile>
+            <Tile>107</Tile>
+            <Tile>106</Tile>
+            <Tile>108</Tile>
+            <Tile>109</Tile>
+            <Tile>110</Tile>
+            <Tile>111</Tile>
+            <Tile>112</Tile>
+            <Tile>113</Tile>
+            <Tile>114</Tile>
+            <Tile>115</Tile>
+            <Tile>116</Tile>
+            <Tile>117</Tile>
+            <Tile>118</Tile>
+            <Tile>119</Tile>
+            <Tile>120</Tile>
+          </Lane>
+          <Lane Index="3">
+            <Sample>s</Sample>
+            <Tile>1</Tile>
+            <Tile>2</Tile>
+            <Tile>3</Tile>
+            <Tile>4</Tile>
+            <Tile>5</Tile>
+            <Tile>6</Tile>
+            <Tile>7</Tile>
+            <Tile>8</Tile>
+            <Tile>9</Tile>
+            <Tile>10</Tile>
+            <Tile>11</Tile>
+            <Tile>12</Tile>
+            <Tile>13</Tile>
+            <Tile>14</Tile>
+            <Tile>15</Tile>
+            <Tile>16</Tile>
+            <Tile>17</Tile>
+            <Tile>18</Tile>
+            <Tile>19</Tile>
+            <Tile>20</Tile>
+            <Tile>21</Tile>
+            <Tile>22</Tile>
+            <Tile>23</Tile>
+            <Tile>24</Tile>
+            <Tile>25</Tile>
+            <Tile>26</Tile>
+            <Tile>27</Tile>
+            <Tile>28</Tile>
+            <Tile>29</Tile>
+            <Tile>30</Tile>
+            <Tile>31</Tile>
+            <Tile>32</Tile>
+            <Tile>33</Tile>
+            <Tile>34</Tile>
+            <Tile>35</Tile>
+            <Tile>36</Tile>
+            <Tile>37</Tile>
+            <Tile>38</Tile>
+            <Tile>39</Tile>
+            <Tile>40</Tile>
+            <Tile>41</Tile>
+            <Tile>42</Tile>
+            <Tile>43</Tile>
+            <Tile>44</Tile>
+            <Tile>45</Tile>
+            <Tile>46</Tile>
+            <Tile>47</Tile>
+            <Tile>48</Tile>
+            <Tile>49</Tile>
+            <Tile>50</Tile>
+            <Tile>51</Tile>
+            <Tile>53</Tile>
+            <Tile>52</Tile>
+            <Tile>54</Tile>
+            <Tile>55</Tile>
+            <Tile>56</Tile>
+            <Tile>57</Tile>
+            <Tile>58</Tile>
+            <Tile>59</Tile>
+            <Tile>60</Tile>
+            <Tile>62</Tile>
+            <Tile>61</Tile>
+            <Tile>63</Tile>
+            <Tile>64</Tile>
+            <Tile>65</Tile>
+            <Tile>66</Tile>
+            <Tile>67</Tile>
+            <Tile>68</Tile>
+            <Tile>69</Tile>
+            <Tile>70</Tile>
+            <Tile>71</Tile>
+            <Tile>72</Tile>
+            <Tile>73</Tile>
+            <Tile>74</Tile>
+            <Tile>75</Tile>
+            <Tile>76</Tile>
+            <Tile>77</Tile>
+            <Tile>78</Tile>
+            <Tile>79</Tile>
+            <Tile>80</Tile>
+            <Tile>81</Tile>
+            <Tile>82</Tile>
+            <Tile>83</Tile>
+            <Tile>84</Tile>
+            <Tile>85</Tile>
+            <Tile>87</Tile>
+            <Tile>86</Tile>
+            <Tile>88</Tile>
+            <Tile>90</Tile>
+            <Tile>89</Tile>
+            <Tile>93</Tile>
+            <Tile>91</Tile>
+            <Tile>92</Tile>
+            <Tile>94</Tile>
+            <Tile>96</Tile>
+            <Tile>95</Tile>
+            <Tile>99</Tile>
+            <Tile>97</Tile>
+            <Tile>98</Tile>
+            <Tile>102</Tile>
+            <Tile>100</Tile>
+            <Tile>101</Tile>
+            <Tile>105</Tile>
+            <Tile>103</Tile>
+            <Tile>104</Tile>
+            <Tile>108</Tile>
+            <Tile>106</Tile>
+            <Tile>107</Tile>
+            <Tile>111</Tile>
+            <Tile>110</Tile>
+            <Tile>109</Tile>
+            <Tile>114</Tile>
+            <Tile>113</Tile>
+            <Tile>112</Tile>
+            <Tile>117</Tile>
+            <Tile>116</Tile>
+            <Tile>115</Tile>
+            <Tile>119</Tile>
+            <Tile>120</Tile>
+            <Tile>118</Tile>
+          </Lane>
+          <Lane Index="4">
+            <Sample>s</Sample>
+            <Tile>1</Tile>
+            <Tile>2</Tile>
+            <Tile>3</Tile>
+            <Tile>4</Tile>
+            <Tile>6</Tile>
+            <Tile>5</Tile>
+            <Tile>9</Tile>
+            <Tile>8</Tile>
+            <Tile>7</Tile>
+            <Tile>12</Tile>
+            <Tile>11</Tile>
+            <Tile>10</Tile>
+            <Tile>15</Tile>
+            <Tile>14</Tile>
+            <Tile>13</Tile>
+            <Tile>18</Tile>
+            <Tile>17</Tile>
+            <Tile>16</Tile>
+            <Tile>21</Tile>
+            <Tile>19</Tile>
+            <Tile>20</Tile>
+            <Tile>24</Tile>
+            <Tile>22</Tile>
+            <Tile>23</Tile>
+            <Tile>27</Tile>
+            <Tile>25</Tile>
+            <Tile>26</Tile>
+            <Tile>30</Tile>
+            <Tile>28</Tile>
+            <Tile>29</Tile>
+            <Tile>33</Tile>
+            <Tile>32</Tile>
+            <Tile>31</Tile>
+            <Tile>36</Tile>
+            <Tile>35</Tile>
+            <Tile>34</Tile>
+            <Tile>39</Tile>
+            <Tile>38</Tile>
+            <Tile>37</Tile>
+            <Tile>41</Tile>
+            <Tile>42</Tile>
+            <Tile>40</Tile>
+            <Tile>45</Tile>
+            <Tile>44</Tile>
+            <Tile>43</Tile>
+            <Tile>48</Tile>
+            <Tile>47</Tile>
+            <Tile>46</Tile>
+            <Tile>51</Tile>
+            <Tile>50</Tile>
+            <Tile>49</Tile>
+            <Tile>53</Tile>
+            <Tile>54</Tile>
+            <Tile>52</Tile>
+            <Tile>56</Tile>
+            <Tile>57</Tile>
+            <Tile>55</Tile>
+            <Tile>59</Tile>
+            <Tile>60</Tile>
+            <Tile>58</Tile>
+            <Tile>63</Tile>
+            <Tile>62</Tile>
+            <Tile>61</Tile>
+            <Tile>65</Tile>
+            <Tile>66</Tile>
+            <Tile>64</Tile>
+            <Tile>69</Tile>
+            <Tile>68</Tile>
+            <Tile>67</Tile>
+            <Tile>72</Tile>
+            <Tile>71</Tile>
+            <Tile>70</Tile>
+            <Tile>75</Tile>
+            <Tile>73</Tile>
+            <Tile>74</Tile>
+            <Tile>78</Tile>
+            <Tile>76</Tile>
+            <Tile>77</Tile>
+            <Tile>80</Tile>
+            <Tile>79</Tile>
+            <Tile>81</Tile>
+            <Tile>83</Tile>
+            <Tile>82</Tile>
+            <Tile>84</Tile>
+            <Tile>86</Tile>
+            <Tile>87</Tile>
+            <Tile>85</Tile>
+            <Tile>90</Tile>
+            <Tile>89</Tile>
+            <Tile>88</Tile>
+            <Tile>93</Tile>
+            <Tile>92</Tile>
+            <Tile>91</Tile>
+            <Tile>96</Tile>
+            <Tile>95</Tile>
+            <Tile>94</Tile>
+            <Tile>99</Tile>
+            <Tile>97</Tile>
+            <Tile>98</Tile>
+            <Tile>102</Tile>
+            <Tile>101</Tile>
+            <Tile>100</Tile>
+            <Tile>105</Tile>
+            <Tile>103</Tile>
+            <Tile>104</Tile>
+            <Tile>106</Tile>
+            <Tile>108</Tile>
+            <Tile>107</Tile>
+            <Tile>111</Tile>
+            <Tile>109</Tile>
+            <Tile>110</Tile>
+            <Tile>112</Tile>
+            <Tile>114</Tile>
+            <Tile>113</Tile>
+            <Tile>116</Tile>
+            <Tile>117</Tile>
+            <Tile>115</Tile>
+            <Tile>118</Tile>
+            <Tile>119</Tile>
+            <Tile>120</Tile>
+          </Lane>
+          <Lane Index="5">
+            <Sample>s</Sample>
+            <Tile>1</Tile>
+            <Tile>2</Tile>
+            <Tile>3</Tile>
+            <Tile>5</Tile>
+            <Tile>6</Tile>
+            <Tile>4</Tile>
+            <Tile>9</Tile>
+            <Tile>8</Tile>
+            <Tile>7</Tile>
+            <Tile>11</Tile>
+            <Tile>10</Tile>
+            <Tile>12</Tile>
+            <Tile>13</Tile>
+            <Tile>15</Tile>
+            <Tile>14</Tile>
+            <Tile>16</Tile>
+            <Tile>17</Tile>
+            <Tile>18</Tile>
+            <Tile>20</Tile>
+            <Tile>19</Tile>
+            <Tile>21</Tile>
+            <Tile>23</Tile>
+            <Tile>22</Tile>
+            <Tile>24</Tile>
+            <Tile>26</Tile>
+            <Tile>25</Tile>
+            <Tile>27</Tile>
+            <Tile>29</Tile>
+            <Tile>28</Tile>
+            <Tile>30</Tile>
+            <Tile>32</Tile>
+            <Tile>31</Tile>
+            <Tile>33</Tile>
+            <Tile>35</Tile>
+            <Tile>34</Tile>
+            <Tile>36</Tile>
+            <Tile>38</Tile>
+            <Tile>37</Tile>
+            <Tile>39</Tile>
+            <Tile>40</Tile>
+            <Tile>41</Tile>
+            <Tile>42</Tile>
+            <Tile>43</Tile>
+            <Tile>44</Tile>
+            <Tile>45</Tile>
+            <Tile>46</Tile>
+            <Tile>47</Tile>
+            <Tile>48</Tile>
+            <Tile>49</Tile>
+            <Tile>50</Tile>
+            <Tile>51</Tile>
+            <Tile>52</Tile>
+            <Tile>53</Tile>
+            <Tile>54</Tile>
+            <Tile>56</Tile>
+            <Tile>55</Tile>
+            <Tile>57</Tile>
+            <Tile>58</Tile>
+            <Tile>59</Tile>
+            <Tile>60</Tile>
+            <Tile>62</Tile>
+            <Tile>61</Tile>
+            <Tile>63</Tile>
+            <Tile>65</Tile>
+            <Tile>64</Tile>
+            <Tile>66</Tile>
+            <Tile>68</Tile>
+            <Tile>67</Tile>
+            <Tile>69</Tile>
+            <Tile>71</Tile>
+            <Tile>70</Tile>
+            <Tile>72</Tile>
+            <Tile>74</Tile>
+            <Tile>73</Tile>
+            <Tile>75</Tile>
+            <Tile>76</Tile>
+            <Tile>77</Tile>
+            <Tile>78</Tile>
+            <Tile>79</Tile>
+            <Tile>80</Tile>
+            <Tile>81</Tile>
+            <Tile>82</Tile>
+            <Tile>83</Tile>
+            <Tile>84</Tile>
+            <Tile>85</Tile>
+            <Tile>86</Tile>
+            <Tile>87</Tile>
+            <Tile>88</Tile>
+            <Tile>89</Tile>
+            <Tile>90</Tile>
+            <Tile>91</Tile>
+            <Tile>92</Tile>
+            <Tile>93</Tile>
+            <Tile>94</Tile>
+            <Tile>95</Tile>
+            <Tile>96</Tile>
+            <Tile>97</Tile>
+            <Tile>98</Tile>
+            <Tile>99</Tile>
+            <Tile>100</Tile>
+            <Tile>101</Tile>
+            <Tile>102</Tile>
+            <Tile>104</Tile>
+            <Tile>103</Tile>
+            <Tile>105</Tile>
+            <Tile>107</Tile>
+            <Tile>106</Tile>
+            <Tile>108</Tile>
+            <Tile>110</Tile>
+            <Tile>109</Tile>
+            <Tile>111</Tile>
+            <Tile>113</Tile>
+            <Tile>112</Tile>
+            <Tile>114</Tile>
+            <Tile>116</Tile>
+            <Tile>115</Tile>
+            <Tile>117</Tile>
+            <Tile>118</Tile>
+            <Tile>119</Tile>
+            <Tile>120</Tile>
+          </Lane>
+          <Lane Index="6">
+            <Sample>s</Sample>
+            <Tile>1</Tile>
+            <Tile>2</Tile>
+            <Tile>3</Tile>
+            <Tile>4</Tile>
+            <Tile>5</Tile>
+            <Tile>6</Tile>
+            <Tile>7</Tile>
+            <Tile>8</Tile>
+            <Tile>9</Tile>
+            <Tile>10</Tile>
+            <Tile>11</Tile>
+            <Tile>12</Tile>
+            <Tile>13</Tile>
+            <Tile>14</Tile>
+            <Tile>15</Tile>
+            <Tile>16</Tile>
+            <Tile>17</Tile>
+            <Tile>18</Tile>
+            <Tile>19</Tile>
+            <Tile>20</Tile>
+            <Tile>21</Tile>
+            <Tile>22</Tile>
+            <Tile>23</Tile>
+            <Tile>24</Tile>
+            <Tile>26</Tile>
+            <Tile>25</Tile>
+            <Tile>27</Tile>
+            <Tile>29</Tile>
+            <Tile>28</Tile>
+            <Tile>30</Tile>
+            <Tile>32</Tile>
+            <Tile>31</Tile>
+            <Tile>33</Tile>
+            <Tile>34</Tile>
+            <Tile>35</Tile>
+            <Tile>36</Tile>
+            <Tile>37</Tile>
+            <Tile>38</Tile>
+            <Tile>39</Tile>
+            <Tile>41</Tile>
+            <Tile>40</Tile>
+            <Tile>42</Tile>
+            <Tile>44</Tile>
+            <Tile>45</Tile>
+            <Tile>43</Tile>
+            <Tile>47</Tile>
+            <Tile>46</Tile>
+            <Tile>48</Tile>
+            <Tile>49</Tile>
+            <Tile>50</Tile>
+            <Tile>51</Tile>
+            <Tile>52</Tile>
+            <Tile>53</Tile>
+            <Tile>54</Tile>
+            <Tile>55</Tile>
+            <Tile>56</Tile>
+            <Tile>57</Tile>
+            <Tile>59</Tile>
+            <Tile>58</Tile>
+            <Tile>60</Tile>
+            <Tile>62</Tile>
+            <Tile>61</Tile>
+            <Tile>63</Tile>
+            <Tile>65</Tile>
+            <Tile>64</Tile>
+            <Tile>66</Tile>
+            <Tile>67</Tile>
+            <Tile>68</Tile>
+            <Tile>69</Tile>
+            <Tile>71</Tile>
+            <Tile>70</Tile>
+            <Tile>72</Tile>
+            <Tile>74</Tile>
+            <Tile>73</Tile>
+            <Tile>75</Tile>
+            <Tile>77</Tile>
+            <Tile>76</Tile>
+            <Tile>78</Tile>
+            <Tile>80</Tile>
+            <Tile>79</Tile>
+            <Tile>81</Tile>
+            <Tile>83</Tile>
+            <Tile>82</Tile>
+            <Tile>84</Tile>
+            <Tile>85</Tile>
+            <Tile>86</Tile>
+            <Tile>87</Tile>
+            <Tile>88</Tile>
+            <Tile>89</Tile>
+            <Tile>90</Tile>
+            <Tile>91</Tile>
+            <Tile>92</Tile>
+            <Tile>93</Tile>
+            <Tile>94</Tile>
+            <Tile>95</Tile>
+            <Tile>96</Tile>
+            <Tile>97</Tile>
+            <Tile>98</Tile>
+            <Tile>99</Tile>
+            <Tile>100</Tile>
+            <Tile>101</Tile>
+            <Tile>102</Tile>
+            <Tile>104</Tile>
+            <Tile>103</Tile>
+            <Tile>105</Tile>
+            <Tile>106</Tile>
+            <Tile>107</Tile>
+            <Tile>108</Tile>
+            <Tile>109</Tile>
+            <Tile>110</Tile>
+            <Tile>111</Tile>
+            <Tile>112</Tile>
+            <Tile>113</Tile>
+            <Tile>114</Tile>
+            <Tile>115</Tile>
+            <Tile>116</Tile>
+            <Tile>117</Tile>
+            <Tile>118</Tile>
+            <Tile>119</Tile>
+            <Tile>120</Tile>
+          </Lane>
+          <Lane Index="7">
+            <Sample>s</Sample>
+            <Tile>1</Tile>
+            <Tile>2</Tile>
+            <Tile>3</Tile>
+            <Tile>5</Tile>
+            <Tile>4</Tile>
+            <Tile>6</Tile>
+            <Tile>7</Tile>
+            <Tile>8</Tile>
+            <Tile>9</Tile>
+            <Tile>10</Tile>
+            <Tile>11</Tile>
+            <Tile>12</Tile>
+            <Tile>13</Tile>
+            <Tile>14</Tile>
+            <Tile>15</Tile>
+            <Tile>16</Tile>
+            <Tile>18</Tile>
+            <Tile>17</Tile>
+            <Tile>19</Tile>
+            <Tile>20</Tile>
+            <Tile>21</Tile>
+            <Tile>22</Tile>
+            <Tile>23</Tile>
+            <Tile>24</Tile>
+            <Tile>25</Tile>
+            <Tile>26</Tile>
+            <Tile>27</Tile>
+            <Tile>28</Tile>
+            <Tile>29</Tile>
+            <Tile>30</Tile>
+            <Tile>31</Tile>
+            <Tile>32</Tile>
+            <Tile>33</Tile>
+            <Tile>36</Tile>
+            <Tile>35</Tile>
+            <Tile>34</Tile>
+            <Tile>38</Tile>
+            <Tile>39</Tile>
+            <Tile>37</Tile>
+            <Tile>41</Tile>
+            <Tile>42</Tile>
+            <Tile>40</Tile>
+            <Tile>43</Tile>
+            <Tile>45</Tile>
+            <Tile>44</Tile>
+            <Tile>46</Tile>
+            <Tile>47</Tile>
+            <Tile>48</Tile>
+            <Tile>51</Tile>
+            <Tile>49</Tile>
+            <Tile>50</Tile>
+            <Tile>54</Tile>
+            <Tile>53</Tile>
+            <Tile>52</Tile>
+            <Tile>57</Tile>
+            <Tile>56</Tile>
+            <Tile>55</Tile>
+            <Tile>60</Tile>
+            <Tile>59</Tile>
+            <Tile>58</Tile>
+            <Tile>63</Tile>
+            <Tile>61</Tile>
+            <Tile>62</Tile>
+            <Tile>64</Tile>
+            <Tile>66</Tile>
+            <Tile>65</Tile>
+            <Tile>67</Tile>
+            <Tile>68</Tile>
+            <Tile>69</Tile>
+            <Tile>70</Tile>
+            <Tile>71</Tile>
+            <Tile>72</Tile>
+            <Tile>73</Tile>
+            <Tile>74</Tile>
+            <Tile>75</Tile>
+            <Tile>76</Tile>
+            <Tile>77</Tile>
+            <Tile>78</Tile>
+            <Tile>79</Tile>
+            <Tile>81</Tile>
+            <Tile>80</Tile>
+            <Tile>82</Tile>
+            <Tile>84</Tile>
+            <Tile>83</Tile>
+            <Tile>86</Tile>
+            <Tile>85</Tile>
+            <Tile>87</Tile>
+            <Tile>89</Tile>
+            <Tile>90</Tile>
+            <Tile>88</Tile>
+            <Tile>91</Tile>
+            <Tile>92</Tile>
+            <Tile>93</Tile>
+            <Tile>95</Tile>
+            <Tile>96</Tile>
+            <Tile>94</Tile>
+            <Tile>98</Tile>
+            <Tile>99</Tile>
+            <Tile>97</Tile>
+            <Tile>101</Tile>
+            <Tile>102</Tile>
+            <Tile>100</Tile>
+            <Tile>104</Tile>
+            <Tile>105</Tile>
+            <Tile>103</Tile>
+            <Tile>107</Tile>
+            <Tile>108</Tile>
+            <Tile>106</Tile>
+            <Tile>110</Tile>
+            <Tile>111</Tile>
+            <Tile>109</Tile>
+            <Tile>112</Tile>
+            <Tile>113</Tile>
+            <Tile>114</Tile>
+            <Tile>117</Tile>
+            <Tile>116</Tile>
+            <Tile>115</Tile>
+            <Tile>119</Tile>
+            <Tile>120</Tile>
+            <Tile>118</Tile>
+          </Lane>
+          <Lane Index="8">
+            <Sample>s</Sample>
+            <Tile>2</Tile>
+            <Tile>1</Tile>
+            <Tile>3</Tile>
+            <Tile>5</Tile>
+            <Tile>4</Tile>
+            <Tile>6</Tile>
+            <Tile>7</Tile>
+            <Tile>8</Tile>
+            <Tile>9</Tile>
+            <Tile>11</Tile>
+            <Tile>10</Tile>
+            <Tile>12</Tile>
+            <Tile>14</Tile>
+            <Tile>15</Tile>
+            <Tile>13</Tile>
+            <Tile>17</Tile>
+            <Tile>16</Tile>
+            <Tile>18</Tile>
+            <Tile>20</Tile>
+            <Tile>19</Tile>
+            <Tile>21</Tile>
+            <Tile>22</Tile>
+            <Tile>23</Tile>
+            <Tile>24</Tile>
+            <Tile>26</Tile>
+            <Tile>25</Tile>
+            <Tile>27</Tile>
+            <Tile>28</Tile>
+            <Tile>29</Tile>
+            <Tile>30</Tile>
+            <Tile>32</Tile>
+            <Tile>31</Tile>
+            <Tile>33</Tile>
+            <Tile>36</Tile>
+            <Tile>34</Tile>
+            <Tile>35</Tile>
+            <Tile>39</Tile>
+            <Tile>38</Tile>
+            <Tile>37</Tile>
+            <Tile>42</Tile>
+            <Tile>41</Tile>
+            <Tile>40</Tile>
+            <Tile>45</Tile>
+            <Tile>44</Tile>
+            <Tile>43</Tile>
+            <Tile>46</Tile>
+            <Tile>48</Tile>
+            <Tile>47</Tile>
+            <Tile>50</Tile>
+            <Tile>49</Tile>
+            <Tile>51</Tile>
+            <Tile>53</Tile>
+            <Tile>54</Tile>
+            <Tile>52</Tile>
+            <Tile>56</Tile>
+            <Tile>55</Tile>
+            <Tile>57</Tile>
+            <Tile>59</Tile>
+            <Tile>58</Tile>
+            <Tile>60</Tile>
+            <Tile>62</Tile>
+            <Tile>61</Tile>
+            <Tile>63</Tile>
+            <Tile>65</Tile>
+            <Tile>64</Tile>
+            <Tile>66</Tile>
+            <Tile>67</Tile>
+            <Tile>68</Tile>
+            <Tile>69</Tile>
+            <Tile>71</Tile>
+            <Tile>70</Tile>
+            <Tile>72</Tile>
+            <Tile>74</Tile>
+            <Tile>73</Tile>
+            <Tile>75</Tile>
+            <Tile>77</Tile>
+            <Tile>76</Tile>
+            <Tile>78</Tile>
+            <Tile>80</Tile>
+            <Tile>79</Tile>
+            <Tile>81</Tile>
+            <Tile>83</Tile>
+            <Tile>82</Tile>
+            <Tile>84</Tile>
+            <Tile>86</Tile>
+            <Tile>85</Tile>
+            <Tile>87</Tile>
+            <Tile>89</Tile>
+            <Tile>88</Tile>
+            <Tile>90</Tile>
+            <Tile>92</Tile>
+            <Tile>91</Tile>
+            <Tile>93</Tile>
+            <Tile>95</Tile>
+            <Tile>94</Tile>
+            <Tile>96</Tile>
+            <Tile>98</Tile>
+            <Tile>97</Tile>
+            <Tile>99</Tile>
+            <Tile>101</Tile>
+            <Tile>100</Tile>
+            <Tile>102</Tile>
+            <Tile>104</Tile>
+            <Tile>103</Tile>
+            <Tile>105</Tile>
+            <Tile>107</Tile>
+            <Tile>106</Tile>
+            <Tile>108</Tile>
+            <Tile>109</Tile>
+            <Tile>110</Tile>
+            <Tile>111</Tile>
+            <Tile>113</Tile>
+            <Tile>112</Tile>
+            <Tile>114</Tile>
+            <Tile>116</Tile>
+            <Tile>115</Tile>
+            <Tile>117</Tile>
+            <Tile>119</Tile>
+            <Tile>118</Tile>
+            <Tile>120</Tile>
+          </Lane>
+        </TileSelection>
+        <Time />
+        <User />
+      </Run>
+    </BaseCallAnalysis>
+  </Bustard>
+  <Gerald version="1">
+    <RunParameters>
+      <ChipWideRunParameters>
+        <ALIGN_PARAMS />
+        <ANALYSIS>none</ANALYSIS>
+        <BAD_TILES />
+        <BIN_DIR>/usr/local/casava-1.7.0/bin/../bin</BIN_DIR>
+        <CHASTITY_THRESHOLD>0.6</CHASTITY_THRESHOLD>
+        <CMDPREFIX />
+        <COMPRESSION>gzip</COMPRESSION>
+        <COMPRESSIONSUFFIX>.gz</COMPRESSIONSUFFIX>
+        <ELAND_GENOME>Need_to_specify_ELAND_genome_directory</ELAND_GENOME>
+        <ELAND_MAX_MATCHES />
+        <ELAND_MULTIPLE_INSTANCES />
+        <ELAND_REPEAT />
+        <ELAND_RNA_GENOME_CONTAM />
+        <ELAND_RNA_GENOME_REF_FLAT_GZ />
+        <ELAND_RNA_GENOME_SEQ_GENE_MD_GZ />
+        <ELAND_SEED_LENGTH />
+        <ELAND_SET_SIZE>20</ELAND_SET_SIZE>
+        <EMAIL_DOMAIN>domain.com</EMAIL_DOMAIN>
+        <EMAIL_LIST>igor</EMAIL_LIST>
+        <EMAIL_SERVER>localhost:25</EMAIL_SERVER>
+        <EXPT_DIR>/mmjggl/thornvalley/tardigrade/101229_ILLUMINA-EC5D15_00026_62DJMAAXX/Data/Intensities/BaseCalls</EXPT_DIR>
+        <EXPT_DIR_ROOT>/mmjggl/thornvalley/tardigrade</EXPT_DIR_ROOT>
+        <FLOW_CELL>v4</FLOW_CELL>
+        <FLOW_CELL_ID />
+        <FORCE>1</FORCE>
+        <GENOME_DIR>/usr/local/casava-1.7.0/bin/../../Genomes</GENOME_DIR>
+        <GENOME_FILE>Need_to_specify_genome_file_name</GENOME_FILE>
+        <GROUP_LANES />
+        <INDEXING_READ_POSITION />
+        <INDEX_BASES />
+        <KEEP_INTERMEDIARY>false</KEEP_INTERMEDIARY>
+        <LANE_POST_RUN_COMMAND />
+        <NUM_LEADING_DIRS_TO_STRIP>2</NUM_LEADING_DIRS_TO_STRIP>
+        <ORIG_READ_LENGTHS>76:76</ORIG_READ_LENGTHS>
+        <OUT_DIR>/mmjggl/thornvalley/tardigrade/101229_ILLUMINA-EC5D15_00026_62DJMAAXX/Data/Intensities/BaseCalls/GERALD_09-01-2011_igor</OUT_DIR>
+        <PAIR_PARAMS />
+        <POST_RUN_COMMAND>/home/diane/bin/runfolder -j 4 --site=woldlab -o /woldlab/loxcyc/data00/solexa-sequence/flowcells/ --extract-results /mmjggl/thornvalley/tardigrade/101229_ILLUMINA-EC5D15_00026_62DJMAAXX</POST_RUN_COMMAND>
+        <PRB_FILE_SUFFIX>_prb.txt</PRB_FILE_SUFFIX>
+        <PURE_BASES>25</PURE_BASES>
+        <QCAL_SOURCE>upstream</QCAL_SOURCE>
+        <QCAL_SOURCE1 />
+        <QCAL_SOURCE2 />
+        <QHG_FILE_SUFFIX>_qhg.txt</QHG_FILE_SUFFIX>
+        <QSEQ_READS>1 2</QSEQ_READS>
+        <QTABLE_PATH />
+        <QTABLE_PATH1 />
+        <QTABLE_PATH2 />
+        <QTABLE_PATH3 />
+        <QTABLE_REQUIRED>0</QTABLE_REQUIRED>
+        <QTABLE_REQUIRED1>0</QTABLE_REQUIRED1>
+        <QTABLE_REQUIRED2>0</QTABLE_REQUIRED2>
+        <QTABLE_REQUIRED3>0</QTABLE_REQUIRED3>
+        <QUALITY_CALIBRATION>QualityCalibration.xml</QUALITY_CALIBRATION>
+        <RAMM_REPORT_TYPE />
+        <READ_LENGTH>76</READ_LENGTH>
+        <READ_LENGTH1>76</READ_LENGTH1>
+        <READ_LENGTH2>0</READ_LENGTH2>
+        <RNAQC_COUNT_CLUSTERS_CMD>$(WC) -l</RNAQC_COUNT_CLUSTERS_CMD>
+        <RNAQC_COUNT_CLUSTERS_NAME>totalClusters</RNAQC_COUNT_CLUSTERS_NAME>
+        <RNAQC_COUNT_CONTAM_1_CMD>($(EGREP) -c 'c.*M' || exit 0)</RNAQC_COUNT_CONTAM_1_CMD>
+        <RNAQC_COUNT_CONTAM_1_NAME>mito</RNAQC_COUNT_CONTAM_1_NAME>
+        <RNAQC_COUNT_CONTAM_2_CMD>($(FGREP) -c newcontam || exit 0)</RNAQC_COUNT_CONTAM_2_CMD>
+        <RNAQC_COUNT_CONTAM_2_NAME>adapters</RNAQC_COUNT_CONTAM_2_NAME>
+        <RNAQC_COUNT_CONTAM_3_CMD>($(FGREP) -c Ribosomal || exit 0)</RNAQC_COUNT_CONTAM_3_CMD>
+        <RNAQC_COUNT_CONTAM_3_NAME>ribosomal</RNAQC_COUNT_CONTAM_3_NAME>
+        <RNAQC_COUNT_CONTAM_4_CMD>($(FGREP) -c 5S || exit 0)</RNAQC_COUNT_CONTAM_4_CMD>
+        <RNAQC_COUNT_CONTAM_4_NAME>5S</RNAQC_COUNT_CONTAM_4_NAME>
+        <RNAQC_COUNT_CONTAM_5_CMD>($(FGREP) -c phi || exit 0)</RNAQC_COUNT_CONTAM_5_CMD>
+        <RNAQC_COUNT_CONTAM_5_NAME>phiX</RNAQC_COUNT_CONTAM_5_NAME>
+        <RNAQC_COUNT_CONTAM_6_CMD>($(FGREP) -c indexed || exit 0)</RNAQC_COUNT_CONTAM_6_CMD>
+        <RNAQC_COUNT_CONTAM_6_NAME>indAdp</RNAQC_COUNT_CONTAM_6_NAME>
+        <RNAQC_COUNT_GENOME_CMD>($(EGREP) -c '^c' || exit 0)</RNAQC_COUNT_GENOME_CMD>
+        <RNAQC_COUNT_GENOME_NAME>genomeUsable</RNAQC_COUNT_GENOME_NAME>
+        <RNAQC_COUNT_NM_CMD>($(FGREP) -wc NM || exit 0)</RNAQC_COUNT_NM_CMD>
+        <RNAQC_COUNT_NM_NAME>noMatch</RNAQC_COUNT_NM_NAME>
+        <RNAQC_COUNT_PF_CMD>$(WC) -l</RNAQC_COUNT_PF_CMD>
+        <RNAQC_COUNT_PF_NAME>PFClusters</RNAQC_COUNT_PF_NAME>
+        <RNAQC_COUNT_QC_CMD>($(FGREP) -wc QC || exit 0)</RNAQC_COUNT_QC_CMD>
+        <RNAQC_COUNT_QC_NAME>QC</RNAQC_COUNT_QC_NAME>
+        <RNAQC_COUNT_RM_CMD>($(FGREP) -wc RM || exit 0)</RNAQC_COUNT_RM_CMD>
+        <RNAQC_COUNT_RM_NAME>repeatMasked</RNAQC_COUNT_RM_NAME>
+        <RNAQC_COUNT_SPLICE_CMD>($(FGREP) -c splice_sites || exit 0)</RNAQC_COUNT_SPLICE_CMD>
+        <RNAQC_COUNT_SPLICE_NAME>spliceUsable</RNAQC_COUNT_SPLICE_NAME>
+        <RNAQC_COUNT_USABLE_CMD>$(CUT) -f13 |($(EGREP) [0-9] || exit 0)|$(WC) -l</RNAQC_COUNT_USABLE_CMD>
+        <RNAQC_COUNT_USABLE_NAME>usable</RNAQC_COUNT_USABLE_NAME>
+        <SEQUENCE_FORMAT>--fastq</SEQUENCE_FORMAT>
+        <SEQ_FILE_SUFFIX>_seq.txt</SEQ_FILE_SUFFIX>
+        <SIG2_COMPRESSION />
+        <SIG2_COMPRESSION_SUFFIX />
+        <SIG_FILE_SUFFIX_DEPHASED>_sig2.txt</SIG_FILE_SUFFIX_DEPHASED>
+        <SIG_FILE_SUFFIX_NOT_DEPHASED>_sig.txt</SIG_FILE_SUFFIX_NOT_DEPHASED>
+        <SINGLESEED />
+        <SOFTWARE_VERSION>CASAVA-1.7.0</SOFTWARE_VERSION>
+        <SRF_2ND_CYCLE />
+        <SRF_ARCHIVE_REQUIRED />
+        <SRF_CHASTITY>0.6</SRF_CHASTITY>
+        <SRF_FILE_SUFFIX>_traces.srf</SRF_FILE_SUFFIX>
+        <SRF_PROCESSED>-P</SRF_PROCESSED>
+        <SRF_QCAL />
+        <SRF_RAW />
+        <TILE_AREA />
+        <TILE_READ1_REGEX>s_[1-8]_1_[0-9][0-9][0-9][0-9]</TILE_READ1_REGEX>
+        <TILE_REGEX>s_[1-8]_[0-9][0-9][0-9][0-9]</TILE_REGEX>
+        <TILE_ROOT>s</TILE_ROOT>
+        <TIME_STAMP>Sun Jan  9 10:28:08 2011</TIME_STAMP>
+        <UNGAPPED />
+        <USE_BASES>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn</USE_BASES>
+        <USE_BASES1>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</USE_BASES1>
+        <USE_BASES2>nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn</USE_BASES2>
+        <USE_BASES3 />
+        <WEB_DIR_ROOT>http://host.domain.com/yourshare/</WEB_DIR_ROOT>
+        <WITH_SEQUENCE>false</WITH_SEQUENCE>
+        <WITH_SORTED>false</WITH_SORTED>
+      </ChipWideRunParameters>
+      <LaneSpecificRunParameters>
+        <ANALYSIS>
+          <s_1>eland_pair</s_1>
+          <s_2>eland_pair</s_2>
+          <s_3>eland_pair</s_3>
+          <s_4>eland_pair</s_4>
+          <s_5>sequence_pair</s_5>
+          <s_6>eland_pair</s_6>
+          <s_7>eland_pair</s_7>
+          <s_8>eland_pair</s_8>
+        </ANALYSIS>
+        <ELAND_GENOME>
+          <s_1>/mmjggl/tardigrade/data00/genomes/hg18</s_1>
+          <s_2>/mmjggl/tardigrade/data00/genomes/hg18</s_2>
+          <s_3>/mmjggl/tardigrade/data00/genomes/hg18</s_3>
+          <s_4>/mmjggl/tardigrade/data00/genomes/hg18</s_4>
+          <s_6>/mmjggl/tardigrade/data00/genomes/hg18</s_6>
+          <s_7>/mmjggl/tardigrade/data00/genomes/hg18</s_7>
+          <s_8>/mmjggl/tardigrade/data00/genomes/hg18</s_8>
+        </ELAND_GENOME>
+        <QTABLE_REQUIRED>
+          <s_1>0</s_1>
+          <s_2>0</s_2>
+          <s_3>0</s_3>
+          <s_4>0</s_4>
+          <s_5>0</s_5>
+          <s_6>0</s_6>
+          <s_7>0</s_7>
+          <s_8>0</s_8>
+        </QTABLE_REQUIRED>
+        <READ_LENGTH1>
+          <s_1>76</s_1>
+          <s_2>76</s_2>
+          <s_3>76</s_3>
+          <s_4>76</s_4>
+          <s_5>76</s_5>
+          <s_6>76</s_6>
+          <s_7>76</s_7>
+          <s_8>76</s_8>
+        </READ_LENGTH1>
+        <READ_LENGTH2>
+          <s_1>76</s_1>
+          <s_2>76</s_2>
+          <s_3>76</s_3>
+          <s_4>76</s_4>
+          <s_5>76</s_5>
+          <s_6>76</s_6>
+          <s_7>76</s_7>
+          <s_8>76</s_8>
+        </READ_LENGTH2>
+        <SRF_2ND_CYCLE>
+          <s_1>-2 77</s_1>
+          <s_2>-2 77</s_2>
+          <s_3>-2 77</s_3>
+          <s_4>-2 77</s_4>
+          <s_5>-2 77</s_5>
+          <s_6>-2 77</s_6>
+          <s_7>-2 77</s_7>
+          <s_8>-2 77</s_8>
+        </SRF_2ND_CYCLE>
+        <SRF_ARCHIVE_REQUIRED>
+          <s_1 />
+          <s_2 />
+          <s_3 />
+          <s_4 />
+          <s_5 />
+          <s_6 />
+          <s_7 />
+          <s_8 />
+        </SRF_ARCHIVE_REQUIRED>
+        <SRF_QCAL>
+          <s_1 />
+          <s_2 />
+          <s_3 />
+          <s_4 />
+          <s_5 />
+          <s_6 />
+          <s_7 />
+          <s_8 />
+        </SRF_QCAL>
+        <USE_BASES>
+          <s_1>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_1>
+          <s_2>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_2>
+          <s_3>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_3>
+          <s_4>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_4>
+          <s_5>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_5>
+          <s_6>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_6>
+          <s_7>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_7>
+          <s_8>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_8>
+        </USE_BASES>
+        <USE_BASES1>
+          <s_1>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_1>
+          <s_2>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_2>
+          <s_3>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_3>
+          <s_4>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_4>
+          <s_5>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_5>
+          <s_6>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_6>
+          <s_7>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_7>
+          <s_8>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_8>
+        </USE_BASES1>
+        <USE_BASES2>
+          <s_1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_1>
+          <s_2>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_2>
+          <s_3>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_3>
+          <s_4>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_4>
+          <s_5>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_5>
+          <s_6>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_6>
+          <s_7>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_7>
+          <s_8>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_8>
+        </USE_BASES2>
+        <USE_BASES3>
+          <s_1 />
+          <s_2 />
+          <s_3 />
+          <s_4 />
+          <s_5 />
+          <s_6 />
+          <s_7 />
+          <s_8 />
+        </USE_BASES3>
+        <WITH_SEQUENCE>
+          <s_1>true</s_1>
+          <s_2>true</s_2>
+          <s_3>true</s_3>
+          <s_4>true</s_4>
+          <s_5>true</s_5>
+          <s_6>true</s_6>
+          <s_7>true</s_7>
+          <s_8>true</s_8>
+        </WITH_SEQUENCE>
+      </LaneSpecificRunParameters>
+    </RunParameters>
+    <Summary version="3">
+      <LaneResultSummary end="0" lane="1">
+        <Cluster deviation="9456" mean="375885" />
+        <AverageFirstCycleIntensity deviation="11" mean="360" />
+        <AverageAlignmentScore deviation="4.19" mean="172.04" />
+        <ClusterPF deviation="8651" mean="321428" />
+        <PercentPassFilterClusters deviation="1.35" mean="85.52" />
+        <PercentPassFilterAlign deviation="0.72" mean="79.17" />
+        <LaneYield>2931430</LaneYield>
+        <PercentErrorRate deviation="0.54" mean="4.21" />
+        <PercentIntensityAfter20Cycles deviation="3.82" mean="85.72" />
+      </LaneResultSummary>
+      <LaneResultSummary end="0" lane="2">
+        <Cluster deviation="10241" mean="443170" />
+        <AverageFirstCycleIntensity deviation="5" mean="381" />
+        <AverageAlignmentScore deviation="1.4" mean="171.98" />
+        <ClusterPF deviation="8335" mean="362709" />
+        <PercentPassFilterClusters deviation="0.8" mean="81.85" />
+        <PercentPassFilterAlign deviation="0.23" mean="79.73" />
+        <LaneYield>3307914</LaneYield>
+        <PercentErrorRate deviation="0.14" mean="4.13" />
+        <PercentIntensityAfter20Cycles deviation="3.26" mean="85.89" />
+      </LaneResultSummary>
+      <LaneResultSummary end="0" lane="3">
+        <Cluster deviation="12487" mean="414053" />
+        <AverageFirstCycleIntensity deviation="7" mean="391" />
+        <AverageAlignmentScore deviation="0.79" mean="186.83" />
+        <ClusterPF deviation="9494" mean="350824" />
+        <PercentPassFilterClusters deviation="0.42" mean="84.74" />
+        <PercentPassFilterAlign deviation="0.19" mean="79.22" />
+        <LaneYield>3199519</LaneYield>
+        <PercentErrorRate deviation="0.12" mean="4.09" />
+        <PercentIntensityAfter20Cycles deviation="1.43" mean="87.39" />
+      </LaneResultSummary>
+      <LaneResultSummary end="0" lane="4">
+        <Cluster deviation="7195" mean="449298" />
+        <AverageFirstCycleIntensity deviation="5" mean="369" />
+        <AverageAlignmentScore deviation="1.02" mean="187.26" />
+        <ClusterPF deviation="6100" mean="364192" />
+        <PercentPassFilterClusters deviation="0.27" mean="81.06" />
+        <PercentPassFilterAlign deviation="0.27" mean="79.6" />
+        <LaneYield>3321433</LaneYield>
+        <PercentErrorRate deviation="0.14" mean="4.07" />
+        <PercentIntensityAfter20Cycles deviation="1.68" mean="86.34" />
+      </LaneResultSummary>
+      <LaneResultSummary end="0" lane="5">
+        <Cluster deviation="15946" mean="310619" />
+        <AverageFirstCycleIntensity deviation="4" mean="362" />
+        <ClusterPF deviation="13858" mean="277584" />
+        <PercentPassFilterClusters deviation="0.25" mean="89.37" />
+        <LaneYield>2531573</LaneYield>
+        <PercentIntensityAfter20Cycles deviation="1.12" mean="90.35" />
+      </LaneResultSummary>
+      <LaneResultSummary end="0" lane="6">
+        <Cluster deviation="11650" mean="338882" />
+        <AverageFirstCycleIntensity deviation="5" mean="352" />
+        <AverageAlignmentScore deviation="0.52" mean="169.04" />
+        <ClusterPF deviation="9492" mean="299688" />
+        <PercentPassFilterClusters deviation="0.41" mean="88.44" />
+        <PercentPassFilterAlign deviation="0.09" mean="79.95" />
+        <LaneYield>2733160</LaneYield>
+        <PercentErrorRate deviation="0.06" mean="3.96" />
+        <PercentIntensityAfter20Cycles deviation="1.23" mean="87.56" />
+      </LaneResultSummary>
+      <LaneResultSummary end="0" lane="7">
+        <Cluster deviation="8411" mean="332799" />
+        <AverageFirstCycleIntensity deviation="4" mean="336" />
+        <AverageAlignmentScore deviation="0.49" mean="170.86" />
+        <ClusterPF deviation="7225" mean="294318" />
+        <PercentPassFilterClusters deviation="0.38" mean="88.44" />
+        <PercentPassFilterAlign deviation="0.08" mean="79.95" />
+        <LaneYield>2684182</LaneYield>
+        <PercentErrorRate deviation="0.05" mean="3.76" />
+        <PercentIntensityAfter20Cycles deviation="1.61" mean="88.56" />
+      </LaneResultSummary>
+      <LaneResultSummary end="0" lane="8">
+        <Cluster deviation="18049" mean="315442" />
+        <AverageFirstCycleIntensity deviation="40" mean="360" />
+        <AverageAlignmentScore deviation="0.83" mean="173.29" />
+        <ClusterPF deviation="14655" mean="277736" />
+        <PercentPassFilterClusters deviation="0.6" mean="88.08" />
+        <PercentPassFilterAlign deviation="0.12" mean="80.04" />
+        <LaneYield>2532958</LaneYield>
+        <PercentErrorRate deviation="0.05" mean="3.99" />
+        <PercentIntensityAfter20Cycles deviation="1.97" mean="88.94" />
+      </LaneResultSummary>
+    </Summary>
+    <ElandCollection version="3">
+      <ElandLane end="0" id="1" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>1</LaneID>
+        <End>1</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="2144998" />
+          <MappedItem name="hg18/chr17.fa" value="2282473" />
+          <MappedItem name="hg18/chr15_random.fa" value="64" />
+          <MappedItem name="hg18/chrX_random.fa" value="848" />
+          <MappedItem name="hg18/chr5_random.fa" value="54" />
+          <MappedItem name="hg18/chr11.fa" value="2579028" />
+          <MappedItem name="hg18/chr10_random.fa" value="17" />
+          <MappedItem name="hg18/chrM.fa" value="1632811" />
+          <MappedItem name="hg18/chr18.fa" value="288304" />
+          <MappedItem name="OBF5.fa" value="126600" />
+          <MappedItem name="EPR-1.fa" value="22" />
+          <MappedItem name="Apetala2.fa" value="237" />
+          <MappedItem name="hg18/chr13.fa" value="385426" />
+          <MappedItem name="hg18/chr21.fa" value="304526" />
+          <MappedItem name="hg18/chr13_random.fa" value="299" />
+          <MappedItem name="hg18/chr21_random.fa" value="157701" />
+          <MappedItem name="hg18/chr4.fa" value="789848" />
+          <MappedItem name="hg18/chr6_random.fa" value="71" />
+          <MappedItem name="hg18/chr22_random.fa" value="4" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="44" />
+          <MappedItem name="hg18/chr16_random.fa" value="124" />
+          <MappedItem name="hg18/chr17_random.fa" value="6029" />
+          <MappedItem name="hg18/chr8_random.fa" value="28" />
+          <MappedItem name="hg18/chr9.fa" value="1202341" />
+          <MappedItem name="hg18/chr2.fa" value="2207171" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="5330" />
+          <MappedItem name="hg18/chr19.fa" value="2076941" />
+          <MappedItem name="hg18/chr4_random.fa" value="868" />
+          <MappedItem name="hg18/chr7_random.fa" value="1540" />
+          <MappedItem name="hg18/chr22.fa" value="845743" />
+          <MappedItem name="hg18/chr12.fa" value="1895645" />
+          <MappedItem name="hg18/chr8.fa" value="787255" />
+          <MappedItem name="hg18/chr10.fa" value="1056903" />
+          <MappedItem name="hg18/chrY.fa" value="56373" />
+          <MappedItem name="hg18/chr15.fa" value="1591636" />
+          <MappedItem name="hg18/chr18_random.fa" value="3" />
+          <MappedItem name="hg18/chr16.fa" value="1249046" />
+          <MappedItem name="hg18/chr2_random.fa" value="69" />
+          <MappedItem name="hg18/chr14.fa" value="772454" />
+          <MappedItem name="newcontam_UK.fa" value="258" />
+          <MappedItem name="hg18/chr19_random.fa" value="2" />
+          <MappedItem name="hg18/chr1.fa" value="2884469" />
+          <MappedItem name="BAC_plus_vector.fa" value="557" />
+          <MappedItem name="hg18/chrX.fa" value="1100712" />
+          <MappedItem name="hg18/chr3.fa" value="1461804" />
+          <MappedItem name="hg18/chr20.fa" value="711043" />
+          <MappedItem name="VATG.fa" value="5348" />
+          <MappedItem name="hg18/chr1_random.fa" value="8542" />
+          <MappedItem name="hg18/chr6.fa" value="1241595" />
+          <MappedItem name="hg18/chr3_random.fa" value="1" />
+          <MappedItem name="hg18/chr9_random.fa" value="47" />
+          <MappedItem name="hg18/chr5.fa" value="1523047" />
+          <MappedItem name="AGP.fa" value="20" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="420832" />
+          <Code name="R0" value="20400195" />
+          <Code name="NM" value="3347706" />
+          <Code name="R2" value="12657996" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="6634022" />
+          <Code name="U0" value="20310214" />
+          <Code name="R1" value="17742317" />
+          <Code name="U2" value="12729084" />
+        </MatchCodes>
+        <Reads>45106262</Reads>
+      </ElandLane>
+      <ElandLane end="0" id="2" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>2</LaneID>
+        <End>1</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="2490766" />
+          <MappedItem name="hg18/chr17.fa" value="2626254" />
+          <MappedItem name="hg18/chr15_random.fa" value="87" />
+          <MappedItem name="Apetala2.fa" value="260" />
+          <MappedItem name="hg18/chr5_random.fa" value="66" />
+          <MappedItem name="hg18/chr11.fa" value="2963806" />
+          <MappedItem name="hg18/chr10_random.fa" value="21" />
+          <MappedItem name="hg18/chrM.fa" value="1977596" />
+          <MappedItem name="hg18/chr18.fa" value="340872" />
+          <MappedItem name="OBF5.fa" value="154871" />
+          <MappedItem name="EPR-1.fa" value="21" />
+          <MappedItem name="hg18/chr13.fa" value="453542" />
+          <MappedItem name="hg18/chr21.fa" value="353325" />
+          <MappedItem name="hg18/chr13_random.fa" value="366" />
+          <MappedItem name="hg18/chr21_random.fa" value="177857" />
+          <MappedItem name="hg18/chr4.fa" value="934151" />
+          <MappedItem name="hg18/chr6_random.fa" value="90" />
+          <MappedItem name="hg18/chr22_random.fa" value="5" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="48" />
+          <MappedItem name="hg18/chr16_random.fa" value="157" />
+          <MappedItem name="hg18/chr17_random.fa" value="6944" />
+          <MappedItem name="hg18/chr8_random.fa" value="30" />
+          <MappedItem name="hg18/chr9.fa" value="1397554" />
+          <MappedItem name="hg18/chr2.fa" value="2599065" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="6079" />
+          <MappedItem name="hg18/chr19.fa" value="2335026" />
+          <MappedItem name="hg18/chr4_random.fa" value="978" />
+          <MappedItem name="hg18/chr7_random.fa" value="1929" />
+          <MappedItem name="hg18/chr22.fa" value="967647" />
+          <MappedItem name="hg18/chr12.fa" value="2230354" />
+          <MappedItem name="hg18/chr8.fa" value="916654" />
+          <MappedItem name="hg18/chr10.fa" value="1238852" />
+          <MappedItem name="hg18/chrY.fa" value="66090" />
+          <MappedItem name="hg18/chr15.fa" value="1871738" />
+          <MappedItem name="hg18/chr18_random.fa" value="2" />
+          <MappedItem name="hg18/chrX_random.fa" value="819" />
+          <MappedItem name="hg18/chr16.fa" value="1422614" />
+          <MappedItem name="hg18/chr2_random.fa" value="95" />
+          <MappedItem name="hg18/chr14.fa" value="908527" />
+          <MappedItem name="newcontam_UK.fa" value="340" />
+          <MappedItem name="hg18/chr19_random.fa" value="1" />
+          <MappedItem name="hg18/chr1.fa" value="3373415" />
+          <MappedItem name="BAC_plus_vector.fa" value="619" />
+          <MappedItem name="hg18/chrX.fa" value="1282347" />
+          <MappedItem name="hg18/chr3.fa" value="1723955" />
+          <MappedItem name="hg18/chr20.fa" value="821603" />
+          <MappedItem name="VATG.fa" value="6627" />
+          <MappedItem name="hg18/chr1_random.fa" value="10133" />
+          <MappedItem name="hg18/chr6.fa" value="1464444" />
+          <MappedItem name="hg18/chr3_random.fa" value="8" />
+          <MappedItem name="hg18/chr9_random.fa" value="62" />
+          <MappedItem name="hg18/chr5.fa" value="1790026" />
+          <MappedItem name="AGP.fa" value="22" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="493490" />
+          <Code name="R0" value="24056939" />
+          <Code name="NM" value="4718493" />
+          <Code name="R2" value="14654787" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="6553571" />
+          <Code name="U0" value="24692585" />
+          <Code name="R1" value="20347000" />
+          <Code name="U2" value="14765020" />
+        </MatchCodes>
+        <Reads>53180501</Reads>
+      </ElandLane>
+      <ElandLane end="0" id="3" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>3</LaneID>
+        <End>1</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="2148554" />
+          <MappedItem name="hg18/chr17.fa" value="3229684" />
+          <MappedItem name="hg18/chr15_random.fa" value="195" />
+          <MappedItem name="Apetala2.fa" value="296" />
+          <MappedItem name="hg18/chr5_random.fa" value="87" />
+          <MappedItem name="hg18/chr11.fa" value="2717694" />
+          <MappedItem name="hg18/chr10_random.fa" value="28" />
+          <MappedItem name="hg18/chrM.fa" value="2065569" />
+          <MappedItem name="hg18/chr18.fa" value="271783" />
+          <MappedItem name="OBF5.fa" value="185107" />
+          <MappedItem name="EPR-1.fa" value="38" />
+          <MappedItem name="hg18/chr13.fa" value="465309" />
+          <MappedItem name="hg18/chr21.fa" value="376480" />
+          <MappedItem name="hg18/chr13_random.fa" value="311" />
+          <MappedItem name="hg18/chr21_random.fa" value="96692" />
+          <MappedItem name="hg18/chr4.fa" value="835511" />
+          <MappedItem name="hg18/chr6_random.fa" value="143" />
+          <MappedItem name="hg18/chr22_random.fa" value="13" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="80" />
+          <MappedItem name="hg18/chr16_random.fa" value="14" />
+          <MappedItem name="hg18/chr17_random.fa" value="5926" />
+          <MappedItem name="hg18/chr8_random.fa" value="73" />
+          <MappedItem name="hg18/chr9.fa" value="1331179" />
+          <MappedItem name="hg18/chr2.fa" value="3177572" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="9123" />
+          <MappedItem name="hg18/chr19.fa" value="1866912" />
+          <MappedItem name="hg18/chr4_random.fa" value="1431" />
+          <MappedItem name="hg18/chr7_random.fa" value="1892" />
+          <MappedItem name="hg18/chr22.fa" value="873427" />
+          <MappedItem name="hg18/chr12.fa" value="1747890" />
+          <MappedItem name="hg18/chr8.fa" value="790547" />
+          <MappedItem name="hg18/chr10.fa" value="1135596" />
+          <MappedItem name="hg18/chrY.fa" value="53043" />
+          <MappedItem name="hg18/chr15.fa" value="1704624" />
+          <MappedItem name="hg18/chrX_random.fa" value="750" />
+          <MappedItem name="hg18/chr16.fa" value="1269664" />
+          <MappedItem name="hg18/chr2_random.fa" value="119" />
+          <MappedItem name="hg18/chr14.fa" value="928142" />
+          <MappedItem name="newcontam_UK.fa" value="279" />
+          <MappedItem name="hg18/chr1.fa" value="3091317" />
+          <MappedItem name="BAC_plus_vector.fa" value="440" />
+          <MappedItem name="hg18/chrX.fa" value="946084" />
+          <MappedItem name="hg18/chr3.fa" value="1561501" />
+          <MappedItem name="hg18/chr20.fa" value="684339" />
+          <MappedItem name="VATG.fa" value="7246" />
+          <MappedItem name="hg18/chr1_random.fa" value="5726" />
+          <MappedItem name="hg18/chr6.fa" value="1353514" />
+          <MappedItem name="hg18/chr3_random.fa" value="13" />
+          <MappedItem name="hg18/chr9_random.fa" value="80" />
+          <MappedItem name="hg18/chr5.fa" value="1755943" />
+          <MappedItem name="AGP.fa" value="28" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="488929" />
+          <Code name="R0" value="25866152" />
+          <Code name="NM" value="3646056" />
+          <Code name="R2" value="14198684" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="5813602" />
+          <Code name="U0" value="25215115" />
+          <Code name="R1" value="17490328" />
+          <Code name="U2" value="12882995" />
+        </MatchCodes>
+        <Reads>49686417</Reads>
+      </ElandLane>
+      <ElandLane end="0" id="4" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>4</LaneID>
+        <End>1</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="2297270" />
+          <MappedItem name="hg18/chr17.fa" value="3368936" />
+          <MappedItem name="hg18/chr15_random.fa" value="230" />
+          <MappedItem name="Apetala2.fa" value="350" />
+          <MappedItem name="hg18/chr5_random.fa" value="99" />
+          <MappedItem name="hg18/chr11.fa" value="2867086" />
+          <MappedItem name="hg18/chr10_random.fa" value="23" />
+          <MappedItem name="hg18/chrM.fa" value="2279052" />
+          <MappedItem name="hg18/chr18.fa" value="296510" />
+          <MappedItem name="OBF5.fa" value="208722" />
+          <MappedItem name="EPR-1.fa" value="47" />
+          <MappedItem name="hg18/chr13.fa" value="503812" />
+          <MappedItem name="hg18/chr21.fa" value="399365" />
+          <MappedItem name="hg18/chr13_random.fa" value="362" />
+          <MappedItem name="hg18/chr21_random.fa" value="100820" />
+          <MappedItem name="hg18/chr4.fa" value="909552" />
+          <MappedItem name="hg18/chr6_random.fa" value="151" />
+          <MappedItem name="hg18/chr22_random.fa" value="19" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="66" />
+          <MappedItem name="hg18/chr16_random.fa" value="32" />
+          <MappedItem name="hg18/chr17_random.fa" value="6055" />
+          <MappedItem name="hg18/chr8_random.fa" value="38" />
+          <MappedItem name="hg18/chr9.fa" value="1417257" />
+          <MappedItem name="hg18/chr2.fa" value="3444039" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="9530" />
+          <MappedItem name="hg18/chr19.fa" value="1926570" />
+          <MappedItem name="hg18/chr4_random.fa" value="1543" />
+          <MappedItem name="hg18/chr7_random.fa" value="2070" />
+          <MappedItem name="hg18/chr22.fa" value="920396" />
+          <MappedItem name="hg18/chr12.fa" value="1883489" />
+          <MappedItem name="hg18/chr8.fa" value="845755" />
+          <MappedItem name="hg18/chr10.fa" value="1229737" />
+          <MappedItem name="hg18/chrY.fa" value="56562" />
+          <MappedItem name="hg18/chr15.fa" value="1839653" />
+          <MappedItem name="hg18/chrX_random.fa" value="789" />
+          <MappedItem name="hg18/chr16.fa" value="1331008" />
+          <MappedItem name="hg18/chr2_random.fa" value="109" />
+          <MappedItem name="hg18/chr14.fa" value="995608" />
+          <MappedItem name="newcontam_UK.fa" value="355" />
+          <MappedItem name="hg18/chr19_random.fa" value="3" />
+          <MappedItem name="hg18/chr1.fa" value="3316111" />
+          <MappedItem name="BAC_plus_vector.fa" value="459" />
+          <MappedItem name="hg18/chrX.fa" value="1015280" />
+          <MappedItem name="hg18/chr3.fa" value="1692924" />
+          <MappedItem name="hg18/chr20.fa" value="728843" />
+          <MappedItem name="VATG.fa" value="8223" />
+          <MappedItem name="hg18/chr1_random.fa" value="6043" />
+          <MappedItem name="hg18/chr6.fa" value="1465061" />
+          <MappedItem name="hg18/chr3_random.fa" value="14" />
+          <MappedItem name="hg18/chr9_random.fa" value="103" />
+          <MappedItem name="hg18/chr5.fa" value="1902275" />
+          <MappedItem name="AGP.fa" value="21" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="511423" />
+          <Code name="R0" value="27569590" />
+          <Code name="NM" value="4800271" />
+          <Code name="R2" value="15993234" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="6315510" />
+          <Code name="U0" value="26283390" />
+          <Code name="R1" value="19317860" />
+          <Code name="U2" value="14213378" />
+        </MatchCodes>
+        <Reads>53915808</Reads>
+      </ElandLane>
+      <SequenceLane end="0" id="5" version="1">
+        <SampleName>s</SampleName>
+        <LaneID>5</LaneID>
+        <End>1</End>
+        <Reads>33310172</Reads>
+        <SequenceType>FASTQ</SequenceType>
+      </SequenceLane>
+      <ElandLane end="0" id="6" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>6</LaneID>
+        <End>1</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="1120453" />
+          <MappedItem name="hg18/chr17.fa" value="2581100" />
+          <MappedItem name="hg18/chr15_random.fa" value="362" />
+          <MappedItem name="Apetala2.fa" value="725" />
+          <MappedItem name="hg18/chr5_random.fa" value="67" />
+          <MappedItem name="hg18/chr11.fa" value="1795101" />
+          <MappedItem name="hg18/chr10_random.fa" value="32" />
+          <MappedItem name="hg18/chr20.fa" value="860142" />
+          <MappedItem name="hg18/chr18.fa" value="227000" />
+          <MappedItem name="OBF5.fa" value="270702" />
+          <MappedItem name="EPR-1.fa" value="91" />
+          <MappedItem name="hg18/chr11_random.fa" value="6" />
+          <MappedItem name="hg18/chr13.fa" value="302913" />
+          <MappedItem name="hg18/chr21.fa" value="224996" />
+          <MappedItem name="hg18/chr13_random.fa" value="400" />
+          <MappedItem name="hg18/chr21_random.fa" value="39959" />
+          <MappedItem name="hg18/chr4.fa" value="659993" />
+          <MappedItem name="hg18/chr6_random.fa" value="146" />
+          <MappedItem name="hg18/chr22_random.fa" value="2" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="260" />
+          <MappedItem name="hg18/chr16_random.fa" value="398" />
+          <MappedItem name="hg18/chr17_random.fa" value="4396" />
+          <MappedItem name="hg18/chr8_random.fa" value="209" />
+          <MappedItem name="hg18/chr9.fa" value="1117173" />
+          <MappedItem name="hg18/chr2.fa" value="1466793" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="32760" />
+          <MappedItem name="hg18/chr19.fa" value="2728003" />
+          <MappedItem name="hg18/chr4_random.fa" value="889" />
+          <MappedItem name="hg18/chr7_random.fa" value="1010" />
+          <MappedItem name="hg18/chr22.fa" value="847241" />
+          <MappedItem name="hg18/chr12.fa" value="1886658" />
+          <MappedItem name="hg18/chr8.fa" value="1185265" />
+          <MappedItem name="hg18/chr10.fa" value="922363" />
+          <MappedItem name="hg18/chrY.fa" value="25307" />
+          <MappedItem name="hg18/chr15.fa" value="714342" />
+          <MappedItem name="hg18/chr18_random.fa" value="4" />
+          <MappedItem name="hg18/chrX_random.fa" value="588" />
+          <MappedItem name="hg18/chr16.fa" value="1484709" />
+          <MappedItem name="hg18/chr2_random.fa" value="227" />
+          <MappedItem name="hg18/chr14.fa" value="715834" />
+          <MappedItem name="newcontam_UK.fa" value="215" />
+          <MappedItem name="hg18/chr1.fa" value="2689713" />
+          <MappedItem name="BAC_plus_vector.fa" value="706" />
+          <MappedItem name="hg18/chrX.fa" value="864197" />
+          <MappedItem name="hg18/chr3.fa" value="1313052" />
+          <MappedItem name="hg18/chrM.fa" value="2107856" />
+          <MappedItem name="VATG.fa" value="10701" />
+          <MappedItem name="hg18/chr1_random.fa" value="12956" />
+          <MappedItem name="hg18/chr6.fa" value="1593145" />
+          <MappedItem name="hg18/chr3_random.fa" value="6" />
+          <MappedItem name="hg18/chr9_random.fa" value="143" />
+          <MappedItem name="hg18/chr5.fa" value="1072750" />
+          <MappedItem name="AGP.fa" value="55" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="411428" />
+          <Code name="R0" value="29376842" />
+          <Code name="NM" value="2015480" />
+          <Code name="R2" value="19845909" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="5158347" />
+          <Code name="U0" value="20507860" />
+          <Code name="R1" value="25860301" />
+          <Code name="U2" value="10463797" />
+        </MatchCodes>
+        <Reads>40665866</Reads>
+      </ElandLane>
+      <ElandLane end="0" id="7" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>7</LaneID>
+        <End>1</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="1081292" />
+          <MappedItem name="hg18/chr17.fa" value="2454513" />
+          <MappedItem name="hg18/chr15_random.fa" value="270" />
+          <MappedItem name="hg18/chrX_random.fa" value="535" />
+          <MappedItem name="hg18/chr5_random.fa" value="54" />
+          <MappedItem name="hg18/chr11.fa" value="1766515" />
+          <MappedItem name="hg18/chr10_random.fa" value="73" />
+          <MappedItem name="hg18/chrM.fa" value="2433937" />
+          <MappedItem name="hg18/chr18.fa" value="242430" />
+          <MappedItem name="OBF5.fa" value="138879" />
+          <MappedItem name="EPR-1.fa" value="28" />
+          <MappedItem name="hg18/chr11_random.fa" value="4" />
+          <MappedItem name="Apetala2.fa" value="309" />
+          <MappedItem name="hg18/chr13.fa" value="310301" />
+          <MappedItem name="hg18/chr21.fa" value="215758" />
+          <MappedItem name="hg18/chr13_random.fa" value="432" />
+          <MappedItem name="hg18/chr21_random.fa" value="33258" />
+          <MappedItem name="hg18/chr4.fa" value="695628" />
+          <MappedItem name="hg18/chr6_random.fa" value="164" />
+          <MappedItem name="hg18/chr22_random.fa" value="14" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="107" />
+          <MappedItem name="hg18/chr16_random.fa" value="465" />
+          <MappedItem name="hg18/chr17_random.fa" value="4439" />
+          <MappedItem name="hg18/chr8_random.fa" value="181" />
+          <MappedItem name="hg18/chr9.fa" value="1050733" />
+          <MappedItem name="hg18/chr2.fa" value="1501641" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="10387" />
+          <MappedItem name="hg18/chr19.fa" value="2462452" />
+          <MappedItem name="hg18/chr4_random.fa" value="850" />
+          <MappedItem name="hg18/chr7_random.fa" value="1442" />
+          <MappedItem name="hg18/chr22.fa" value="811982" />
+          <MappedItem name="hg18/chr12.fa" value="1819548" />
+          <MappedItem name="hg18/chr8.fa" value="1119851" />
+          <MappedItem name="hg18/chr10.fa" value="957467" />
+          <MappedItem name="hg18/chrY.fa" value="20986" />
+          <MappedItem name="hg18/chr15.fa" value="696558" />
+          <MappedItem name="hg18/chr18_random.fa" value="3" />
+          <MappedItem name="hg18/chr16.fa" value="1415828" />
+          <MappedItem name="hg18/chr2_random.fa" value="180" />
+          <MappedItem name="hg18/chr14.fa" value="719275" />
+          <MappedItem name="newcontam_UK.fa" value="64" />
+          <MappedItem name="hg18/chr1.fa" value="2720787" />
+          <MappedItem name="BAC_plus_vector.fa" value="572" />
+          <MappedItem name="hg18/chrX.fa" value="843558" />
+          <MappedItem name="hg18/chr3.fa" value="1301623" />
+          <MappedItem name="hg18/chr20.fa" value="829176" />
+          <MappedItem name="VATG.fa" value="4851" />
+          <MappedItem name="hg18/chr1_random.fa" value="20384" />
+          <MappedItem name="hg18/chr6.fa" value="1577196" />
+          <MappedItem name="hg18/chr3_random.fa" value="8" />
+          <MappedItem name="hg18/chr9_random.fa" value="153" />
+          <MappedItem name="hg18/chr5.fa" value="1077823" />
+          <MappedItem name="AGP.fa" value="26" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="398401" />
+          <Code name="R0" value="33075102" />
+          <Code name="NM" value="1884694" />
+          <Code name="R2" value="21796739" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="4944553" />
+          <Code name="U0" value="20761715" />
+          <Code name="R1" value="28121693" />
+          <Code name="U2" value="9892023" />
+        </MatchCodes>
+        <Reads>39935997</Reads>
+      </ElandLane>
+      <ElandLane end="0" id="8" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>8</LaneID>
+        <End>1</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="1353762" />
+          <MappedItem name="hg18/chr17.fa" value="2335334" />
+          <MappedItem name="hg18/chr22_random.fa" value="48" />
+          <MappedItem name="hg18/chrX_random.fa" value="711" />
+          <MappedItem name="hg18/chr5_random.fa" value="129" />
+          <MappedItem name="hg18/chr11.fa" value="1740419" />
+          <MappedItem name="hg18/chr10_random.fa" value="7" />
+          <MappedItem name="hg18/chrM.fa" value="1915882" />
+          <MappedItem name="hg18/chr18.fa" value="169596" />
+          <MappedItem name="OBF5.fa" value="125644" />
+          <MappedItem name="EPR-1.fa" value="28" />
+          <MappedItem name="hg18/chr11_random.fa" value="1" />
+          <MappedItem name="Apetala2.fa" value="303" />
+          <MappedItem name="hg18/chr13.fa" value="248276" />
+          <MappedItem name="hg18/chr21.fa" value="315746" />
+          <MappedItem name="hg18/chr13_random.fa" value="403" />
+          <MappedItem name="hg18/chr21_random.fa" value="50862" />
+          <MappedItem name="hg18/chr4.fa" value="496918" />
+          <MappedItem name="hg18/chr6_random.fa" value="47" />
+          <MappedItem name="hg18/chr4_random.fa" value="1107" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="140" />
+          <MappedItem name="hg18/chr16_random.fa" value="632" />
+          <MappedItem name="hg18/chr17_random.fa" value="4303" />
+          <MappedItem name="hg18/chr8_random.fa" value="137" />
+          <MappedItem name="hg18/chr9.fa" value="1357817" />
+          <MappedItem name="hg18/chr2.fa" value="1405717" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="12343" />
+          <MappedItem name="hg18/chr19.fa" value="2177360" />
+          <MappedItem name="hg18/chr15_random.fa" value="339" />
+          <MappedItem name="hg18/chr7_random.fa" value="1067" />
+          <MappedItem name="hg18/chr22.fa" value="573666" />
+          <MappedItem name="hg18/chr12.fa" value="1952654" />
+          <MappedItem name="hg18/chr8.fa" value="998240" />
+          <MappedItem name="hg18/chr10.fa" value="759145" />
+          <MappedItem name="hg18/chrY.fa" value="31522" />
+          <MappedItem name="hg18/chr15.fa" value="632544" />
+          <MappedItem name="hg18/chr16.fa" value="1574152" />
+          <MappedItem name="hg18/chr2_random.fa" value="145" />
+          <MappedItem name="hg18/chr14.fa" value="886259" />
+          <MappedItem name="newcontam_UK.fa" value="92" />
+          <MappedItem name="hg18/chr19_random.fa" value="1" />
+          <MappedItem name="hg18/chr1.fa" value="2320965" />
+          <MappedItem name="BAC_plus_vector.fa" value="579" />
+          <MappedItem name="hg18/chrX.fa" value="1046889" />
+          <MappedItem name="hg18/chr3.fa" value="1298647" />
+          <MappedItem name="hg18/chr20.fa" value="1047930" />
+          <MappedItem name="VATG.fa" value="4892" />
+          <MappedItem name="hg18/chr1_random.fa" value="5435" />
+          <MappedItem name="hg18/chr6.fa" value="906640" />
+          <MappedItem name="hg18/chr3_random.fa" value="2" />
+          <MappedItem name="hg18/chr9_random.fa" value="399" />
+          <MappedItem name="hg18/chr5.fa" value="1009359" />
+          <MappedItem name="AGP.fa" value="35" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="384264" />
+          <Code name="R0" value="22432765" />
+          <Code name="NM" value="2047898" />
+          <Code name="R2" value="12821609" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="4371027" />
+          <Code name="U0" value="19760560" />
+          <Code name="R1" value="17023340" />
+          <Code name="U2" value="9509461" />
+        </MatchCodes>
+        <Reads>37853044</Reads>
+      </ElandLane>
+      <ElandLane end="1" id="1" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>1</LaneID>
+        <End>2</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="2126607" />
+          <MappedItem name="hg18/chr17.fa" value="2253692" />
+          <MappedItem name="hg18/chr15_random.fa" value="61" />
+          <MappedItem name="hg18/chrX_random.fa" value="822" />
+          <MappedItem name="hg18/chr5_random.fa" value="50" />
+          <MappedItem name="hg18/chr11.fa" value="2547492" />
+          <MappedItem name="hg18/chr10_random.fa" value="19" />
+          <MappedItem name="hg18/chrM.fa" value="1629323" />
+          <MappedItem name="hg18/chr18.fa" value="286348" />
+          <MappedItem name="OBF5.fa" value="126737" />
+          <MappedItem name="EPR-1.fa" value="22" />
+          <MappedItem name="Apetala2.fa" value="239" />
+          <MappedItem name="hg18/chr13.fa" value="383402" />
+          <MappedItem name="hg18/chr21.fa" value="301583" />
+          <MappedItem name="hg18/chr13_random.fa" value="299" />
+          <MappedItem name="hg18/chr21_random.fa" value="156063" />
+          <MappedItem name="hg18/chr4.fa" value="784025" />
+          <MappedItem name="hg18/chr6_random.fa" value="78" />
+          <MappedItem name="hg18/chr22_random.fa" value="5" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="43" />
+          <MappedItem name="hg18/chr16_random.fa" value="119" />
+          <MappedItem name="hg18/chr17_random.fa" value="5906" />
+          <MappedItem name="hg18/chr8_random.fa" value="28" />
+          <MappedItem name="hg18/chr9.fa" value="1192809" />
+          <MappedItem name="hg18/chr2.fa" value="2186476" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="5240" />
+          <MappedItem name="hg18/chr19.fa" value="2042730" />
+          <MappedItem name="hg18/chr4_random.fa" value="841" />
+          <MappedItem name="hg18/chr7_random.fa" value="1565" />
+          <MappedItem name="hg18/chr22.fa" value="835246" />
+          <MappedItem name="hg18/chr12.fa" value="1882091" />
+          <MappedItem name="hg18/chr8.fa" value="780595" />
+          <MappedItem name="hg18/chr10.fa" value="1049100" />
+          <MappedItem name="hg18/chrY.fa" value="56311" />
+          <MappedItem name="hg18/chr15.fa" value="1577762" />
+          <MappedItem name="hg18/chr18_random.fa" value="2" />
+          <MappedItem name="hg18/chr16.fa" value="1231679" />
+          <MappedItem name="hg18/chr2_random.fa" value="66" />
+          <MappedItem name="hg18/chr14.fa" value="767069" />
+          <MappedItem name="newcontam_UK.fa" value="169" />
+          <MappedItem name="hg18/chr19_random.fa" value="1" />
+          <MappedItem name="hg18/chr1.fa" value="2860480" />
+          <MappedItem name="BAC_plus_vector.fa" value="551" />
+          <MappedItem name="hg18/chrX.fa" value="1091291" />
+          <MappedItem name="hg18/chr3.fa" value="1451771" />
+          <MappedItem name="hg18/chr20.fa" value="703378" />
+          <MappedItem name="VATG.fa" value="5371" />
+          <MappedItem name="hg18/chr1_random.fa" value="8523" />
+          <MappedItem name="hg18/chr6.fa" value="1232708" />
+          <MappedItem name="hg18/chr3_random.fa" value="2" />
+          <MappedItem name="hg18/chr9_random.fa" value="44" />
+          <MappedItem name="hg18/chr5.fa" value="1513569" />
+          <MappedItem name="AGP.fa" value="22" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="449271" />
+          <Code name="R0" value="20013156" />
+          <Code name="NM" value="3726089" />
+          <Code name="R2" value="13101096" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="7295280" />
+          <Code name="U0" value="18087623" />
+          <Code name="R1" value="18078115" />
+          <Code name="U2" value="13874787" />
+        </MatchCodes>
+        <Reads>45106262</Reads>
+      </ElandLane>
+      <ElandLane end="1" id="2" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>2</LaneID>
+        <End>2</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="2483459" />
+          <MappedItem name="hg18/chr17.fa" value="2606321" />
+          <MappedItem name="hg18/chr15_random.fa" value="88" />
+          <MappedItem name="Apetala2.fa" value="273" />
+          <MappedItem name="hg18/chr5_random.fa" value="69" />
+          <MappedItem name="hg18/chr11.fa" value="2944847" />
+          <MappedItem name="hg18/chr10_random.fa" value="21" />
+          <MappedItem name="hg18/chrM.fa" value="1982845" />
+          <MappedItem name="hg18/chr18.fa" value="340561" />
+          <MappedItem name="OBF5.fa" value="155602" />
+          <MappedItem name="EPR-1.fa" value="23" />
+          <MappedItem name="hg18/chr13.fa" value="453545" />
+          <MappedItem name="hg18/chr21.fa" value="351384" />
+          <MappedItem name="hg18/chr13_random.fa" value="378" />
+          <MappedItem name="hg18/chr21_random.fa" value="176612" />
+          <MappedItem name="hg18/chr4.fa" value="932629" />
+          <MappedItem name="hg18/chr6_random.fa" value="89" />
+          <MappedItem name="hg18/chr22_random.fa" value="7" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="50" />
+          <MappedItem name="hg18/chr16_random.fa" value="153" />
+          <MappedItem name="hg18/chr17_random.fa" value="6782" />
+          <MappedItem name="hg18/chr8_random.fa" value="35" />
+          <MappedItem name="hg18/chr9.fa" value="1393967" />
+          <MappedItem name="hg18/chr2.fa" value="2589626" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="6030" />
+          <MappedItem name="hg18/chr19.fa" value="2311803" />
+          <MappedItem name="hg18/chr4_random.fa" value="974" />
+          <MappedItem name="hg18/chr7_random.fa" value="1950" />
+          <MappedItem name="hg18/chr22.fa" value="961665" />
+          <MappedItem name="hg18/chr12.fa" value="2228686" />
+          <MappedItem name="hg18/chr8.fa" value="914265" />
+          <MappedItem name="hg18/chr10.fa" value="1236870" />
+          <MappedItem name="hg18/chrY.fa" value="66210" />
+          <MappedItem name="hg18/chr15.fa" value="1865285" />
+          <MappedItem name="hg18/chr18_random.fa" value="2" />
+          <MappedItem name="hg18/chrX_random.fa" value="842" />
+          <MappedItem name="hg18/chr16.fa" value="1411750" />
+          <MappedItem name="hg18/chr2_random.fa" value="96" />
+          <MappedItem name="hg18/chr14.fa" value="906824" />
+          <MappedItem name="newcontam_UK.fa" value="142" />
+          <MappedItem name="hg18/chr19_random.fa" value="2" />
+          <MappedItem name="hg18/chr1.fa" value="3363461" />
+          <MappedItem name="BAC_plus_vector.fa" value="624" />
+          <MappedItem name="hg18/chrX.fa" value="1279200" />
+          <MappedItem name="hg18/chr3.fa" value="1721468" />
+          <MappedItem name="hg18/chr20.fa" value="817155" />
+          <MappedItem name="VATG.fa" value="6670" />
+          <MappedItem name="hg18/chr1_random.fa" value="10058" />
+          <MappedItem name="hg18/chr6.fa" value="1460962" />
+          <MappedItem name="hg18/chr3_random.fa" value="8" />
+          <MappedItem name="hg18/chr9_random.fa" value="64" />
+          <MappedItem name="hg18/chr5.fa" value="1786887" />
+          <MappedItem name="AGP.fa" value="22" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="480598" />
+          <Code name="R0" value="24037041" />
+          <Code name="NM" value="4894717" />
+          <Code name="R2" value="14958119" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="6818769" />
+          <Code name="U0" value="24000735" />
+          <Code name="R1" value="20730819" />
+          <Code name="U2" value="15036542" />
+        </MatchCodes>
+        <Reads>53180501</Reads>
+      </ElandLane>
+      <ElandLane end="1" id="3" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>3</LaneID>
+        <End>2</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="2139203" />
+          <MappedItem name="hg18/chr17.fa" value="3201893" />
+          <MappedItem name="hg18/chr15_random.fa" value="202" />
+          <MappedItem name="hg18/chrX_random.fa" value="764" />
+          <MappedItem name="hg18/chr5_random.fa" value="86" />
+          <MappedItem name="hg18/chr11.fa" value="2699541" />
+          <MappedItem name="hg18/chr10_random.fa" value="28" />
+          <MappedItem name="hg18/chrM.fa" value="2067237" />
+          <MappedItem name="hg18/chr18.fa" value="271529" />
+          <MappedItem name="OBF5.fa" value="185573" />
+          <MappedItem name="EPR-1.fa" value="36" />
+          <MappedItem name="Apetala2.fa" value="293" />
+          <MappedItem name="hg18/chr13.fa" value="463815" />
+          <MappedItem name="hg18/chr21.fa" value="373264" />
+          <MappedItem name="hg18/chr13_random.fa" value="319" />
+          <MappedItem name="hg18/chr21_random.fa" value="95757" />
+          <MappedItem name="hg18/chr4.fa" value="832302" />
+          <MappedItem name="hg18/chr6_random.fa" value="142" />
+          <MappedItem name="hg18/chr22_random.fa" value="13" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="85" />
+          <MappedItem name="hg18/chr16_random.fa" value="14" />
+          <MappedItem name="hg18/chr17_random.fa" value="5878" />
+          <MappedItem name="hg18/chr8_random.fa" value="69" />
+          <MappedItem name="hg18/chr9.fa" value="1325480" />
+          <MappedItem name="hg18/chr2.fa" value="3162629" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="9090" />
+          <MappedItem name="hg18/chr19.fa" value="1848319" />
+          <MappedItem name="hg18/chr4_random.fa" value="1420" />
+          <MappedItem name="hg18/chr7_random.fa" value="1873" />
+          <MappedItem name="hg18/chr22.fa" value="867598" />
+          <MappedItem name="hg18/chr12.fa" value="1741596" />
+          <MappedItem name="hg18/chr8.fa" value="786746" />
+          <MappedItem name="hg18/chr10.fa" value="1131840" />
+          <MappedItem name="hg18/chrY.fa" value="53269" />
+          <MappedItem name="hg18/chr15.fa" value="1696119" />
+          <MappedItem name="hg18/chr16.fa" value="1261968" />
+          <MappedItem name="hg18/chr2_random.fa" value="121" />
+          <MappedItem name="hg18/chr14.fa" value="924404" />
+          <MappedItem name="newcontam_UK.fa" value="142" />
+          <MappedItem name="hg18/chr19_random.fa" value="2" />
+          <MappedItem name="hg18/chr1.fa" value="3077467" />
+          <MappedItem name="BAC_plus_vector.fa" value="433" />
+          <MappedItem name="hg18/chrX.fa" value="941349" />
+          <MappedItem name="hg18/chr3.fa" value="1556024" />
+          <MappedItem name="hg18/chr20.fa" value="681063" />
+          <MappedItem name="VATG.fa" value="7323" />
+          <MappedItem name="hg18/chr1_random.fa" value="5712" />
+          <MappedItem name="hg18/chr6.fa" value="1349024" />
+          <MappedItem name="hg18/chr3_random.fa" value="14" />
+          <MappedItem name="hg18/chr9_random.fa" value="82" />
+          <MappedItem name="hg18/chr5.fa" value="1751986" />
+          <MappedItem name="AGP.fa" value="29" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="465003" />
+          <Code name="R0" value="26081396" />
+          <Code name="NM" value="3808973" />
+          <Code name="R2" value="14683585" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="6111504" />
+          <Code name="U0" value="24547920" />
+          <Code name="R1" value="17952764" />
+          <Code name="U2" value="13121000" />
+        </MatchCodes>
+        <Reads>49686417</Reads>
+      </ElandLane>
+      <ElandLane end="1" id="4" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>4</LaneID>
+        <End>2</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="2285395" />
+          <MappedItem name="hg18/chr17.fa" value="3329709" />
+          <MappedItem name="hg18/chr15_random.fa" value="233" />
+          <MappedItem name="Apetala2.fa" value="337" />
+          <MappedItem name="hg18/chr5_random.fa" value="99" />
+          <MappedItem name="hg18/chr11.fa" value="2843439" />
+          <MappedItem name="hg18/chr10_random.fa" value="22" />
+          <MappedItem name="hg18/chrM.fa" value="2279334" />
+          <MappedItem name="hg18/chr18.fa" value="295500" />
+          <MappedItem name="OBF5.fa" value="209416" />
+          <MappedItem name="EPR-1.fa" value="49" />
+          <MappedItem name="hg18/chr13.fa" value="502492" />
+          <MappedItem name="hg18/chr21.fa" value="396049" />
+          <MappedItem name="hg18/chr13_random.fa" value="376" />
+          <MappedItem name="hg18/chr21_random.fa" value="99839" />
+          <MappedItem name="hg18/chr4.fa" value="905741" />
+          <MappedItem name="hg18/chr6_random.fa" value="147" />
+          <MappedItem name="hg18/chr22_random.fa" value="18" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="64" />
+          <MappedItem name="hg18/chr16_random.fa" value="27" />
+          <MappedItem name="hg18/chr17_random.fa" value="6045" />
+          <MappedItem name="hg18/chr8_random.fa" value="42" />
+          <MappedItem name="hg18/chr9.fa" value="1409400" />
+          <MappedItem name="hg18/chr2.fa" value="3422310" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="9455" />
+          <MappedItem name="hg18/chr19.fa" value="1900319" />
+          <MappedItem name="hg18/chr4_random.fa" value="1512" />
+          <MappedItem name="hg18/chr7_random.fa" value="2082" />
+          <MappedItem name="hg18/chr22.fa" value="913051" />
+          <MappedItem name="hg18/chr12.fa" value="1874479" />
+          <MappedItem name="hg18/chr8.fa" value="841644" />
+          <MappedItem name="hg18/chr10.fa" value="1225075" />
+          <MappedItem name="hg18/chrY.fa" value="56438" />
+          <MappedItem name="hg18/chr15.fa" value="1829529" />
+          <MappedItem name="hg18/chrX_random.fa" value="806" />
+          <MappedItem name="hg18/chr16.fa" value="1319456" />
+          <MappedItem name="hg18/chr2_random.fa" value="112" />
+          <MappedItem name="hg18/chr14.fa" value="990085" />
+          <MappedItem name="newcontam_UK.fa" value="237" />
+          <MappedItem name="hg18/chr19_random.fa" value="2" />
+          <MappedItem name="hg18/chr1.fa" value="3297073" />
+          <MappedItem name="BAC_plus_vector.fa" value="445" />
+          <MappedItem name="hg18/chrX.fa" value="1009413" />
+          <MappedItem name="hg18/chr3.fa" value="1686851" />
+          <MappedItem name="hg18/chr20.fa" value="723549" />
+          <MappedItem name="VATG.fa" value="8331" />
+          <MappedItem name="hg18/chr1_random.fa" value="5988" />
+          <MappedItem name="hg18/chr6.fa" value="1458573" />
+          <MappedItem name="hg18/chr3_random.fa" value="13" />
+          <MappedItem name="hg18/chr9_random.fa" value="101" />
+          <MappedItem name="hg18/chr5.fa" value="1894819" />
+          <MappedItem name="AGP.fa" value="24" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="493835" />
+          <Code name="R0" value="27933524" />
+          <Code name="NM" value="5037389" />
+          <Code name="R2" value="16575441" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="6649797" />
+          <Code name="U0" value="25505275" />
+          <Code name="R1" value="20052812" />
+          <Code name="U2" value="14441702" />
+        </MatchCodes>
+        <Reads>53915808</Reads>
+      </ElandLane>
+      <SequenceLane end="1" id="5" version="1">
+        <SampleName>s</SampleName>
+        <LaneID>5</LaneID>
+        <End>2</End>
+        <Reads>33310172</Reads>
+        <SequenceType>FASTQ</SequenceType>
+      </SequenceLane>
+      <ElandLane end="1" id="6" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>6</LaneID>
+        <End>2</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="1118079" />
+          <MappedItem name="hg18/chr17.fa" value="2570258" />
+          <MappedItem name="hg18/chr15_random.fa" value="366" />
+          <MappedItem name="Apetala2.fa" value="727" />
+          <MappedItem name="hg18/chr5_random.fa" value="62" />
+          <MappedItem name="hg18/chr11.fa" value="1790218" />
+          <MappedItem name="hg18/chr10_random.fa" value="32" />
+          <MappedItem name="hg18/chrM.fa" value="2109602" />
+          <MappedItem name="hg18/chr18.fa" value="226387" />
+          <MappedItem name="OBF5.fa" value="270927" />
+          <MappedItem name="EPR-1.fa" value="92" />
+          <MappedItem name="hg18/chr11_random.fa" value="6" />
+          <MappedItem name="hg18/chr13.fa" value="302988" />
+          <MappedItem name="hg18/chr21.fa" value="223133" />
+          <MappedItem name="hg18/chr13_random.fa" value="397" />
+          <MappedItem name="hg18/chr21_random.fa" value="39777" />
+          <MappedItem name="hg18/chr4.fa" value="658824" />
+          <MappedItem name="hg18/chr6_random.fa" value="158" />
+          <MappedItem name="hg18/chr22_random.fa" value="1" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="264" />
+          <MappedItem name="hg18/chr16_random.fa" value="394" />
+          <MappedItem name="hg18/chr17_random.fa" value="4348" />
+          <MappedItem name="hg18/chr8_random.fa" value="212" />
+          <MappedItem name="hg18/chr9.fa" value="1117430" />
+          <MappedItem name="hg18/chr2.fa" value="1461556" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="32684" />
+          <MappedItem name="hg18/chr19.fa" value="2713802" />
+          <MappedItem name="hg18/chr4_random.fa" value="887" />
+          <MappedItem name="hg18/chr7_random.fa" value="992" />
+          <MappedItem name="hg18/chr22.fa" value="844752" />
+          <MappedItem name="hg18/chr12.fa" value="1885047" />
+          <MappedItem name="hg18/chr8.fa" value="1182749" />
+          <MappedItem name="hg18/chr10.fa" value="921449" />
+          <MappedItem name="hg18/chrY.fa" value="25442" />
+          <MappedItem name="hg18/chr15.fa" value="713094" />
+          <MappedItem name="hg18/chr18_random.fa" value="4" />
+          <MappedItem name="hg18/chrX_random.fa" value="602" />
+          <MappedItem name="hg18/chr16.fa" value="1479718" />
+          <MappedItem name="hg18/chr2_random.fa" value="229" />
+          <MappedItem name="hg18/chr14.fa" value="714206" />
+          <MappedItem name="newcontam_UK.fa" value="138" />
+          <MappedItem name="hg18/chr1.fa" value="2682954" />
+          <MappedItem name="BAC_plus_vector.fa" value="698" />
+          <MappedItem name="hg18/chrX.fa" value="862310" />
+          <MappedItem name="hg18/chr3.fa" value="1310743" />
+          <MappedItem name="hg18/chr20.fa" value="858302" />
+          <MappedItem name="VATG.fa" value="10757" />
+          <MappedItem name="hg18/chr1_random.fa" value="12994" />
+          <MappedItem name="hg18/chr6.fa" value="1589887" />
+          <MappedItem name="hg18/chr3_random.fa" value="6" />
+          <MappedItem name="hg18/chr9_random.fa" value="142" />
+          <MappedItem name="hg18/chr5.fa" value="1072768" />
+          <MappedItem name="AGP.fa" value="57" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="410941" />
+          <Code name="R0" value="29332617" />
+          <Code name="NM" value="2140058" />
+          <Code name="R2" value="20062622" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="5296080" />
+          <Code name="U0" value="20105242" />
+          <Code name="R1" value="25994563" />
+          <Code name="U2" value="10610880" />
+        </MatchCodes>
+        <Reads>40665866</Reads>
+      </ElandLane>
+      <ElandLane end="1" id="7" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>7</LaneID>
+        <End>2</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="1078702" />
+          <MappedItem name="hg18/chr17.fa" value="2444411" />
+          <MappedItem name="hg18/chr15_random.fa" value="272" />
+          <MappedItem name="hg18/chrX_random.fa" value="577" />
+          <MappedItem name="hg18/chr5_random.fa" value="49" />
+          <MappedItem name="hg18/chr11.fa" value="1759146" />
+          <MappedItem name="hg18/chr10_random.fa" value="71" />
+          <MappedItem name="hg18/chrM.fa" value="2433962" />
+          <MappedItem name="hg18/chr18.fa" value="242431" />
+          <MappedItem name="OBF5.fa" value="139021" />
+          <MappedItem name="EPR-1.fa" value="30" />
+          <MappedItem name="hg18/chr11_random.fa" value="4" />
+          <MappedItem name="Apetala2.fa" value="309" />
+          <MappedItem name="hg18/chr13.fa" value="310057" />
+          <MappedItem name="hg18/chr21.fa" value="214386" />
+          <MappedItem name="hg18/chr13_random.fa" value="442" />
+          <MappedItem name="hg18/chr21_random.fa" value="33051" />
+          <MappedItem name="hg18/chr4.fa" value="693890" />
+          <MappedItem name="hg18/chr6_random.fa" value="153" />
+          <MappedItem name="hg18/chr22_random.fa" value="15" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="107" />
+          <MappedItem name="hg18/chr16_random.fa" value="467" />
+          <MappedItem name="hg18/chr17_random.fa" value="4405" />
+          <MappedItem name="hg18/chr8_random.fa" value="183" />
+          <MappedItem name="hg18/chr9.fa" value="1050219" />
+          <MappedItem name="hg18/chr2.fa" value="1496165" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="10371" />
+          <MappedItem name="hg18/chr19.fa" value="2447678" />
+          <MappedItem name="hg18/chr4_random.fa" value="856" />
+          <MappedItem name="hg18/chr7_random.fa" value="1450" />
+          <MappedItem name="hg18/chr22.fa" value="808364" />
+          <MappedItem name="hg18/chr12.fa" value="1815509" />
+          <MappedItem name="hg18/chr8.fa" value="1116286" />
+          <MappedItem name="hg18/chr10.fa" value="956650" />
+          <MappedItem name="hg18/chrY.fa" value="21091" />
+          <MappedItem name="hg18/chr15.fa" value="695403" />
+          <MappedItem name="hg18/chr18_random.fa" value="2" />
+          <MappedItem name="hg18/chr16.fa" value="1408777" />
+          <MappedItem name="hg18/chr2_random.fa" value="179" />
+          <MappedItem name="hg18/chr14.fa" value="717532" />
+          <MappedItem name="newcontam_UK.fa" value="76" />
+          <MappedItem name="hg18/chr1.fa" value="2713175" />
+          <MappedItem name="BAC_plus_vector.fa" value="576" />
+          <MappedItem name="hg18/chrX.fa" value="842394" />
+          <MappedItem name="hg18/chr3.fa" value="1299476" />
+          <MappedItem name="hg18/chr20.fa" value="826774" />
+          <MappedItem name="VATG.fa" value="4894" />
+          <MappedItem name="hg18/chr1_random.fa" value="20371" />
+          <MappedItem name="hg18/chr6.fa" value="1574072" />
+          <MappedItem name="hg18/chr3_random.fa" value="7" />
+          <MappedItem name="hg18/chr9_random.fa" value="156" />
+          <MappedItem name="hg18/chr5.fa" value="1076419" />
+          <MappedItem name="AGP.fa" value="26" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="391630" />
+          <Code name="R0" value="33185367" />
+          <Code name="NM" value="2010407" />
+          <Code name="R2" value="21949225" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="5056565" />
+          <Code name="U0" value="20382001" />
+          <Code name="R1" value="28203270" />
+          <Code name="U2" value="10038024" />
+        </MatchCodes>
+        <Reads>39935997</Reads>
+      </ElandLane>
+      <ElandLane end="1" id="8" version="2">
+        <SampleName>s</SampleName>
+        <LaneID>8</LaneID>
+        <End>2</End>
+        <GenomeMap>
+          <GenomeItem name="chr20.fa" value="hg18/chr20.fa" />
+          <GenomeItem name="chr10_random.fa" value="hg18/chr10_random.fa" />
+          <GenomeItem name="chr4.fa" value="hg18/chr4.fa" />
+          <GenomeItem name="chrY.fa" value="hg18/chrY.fa" />
+          <GenomeItem name="chr4_random.fa" value="hg18/chr4_random.fa" />
+          <GenomeItem name="chr11_random.fa" value="hg18/chr11_random.fa" />
+          <GenomeItem name="chr6_random.fa" value="hg18/chr6_random.fa" />
+          <GenomeItem name="chr6.fa" value="hg18/chr6.fa" />
+          <GenomeItem name="chrX_random.fa" value="hg18/chrX_random.fa" />
+          <GenomeItem name="Apetala2.fa" value="Apetala2.fa" />
+          <GenomeItem name="chr3.fa" value="hg18/chr3.fa" />
+          <GenomeItem name="chr10.fa" value="hg18/chr10.fa" />
+          <GenomeItem name="chr15_random.fa" value="hg18/chr15_random.fa" />
+          <GenomeItem name="chr19.fa" value="hg18/chr19.fa" />
+          <GenomeItem name="chr7_random.fa" value="hg18/chr7_random.fa" />
+          <GenomeItem name="OBF5.fa" value="OBF5.fa" />
+          <GenomeItem name="chr12.fa" value="hg18/chr12.fa" />
+          <GenomeItem name="EPR-1.fa" value="EPR-1.fa" />
+          <GenomeItem name="chr1.fa" value="hg18/chr1.fa" />
+          <GenomeItem name="chr1_random.fa" value="hg18/chr1_random.fa" />
+          <GenomeItem name="chr16_random.fa" value="hg18/chr16_random.fa" />
+          <GenomeItem name="chr21.fa" value="hg18/chr21.fa" />
+          <GenomeItem name="chr2_random.fa" value="hg18/chr2_random.fa" />
+          <GenomeItem name="chr8.fa" value="hg18/chr8.fa" />
+          <GenomeItem name="Lambda_2-3-2_9786nts.fa" value="Lambda_2-3-2_9786nts.fa" />
+          <GenomeItem name="chr8_random.fa" value="hg18/chr8_random.fa" />
+          <GenomeItem name="chr18.fa" value="hg18/chr18.fa" />
+          <GenomeItem name="Lambda_1-1_11936nts.fa" value="Lambda_1-1_11936nts.fa" />
+          <GenomeItem name="chr17.fa" value="hg18/chr17.fa" />
+          <GenomeItem name="chr22_random.fa" value="hg18/chr22_random.fa" />
+          <GenomeItem name="chr15.fa" value="hg18/chr15.fa" />
+          <GenomeItem name="chr7.fa" value="hg18/chr7.fa" />
+          <GenomeItem name="chrX.fa" value="hg18/chrX.fa" />
+          <GenomeItem name="chrM.fa" value="hg18/chrM.fa" />
+          <GenomeItem name="chr21_random.fa" value="hg18/chr21_random.fa" />
+          <GenomeItem name="chr19_random.fa" value="hg18/chr19_random.fa" />
+          <GenomeItem name="VATG.fa" value="VATG.fa" />
+          <GenomeItem name="chr14.fa" value="hg18/chr14.fa" />
+          <GenomeItem name="chr17_random.fa" value="hg18/chr17_random.fa" />
+          <GenomeItem name="chr13.fa" value="hg18/chr13.fa" />
+          <GenomeItem name="chr11.fa" value="hg18/chr11.fa" />
+          <GenomeItem name="chr16.fa" value="hg18/chr16.fa" />
+          <GenomeItem name="newcontam_UK.fa" value="newcontam_UK.fa" />
+          <GenomeItem name="chr9.fa" value="hg18/chr9.fa" />
+          <GenomeItem name="chr2.fa" value="hg18/chr2.fa" />
+          <GenomeItem name="BAC_plus_vector.fa" value="BAC_plus_vector.fa" />
+          <GenomeItem name="chr18_random.fa" value="hg18/chr18_random.fa" />
+          <GenomeItem name="chr9_random.fa" value="hg18/chr9_random.fa" />
+          <GenomeItem name="chr5.fa" value="hg18/chr5.fa" />
+          <GenomeItem name="chr3_random.fa" value="hg18/chr3_random.fa" />
+          <GenomeItem name="chr5_random.fa" value="hg18/chr5_random.fa" />
+          <GenomeItem name="PDF.fa" value="PDF.fa" />
+          <GenomeItem name="chr13_random.fa" value="hg18/chr13_random.fa" />
+          <GenomeItem name="chr22.fa" value="hg18/chr22.fa" />
+          <GenomeItem name="AGP.fa" value="AGP.fa" />
+        </GenomeMap>
+        <MappedReads>
+          <MappedItem name="hg18/chr7.fa" value="1349366" />
+          <MappedItem name="hg18/chr17.fa" value="2326709" />
+          <MappedItem name="hg18/chr15_random.fa" value="352" />
+          <MappedItem name="hg18/chrX_random.fa" value="721" />
+          <MappedItem name="hg18/chr5_random.fa" value="125" />
+          <MappedItem name="hg18/chr11.fa" value="1734497" />
+          <MappedItem name="hg18/chr10_random.fa" value="4" />
+          <MappedItem name="hg18/chrM.fa" value="1917138" />
+          <MappedItem name="hg18/chr18.fa" value="169567" />
+          <MappedItem name="OBF5.fa" value="125783" />
+          <MappedItem name="EPR-1.fa" value="28" />
+          <MappedItem name="hg18/chr11_random.fa" value="1" />
+          <MappedItem name="Apetala2.fa" value="310" />
+          <MappedItem name="hg18/chr13.fa" value="248252" />
+          <MappedItem name="hg18/chr21.fa" value="314085" />
+          <MappedItem name="hg18/chr13_random.fa" value="405" />
+          <MappedItem name="hg18/chr21_random.fa" value="50620" />
+          <MappedItem name="hg18/chr4.fa" value="495425" />
+          <MappedItem name="hg18/chr6_random.fa" value="46" />
+          <MappedItem name="hg18/chr22_random.fa" value="42" />
+          <MappedItem name="Lambda_2-3-2_9786nts.fa" value="137" />
+          <MappedItem name="hg18/chr16_random.fa" value="640" />
+          <MappedItem name="hg18/chr17_random.fa" value="4224" />
+          <MappedItem name="hg18/chr8_random.fa" value="139" />
+          <MappedItem name="hg18/chr9.fa" value="1356315" />
+          <MappedItem name="hg18/chr2.fa" value="1401418" />
+          <MappedItem name="Lambda_1-1_11936nts.fa" value="12293" />
+          <MappedItem name="hg18/chr19.fa" value="2167120" />
+          <MappedItem name="hg18/chr4_random.fa" value="1118" />
+          <MappedItem name="hg18/chr7_random.fa" value="1062" />
+          <MappedItem name="hg18/chr22.fa" value="572306" />
+          <MappedItem name="hg18/chr12.fa" value="1953327" />
+          <MappedItem name="hg18/chr8.fa" value="995413" />
+          <MappedItem name="hg18/chr10.fa" value="758115" />
+          <MappedItem name="hg18/chrY.fa" value="31615" />
+          <MappedItem name="hg18/chr15.fa" value="631556" />
+          <MappedItem name="hg18/chr16.fa" value="1568689" />
+          <MappedItem name="hg18/chr2_random.fa" value="141" />
+          <MappedItem name="hg18/chr14.fa" value="884077" />
+          <MappedItem name="newcontam_UK.fa" value="50" />
+          <MappedItem name="hg18/chr1.fa" value="2315522" />
+          <MappedItem name="BAC_plus_vector.fa" value="583" />
+          <MappedItem name="hg18/chrX.fa" value="1045292" />
+          <MappedItem name="hg18/chr3.fa" value="1297351" />
+          <MappedItem name="hg18/chr20.fa" value="1045350" />
+          <MappedItem name="VATG.fa" value="4908" />
+          <MappedItem name="hg18/chr1_random.fa" value="5447" />
+          <MappedItem name="hg18/chr6.fa" value="905023" />
+          <MappedItem name="hg18/chr3_random.fa" value="3" />
+          <MappedItem name="hg18/chr9_random.fa" value="394" />
+          <MappedItem name="hg18/chr5.fa" value="1009254" />
+          <MappedItem name="AGP.fa" value="34" />
+        </MappedReads>
+        <MatchCodes>
+          <Code name="QC" value="377748" />
+          <Code name="R0" value="22489651" />
+          <Code name="NM" value="2158049" />
+          <Code name="R2" value="12904686" />
+          <Code name="RM" value="0" />
+          <Code name="U1" value="4495980" />
+          <Code name="U0" value="19418018" />
+          <Code name="R1" value="16965863" />
+          <Code name="U2" value="9633798" />
+        </MatchCodes>
+        <Reads>37853044</Reads>
+      </ElandLane>
+    </ElandCollection>
+  </Gerald>
+</PipelineRun>

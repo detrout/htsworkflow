@@ -2,8 +2,7 @@
 Define some alternate authentication methods
 """
 from django.core.exceptions import PermissionDenied
-
-from htsworkflow.frontend import settings
+from django.conf import settings
 
 apidata = {'apiid': u'0', 'apikey': settings.DEFAULT_API_KEY}
 

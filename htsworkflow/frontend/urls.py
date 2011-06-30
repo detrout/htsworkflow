@@ -9,7 +9,7 @@ admin.autodiscover()
 #databrowse.site.register(Library)
 #databrowse.site.register(FlowCell)
 
-from htsworkflow.frontend import settings
+from django.conf import settings
 
 
 urlpatterns = patterns('',
@@ -25,6 +25,11 @@ urlpatterns = patterns('',
     #(r'^admin/(.*)', admin.site.root),
     # Experiments:
     (r'^experiments/', include('htsworkflow.frontend.experiments.urls')),
+    # Flowcell:
+    (r'^lane/(?P<lane_pk>\w+)',
+     'htsworkflow.frontend.experiments.views.flowcell_lane_detail'),
+    (r'^flowcell/(?P<flowcell_id>\w+)/((?P<lane_number>\w+)/)?$',
+     'htsworkflow.frontend.experiments.views.flowcell_detail'),
     # AnalysTrack:
     #(r'^analysis/', include('htsworkflow.frontend.analysis.urls')),
     # Inventory urls

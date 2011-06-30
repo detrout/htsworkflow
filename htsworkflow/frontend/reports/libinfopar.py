@@ -1,4 +1,4 @@
-from htsworkflow.frontend import settings
+from django.conf import settings
 from django.http import HttpResponse
 from datetime import datetime
 from string import *

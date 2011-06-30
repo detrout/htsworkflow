@@ -18,13 +18,13 @@ class RetrieveTestCases(TestCase):
         pass
 
     def test_format_gerald(self):
-        flowcell_request = self.client.get('/experiments/config/303TUAAXX/json', apidata)
+        flowcell_request = self.client.get('/experiments/config/FC12150/json', apidata)
         self.failUnlessEqual(flowcell_request.status_code, 200)
 
         print dir(flowcell_request)
         flowcell_info = json.loads(flowcell_request.content)
 
-        options = getCombinedOptions(['-f','303TUAAXX','-g',os.getcwd()])        
+        options = getCombinedOptions(['-f','FC12150','-g',os.getcwd()])        
         genome_map = {u'Homo sapiens': '/tmp/hg18' }
         
         config = format_gerald_config(options, flowcell_info, genome_map)

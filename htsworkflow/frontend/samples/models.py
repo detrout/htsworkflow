@@ -2,13 +2,11 @@ import logging
 import urlparse
 from django.db import models
 from django.contrib.auth.models import User, UserManager
+from django.core import urlresolvers
 from django.db.models.signals import pre_save, post_save
 from django.db import connection
-from htsworkflow.frontend import settings
 from htsworkflow.frontend.reports.libinfopar import *
 
-
-# Create your models here.
 logger = logging.getLogger(__name__)
 
 class Antibody(models.Model):
@@ -20,8 +18,7 @@ class Antibody(models.Model):
         max_length=20,
         blank=True,
         null=True, 
-        db_index=True,
-        verbose_name = 'Short Name'
+        db_index=True
     )
     catalog = models.CharField(max_length=50, unique=True, db_index=True)
     antibodies = models.CharField(max_length=500, db_index=True)
@@ -39,8 +36,8 @@ class Cellline(models.Model):
     nickname = models.CharField(max_length=20,
         blank=True,
         null=True, 
-        db_index=True,
-        verbose_name = 'Short Name')
+        db_index=True)
+    
     notes = models.TextField(blank=True)
     def __unicode__(self):
         return unicode(self.cellline_name)
@@ -64,6 +61,7 @@ class Condition(models.Model):
     class Meta:
         ordering = ["condition_name"]
 
+    
 class ExperimentType(models.Model):
   name = models.CharField(max_length=50, unique=True)
 
@@ -102,6 +100,10 @@ class Species(models.Model):
   class Meta:
     verbose_name_plural = "species"
     ordering = ["scientific_name"]
+
+  @models.permalink
+  def get_absolute_url(self):
+    return ('htsworkflow.frontend.samples.views.species', [str(self.id)])
   
 class Affiliation(models.Model):
   name = models.CharField(max_length=256, db_index=True, verbose_name='Name')
@@ -135,26 +137,24 @@ class Library(models.Model):
   id = models.CharField(max_length=10, primary_key=True)
   library_name = models.CharField(max_length=100, unique=True)
   library_species = models.ForeignKey(Species)
-  # new field 2008 Mar 5, alter table samples_library add column "hidden" NOT NULL default 0;
   hidden = models.BooleanField()
-  # new field 2009 Oct 6, alter table samples_library add column "account_number" varchar(100) NULL
   account_number = models.CharField(max_length=100, null=True, blank=True)
-  cell_line = models.ForeignKey(Cellline, blank=True, null=True, verbose_name="Background")
+  cell_line = models.ForeignKey(Cellline, blank=True, null=True,
+                                verbose_name="Background")
   condition = models.ForeignKey(Condition, blank=True, null=True)
   antibody = models.ForeignKey(Antibody,blank=True,null=True)
-  # New field Aug/25/08. SQL: alter table fctracker_library add column "lib_affiliation" varchar(256)  NULL;
-  affiliations = models.ManyToManyField(Affiliation,related_name='library_affiliations',null=True)
-  # new field Nov/14/08
-  tags = models.ManyToManyField(Tag,related_name='library_tags',blank=True,null=True)
-  # New field Aug/19/08
-  # SQL to add column: alter table fctracker_library add column "replicate" smallint unsigned NULL;
+  affiliations = models.ManyToManyField(
+      Affiliation,related_name='library_affiliations',null=True)
+  tags = models.ManyToManyField(Tag,related_name='library_tags',
+                                blank=True,null=True)
   REPLICATE_NUM = ((1,1),(2,2),(3,3),(4,4))
-  replicate =  models.PositiveSmallIntegerField(choices=REPLICATE_NUM,default=1) 
+  replicate =  models.PositiveSmallIntegerField(choices=REPLICATE_NUM,
+                                                blank=True,null=True) 
   experiment_type = models.ForeignKey(ExperimentType)
   library_type = models.ForeignKey(LibraryType, blank=True, null=True)
   creation_date = models.DateField(blank=True, null=True)
   made_for = models.CharField(max_length=50, blank=True, 
-      verbose_name='ChIP/DNA/RNA Made By')
+                              verbose_name='ChIP/DNA/RNA Made By')
   made_by = models.CharField(max_length=50, blank=True, default="Lorian")
   
   PROTOCOL_END_POINTS = (
@@ -170,15 +170,20 @@ class Library(models.Model):
       ('Done', 'Completed'),
     )
   PROTOCOL_END_POINTS_DICT = dict(PROTOCOL_END_POINTS)
+  stopping_point = models.CharField(max_length=25,
+                                    choices=PROTOCOL_END_POINTS,
+                                    default='Done')
   
-  stopping_point = models.CharField(max_length=25, choices=PROTOCOL_END_POINTS, default='Done')
-  amplified_from_sample = models.ForeignKey('self', blank=True, null=True, related_name='amplified_into_sample')  
+  amplified_from_sample = models.ForeignKey('self',
+                            related_name='amplified_into_sample',
+                            blank=True, null=True)
   
   undiluted_concentration = models.DecimalField("Concentration", 
       max_digits=5, decimal_places=2, blank=True, null=True,
       help_text=u"Undiluted concentration (ng/\u00b5l)") 
       # note \u00b5 is the micro symbol in unicode
-  successful_pM = models.DecimalField(max_digits=9, decimal_places=1, blank=True, null=True)
+  successful_pM = models.DecimalField(max_digits=9,
+                                      decimal_places=1, blank=True, null=True)
   ten_nM_dilution = models.BooleanField()
   gel_cut_size = models.IntegerField(default=225, blank=True, null=True)
   insert_size = models.IntegerField(blank=True, null=True)
@@ -199,7 +204,7 @@ class Library(models.Model):
       ordering = ["-id"]
   
   def antibody_name(self):
-    str ='<a target=_self href="/admin/samples/antibody/'+self.antibody.id.__str__()+'/" title="'+self.antibody.__str__()+'">'+self.antibody.nickname+'</a>' 
+    str ='<a target=_self href="/admin/samples/antibody/'+self.antibody.id.__str__()+'/" title="'+self.antibody.__str__()+'">'+self.antibody.label+'</a>' 
     return str
   antibody_name.allow_tags = True
 
@@ -286,10 +291,10 @@ class Library(models.Model):
   @models.permalink
   def get_absolute_url(self):
     return ('htsworkflow.frontend.samples.views.library_to_flowcells', [str(self.id)])
-    
-  
-    
 
+  def get_admin_url(self):
+      return urlresolvers.reverse('admin:samples_library_change',
+                                  args=(self.id,))
 
 class HTSUser(User):
     """

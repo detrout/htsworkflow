@@ -2,7 +2,7 @@ import unittest
 
 
 import os
-from htsworkflow.automation.copier import runfolder_validate
+from htsworkflow.automation.solexa import is_runfolder
 
 def extract_runfolder_path(watchdir, event):
   runfolder_path = watchdir
@@ -13,7 +13,7 @@ def extract_runfolder_path(watchdir, event):
   fragments = path[len(watchdir):].split(os.path.sep)
   for f in fragments:
     runfolder_path = os.path.join(runfolder_path, f)
-    if runfolder_validate(f):
+    if is_runfolder(f):
       return runfolder_path
   return None
 
