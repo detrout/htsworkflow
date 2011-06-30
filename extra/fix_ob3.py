@@ -7,7 +7,7 @@ import re
 import sys
 
 from django.core.management import setup_environ
-from htsworkflow.frontend import settings
+from django.conf import settings
 setup_environ(settings)
 
 import htsworkflow.frontend.samples.models as samples
