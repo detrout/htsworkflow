@@ -66,7 +66,7 @@ class FlowCell(models.Model):
 
   def Lanes(self):
     html = ['<table>']
-    for lane in self.lane_set.all():
+    for lane in self.lane_set.order_by('lane_number'):
         cluster_estimate = lane.cluster_estimate
         if cluster_estimate is not None:
             cluster_estimate = "%s k" % ((int(cluster_estimate)/1000), )
