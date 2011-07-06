@@ -1,9 +1,12 @@
 """Helper features for working with librdf
 """
+import logging
 import os
 import types
 
 import RDF
+
+logger = logging.getLogger(__name__)
 
 # standard ontology namespaces
 owlNS = RDF.NS('http://www.w3.org/2002/07/owl#')
@@ -21,6 +24,7 @@ submissionLog = RDF.NS("http://jumpgate.caltech.edu/wiki/SubmissionsLog/")
 def sparql_query(model, query_filename):
     """Execute sparql query from file
     """
+    logger.info("Opening: %s" % (query_filename,))
     query_body = open(query_filename,'r').read()
     query = RDF.SPARQLQuery(query_body)
     results = query.execute(model)
@@ -92,16 +96,19 @@ def fromTypedNode(node):
 
     return literal
 
-
+    
 def get_model(model_name=None, directory=None):
     if directory is None:
         directory = os.getcwd()
         
     if model_name is None:
         storage = RDF.MemoryStorage()
+        logger.info("Using RDF Memory model")
     else:
+        options = "hash-type='bdb',dir='{0}'".format(directory)
         storage = RDF.HashStorage(model_name,
-                      options="hash-type='bdb',dir='{0}'".format(directory))
+                      options=options)
+        logger.info("Using {0} with options {1}".format(model_name, options))
     model = RDF.Model(storage)
     return model
         
