@@ -151,7 +151,7 @@ class TestDAFMapper(unittest.TestCase):
 
     def test_find_attributes(self):
         lib_id = '11204'
-        lib_url = 'http://jumpgate.caltech.edu/library/%s' %(lib_id)
+        lib_url = 'http://jumpgate.caltech.edu/library/%s/' %(lib_id)
         extra = '''@prefix dafTerm: <http://jumpgate.caltech.edu/wiki/UcscDaf#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -169,7 +169,7 @@ class TestDAFMapper(unittest.TestCase):
         # make sure we can override attributes, the value in our
         # server is 500 for this library
         self.failUnlessEqual(gel_cut, 100)
-        
+
         species = daf_mapper._get_library_attribute(libNode, 'species')
         self.failUnlessEqual(species, "Homo sapiens")
 
