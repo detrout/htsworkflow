@@ -210,15 +210,15 @@ def make_ddf(view_map, submissionNode, daf_name, make_condor=False, outdir=None)
 PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
 PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
 
-select ?submitView  ?filename ?md5sum ?view ?cell ?antibody ?sex ?control ?controlId ?labExpId ?labVersion ?treatment ?protocol
+select ?submitView  ?files ?md5sum ?view ?cell ?antibody ?sex ?control ?controlId ?labExpId ?labVersion ?treatment ?protocol
 WHERE {
-  ?file ucscDaf:filename ?filename ;
+  ?file ucscDaf:filename ?files ;
         ucscDaf:md5sum ?md5sum .
   ?submitView ucscDaf:has_file ?file ;
               ucscDaf:view ?dafView ;
-              ucscDaf:submission %(submission)s .
+              ucscDaf:submission <%(submission)s> .
   ?dafView ucscDaf:name ?view .
-  %(submission)s submissionOntology:library ?library .
+  <%(submission)s> submissionOntology:library ?library .
 
   OPTIONAL { ?submitView ucscDaf:antibody ?antibody }
   OPTIONAL { ?submitView ucscDaf:cell ?cell }
@@ -245,12 +245,12 @@ ORDER BY  ?submitView"""
     else:
         output = sys.stdout
 
-    formatted_query = query_template % {'submission': str(submissionNode)}
+    formatted_query = query_template % {'submission': str(submissionNode.uri)}
 
     query = RDF.SPARQLQuery(formatted_query)
     results = query.execute(view_map.model)
 
-    variables = ['filename']
+    variables = ['files']
     # filename goes first
     variables.extend(view_map.get_daf_variables())
     variables += ['controlId', 'labExpId', 'md5sum']
@@ -264,7 +264,7 @@ ORDER BY  ?submitView"""
         current = all_views.setdefault(viewname, {})
         for variable_name in variables:
             value = str(fromTypedNode(row[variable_name]))
-            if variable_name in ('filename', 'md5sum'):
+            if variable_name in ('files', 'md5sum'):
                 current.setdefault(variable_name,[]).append(value)
             else:
                 current[variable_name] = value
@@ -272,13 +272,13 @@ ORDER BY  ?submitView"""
     for view in all_views.keys():
         line = []
         for variable_name in variables:
-            if variable_name in ('filename', 'md5sum'):
+            if variable_name in ('files', 'md5sum'):
                 line.append(','.join(all_views[view][variable_name]))
             else:
                 line.append(all_views[view][variable_name])
         output.write("\t".join(line))
         output.write(os.linesep)
-        all_files.extend(all_views[view]['filename'])
+        all_files.extend(all_views[view]['files'])
         
     logging.info(
         "Examined {0}, found files: {1}".format(
