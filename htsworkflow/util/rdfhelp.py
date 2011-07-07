@@ -60,13 +60,15 @@ def toTypedNode(value):
     elif type(value) == types.FloatType:
         value_type = xsdNS['float'].uri
         value = unicode(value)
-    elif type(value) in types.StringTypes:
-        value_type = xsdNS['string'].uri
     else:
         value_type = None
         value = unicode(value)
 
-    return RDF.Node(literal=value, datatype=value_type)
+    if value_type is not None:
+        node = RDF.Node(literal=value, datatype=value_type)
+    else:
+        node = RDF.Node(literal=value)
+    return node
 
 def fromTypedNode(node):
     if node is None:

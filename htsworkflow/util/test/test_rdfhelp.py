@@ -14,8 +14,7 @@ try:
       def test_typed_node_string(self):
           node = toTypedNode('hello')
           self.failUnlessEqual(node.literal_value['string'], u'hello')
-          self.failUnlessEqual(str(node.literal_value['datatype']),
-                               'http://www.w3.org/2001/XMLSchema#string')
+          self.failUnless(node.literal_value['datatype'] is None)
   
       def test_blank_or_uri_blank(self):
           node = blankOrUri()
