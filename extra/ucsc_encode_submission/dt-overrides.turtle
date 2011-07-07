@@ -5,7 +5,7 @@
 ##
 
 @base <file:///home/diane/proj/solexa/htsworkflow/extra/ucsc_encode_submission/no-lib.sparql> .
-@prefix encodeSubmit:<http://jumpgate.caltech.edu/wiki/UCSCSubmissionOntology#> .
+@prefix encodeSubmit:<http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#> .
 
 # woldlab-hepg2-rnaseq-2009dec
 <http://encodesubmit.ucsc.edu/pipeline/show/805>

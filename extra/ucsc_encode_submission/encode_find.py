@@ -22,7 +22,7 @@ from htsworkflow.util.rdfhelp import \
      get_model, \
      get_serializer, \
      sparql_query, \
-     submitOntology, \
+     submissionOntology, \
      libraryOntology, \
      load_into_model, \
      rdfNS, \
@@ -34,7 +34,7 @@ libraryNS = RDF.NS("http://jumpgate.caltech.edu/library/")
 
 
 from htsworkflow.submission.ucsc import submission_view_url, UCSCEncodePipeline
-download_ddf = urlparse.urljoin(UCSCEncodePipeline, "download_ddf#", allow_fragments=True)
+download_ddf = UCSCEncodePipeline+"download_ddf#"
 ddfNS = RDF.NS(download_ddf)
                
 DBDIR = os.path.expanduser("~diane/proj/submission")
@@ -61,7 +61,7 @@ def main(cmdline=None):
     model = get_model(opts.load_model, DBDIR)
     
     if opts.load_rdf is not None:
-        ns_uri = submitOntology[''].uri
+        ns_uri = submissionOntology[''].uri
         load_into_model(model, opts.rdf_parser_name, opts.load_rdf, ns_uri)
         
     if opts.update:
@@ -127,9 +127,9 @@ def load_my_submissions(model, cookie=None):
     # first record is header
     tr = tr.findNext()
     TypeN = rdfsNS['type']
-    NameN = submitOntology['name']
-    SpeciesN = submitOntology['species']
-    LibraryURN = submitOntology['library_urn']
+    NameN = submissionOntology['name']
+    SpeciesN = submissionOntology['species']
+    LibraryURN = submissionOntology['library_urn']
 
     while tr is not None:
         td = tr.findAll('td')
@@ -137,7 +137,7 @@ def load_my_submissions(model, cookie=None):
             subUrnText = td[0].contents[0].contents[0].encode(CHARSET)
             subUrn = RDF.Uri(submission_view_url(subUrnText))
 
-            add_stmt(model, subUrn, TypeN, submitOntology['Submission'])
+            add_stmt(model, subUrn, TypeN, submissionOntology['Submission'])
                 
             name = get_contents(td[4])
             add_stmt(model, subUrn, NameN, name)
@@ -170,10 +170,10 @@ def load_my_submissions(model, cookie=None):
 def add_submission_to_library_urn(model, submissionUrn, predicate, library_id):
     """Add a link from a UCSC submission to woldlab library if needed
     """
-    libraryUrn = libraryNS[library_id]
+    libraryUrn = libraryNS[library_id+'/']
     query = RDF.Statement(submissionUrn, predicate, libraryUrn)
     if not model.contains_statement(query):
-        link = RDF.Statement(submissionUrn, predicate, libraryNS[library_id])
+        link = RDF.Statement(submissionUrn, predicate, libraryUrn)
         logger.info("Adding Sub -> Lib link: {0}".format(link))
         model.add_statement(link)
     else:
@@ -190,7 +190,7 @@ WHERE {{
   ?subid submissionOntology:name ?name
   OPTIONAL {{ ?subid submissionOntology:library_urn ?libid }}
   FILTER  (!bound(?libid))
-}}""".format(submissionOntology=submitOntology[''].uri)
+}}""".format(submissionOntology=submissionOntology[''].uri)
 )    
 
     results = missing_lib_query.execute(model)
@@ -211,7 +211,7 @@ def add_submission_creation_date(model, subUrn, cookie):
     creation_dates = list(model.find_statements(query))
     if len(creation_dates) == 0:
         logger.info("Getting creation date for: {0}".format(str(subUrn)))
-        soup = get_url_as_soup(str(subUrn.uri), 'GET', cookie)
+        soup = get_url_as_soup(str(subUrn), 'GET', cookie)
         created_label = soup.find(text="Created: ")
         if created_label:
             created_date = get_date_contents(created_label.next)
@@ -222,9 +222,9 @@ def add_submission_creation_date(model, subUrn, cookie):
         logger.debug("Found creation date for: {0}".format(str(subUrn)))
 
 def update_submission_detail(model, subUrn, status, recent_update, cookie):
-    HasStatusN = submitOntology['has_status']
-    StatusN = submitOntology['status']
-    LastModifyN = submitOntology['last_modify_date']
+    HasStatusN = submissionOntology['has_status']
+    StatusN = submissionOntology['status']
+    LastModifyN = submissionOntology['last_modify_date']
 
     status_nodes_query = RDF.Statement(subUrn, HasStatusN, None)
     status_nodes = list(model.find_statements(status_nodes_query))
@@ -258,7 +258,7 @@ def update_ddf(model, subUrn, statusNode, cookie):
     download_ddf_url = str(subUrn).replace('show', 'download_ddf')
     ddfUrn = RDF.Uri(download_ddf_url)
     
-    status_is_ddf = RDF.Statement(statusNode, TypeN, ddfNS['ddf'])
+    status_is_ddf = RDF.Statement(statusNode, TypeN, ddfNS[''])
     if not model.contains_statement(status_is_ddf):
         logging.info('Adding ddf to {0}, {1}'.format(subUrn, statusNode))
         ddf_text = get_url_as_text(download_ddf_url, 'GET', cookie)
@@ -288,7 +288,7 @@ def add_ddf_statements(model, statusNode, ddf_string):
 
         for f in files:
             fileNode = RDF.Node()
-            add_stmt(model, statusNode, submitOntology['has_file'], fileNode)
+            add_stmt(model, statusNode, submissionOntology['has_file'], fileNode)
             add_stmt(model, fileNode, rdfsNS['type'], ddfNS['file'])
             add_stmt(model, fileNode, ddfNS['filename'], f)
 
@@ -355,20 +355,13 @@ def get_date_contents(element):
         return None
 
         
-def load_into_model(model, parser_name, filename):
-    if not os.path.exists(filename):
-        raise IOError("Can't find {0}".format(filename))
-    
-    data = open(filename, 'r').read()
-    rdf_parser = RDF.Parser(name=parser_name)
-    rdf_parser.parse_string_into_model(model, data, ns_uri)
-
 def add_stmt(model, subject, predicate, object):
     """Convienence create RDF Statement and add to a model
     """
     return model.add_statement(
         RDF.Statement(subject, predicate, object)
     )
+
 
 def login(cookie=None):
     """Login if we don't have a cookie

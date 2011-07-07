@@ -1,14 +1,14 @@
 # Produce list of submissions associated with a cell/replicate
 
 PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
-PREFIX encodeSubmit:<http://jumpgate.caltech.edu/wiki/UCSCSubmissionOntology#>
+PREFIX ucscSubmission:<http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
 PREFIX libraryOntology:<http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
 SELECT distinct ?liburn ?cell ?replicate ?subid
 WHERE {
-    ?subid encodeSubmit:library_urn ?liburn ;
-           encodeSubmit:name ?name .
+    ?subid ucscSubmission:library_urn ?liburn ;
+           ucscSubmission:name ?name .
     ?liburn libraryOntology:cell_line ?cell ;
-            libraryOntology:replicate ?replicate
+            libraryOntology:replicate ?replicate .
 }
 ORDER BY ?cell ?replicate ?liburn
