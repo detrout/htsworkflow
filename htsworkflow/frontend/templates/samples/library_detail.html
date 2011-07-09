@@ -135,6 +135,23 @@
 	  {% endfor %}
     </tbody>
   </table>
+  <br/>
+  <hr/>
+  <h2>Count of multi-reads</h2>
+  {% for eland_lane in lane_summary_list %}
+    {% if eland_lane.summarized_reads %}
+    <h3>{{eland_lane.cycle_width}} {{ eland_lane.flowcell_id }} lane {{ eland_lane.lane_id }} 
+      {% if eland_lane.end %} end {{ eland_lane.end }}{% endif %}
+    </h3>
+    <ul about="{{eland_lane.lane.get_absolute_url}}">
+      {% for name, counts in eland_lane.summarized_reads.items %}
+      <li rel="libns:has_mappings">
+         <b property="libns:mapped_to">{{ name }}</b>: 
+         <span property="libns:reads" content="{{counts}}" datatype="xsd:integer">{{ counts|intcomma }}</span></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  {% endfor %}
   {% endblock %}
   </div>
 </div>
