@@ -20,13 +20,13 @@ class Antibody(models.Model):
         null=True, 
         db_index=True
     )
-    catalog = models.CharField(max_length=50, unique=True, db_index=True)
+    catalog = models.CharField(max_length=50, blank=True, null=True)
     antibodies = models.CharField(max_length=500, db_index=True)
-    source = models.CharField(max_length=500, blank=True, db_index=True)
-    biology = models.TextField(blank=True)
-    notes = models.TextField(blank=True)
+    source = models.CharField(max_length=500, blank=True, null=True, db_index=True)
+    biology = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
     def __unicode__(self):
-        return u'%s - %s (%s)' % (self.antigene, self.antibodies, self.catalog)
+        return u'%s - %s' % (self.antigene, self.antibodies)
     class Meta:
         verbose_name_plural = "antibodies"
         ordering = ["antigene"]
