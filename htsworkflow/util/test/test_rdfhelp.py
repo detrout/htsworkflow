@@ -1,6 +1,7 @@
 import unittest
+import types
 
-from htsworkflow.util.rdfhelp import toTypedNode, blankOrUri
+from htsworkflow.util.rdfhelp import blankOrUri, toTypedNode, fromTypedNode
 try:
   import RDF
   
@@ -31,6 +32,12 @@ try:
           node = blankOrUri(s)
           self.failUnlessEqual(node.is_resource(), True)
           self.failUnlessEqual(node, s)
+
+      def test_unicode_node_roundtrip(self):
+        literal = u'\u5927'
+        roundtrip = fromTypedNode(toTypedNode(literal))
+        self.failUnlessEqual(roundtrip, literal)
+        self.failUnlessEqual(type(roundtrip), types.UnicodeType)
           
   def suite():
       return unittest.makeSuite(testRdfHelp, 'test')

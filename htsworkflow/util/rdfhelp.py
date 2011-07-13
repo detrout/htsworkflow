@@ -67,7 +67,7 @@ def toTypedNode(value):
     if value_type is not None:
         node = RDF.Node(literal=value, datatype=value_type)
     else:
-        node = RDF.Node(literal=value)
+        node = RDF.Node(literal=unicode(value).encode('utf-8'))
     return node
 
 def fromTypedNode(node):
