@@ -51,7 +51,9 @@ def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
 
-    if opts.verbose:
+    if opts.debug:
+        logging.basicConfig(level=logging.DEBUG)
+    elif opts.verbose:
         logging.basicConfig(level=logging.INFO)
 
     htsw_authdata = api.make_auth_from_opts(opts, parser)
@@ -111,6 +113,7 @@ def make_parser():
     options.add_option("--rdf-parser-name", default="turtle",
       help="set rdf file parser type")
     options.add_option("-v", "--verbose", action="store_true", default=False)
+    options.add_option("--debug", action="store_true", default=False)
     parser.add_option_group(options)
     
     api.add_auth_options(parser)
@@ -299,15 +302,21 @@ def add_ddf_statements(model, statusNode, ddf_string):
 def load_encode_libraries(model, htswapi):
     """Get libraries associated with encode.
     """
-    encodeUrl = os.path.join(htswapi.root_url + "/library/?affiliations__id__exact=44")
+    encodeFilters = ["/library/?affiliations__id__exact=44",
+                     "/library/?affiliations__id__exact=80",]
+
+    
+    encodeUrls = [os.path.join(htswapi.root_url + u) for u in encodeFilters]
     rdfaParser = RDF.Parser(name='rdfa')
-    print encodeUrl
-    rdfaParser.parse_into_model(model, encodeUrl)
-    query = RDF.Statement(None, libraryOntology['library_id'], None)
-    libraries = model.find_statements(query)
-    for statement in libraries:
-        libraryUrn = statement.subject
-        load_library_detail(model, libraryUrn)
+    for encodeUrl in encodeUrls:
+        logger.info("Scanning library url {0}".format(encodeUrl))
+        rdfaParser.parse_into_model(model, encodeUrl)
+        query = RDF.Statement(None, libraryOntology['library_id'], None)
+        libraries = model.find_statements(query)
+        for statement in libraries:
+            libraryUrn = statement.subject
+            logger.info("Scanning {0}".format(str(libraryUrn)))
+            load_library_detail(model, libraryUrn)
 
 
 def load_library_detail(model, libraryUrn):
@@ -316,6 +325,7 @@ def load_library_detail(model, libraryUrn):
     rdfaParser = RDF.Parser(name='rdfa')
     query = RDF.Statement(libraryUrn, libraryOntology['date'], None)
     results = list(model.find_statements(query))
+    logger.debug("Found {0} statements for {1}".format(len(results), libraryUrn))
     if len(results) == 0:
         logger.info("Loading {0}".format(str(libraryUrn)))
         rdfaParser.parse_into_model(model, libraryUrn.uri)
@@ -326,8 +336,13 @@ def load_library_detail(model, libraryUrn):
                         
 def get_library_id(name):
     """Guess library ID from library name
+
+    >>> get_library_id('2x75-GM12892-rep1-11039 20110217 elements')
+    '11039'
+    >>> get_library_id('10150 C2C12-24h-myogenin-2PCR-Rep1.32mers')
+    '10150'
     """
-    match = re.search(r"[ -](?P<id>([\d]{5})|(SL[\d]{4}))", name)
+    match = re.search(r"([ -]|^)(?P<id>([\d]{5})|(SL[\d]{4}))", name)
     library_id = None
     if match is not None:
         library_id = match.group('id')
