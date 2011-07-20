@@ -83,14 +83,17 @@ class TestDAF(unittest.TestCase):
         name = model.get_target(signal_view_node, dafTermOntology['name'])
         self.failUnlessEqual(fromTypedNode(name), u'Signal')
 
-def load_daf_mapper(name, extra_statements=None):
+def load_daf_mapper(name, extra_statements=None, ns=None):
     """Load test model in
     """
     model = get_model()
+    if ns is None:
+        ns="http://extra"
+        
     if extra_statements is not None:
         parser = RDF.Parser(name='turtle')
         parser.parse_string_into_model(model, extra_statements,
-                                       'http://extra.extra')
+                                       ns)
         
     test_daf_stream = StringIO(test_daf)
     mapper = daf.DAFMapper(name, daf_file = test_daf_stream, model=model)
@@ -120,30 +123,31 @@ class TestDAFMapper(unittest.TestCase):
         #self.failUnlessEqual(search[0].object.literal_value['string'], pattern)
 
     def test_find_one_view(self):
+        name='testfind'
         extra = '''@prefix dafTerm:<http://jumpgate.caltech.edu/wiki/UcscDaf#> .
+@prefix thisView: <http://jumpgate.caltech.edu/wiki/SubmissionsLog/{0}/view/> .
 
-<%(submissionLog)s/testfind/view/Signal> dafTerm:filename_re ".*\\\\.bam" .
-<%(submissionLog)s/testfind/view/FastqRd1> dafTerm:filename_re ".*_r1\\\\.fastq" .
-''' % {'submissionLog': 'http://jumpgate.caltech.edu/wiki/SubmissionsLog'}
-
-        daf_mapper = load_daf_mapper('testfind', extra_statements = extra)
+thisView:Signal dafTerm:filename_re ".*\\\\.bam" .
+thisView:FastqRd1 dafTerm:filename_re ".*_r1\\\\.fastq" .
+'''.format(name)
+        daf_mapper = load_daf_mapper(name, extra_statements = extra)
 
         view = daf_mapper.find_view('filename_r1.fastq')
-        self.failUnlessEqual(str(view),
-                             str(submissionLog['testfind/view/FastqRd1']))
-
-        #writer = get_serializer()
-        #turtle =  writer.serialize_model_to_string(model)
-        #print turtle
+        
+        # dump_model(daf_mapper.model)
+        view_root = 'http://jumpgate.caltech.edu/wiki/SubmissionsLog/{0}/view/'
+        view_root = view_root.format(name)
+        self.failUnlessEqual(str(view), '<{0}{1}>'.format(view_root,'FastqRd1'))
 
     def test_find_overlapping_view(self):
+        name = 'testfind'
         extra = '''@prefix dafTerm:<http://jumpgate.caltech.edu/wiki/UcscDaf#> .
+@prefix thisView: <http://jumpgate.caltech.edu/wiki/SubmissionsLog/{0}/view/> .
 
-<%(submissionLog)s/testfind/view/fastq> dafTerm:filename_re ".*\\\\.fastq" .
-<%(submissionLog)s/testfind/view/FastqRd1> dafTerm:filename_re ".*_r1\\\\.fastq" .
-''' % {'submissionLog': 'http://jumpgate.caltech.edu/wiki/SubmissionsLog'}
-
-        daf_mapper = load_daf_mapper('testfind', extra_statements = extra)
+thisView:fastq dafTerm:filename_re ".*\\\\.fastq" .
+thisView:FastqRd1 dafTerm:filename_re ".*_r1\\\\.fastq" .
+'''.format(name)
+        daf_mapper = load_daf_mapper(name, extra_statements = extra)
 
         self.failUnlessRaises(daf.ModelException,
                               daf_mapper.find_view,
@@ -153,13 +157,16 @@ class TestDAFMapper(unittest.TestCase):
         lib_id = '11204'
         lib_url = 'http://jumpgate.caltech.edu/library/%s/' %(lib_id)
         extra = '''@prefix dafTerm: <http://jumpgate.caltech.edu/wiki/UcscDaf#> .
+@prefix submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#> .
+@prefix thisView: <http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/view/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<%(submissionLog)s/testfind/view/Signal> dafTerm:filename_re ".*\\\\.bam" .
-<%(submissionLog)s/testfind/view/FastqRd1> dafTerm:filename_re ".*\\\\.fastq" .
+thisView:Signal dafTerm:filename_re ".*\\\\.bam" ;
+      submissionOntology:view_name "Signal" .
+thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
+        submissionOntology:view_name "FastqRd1" .
 <%(libUrl)s> <%(libraryOntology)sgel_cut> "100"^^xsd:decimal . 
-''' % {'submissionLog': 'http://jumpgate.caltech.edu/wiki/SubmissionsLog',
-       'libraryOntology': 'http://jumpgate.caltech.edu/wiki/LibraryOntology#',
+''' % {'libraryOntology': 'http://jumpgate.caltech.edu/wiki/LibraryOntology#',
        'libUrl': lib_url}
 
         daf_mapper = load_daf_mapper('testfind', extra)
@@ -181,16 +188,18 @@ class TestDAFMapper(unittest.TestCase):
                                                      libNode,
                                                      filename)
             
+        #dump_model(daf_mapper.model)
+        
         sub_root = "http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/"
         submission_name = sub_root + analysis_name
         source = daf_mapper.model.get_source(rdfNS['type'], submissionOntology['submission'])
-
         self.failUnlessEqual(str(source.uri), submission_name)
 
         view_name = submission_name + '/Signal'
         view = daf_mapper.model.get_target(source, submissionOntology['has_view'])
         self.failUnlessEqual(str(view.uri), view_name)
 
+        
     def test_library_url(self):
         daf_mapper = load_daf_mapper('urltest')
 
@@ -215,6 +224,7 @@ def mktempfile(suffix='', prefix='tmp', dir=None):
     os.close(fd)
     os.unlink(pathname)
     print "unmade", pathname
+
     
 def suite():
     suite = unittest.makeSuite(TestDAF, 'test')

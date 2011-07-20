@@ -40,6 +40,7 @@ logger = logging.getLogger('ucsc_gather')
 def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
+    submission_uri = None
     
     if opts.debug:
         logging.basicConfig(level = logging.DEBUG )
@@ -53,12 +54,14 @@ def main(cmdline=None):
     model = get_model(opts.load_model)
     if opts.name:
         mapper = DAFMapper(opts.name, opts.daf,  model)
+        if opts.library_url is not None:
+            mapper.library_url = opts.library_url
         submission_uri = get_submission_uri(opts.name)
-
-    if opts.library_url is not None:
-        mapper.library_url = opts.library_url
         
+
     if opts.load_rdf is not None:
+        if submission_uri is None:
+            parser.error("Please specify the submission name")
         load_into_model(model, 'turtle', opts.load_rdf, submission_uri)
 
     if opts.make_ddf and opts.daf is None:
@@ -210,7 +213,7 @@ def make_ddf(view_map, submissionNode, daf_name, make_condor=False, outdir=None)
 PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
 PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
 
-select ?submitView  ?files ?md5sum ?view ?cell ?antibody ?sex ?control ?controlId ?labExpId ?labVersion ?treatment ?protocol
+select ?submitView  ?files ?md5sum ?view ?cell ?antibody ?sex ?control ?controlId ?labExpId ?labVersion ?treatment ?protocol ?readType ?insertLength
 WHERE {
   ?file ucscDaf:filename ?files ;
         ucscDaf:md5sum ?md5sum .
@@ -218,17 +221,19 @@ WHERE {
               ucscDaf:view ?dafView ;
               ucscDaf:submission <%(submission)s> .
   ?dafView ucscDaf:name ?view .
-  <%(submission)s> submissionOntology:library ?library .
+  <%(submission)s> submissionOntology:library ?library ;
 
-  OPTIONAL { ?submitView ucscDaf:antibody ?antibody }
-  OPTIONAL { ?submitView ucscDaf:cell ?cell }
-  OPTIONAL { ?submitView ucscDaf:control ?control }
-  OPTIONAL { ?library ucscDaf:controlId ?controlId }
-  OPTIONAL { ?submitView ucscDaf:sex ?sex }
-  OPTIONAL { ?submitView ucscDaf:labVersion ?labExpId }
-  OPTIONAL { ?submitView ucscDaf:labVersion ?labVersion }
-  OPTIONAL { ?library ucscDaf:treatment ?treatment }
-  OPTIONAL { ?submitView ucscDaf:protocol ?protocol }
+  OPTIONAL { ?library libraryOntology:antibody ?antibody }
+  OPTIONAL { ?library libraryOntology:cell_line ?cell }
+  OPTIONAL { <%(submission)s> ucscDaf:control ?control }
+  OPTIONAL { <%(submission)s> ucscDaf:controlId ?controlId }
+  OPTIONAL { ?library ucscDaf:sex ?sex }
+  OPTIONAL { ?library libraryOntology:library_id ?labExpId }
+  OPTIONAL { ?library libraryOntology:library_id ?labVersion }
+  OPTIONAL { ?library libraryOntology:condition ?treatment }
+  OPTIONAL { ?library ucscDaf:protocol ?protocol }
+  OPTIONAL { ?library ucscDaf:readType ?readType }
+  OPTIONAL { ?library libraryOntology:insert_size ?insertLength }
 }
 ORDER BY  ?submitView""" 
     dag_fragments = []
@@ -253,7 +258,8 @@ ORDER BY  ?submitView"""
     variables = ['files']
     # filename goes first
     variables.extend(view_map.get_daf_variables())
-    variables += ['controlId', 'labExpId', 'md5sum']
+    # 'controlId',
+    variables += [ 'labExpId', 'md5sum']
     output.write('\t'.join(variables))
     output.write(os.linesep)
     
@@ -337,7 +343,7 @@ queue
     for f in files:
         pathname = os.path.join(outdir, f)
         if not os.path.exists(pathname):
-            raise RuntimeError("Missing %s" % (f,))
+            raise RuntimeError("Missing %s from %s" % (f,outdir))
 
     context = {'archivename': make_submission_name(name),
                'filelist': " ".join(files),

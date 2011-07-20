@@ -236,6 +236,8 @@ class DAFMapper(object):
         #attributes = get_filename_attribute_map(paired)
         libNode = self.libraryNS[library_id + "/"]
         
+        self._add_library_details_to_model(libNode)
+        
         submission_files = os.listdir(submission_dir)
         for f in submission_files:
             self.construct_file_attributes(submission_dir, libNode, f)
@@ -250,6 +252,7 @@ class DAFMapper(object):
         """
         path, filename = os.path.split(pathname)
 
+        logger.debug("Searching for view")
         view = self.find_view(filename)
         if view is None:
             logger.warn("Unrecognized file: %s" % (pathname,))
@@ -260,17 +263,23 @@ class DAFMapper(object):
         submission_name = self.make_submission_name(submission_dir)
         submissionNode = self.get_submission_node(submission_dir)
         submission_uri = str(submissionNode.uri)
-        view_name = str(fromTypedNode(self.model.get_target(view, dafTermOntology['name'])))
+        view_name = fromTypedNode(self.model.get_target(view, dafTermOntology['name']))
+        if view_name is None:
+            logging.warning('Could not find view name for {0}'.format(str(view)))
+            return
+        
+        view_name = str(view_name)
         submissionView = RDF.Node(RDF.Uri(submission_uri + '/' + view_name))
 
         self.model.add_statement(
             RDF.Statement(self.submissionSet, dafTermOntology['has_submission'], submissionNode))
-
+        logger.debug("Adding statements to {0}".format(str(submissionNode)))
         self.model.add_statement(RDF.Statement(submissionNode, submissionOntology['has_view'], submissionView))
         self.model.add_statement(RDF.Statement(submissionNode, submissionOntology['name'], toTypedNode(submission_name)))
         self.model.add_statement(RDF.Statement(submissionNode, rdfNS['type'], submissionOntology['submission']))
         self.model.add_statement(RDF.Statement(submissionNode, submissionOntology['library'], libNode))
-        
+
+        logger.debug("Adding statements to {0}".format(str(submissionView)))
         # add trac specific information
         self.model.add_statement(
             RDF.Statement(submissionView, dafTermOntology['view'], view))
@@ -285,13 +294,8 @@ class DAFMapper(object):
                  ]
         terms.extend((dafTermOntology[v] for v in self.get_daf_variables()))
 
-        # Add everything I can find
-        for term in terms:
-            value = str(self._get_library_attribute(libNode, term))
-            if value is not None:
-                self.model.add_statement(RDF.Statement(submissionView, term, value))
-
         # add file specific information
+        logger.debug("Updating file md5sum")
         fileNode = RDF.Node(RDF.Uri(submission_uri + '/' + filename))
         submission_pathname = os.path.join(submission_dir, filename)
         md5 = make_md5sum(submission_pathname)
@@ -306,19 +310,16 @@ class DAFMapper(object):
             self.model.add_statement(
                 RDF.Statement(fileNode, dafTermOntology['md5sum'], md5))
 
-            
+        logger.debug("Done.")
+        
     def _add_library_details_to_model(self, libNode):
         parser = RDF.Parser(name='rdfa')
         new_statements = parser.parse_as_stream(libNode.uri)
         for s in new_statements:
             # don't override things we already have in the model
-            q = RDF.Statement(s.subject, s.predicate, None)
-            if len(list(self.model.find_statements(q))) == 0:
+            targets = list(self.model.get_targets(s.subject, s.predicate))
+            if len(targets) == 0:
                 self.model.append(s)
-            
-        statements = list(self.model.find_statements(q))
-        if len(statements) == 0:
-            logger.warning("Nothing known about %s" % (str(libNode),))
 
     def get_daf_variables(self):
         """Returns simple variables names that to include in the ddf
@@ -349,21 +350,25 @@ class DAFMapper(object):
         if not isinstance(attribute, RDF.Node):
             attribute = libraryOntology[attribute]
 
-        # search through the model twice (adding in data from website)
-        for i in xrange(2):
-            targets = list(self.model.get_targets(libNode, attribute))
-            if len(targets) > 0:
-                return self._format_library_attribute(targets)
+        targets = list(self.model.get_targets(libNode, attribute))
+        if len(targets) > 0:
+            return self._format_library_attribute(targets)
+        else:
+            return None
 
-            targets = self._search_same_as(libNode, attribute)
-            if targets is not None:
-                return self._format_library_attribute(targets)
-            
-            # we don't know anything about this attribute
-            self._add_library_details_to_model(libNode)
+        #targets = self._search_same_as(libNode, attribute)
+        #if targets is not None:
+        #    return self._format_library_attribute(targets)
+        
+        # we don't know anything about this attribute
+        self._add_library_details_to_model(libNode)
+
+        targets = list(self.model.get_targets(libNode, attribute))
+        if len(targets) > 0:
+            return self._format_library_attribute(targets)
 
         return None
-            
+    
     def _format_library_attribute(self, targets):
         if len(targets) == 0:
             return None
@@ -402,7 +407,17 @@ class DAFMapper(object):
         else:
             return None
         
-
+    def get_view_name(self, view):
+        names = list(self.model.get_targets(view, submissionOntology['view_name']))
+        if len(names) == 1:
+            return fromTypedNode(names[0])
+        else:
+            msg = "Found wrong number of view names for {0} len = {1}"
+            msg = msg.format(str(view), len(names))
+            logger.error(msg)
+            raise RuntimeError(msg)
+        
+            
     def _get_filename_view_map(self):
         """Query our model for filename patterns
 
