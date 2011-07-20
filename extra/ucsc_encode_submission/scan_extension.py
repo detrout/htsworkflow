@@ -8,11 +8,17 @@ def main(cmdline=None):
     opts, args = parser.parse_args(cmdline)
 
     extensions = scan(args)
-    #pprint(extensions)
-    print find_common_suffix(extensions)
+    common_extensions = find_common_suffix(extensions)
 
+    if opts.rdf:
+        print_rdf(common_extensions)
+    else:
+        print common_extensions
+        
 def make_parser():
     parser = OptionParser("%prog: directory [directory...]")
+    parser.add_option('--rdf', action="store_true", default=False,
+                      help="Produce rdf configuration file for ucsc_gather")
     return parser
 
 def scan(toscan):
@@ -20,6 +26,9 @@ def scan(toscan):
     for cur_scan_dir in toscan:
         for path, dirnames, filenames in os.walk(cur_scan_dir):
             for filename in filenames:
+                base, ext = os.path.splitext(filename)
+                if ext in ('.daf', 'ddf'):
+                    continue
                 next_index = index
                 for c in filename[::-1]:
                     next_index = next_index.setdefault(c, {})
@@ -41,6 +50,27 @@ def find_common_suffix(index, tail=[]):
         return results[0]
     else:
         return results
+
+def print_rdf(common_extensions):
+    import RDF
+    from htsworkflow.util import rdfhelp
+    model = rdfhelp.get_model()
+
+    viewName = 'http://jumpgate.caltech.edu/wiki/SubmissionsLog/NAME/view/'
+    subView = RDF.NS(viewName)
+    fileReTerm = rdfhelp.dafTermOntology['filename_re']
+
+    count = 1
+    for ext in common_extensions:
+        s = RDF.Statement(subView['VIEW{0}'.format(count)],
+                          fileReTerm,
+                          '.*{0}$'.format(ext.replace('.', '\\.')))
+        model.add_statement(s)
+        count += 1
+        
+    writer = rdfhelp.get_serializer()
+    writer.set_namespace('thisSubmissionView', subView._prefix)
+    print writer.serialize_model_to_string(model)
 
 if __name__ == "__main__":
     main()
