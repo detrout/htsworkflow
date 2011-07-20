@@ -10,7 +10,6 @@ def make_md5sum(filename):
     """Quickly find the md5sum of a file
     """
     md5_cache = os.path.join(filename+".md5")
-    print md5_cache
     if os.path.exists(md5_cache):
         logger.debug("Found md5sum in {0}".format(md5_cache))
         stream = open(md5_cache,'r')
