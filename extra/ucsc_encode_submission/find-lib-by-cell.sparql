@@ -1,14 +1,16 @@
 # Produce list of submissions associated with a cell/replicate
-
+PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>
 PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
 PREFIX ucscSubmission:<http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
 PREFIX libraryOntology:<http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
-SELECT distinct ?liburn ?cell ?replicate ?subid
+SELECT distinct ?liburn ?cell ?replicate ?subid ?name ?submission_date
 WHERE {
-    ?subid ucscSubmission:library_urn ?liburn ;
+    ?subid libraryOntology:date ?submission_date ;
            ucscSubmission:name ?name .
-    ?liburn libraryOntology:cell_line ?cell ;
-            libraryOntology:replicate ?replicate .
+    OPTIONAL { ?subid ucscSubmission:library_urn ?liburn . 
+               ?liburn libraryOntology:cell_line ?cell ;
+                       libraryOntology:replicate ?replicate . }
+    #filter(?submission_date > "2011-04-01T00:00:00Z"^^xsd:dateTime)
 }
-ORDER BY ?cell ?replicate ?liburn
+ORDER BY ?submission_date ?cell ?replicate ?liburn
