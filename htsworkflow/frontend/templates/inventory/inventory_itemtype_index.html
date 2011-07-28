@@ -37,15 +37,29 @@
   <table class="{% if cl.has_filters %} filtered{% endif %}">
     <thead >
       <tr >
-        <td >Name</td>
-        <td >Description</td>
+        <td >UUID</td>
+        <td >Barcode ID</td>
+        <td >Location</td>
+        <td >Model</td>
+        <td >Vendor</td>
+        <td >Created</td>
+        <td >Contains</td>
       </tr>
     </thead>
     <tbody >
-      {% for itemtype in item_changelist.get_query_set %}
+      {% for item in item_changelist.get_query_set %}
       <tr >
-        <td ><a href="/inventory/it/{{ itemtype.name }}/">{{ itemtype.name }}</a></td>
-        <td >{{ itemtype.description }}</td>
+        <td ><a href="/inventory/{{ item.uuid }}/">{{ item.uuid }}</a></td>
+        <td ><a href="/inventory/{{ item.barcode_id }}/">{{ item.barcode_id }}</a></td>
+        <td >{{ item.location }}</td>
+        <td >{{ item.item_type }}</td>
+        <td ></td>      
+        <td >{{ item.creation_date }}</td>      
+        <td >
+          {% for content in item.longtermstorage_set.all %}
+          {{ content.flowcell }}
+          {% endfor %}
+        </td>
       </tr>
       {% endfor %}
     </tbody>

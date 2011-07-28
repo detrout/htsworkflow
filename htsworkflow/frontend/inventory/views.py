@@ -44,7 +44,7 @@ def __expand_longtermstorage_context(context, item):
     flowcell_list = []
     flowcell_id_list = []
     library_id_list = []
-    
+
     for lts in item.longtermstorage_set.all():
         flowcell_list.append(lts.flowcell)
         flowcell_id_list.append(lts.flowcell.flowcell_id)
@@ -59,7 +59,7 @@ def __expand_longtermstorage_context(context, item):
     context['library_id_list_21_to_40'] = library_id_list[20:40]
     context['library_id_list_41_to_60'] = library_id_list[40:60]
     context['library_id_list_61_to_80'] = library_id_list[60:80]
-    
+
 
 EXPAND_CONTEXT = {
     'Hard Drive': __expand_longtermstorage_context
@@ -76,21 +76,21 @@ def getPrinterTemplateByType(item_type):
     returns template to use given item_type
     """
     assert item_type.printertemplate_set.count() < 2
-    
+
     # Get the template for item_type
     if item_type.printertemplate_set.count() > 0:
         printer_template = item_type.printertemplate_set.all()[0]
         return printer_template
     # Get default
     else:
-        try: 
+        try:
             printer_template = PrinterTemplate.objects.get(default=True)
         except ObjectDoesNotExist:
             msg = "No template for item type (%s) and no default template found" % (item_type.name)
             raise ValueError, msg
-        
+
         return printer_template
-        
+
 
 @login_required
 def data_items(request):
@@ -100,7 +100,7 @@ def data_items(request):
     item_list = Item.objects.all()
     d = { 'results': len(item_list) }
     rows = []
-    
+
     for item in item_list:
         item_d = {}
         item_d['uuid'] = item.uuid
@@ -112,34 +112,34 @@ def data_items(request):
         item_d['creation_date'] = item.creation_date.strftime('%Y-%m-%d %H:%M:%S')
         item_d['modified_date'] = item.modified_date.strftime('%Y-%m-%d %H:%M:%S')
         item_d['location'] = item.location.name
-        
+
         # Item status if exists
         if item.status is None:
             item_d['status'] = ''
         else:
             item_d['status'] = item.status.name
-            
+
         # Stored flowcells on device
         if item.longtermstorage_set.count() > 0:
             item_d['flowcells'] = ','.join([ lts.flowcell.flowcell_id for lts in item.longtermstorage_set.all() ])
         else:
             item_d['flowcells'] = ''
-        
+
         item_d['type'] = item.item_type.name
         rows.append(item_d)
-    
+
     d['rows'] = rows
-    
+
     return HttpResponse(json.dumps(d), content_type="application/javascript")
 
 @login_required
-def index(request):
+def all_index(request):
     """
     Inventory Index View
     """
     # build changelist
     item_changelist = ChangeList(request, Item,
-        list_filter=[],                 
+        list_filter=[],
         search_fields=[],
         list_per_page=200,
         queryset=Item.objects.all()
@@ -150,11 +150,62 @@ def index(request):
         'page_name': 'Inventory Index'
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
-    
+
+    return render_to_response('inventory/inventory_all_index.html',
+                              context_dict,
+                              context_instance=RequestContext(request))
+
+@login_required
+def index(request):
+    """
+    Inventory Index View
+    """
+    # build changelist
+    item_changelist = ChangeList(request, Item,
+        list_filter=[],
+        search_fields=['name'],
+        list_per_page=50,
+        queryset=ItemType.objects.all()
+    )
+
+    context_dict = {
+        'item_changelist': item_changelist,
+        'page_name': 'Inventory Index'
+    }
+    context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
+
     return render_to_response('inventory/inventory_index.html',
                               context_dict,
                               context_instance=RequestContext(request))
-    
+
+@login_required
+def itemtype_index(request, name):
+    """
+    Inventory Index View
+    """
+
+    name = name.replace('%20', ' ')
+
+    itemtype = ItemType.objects.get(name=name)
+
+    # build changelist
+    item_changelist = ChangeList(request, Item,
+        list_filter=[],
+        search_fields=[],
+        list_per_page=200,
+        queryset=itemtype.item_set.all()
+    )
+
+    context_dict = {
+        'item_changelist': item_changelist,
+        'page_name': 'Inventory Index'
+    }
+    context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
+
+    return render_to_response('inventory/inventory_itemtype_index.html',
+                              context_dict,
+                              context_instance=RequestContext(request))
+
 
 @login_required
 def item_summary_by_barcode(request, barcode_id, msg=''):
@@ -165,9 +216,9 @@ def item_summary_by_barcode(request, barcode_id, msg=''):
         item = Item.objects.get(barcode_id=barcode_id)
     except ObjectDoesNotExist, e:
         item = None
-        
+
     return item_summary_by_uuid(request, None, msg, item)
-    
+
 
 @login_required
 def item_summary_by_uuid(request, uuid, msg='', item=None):
@@ -180,7 +231,7 @@ def item_summary_by_uuid(request, uuid, msg='', item=None):
             item = Item.objects.get(uuid=uuid)
         except ObjectDoesNotExist, e:
             item = None
-    
+
     context_dict = {
         'page_name': 'Item Summary',
         'item': item,
@@ -188,15 +239,15 @@ def item_summary_by_uuid(request, uuid, msg='', item=None):
         'msg': msg
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
-    
+
     return render_to_response('inventory/inventory_summary.html',
                               context_dict,
                               context_instance=RequestContext(request))
 
 
 
-    
-    
+
+
 
 def __expand_context(context, item):
     """
@@ -213,7 +264,7 @@ def _item_print(item, request):
     #FIXME: Hard coding this for now... need to abstract later.
     context = {'item': item}
     __expand_context(context, item)
-    
+
     # Print using barcode_id
     if not item.force_use_uuid and (item.barcode_id is None or len(item.barcode_id.strip())):
         context['use_uuid'] = False
@@ -222,13 +273,13 @@ def _item_print(item, request):
     else:
         context['use_uuid'] = True
         msg = 'Printing item with UUID: %s' % (item.uuid)
-    
+
     printer_template = getPrinterTemplateByType(item.item_type)
-    
+
     c = RequestContext(request, context)
     t = Template(printer_template.template)
     print_zpl_socket(t.render(c), host=printer_template.printer.ip_address)
-    
+
     return msg
 
 @login_required
@@ -241,10 +292,10 @@ def item_print(request, uuid):
     except ObjectDoesNotExist, e:
         item = None
         msg = "Item with UUID %s does not exist" % (uuid)
-    
+
     if item is not None:
         msg = _item_print(item, request)
-    
+
     return item_summary_by_uuid(request, uuid, msg)
 
 
@@ -254,11 +305,11 @@ def link_flowcell_and_device(request, flowcell, serial):
     """
     assert flowcell is not None
     assert serial is not None
-    
+
     LTS_UPDATED = False
     SD_UPDATED = False
     LIBRARY_UPDATED = False
-        
+
     ###########################################
     # Retrieve Storage Device
     try:
@@ -266,15 +317,15 @@ def link_flowcell_and_device(request, flowcell, serial):
     except ObjectDoesNotExist, e:
         msg = "Item with barcode_id of %s not found." % (serial)
         raise ObjectDoesNotExist(msg)
-    
+
     ###########################################
     # Retrieve FlowCell
-    try:    
+    try:
         fc = FlowCell.objects.get(flowcell_id=flowcell)
     except ObjectDoesNotExist, e:
         msg = "FlowCell with flowcell_id of %s not found." % (flowcell)
         raise ObjectDoesNotExist(msg)
-    
+
     ###########################################
     # Retrieve or create LongTermStorage Object
     count = fc.longtermstorage_set.count()
@@ -292,27 +343,27 @@ def link_flowcell_and_device(request, flowcell, serial):
         # Need a primary keey before linking to storage devices
         lts.save()
         LTS_UPDATED = True
-        
-        
+
+
     ############################################
     # Link Storage to Flowcell
-    
+
     # Add a link to this storage device if it is not already linked.
     if sd not in lts.storage_devices.all():
         lts.storage_devices.add(sd)
         SD_UPDATED = True
-    
+
     ###########################################
     # Add Library Links to LTS
 
     for lane in fc.lane_set.all():
         if lane.library not in lts.libraries.all():
             lts.libraries.add(lane.library)
-            LIBRARY_UPDATED = True        
-        
+            LIBRARY_UPDATED = True
+
     # Save Changes
     lts.save()
-    
+
     msg = ['Success:']
     if LTS_UPDATED or SD_UPDATED or LIBRARY_UPDATED:
         msg.append('  LongTermStorage (LTS) Created: %s' % (LTS_UPDATED))
@@ -320,5 +371,5 @@ def link_flowcell_and_device(request, flowcell, serial):
         msg.append('       Libraries updated in LTS: %s' % (LIBRARY_UPDATED))
     else:
         msg.append('  No Updates Needed.')
-    
+
     return HttpResponse('\n'.join(msg))
