@@ -213,7 +213,7 @@ def make_ddf(view_map, submissionNode, daf_name, make_condor=False, outdir=None)
 PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
 PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
 
-select ?submitView  ?files ?md5sum ?view ?cell ?antibody ?sex ?control ?controlId ?labExpId ?labVersion ?treatment ?protocol ?readType ?insertLength
+select ?submitView  ?files ?md5sum ?view ?cell ?antibody ?sex ?control ?controlId ?labExpId ?labVersion ?treatment ?protocol ?readType ?insertLength ?replicate
 WHERE {
   ?file ucscDaf:filename ?files ;
         ucscDaf:md5sum ?md5sum .
@@ -230,6 +230,7 @@ WHERE {
   OPTIONAL { ?library ucscDaf:sex ?sex }
   OPTIONAL { ?library libraryOntology:library_id ?labExpId }
   OPTIONAL { ?library libraryOntology:library_id ?labVersion }
+  OPTIONAL { ?library libraryOntology:replicate ?replicate }
   OPTIONAL { ?library libraryOntology:condition ?treatment }
   OPTIONAL { ?library ucscDaf:protocol ?protocol }
   OPTIONAL { ?library ucscDaf:readType ?readType }

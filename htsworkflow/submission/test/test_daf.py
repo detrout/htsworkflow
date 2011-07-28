@@ -41,6 +41,24 @@ hasReplicates    yes
 required         no
 """
 
+test_daf_no_rep = """# Lab and general info
+grant             Hardison
+lab               Caltech-m
+dataType          ChipSeq 
+variables         cell, antibody,sex,age,strain,control
+compositeSuffix   CaltechHistone
+assembly          mm9
+dafVersion        2.0
+validationSettings validateFiles.bam:mismatches=2,bamPercent=99.9;validateFiles.fastq:quick=1000
+
+# Track/view definition
+view             FastqRd1
+longLabelPrefix  Caltech Fastq Read 1
+type             fastq
+hasReplicates    no
+required         no
+"""
+
 class TestDAF(unittest.TestCase):
     def test_parse(self):
 
@@ -83,7 +101,7 @@ class TestDAF(unittest.TestCase):
         name = model.get_target(signal_view_node, dafTermOntology['name'])
         self.failUnlessEqual(fromTypedNode(name), u'Signal')
 
-def load_daf_mapper(name, extra_statements=None, ns=None):
+def load_daf_mapper(name, extra_statements=None, ns=None, test_daf=test_daf):
     """Load test model in
     """
     model = get_model()
@@ -122,6 +140,7 @@ class TestDAFMapper(unittest.TestCase):
                              str(dafTermOntology['filename_re']))
         #self.failUnlessEqual(search[0].object.literal_value['string'], pattern)
 
+        
     def test_find_one_view(self):
         name='testfind'
         extra = '''@prefix dafTerm:<http://jumpgate.caltech.edu/wiki/UcscDaf#> .
@@ -208,6 +227,16 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         daf_mapper.library_url = 'http://google.com'
         self.failUnlessEqual(daf_mapper.library_url, 'http://google.com' )
 
+    def test_daf_with_replicate(self):
+        daf_mapper = load_daf_mapper('test_rep')
+        self.failUnlessEqual(daf_mapper.need_replicate(), True)
+        self.failUnless('replicate' in daf_mapper.get_daf_variables())
+                        
+    def test_daf_without_replicate(self):
+        daf_mapper = load_daf_mapper('test_rep',test_daf=test_daf_no_rep)
+        self.failUnlessEqual(daf_mapper.need_replicate(), False)
+        self.failUnless('replicate' not in daf_mapper.get_daf_variables())
+        
 @contextmanager
 def mktempdir(prefix='tmp'):
     d = tempfile.mkdtemp(prefix=prefix)

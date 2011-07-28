@@ -326,6 +326,9 @@ class DAFMapper(object):
         """
         variableTerm = dafTermOntology['variables']
         results = ['view']
+        if self.need_replicate():
+            results.append('replicate')
+            
         for obj in self.model.get_targets(self.submissionSet, variableTerm):
             value = str(fromTypedNode(obj))
             results.append(value)
@@ -438,6 +441,12 @@ class DAFMapper(object):
             patterns[literal_re] = view_name
         return patterns
 
+    def _get_library_url(self):
+        return str(self.libraryNS[''].uri)
+    def _set_library_url(self, value):
+        self.libraryNS = RDF.NS(str(value))
+    library_url = property(_get_library_url, _set_library_url)
+
     def _is_paired(self, libNode):
         """Determine if a library is paired end"""
         library_type = self._get_library_attribute(libNode, 'library_type')
@@ -456,8 +465,15 @@ class DAFMapper(object):
                 "Unrecognized library type %s for %s" % \
                 (library_type, str(libNode)))
 
-    def _get_library_url(self):
-        return str(self.libraryNS[''].uri)
-    def _set_library_url(self, value):
-        self.libraryNS = RDF.NS(str(value))
-    library_url = property(_get_library_url, _set_library_url)
+    def need_replicate(self):
+        viewTerm = dafTermOntology['views']
+        replicateTerm = dafTermOntology['hasReplicates']
+
+        views = self.model.get_targets(self.submissionSet, viewTerm)
+
+        for view in views:
+            replicate = self.model.get_target(view, replicateTerm)
+            if fromTypedNode(replicate):
+                return True
+            
+        return False
