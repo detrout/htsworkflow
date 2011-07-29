@@ -30,7 +30,7 @@
       {% for spec in item_changelist.filter_specs %}
          {% admin_list_filter cl spec %}
          {% endfor %}
-       </div>
+    </div>
     {% endif %}
     {% endblock %}
   {% block summary_stats %}
@@ -48,16 +48,16 @@
     </thead>
     <tbody >
       {% for item in item_changelist.get_query_set %}
-      <tr >
-        <td ><a href="/inventory/{{ item.uuid }}/">{{ item.uuid }}</a></td>
-        <td ><a href="/inventory/{{ item.barcode_id }}/">{{ item.barcode_id }}</a></td>
-        <td >{{ item.location }}</td>
-        <td >{{ item.item_type }}</td>
+      <tr about="{{ item.get_absolute_url }}">
+        <td ><a href="{{ item.get_absolute_url}}" rel="invns:uuid">{{ item.uuid }}</a></td>
+        <td ><a href="/inventory/{{ item.barcode_id }}/" rel="invns:barcode">{{ item.barcode_id }}</a></td>
+        <td property="invns:location">{{ item.location }}</td>
+        <td property="invns:item_type">{{ item.item_type }}</td>
         <td ></td>      
-        <td >{{ item.creation_date }}</td>      
-        <td >
+        <td property="invnfs:creation_date" content="{{item.creation_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ item.creation_date }}</td>      
+        <td style="a {display inline}">
           {% for content in item.longtermstorage_set.all %}
-          {{ content.flowcell }}
+          <a href="{{content.flowcell.get_absolute_url}}" rel="libns:flowcell_id">{{ content.flowcell }}</a>
           {% endfor %}
         </td>
       </tr>
@@ -65,5 +65,6 @@
     </tbody>
   </table>
   {% endblock %}
+  </div>
 </div>
 {% endblock %}

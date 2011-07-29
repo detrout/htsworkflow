@@ -1,0 +1,338 @@
+[
+  {
+    "pk": 1, 
+    "model": "inventory.vendor", 
+    "fields": {
+      "url": "http://www.newegg.com/", 
+      "name": "newegg.com"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "inventory.location", 
+    "fields": {
+      "uuid": "e344a4a2522211de99b00015172ce556", 
+      "notes": "", 
+      "location_description": "Office 1", 
+      "name": "Dev Office"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "inventory.iteminfo", 
+    "fields": {
+      "model_id": "WD10EADS-00L5B1", 
+      "vendor": 1, 
+      "lot_number": "", 
+      "url": "http://www.newegg.com/Product/Product.aspx?Item=N82E16822136317&Tpk=WD10EADS", 
+      "warranty_months": 24, 
+      "notes": "", 
+      "part_number": "", 
+      "purchase_date": "2009-05-19", 
+      "qty_purchased": 17
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "inventory.itemtype", 
+    "fields": {
+      "name": "Hard Drive", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "inventory.itemstatus", 
+    "fields": {
+      "notes": "", 
+      "name": "Used"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "inventory.itemstatus", 
+    "fields": {
+      "notes": "", 
+      "name": "Unused"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "inventory.item", 
+    "fields": {
+      "status": null, 
+      "modified_date": "2009-08-10 16:58:44", 
+      "uuid": "8a90b6ce522311de99b00015172ce556", 
+      "barcode_id": "WCAU49183397", 
+      "notes": "", 
+      "item_info": 1, 
+      "force_use_uuid": false, 
+      "item_type": 1, 
+      "location": 1, 
+      "creation_date": "2009-06-05 15:52:26"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "inventory.item", 
+    "fields": {
+      "status": null, 
+      "modified_date": "2009-06-16 11:38:24", 
+      "uuid": "b0792d425aa411de99b00015172ce556", 
+      "barcode_id": "WCAU49042470", 
+      "notes": "", 
+      "item_info": 1, 
+      "force_use_uuid": false, 
+      "item_type": 1, 
+      "location": 1, 
+      "creation_date": "2009-06-16 11:37:04"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "inventory.printertemplate", 
+    "fields": {
+      "default": false, 
+      "item_type": 1, 
+      "printer": 2, 
+      "template": "^FX=========================\r\n^FX 3\"x3\" Label\r\n^FX=========================\r\n^XA\r\n\r\n\r\n^FX======== Left Side ===========\r\n\r\n^FX------------\r\n^FX ^LH changes the 0,0 point of all subsequent location references\r\n^FX------------\r\n\r\n^LH0,50\r\n\r\n^FX ---Header---\r\n\r\n^FO25,0\r\n^CF0,50\r\n^FB250,2,,C\r\n^FD{{ item.barcode_id }}^FS\r\n\r\n^FX ---Column 1: Flowcells---\r\n\r\n^FX-----------------\r\n^FX FB command for automatic text formatting:\r\n^FX ^FB[dot width of area], [max # of lines], [change line spacing], [justification: L, C, R, J], [hanging indent]\r\n^FX-----------------\r\n\r\n^CF0,30,30\r\n^FO75,125\r\n^FB275,19,,L\r\n^FD{% for flowcell in flowcell_id_list %}{{ flowcell }}{% if not forloop.last %}\\&{% endif %}{% endfor %}^FS\r\n^FX ---Date---\r\n\r\n^FO0,725\r\n^CF0,35\r\n^FB300,2,,C\r\n^FD{{ oldest_rundate|date:\"YMd\" }} - {{ latest_rundate|date:\"YMd\" }}^FS\r\n\r\n^FX ---Barcode---\r\n\r\n^FO135,795\r\n^BXN,3,200^FDinvb|{{ item.barcode_id }}^FS\r\n\r\n^FX======== Right Side ===========\r\n\r\n^LH300,60\r\n\r\n^FX ---Header---\r\n\r\n^FO0,0\r\n^CF0,50\r\n^FB600,2,,C\r\n^FD{{ barcode_id }}^FS\r\n\r\n^FX ---Dividing line---\r\n\r\n^FX---------------\r\n^FX GB command:\r\n^FX ^GB[box width], [box height], [border thickness], [color: B, W], [corner rounding: 0-8]^FS\r\n^FX---------------\r\n\r\n^FO0,100\r\n^GB0,600,10^FS\r\n\r\n^FX ---Column 2: Libraries 1-20---\r\n\r\n^CF0,30,30\r\n^FO75,100\r\n^FB100,20,,L\r\n^FD{% for lib_id in library_id_list_1_to_20 %}{{ lib_id }}{% if not forloop.last %}\\&{% endif %}{% endfor %}^FS\r\n\r\n^FX ---Column 3: Libraries 21-40---\r\n\r\n^CF0,30,30\r\n^FO200,100\r\n^FB100,20,,L\r\n^FD{% for lib_id in library_id_list_21_to_40 %}{{ lib_id }}{% if not forloop.last %}\\&{% endif %}{% endfor %}^FS\r\n\r\n^FX ---Column 4: Libraries 41-60---\r\n\r\n^CF0,30,30\r\n^FO325,100\r\n^FB100,20,,L\r\n^FD{% for lib_id in library_id_list_41_to_60 %}{{ lib_id }}{% if not forloop.last %}\\&{% endif %}{% endfor %}^FS\r\n\r\n^FX ---Column 5: Libraries 61-80---\r\n\r\n^CF0,30,30\r\n^FO450,100\r\n^FB100,20,,L\r\n^FD{% for lib_id in library_id_list_61_to_80 %}{{ lib_id }}{% if not forloop.last %}\\&{% endif %}{% endfor %}^FS\r\n\r\n^FX ---Date---\r\n\r\n^FO0,715\r\n^CF0,35\r\n^FB600,2,,C\r\n^FDRun Dates: {{ oldest_rundate|date:\"YMd\" }}-{{ latest_rundate|date:\"YMd\" }}^FS\r\n\r\n^FX ---Barcode---\r\n\r\n^FO255,785\r\n^BXN,3,200^FDinvb|{{ item.barcode_id }}^FS\r\n\r\n^LH0,0\r\n^FX ---End---\r\n^XZ\r\n"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "inventory.printertemplate", 
+    "fields": {
+      "default": true, 
+      "item_type": 2, 
+      "printer": 1, 
+      "template": "^FX=========================\r\n^FX Harddrive Location Tracking Label\r\n^FX 300x375 dots\r\n^FX=========================\r\n\r\n^XA\r\n^LH 0,25\r\n\r\n^FO0,0\r\n^CF0,35\r\n^FB375,1,,C\r\n^FD{{ item.item_type.name }}:^FS\r\n\r\n^FX -------Text contains HD serial #-------------\r\n^FO15,75\r\n^CF0,42\r\n^FB325,3,,C\r\n^FD{% if use_uuid %}{{ item.uuid }}{% else %}{{ item.barcode_id }}{% endif %}^FS\r\n\r\n^FX -------Barcode contains HD serial #-----------\r\n^FO150,200\r\n^BXN,3,200\r\n^FD{% if use_uuid %}invu|{{ item.uuid }}{% else %}invb|{{ item.barcode_id }}{% endif %}^FS\r\n\r\n^XZ\r\n"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "inventory.printertemplate", 
+    "fields": {
+      "default": false, 
+      "item_type": 6, 
+      "printer": 1, 
+      "template": "^XA\r\n\r\n^FX ---SIDE LABEL---\r\n^LH 190,40\r\n^CF 0,30\r\n\r\n^FX------Sideways ID------\r\n^FO 0,25\r\n^TB R,100,40\r\n^FD{{ library.id }}^FS\r\n^FX------Sideways Line------\r\n^FO 50,0\r\n^GB 5,200,5^FS\r\n\r\n^FX-------Name----------\r\n^FO 65,20\r\n^FB 325,4\r\n^FD{{ library.library_name }}^FS\r\n\r\n^FX ---TOP LABEL---\r\n^LH 12,28\r\n^CF 0,30\r\n\r\n^FX----ID #----\r\n^FO 5,25\r\n^FB 145,1,,C\r\n^FD{{ library.id }}^FS\r\n\r\n^FX----Name----\r\n^CF 0,16\r\n^FO 13,47\r\n^TB N,130,30\r\n^FD{{ library.library_name }}^FS\r\n\r\n^FX--------Barcode--------\r\n^FO 50,80\r\n^BXN ,3,200\r\n^FDl|0000000{{ library.id }}|woldlab^FS\r\n\r\n{% if not library.hidden %}\r\n^FX-----Border-------\r\n^FO 0,0\r\n^GC 150,10\r\n^FX ---End---\r\n{% endif %}\r\n^XZ\r\n"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "inventory.longtermstorage", 
+    "fields": {
+      "libraries": [
+        "10001", 
+        "10002", 
+        "10003"
+      ], 
+      "modified_date": "2009-06-01 00:00:00", 
+      "storage_devices": [
+        1
+      ], 
+      "flowcell": 1,
+      "creation_date": "2009-06-01 00:00:00"
+    }
+  },
+  {
+    "pk": 2, 
+    "model": "inventory.longtermstorage", 
+    "fields": {
+      "libraries": [
+        "10001", 
+        "10002", 
+        "10003"
+      ], 
+      "modified_date": "2009-06-01 00:00:00", 
+      "storage_devices": [
+        1
+      ], 
+      "flowcell": 2,
+      "creation_date": "2009-06-01 00:00:00"
+    }
+  },
+ {"pk": 1, "model": "experiments.flowcell", 
+  "fields": {
+      "paired_end": true, 
+      "run_date": "2009-09-11 22:12:13", 
+      "read_length": 75, 
+      "notes": "",
+      "advanced_run": false,
+      "control_lane": 2,
+      "flowcell_id": "11ONEAAXX"
+      }
+  }, 
+ {"pk": 2, "model": "experiments.flowcell", 
+  "fields": {
+      "paired_end": false, 
+      "run_date": "2010-09-11 22:12:13", 
+      "read_length": 75, 
+      "notes": "",
+      "advanced_run": false,
+      "control_lane": 2,
+      "flowcell_id": "22TWOAAXX"
+      }
+  }, 
+  {"pk": "10001", "model": "samples.library", 
+        "fields": {
+            "ten_nM_dilution": false, 
+            "gel_cut_size": 400, 
+            "library_name": "10001", 
+            "creation_date": "2009-07-21", 
+            "cell_line": 1, 
+            "library_species": 2, 
+            "library_type": null, 
+            "made_by": "Igor", 
+            "affiliations": [
+                1
+            ], 
+            "replicate": 1, 
+            "condition": 1, 
+            "hidden": false, 
+            "stopping_point": "Done", 
+            "tags": [], 
+            "made_for": "Test", 
+            "amplified_from_sample": null, 
+            "notes": "", 
+            "undiluted_concentration": "1", 
+            "successful_pM": null, 
+            "experiment_type": 10, 
+            "antibody": null
+        }
+    }, 
+  {"pk": "10002", "model": "samples.library", 
+        "fields": {
+            "ten_nM_dilution": false, 
+            "gel_cut_size": 400, 
+            "library_name": "10002", 
+            "creation_date": "2009-07-21", 
+            "cell_line": 1, 
+            "library_species": 2, 
+            "library_type": null, 
+            "made_by": "Igor", 
+            "affiliations": [
+                1
+            ], 
+            "replicate": 1, 
+            "condition": 1, 
+            "hidden": false, 
+            "stopping_point": "Done", 
+            "tags": [], 
+            "made_for": "Test", 
+            "amplified_from_sample": null, 
+            "notes": "", 
+            "undiluted_concentration": "1", 
+            "successful_pM": null, 
+            "experiment_type": 10, 
+            "antibody": null
+        }
+    }, 
+  {"pk": "10003", "model": "samples.library", 
+        "fields": {
+            "ten_nM_dilution": false, 
+            "gel_cut_size": 400, 
+            "library_name": "10003", 
+            "creation_date": "2009-07-21", 
+            "cell_line": 1, 
+            "library_species": 2, 
+            "library_type": null, 
+            "made_by": "Igor", 
+            "affiliations": [
+                1
+            ], 
+            "replicate": 1, 
+            "condition": 1, 
+            "hidden": false, 
+            "stopping_point": "Done", 
+            "tags": [], 
+            "made_for": "Test", 
+            "amplified_from_sample": null, 
+            "notes": "", 
+            "undiluted_concentration": "1", 
+            "successful_pM": null, 
+            "experiment_type": 10, 
+            "antibody": null
+        }
+    }, 
+  {"pk": 1, "model": "experiments.lane",
+   "fields": {
+       "comment": "10001 lane 1",
+       "library": "10001",
+       "cluster_estimate": 100000,
+       "flowcell": 1,
+       "lane_number": 1,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 2, "model": "experiments.lane",
+   "fields": {
+       "comment": "10002 lane 2",
+       "library": "10002",
+       "cluster_estimate": 100000,
+       "flowcell": 1,
+       "lane_number": 2,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 3, "model": "experiments.lane",
+   "fields": {
+       "comment": "10003 lane 3",
+       "library": "10003",
+       "cluster_estimate": 100000,
+       "flowcell": 1,
+       "lane_number": 3,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 4, "model": "experiments.lane",
+   "fields": {
+       "comment": "10004 lane 4",
+       "library": "10001",
+       "cluster_estimate": 100000,
+       "flowcell": 2,
+       "lane_number": 4,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 5, "model": "experiments.lane",
+   "fields": {
+       "comment": "10001 lane 1",
+       "library": "10001",
+       "cluster_estimate": 100000,
+       "flowcell": 2,
+       "lane_number": 1,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 6, "model": "experiments.lane",
+   "fields": {
+       "comment": "10001 lane 1",
+       "library": "10003",
+       "cluster_estimate": 100000,
+       "flowcell": 2,
+       "lane_number": 2,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 7, "model": "experiments.lane",
+   "fields": {
+       "comment": "10003 lane 8",
+       "library": "10003",
+       "cluster_estimate": 100000,
+       "flowcell": 2,
+       "lane_number": 8,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 8, "model": "experiments.lane",
+   "fields": {
+       "comment": "10002 lane 8",
+       "library": "10001",
+       "cluster_estimate": 100000,
+       "flowcell": 2,
+       "lane_number": 8,
+       "pM": "8"
+       }
+   }
+]

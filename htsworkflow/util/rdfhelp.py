@@ -19,6 +19,7 @@ xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
 submissionOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#")
 dafTermOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/UcscDaf#")
 libraryOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
+inventoryOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/InventoryOntology#")
 submissionLog = RDF.NS("http://jumpgate.caltech.edu/wiki/SubmissionsLog/")
 
 def sparql_query(model, query_filename):
@@ -120,6 +121,13 @@ def load_into_model(model, parser_name, filename, ns=None):
         raise IOError("Can't find {0}".format(filename))
     
     data = open(filename, 'r').read()
+    load_string_into_model(model, parser_name, data, ns)
+
+
+def load_string_into_model(model, parser_name, data, ns=None):
+    if ns is None:
+        ns = "http://localhost/"
+        
     rdf_parser = RDF.Parser(name=parser_name)
     rdf_parser.parse_string_into_model(model, data, ns)
 

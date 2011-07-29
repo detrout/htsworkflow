@@ -5,25 +5,25 @@
         <h2>Item Summary:</h2>
         <a href="{% url htsworkflow.frontend.inventory.views.index %}{{item.uuid}}/print/">Print</a><br />
         <br />
-        <b>UUID:</b> {{item.uuid}}<br />
-        <b>Barcode ID:</b> {{ item.barcode_id }}<br />
-        <b>Type:</b> {{ item.item_type.name }}<br />
+        <b>UUID:</b> <span property="invns:uuid">{{item.uuid}}</span><br />
+        <b>Barcode ID:</b> <span property="invns:barcode">{{ item.barcode_id }}</span><br />
+        <b>Type:</b> <span property="invns:item_type">{{ item.item_type.name }}</span><br />
         <br />
-        <b>Location:</b> {{ item.location.name }}<br />
-        <b>Status: </b> {% if item.status %}{{ item.status.name }}{% else %}N/A{% endif %}<br />
+        <b>Location:</b> <span property="invns:location">{{ item.location.name }}</span><br />
+        <b>Status: </b> {% if item.status %}<span property="invns:status">{{ item.status.name }}</span>{% else %}N/A{% endif %}<br />
         <br />
         {% if item.item_info.model_id %}
-        <b>Model ID:</b> {{ item.item_info.model_id }}<br />
+        <b>Model ID:</b> <span property="invns:model">{{ item.item_info.model_id }}</span><br />
         {% endif %}
         {% if item.item_info.part_number %}
-        <b>Part Number:</b> {{ item.item_info.part_number }}<br />
+        <b>Part Number:</b> <span property="invns:part_number">{{ item.item_info.part_number }}</span><br />
         {% endif %}
         {% if item.item_info.lot_number %}
-        <b>Lot Number:</b> {{ item.item_info.lot_number }}<br />
+        <b>Lot Number:</b> <span property="invns:lot_number">{{ item.item_info.lot_number }}</span><br />
         {% endif %}
         <br />
         {% if item.item_info.url %}
-        <b>Item Website:</b> <a href="{{ item.item_info.url }}">Link</a><br />
+        <b>Item Website:</b> <a href="{{ item.item_info.url }}" rel="invns:vendor_link">Link</a><br />
         {% endif %}
         <b>Vendor:</b> {% if item.item_info.vendor.url %}<a href="{{ item.item_info.vendor.url }}">{% endif %}{{ item.item_info.vendor.name }}{% if item.item_info.vendor.url %}</a>{% endif %}<br />
         <b>Purchase Date:</b>{% if item.item_info.purchase_date %}{{ item.item_info.purchase_date }}{% else %}N/A{% endif %}<br />
