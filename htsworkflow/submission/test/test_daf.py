@@ -156,7 +156,8 @@ thisView:FastqRd1 dafTerm:filename_re ".*_r1\\\\.fastq" .
         # dump_model(daf_mapper.model)
         view_root = 'http://jumpgate.caltech.edu/wiki/SubmissionsLog/{0}/view/'
         view_root = view_root.format(name)
-        self.failUnlessEqual(str(view), '<{0}{1}>'.format(view_root,'FastqRd1'))
+        self.failUnlessEqual(str(view)[1:-1],
+                             '{0}{1}'.format(view_root,'FastqRd1'))
 
     def test_find_overlapping_view(self):
         name = 'testfind'
