@@ -12,7 +12,7 @@ except ImportError, e:
 from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend.experiments.models import FlowCell, Lane, LANE_STATUS_MAP
 from htsworkflow.frontend.samples.changelist import ChangeList
-from htsworkflow.frontend.samples.models import Library, Species, HTSUser
+from htsworkflow.frontend.samples.models import Antibody, Library, Species, HTSUser
 from htsworkflow.frontend.samples.results import get_flowcell_result_dict
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
@@ -518,6 +518,11 @@ def species(request, species_id):
 
     return render_to_response("samples/species_detail.html", context)
 
+def antibodies(request):
+    context = RequestContext(request,
+                             {'antibodies': Antibody.objects.order_by('antigene')})
+    return render_to_response("samples/antibody_index.html", context)
+    
 @login_required
 def user_profile(request):
     """
@@ -532,4 +537,5 @@ def user_profile(request):
     context.update(SAMPLES_CONTEXT_DEFAULTS)
     return render_to_response('registration/profile.html', context,
                               context_instance=RequestContext(request))
+
 

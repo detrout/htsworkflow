@@ -1,0 +1,44 @@
+{% extends "base_site.html" %}
+{% load adminmedia admin_list i18n %}
+
+{% block bodyclass %}change-list{% endblock %}
+{% block coltype %}flex{% endblock %}
+
+{% block content %}
+<div id="antibody-index-div">
+{% block body %}
+<table >
+  <thead >
+    <tr >
+      <td >Antigene</td>
+      <td >Nickname</td>
+      <td >Antibodies</td>
+      <td >Catalog</td>
+      <td >Source</td>
+  </tr>
+  </thead>
+  <tbody >
+    {% for antibody in antibodies %}
+    <tr >
+      <td >
+        {{ antibody.antigene }}
+      </td>
+      <td >
+        {{ antibody.nickname }}
+      </td>
+      <td >
+        {{ antibody.antibodies }}
+      </td>
+      <td >
+        {{ antibody.catalog }}
+      </td>
+      <td >
+        {{ antibody.source }}
+      </td>
+   </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}
+{% endblock %}
