@@ -321,7 +321,7 @@ def link_flowcell_and_device(request, flowcell, serial):
     ###########################################
     # Retrieve FlowCell
     try:
-        fc = FlowCell.objects.get(flowcell_id=flowcell)
+        fc = FlowCell.objects.get(flowcell_id__startswith=flowcell)
     except ObjectDoesNotExist, e:
         msg = "FlowCell with flowcell_id of %s not found." % (flowcell)
         raise ObjectDoesNotExist(msg)

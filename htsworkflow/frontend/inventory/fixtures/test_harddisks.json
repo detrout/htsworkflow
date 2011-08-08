@@ -163,7 +163,7 @@
       "flowcell_id": "11ONEAAXX"
       }
   }, 
- {"pk": 2, "model": "experiments.flowcell", 
+  {"pk": 2, "model": "experiments.flowcell", 
   "fields": {
       "paired_end": false, 
       "run_date": "2010-09-11 22:12:13", 
@@ -172,6 +172,17 @@
       "advanced_run": false,
       "control_lane": 2,
       "flowcell_id": "22TWOAAXX"
+      }
+  }, 
+  {"pk": 3, "model": "experiments.flowcell", 
+  "fields": {
+      "paired_end": false, 
+      "run_date": "2010-09-11 22:12:13", 
+      "read_length": 75, 
+      "notes": "",
+      "advanced_run": false,
+      "control_lane": 2,
+      "flowcell_id": "33THRAAXX (failed)"
       }
   }, 
   {"pk": "10001", "model": "samples.library", 
@@ -331,6 +342,56 @@
        "library": "10001",
        "cluster_estimate": 100000,
        "flowcell": 2,
+       "lane_number": 8,
+       "pM": "8"
+       }
+   },
+  {"pk": 9, "model": "experiments.lane",
+   "fields": {
+       "comment": "10004 lane 4",
+       "library": "10001",
+       "cluster_estimate": 100000,
+       "flowcell": 3,
+       "lane_number": 4,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 10, "model": "experiments.lane",
+   "fields": {
+       "comment": "10001 lane 1",
+       "library": "10001",
+       "cluster_estimate": 100000,
+       "flowcell": 3,
+       "lane_number": 1,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 11, "model": "experiments.lane",
+   "fields": {
+       "comment": "10001 lane 1",
+       "library": "10003",
+       "cluster_estimate": 100000,
+       "flowcell": 3,
+       "lane_number": 2,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 12, "model": "experiments.lane",
+   "fields": {
+       "comment": "10003 lane 8",
+       "library": "10003",
+       "cluster_estimate": 100000,
+       "flowcell": 3,
+       "lane_number": 8,
+       "pM": "8"
+       }
+   }, 
+  {"pk": 13, "model": "experiments.lane",
+   "fields": {
+       "comment": "10002 lane 8",
+       "library": "10001",
+       "cluster_estimate": 100000,
+       "flowcell": 3,
        "lane_number": 8,
        "pM": "8"
        }
