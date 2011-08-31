@@ -1,7 +1,7 @@
 """
 Generate settings for the Django Application.
 
-To make it easier to customize the application the settings can be 
+To make it easier to customize the application the settings can be
 defined in a configuration file read by ConfigParser.
 
 The options understood by this module are (with their defaults):
@@ -18,7 +18,7 @@ The options understood by this module are (with their defaults):
   [allowed_hosts]
   #name1=ip
   localhost=127.0.0.1
-  
+
   [allowed_analysis_hosts]
   #name1=ip
   localhost=127.0.0.1
@@ -28,6 +28,7 @@ import ConfigParser
 import os
 import shlex
 import htsworkflow
+import django
 
 HTSWORKFLOW_ROOT = os.path.abspath(os.path.split(htsworkflow.__file__)[0])
 
@@ -41,7 +42,7 @@ def options_to_list(options, dest, section_name, option_name):
   if options.has_option(section_name, option_name):
     opt = options.get(section_name, option_name)
     dest.extend( shlex.split(opt) )
-      
+
 def options_to_dict(dest, section_name):
   """
   Load a options from section_name and store in a dictionary
@@ -53,9 +54,9 @@ def options_to_dict(dest, section_name):
 # define your defaults here
 options = ConfigParser.SafeConfigParser(
            { 'email_host': 'localhost',
-             'email_port': '25', 
+             'email_port': '25',
              'database_engine': 'sqlite3',
-             'database_name': 
+             'database_name':
                   os.path.join(HTSWORKFLOW_ROOT, '..', 'fctracker.db'),
              'time_zone': 'America/Los_Angeles',
              'default_pm': '5',
@@ -91,9 +92,9 @@ options_to_list(options, MANAGERS, 'frontend', 'managers')
 
 DEFAULT_PM=int(options.get('frontend', 'default_pm'))
 
-AUTHENTICATION_BACKENDS = ( 
+AUTHENTICATION_BACKENDS = (
   'htsworkflow.frontend.samples.auth_backend.HTSUserModelBackend', )
-CUSTOM_USER_MODEL = 'samples.HTSUser' 
+CUSTOM_USER_MODEL = 'samples.HTSUser'
 
 EMAIL_HOST = options.get('frontend', 'email_host')
 EMAIL_PORT = int(options.get('frontend', 'email_port'))
@@ -110,7 +111,7 @@ database_section = options.get('frontend', 'database', 'database')
 if not options.has_section(database_section):
     raise ConfigParser.NoSectionError(
         "No database=<database_section_name> defined")
-    
+
 # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
 DATABASE_ENGINE = options.get(database_section, 'engine')
 DATABASE_NAME = options.get(database_section, 'name')
@@ -171,12 +172,17 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.load_template_source',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
-)
+]
+# be forgiving for django 1.1 which doesn't have csrf protection
+# TODO remove this when we upgrade to django 1.2
+if django.VERSION[0] == 1 and django.VERSION[1] > 1:
+    MIDDLEWARE_CLASSES.insert(0, 'django.middleware.csrf.CsrfViewMiddleware')
+
 
 ROOT_URLCONF = 'htsworkflow.frontend.urls'
 
@@ -200,7 +206,7 @@ INSTALLED_APPS = (
     'htsworkflow.frontend.samples',
     # modules from htsworkflow branch
     'htsworkflow.frontend.experiments',
-    'htsworkflow.frontend.analysis', 
+    'htsworkflow.frontend.analysis',
     'htsworkflow.frontend.reports',
     'htsworkflow.frontend.inventory',
     'htsworkflow.frontend.bcmagic',
