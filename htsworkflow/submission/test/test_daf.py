@@ -20,7 +20,7 @@ import RDF
 test_daf = """# Lab and general info
 grant             Hardison
 lab               Caltech-m
-dataType          ChipSeq 
+dataType          ChipSeq
 variables         cell, antibody,sex,age,strain,control
 compositeSuffix   CaltechHistone
 assembly          mm9
@@ -44,7 +44,7 @@ required         no
 test_daf_no_rep = """# Lab and general info
 grant             Hardison
 lab               Caltech-m
-dataType          ChipSeq 
+dataType          ChipSeq
 variables         cell, antibody,sex,age,strain,control
 compositeSuffix   CaltechHistone
 assembly          mm9
@@ -63,7 +63,7 @@ class TestDAF(unittest.TestCase):
     def test_parse(self):
 
         parsed = daf.fromstring(test_daf)
-        
+
         self.failUnlessEqual(parsed['assembly'], 'mm9')
         self.failUnlessEqual(parsed['grant'], 'Hardison')
         self.failUnlessEqual(len(parsed['variables']), 6)
@@ -85,7 +85,7 @@ class TestDAF(unittest.TestCase):
 
         name = 'cursub'
         subNS = RDF.NS(str(submissionLog[name].uri))
-        daf.add_to_model(model, parsed, name)
+        daf.add_to_model(model, parsed, submissionLog[name].uri)
 
         signal_view_node = RDF.Node(subNS['/view/Signal'].uri)
 
@@ -101,18 +101,38 @@ class TestDAF(unittest.TestCase):
         name = model.get_target(signal_view_node, dafTermOntology['name'])
         self.failUnlessEqual(fromTypedNode(name), u'Signal')
 
+    def test_get_view_namespace_from_string(self):
+        url = "http://jumpgate.caltech.edu/wiki/SubmissionLog/cursub/"
+        target = RDF.NS(url + 'view/')
+        view_namespace = daf.get_view_namespace(url)
+        self.assertEqual(view_namespace[''], target[''])
+
+    def test_get_view_namespace_from_string_no_trailing_slash(self):
+        url = "http://jumpgate.caltech.edu/wiki/SubmissionLog/cursub"
+        target = RDF.NS(url + '/view/')
+        view_namespace = daf.get_view_namespace(url)
+        self.assertEqual(view_namespace[''], target[''])
+
+    def test_get_view_namespace_from_uri_node(self):
+        url = "http://jumpgate.caltech.edu/wiki/SubmissionLog/cursub/"
+        node = RDF.Node(RDF.Uri(url))
+        target = RDF.NS(url + 'view/')
+        view_namespace = daf.get_view_namespace(node)
+        self.assertEqual(view_namespace[''], target[''])
+
+
 def load_daf_mapper(name, extra_statements=None, ns=None, test_daf=test_daf):
     """Load test model in
     """
     model = get_model()
     if ns is None:
         ns="http://extra"
-        
+
     if extra_statements is not None:
         parser = RDF.Parser(name='turtle')
         parser.parse_string_into_model(model, extra_statements,
                                        ns)
-        
+
     test_daf_stream = StringIO(test_daf)
     mapper = daf.DAFMapper(name, daf_file = test_daf_stream, model=model)
     return mapper
@@ -121,7 +141,7 @@ def dump_model(model):
     writer = get_serializer()
     turtle =  writer.serialize_model_to_string(model)
     print turtle
-    
+
 class TestDAFMapper(unittest.TestCase):
     def test_create_mapper_add_pattern(self):
         name = 'testsub'
@@ -129,7 +149,7 @@ class TestDAFMapper(unittest.TestCase):
         pattern = '.bam\Z(?ms)'
         mapper.add_pattern('Signal', pattern)
 
-        s = RDF.Statement(daf.get_view_namespace(name)['Signal'],
+        s = RDF.Statement(mapper.viewNS['Signal'],
                           dafTermOntology['filename_re'],
                           None)
         search = list(mapper.model.find_statements(s))
@@ -140,7 +160,7 @@ class TestDAFMapper(unittest.TestCase):
                              str(dafTermOntology['filename_re']))
         #self.failUnlessEqual(search[0].object.literal_value['string'], pattern)
 
-        
+
     def test_find_one_view(self):
         name='testfind'
         extra = '''@prefix dafTerm:<http://jumpgate.caltech.edu/wiki/UcscDaf#> .
@@ -152,7 +172,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*_r1\\\\.fastq" .
         daf_mapper = load_daf_mapper(name, extra_statements = extra)
 
         view = daf_mapper.find_view('filename_r1.fastq')
-        
+
         # dump_model(daf_mapper.model)
         view_root = 'http://jumpgate.caltech.edu/wiki/SubmissionsLog/{0}/view/'
         view_root = view_root.format(name)
@@ -185,7 +205,7 @@ thisView:Signal dafTerm:filename_re ".*\\\\.bam" ;
       submissionOntology:view_name "Signal" .
 thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         submissionOntology:view_name "FastqRd1" .
-<%(libUrl)s> <%(libraryOntology)sgel_cut> "100"^^xsd:decimal . 
+<%(libUrl)s> <%(libraryOntology)sgel_cut> "100"^^xsd:decimal .
 ''' % {'libraryOntology': 'http://jumpgate.caltech.edu/wiki/LibraryOntology#',
        'libUrl': lib_url}
 
@@ -203,13 +223,12 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         with mktempdir('analysis') as analysis_dir:
             path, analysis_name = os.path.split(analysis_dir)
             with mktempfile('.bam', dir=analysis_dir) as filename:
-                print 'dir', os.listdir(analysis_dir)
-                daf_mapper.construct_file_attributes(analysis_dir,
-                                                     libNode,
-                                                     filename)
-            
+                daf_mapper.construct_track_attributes(analysis_dir,
+                                                      libNode,
+                                                      filename)
+
         #dump_model(daf_mapper.model)
-        
+
         sub_root = "http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/"
         submission_name = sub_root + analysis_name
         source = daf_mapper.model.get_source(rdfNS['type'], submissionOntology['submission'])
@@ -219,7 +238,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         view = daf_mapper.model.get_target(source, submissionOntology['has_view'])
         self.failUnlessEqual(str(view.uri), view_name)
 
-        
+
     def test_library_url(self):
         daf_mapper = load_daf_mapper('urltest')
 
@@ -232,12 +251,12 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         daf_mapper = load_daf_mapper('test_rep')
         self.failUnlessEqual(daf_mapper.need_replicate(), True)
         self.failUnless('replicate' in daf_mapper.get_daf_variables())
-                        
+
     def test_daf_without_replicate(self):
         daf_mapper = load_daf_mapper('test_rep',test_daf=test_daf_no_rep)
         self.failUnlessEqual(daf_mapper.need_replicate(), False)
         self.failUnless('replicate' not in daf_mapper.get_daf_variables())
-        
+
 @contextmanager
 def mktempdir(prefix='tmp'):
     d = tempfile.mkdtemp(prefix=prefix)
@@ -255,7 +274,7 @@ def mktempfile(suffix='', prefix='tmp', dir=None):
     os.unlink(pathname)
     print "unmade", pathname
 
-    
+
 def suite():
     suite = unittest.makeSuite(TestDAF, 'test')
     suite.addTest(unittest.makeSuite(TestDAFMapper, 'test'))
