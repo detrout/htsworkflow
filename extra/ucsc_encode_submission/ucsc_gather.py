@@ -28,7 +28,7 @@ from htsworkflow.util.rdfhelp import \
      get_serializer, \
      load_into_model, \
      sparql_query, \
-     submissionOntology 
+     submissionOntology
 from htsworkflow.submission.daf import \
      DAFMapper, \
      MetadataLookupException, \
@@ -41,14 +41,14 @@ def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
     submission_uri = None
-    
+
     if opts.debug:
         logging.basicConfig(level = logging.DEBUG )
     elif opts.verbose:
         logging.basicConfig(level = logging.INFO )
     else:
-        logging.basicConfig(level = logging.WARNING )        
-    
+        logging.basicConfig(level = logging.WARNING )
+
     apidata = api.make_auth_from_opts(opts, parser)
 
     model = get_model(opts.load_model)
@@ -57,7 +57,7 @@ def main(cmdline=None):
         if opts.library_url is not None:
             mapper.library_url = opts.library_url
         submission_uri = get_submission_uri(opts.name)
-        
+
 
     if opts.load_rdf is not None:
         if submission_uri is None:
@@ -73,8 +73,10 @@ def main(cmdline=None):
 
     if opts.make_tree_from is not None:
         make_tree_from(opts.make_tree_from, library_result_map)
-            
+
     if opts.link_daf:
+        if opts.daf is None:
+            parser.error("Please specify daf filename with --daf")
         link_daf(opts.daf, library_result_map)
 
     if opts.fastq:
@@ -90,12 +92,12 @@ def main(cmdline=None):
 
     if opts.sparql:
         sparql_query(model, opts.sparql)
-        
+
     if opts.print_rdf:
         writer = get_serializer()
         print writer.serialize_model_to_string(model)
 
-        
+
 def make_parser():
     parser = OptionParser()
 
@@ -123,7 +125,7 @@ def make_parser():
     commands.add_option('--make-ddf', help='make the ddfs', default=False,
                       action="store_true")
     parser.add_option_group(commands)
-    
+
     parser.add_option('--force', default=False, action="store_true",
                       help="Force regenerating fastqs")
     parser.add_option('--daf', default=None, help='specify daf name')
@@ -136,7 +138,7 @@ def make_parser():
                       help='debug logging')
 
     api.add_auth_options(parser)
-    
+
     return parser
 
 def make_tree_from(source_path, library_result_map):
@@ -158,14 +160,14 @@ def make_tree_from(source_path, library_result_map):
                 os.symlink(source_pathname, target_pathname)
                 logging.info(
                     'LINK {0} to {1}'.format(source_pathname, target_pathname))
-    
+
 
 def link_daf(daf_path, library_result_map):
     if not os.path.exists(daf_path):
         raise RuntimeError("%s does not exist, how can I link to it?" % (daf_path,))
 
     base_daf = os.path.basename(daf_path)
-    
+
     for lib_id, result_dir in library_result_map:
         if not os.path.exists(result_dir):
             raise RuntimeError("Couldn't find target directory %s" %(result_dir,))
@@ -185,7 +187,7 @@ def scan_submission_dirs(view_map, library_result_map):
             view_map.import_submission_dir(result_dir, lib_id)
         except MetadataLookupException, e:
             logging.error("Skipping %s: %s" % (lib_id, str(e)))
-        
+
 def make_all_ddfs(view_map, library_result_map, daf_name, make_condor=True, force=False):
     dag_fragment = []
     for lib_id, result_dir in library_result_map:
@@ -203,7 +205,7 @@ def make_all_ddfs(view_map, library_result_map, daf_name, make_condor=True, forc
             f.write( os.linesep.join(dag_fragment))
             f.write( os.linesep )
             f.close()
-            
+
 
 def make_ddf(view_map, submissionNode, daf_name, make_condor=False, outdir=None):
     """
@@ -236,7 +238,7 @@ WHERE {
   OPTIONAL { ?library ucscDaf:readType ?readType }
   OPTIONAL { ?library libraryOntology:insert_size ?insertLength }
 }
-ORDER BY  ?submitView""" 
+ORDER BY  ?submitView"""
     dag_fragments = []
 
     name = fromTypedNode(view_map.model.get_target(submissionNode, submissionOntology['name']))
@@ -263,7 +265,7 @@ ORDER BY  ?submitView"""
     variables += [ 'labExpId', 'md5sum']
     output.write('\t'.join(variables))
     output.write(os.linesep)
-    
+
     all_views = {}
     all_files = []
     for row in results:
@@ -286,7 +288,7 @@ ORDER BY  ?submitView"""
         output.write("\t".join(line))
         output.write(os.linesep)
         all_files.extend(all_views[view]['files'])
-        
+
     logging.info(
         "Examined {0}, found files: {1}".format(
             str(submissionNode), ", ".join(all_files)))
@@ -297,19 +299,19 @@ ORDER BY  ?submitView"""
     if make_condor:
         archive_condor = make_condor_archive_script(name, all_files, outdir)
         upload_condor = make_condor_upload_script(name, outdir)
-        
-        dag_fragments.extend( 
+
+        dag_fragments.extend(
             make_dag_fragment(name, archive_condor, upload_condor)
-        ) 
-        
+        )
+
     return dag_fragments
 
 
 def read_library_result_map(filename):
     """
     Read a file that maps library id to result directory.
-    Does not support spaces in filenames. 
-    
+    Does not support spaces in filenames.
+
     For example:
       10000 result/foo/bar
     """
@@ -337,7 +339,7 @@ initialdir = %(initialdir)s
 environment="GZIP=-3"
 request_memory = 20
 
-queue 
+queue
 """
     if outdir is None:
         outdir = os.getcwd()
@@ -348,7 +350,7 @@ queue
 
     context = {'archivename': make_submission_name(name),
                'filelist': " ".join(files),
-               'initialdir': os.path.abspath(outdir), 
+               'initialdir': os.path.abspath(outdir),
                'user': os.getlogin()}
 
     condor_script = os.path.join(outdir, make_condor_name(name, 'archive'))
@@ -369,13 +371,13 @@ Output = upload.out.$(Process).log
 Log = /tmp/submission-upload-%(user)s.log
 initialdir = %(initialdir)s
 
-queue 
+queue
 """
     if outdir is None:
         outdir = os.getcwd()
-        
+
     auth = netrc.netrc(os.path.expanduser("~diane/.netrc"))
-    
+
     encodeftp = 'encodeftp.cse.ucsc.edu'
     ftpuser = auth.hosts[encodeftp][0]
     ftppassword = auth.hosts[encodeftp][2]
