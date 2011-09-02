@@ -2,5 +2,7 @@
 *.py[co]
 .coverage
 *.egg-info
+.noseids
+.ropeproject
 dist
 RELEASE-VERSION
