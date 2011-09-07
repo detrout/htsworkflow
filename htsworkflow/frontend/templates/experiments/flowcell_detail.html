@@ -11,20 +11,7 @@
 
 {% block content %}
 <div id="flowcell_detail">
-  <h2>About this Flowcell</h2>
-  <b>Flowcell</b>: 
-    <a href="{{flowcell.get_absolute_url}}" property="libns:flowcell_id">{{flowcell.flowcell_id}}</a><br/>
-  <b>Run Date</b>:
-    <span property="libns:date" content="{{flowcell.run_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ flowcell.run_date }}</span><br/>
-  <b>Type</b>: 
-    <span property="libns:flowcell_type">{{flowcell.flowcell_type}}</span><br/>
-  <b>Read Length</b>:
-    <span property="libns:read_length">{{flowcell.read_length}}</span><br/>
-  <b>Control Lane</b>:
-    <span property="libns:control_lane">{{flowcell.control_lane}}</span><br/>
-
-  <b>Notes</b>:
-    <pre property="libns:flowcell_notes">{{flowcell.notes}}</pre>
+  {% include "experiments/flowcell_header.html" %}
   <div class="htswdetail">
     <h2>Lanes</h2>
     <table>

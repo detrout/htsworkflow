@@ -27,6 +27,13 @@
     min-height:600px;
 }
 
+.icon_button {
+   border-style: solid;
+   border-width: 1px;
+   padding: 1px;
+   margin: 0px 0px -2px 2px;
+}
+
 div.msg {
     color: white;
     background: #880000;
@@ -134,8 +141,10 @@ div#librarydetail ol
 }
 
 div.library_identity { 
-  float: left; margin: 5px; }
+  clear: left; float: left; margin: 5px; }
 div.library_sample_detail { float: left; margin: 5px; }
 div.library_library_detail { float: left; margin: 5px; }
 div.library_statistics { clear: both; border: 1px; }
 
+div.flowcell_identity { clear: left; float: left; margin: 5px;}
+div.flowcell_lane_detail { float: left; margin: 5px; }

@@ -11,28 +11,22 @@
 
 {% block content %}
 <div id="lane_detail" class="htswdetail">
-  <h2>About this lane</h2>
   <div rel="libns:flowcell" resource="{{flowcell.get_absolute_url}}">
-  <b>Flowcell</b>: 
-    <a href="{{flowcell.get_absolute_url}}">{{flowcell.flowcell_id}}</a><br/>
-  <b>Run Date</b>:
-    <span property="libns:date" content="{{flowcell.run_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ flowcell.run_date }}</span><br/>
-  <b>Type</b>: 
-    <span property="libns:flowcell_type">{{flowcell.flowcell_type}}</span><br/>
-  </div>
+  {% include "experiments/flowcell_header.html" %}
+  <div class="flowcell_lane_detail">
+  <h2>About this lane</h2>
   <b>Lane</b>: 
     <span property="libns:lane_number" datatype="xsd:decimal">{{lane.lane_number}}</span><br/>
-  <b>Cycles</b>: 
-    <span property="libns:read_length">{{lane.flowcell.read_length}}</span><br/>
-  <b>pM</b>
+  <b>pM</b>:
     <span property="libns:pM" datatype="xsd:decimal">{{ lane.pM }}</span><br/>
-  <b>Cluster Estimate</b>
+  <b>Cluster Estimate</b>:
     <span property="libns:cluster_estimate" datatype="xsd:decimal"
           content="{{lane.cluster_estimate}}">{{ lane.cluster_estimate|intcomma }}</span><br/>
   <b>Lane Status</b>: 
     <span property="libns:status">{{ lane.status }}</span><br/>
-  <b>Comment</b>: 
+  <b>Comments</b>: 
     <span property="libns:comment">{{ lane.comment }}</span><br/>
+  </div>
   <hr/>
   {% include "sample_header.html" %}
   <hr/>
