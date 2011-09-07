@@ -3,7 +3,7 @@
 /* CHANGELISTS */
 #changelist {  margin-bottom: 0pm; }
 #changelist table { display: block; }
-#changelist table.filtered { margin-right: 21em; overflow-y: scroll; }
+#changelist table.filtered { overflow-y: scroll; }
 .change-list .filtered table { border-right:1px solid #ddd;  }
 .change-list .filtered { min-height:400px; }
 .change-list .filtered { background:white url(../img/changelist-bg.gif) top right repeat-y !important; }
