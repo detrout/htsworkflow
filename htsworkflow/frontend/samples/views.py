@@ -44,7 +44,7 @@ def count_lanes(lane_set):
     medium_read = 1
     long_read = 2
     counts = [[0,0,0,],[0,0,0]]
-    
+
     for lane in lane_set.all():
         if lane.flowcell.paired_end:
             lane_type = paired
@@ -57,7 +57,7 @@ def count_lanes(lane_set):
         else:
             read_type = long_read
         counts[lane_type][read_type] += 1
-        
+
     return counts
 
 def create_library_context(cl):
@@ -102,18 +102,18 @@ def library(request):
     t = get_template('samples/library_index.html')
     c = RequestContext(request, context)
     return HttpResponse( t.render(c) )
-    
+
 
 def library_to_flowcells(request, lib_id):
     """
     Display information about all the flowcells a library has been run on.
     """
-    
+
     try:
       lib = Library.objects.get(id=lib_id)
     except:
       return HttpResponse("Library %s does not exist" % (lib_id))
-   
+
     flowcell_list = []
     flowcell_run_results = {} # aka flowcells we're looking at
     for lane in lib.lane_set.all():
@@ -129,7 +129,7 @@ def library_to_flowcells(request, lib_id):
     for fc, lane_number in flowcell_list:
         lane_summary, err_list = _summary_stats(fc, lane_number)
         lane_summary_list.extend(lane_summary)
-        
+
         eland_results.extend(_make_eland_results(fc, lane_number, flowcell_run_results))
 
     context = {
@@ -167,28 +167,28 @@ def lanes_for(request, username=None):
         context,
         context_instance = RequestContext(request)
     )
-          
-    
+
+
 def summaryhtm_fc_cnm(request, flowcell_id, cnm):
     """
     returns a Summary.htm file if it exists.
     """
     fc_id, status = parse_flowcell_id(flowcell_id)
     d = get_flowcell_result_dict(fc_id)
-    
+
     if d is None:
         return HttpResponse('<b>Results for Flowcell %s not found.</b>' % (fc_id))
-    
+
     if cnm not in d:
         return HttpResponse('<b>Results for Flowcell %s; %s not found.</b>' % (fc_id, cnm))
-    
+
     summary_filepath = d[cnm]['summary']
-    
+
     if summary_filepath is None:
         return HttpResponse('<b>Summary.htm for Flowcell %s; %s not found.</b>' % (fc_id, cnm))
-    
+
     f = open(summary_filepath, 'r')
-    
+
     return HttpResponse(f)
 
 
@@ -198,27 +198,27 @@ def result_fc_cnm_eland_lane(request, flowcell_id, cnm, lane):
     """
     fc_id, status = parse_flowcell_id(flowcell_id)
     d = get_flowcell_result_dict(fc_id)
-    
+
     if d is None:
         return HttpResponse('<b>Results for Flowcell %s not found.</b>' % (fc_id))
-    
+
     if cnm not in d:
         return HttpResponse('<b>Results for Flowcell %s; %s not found.</b>' % (fc_id, cnm))
-    
+
     erd = d[cnm]['eland_results']
     lane = int(lane)
-    
+
     if lane not in erd:
         return HttpResponse('<b>Results for Flowcell %s; %s; lane %s not found.</b>' % (fc_id, cnm, lane))
-    
+
     filepath = erd[lane]
-    
+
     #f = opener.autoopen(filepath, 'r')
     # return HttpResponse(f, mimetype="application/x-elandresult")
 
     f = open(filepath, 'r')
     return HttpResponse(f, mimetype='application/x-bzip2')
-    
+
 
 
 def bedfile_fc_cnm_eland_lane_ucsc(request, fc_id, cnm, lane):
@@ -234,29 +234,29 @@ def bedfile_fc_cnm_eland_lane(request, flowcell_id, cnm, lane, ucsc_compatible=F
     """
     fc_id, status = parse_flowcell_id(flowcell_id)
     d = get_flowcell_result_dict(fc_id)
-    
+
     if d is None:
         return HttpResponse('<b>Results for Flowcell %s not found.</b>' % (fc_id))
-    
+
     if cnm not in d:
         return HttpResponse('<b>Results for Flowcell %s; %s not found.</b>' % (fc_id, cnm))
-    
+
     erd = d[cnm]['eland_results']
     lane = int(lane)
-    
+
     if lane not in erd:
         return HttpResponse('<b>Results for Flowcell %s; %s; lane %s not found.</b>' % (fc_id, cnm, lane))
-    
+
     filepath = erd[lane]
-    
+
     # Eland result file
     fi = opener.autoopen(filepath, 'r')
     # output memory file
-    
+
     name, description = makebed.make_description( fc_id, lane )
-    
+
     bedgen = makebed.make_bed_from_eland_generator(fi, name, description)
-    
+
     if ucsc_compatible:
         return HttpResponse(bedgen)
     else:
@@ -272,18 +272,18 @@ def _summary_stats(flowcell_id, lane_id):
 
     summary_list = []
     err_list = []
-    
+
     if fc_result_dict is None:
         err_list.append('Results for Flowcell %s not found.' % (fc_id))
         return (summary_list, err_list)
 
     for cycle_width in fc_result_dict:
         xmlpath = fc_result_dict[cycle_width]['run_xml']
-        
+
         if xmlpath is None:
             err_list.append('Run xml for Flowcell %s(%s) not found.' % (fc_id, cycle_width))
             continue
-        
+
         run = load_pipeline_run_xml(xmlpath)
         gerald_summary = run.gerald.summary.lane_results
         for end in range(len(gerald_summary)):
@@ -300,8 +300,8 @@ def _summary_stats(flowcell_id, lane_id):
                 eland_summary.clusters = None
             eland_summary.cycle_width = cycle_width
             if hasattr(eland_summary, 'genome_map'):
-                eland_summary.summarized_reads = runfolder.summarize_mapped_reads( 
-                                                   eland_summary.genome_map, 
+                eland_summary.summarized_reads = runfolder.summarize_mapped_reads(
+                                                   eland_summary.genome_map,
                                                    eland_summary.mapped_reads)
 
             # grab some more information out of the flowcell db
@@ -316,10 +316,10 @@ def _summary_stats(flowcell_id, lane_id):
         #except Exception, e:
         #    summary_list.append("Summary report needs to be updated.")
         #    logging.error("Exception: " + str(e))
-    
+
     return (summary_list, err_list)
 
-    
+
 def get_eland_result_type(pathname):
     """
     Guess the eland result file type from the filename
@@ -353,7 +353,7 @@ def _make_eland_results(flowcell_id, lane_number, interesting_flowcells):
                 # Otherwise use UUID
                 else:
                     storage_id_list.append(sd.uuid)
-        
+
     # Formatting for template use
     if len(storage_id_list) == 0:
         storage_ids = None
@@ -367,8 +367,8 @@ def _make_eland_results(flowcell_id, lane_number, interesting_flowcells):
         results.append({'flowcell_id': fc_id,
                         'flowcell': flowcell,
                         'run_date': flowcell.run_date,
-                        'cycle': cycle, 
-                        'lane': lane, 
+                        'cycle': cycle,
+                        'lane': lane,
                         'summary_url': make_summary_url(flowcell_id, cycle),
                         'result_url': result_link[0],
                         'result_label': result_link[1],
@@ -392,7 +392,7 @@ def make_result_link(flowcell_id, cycle_name, lane, eland_result_path):
     if result_type == 'result':
        bed_url_pattern = '/results/%s/%s/bedfile/%s'
        bed_url = bed_url_pattern % (flowcell_id, cycle_name, lane)
-    
+
     return (result_url, result_label, bed_url)
 
 def _files(flowcell_id, lane):
@@ -403,19 +403,19 @@ def _files(flowcell_id, lane):
 
     flowcell_id, id = parse_flowcell_id(flowcell_id)
     d = get_flowcell_result_dict(flowcell_id)
-    
+
     if d is None:
         return ''
-    
+
     output = []
-    
+
     # c_name == 'CN-M' (i.e. C1-33)
     for c_name in d:
-        
+
         if d[c_name]['summary'] is not None:
             output.append('<a href="/results/%s/%s/summary/">summary(%s)</a>' \
                           % (flowcell_id, c_name, c_name))
-        
+
         erd = d[c_name]['eland_results']
         if lane in erd:
             result_type = get_eland_result_type(erd[lane])
@@ -424,10 +424,10 @@ def _files(flowcell_id, lane):
             if result_type == 'result':
                 bed_url_pattern = '<a href="/results/%s/%s/bedfile/%s">bedfile(%s)</a>'
                 output.append(bed_url_pattern % (flowcell_id, c_name, lane, c_name))
-    
+
     if len(output) == 0:
         return ''
-    
+
     return '(' + '|'.join(output) + ')'
 
 def library_id_to_admin_url(request, lib_id):
@@ -453,12 +453,12 @@ def library_dict(library_id):
                            'read_length': lane.flowcell.read_length,
                            'status_code': lane.status,
                            'status': LANE_STATUS_MAP[lane.status]} )
-        
+
     info = {
         # 'affiliations'?
         # 'aligned_reads': lib.aligned_reads,
         #'amplified_into_sample': lib.amplified_into_sample, # into is a colleciton...
-        #'amplified_from_sample_id': lib.amplified_from_sample, 
+        #'amplified_from_sample_id': lib.amplified_from_sample,
         #'antibody_name': lib.antibody_name(), # we have no antibodies.
         'antibody_id': lib.antibody_id,
         'cell_line_id': lib.cell_line_id,
@@ -496,7 +496,7 @@ def library_json(request, library_id):
     """
     require_api_key(request)
     # what validation should we do on library_id?
-    
+
     lib = library_dict(library_id)
     if lib is None:
         raise Http404
@@ -512,7 +512,7 @@ def species_json(request, species_id):
 
 def species(request, species_id):
     species = get_object_or_404(Species, id=species_id)
-    
+
     context = RequestContext(request,
                              { 'species': species })
 
@@ -522,7 +522,7 @@ def antibodies(request):
     context = RequestContext(request,
                              {'antibodies': Antibody.objects.order_by('antigene')})
     return render_to_response("samples/antibody_index.html", context)
-    
+
 @login_required
 def user_profile(request):
     """
