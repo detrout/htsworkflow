@@ -20,7 +20,7 @@
 <div id="inventory-index-div" >
   <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
     {% block search %}{% search_form item_changelist %}{% endblock %}
- 
+
     {% block pagination %}{% pagination item_changelist %}{% endblock %}
 
     {% block filters %}
@@ -53,9 +53,9 @@
         <td ><a href="/inventory/{{ item.barcode_id }}/" rel="invns:barcode">{{ item.barcode_id }}</a></td>
         <td property="invns:location">{{ item.location }}</td>
         <td property="invns:item_type">{{ item.item_type }}</td>
-        <td ></td>      
-        <td property="invnfs:creation_date" content="{{item.creation_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ item.creation_date }}</td>      
-        <td style="a {display inline}">
+        <td ></td>
+        <td property="invnfs:creation_date" content="{{item.creation_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ item.creation_date }}</td>
+        <td class="cell_list" >
           {% for content in item.longtermstorage_set.all %}
           <a href="{{content.flowcell.get_absolute_url}}" rel="libns:flowcell_id">{{ content.flowcell }}</a>
           {% endfor %}

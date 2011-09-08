@@ -4,7 +4,7 @@
     <!-- App Stuff -->
     <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
     <script type="text/javascript" src="/static/js/jquery.min.js"></script>
-    
+
     {% block additional_javascript %}
     {% endblock %}
 {% endblock %}
@@ -27,11 +27,17 @@
       <tbody>
       {% for lane in lanes %}
         <tr rel="libns:has_lane" resource="{{lane.get_absolute_url}}" >
-          <td><a href="{{lane.get_absolute_url}}"> 
+          <td><a href="{{lane.get_absolute_url}}">
               <span property="libns:lane_number">{{lane.lane_number}}</span></a></td>
-          <td><a href="{{lane.library.get_absolute_url}}" 
+          <td><a href="{{lane.library.get_absolute_url}}"
                  rel="libns:library"><span property="libns:library_id"
-              >{{lane.library.id}}</span></a></td>
+              >{{lane.library.id}}</span></a>
+              {% if user.is_staff %}
+              <a href="{{lane.library.get_admin_url}}">
+                  <img class="icon_button"
+                       src="/media/img/admin/icon_changelink.gif"/>
+              </a>{% endif %}
+          </td>
           <td><a href="{{lane.library.get_absolute_url}}" rel="libns:library"><span property="libns:name">{{lane.library.library_name}}</span></a></td>
           <td><a href="{{lane.library.library_species.get_absolute_url}}" rel="libns:species">
               <span property="libns:species_name">{{ lane.library.library_species.scientific_name }}</span></a></td>
@@ -85,10 +91,10 @@
               </td>
             </tr>
             {% endif %}
-            {% endfor %} 
+            {% endfor %}
          </tbody>
        </table>
     {% endfor %}
     </div>
-</div>  
+</div>
 {% endblock %}

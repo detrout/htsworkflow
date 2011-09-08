@@ -40,6 +40,7 @@ div.msg {
 }
 
 div.htswdetail {
+    clear: both;
     margin: 0;
     padding: 0;
 }
@@ -80,7 +81,7 @@ div.htswdetail ol,
 div.htswdetail li
 {
   list-style: none;
-  margin: 0;   
+  margin: 0;
 }
 
 div.htswdetail ul,
@@ -89,7 +90,7 @@ div.htswdetail ol
   margin-bottom: .5em;
 }
 
-/* style library detail headers */ 
+/* style library detail headers */
 div#librarydetail {
   margin: 0;
   padding: 0;
@@ -131,7 +132,7 @@ div#librarydetail ol,
 div#librarydetail li
 {
   list-style: none;
-  margin: 0;   
+  margin: 0;
 }
 
 div#librarydetail ul,
@@ -140,7 +141,7 @@ div#librarydetail ol
   margin-bottom: .5em;
 }
 
-div.library_identity { 
+div.library_identity {
   clear: left; float: left; margin: 5px; }
 div.library_sample_detail { float: left; margin: 5px; }
 div.library_library_detail { float: left; margin: 5px; }

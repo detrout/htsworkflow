@@ -4,7 +4,7 @@
     <!-- App Stuff -->
     <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
     <script type="text/javascript" src="/static/js/jquery.min.js"></script>
-    
+
     {% block additional_javascript %}
     {% endblock %}
 {% endblock %}
@@ -32,7 +32,7 @@
     <tr about="{{result.flowcell.get_absolute_url}}">
       <td property="libns:date" content="{{result.run_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ result.run_date|date}}</td>
       <td>{{ result.cycle }}</td>
-      <td><a href="{{result.flowcell.get_absolute_url}}"><span property="libns:flowcell_id">{{ result.flowcell_id }}</span></a></td>
+      <td><a href="{{result.flowcell.get_absolute_url}}"><span property="libns:flowcell_id">{{ result.flowcell_id }}</span></a>{% if user.is_staff %}<a href="{{result.flowcell.get_admin_url}}"><img class="icon_button" src="/media/img/admin/icon_changelink.gif" alt="Edit"/></a>{% endif%}</td>
       <td><a href="{{result.lane.get_absolute_url}}" rel="libns:has_lane"><span property="libns:lane_number" datatype="xsd:decimal">{{ result.lane.lane_number }}</span></a></td>
       <td><a href="{{ result.summary_url }}">Summary</a></td>
       <td><a href="{{ result.result_url }}">{{ result.result_label }}</a></td>
@@ -50,7 +50,7 @@
     {% endfor %}
   </tbody>
   </table>
-  
+
   <h2>Lane Summary Statistics</h2>
   {% block summary_stats %}
   <table>
@@ -85,12 +85,13 @@
       </tr>
     </thead>
     <tbody>
-  
+
       {# ls short for lane summary #}
       {% for ls in lane_summary_list %}
       <tr about="{{ls.lane.get_absolute_url}}">
         <td>{{ ls.cycle_width }}</td>
-        <td><a href="{{ls.flowcell.get_absolute_url}}">{{ ls.flowcell_id }}</a></td>
+        <td><a href="{{ls.flowcell.get_absolute_url}}">{{ ls.flowcell_id }}</a>
+        </td>
         <td><a href="{{ls.lane.get_absolute_url}}">{{ ls.lane_id }}</a></td>
         <td>{% if ls.end %}{{ ls.end }}{% endif %}</td>
         <td>{{ ls.clusters.0|intcomma }}</td>
@@ -126,8 +127,15 @@
       {% for lane in lib.lane_set.all %}
       <tr rel="libns:has_lane" resource="{{lane.get_absolute_url}}">
         <td><a href="{{lane.flowcell.get_absolute_url}}" rel="libns:flowcell"
-            ><span property="libns:flowcell_id">{{ lane.flowcell.flowcell_id }}</span></a></td>
-        <td><a href="{{lane.get_absolute_url}}"> 
+            ><span property="libns:flowcell_id">{{ lane.flowcell.flowcell_id }}</span></a>
+          {% if user.is_staff %}
+            <a href="{{lane.flowcell.get_admin_url}}">
+               <img class="icon_button"
+                    src="/media/img/admin/icon_changelink.gif" alt="Edit"/>
+            </a>
+          {% endif%}
+        </td>
+        <td><a href="{{lane.get_absolute_url}}">
             <span property="libns:lane_number"  datatype="xsd:decimal"
                >{{ lane.lane_number }}</span></a></td>
         <td>{{ lane.comment }}</td>
@@ -140,13 +148,13 @@
   <h2>Count of multi-reads</h2>
   {% for eland_lane in lane_summary_list %}
     {% if eland_lane.summarized_reads %}
-    <h3>{{eland_lane.cycle_width}} {{ eland_lane.flowcell_id }} lane {{ eland_lane.lane_id }} 
+    <h3>{{eland_lane.cycle_width}} {{ eland_lane.flowcell_id }} lane {{ eland_lane.lane_id }}
       {% if eland_lane.end %} end {{ eland_lane.end }}{% endif %}
     </h3>
     <ul about="{{eland_lane.lane.get_absolute_url}}">
       {% for name, counts in eland_lane.summarized_reads.items %}
       <li rel="libns:has_mappings">
-         <b property="libns:mapped_to">{{ name }}</b>: 
+         <b property="libns:mapped_to">{{ name }}</b>:
          <span property="libns:reads" content="{{counts}}" datatype="xsd:integer">{{ counts|intcomma }}</span></li>
       {% endfor %}
     </ul>
