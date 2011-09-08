@@ -29,6 +29,7 @@ import os
 import shlex
 import htsworkflow
 import django
+from django.conf import global_settings
 
 HTSWORKFLOW_ROOT = os.path.abspath(os.path.split(htsworkflow.__file__)[0])
 
@@ -172,18 +173,17 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.load_template_source',
 )
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE_CLASSES = (
+    'django.contrib.csrf.middleware.CsrfMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
-]
-# be forgiving for django 1.1 which doesn't have csrf protection
-# TODO remove this when we upgrade to django 1.2
-if django.VERSION[0] == 1 and django.VERSION[1] > 1:
-    MIDDLEWARE_CLASSES.insert(0, 'django.middleware.csrf.CsrfViewMiddleware')
+)
 
-
+TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
+    'htsworkflow.frontend.thispage.thispage',
+)
 ROOT_URLCONF = 'htsworkflow.frontend.urls'
 
 TEMPLATE_DIRS = (
