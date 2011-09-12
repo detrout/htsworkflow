@@ -44,7 +44,7 @@ class ResultLane(object):
         self.lane_id = lane_id
         self.end = end
         self._reads = None
-        
+
         if xml is not None:
             self.set_elements(xml)
 
@@ -182,13 +182,13 @@ class ElandLane(ResultLane):
             reads += 1
             fields = line.split()
             # fields[2] = QC/NM/or number of matches
-            score_type = self._score_mapped_mismatches(fields[MATCH_INDEX], 
+            score_type = self._score_mapped_mismatches(fields[MATCH_INDEX],
                                                        match_codes)
             if score_type == ElandLane.SCORE_READ:
                 # when there are too many hits, eland  writes a - where
                 # it would have put the list of hits.
                 # or in a different version of eland, it just leaves
-                # that column blank, and only outputs 3 fields.     
+                # that column blank, and only outputs 3 fields.
                 if len(fields) < 4 or fields[LOCATION_INDEX] == '-':
                   continue
 
@@ -213,16 +213,16 @@ class ElandLane(ResultLane):
             reads += 1
             fields = line.split()
             # fields[2] = QC/NM/or number of matches
-            score_type = self._score_mapped_mismatches(fields[MATCH_INDEX], 
+            score_type = self._score_mapped_mismatches(fields[MATCH_INDEX],
                                                        match_codes)
             if score_type == ElandLane.SCORE_UNRECOGNIZED:
                 # export files have three states for the match field
-                # QC code, count of multi-reads, or a single 
+                # QC code, count of multi-reads, or a single
                 # read location. The score_mapped_mismatches function
                 # only understands the first two types.
                 # if we get unrecognized, that implies the field is probably
                 # a location.
-                code = self._count_mapped_export(mapped_reads, 
+                code = self._count_mapped_export(mapped_reads,
                                                  fields[LOCATION_INDEX],
                                                  fields[DESCRIPTOR_INDEX])
                 match_codes[code] += 1
@@ -232,7 +232,7 @@ class ElandLane(ResultLane):
 
     def _score_mapped_mismatches(self, match, match_codes):
         """Update match_codes with eland map counts, or failure code.
-        
+
         Returns True if the read mapped, false if it was an error code.
         """
         groups = ElandLane.MATCH_COUNTS_RE.match(match)
@@ -260,12 +260,12 @@ class ElandLane(ResultLane):
                 match_codes['U1'] += 1
             elif one_mismatches < 255:
                 match_codes['R1'] += one_mismatches
-    
+
             if two_mismatches == 1:
                 match_codes['U2'] += 1
             elif two_mismatches < 255:
                 match_codes['R2'] += two_mismatches
-                
+
             return ElandLane.SCORE_READ
 
 
@@ -284,9 +284,9 @@ class ElandLane(ResultLane):
 
     def _count_mapped_export(self, mapped_reads, match_string, descriptor):
         """Count a read as defined in an export file
-        
+
         match_string contains the chromosome
-        descriptor contains the an ecoding of bases that match, mismatch, 
+        descriptor contains the an ecoding of bases that match, mismatch,
                    and have indels.
         returns the "best" match code
 
@@ -320,25 +320,25 @@ class ElandLane(ResultLane):
 
     def _get_no_match(self):
         if self._mapped_reads is None:
-            self._update()  
+            self._update()
         return self._match_codes['NM']
-    no_match = property(_get_no_match, 
+    no_match = property(_get_no_match,
                         doc="total reads that didn't match the target genome.")
 
     def _get_no_match_percent(self):
-        return float(self.no_match)/self.reads * 100 
+        return float(self.no_match)/self.reads * 100
     no_match_percent = property(_get_no_match_percent,
                                 doc="no match reads as percent of total")
 
     def _get_qc_failed(self):
         if self._mapped_reads is None:
-            self._update()  
+            self._update()
         return self._match_codes['QC']
     qc_failed = property(_get_qc_failed,
                         doc="total reads that didn't match the target genome.")
 
     def _get_qc_failed_percent(self):
-        return float(self.qc_failed)/self.reads * 100 
+        return float(self.qc_failed)/self.reads * 100
     qc_failed_percent = property(_get_qc_failed_percent,
                                  doc="QC failed reads as percent of total")
 
@@ -361,7 +361,7 @@ class ElandLane(ResultLane):
         return sum
     repeat_reads = property(_get_repeat_reads,
                             doc="total repeat reads")
-    
+
     def get_elements(self):
         lane = ElementTree.Element(ElandLane.LANE,
                                    {'version':
@@ -565,7 +565,7 @@ class ELAND(object):
             raise ValueError('Expecting %s', ELAND.ELAND)
         for element in list(tree):
             lane_id = int(element.attrib[ELAND.LANE_ID])
-            end = int(element.attrib.get(ELAND.END, 0)) 
+            end = int(element.attrib.get(ELAND.END, 0))
             if element.tag.lower() == ElandLane.LANE.lower():
                 lane = ElandLane(xml=element)
             elif element.tag.lower() == SequenceLane.LANE.lower():
@@ -598,16 +598,16 @@ def update_result_with_eland(gerald, results, lane_id, end, pathname, genome_map
     # split_name = name.split('_')
     # lane_id = int(split_name[1])
 
+    genome_map = {}
     if genome_maps is not None:
         genome_map = genome_maps[lane_id]
     elif gerald is not None:
         genome_dir = gerald.lanes[lane_id].eland_genome
-        genome_map = build_genome_fasta_map(genome_dir)
-    else:
-        genome_map = {}
+        if genome_dir is not None:
+            genome_map = build_genome_fasta_map(genome_dir)
 
     lane = ElandLane(pathname, lane_id, end, genome_map)
-    
+
     if end is None:
         effective_end =  0
     else:
@@ -643,7 +643,7 @@ def eland(gerald_dir, gerald=None, genome_maps=None):
     if os.path.isdir(basedir_temp):
         basedirs.append(basedir_temp)
 
-   
+
     # the order in patterns determines the preference for what
     # will be found.
     MAPPED_ELAND = 0
@@ -723,7 +723,7 @@ def main(cmdline=None):
         e = eland(a)
         print e.get_elements()
 
-    return 
+    return
 
 
 if __name__ == "__main__":

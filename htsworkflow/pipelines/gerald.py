@@ -56,14 +56,18 @@ class Gerald(object):
             # default to the chipwide parameters if there isn't an
             # entry in the lane specific paramaters
             if genome is None:
-                subtree = self._gerald.tree.find('ChipWideRunParameters')
-                container = subtree.find('ELAND_GENOME')
-                genome = container.text
+                genome = self._gerald._get_chip_attribute('ELAND_GENOME')
+            # ignore flag value
+            if genome == 'Need_to_specify_ELAND_genome_directory':
+                genome = None
             return genome
         eland_genome = property(_get_eland_genome)
 
         def _get_read_length(self):
-            return self.__get_attribute('READ_LENGTH')
+            read_length = self.__get_attribute('READ_LENGTH')
+            if read_length is None:
+                read_length = self._gerald._get_chip_attribute('READ_LENGTH')
+            return read_length
         read_length = property(_get_read_length)
 
         def _get_use_bases(self):
@@ -154,7 +158,7 @@ class Gerald(object):
             root = ''
         else:
             root = os.path.join(root,'')
-            
+
         experiment_dir = self.tree.findtext('ChipWideRunParameters/EXPT_DIR')
         if experiment_dir is None:
             return None
@@ -165,12 +169,15 @@ class Gerald(object):
         dirnames = experiment_dir.split(os.path.sep)
         return dirnames[0]
     runfolder_name = property(_get_runfolder_name)
-    
+
     def _get_version(self):
         if self.tree is None:
             return None
         return self.tree.findtext('ChipWideRunParameters/SOFTWARE_VERSION')
     version = property(_get_version)
+
+    def _get_chip_attribute(self, value):
+        return self.tree.findtext('ChipWideRunParameters/%s' % (value,))
 
     def dump(self):
         """
