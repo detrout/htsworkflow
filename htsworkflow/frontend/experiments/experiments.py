@@ -4,7 +4,7 @@ try:
     import json
 except ImportError, e:
     import simplejson as json
-    
+
 import os
 import re
 
@@ -20,7 +20,7 @@ from htsworkflow.frontend.experiments.models import \
     DataRun, \
     Lane, \
     LANE_STATUS_MAP
-from htsworkflow.frontend.samples.models import Library, HTSUser
+from htsworkflow.frontend.samples.models import Library, MultiplexIndex, HTSUser
 
 def flowcell_information(flowcell_id):
     """
@@ -33,13 +33,13 @@ def flowcell_information(flowcell_id):
 
     lane_set = {}
     for lane in fc.lane_set.all():
-        lane_set[lane.lane_number] = {
+        lane_item = {
             'cluster_estimate': lane.cluster_estimate,
             'comment': lane.comment,
             'experiment_type': lane.library.experiment_type.name,
             'experiment_type_id': lane.library.experiment_type_id,
             'flowcell': lane.flowcell.flowcell_id,
-            'lane_number': int(lane.lane_number),
+            'lane_number': lane.lane_number,
             'library_name': lane.library.library_name,
             'library_id': lane.library.id,
             'library_species': lane.library.library_species.scientific_name,
@@ -48,12 +48,17 @@ def flowcell_information(flowcell_id):
             'status_code': lane.status,
             'status': LANE_STATUS_MAP[lane.status]
         }
+        sequences = lane.library.index_sequences()
+        if sequences is not None:
+            lane_item['index_sequence'] = sequences
+
+        lane_set.setdefault(lane.lane_number,[]).append(lane_item)
 
     if fc.control_lane is None:
         control_lane = None
     else:
         control_lane = int(fc.control_lane)
-        
+
     info = {
         'advanced_run': fc.advanced_run,
         'cluster_station_id': fc.cluster_station_id,
@@ -70,7 +75,7 @@ def flowcell_information(flowcell_id):
         'sequencer_id': fc.sequencer_id,
         'sequencer': fc.sequencer.name,
     }
-    
+
     return info
 
 def flowcell_json(request, fc_id):
@@ -78,12 +83,12 @@ def flowcell_json(request, fc_id):
     Return a JSON blob containing enough information to generate a config file.
     """
     require_api_key(request)
-    
+
     fc_dict = flowcell_information(fc_id)
 
     if fc_dict is None:
         raise Http404
-    
+
     fc_json = json.dumps(fc_dict)
     return HttpResponse(fc_json, mimetype = 'application/json')
 
@@ -93,12 +98,12 @@ def lanes_for(username=None):
     """
     query = {}
     if username is not None:
-        user = HTSUser.objects.get(username=username)        
+        user = HTSUser.objects.get(username=username)
         query.update({'library__affiliations__users__id': user.id})
-        
+
     lanes = Lane.objects.filter(**query).order_by('-flowcell__run_date')
 
-    
+
     result = []
     for l in lanes:
         affiliations = l.library.affiliations.all()
@@ -122,12 +127,13 @@ def lanes_for_json(request, username):
         result = lanes_for(username)
     except ObjectDoesNotExist, e:
         raise Http404
-    
+
     #convert query set to python structure
-    
+
     result_json = json.dumps(result)
     return HttpResponse(result_json, mimetype='application/json')
-                 
+
+
 def updStatus(request):
     output=''
     user = 'none'
@@ -141,7 +147,7 @@ def updStatus(request):
       user = request.user
 
     #Check access permission
-    if not (user.is_superuser and settings.ALLOWED_IPS.has_key(ClIP)): 
+    if not (user.is_superuser and settings.ALLOWED_IPS.has_key(ClIP)):
         return HttpResponse("%s access denied from %s." % (user, ClIP))
 
     # ~~~~~~Parameters for the job ~~~~
@@ -149,22 +155,22 @@ def updStatus(request):
       fcid = request.REQUEST['fcid']
     else:
       return HttpResponse('missing fcid')
-    
+
     if request.REQUEST.has_key('runf'):
       runfolder = request.REQUEST['runf']
     else:
       return HttpResponse('missing runf')
 
-    
+
     if request.REQUEST.has_key('updst'):
       UpdatedStatus = request.REQUEST['updst']
     else:
       return HttpResponse('missing status')
-    
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # Update Data Run status in DB
-    # Try get rec. If not found return 'entry not found + <fcid><runfolder>', if found try update and return updated 
+    # Try get rec. If not found return 'entry not found + <fcid><runfolder>', if found try update and return updated
     try:
       rec = DataRun.objects.get(run_folder=runfolder)
       rec.run_status = UpdatedStatus
@@ -204,15 +210,15 @@ def generateConfile(request,fcid):
     config += ['ELAND_MULTIPLE_INSTANCES 8']
     genome_dir = 'GENOME_DIR /Volumes/Genomes/'
     eland_genome = 'ELAND_GENOME /Volumes/Genomes/'
-    
-    try:                                                                                                                                              
+
+    try:
       fc = FlowCell.objects.get(flowcell_id=fcid)
       for lane in fc.lane_set.all():
           config += [ str(lane.lane_number) +":" + \
                       genome_dir + lane.library.library_species.scientific_name ]
           config += [ str(lane.lane_number) +":" + \
                       eland_genome + lane.library.library_species.scientific_name ]
-      
+
     except ObjectDoesNotExist:
       config = 'Entry not found for fcid  = '+fcid
 
@@ -245,8 +251,8 @@ def getConfile(req):
               rec.config_params = cnfgfile
               rec.save()
             else:
-              cnfgfile = 'Failed generating config params for RunFolder = '+runfolder +', Flowcell id = '+ fcid+ ' Config Text:\n'+cnfgfile  
-            
+              cnfgfile = 'Failed generating config params for RunFolder = '+runfolder +', Flowcell id = '+ fcid+ ' Config Text:\n'+cnfgfile
+
         except ObjectDoesNotExist:
           cnfgfile = 'Entry not found for RunFolder = '+runfolder
 
@@ -264,14 +270,14 @@ def getLaneLibs(req):
     outputfile = ''
     if request.has_key('fcid'):
       fcid = request['fcid']
-      try:                                
+      try:
         rec = FlowCell.objects.get(flowcell_id=fcid)
         #Ex: 071211
         year = datetime.today().year.__str__()
         year = replace(year,'20','')
         month = datetime.today().month
         if month < 10: month = "0"+month.__str__()
-        else: month = month.__str__() 
+        else: month = month.__str__()
         day = datetime.today().day
         if day < 10: day = "0"+day.__str__()
         else: day = day.__str__()
@@ -302,7 +308,7 @@ def estimateFlowcellDuration(flowcell):
     sequencing_seconds_per_cycle= 3600 * 1.5
     # 800 is a rough guess
     pipeline_seconds_per_cycle = 800
-    
+
     cycles = flowcell.read_length
     if flowcell.paired_end:
         cycles *= 2
@@ -314,7 +320,7 @@ def estimateFlowcellDuration(flowcell):
 
 def estimateFlowcellTimeRemaining(flowcell):
     estimate_mid = estimateFlowcellDuration(flowcell)
-    
+
     # offset for how long we've been running
     running_time = datetime.now() - flowcell.run_date
     estimate_mid -= running_time
@@ -329,9 +335,9 @@ def roundToDays(estimate):
     estimate_low = timedelta(estimate.days, 0)
     # floor estimate_mid and add a day
     estimate_high = timedelta(estimate.days+1, 0)
-    
+
     return (estimate_low, estimate_high)
-    
+
 
 def makeUserLaneMap(flowcell):
     """
@@ -349,26 +355,26 @@ def makeUserLaneMap(flowcell):
 
 def getUsersForFlowcell(flowcell):
     users = set()
-    
+
     for lane in flowcell.lane_set.all():
         for affiliation in lane.library.affiliations.all():
             for user in affiliation.users.all():
                 users.add(user)
-                
+
     return users
-    
+
 def makeUserLibraryMap(libraries):
     """
     Given an interable set of libraries return a mapping or
     users interested in those libraries.
     """
     users = {}
-    
+
     for library in libraries:
         for affiliation in library.affiliations.all():
             for user in affiliation.users.all():
                 users.setdefault(user,[]).append(library)
-                
+
     return users
 
 def makeAffiliationLaneMap(flowcell):

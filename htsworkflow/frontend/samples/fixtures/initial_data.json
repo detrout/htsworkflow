@@ -4,7 +4,7 @@
      "pk": 1,
      "fields": {
         "cellline_name": "Unknown",
-        "notes": "Unknown"    
+        "notes": "Unknown"
      }
   },
   {
@@ -12,7 +12,7 @@
      "pk": 2,
      "fields": {
         "cellline_name": "C2C12 Exponential",
-        "notes": ""    
+        "notes": ""
      }
   },
   {
@@ -20,21 +20,34 @@
      "pk": 3,
      "fields": {
         "cellline_name": "C2C12 60 hrs",
-        "notes": "Unknown"    
+        "notes": "Unknown"
      }
   },
   {
      "model": "samples.LibraryType",
      "pk": 1,
      "fields": {
-        "name": "Single End"
+        "name": "Single End",
+        "can_multiplex": false,
+        "is_paired_end": false
      }
   },
   {
      "model": "samples.LibraryType",
      "pk": 2,
      "fields": {
-        "name": "Paired End"
+        "name": "Paired End",
+        "can_multiplex": false,
+        "is_paired_end": true
+     }
+  },
+  {
+     "model": "samples.LibraryType",
+     "pk": 5,
+     "fields": {
+        "name": "Barcoded",
+        "can_multiplex": true,
+        "is_paired_end": true
      }
   },
   {
@@ -131,5 +144,653 @@
      "fields": {
         "scientific_name": "Strongylocentrotus purpuratus"
      }
+  },
+  {
+    "pk": 1,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 1,
+      "adapter_type": 8,
+      "sequence": "ATCACG"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 2,
+      "adapter_type": 8,
+      "sequence": "CGATGT"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 3,
+      "adapter_type": 8,
+      "sequence": "TTAGGC"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 4,
+      "adapter_type": 8,
+      "sequence": "TGACCA"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 5,
+      "adapter_type": 8,
+      "sequence": "ACAGTG"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 6,
+      "adapter_type": 8,
+      "sequence": "GCCAAT"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 7,
+      "adapter_type": 8,
+      "sequence": "CAGATC"
+    }
+  },
+  {
+    "pk": 8,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 8,
+      "adapter_type": 8,
+      "sequence": "ACTTGA"
+    }
+  },
+  {
+    "pk": 9,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 9,
+      "adapter_type": 8,
+      "sequence": "GATCAG"
+    }
+  },
+  {
+    "pk": 10,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 10,
+      "adapter_type": 8,
+      "sequence": "TAGCTT"
+    }
+  },
+  {
+    "pk": 11,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 11,
+      "adapter_type": 8,
+      "sequence": "GGCTAC"
+    }
+  },
+  {
+    "pk": 12,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 12,
+      "adapter_type": 8,
+      "sequence": "CTTGTA"
+    }
+  },
+  {
+    "pk": 13,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 1,
+      "adapter_type": 7,
+      "sequence": "ATCACG"
+    }
+  },
+  {
+    "pk": 14,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 2,
+      "adapter_type": 7,
+      "sequence": "CGATGT"
+    }
+  },
+  {
+    "pk": 15,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 3,
+      "adapter_type": 7,
+      "sequence": "TTAGGC"
+    }
+  },
+  {
+    "pk": 16,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 4,
+      "adapter_type": 7,
+      "sequence": "TGACCA"
+    }
+  },
+  {
+    "pk": 17,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 5,
+      "adapter_type": 7,
+      "sequence": "ACAGTG"
+    }
+  },
+  {
+    "pk": 18,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 6,
+      "adapter_type": 7,
+      "sequence": "GCCAAT"
+    }
+  },
+  {
+    "pk": 19,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 7,
+      "adapter_type": 7,
+      "sequence": "CAGATC"
+    }
+  },
+  {
+    "pk": 20,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 8,
+      "adapter_type": 7,
+      "sequence": "ACTTGA"
+    }
+  },
+  {
+    "pk": 21,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 9,
+      "adapter_type": 7,
+      "sequence": "GATCAG"
+    }
+  },
+  {
+    "pk": 22,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 10,
+      "adapter_type": 7,
+      "sequence": "TAGCTT"
+    }
+  },
+  {
+    "pk": 23,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 11,
+      "adapter_type": 7,
+      "sequence": "GGCTAC"
+    }
+  },
+  {
+    "pk": 24,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 12,
+      "adapter_type": 7,
+      "sequence": "CTTGTA"
+    }
+  },
+  {
+    "pk": 25,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 13,
+      "adapter_type": 7,
+      "sequence": "AGTCAA"
+    }
+  },
+  {
+    "pk": 26,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 14,
+      "adapter_type": 7,
+      "sequence": "AGTTCC"
+    }
+  },
+  {
+    "pk": 27,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 15,
+      "adapter_type": 7,
+      "sequence": "ATGTCA"
+    }
+  },
+  {
+    "pk": 28,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 16,
+      "adapter_type": 7,
+      "sequence": "CCGTCC"
+    }
+  },
+  {
+    "pk": 29,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 17,
+      "adapter_type": 7,
+      "sequence": "GTAGAG"
+    }
+  },
+  {
+    "pk": 30,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 18,
+      "adapter_type": 7,
+      "sequence": "GTCCGC"
+    }
+  },
+  {
+    "pk": 31,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 19,
+      "adapter_type": 7,
+      "sequence": "GTGAAA"
+    }
+  },
+  {
+    "pk": 32,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 20,
+      "adapter_type": 7,
+      "sequence": "GTGGCC"
+    }
+  },
+  {
+    "pk": 33,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 21,
+      "adapter_type": 7,
+      "sequence": "GTTTCG"
+    }
+  },
+  {
+    "pk": 34,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 22,
+      "adapter_type": 7,
+      "sequence": "CGTACG"
+    }
+  },
+  {
+    "pk": 35,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 23,
+      "adapter_type": 7,
+      "sequence": "GAGTGG"
+    }
+  },
+  {
+    "pk": 36,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 24,
+      "adapter_type": 7,
+      "sequence": "GGTAGC"
+    }
+  },
+  {
+    "pk": 37,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 25,
+      "adapter_type": 7,
+      "sequence": "ACTGAT"
+    }
+  },
+  {
+    "pk": 38,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 26,
+      "adapter_type": 7,
+      "sequence": "ATGAGC"
+    }
+  },
+  {
+    "pk": 39,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 27,
+      "adapter_type": 7,
+      "sequence": "ATTCCT"
+    }
+  },
+  {
+    "pk": 40,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 28,
+      "adapter_type": 7,
+      "sequence": "CAAAAG"
+    }
+  },
+  {
+    "pk": 41,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 29,
+      "adapter_type": 7,
+      "sequence": "CAACTA"
+    }
+  },
+  {
+    "pk": 42,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 30,
+      "adapter_type": 7,
+      "sequence": "CACCGG"
+    }
+  },
+  {
+    "pk": 43,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 31,
+      "adapter_type": 7,
+      "sequence": "CACGAT"
+    }
+  },
+  {
+    "pk": 44,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 32,
+      "adapter_type": 7,
+      "sequence": "CACTCA"
+    }
+  },
+  {
+    "pk": 45,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 33,
+      "adapter_type": 7,
+      "sequence": "CAGGCG"
+    }
+  },
+  {
+    "pk": 46,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 34,
+      "adapter_type": 7,
+      "sequence": "CATGGC"
+    }
+  },
+  {
+    "pk": 47,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 35,
+      "adapter_type": 7,
+      "sequence": "CATTTT"
+    }
+  },
+  {
+    "pk": 48,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 36,
+      "adapter_type": 7,
+      "sequence": "CCAACA"
+    }
+  },
+  {
+    "pk": 49,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 37,
+      "adapter_type": 7,
+      "sequence": "CGGAAT"
+    }
+  },
+  {
+    "pk": 50,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 38,
+      "adapter_type": 7,
+      "sequence": "CTAGCT"
+    }
+  },
+  {
+    "pk": 51,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 39,
+      "adapter_type": 7,
+      "sequence": "CTATAC"
+    }
+  },
+  {
+    "pk": 52,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 40,
+      "adapter_type": 7,
+      "sequence": "CTCAGA"
+    }
+  },
+  {
+    "pk": 53,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 41,
+      "adapter_type": 7,
+      "sequence": "GACGAC"
+    }
+  },
+  {
+    "pk": 54,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 42,
+      "adapter_type": 7,
+      "sequence": "TAATCG"
+    }
+  },
+  {
+    "pk": 55,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 43,
+      "adapter_type": 7,
+      "sequence": "TACAGC"
+    }
+  },
+  {
+    "pk": 56,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 44,
+      "adapter_type": 7,
+      "sequence": "TATAAT"
+    }
+  },
+  {
+    "pk": 57,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 45,
+      "adapter_type": 7,
+      "sequence": "TCATTC"
+    }
+  },
+  {
+    "pk": 58,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 46,
+      "adapter_type": 7,
+      "sequence": "TCCCGA"
+    }
+  },
+  {
+    "pk": 59,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 47,
+      "adapter_type": 7,
+      "sequence": "TCGAAG"
+    }
+  },
+  {
+    "pk": 60,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 48,
+      "adapter_type": 7,
+      "sequence": "TCGGCA"
+    }
+  },
+  {
+    "pk": 61,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 1,
+      "adapter_type": 5,
+      "sequence": "ATCACG"
+    }
+  },
+  {
+    "pk": 62,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 2,
+      "adapter_type": 5,
+      "sequence": "CGATGT"
+    }
+  },
+  {
+    "pk": 63,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 3,
+      "adapter_type": 5,
+      "sequence": "TTAGGC"
+    }
+  },
+  {
+    "pk": 64,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 4,
+      "adapter_type": 5,
+      "sequence": "TGACCA"
+    }
+  },
+  {
+    "pk": 65,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 5,
+      "adapter_type": 5,
+      "sequence": "ACAGTG"
+    }
+  },
+  {
+    "pk": 66,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 6,
+      "adapter_type": 5,
+      "sequence": "GCCAAT"
+    }
+  },
+  {
+    "pk": 67,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 7,
+      "adapter_type": 5,
+      "sequence": "CAGATC"
+    }
+  },
+  {
+    "pk": 68,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 8,
+      "adapter_type": 5,
+      "sequence": "ACTTGA"
+    }
+  },
+  {
+    "pk": 69,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 9,
+      "adapter_type": 5,
+      "sequence": "GATCAG"
+    }
+  },
+  {
+    "pk": 70,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 10,
+      "adapter_type": 5,
+      "sequence": "TAGCTT"
+    }
+  },
+  {
+    "pk": 71,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 11,
+      "adapter_type": 5,
+      "sequence": "GGCTAC"
+    }
+  },
+  {
+    "pk": 72,
+    "model": "samples.MultiplexIndex",
+    "fields": {
+      "multiplex_id": 12,
+      "adapter_type": 5,
+      "sequence": "CTTGTA"
+    }
   }
 ]

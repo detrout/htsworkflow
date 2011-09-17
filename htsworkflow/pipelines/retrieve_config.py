@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+import csv
 from ConfigParser import RawConfigParser
 import logging
 from optparse import OptionParser, IndentedHelpFormatter
 import os
 import sys
+import types
 import urllib
 import urllib2
 
@@ -16,8 +18,12 @@ except ImportError, e:
 from htsworkflow.frontend.auth import apidata
 from htsworkflow.util import api
 from htsworkflow.util.url import normalize_url
-from htsworkflow.pipelines.genome_mapper import getAvailableGenomes
-from htsworkflow.pipelines.genome_mapper import constructMapperDict
+from htsworkflow.pipelines.genome_mapper import \
+     getAvailableGenomes, \
+     constructMapperDict
+from htsworkflow.pipelines.runfolder import LANE_LIST
+# JSON dictionaries use strings
+LANE_LIST_JSON = [ str(l) for l in LANE_LIST ]
 
 __docformat__ = "restructredtext en"
 
@@ -28,17 +34,15 @@ GERALD_CONFIG_SECTION = 'gerald_config'
 #Disable or enable commandline arg parsing; disabled by default.
 DISABLE_CMDLINE = True
 
-LANE_LIST = ['1','2','3','4','5','6','7','8']
-
 class FlowCellNotFound(Exception): pass
 class WebError404(Exception): pass
 
 def retrieve_flowcell_info(base_host_url, flowcell):
     """
-    Return a dictionary describing a 
+    Return a dictionary describing a
     """
     url = api.flowcell_url(base_host_url, flowcell)
-  
+
     try:
         apipayload = urllib.urlencode(apidata)
         web = urllib2.urlopen(url, apipayload)
@@ -47,19 +51,19 @@ def retrieve_flowcell_info(base_host_url, flowcell):
         logging.error(errmsg)
         logging.error('opened %s' % (url,))
         raise IOError(errmsg)
-    
+
     contents = web.read()
     headers = web.info()
 
     if web.code == 403:
         msg = "403 - Forbbidden, probably need api key"
         raise FlowCellNotFound(msg)
-    
+
     if web.code == 404:
         msg = "404 - Not Found: Flowcell (%s); base_host_url (%s);\n full url(%s)\n " \
               "Did you get right port #?" % (flowcell, base_host_url, url)
         raise FlowCellNotFound(msg)
-  
+
     if len(contents) == 0:
         msg = "No information for flowcell (%s) returned; full url(%s)" % (flowcell, url)
         raise FlowCellNotFound(msg)
@@ -75,7 +79,7 @@ def is_sequencing(lane_info):
         return True
     else:
         return False
-    
+
 def group_lane_parameters(flowcell_info):
     """
     goup lanes that can share GERALD configuration blocks.
@@ -83,11 +87,12 @@ def group_lane_parameters(flowcell_info):
     (The same species, read length, and eland vs sequencing)
     """
     lane_groups = {}
-    for lane_number, lane_info in flowcell_info['lane_set'].items():
-        index = (lane_info['read_length'],
-                 lane_info['library_species'],
-                 is_sequencing(lane_info))
-        lane_groups.setdefault(index, []).append(lane_number)
+    for lane_number, lane_contents in flowcell_info['lane_set'].items():
+        for lane_info in lane_contents:
+            index = (lane_info['read_length'],
+                     lane_info['library_species'],
+                     is_sequencing(lane_info))
+            lane_groups.setdefault(index, []).append(lane_number)
     return lane_groups
 
 def format_gerald_header(flowcell_info):
@@ -103,10 +108,12 @@ def format_gerald_header(flowcell_info):
     config += ['Flowcell Notes:']
     config.extend(flowcell_info['notes'].split('\r\n'))
     config += ['']
-    for lane_number in LANE_LIST:
-        lane_info = flowcell_info['lane_set'][lane_number]
-        config += ['Lane%s: %s | %s' % (lane_number, lane_info['library_id'],
-                                        lane_info['library_name'])]
+    for lane_number in LANE_LIST_JSON:
+        lane_contents = flowcell_info['lane_set'][lane_number]
+        for lane_info in lane_contents:
+            config += ['Lane%s: %s | %s' % (lane_number,
+                                            lane_info['library_id'],
+                                            lane_info['library_name'])]
 
     config += ['']
     return "\n# ".join(config)
@@ -134,14 +141,14 @@ def format_gerald_config(options, flowcell_info, genome_map):
         read_length, species, is_sequencing = lane_index
         lane_numbers.sort()
         lane_prefix = u"".join(lane_numbers)
-        
+
         species_path = genome_map.get(species, None)
         logging.debug("Looked for genome '%s' got location '%s'" % (species, species_path))
         if not is_sequencing and species_path is None:
             no_genome_msg = "Forcing lanes %s to sequencing as there is no genome for %s"
             logging.warning(no_genome_msg % (lane_numbers, species))
             is_sequencing = True
-            
+
         if is_sequencing:
             config += ['%s:ANALYSIS sequence%s' % (lane_prefix, sequence_suffix)]
         else:
@@ -150,16 +157,16 @@ def format_gerald_config(options, flowcell_info, genome_map):
         #config += ['%s:READ_LENGTH %s' % ( lane_prefix, read_length ) ]
         config += ['%s:USE_BASES Y%s' % ( lane_prefix, read_length ) ]
 
-    # add in option for running script after 
+    # add in option for running script after
     if not (options.post_run is None or options.runfolder is None):
         runfolder = os.path.abspath(options.runfolder)
         post_run = options.post_run  % {'runfolder': runfolder}
         config += ['POST_RUN_COMMAND %s' % (post_run,) ]
-        
+
     config += [''] # force trailing newline
-    
+
     return "\n".join(config)
-              
+
 class DummyOptions:
   """
   Used when command line parsing is disabled; default
@@ -171,14 +178,14 @@ class DummyOptions:
     self.genome_dir = None
 
 class PreformattedDescriptionFormatter(IndentedHelpFormatter):
-  
+
   #def format_description(self, description):
-  #  
+  #
   #  if description:
   #      return description + "\n"
   #  else:
   #     return ""
-      
+
   def format_epilog(self, epilog):
     """
     It was removing my preformated epilog, so this should override
@@ -197,33 +204,33 @@ def constructOptionParser():
     parser = OptionParser(formatter=PreformattedDescriptionFormatter())
 
     parser.set_description('Retrieves eland config file from hts_frontend web frontend.')
-  
+
     parser.epilog = """
 Config File:
   * %s (System wide)
   * %s (User specific; overrides system)
   * command line overrides all config file options
-  
+
   Example Config File:
-  
+
     [%s]
     config_host: http://somewhere.domain:port
     genome_dir: /path to search for genomes
     post_run: runfolder -o <destdir> %%(runfolder)s
-    
+
 """ % (CONFIG_SYSTEM, CONFIG_USER, GERALD_CONFIG_SECTION)
-  
+
     #Special formatter for allowing preformatted description.
     ##parser.format_epilog(PreformattedDescriptionFormatter())
 
     parser.add_option("-u", "--url",
                       action="store", type="string", dest="url")
-  
+
     parser.add_option("-o", "--output-file",
                       action="store", type="string", dest="output_filepath",
                       help="config file destination. If runfolder is specified defaults "
                            "to <runfolder>/config-auto.txt" )
-  
+
     parser.add_option("-f", "--flowcell",
                       action="store", type="string", dest="flowcell")
 
@@ -234,10 +241,17 @@ Config File:
                       action="store", type="string",
                       help="specify runfolder for post_run command ")
 
+    parser.add_option("--sample-sheet", default=None,
+                      help="path to save demultiplexing sample sheet")
+
+    parser.add_option("--operator", default='', help="Name of sequencer operator")
+    parser.add_option("--recipe", default="Unknown",
+                      help="specify recipe name")
+
     parser.add_option('-v', '--verbose', action='store_true', default=False,
                        help='increase logging verbosity')
     return parser
-    
+
 def constructConfigParser():
     """
     returns a pre-setup config parser
@@ -246,7 +260,7 @@ def constructConfigParser():
     parser.read([CONFIG_SYSTEM, CONFIG_USER])
     if not parser.has_section(GERALD_CONFIG_SECTION):
         parser.add_section(GERALD_CONFIG_SECTION)
-  
+
     return parser
 
 
@@ -264,13 +278,13 @@ def getCombinedOptions(argv=None):
         options = DummyOptions()
     else:
         options, args = cl_parser.parse_args(argv)
-        
+
     if options.url is None:
         if conf_parser.has_option(GERALD_CONFIG_SECTION, 'config_host'):
             options.url = conf_parser.get(GERALD_CONFIG_SECTION, 'config_host')
-      
+
     options.url = normalize_url(options.url)
-  
+
     if options.genome_dir is None:
         if conf_parser.has_option(GERALD_CONFIG_SECTION, 'genome_dir'):
             options.genome_dir = conf_parser.get(GERALD_CONFIG_SECTION, 'genome_dir')
@@ -283,7 +297,7 @@ def getCombinedOptions(argv=None):
     if options.output_filepath is None:
         if options.runfolder is not None:
             options.output_filepath = os.path.join(options.runfolder, 'config-auto.txt')
-            
+
     return options
 
 
@@ -298,7 +312,7 @@ def saveConfigFile(options):
   logging.info(u'      FC: %s' % (options.flowcell,))
   #logging.info(': %s' % (options.genome_dir,))
   logging.info(u'post_run: %s' % ( unicode(options.post_run),))
-   
+
   flowcell_info = retrieve_flowcell_info(options.url, options.flowcell)
 
   logging.debug('genome_dir: %s' % ( options.genome_dir, ))
@@ -306,16 +320,107 @@ def saveConfigFile(options):
   genome_map = constructMapperDict(available_genomes)
   logging.debug('available genomes: %s' % ( unicode( genome_map.keys() ),))
 
-  config = format_gerald_config(options, flowcell_info, genome_map)
+  #config = format_gerald_config(options, flowcell_info, genome_map)
+  #
+  #if options.output_filepath is not None:
+  #    outstream = open(options.output_filepath, 'w')
+  #    logging.info('Writing config file to %s' % (options.output_filepath,))
+  #else:
+  #    outstream = sys.stdout
+  #
+  #outstream.write(config)
 
-  if options.output_filepath is not None:
-      outstream = open(options.output_filepath, 'w')
-      logging.info('Writing config file to %s' % (options.output_filepath,))
+  if options.sample_sheet is None:
+      pass
+  elif options.sample_sheet == '-':
+      save_sample_sheet(sys.stdout, options, flowcell_info)
   else:
-      outstream = sys.stdout
-      
-  outstream.write(config)
-  
+      stream = open(options.sample_sheet,'w')
+      save_sample_sheet(stream, options, flowcell_info)
 
 
-  
+def save_sample_sheet(outstream, options, flowcell_info):
+    sample_sheet_fields = ['FCID', 'Lane', 'SampleID', 'SampleRef', 'Index',
+                           'Description', 'Control', 'Recipe', 'Operator',
+                           'SampleProject']
+    illumina_to_htsw_map = {'FCID': 'flowcell',
+                            'Lane': 'lane_number',
+                            'SampleID': 'library_id',
+                            'SampleRef': format_sampleref,
+                            'Description': 'library_name',
+                            'Control': format_control_lane,
+                            'Recipe': format_recipe_name,
+                            'Operator': format_operator_name}
+    out = csv.DictWriter(outstream, sample_sheet_fields)
+    out.writeheader()
+    for lane_number in LANE_LIST:
+        lane_contents = flowcell_info['lane_set'][str(lane_number)]
+
+        pooled_lane_contents = []
+        for library in lane_contents:
+            # build common attributes
+            renamed = {}
+            for illumina_name in sample_sheet_fields:
+                htsw_field = illumina_to_htsw_map.get(illumina_name, None)
+                if htsw_field is None:
+                    continue
+                if callable(htsw_field):
+                    renamed[illumina_name] = htsw_field(options,
+                                                        flowcell_info,
+                                                        library)
+                else:
+                    renamed[illumina_name] = library[htsw_field]
+
+            pooled_lane_contents.extend(format_pooled_libraries(renamed, library))
+
+        if len(pooled_lane_contents) > 1:
+            for row in pooled_lane_contents:
+                out.writerow(row)
+
+
+def format_sampleref(options, flowcell_info, sample):
+    return sample['library_species'].replace(' ', '_')
+
+
+def format_control_lane(options, flowcell_info, sample):
+    if sample['lane_number'] == flowcell_info['control_lane']:
+        return 'Y'
+    else:
+        return 'N'
+
+
+def format_recipe_name(options, flowcell_info, sample):
+    return options.recipe
+
+
+def format_operator_name(options, flowcell_info, sample):
+    return options.operator
+
+
+def format_pooled_libraries(shared, library):
+    sequences = library.get('index_sequence', None)
+    if sequences is None:
+        return []
+    elif type(sequences) in types.StringTypes:
+        shared['Index'] = sequences
+        shared['SampleProject'] = library['library_id']
+        return [shared]
+    else:
+        pooled = []
+        multiplex_ids = sequences.keys()
+        multiplex_ids.sort(key=int)
+        for multiplex_id in multiplex_ids:
+            sample = {}
+            sample.update(shared)
+            sample['Index'] = sequences[multiplex_id]
+            sample['SampleProject'] = format_project_name(library,
+                                                          multiplex_id)
+            pooled.append(sample)
+        return pooled
+
+
+def format_project_name(library, multiplex_id):
+    library_id = library['library_id']
+    return "%s_index%s" % (library_id, multiplex_id)
+
+

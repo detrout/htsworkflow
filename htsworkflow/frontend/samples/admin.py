@@ -8,7 +8,9 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.forms import TextInput, Textarea
 
-from htsworkflow.frontend.samples.models import Antibody, Cellline, Condition, ExperimentType, HTSUser, LibraryType, Species, Affiliation, Library, Tag
+from htsworkflow.frontend.samples.models import \
+     Antibody, Cellline, Condition, ExperimentType, HTSUser, \
+     LibraryType, MultiplexIndex, Species, Affiliation, Library, Tag
 from htsworkflow.frontend.experiments.models import Lane
 from htsworkflow.frontend.inventory.models import PrinterTemplate
 from htsworkflow.frontend.bcmagic.utils import print_zpl_socket
@@ -24,7 +26,7 @@ class AffiliationOptions(admin.ModelAdmin):
       }),
     )
 
-    # some post 1.0.2 version of django has formfield_overrides 
+    # some post 1.0.2 version of django has formfield_overrides
     # which would replace this code with:
     # formfield_overrids = {
     #   models.ManyToMany: { 'widget': widgets.FilteredSelectMultiple }
@@ -76,7 +78,7 @@ class HTSUserCreationForm(UserCreationForm):
 class HTSUserChangeForm(UserChangeForm):
     class Meta:
         model = HTSUser
-        
+
 class HTSUserOptions(UserAdmin):
     form = HTSUserChangeForm
     add_form = HTSUserCreationForm
@@ -89,14 +91,19 @@ class Library_Inline(admin.TabularInline):
   model = Library
 
 class LibraryTypeOptions(admin.ModelAdmin):
+    list_display = ['name', 'is_paired_end', 'can_multiplex']
     model = LibraryType
+
+class MultiplexIndexOptions(admin.ModelAdmin):
+    model = MultiplexIndex
+    list_display = ['adapter_type', 'multiplex_id', 'sequence']
 
 class LibraryOptions(admin.ModelAdmin):
     class Media:
         css = {
             "all": ("css/wide_account_number.css",)
             }
-        
+
     date_hierarchy = "creation_date"
     save_as = True
     save_on_top = True
@@ -110,7 +117,7 @@ class LibraryOptions(admin.ModelAdmin):
     list_display = (
         'id',
         'library_name',
-        'public',
+        'index_sequence_text',
         'affiliation',
         'undiluted_concentration',
         'gel_cut_size',
@@ -119,9 +126,9 @@ class LibraryOptions(admin.ModelAdmin):
     list_filter = (
         'hidden',
         'affiliations',
-        'library_species', 
-        'experiment_type', 
-        'made_by', 
+        'library_species',
+        'experiment_type',
+        'made_by',
         'cell_line',
         'stopping_point',)
     list_display_links = ('id', 'library_name',)
@@ -129,7 +136,8 @@ class LibraryOptions(admin.ModelAdmin):
       (None, {
         'fields': (
           ('id','library_name','hidden'),
-          ('library_species', 'library_type', 'experiment_type'),
+          ('library_species', 'experiment_type'),
+          ('library_type', 'multiplex_id'),
           )
          }),
          ('Experiment Detail:', {
@@ -140,12 +148,12 @@ class LibraryOptions(admin.ModelAdmin):
             'classes': ('collapse',),
             }),
          ('Creation Information:', {
-             'fields' : (('made_by', 'creation_date', 'stopping_point'), 
-                         ('amplified_from_sample'), 
-                         ('gel_cut_size', 'insert_size', 
-                          'undiluted_concentration'), 
+             'fields' : (('made_by', 'creation_date', 'stopping_point'),
+                         ('amplified_from_sample'),
+                         ('gel_cut_size', 'insert_size',
+                          'undiluted_concentration'),
                          ('bioanalyzer_concentration','bioanalyzer_image_url'),
-                         ('bioanalyzer_summary'), 
+                         ('bioanalyzer_summary'),
                          ('notes'))
          }),
          ('Library/Project Affiliation:', {
@@ -156,45 +164,45 @@ class LibraryOptions(admin.ModelAdmin):
       LaneLibraryInline,
     ]
     actions = ['action_print_library_labels']
-    
+
     def action_print_library_labels(self, request, queryset):
         """
         Django action which prints labels for the selected set of labels from the
         Django Admin interface.
         """
-        
+
         #Probably should ask if the user really meant to print all selected
         # libraries if the count is above X. X=10 maybe?
-        
+
         # Grab the library template
         #FIXME: Hardcoding library template name. Not a good idea... *sigh*.
         EVIL_HARDCODED_LIBRARY_TEMPLATE_NAME = "Library"
-        
+
         try:
             template = PrinterTemplate.objects.get(item_type__name=EVIL_HARDCODED_LIBRARY_TEMPLATE_NAME)
         except PrinterTemplate.DoesNotExist:
             self.message_user(request, "Could not find a library template with ItemType.name of '%s'" % \
                               (EVIL_HARDCODED_LIBRARY_TEMPLATE_NAME))
             return
-        
+
         # ZPL Template
         t = Template(template.template)
-        
+
         zpl_list = []
         #Iterate over selected labels to print
         for library in queryset.all():
-            
+
             # Django Template Context
             c = Context({'library': library})
-            
+
             # Send rendered template to the printer that the template
             #  object has been attached to in the database.
             zpl_list.append(t.render(c))
-        
+
         print_zpl_socket(zpl_list, host=template.printer.ip_address)
-    
+
         self.message_user(request, "%s labels printed." % (len(queryset)))
-                          
+
     action_print_library_labels.short_description = "Print Labels"
 
     def formfield_for_dbfield(self, db_field, **kwargs):
@@ -220,7 +228,7 @@ class SpeciesOptions(admin.ModelAdmin):
 
 class TagOptions(admin.ModelAdmin):
     list_display = ('tag_name', 'context')
-    fieldsets = ( 
+    fieldsets = (
         (None, {
           'fields': ('tag_name', 'context')
           }),
@@ -234,5 +242,6 @@ admin.site.register(Condition, ConditionOptions)
 admin.site.register(ExperimentType, ExperimentTypeOptions)
 #admin.site.register(HTSUser, HTSUserOptions)
 admin.site.register(LibraryType, LibraryTypeOptions)
+admin.site.register(MultiplexIndex, MultiplexIndexOptions)
 admin.site.register(Species, SpeciesOptions)
 #admin.site.register(Tag, TagOptions)

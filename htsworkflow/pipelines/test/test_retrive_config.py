@@ -1,15 +1,20 @@
+import csv
 import os
 import re
+from StringIO import StringIO
 
 try:
     import json
 except ImportError, e:
     import simplejson as json
-    
+
 from django.test import TestCase
 
 from htsworkflow.frontend.auth import apidata
-from htsworkflow.pipelines.retrieve_config import format_gerald_config, getCombinedOptions
+from htsworkflow.pipelines.retrieve_config import \
+     format_gerald_config, \
+     getCombinedOptions, \
+     save_sample_sheet
 
 class RetrieveTestCases(TestCase):
     fixtures = ['test_flowcells.json']
@@ -20,13 +25,11 @@ class RetrieveTestCases(TestCase):
     def test_format_gerald(self):
         flowcell_request = self.client.get('/experiments/config/FC12150/json', apidata)
         self.failUnlessEqual(flowcell_request.status_code, 200)
-
-        print dir(flowcell_request)
         flowcell_info = json.loads(flowcell_request.content)
 
-        options = getCombinedOptions(['-f','FC12150','-g',os.getcwd()])        
+        options = getCombinedOptions(['-f','FC12150','-g',os.getcwd()])
         genome_map = {u'Homo sapiens': '/tmp/hg18' }
-        
+
         config = format_gerald_config(options, flowcell_info, genome_map)
         config_lines = config.split('\n')
         lane3 = [ line for line in config_lines if re.search('Lane3', line) ]
@@ -39,7 +42,31 @@ class RetrieveTestCases(TestCase):
         sequencing = [ line for line in config_lines if re.search('sequence_pair', line) ]
         self.failUnlessEqual(len(sequencing), 2)
 
-                  
 
-        
-    
+    def test_format_sample_sheet(self):
+        fcid = '42JU1AAXX'
+        url = '/experiments/config/%s/json' % (fcid,)
+        flowcell_request = self.client.get(url, apidata)
+        self.failUnlessEqual(flowcell_request.status_code, 200)
+        flowcell_info = json.loads(flowcell_request.content)
+
+        options = getCombinedOptions(['-f',fcid,'-g',os.getcwd(),])
+
+        output = StringIO()
+        save_sample_sheet(output, options, flowcell_info)
+        output.seek(0)
+        sheet = list(csv.DictReader(output))
+        expected = [{'SampleProject': '12044_index1', 'Index': 'ATCACG'},
+                    {'SampleProject': '12044_index2', 'Index': 'CGATGT'},
+                    {'SampleProject': '12044_index3', 'Index': 'TTAGGC'},
+                    {'SampleProject': '11045_index1', 'Index': 'ATCACG'},
+                    ]
+        for i in range(4):
+            self.assertEqual(sheet[i]['SampleProject'],
+                             expected[i]['SampleProject'])
+            self.assertEqual(sheet[i]['Index'],
+                             expected[i]['Index'])
+            self.assertEqual(sheet[i]['FCID'], fcid)
+            self.assertEqual(sheet[i]['Lane'], '3')
+
+

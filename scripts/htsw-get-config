@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+import os
+if not 'DJANGO_SETTINGS_MODULE' in os.environ:
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
+
 import logging
 import sys
 from htsworkflow.pipelines.retrieve_config import *
@@ -7,37 +11,43 @@ from htsworkflow.pipelines import retrieve_config
 #Turn on built-in command-line parsing.
 retrieve_config.DISABLE_CMDLINE = False
 
-def main(argv=None):
-  if argv is None:
-    argv = sys.argv
-    
-  #Display help if no args are presented
-  options = getCombinedOptions(argv)
 
-  if options.verbose:
-    logging.basicConfig(level=logging.DEBUG)
-  else:
-    logging.basicConfig(level=logging.INFO)
-  
-  msg_list = ['ERROR MESSAGES:']
-  if options.flowcell is None:
-    msg_list.append("  Flow cell argument required. -f <flowcell> or --flowcell=<flowcell>")
-    
-  if options.url is None:
-    msg_list.append("  URL argument required (-u <url> or --url=<url>), or entry\n" \
-                    "    in /etc/ga_frontend/ga_frontend.conf or ~/.ga_frontend.conf")
-  if options.genome_dir is None:
-    msg_list.append("  genome_dir argument required (-g <genome_dir> or \n" \
-                    "    --genome_dir=<genome_dir>, or entry in \n" \
-                    "    /etc/ga_frontend/ga_frontend.conf or ~/.ga_frontend.conf")
-    
-  if len(msg_list) > 1:
-    print '\n'.join(msg_list)
-    return 1
-  
-  saveConfigFile(options)
-  
-  return 0
-  
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv
+
+    #Display help if no args are presented
+    options = getCombinedOptions(argv)
+
+    if options.verbose:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
+
+    msg_list = ['ERROR MESSAGES:']
+    if options.flowcell is None:
+        msg_list.append(
+          "  Flow cell argument required. -f <flowcell> or "\
+          "--flowcell=<flowcell>")
+
+    if options.url is None:
+        msg_list.append(
+          "  URL argument required (-u <url> or --url=<url>), or entry\n" \
+          "    in /etc/ga_frontend/ga_frontend.conf or ~/.ga_frontend.conf")
+
+    if options.genome_dir is None:
+        msg_list.append(
+          "  genome_dir argument required (-g <genome_dir> or \n" \
+          "    --genome_dir=<genome_dir>, or entry in \n" \
+          "    /etc/ga_frontend/ga_frontend.conf or ~/.ga_frontend.conf")
+
+    if len(msg_list) > 1:
+        print '\n'.join(msg_list)
+        return 1
+
+    saveConfigFile(options)
+
+    return 0
+
 if __name__ == "__main__":
-  sys.exit(main(sys.argv[1:]))
+    sys.exit(main(sys.argv[1:]))
