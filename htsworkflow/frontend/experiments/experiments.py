@@ -9,6 +9,7 @@ import os
 import re
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.csrf.middleware import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail, mail_admins
 from django.http import HttpResponse, Http404
@@ -78,6 +79,7 @@ def flowcell_information(flowcell_id):
 
     return info
 
+@csrf_exempt
 def flowcell_json(request, fc_id):
     """
     Return a JSON blob containing enough information to generate a config file.
@@ -117,6 +119,7 @@ def lanes_for(username=None):
                         'affiliations': affiliations_list})
     return result
 
+@csrf_exempt
 def lanes_for_json(request, username):
     """
     Format lanes for a user

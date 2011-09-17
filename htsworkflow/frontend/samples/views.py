@@ -9,6 +9,7 @@ try:
 except ImportError, e:
     import simplejson as json
 
+from django.contrib.csrf.middleware import csrf_exempt
 from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend.experiments.models import FlowCell, Lane, LANE_STATUS_MAP
 from htsworkflow.frontend.samples.changelist import ChangeList
@@ -490,6 +491,7 @@ def library_dict(library_id):
         info['library_type'] = lib.library_type.name
     return info
 
+@csrf_exempt
 def library_json(request, library_id):
     """
     Return a json formatted library dictionary
@@ -504,6 +506,7 @@ def library_json(request, library_id):
     lib_json = json.dumps(lib)
     return HttpResponse(lib_json, mimetype='application/json')
 
+@csrf_exempt
 def species_json(request, species_id):
     """
     Return information about a species.
