@@ -352,7 +352,7 @@ def save_sample_sheet(outstream, options, flowcell_info):
                             'Recipe': format_recipe_name,
                             'Operator': format_operator_name}
     out = csv.DictWriter(outstream, sample_sheet_fields)
-    out.writeheader()
+    outstream.write(','.join(sample_sheet_fields))
     for lane_number in LANE_LIST:
         lane_contents = flowcell_info['lane_set'][str(lane_number)]
 
