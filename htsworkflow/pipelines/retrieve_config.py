@@ -352,7 +352,7 @@ def save_sample_sheet(outstream, options, flowcell_info):
                             'Recipe': format_recipe_name,
                             'Operator': format_operator_name}
     out = csv.DictWriter(outstream, sample_sheet_fields)
-    outstream.write(','.join(sample_sheet_fields))
+    out.writerow(dict(((x,x) for x in sample_sheet_fields)))
     for lane_number in LANE_LIST:
         lane_contents = flowcell_info['lane_set'][str(lane_number)]
 
@@ -373,9 +373,8 @@ def save_sample_sheet(outstream, options, flowcell_info):
 
             pooled_lane_contents.extend(format_pooled_libraries(renamed, library))
 
-        if len(pooled_lane_contents) > 1:
-            for row in pooled_lane_contents:
-                out.writerow(row)
+        for row in pooled_lane_contents:
+            out.writerow(row)
 
 
 def format_sampleref(options, flowcell_info, sample):
@@ -401,11 +400,12 @@ def format_pooled_libraries(shared, library):
     sequences = library.get('index_sequence', None)
     if sequences is None:
         return []
-    elif type(sequences) in types.StringTypes:
-        shared['Index'] = sequences
+    elif (type(sequences) in types.StringTypes and
+          sequences.lower().startswith('err')):
+        shared['Index'] = ''
         shared['SampleProject'] = library['library_id']
         return [shared]
-    else:
+    elif (type(sequences) == types.DictType):
         pooled = []
         multiplex_ids = sequences.keys()
         multiplex_ids.sort(key=int)
@@ -417,6 +417,9 @@ def format_pooled_libraries(shared, library):
                                                           multiplex_id)
             pooled.append(sample)
         return pooled
+    else:
+        raise RuntimeError("Unrecognized index type")
+
 
 
 def format_project_name(library, multiplex_id):
