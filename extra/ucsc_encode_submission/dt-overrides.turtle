@@ -1,157 +1,178 @@
 ##
 ## Override submission ID to library URN names for our libraries
-## whose names either lack, or have the wrong library ID string 
+## whose names either lack, or have the wrong library ID string
 ## embedded in them.
 ##
 
 @base <file:///home/diane/proj/solexa/htsworkflow/extra/ucsc_encode_submission/no-lib.sparql> .
-@prefix encodeSubmit:<http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#> .
+@prefix ucscSubmission:<http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#> .
 
 # woldlab-hepg2-rnaseq-2009dec
 <http://encodesubmit.ucsc.edu/pipeline/show/805>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/10879/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/10879/> .
 
 # woldlab-hepg2-rnaseq-2009dec-part2
 <http://encodesubmit.ucsc.edu/pipeline/show/810>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/10879/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/10879/> .
 
-# woldlab-hepg2-rnaseq-2009dec-part3\t 
+# woldlab-hepg2-rnaseq-2009dec-part3
 <http://encodesubmit.ucsc.edu/pipeline/show/869>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/10879/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/10879/> .
 
 # woldlab-rnaseq-GM12878-rep1-stranded-2010Jan15
 <http://encodesubmit.ucsc.edu/pipeline/show/870>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11011/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11011/> .
 
 # woldlab-hepg2-rnaseq-2010Jan-part4
 <http://encodesubmit.ucsc.edu/pipeline/show/897>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/10879/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/10879/> .
 
 # woldlab-gm12878-directional-rep2-rnaseq-2010Jan06
 <http://encodesubmit.ucsc.edu/pipeline/show/898>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11010/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11010/> .
 
 # woldlab-K562-directional-rnaseq-rep1-2010Jan6
 <http://encodesubmit.ucsc.edu/pipeline/show/903>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11010/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11010/> .
 
 # woldlab-K562-directional-rnaseq-rep2-2010jan9
 <http://encodesubmit.ucsc.edu/pipeline/show/904>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11007/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11007/> .
 
 # woldlab hESC 10886 rep1 2009Jan13
 <http://encodesubmit.ucsc.edu/pipeline/show/1026>
-  encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11286/> .
+  ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11286/> .
 
 # woldlab 2010Jun15 1x75-Directional-NHEK-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/1483>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11204/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11204/> .
 
 # woldlab Jun18 1x75-Directional-H1-hESC-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/1626>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11009/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11009/> .
 
 # woldlab jun 18 1x75-Directional-GM12878-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/1631>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11011/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11011/> .
 
 # woldlab jun 18  1x75-Directional-GM12878-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/1632>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11010/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11010/> .
 
 # woldlab jun 18 1x75-Directional-H1-hESC-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/1633>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/10947> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/10947> .
 
 # woldlab jun 18 1x75-Directional-HeLa-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/1634>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11208/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11208/> .
 
 # woldlab jun 18 1x75-Directional-HeLa-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/1635>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11207/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11207/> .
 
 # woldlab jun 18 1x75-Directional-HepG2-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/1636>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11210/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11210/> .
 
 # woldlab jun 18 1x75-Directional-K562-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/1637>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11008/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11008/> .
 
 # woldlab jun 18 1x75-Directional-HepG2-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/1638>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11209/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11209/> .
 
 # woldlab jun 18 1x75-Directional-HUVEC-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/1639>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11206/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11206/> .
 
 # woldlab jun 18 1x75-Directional-HUVEC-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/1645>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11205/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11205/> .
 
 # woldlab jun 18 1x75-Directional-K562-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/1646>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11007/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11007/> .
 
 # woldlab June  2x75-GM12878-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/1856>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/10515/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/10515/> .
 
-#2010 jul 9corrected fastqs 
+#2010 jul 9corrected fastqs
 <http://encodesubmit.ucsc.edu/pipeline/show/1874>
-     encodeSubmit:ignore "1" .
-#    encodeSubmit:library_urn "
+     ucscSubmission:ignore "1" .
+#    ucscSubmission:library_urn "
 
 # 2010-11-05 Correction 1x75-Directional-GM12878-Rep1.tgz
 <http://encodesubmit.ucsc.edu/pipeline/show/2926>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11010/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11010/> .
 
 # 1x75-Directional-GM12878-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/2930>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11010/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11010/> .
 
 # 1x75-Directional-H1-hESC-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/2931>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/10947/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/10947/> .
 
 # 1x75-Directional-H1-hESC-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/2932>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11205/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11205/> .
 
 # 1x75-Directional-HUVEC-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/2933>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11206/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11206/> .
 
 # 1x75-Directional-HUVEC-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/2934>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11205/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11205/> .
 
 # 1x75-Directional-HeLa-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/2935>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11208/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11208/> .
 
 # 1x75-Directional-HeLa-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/2936>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11207/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11207/> .
 
 # 1x75-Directional-HepG2-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/2937>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11210/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11210/> .
 
 # 1x75-Directional-HepG2-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/2938>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11209/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11209/> .
 
 # 1x75-Directional-K562-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/2939>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11008/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11008/> .
 
 # 1x75-Directional-K562-Rep2
 <http://encodesubmit.ucsc.edu/pipeline/show/2940>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11007/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11007/> .
 
 # 1x75-Directional-NHEK-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/2941>
-    encodeSubmit:library_urn <http://jumpgate.caltech.edu/library/11204/> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11204/> .
+
+# "3438 fastq resubmit"
+<http://encodesubmit.ucsc.edu/pipeline/show/4607>
+  ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/02970/> .
+
+# "3439 fastq resubmit"
+<http://encodesubmit.ucsc.edu/pipeline/show/4608>
+  ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/02973/> .
+
+# "3437 Fastq re-submission"
+<http://encodesubmit.ucsc.edu/pipeline/show/4609>
+  ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/02971/> .
+
+# "1x75-Directional-HepG2-rep2-replace 3522"
+<http://encodesubmit.ucsc.edu/pipeline/show/4797>
+  ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11209/> .
+
+# "1x75-Directional-HepG2-rep1 replacement of 3521"
+<http://encodesubmit.ucsc.edu/pipeline/show/4798>
+  ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/11210/> .
+
