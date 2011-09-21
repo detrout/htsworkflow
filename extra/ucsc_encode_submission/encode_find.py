@@ -3,7 +3,7 @@
 Gather information about our submissions into a single RDF store
 """
 
-from BeautifulSoup import BeautifulSoup
+from lxml.html import fromstring
 from datetime import datetime
 import httplib2
 from operator import attrgetter
@@ -155,28 +155,27 @@ def load_my_submissions(model, limit=None, cookie=None):
     if cookie is None:
         cookie = login()
 
-    soup = get_url_as_soup(USER_URL, 'GET', cookie)
-    projects = soup.find('table', attrs={'id': 'projects'})
-    table_row = projects.findNext('tr')
+    tree = get_url_as_tree(USER_URL, 'GET', cookie)
+    table_rows = tree.xpath('//table[@id="projects"]/tr')
     # first record is header
-    table_row = table_row.findNext()
     name_n = submissionOntology['name']
     species_n = submissionOntology['species']
     library_urn = submissionOntology['library_urn']
 
-    while table_row is not None:
-        cell = table_row.findAll('td')
+    # skip header
+    for row in table_rows[1:]:
+        cell = row.xpath('td')
         if cell is not None and len(cell) > 1:
-            submission_id = cell[0].contents[0].contents[0].encode(CHARSET)
+            submission_id = str(cell[0].text_content())
             if limit is None or submission_id in limit:
                 subUrn = RDF.Uri(submission_view_url(submission_id))
 
                 add_stmt(model, subUrn, TYPE_N, submissionOntology['Submission'])
 
-                name = get_contents(cell[4])
+                name = str(cell[4].text_content())
                 add_stmt(model, subUrn, name_n, name)
 
-                species = get_contents(cell[2])
+                species = str(cell[2].text_content())
                 if species is not None:
                     add_stmt(model, subUrn, species_n, species)
 
@@ -190,7 +189,7 @@ def load_my_submissions(model, limit=None, cookie=None):
                 add_submission_creation_date(model, subUrn, cookie)
 
                 # grab changing atttributes
-                status = get_contents(cell[6]).strip()
+                status = str(cell[6].text_content()).strip()
                 last_mod_datetime = get_date_contents(cell[8])
                 last_mod = last_mod_datetime.isoformat()
 
@@ -199,7 +198,7 @@ def load_my_submissions(model, limit=None, cookie=None):
 
                 logging.info("Processed {0}".format(subUrn))
 
-        table_row = table_row.findNext('tr')
+
 
 
 def add_submission_to_library_urn(model, submissionUrn, predicate, library_id):
@@ -233,7 +232,7 @@ WHERE {{
         name = row['name']
         print "# {0}".format(name)
         print "<{0}>".format(subid.uri)
-        print "  encodeSubmit:library_urn"\
+        print "  encodeSubmit:library_urn "\
               "<http://jumpgate.caltech.edu/library/> ."
         print ""
 
@@ -246,10 +245,12 @@ def add_submission_creation_date(model, subUrn, cookie):
     creation_dates = list(model.find_statements(query))
     if len(creation_dates) == 0:
         LOGGER.info("Getting creation date for: {0}".format(str(subUrn)))
-        soup = get_url_as_soup(str(subUrn), 'GET', cookie)
-        created_label = soup.find(text="Created: ")
-        if created_label:
-            created_date = get_date_contents(created_label.next)
+        tree = get_url_as_tree(str(subUrn), 'GET', cookie)
+        cells = tree.xpath('//div[@id="content"]/table/tr/td')
+        created_label = [x for x in cells
+                         if x.text_content().startswith('Created')]
+        if len(created_label) == 1:
+            created_date = get_date_contents(created_label[0].getnext())
             created_date_node = RDF.Node(literal=created_date.isoformat(),
                                          datatype=dateTimeType.uri)
             add_stmt(model, subUrn, creationDateN, created_date_node)
@@ -417,8 +418,9 @@ def create_status_node(submission_uri, timestamp):
     status_uri = urlparse.urljoin(submission_uri, timestamp)
     return RDF.Node(RDF.Uri(status_uri))
 
+
 def get_date_contents(element):
-    data = get_contents(element)
+    data = element.text_content()
     if data:
         return datetime.strptime(data, "%Y-%m-%d %H:%M")
     else:
@@ -457,17 +459,15 @@ def login(cookie=None):
     return cookie
 
 
-def get_url_as_soup(url, method, cookie=None):
+def get_url_as_tree(url, method, cookie=None):
     http = httplib2.Http()
     headers = {}
     if cookie is not None:
         headers['Cookie'] = cookie
     response, content = http.request(url, method, headers=headers)
     if response['status'] == '200':
-        soup = BeautifulSoup(content,
-                             fromEncoding="utf-8",  # should read from header
-                             convertEntities=BeautifulSoup.HTML_ENTITIES)
-        return soup
+        tree = fromstring(content, base_url=url)
+        return tree
     else:
         msg = "error accessing {0}, status {1}"
         msg = msg.format(url, response['status'])

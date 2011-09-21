@@ -1,5 +1,5 @@
 import re
-from BeautifulSoup import BeautifulSoup
+from lxml.html import fromstring
 try:
     import json
 except ImportError, e:
@@ -19,11 +19,13 @@ from htsworkflow.frontend.auth import apidata
 
 from htsworkflow.pipelines.test.simulate_runfolder import TESTDATA_DIR
 
-LANE_SET = range(1, 9)
+LANE_SET = range(1,9)
 
+NSMAP = {'libns':'http://jumpgate.caltech.edu/wiki/LibraryOntology#'}
 
 class ExperimentsTestCases(TestCase):
-    fixtures = ['test_flowcells.json']
+    fixtures = ['test_flowcells.json',
+                ]
 
     def setUp(self):
         self.tempdir = tempfile.mkdtemp(prefix='htsw-test-experiments-')
@@ -37,12 +39,12 @@ class ExperimentsTestCases(TestCase):
         runxml = 'run_FC12150_2007-09-27.xml'
         shutil.copy(os.path.join(TESTDATA_DIR, runxml),
                     os.path.join(self.fc1_dir, runxml))
-        for i in range(1, 9):
+        for i in range(1,9):
             shutil.copy(
                 os.path.join(TESTDATA_DIR,
                              'woldlab_070829_USI-EAS44_0017_FC11055_1.srf'),
                 os.path.join(self.fc1_dir,
-                             'woldlab_070829_SERIAL_FC12150_%d.srf' % (i, ))
+                             'woldlab_070829_SERIAL_FC12150_%d.srf' %(i,))
                 )
 
         self.fc2_dir = os.path.join(self.tempdir, '42JTNAAXX')
@@ -63,69 +65,53 @@ class ExperimentsTestCases(TestCase):
             fc_django = models.FlowCell.objects.get(flowcell_id=fc_id)
             self.failUnlessEqual(fc_dict['flowcell_id'], fc_id)
             self.failUnlessEqual(fc_django.flowcell_id, fc_id)
-            self.failUnlessEqual(fc_dict['sequencer'],
-                                 fc_django.sequencer.name)
-            self.failUnlessEqual(fc_dict['read_length'],
-                                 fc_django.read_length)
+            self.failUnlessEqual(fc_dict['sequencer'], fc_django.sequencer.name)
+            self.failUnlessEqual(fc_dict['read_length'], fc_django.read_length)
             self.failUnlessEqual(fc_dict['notes'], fc_django.notes)
-            self.failUnlessEqual(fc_dict['cluster_station'],
-                                 fc_django.cluster_station.name)
+            self.failUnlessEqual(fc_dict['cluster_station'], fc_django.cluster_station.name)
 
             for lane in fc_django.lane_set.all():
                 lane_contents = fc_dict['lane_set'][lane.lane_number]
                 lane_dict = multi_lane_to_dict(lane_contents)[lane.library_id]
-                self.failUnlessEqual(lane_dict['cluster_estimate'],
-                                     lane.cluster_estimate)
+                self.failUnlessEqual(lane_dict['cluster_estimate'], lane.cluster_estimate)
                 self.failUnlessEqual(lane_dict['comment'], lane.comment)
-                self.failUnlessEqual(lane_dict['flowcell'],
-                                     lane.flowcell.flowcell_id)
-                self.failUnlessEqual(lane_dict['lane_number'],
-                                     lane.lane_number)
-                self.failUnlessEqual(lane_dict['library_name'],
-                                     lane.library.library_name)
+                self.failUnlessEqual(lane_dict['flowcell'], lane.flowcell.flowcell_id)
+                self.failUnlessEqual(lane_dict['lane_number'], lane.lane_number)
+                self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
                 self.failUnlessEqual(lane_dict['library_id'], lane.library.id)
-                self.failUnlessAlmostEqual(float(lane_dict['pM']),
-                                           float(lane.pM))
+                self.failUnlessAlmostEqual(float(lane_dict['pM']), float(lane.pM))
                 self.failUnlessEqual(lane_dict['library_species'],
-                     lane.library.library_species.scientific_name)
+                                     lane.library.library_species.scientific_name)
 
-            flowcell_url = '/experiments/config/%s/json'
-            response = self.client.get(flowcell_url % (fc_id,), apidata)
+            response = self.client.get('/experiments/config/%s/json' % (fc_id,), apidata)
             # strptime isoformat string = '%Y-%m-%dT%H:%M:%S'
             fc_json = json.loads(response.content)
             self.failUnlessEqual(fc_json['flowcell_id'], fc_id)
-            self.failUnlessEqual(fc_json['sequencer'],
-                                 fc_django.sequencer.name)
+            self.failUnlessEqual(fc_json['sequencer'], fc_django.sequencer.name)
             self.failUnlessEqual(fc_json['read_length'], fc_django.read_length)
             self.failUnlessEqual(fc_json['notes'], fc_django.notes)
-            self.failUnlessEqual(fc_json['cluster_station'],
-                                 fc_django.cluster_station.name)
+            self.failUnlessEqual(fc_json['cluster_station'], fc_django.cluster_station.name)
+
 
             for lane in fc_django.lane_set.all():
                 lane_contents = fc_json['lane_set'][unicode(lane.lane_number)]
                 lane_dict = multi_lane_to_dict(lane_contents)[lane.library_id]
 
-                self.failUnlessEqual(lane_dict['cluster_estimate'],
-                                     lane.cluster_estimate)
+                self.failUnlessEqual(lane_dict['cluster_estimate'], lane.cluster_estimate)
                 self.failUnlessEqual(lane_dict['comment'], lane.comment)
-                self.failUnlessEqual(lane_dict['flowcell'],
-                                     lane.flowcell.flowcell_id)
-                self.failUnlessEqual(lane_dict['lane_number'],
-                                     lane.lane_number)
-                self.failUnlessEqual(lane_dict['library_name'],
-                                     lane.library.library_name)
+                self.failUnlessEqual(lane_dict['flowcell'], lane.flowcell.flowcell_id)
+                self.failUnlessEqual(lane_dict['lane_number'], lane.lane_number)
+                self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
                 self.failUnlessEqual(lane_dict['library_id'], lane.library.id)
-                self.failUnlessAlmostEqual(float(lane_dict['pM']),
-                                           float(lane.pM))
+                self.failUnlessAlmostEqual(float(lane_dict['pM']), float(lane.pM))
                 self.failUnlessEqual(lane_dict['library_species'],
-                     lane.library.library_species.scientific_name)
+                                     lane.library.library_species.scientific_name)
 
     def test_invalid_flowcell(self):
         """
         Make sure we get a 404 if we request an invalid flowcell ID
         """
-        flowcell_url = '/experiments/config/nottheone/json'
-        response = self.client.get(flowcell_url, apidata)
+        response = self.client.get('/experiments/config/nottheone/json', apidata)
         self.failUnlessEqual(response.status_code, 404)
 
     def test_no_key(self):
@@ -137,10 +123,9 @@ class ExperimentsTestCases(TestCase):
 
     def test_library_id(self):
         """
-        Library IDs should be flexible, retrive a non-numeric ID
+        Library IDs should be flexible, so make sure we can retrive a non-numeric ID
         """
-        flowcell_url = '/experiments/config/FC12150/json'
-        response = self.client.get(flowcell_url, apidata)
+        response = self.client.get('/experiments/config/FC12150/json', apidata)
         self.failUnlessEqual(response.status_code, 200)
         flowcell = json.loads(response.content)
 
@@ -160,26 +145,26 @@ class ExperimentsTestCases(TestCase):
 
         Library's have IDs, libraries also have primary keys,
         we eventually had enough libraries that the drop down combo box was too
-        hard to filter through, unfortnately we want a field that uses our
-        library id and not the internal primary key, and raw_id_field uses
-        primary keys.
+        hard to filter through, unfortnately we want a field that uses our library
+        id and not the internal primary key, and raw_id_field uses primary keys.
 
-        This tests to make sure that the value entered in the raw library id
-        field matches the library id looked up.
+        This tests to make sure that the value entered in the raw library id field matches
+        the library id looked up.
         """
-        expected_ids = [u'10981', u'11016', u'SL039', u'11060',
-                        u'11061', u'11062', u'11063', u'11064']
+        expected_ids = [u'10981',u'11016',u'SL039',u'11060',
+                        u'11061',u'11062',u'11063',u'11064']
         self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5')
         response = self.client.get('/admin/experiments/flowcell/153/')
-        soup = BeautifulSoup(response.content)
-        for i in range(0, 8):
-            input_field = soup.find(id='id_lane_set-%d-library' % (i,))
-            library_field = input_field.findNext('strong')
+        tree = fromstring(response.content)
+        for i in range(0,8):
+            xpath_expression = '//input[@id="id_lane_set-%d-library"]'
+            input_field = tree.xpath(xpath_expression % (i,))[0]
+            library_field = input_field.find('../strong')
             library_id, library_name = library_field.text.split(':')
             # strip leading '#' sign from name
             library_id = library_id[1:]
             self.failUnlessEqual(library_id, expected_ids[i])
-            self.failUnlessEqual(input_field['value'], library_id)
+            self.failUnlessEqual(input_field.attrib['value'], library_id)
 
     def test_library_to_flowcell_link(self):
         """
@@ -188,9 +173,12 @@ class ExperimentsTestCases(TestCase):
         """
         self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5')
         response = self.client.get('/library/11070/')
-        soup = BeautifulSoup(response.content)
-        failed_fc_span = soup.find(text='30012AAXX (failed)')
-        failed_fc_a = failed_fc_span.findPrevious('a')
+        tree = fromstring(response.content)
+        flowcell_spans = tree.xpath('//span[@property="libns:flowcell_id"]',
+                                    namespaces=NSMAP)
+        self.assertEqual(flowcell_spans[0].text, '30012AAXX (failed)')
+        failed_fc_span = flowcell_spans[0]
+        failed_fc_a = failed_fc_span.getparent()
         # make sure some of our RDF made it.
         self.failUnlessEqual(failed_fc_a.get('rel'), 'libns:flowcell')
         self.failUnlessEqual(failed_fc_a.get('href'), '/flowcell/30012AAXX/')
@@ -212,6 +200,8 @@ class ExperimentsTestCases(TestCase):
         self.assertEqual(lane_dict['11045']['index_sequence'],
                          {u'1': u'ATCACG'})
 
+
+
     def test_lanes_for(self):
         """
         Check the code that packs the django objects into simple types.
@@ -220,29 +210,24 @@ class ExperimentsTestCases(TestCase):
         lanes = experiments.lanes_for(user)
         self.failUnlessEqual(len(lanes), 5)
 
-        flowcell_url = '/experiments/lanes_for/%s/json'
-        response = self.client.get(flowcell_url % (user,), apidata)
+        response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
         lanes_json = json.loads(response.content)
         self.failUnlessEqual(len(lanes), len(lanes_json))
         for i in range(len(lanes)):
             self.failUnlessEqual(lanes[i]['comment'], lanes_json[i]['comment'])
-            self.failUnlessEqual(lanes[i]['lane_number'],
-                                 lanes_json[i]['lane_number'])
-            self.failUnlessEqual(lanes[i]['flowcell'],
-                                 lanes_json[i]['flowcell'])
-            self.failUnlessEqual(lanes[i]['run_date'],
-                                 lanes_json[i]['run_date'])
+            self.failUnlessEqual(lanes[i]['lane_number'], lanes_json[i]['lane_number'])
+            self.failUnlessEqual(lanes[i]['flowcell'], lanes_json[i]['flowcell'])
+            self.failUnlessEqual(lanes[i]['run_date'], lanes_json[i]['run_date'])
 
     def test_lanes_for_no_lanes(self):
         """
-        What happens to user who haven't submitted anything
+        Do we get something meaningful back when the user isn't attached to anything?
         """
         user = 'supertest'
         lanes = experiments.lanes_for(user)
         self.failUnlessEqual(len(lanes), 0)
 
-        url = '/experiments/lanes_for/%s/json'
-        response = self.client.get(url % (user,), apidata)
+        response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
         lanes_json = json.loads(response.content)
 
     def test_lanes_for_no_user(self):
@@ -252,9 +237,9 @@ class ExperimentsTestCases(TestCase):
         user = 'not a real user'
         self.failUnlessRaises(ObjectDoesNotExist, experiments.lanes_for, user)
 
-        url = '/experiments/lanes_for/%s/json'
-        response = self.client.get(url % (user,), apidata)
+        response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
         self.failUnlessEqual(response.status_code, 404)
+
 
     def test_raw_data_dir(self):
         """Raw data path generator check"""
@@ -266,6 +251,7 @@ class ExperimentsTestCases(TestCase):
 
         fc.flowcell_id = flowcell_id + " (failed)"
         self.failUnlessEqual(fc.get_raw_data_directory(), raw_dir)
+
 
     def test_data_run_import(self):
         srf_file_type = models.FileType.objects.get(name='SRF')
@@ -293,9 +279,10 @@ class ExperimentsTestCases(TestCase):
         lane_files = run.lane_files()
         self.failUnlessEqual(lane_files[4]['srf'], srf4)
 
-        runxml = result_dict['FC12150/C1-37/run_FC12150_2007-09-27.xml']
+        runxml= result_dict['FC12150/C1-37/run_FC12150_2007-09-27.xml']
         self.failUnlessEqual(runxml.file_type, runxml_file_type)
         self.failUnlessEqual(runxml.library_id, None)
+
 
     def test_read_result_file(self):
         """make sure we can return a result file
@@ -308,7 +295,7 @@ class ExperimentsTestCases(TestCase):
 
         result_files = flowcell.datarun_set.all()[0].datafile_set.all()
         for f in result_files:
-            url = '/experiments/file/%s' % (f.random_key, )
+            url = '/experiments/file/%s' % ( f.random_key,)
             response = self.client.get(url)
             self.failUnlessEqual(response.status_code, 200)
             mimetype = f.file_type.mimetype
@@ -316,7 +303,6 @@ class ExperimentsTestCases(TestCase):
                 mimetype = 'application/octet-stream'
 
             self.failUnlessEqual(mimetype, response['content-type'])
-
 
 class TestFileType(TestCase):
     def test_file_type_unicode(self):
@@ -326,7 +312,6 @@ class TestFileType(TestCase):
         self.failUnlessEqual(u"<FileType: QSEQ tarfile>",
                              unicode(file_type_object))
 
-
 class TestFileType(TestCase):
     def test_find_file_type(self):
         file_type_objects = models.FileType.objects
@@ -334,9 +319,9 @@ class TestFileType(TestCase):
                   'QSEQ tarfile', 7, 1),
                  ('woldlab_091005_HWUSI-EAS627_0010_42JT2AAXX_1.srf',
                   'SRF', 1, None),
-                 ('s_1_eland_extended.txt.bz2', 'ELAND Extended', 1, None),
+                 ('s_1_eland_extended.txt.bz2','ELAND Extended', 1, None),
                  ('s_7_eland_multi.txt.bz2', 'ELAND Multi', 7, None),
-                 ('s_3_eland_result.txt.bz2', 'ELAND Result', 3, None),
+                 ('s_3_eland_result.txt.bz2','ELAND Result', 3, None),
                  ('s_1_export.txt.bz2','ELAND Export', 1, None),
                  ('s_1_percent_call.png', 'IVC Percent Call', 1, None),
                  ('s_2_percent_base.png', 'IVC Percent Base', 2, None),
@@ -359,10 +344,10 @@ class TestFileType(TestCase):
                   'QSEQ tarfile', 7, 1),
                  ('foo/woldlab_091005_HWUSI-EAS627_0010_42JT2AAXX_1.srf',
                   'SRF', 1, None),
-                 ('../s_1_eland_extended.txt.bz2', 'ELAND Extended', 1, None),
+                 ('../s_1_eland_extended.txt.bz2','ELAND Extended', 1, None),
                  ('/bleem/s_7_eland_multi.txt.bz2', 'ELAND Multi', 7, None),
-                 ('/qwer/s_3_eland_result.txt.bz2', 'ELAND Result', 3, None),
-                 ('/ty///1/s_1_export.txt.bz2', 'ELAND Export', 1, None),
+                 ('/qwer/s_3_eland_result.txt.bz2','ELAND Result', 3, None),
+                 ('/ty///1/s_1_export.txt.bz2','ELAND Export', 1, None),
                  ('/help/s_1_percent_call.png', 'IVC Percent Call', 1, None),
                  ('/bored/s_2_percent_base.png', 'IVC Percent Base', 2, None),
                  ('/example1/s_3_percent_all.png', 'IVC Percent All', 3, None),
@@ -375,9 +360,8 @@ class TestFileType(TestCase):
             result = models.find_file_type_metadata_from_filename(filename)
             self.failUnlessEqual(result['file_type'],
                                  file_type_objects.get(name=typename))
-            self.failUnlessEqual(result.get('lane', None), lane)
+            self.failUnlessEqual(result.get('lane',None), lane)
             self.failUnlessEqual(result.get('end', None), end)
-
 
 class TestEmailNotify(TestCase):
     fixtures = ['test_flowcells.json']
@@ -404,8 +388,7 @@ class TestEmailNotify(TestCase):
         self.failUnless('pk1@example.com' in response.content)
         self.failUnless('Lane #8 : (11064) Paired ends 104' in response.content)
 
-        response = self.client.get('/experiments/started/153/',
-                                   {'send': '1','bcc': 'on'})
+        response = self.client.get('/experiments/started/153/', {'send':'1','bcc':'on'})
         self.failUnlessEqual(response.status_code, 200)
         self.failUnlessEqual(len(mail.outbox), 4)
         for m in mail.outbox:
@@ -420,11 +403,9 @@ class TestEmailNotify(TestCase):
         self.failUnlessEqual(response.status_code, 200)
         self.failUnless(re.search('Flowcell FC12150', response.content))
         # require that navigation back to the admin page exists
-        flowcell_a_re = '<a href="/admin/experiments/flowcell/153/">[^<]+</a>'
-        self.failUnless(re.search(flowcell_a_re, response.content))
-
+        self.failUnless(re.search('<a href="/admin/experiments/flowcell/153/">[^<]+</a>', response.content))
 
 def multi_lane_to_dict(lane):
     """Convert a list of lane entries into a dictionary indexed by library ID
     """
-    return dict(((x['library_id'], x) for x in lane))
+    return dict( ((x['library_id'],x) for x in lane) )
