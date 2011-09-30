@@ -26,6 +26,9 @@ logger = logging.getLogger(__name__)
 
 DAF_VARIABLE_NAMES = ("variables", "extraVariables")
 VARIABLES_TERM_NAME = 'variables'
+DAF_PRE_VARIABLES = ['files', 'view']
+DAF_POST_VARIABLES = [ 'labExpId', 'md5sum']
+
 
 class ModelException(RuntimeError):
     """Assumptions about the RDF model failed"""
@@ -353,12 +356,6 @@ class DAFMapper(object):
                           dafTermOntology['submission'],
                           submissionNode))
 
-        # extra information
-        terms = [dafTermOntology['type'],
-                 dafTermOntology['filename_re'],
-                 ]
-        terms.extend((dafTermOntology[v] for v in self.get_daf_variables()))
-
         # add file specific information
         self.create_file_attributes(filename, submissionView, submission_uri, submission_dir)
 
@@ -399,14 +396,17 @@ class DAFMapper(object):
         """Returns simple variables names that to include in the ddf
         """
         variables_term = dafTermOntology[VARIABLES_TERM_NAME]
-        results = ['view']
-        if self.need_replicate():
+        results = []
+        results.extend([v for v in DAF_PRE_VARIABLES if v not in results])
+        results = DAF_PRE_VARIABLES[:]
+        if self.need_replicate() and 'replicate' not in results:
             results.append('replicate')
 
         for obj in self.model.get_targets(self.submissionSet, variables_term):
             value = str(fromTypedNode(obj))
-            results.append(value)
-        results.append('labVersion')
+            if value not in results:
+                results.append(value)
+        results.extend([v for v in DAF_POST_VARIABLES if v not in results])
         return results
 
     def make_submission_name(self, submission_dir):

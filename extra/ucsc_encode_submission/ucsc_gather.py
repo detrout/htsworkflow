@@ -215,7 +215,7 @@ def make_ddf(view_map, submissionNode, daf_name, make_condor=False, outdir=None)
 PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
 PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
 
-select ?submitView  ?files ?md5sum ?view ?cell ?antibody ?sex ?control ?controlId ?labExpId ?labVersion ?treatment ?protocol ?readType ?insertLength ?replicate
+select ?submitView  ?files ?md5sum ?view ?cell ?antibody ?sex ?control ?strain ?controlId ?labExpId ?labVersion ?treatment ?protocol ?readType ?insertLength ?replicate ?mapAlgorithm
 WHERE {
   ?file ucscDaf:filename ?files ;
         ucscDaf:md5sum ?md5sum .
@@ -236,7 +236,9 @@ WHERE {
   OPTIONAL { ?library libraryOntology:condition ?treatment }
   OPTIONAL { ?library ucscDaf:protocol ?protocol }
   OPTIONAL { ?library ucscDaf:readType ?readType }
+  OPTIONAL { ?library ucscDaf:strain ?strain }
   OPTIONAL { ?library libraryOntology:insert_size ?insertLength }
+  OPTIONAL { ?library ucscDaf:mapAlgorithm ?mapAlgorithm }
 }
 ORDER BY  ?submitView"""
     dag_fragments = []
@@ -251,6 +253,7 @@ ORDER BY  ?submitView"""
         outfile = os.path.join(outdir, ddf_name)
         output = open(outfile,'w')
     else:
+        outfile = 'stdout:'
         output = sys.stdout
 
     formatted_query = query_template % {'submission': str(submissionNode.uri)}
@@ -258,11 +261,9 @@ ORDER BY  ?submitView"""
     query = RDF.SPARQLQuery(formatted_query)
     results = query.execute(view_map.model)
 
-    variables = ['files']
     # filename goes first
-    variables.extend(view_map.get_daf_variables())
+    variables = view_map.get_daf_variables()
     # 'controlId',
-    variables += [ 'labExpId', 'md5sum']
     output.write('\t'.join(variables))
     output.write(os.linesep)
 
@@ -273,6 +274,8 @@ ORDER BY  ?submitView"""
         current = all_views.setdefault(viewname, {})
         for variable_name in variables:
             value = str(fromTypedNode(row[variable_name]))
+            if value is None or value == 'None':
+                logging.warn("{0}: {1} was None".format(outfile, variable_name))
             if variable_name in ('files', 'md5sum'):
                 current.setdefault(variable_name,[]).append(value)
             else:

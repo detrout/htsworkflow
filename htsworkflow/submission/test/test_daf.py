@@ -282,7 +282,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
     def test_daf_with_extra(self):
         daf_mapper = load_daf_mapper('test_rep',test_daf=test_daf_extra)
         variables = daf_mapper.get_daf_variables()
-        self.assertEqual(len(variables), 9)
+        self.assertEqual(len(variables), 11)
         self.failUnless('treatment' in variables)
         self.failUnless('controlId' in variables)
 
