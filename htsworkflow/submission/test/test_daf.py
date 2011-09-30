@@ -59,6 +59,26 @@ hasReplicates    no
 required         no
 """
 
+test_daf_extra = """# Lab and general info
+grant             Hardison
+lab               Caltech-m
+dataType          ChipSeq
+variables         cell,antibody,sex,age,strain
+extraVariables    controlId,treatment
+compositeSuffix   CaltechHistone
+assembly          mm9
+dafVersion        2.0
+validationSettings validateFiles.bam:mismatches=2,bamPercent=99.9;validateFiles.fastq:quick=1000
+
+# Track/view definition
+view             FastqRd1
+longLabelPrefix  Caltech Fastq Read 1
+type             fastq
+hasReplicates    no
+required         no
+"""
+
+
 class TestDAF(unittest.TestCase):
     def test_parse(self):
 
@@ -74,6 +94,7 @@ class TestDAF(unittest.TestCase):
         self.failUnlessEqual(signal['required'], False)
         self.failUnlessEqual(signal['longLabelPrefix'],
                              'Caltech Histone Signal')
+
 
     def test_rdf(self):
 
@@ -141,6 +162,7 @@ def dump_model(model):
     writer = get_serializer()
     turtle =  writer.serialize_model_to_string(model)
     print turtle
+
 
 class TestDAFMapper(unittest.TestCase):
     def test_create_mapper_add_pattern(self):
@@ -257,22 +279,27 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         self.failUnlessEqual(daf_mapper.need_replicate(), False)
         self.failUnless('replicate' not in daf_mapper.get_daf_variables())
 
+    def test_daf_with_extra(self):
+        daf_mapper = load_daf_mapper('test_rep',test_daf=test_daf_extra)
+        variables = daf_mapper.get_daf_variables()
+        self.assertEqual(len(variables), 9)
+        self.failUnless('treatment' in variables)
+        self.failUnless('controlId' in variables)
+
+
 @contextmanager
 def mktempdir(prefix='tmp'):
     d = tempfile.mkdtemp(prefix=prefix)
-    print "made", d
     yield d
     shutil.rmtree(d)
-    print "unmade", d
+
 
 @contextmanager
 def mktempfile(suffix='', prefix='tmp', dir=None):
     fd, pathname = tempfile.mkstemp(suffix=suffix, prefix=prefix, dir=dir)
     yield pathname
-    print "made", pathname
     os.close(fd)
     os.unlink(pathname)
-    print "unmade", pathname
 
 
 def suite():

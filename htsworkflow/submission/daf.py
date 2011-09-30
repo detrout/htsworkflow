@@ -24,6 +24,8 @@ from htsworkflow.util.hashfile import make_md5sum
 
 logger = logging.getLogger(__name__)
 
+DAF_VARIABLE_NAMES = ("variables", "extraVariables")
+VARIABLES_TERM_NAME = 'variables'
 
 class ModelException(RuntimeError):
     """Assumptions about the RDF model failed"""
@@ -108,7 +110,7 @@ def parse_stream(stream):
                 view_name = None
                 view_attributes = {}
             state = DAF_HEADER
-        elif state == DAF_HEADER and name == 'variables':
+        elif state == DAF_HEADER and name in DAF_VARIABLE_NAMES:
             attributes[name] = [x.strip() for x in value.split(',')]
         elif state == DAF_HEADER and name == 'view':
             view_name = value
@@ -162,6 +164,7 @@ def convert_to_rdf_statements(attributes, subject):
 
     The statements are attached to the provided subject node
     """
+    variables_term = dafTermOntology[VARIABLES_TERM_NAME]
     statements = []
     for daf_key in attributes:
         predicate = dafTermOntology[daf_key]
@@ -169,11 +172,10 @@ def convert_to_rdf_statements(attributes, subject):
             statements.extend(_views_to_statements(subject,
                                                    dafTermOntology,
                                                    attributes[daf_key]))
-        elif daf_key == 'variables':
-            #predicate = ddfNS['variables']
-            for var in attributes.get('variables', []):
+        elif daf_key in DAF_VARIABLE_NAMES:
+            for var in attributes.get(daf_key, []):
                 obj = toTypedNode(var)
-                statements.append(RDF.Statement(subject, predicate, obj))
+                statements.append(RDF.Statement(subject, variables_term, obj))
         else:
             value = attributes[daf_key]
             obj = toTypedNode(value)
@@ -396,12 +398,12 @@ class DAFMapper(object):
     def get_daf_variables(self):
         """Returns simple variables names that to include in the ddf
         """
-        variableTerm = dafTermOntology['variables']
+        variables_term = dafTermOntology[VARIABLES_TERM_NAME]
         results = ['view']
         if self.need_replicate():
             results.append('replicate')
 
-        for obj in self.model.get_targets(self.submissionSet, variableTerm):
+        for obj in self.model.get_targets(self.submissionSet, variables_term):
             value = str(fromTypedNode(obj))
             results.append(value)
         results.append('labVersion')
