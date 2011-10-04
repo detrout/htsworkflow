@@ -580,7 +580,7 @@ def check_for_eland_file(basedir, pattern, lane_id, end):
       full_lane_id = "%d_%d" % ( lane_id, end )
 
    basename = pattern % (full_lane_id,)
-   logging.info("Eland pattern: %s" %(basename,))
+   logging.debug("Eland pattern: %s" %(basename,))
    pathname = os.path.join(basedir, basename)
    if os.path.exists(pathname):
        logging.info('found eland file in %s' % (pathname,))

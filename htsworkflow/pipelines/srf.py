@@ -36,10 +36,10 @@ def pathname_to_run_name(base):
 def make_srf_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel=ILLUMINA2SRF11):
   """
   make a subprocess-friendly list of command line arguments to run solexa2srf
-  generates files like: 
+  generates files like:
   woldlab:080514_HWI-EAS229_0029_20768AAXX:8.srf
    site        run name                    lane
-             
+
   run_name - most of the file name (run folder name is a good choice)
   lanes - list of integers corresponding to which lanes to process
   site_name - name of your "sequencing site" or "Individual"
@@ -80,42 +80,46 @@ def make_srf_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel
   return cmd_list
 
 def create_qseq_patterns(bustard_dir):
-  """
-  Scan a bustard directory for qseq files and determine a glob pattern
-  """
-  # grab one tile for each lane.
-  qseqs = glob(os.path.join(bustard_dir, '*_0001_qseq.txt'))
-  qseqs = [ os.path.split(x)[-1] for x in qseqs ]
-  if len(qseqs[0].split('_')) == 4:
-    # single ended
-    return [(None, "s_%d_[0-9][0-9][0-9][0-9]_qseq.txt")]
-  elif len(qseqs[0].split('_')) == 5:
-    # more than 1 read
-    # build a dictionary of read numbers by lane
-    # ( just in case we didn't run all 8 lanes )
-    lanes = {}
-    for q in qseqs:
-      sample, lane, read, tile, extension = q.split('_')
-      lanes.setdefault(lane, []).append(read)
-    qseq_patterns = []
-    # grab a lane from the dictionary
-    # I don't think it matters which one.
-    k = lanes.keys()[0]
-    # build the list of patterns
-    for read in lanes[k]:
-      read = int(read)
-      qseq_patterns.append((read, 's_%d_' + '%d_[0-9][0-9][0-9][0-9]_qseq.txt' % (read,)))
-    return qseq_patterns
-  else:
-    raise RuntimeError('unrecognized qseq pattern, not a single or multiple read pattern')
+    """Scan a bustard directory for qseq files and determine a glob pattern
+    """
+    # grab one tile for each lane.
+    qseqs = glob(os.path.join(bustard_dir, '*_1101_qseq.txt'))
+    # handle old runfolders
+    if len(qseqs) == 0:
+      qseqs = glob(os.path.join(bustard_dir, '*_0001_qseq.txt'))
+    if len(qseqs) == 0:
+      r
+    qseqs = [ os.path.split(x)[-1] for x in qseqs ]
+    if len(qseqs[0].split('_')) == 4:
+      # single ended
+      return [(None, "s_%d_[0-9][0-9][0-9][0-9]_qseq.txt")]
+    elif len(qseqs[0].split('_')) == 5:
+      # more than 1 read
+      # build a dictionary of read numbers by lane
+      # ( just in case we didn't run all 8 lanes )
+      lanes = {}
+      for q in qseqs:
+        sample, lane, read, tile, extension = q.split('_')
+        lanes.setdefault(lane, []).append(read)
+      qseq_patterns = []
+      # grab a lane from the dictionary
+      # I don't think it matters which one.
+      k = lanes.keys()[0]
+      # build the list of patterns
+      for read in lanes[k]:
+        read = int(read)
+        qseq_patterns.append((read, 's_%d_' + '%d_[0-9][0-9][0-9][0-9]_qseq.txt' % (read,)))
+      return qseq_patterns
+    else:
+      raise RuntimeError('unrecognized qseq pattern, not a single or multiple read pattern')
 
 def make_qseq_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel=ILLUMINA2SRF11):
   """
   make a subprocess-friendly list of command line arguments to run solexa2srf
-  generates files like: 
+  generates files like:
   woldlab:080514_HWI-EAS229_0029_20768AAXX:8.srf
    site        run name                    lane
-             
+
   run_name - most of the file name (run folder name is a good choice)
   lanes - list of integers corresponding to which lanes to process
   site_name - name of your "sequencing site" or "Individual"
