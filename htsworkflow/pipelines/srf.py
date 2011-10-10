@@ -50,7 +50,7 @@ def make_srf_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel
 
   cmd_list = []
   for lane in lanes:
-    name_prefix = '%s_%%l_%%t_' % (run_name,)
+    name_prefix = '%s_%%l_' % (run_name,)
     destname = '%s_%s_%d.srf' % (site_name, run_name, lane)
     destdir = os.path.normpath(destdir)
     dest_path = os.path.join(destdir, destname)
@@ -174,3 +174,4 @@ def make_md5_commands(destdir):
       cmd_list.append(cmd)
 
   return cmd_list
+
