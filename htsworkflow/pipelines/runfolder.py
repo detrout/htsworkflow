@@ -595,7 +595,7 @@ def clean_runs(runs, dry_run=True):
         logging.info('In dry-run mode')
 
     for run in runs:
-        logging.info('Cleaninging %s' % (run.pathname,))
+        logging.info('Cleaning %s' % (run.pathname,))
         # rm RunLog*.xml
         runlogs = glob(os.path.join(run.pathname, 'RunLog*xml'))
         rm_list(runlogs, dry_run)
@@ -614,9 +614,17 @@ def clean_runs(runs, dry_run=True):
         logging.info("Cleaning images")
         image_dirs = glob(os.path.join(run.pathname, 'Images', 'L*'))
         rm_list(image_dirs, dry_run)
-        # cd Data/C1-*_Firecrest*
-        logging.info("Cleaning intermediate files")
+        # rm ReadPrep
+        logging.info("Cleaning ReadPrep*")
+        read_prep_dirs = glob(os.path.join(run.pathname, 'ReadPrep*'))
+        rm_list(read_prep_dirs, dry_run)
+        # rm ReadPrep
+        logging.info("Cleaning Thubmnail_images")
+        thumbnail_dirs = glob(os.path.join(run.pathname, 'Thumbnail_Images'))
+        rm_list(thumbnail_dirs, dry_run)
+
         # make clean_intermediate
+        logging.info("Cleaning intermediate files")
         if os.path.exists(os.path.join(run.image_analysis.pathname, 'Makefile')):
             clean_process = subprocess.Popen(['make', 'clean_intermediate'],
                                              cwd=run.image_analysis.pathname,)

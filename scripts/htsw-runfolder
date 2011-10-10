@@ -46,8 +46,10 @@ def main(cmdlist=None):
     opts, args = parser.parse_args(cmdlist)
 
     logging.basicConfig()
-    if opts.verbose:
-        root_log = logging.getLogger()
+    root_log = logging.getLogger()
+    if opts.debug:
+        root_log.setLevel(logging.DEBUG)
+    elif opts.verbose:
         root_log.setLevel(logging.INFO)
 
     logging.info('Starting htsworkflow illumina runfolder processing tool.')
@@ -132,6 +134,9 @@ def make_parser():
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                       default=False,
                       help='turn on verbose mode')
+    parser.add_option('--debug', action='store_true',
+                      default=False,
+                      help='turn on debug logging (implies verbose)')
     parser.add_option('--dry-run', action='store_true', default=False,
                       help="Don't delete anything (in clean mode)")
 
