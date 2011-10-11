@@ -107,7 +107,7 @@ def library(request, todo_only=False):
     c = RequestContext(request, context)
     return HttpResponse( t.render(c) )
 
-def library_todo(request):
+def library_not_run(request):
     return library(request, todo_only=True)
 
 def library_to_flowcells(request, lib_id):
