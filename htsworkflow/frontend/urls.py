@@ -38,6 +38,8 @@ urlpatterns = patterns('',
     (r'^reports/', include('htsworkflow.frontend.reports.urls')),
     # Library browser
     (r'^library/$', 'htsworkflow.frontend.samples.views.library'),
+    (r'^library/todo/$',
+      'htsworkflow.frontend.samples.views.library_todo'),
     (r'^library/(?P<lib_id>\w+)/$',
       'htsworkflow.frontend.samples.views.library_to_flowcells'),
     (r'^lanes_for/$', 'htsworkflow.frontend.samples.views.lanes_for'),

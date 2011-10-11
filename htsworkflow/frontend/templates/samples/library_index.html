@@ -3,8 +3,8 @@
 {% block extrahead %}
     <!-- App Stuff -->
     <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
-    
-    {% block additional_javascript %}    
+
+    {% block additional_javascript %}
     <script type="text/javascript" src="/static/js/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/htsw.js"></script>
     <script type="text/javascript">
@@ -25,10 +25,14 @@
 {% block coltype %}flex{% endblock %}
 
 {% block content %}
+<div id="library_header_link">
+{% if todo_only %}<a href="..">All</a>{% else %}<a href="todo/">Todo</a>
+{% endif %}
+</div>
 <div id="library-index-div" >
   <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
     {% block search %}{% search_form cl %}{% endblock %}
- 
+
     {% block pagination %}{% pagination cl %}{% endblock %}
 
     {% block filters %}
@@ -71,12 +75,12 @@
         <td ><a href="{{lib.library.get_absolute_url}}"><span property="libns:library_id">{{ lib.library_id }}</span></a></td>
         <td ><a href="{{lib.library.library_species.get_absolute_url}}" rel="libns:species"><span property="libns:species_name">{{ lib.species_name }}</span></a></td>
         <td ><a href="{{ lib.library.get_absolute_url }}"><span property="libns:library_name">{{ lib.library_name }}</span></a></td>
-        <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.0 }}</td>      
-        <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.1 }}</td>      
-        <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.2 }}</td>      
+        <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.0 }}</td>
+        <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.1 }}</td>
+        <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.2 }}</td>
         <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.0 }}</td>
-        <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.1 }}</td>      
-        <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.2 }}</td>      
+        <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.1 }}</td>
+        <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.2 }}</td>
         {% if lib.is_archived %}
           <td ><img src="/static/img/hdd_unmount.png" alt="Archived" /></td>
         {% else %}
