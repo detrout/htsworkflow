@@ -1,19 +1,21 @@
 import logging
 
+LOGGER = logging.getLogger(__name__)
+
 def version():
-    """Return version number    
+    """Return version number
     """
     version = None
     try:
         import pkg_resources
     except ImportError, e:
-        logging.error("Can't find version number, please install setuptools")
+        LOGGER.error("Can't find version number, please install setuptools")
         raise e
 
     try:
         version = pkg_resources.get_distribution("htsworkflow")
     except pkg_resources.DistributionNotFound, e:
-        logging.error("Package not installed")
+        LOGGER.error("Package not installed")
 
     return version
-        
+

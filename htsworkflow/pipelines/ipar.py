@@ -1,7 +1,7 @@
 """
 Extract information about the IPAR run
 
-IPAR 
+IPAR
     class holding the properties we found
 ipar
     IPAR factory function initalized from a directory name
@@ -24,6 +24,7 @@ from htsworkflow.pipelines.runfolder import \
    VERSION_RE, \
    EUROPEAN_STRPTIME
 
+LOGGER = logging.getLogger(__name__)
 SOFTWARE_NAMES = ('IPAR_1.01', 'IPAR_1.3', 'Intensities')
 
 class Tiles(object):
@@ -163,7 +164,7 @@ class IPAR(object):
             raise ValueError('Expected "IPAR" SubElements')
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > IPAR.XML_VERSION:
-            logging.warn('IPAR XML tree is a higher version than this class')
+            LOGGER.warn('IPAR XML tree is a higher version than this class')
         for element in list(tree):
             if element.tag == IPAR.RUN:
                 self.tree = element
@@ -184,14 +185,14 @@ def load_ipar_param_tree(paramfile):
     if run.attrib.has_key('Name') and run.attrib['Name'] in SOFTWARE_NAMES:
         return run
     else:
-        logging.info("No run found")
+        LOGGER.info("No run found")
         return None
 
 def ipar(pathname):
     """
     Examine the directory at pathname and initalize a IPAR object
     """
-    logging.info("Searching IPAR directory %s" % (pathname,))
+    LOGGER.info("Searching IPAR directory %s" % (pathname,))
     i = IPAR()
     i.pathname = pathname
 
@@ -216,7 +217,7 @@ def ipar(pathname):
                   os.path.join(path, '.params')]
     for paramfile in paramfiles:
         if os.path.exists(paramfile):
-            logging.info("Found IPAR Config file at: %s" % ( paramfile, ))
+            LOGGER.info("Found IPAR Config file at: %s" % ( paramfile, ))
             i.tree = load_ipar_param_tree(paramfile)
             mtime_local = os.stat(paramfile)[stat.ST_MTIME]
             i.time = mtime_local

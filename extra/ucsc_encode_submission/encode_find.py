@@ -196,7 +196,7 @@ def load_my_submissions(model, limit=None, cookie=None):
                 update_submission_detail(model, subUrn, status, last_mod,
                                          cookie=cookie)
 
-                logging.info("Processed {0}".format(subUrn))
+                LOGGER.info("Processed {0}".format(subUrn))
 
 
 
@@ -268,7 +268,7 @@ def update_submission_detail(model, subUrn, status, recent_update, cookie):
 
     if len(status_nodes) == 0:
         # has no status node, add one
-        logging.info("Adding status node to {0}".format(subUrn))
+        LOGGER.info("Adding status node to {0}".format(subUrn))
         status_node = create_status_node(subUrn, recent_update)
         add_stmt(model, subUrn, HasStatusN, status_node)
         add_stmt(model, status_node, rdfsNS['type'], StatusN)
@@ -277,7 +277,7 @@ def update_submission_detail(model, subUrn, status, recent_update, cookie):
         update_ddf(model, subUrn, status_node, cookie=cookie)
         update_daf(model, subUrn, status_node, cookie=cookie)
     else:
-        logging.info("Found {0} status blanks".format(len(status_nodes)))
+        LOGGER.info("Found {0} status blanks".format(len(status_nodes)))
         for status_statement in status_nodes:
             status_node = status_statement.object
             last_modified_query = RDF.Statement(status_node,
@@ -298,7 +298,7 @@ def update_daf(model, submission_url, status_node, cookie):
 
     status_is_daf = RDF.Statement(status_node, TYPE_N, dafTermOntology[''])
     if not model.contains_statement(status_is_daf):
-        logging.info('Adding daf to {0}, {1}'.format(submission_url,
+        LOGGER.info('Adding daf to {0}, {1}'.format(submission_url,
                                                      status_node))
         daf_text = get_url_as_text(download_daf_uri, 'GET', cookie)
         daf.fromstring_into_model(model, status_node, daf_text)
@@ -310,7 +310,7 @@ def update_ddf(model, subUrn, statusNode, cookie):
 
     status_is_ddf = RDF.Statement(statusNode, TYPE_N, DDF_NS[''])
     if not model.contains_statement(status_is_ddf):
-        logging.info('Adding ddf to {0}, {1}'.format(subUrn, statusNode))
+        LOGGER.info('Adding ddf to {0}, {1}'.format(subUrn, statusNode))
         ddf_text = get_url_as_text(download_ddf_url, 'GET', cookie)
         add_ddf_statements(model, statusNode, ddf_text)
         model.add_statement(status_is_ddf)
@@ -382,7 +382,7 @@ def load_library_detail(model, libraryUrn):
     elif len(results) == 1:
         pass  # Assuming that a loaded dataset has one record
     else:
-        logging.warning("Many dates for {0}".format(libraryUrn))
+        LOGGER.warning("Many dates for {0}".format(libraryUrn))
 
 
 def get_library_id(name):
@@ -450,7 +450,7 @@ def login(cookie=None):
                                      'POST',
                                      headers=headers,
                                      body=urllib.urlencode(credentials))
-    logging.debug("Login to {0}, status {1}".format(LOGIN_URL,
+    LOGGER.debug("Login to {0}, status {1}".format(LOGIN_URL,
                                                     response['status']))
 
     cookie = response.get('set-cookie', None)

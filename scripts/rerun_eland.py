@@ -10,34 +10,36 @@ from htsworkflow.pipelines import gerald
 from htsworkflow.pipelines.eland import extract_eland_sequence
 from htsworkflow.pipelines import runfolder
 
+LOGGER = logging.getLogger(__name__)
+
 def make_query_filename(eland_obj, output_dir):
-    query_name = '%s_%s_eland_query.txt' 
+    query_name = '%s_%s_eland_query.txt'
     query_name %= (eland_obj.sample_name, eland_obj.lane_id)
 
     query_pathname = os.path.join(output_dir, query_name)
-    
+
     if os.path.exists(query_pathname):
-        logging.warn("overwriting %s" % (query_pathname,))
+        LOGGER.warn("overwriting %s" % (query_pathname,))
 
     return query_pathname
 
 def make_result_filename(eland_obj, output_dir):
-    result_name = '%s_%s_eland_result.txt' 
+    result_name = '%s_%s_eland_result.txt'
     result_name %= (eland_obj.sample_name, eland_obj.lane_id)
 
     result_pathname = os.path.join(output_dir, result_name)
-    
+
     if os.path.exists(result_pathname):
-        logging.warn("overwriting %s" % (result_pathname,))
+        LOGGER.warn("overwriting %s" % (result_pathname,))
 
     return result_pathname
 
 def extract_sequence(inpathname, query_pathname, length, dry_run=False):
-    logging.info('extracting %d bases' %(length,))
-    logging.info('extracting from %s' %(inpathname,))
-    logging.info('extracting to %s' %(query_pathname,))
-    
-    if not dry_run: 
+    LOGGER.info('extracting %d bases' %(length,))
+    LOGGER.info('extracting from %s' %(inpathname,))
+    LOGGER.info('extracting to %s' %(query_pathname,))
+
+    if not dry_run:
         try:
             instream = open(inpathname, 'r')
             outstream = open(query_pathname, 'w')
@@ -45,13 +47,13 @@ def extract_sequence(inpathname, query_pathname, length, dry_run=False):
         finally:
             outstream.close()
             instream.close()
-    
+
 def run_eland(length, query_name, genome, result_name, multi=False, dry_run=False):
     cmdline = ['eland_%d' % (length,), query_name, genome, result_name]
     if multi:
         cmdline += ['--multi']
 
-    logging.info('running eland: ' + " ".join(cmdline))
+    LOGGER.info('running eland: ' + " ".join(cmdline))
     if not dry_run:
         return subprocess.Popen(cmdline)
     else:
@@ -62,12 +64,12 @@ def rerun(gerald_dir, output_dir, length=25, dry_run=False):
     """
     look for eland files in gerald_dir and write a subset to output_dir
     """
-    logging.info("Extracting %d bp from files in %s" % (length, gerald_dir))
+    LOGGER.info("Extracting %d bp from files in %s" % (length, gerald_dir))
     g = gerald.gerald(gerald_dir)
 
     # this will only work if we're only missing the last dir in output_dir
     if not os.path.exists(output_dir):
-        logging.info("Making %s" %(output_dir,))
+        LOGGER.info("Making %s" %(output_dir,))
         if not dry_run: os.mkdir(output_dir)
 
     processes = []
@@ -80,23 +82,23 @@ def rerun(gerald_dir, output_dir, length=25, dry_run=False):
 
         extract_sequence(inpathname, query_pathname, length, dry_run=dry_run)
 
-        p = run_eland(length, 
-                      query_pathname, 
-                      lane_param.eland_genome, 
-                      result_pathname, 
+        p = run_eland(length,
+                      query_pathname,
+                      lane_param.eland_genome,
+                      result_pathname,
                       dry_run=dry_run)
         if p is not None:
             processes.append(p)
 
     for p in processes:
         p.wait()
-        
+
 def make_parser():
     usage = '%prog: [options] runfolder'
 
     parser = OptionParser(usage)
-    
-    parser.add_option('--gerald', 
+
+    parser.add_option('--gerald',
                       help='specify location of GERALD directory',
                       default=None)
     parser.add_option('-o', '--output',
@@ -134,20 +136,20 @@ def main(cmdline=None):
         opts.gerald = runs[0].gerald.pathname
         if opts.output is None:
             opts.output = os.path.join(
-                runs[0].pathname, 
-                'Data', 
+                runs[0].pathname,
+                'Data',
                 # pythons 0..n ==> elands 1..n+1
-                'C1-%d' % (opts.length+1,) 
+                'C1-%d' % (opts.length+1,)
             )
 
     elif opts.gerald is None:
         parser.error("need gerald directory")
-    
+
     if opts.output is None:
         parser.error("specify location for the new eland files")
 
     if opts.verbose:
-        root_logger = logging.getLogger()
+        root_logger = logging.getLogger('rerun_eland')
         root_logger.setLevel(logging.INFO)
 
     rerun(opts.gerald, opts.output, opts.length, dry_run=opts.dry_run)

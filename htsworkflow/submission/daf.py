@@ -318,7 +318,7 @@ class DAFMapper(object):
                                        dafTermOntology['name']))
         if view_name is None:
             errmsg = 'Could not find view name for {0}'
-            logging.warning(errmsg.format(str(view)))
+            logger.warning(errmsg.format(str(view)))
             return
 
         view_name = str(view_name)
@@ -378,7 +378,7 @@ class DAFMapper(object):
         md5 = make_md5sum(submission_pathname)
         if md5 is None:
             errmsg = "Unable to produce md5sum for {0}"
-            logging.warning(errmsg.format(submission_pathname))
+            logger.warning(errmsg.format(submission_pathname))
         else:
             self.model.add_statement(
                 RDF.Statement(fileNode, dafTermOntology['md5sum'], md5))

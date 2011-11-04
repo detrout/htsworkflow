@@ -7,24 +7,24 @@ Runfolder.py can generate a xml file capturing all the 'interesting' parameters 
   * start/stop cycle numbers
   * Firecrest, bustard, gerald version numbers
   * Eland analysis types, and everything in the eland configuration file.
-  * cluster numbers and other values from the Summary.htm 
-    LaneSpecificParameters table. 
+  * cluster numbers and other values from the Summary.htm
+    LaneSpecificParameters table.
   * How many reads mapped to a genome from an eland file
 
 The ELAND "mapped reads" counter will also check for eland squashed file
-that were symlinked from another directory. This is so I can track how 
-many reads landed on the genome of interest and on the spike ins. 
+that were symlinked from another directory. This is so I can track how
+many reads landed on the genome of interest and on the spike ins.
 
 Basically my subdirectories something like:
 
 genomes/hg18
 genomes/hg18/chr*.2bpb <- files for hg18 genome
-genomes/hg18/chr*.vld  
+genomes/hg18/chr*.vld
 genomes/hg18/VATG.fa.2bp <- symlink to genomes/spikeins
-genomes/spikein 
+genomes/spikein
 
-runfolder.py can also spit out a simple summary report (-s option) 
-that contains the per lane post filter cluster numbers and the mapped 
+runfolder.py can also spit out a simple summary report (-s option)
+that contains the per lane post filter cluster numbers and the mapped
 read counts. (The report isn't currently very pretty)
 """
 from glob import glob
@@ -35,6 +35,8 @@ import sys
 
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.runfolder import ElementTree
+
+LOGGER = logging.getLogger(__name__)
 
 def make_parser():
     usage = 'usage: %prog [options] runfolder_root_dir'
@@ -91,10 +93,9 @@ def main(cmdlist=None):
 
     logging.basicConfig()
     if opt.verbose:
-        root_log = logging.getLogger()
-        root_log.setLevel(logging.INFO)
+        LOGGER.setLevel(logging.INFO)
 
-    logging.info('Starting htsworkflow illumina runfolder processing tool.')
+    LOGGER.info('Starting htsworkflow illumina runfolder processing tool.')
     runs = []
     if opt.run_xml:
         # handle ~ shortcut
@@ -108,7 +109,7 @@ def main(cmdlist=None):
         if specific_run is not None:
             runs.append(specific_run)
         else:
-            logging.warn("Couldn't find a run in %s" % (opt.use_run,))
+            LOGGER.warn("Couldn't find a run in %s" % (opt.use_run,))
 
     # scan runfolders for runs
     for run_pattern in args:

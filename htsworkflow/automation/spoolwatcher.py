@@ -17,6 +17,8 @@ IN_UNMOUNT = EventsCodes.ALL_FLAGS['IN_UNMOUNT']
 
 from benderjab import rpc
 
+LOGGER = logging.getLogger(__name__)
+
 class WatcherEvent(object):
     """
     Track information about a file event
@@ -27,7 +29,7 @@ class WatcherEvent(object):
         self.time = time.time()
         self.event_root = event_root
         self.complete = False
-        
+
     def __unicode__(self):
         if self.complete:
            complete = "(completed)"
@@ -64,7 +66,7 @@ class Handler(pyinotify.ProcessEvent):
                     if not is_runfolder(target):
                         self.log.debug("Skipping %s, not a runfolder" % (target,))
                         continue
-                    
+
                     # grab the previous events for this watch path
                     watch_path_events = self.last_event.setdefault(watch_path, {})
 
@@ -102,14 +104,14 @@ class Handler(pyinotify.ProcessEvent):
 class SpoolWatcher(rpc.XmlRpcBot):
     """
     Watch a directory and send a message when another process is done writing.
-    
+
     This monitors a directory tree using inotify (linux specific) and
     after some files having been written will send a message after <timeout>
     seconds of no file writing.
-    
+
     (Basically when the solexa machine finishes dumping a round of data
     this'll hopefully send out a message saying hey look theres data available
-    
+
     """
     # these params need to be in the config file
     # I wonder where I should put the documentation
@@ -121,23 +123,23 @@ class SpoolWatcher(rpc.XmlRpcBot):
     #    `notify_timeout` - how often to timeout from notify
     #    `completion_files` - what files indicates we've finished sequencing
     #                        defaults to: netcopy_complete.txt
-    
+
     def __init__(self, section=None, configfile=None):
         #if configfile is None:
         #    self.configfile = "~/.htsworkflow"
         super(SpoolWatcher, self).__init__(section, configfile)
-        
+
         self.cfg['watchdirs'] = None
         self.cfg['write_timeout'] = 10
         self.cfg['notify_users'] = None
         self.cfg['notify_runner'] = None
         self.cfg['completion_files'] = 'ImageAnalysis_Netcopy_complete_READ2.txt ImageAnalysis_Netcopy_complete_SINGLEREAD.txt'
-       
+
         self.watchdirs = []
         self.watchdir_url_map = {}
         self.notify_timeout = 0.001
 
-        self.wm = None 
+        self.wm = None
         self.notify_users = None
         self.notify_runner = None
         self.wdds = []
@@ -147,14 +149,14 @@ class SpoolWatcher(rpc.XmlRpcBot):
         # keep track of which mount points tie to which watch directories
         # so maybe we can remount them.
         self.mounts_to_watches = {}
-        
+
         self.eventTasks.append(self.process_notify)
 
     def read_config(self, section=None, configfile=None):
-        # Don't give in to the temptation to use logging functions here, 
+        # Don't give in to the temptation to use logging functions here,
         # need to wait until after we detach in start
         super(SpoolWatcher, self).read_config(section, configfile)
-        
+
         self.watchdirs = shlex.split(self._check_required_option('watchdirs'))
         # see if there's an alternate url that should be used for the watchdir
         for watchdir in self.watchdirs:
@@ -162,7 +164,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
 
         self.write_timeout = int(self.cfg['write_timeout'])
         self.completion_files = shlex.split(self.cfg['completion_files'])
-        
+
         self.notify_users = self._parse_user_list(self.cfg['notify_users'])
         try:
           self.notify_runner = \
@@ -207,7 +209,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
             self.wdds.append(self.wm.add_watch(w, mask, rec=True, auto_add=True))
 
     def unmount_watch(self, event_path):
-        # remove backwards so we don't get weirdness from 
+        # remove backwards so we don't get weirdness from
         # the list getting shorter
         for i in range(len(self.wdds),0, -1):
             wdd = self.wdds[i]
@@ -223,7 +225,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         copy_url = root_copy_url + list_event_dir
         self.log.debug('Copy url: %s' % (copy_url,))
         return copy_url
-                  
+
     def process_notify(self, *args):
         if self.notifier is None:
             # nothing to do yet
@@ -240,7 +242,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
             for last_event_dir, last_event_detail in last_events.items():
                 time_delta = time.time() - last_event_detail.time
                 if time_delta > self.write_timeout:
-                    print "timeout", unicode(last_event_detail)
+                    LOGGER.info("timeout: %s" % (unicode(last_event_detail),))
                     copy_url = self.make_copy_url(watchdir, last_event_dir)
                     self.startCopy(copy_url)
                     if last_event_detail.complete:
@@ -267,7 +269,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         help = u"I can send [copy] message, or squencer [finished]"
         if re.match(u"help", msg):
             reply = help
-        elif re.match("copy", msg):            
+        elif re.match("copy", msg):
             self.startCopy(msg)
             reply = u"sent copy message"
         elif re.match(u"finished", msg):
@@ -278,9 +280,9 @@ class SpoolWatcher(rpc.XmlRpcBot):
             else:
                 reply = u"need runfolder name"
         else:
-            reply = u"I didn't understand '%s'" %(msg)            
+            reply = u"I didn't understand '%s'" %(msg)
         return reply
-        
+
     def run(self):
         """
         Start application
@@ -290,7 +292,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         # after it's initialized.
         self.add_watch()
         super(SpoolWatcher, self).run()
-        
+
     def stop(self):
         """
         shutdown application
@@ -299,7 +301,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
         if self.notifier is not None:
             self.notifier.stop()
         super(SpoolWatcher, self).stop()
-    
+
     def startCopy(self, copy_url=None):
         self.log.debug("writes seem to have stopped")
         if self.notify_runner is not None:
@@ -308,13 +310,13 @@ class SpoolWatcher(rpc.XmlRpcBot):
         if self.notify_users is not None:
             for u in self.notify_users:
                 self.send(u, 'startCopy %s.' % (copy_url,))
-        
+
     def sequencingFinished(self, run_dir):
         # need to strip off self.watchdirs from rundir I suspect.
         self.log.info("run.completed in " + str(run_dir))
         for watch in self.watchdirs:
             if not run_dir.startswith(watch):
-                print "%s didn't start with %s" % (run_dir, watch)
+                LOGGER.info("%s didn't start with %s" % (run_dir, watch))
                 continue
             if watch[-1] != os.path.sep:
                 watch += os.path.sep
@@ -334,7 +336,7 @@ class SpoolWatcher(rpc.XmlRpcBot):
 def main(args=None):
     bot = SpoolWatcher()
     return bot.main(args)
-    
+
 if __name__ == "__main__":
     ret = main(sys.argv[1:])
     #sys.exit(ret)

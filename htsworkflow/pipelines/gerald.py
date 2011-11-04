@@ -16,6 +16,8 @@ from htsworkflow.pipelines.runfolder import \
    VERSION_RE
 from htsworkflow.util.ethelp import indent, flatten
 
+LOGGER = logging.getLogger(__name__)
+
 class Gerald(object):
     """
     Capture meaning out of the GERALD directory
@@ -205,7 +207,7 @@ class Gerald(object):
             raise ValueError('exptected GERALD')
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > Gerald.XML_VERSION:
-            logging.warn('XML tree is a higher version than this class')
+            LOGGER.warn('XML tree is a higher version than this class')
         self.eland_results = ELAND()
         for element in list(tree):
             tag = element.tag.lower()
@@ -216,23 +218,23 @@ class Gerald(object):
             elif tag == ELAND.ELAND.lower():
                 self.eland_results = ELAND(xml=element)
             else:
-                logging.warn("Unrecognized tag %s" % (element.tag,))
+                LOGGER.warn("Unrecognized tag %s" % (element.tag,))
 
 def gerald(pathname):
     g = Gerald()
     g.pathname = os.path.expanduser(pathname)
     path, name = os.path.split(g.pathname)
-    logging.info("Parsing gerald config.xml")
+    LOGGER.info("Parsing gerald config.xml")
     config_pathname = os.path.join(g.pathname, 'config.xml')
     g.tree = ElementTree.parse(config_pathname).getroot()
 
     # parse Summary.htm file
     summary_pathname = os.path.join(g.pathname, 'Summary.xml')
     if os.path.exists(summary_pathname):
-        logging.info("Parsing Summary.xml")
+        LOGGER.info("Parsing Summary.xml")
     else:
         summary_pathname = os.path.join(g.pathname, 'Summary.htm')
-        logging.info("Parsing Summary.htm")
+        LOGGER.info("Parsing Summary.htm")
     g.summary = Summary(summary_pathname)
     # parse eland files
     g.eland_results = eland(g.pathname, g)

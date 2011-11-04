@@ -5,6 +5,8 @@ import logging
 import os
 import re
 
+LOGGER = logging.getLogger(__name__)
+
 eland_re = re.compile('s_(?P<lane>\d)(_(?P<read>\d))?_eland_')
 raw_seq_re = re.compile('woldlab_[0-9]{6}_[^_]+_[\d]+_[\dA-Za-z]+')
 qseq_re = re.compile('woldlab_[0-9]{6}_[^_]+_[\d]+_[\dA-Za-z]+_l[\d]_r[\d].tar.bz2')
@@ -30,7 +32,7 @@ CREATE TABLE %(table)s (
 class SequenceFile(object):
     """
     Simple container class that holds the path to a sequence archive
-    and basic descriptive information.     
+    and basic descriptive information.
     """
     def __init__(self, filetype, path, flowcell, lane, read=None, pf=None, cycle=None):
         self.filetype = filetype
@@ -87,7 +89,7 @@ class SequenceFile(object):
         Add this entry to a DB2.0 database.
         """
         #FIXME: NEEDS SQL ESCAPING
-        header_macro = {'table': SEQUENCE_TABLE_NAME } 
+        header_macro = {'table': SEQUENCE_TABLE_NAME }
         sql_header = "insert into %(table)s (" % header_macro
         sql_columns = ['filetype','path','flowcell','lane']
         sql_middle = ") values ("
@@ -125,9 +127,9 @@ def get_flowcell_cycle(path):
     stop = cycle_match.group('stop')
     if stop is not None:
         stop = int(stop)
-    
+
     return flowcell, start, stop
-        
+
 def parse_srf(path, filename):
     flowcell_dir, start, stop = get_flowcell_cycle(path)
     basename, ext = os.path.splitext(filename)
@@ -137,7 +139,7 @@ def parse_srf(path, filename):
     fullpath = os.path.join(path, filename)
 
     if flowcell_dir != flowcell:
-        logging.warn("flowcell %s found in wrong directory %s" % \
+        LOGGER.warn("flowcell %s found in wrong directory %s" % \
                          (flowcell, path))
 
     return SequenceFile('srf', fullpath, flowcell, lane, cycle=stop)
@@ -152,7 +154,7 @@ def parse_qseq(path, filename):
     read = int(records[6][1])
 
     if flowcell_dir != flowcell:
-        logging.warn("flowcell %s found in wrong directory %s" % \
+        LOGGER.warn("flowcell %s found in wrong directory %s" % \
                          (flowcell, path))
 
     return SequenceFile('qseq', fullpath, flowcell, lane, read, cycle=stop)
@@ -168,9 +170,9 @@ def parse_fastq(path, filename):
     lane = int(records[5][1])
     read = int(records[6][1])
     pf = parse_fastq_pf_flag(records)
-    
+
     if flowcell_dir != flowcell:
-        logging.warn("flowcell %s found in wrong directory %s" % \
+        LOGGER.warn("flowcell %s found in wrong directory %s" % \
                          (flowcell, path))
 
     return SequenceFile('fastq', fullpath, flowcell, lane, read, pf=pf, cycle=stop)
@@ -193,7 +195,7 @@ def parse_fastq_pf_flag(records):
                              (records[-1], os.path.join(path,filename)))
 
     return pf
-    
+
 def parse_eland(path, filename, eland_match=None):
     if eland_match is None:
         eland_match = eland_re.match(filename)
@@ -208,18 +210,18 @@ def parse_eland(path, filename, eland_match=None):
     else:
         read = None
     return SequenceFile('eland', fullpath, flowcell, lane, read, cycle=stop)
-    
+
 def scan_for_sequences(dirs):
     """
     Scan through a list of directories for sequence like files
     """
     sequences = []
     for d in dirs:
-        logging.info("Scanning %s for sequences" % (d,))
+        LOGGER.info("Scanning %s for sequences" % (d,))
         if not os.path.exists(d):
-            logging.warn("Flowcell directory %s does not exist" % (d,))
+            LOGGER.warn("Flowcell directory %s does not exist" % (d,))
             continue
-        
+
         for path, dirname, filenames in os.walk(d):
             for f in filenames:
                 seq = None
@@ -240,6 +242,6 @@ def scan_for_sequences(dirs):
                     seq = parse_eland(path, f, eland_match)
                 if seq:
                     sequences.append(seq)
-                    logging.debug("Found sequence at %s" % (f,))
-                    
+                    LOGGER.debug("Found sequence at %s" % (f,))
+
     return sequences

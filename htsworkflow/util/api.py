@@ -15,6 +15,7 @@ import urllib
 import urllib2
 import urlparse
 
+LOGGER = logging.getLogger(__name__)
 
 def add_auth_options(parser):
     """Add options OptParser configure authentication options
@@ -24,7 +25,7 @@ def add_auth_options(parser):
     config.read([os.path.expanduser('~/.htsworkflow.ini'),
                  '/etc/htsworkflow.ini'
                  ])
-    
+
     sequence_archive = None
     apiid = None
     apikey = None
@@ -52,7 +53,7 @@ def make_auth_from_opts(opts, parser):
     """
     if opts.host is None or opts.apiid is None or opts.apikey is None:
         parser.error("Please specify host url, apiid, apikey")
-        
+
     return {'apiid': opts.apiid, 'apikey': opts.apikey }
 
 
@@ -100,7 +101,7 @@ def flowcell_url(root_url, flowcell_id):
 def lanes_for_user_url(root_url, username):
     """
     Return the url for returning all the lanes associated with a username
-    
+
     Args:
       username (str): a username in your target filesystem
       root_url (str): the root portion of the url, e.g. http://localhost
@@ -126,12 +127,12 @@ def retrieve_info(url, apidata):
         web = urllib2.urlopen(url, apipayload)
     except urllib2.URLError, e:
         if hasattr(e, 'code') and e.code == 404:
-            logging.info("%s was not found" % (url,))
+            LOGGER.info("%s was not found" % (url,))
             return None
         else:
             errmsg = 'URLError: %s' % (str(e))
             raise IOError(errmsg)
-    
+
     contents = web.read()
     headers = web.info()
 
@@ -156,4 +157,4 @@ class HtswApi(object):
 
   def get_url(self, url):
     return retrieve_info(url, self.authdata)
-    
+

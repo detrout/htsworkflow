@@ -9,6 +9,8 @@ import sys
 from htsworkflow.util.opener import autoopen
 from htsworkflow.version import version
 
+LOGGER = logging.getLogger(__name__)
+
 # constants for our fastq finite state machine
 FASTQ_HEADER = 0
 FASTQ_SEQUENCE = 1
@@ -41,7 +43,7 @@ def main(cmdline=None):
     else:
         left = open_write(opts.left, opts.force)
         right = open_write(opts.right, opts.force)
-    
+
     # open the srf, fastq, or compressed fastq
     if is_srf(args[0]):
         source = srf_open(args[0], opts.cnf1)
@@ -52,7 +54,7 @@ def main(cmdline=None):
         convert_single_to_fastq(source, left, header)
     else:
         convert_single_to_two_fastq(source, left, right, opts.mid, header)
-   
+
     return 0
 
 def make_parser():
@@ -67,7 +69,7 @@ You can also force the flowcell ID to be added to the header.""")
                       help="add flowcell id header to sequence")
     parser.add_option('-l','--left', default="r1.fastq",
                       help='left side filename')
-    parser.add_option('-m','--mid', default=None, 
+    parser.add_option('-m','--mid', default=None,
                       help='actual sequence mid point')
     parser.add_option('-r','--right', default="r2.fastq",
                       help='right side filename')
@@ -90,11 +92,11 @@ def srf_open(filename, cnf1=False):
     if cnf1 or is_cnf1(filename):
         cmd.append('-c')
     cmd.append(filename)
-      
-    logging.info('srf command: %s' % (" ".join(cmd),))
+
+    LOGGER.info('srf command: %s' % (" ".join(cmd),))
     p = Popen(cmd, stdout=PIPE)
     return p.stdout
-    
+
 
 def convert_single_to_fastq(instream, target1, header=''):
 
@@ -111,7 +113,7 @@ def convert_single_to_fastq(instream, target1, header=''):
             state = FASTQ_SEQUENCE_HEADER
         # quality header
         elif state == FASTQ_SEQUENCE_HEADER:
-            # the sequence header isn't really sequence, but 
+            # the sequence header isn't really sequence, but
             # we're just passing it through
             write_sequence(target1, line)
             state = FASTQ_QUALITY
@@ -123,10 +125,10 @@ def convert_single_to_fastq(instream, target1, header=''):
             raise RuntimeError("Unrecognized STATE in fastq split")
 
 
-        
+
 def convert_single_to_two_fastq(instream, target1, target2, mid=None, header=''):
     """
-    read a fastq file where two paired ends have been run together into 
+    read a fastq file where two paired ends have been run together into
     two halves.
 
     instream is the source stream
@@ -151,7 +153,7 @@ def convert_single_to_two_fastq(instream, target1, target2, mid=None, header='')
             state = FASTQ_SEQUENCE_HEADER
         # quality header
         elif state == FASTQ_SEQUENCE_HEADER:
-            # the sequence header isn't really sequence, but 
+            # the sequence header isn't really sequence, but
             # we're just passing it through
             write_sequence(target1, line)
             write_sequence(target2, line)
@@ -197,7 +199,7 @@ def is_cnf1(filename):
     """
     max_header = 1024 ** 2
     PROGRAM_ID = 'PROGRAM_ID\000'
-    cnf4_apps = set(("solexa2srf v1.4", 
+    cnf4_apps = set(("solexa2srf v1.4",
                     "illumina2srf v1.11.5.Illumina.1.3"))
 
     if not is_srf(filename):

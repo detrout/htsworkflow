@@ -3,7 +3,6 @@ import logging
 import time
 import unittest
 
-
 from htsworkflow.util.queuecommands import QueueCommands
 
 class testQueueCommands(unittest.TestCase):
@@ -11,7 +10,7 @@ class testQueueCommands(unittest.TestCase):
         logging.basicConfig(level=logging.DEBUG,
                             format='%(asctime)s %(name)-8s %(message)s')
 
-       
+
 
     def test_unlimited_run_slow(self):
         """
@@ -45,7 +44,7 @@ class testQueueCommands(unittest.TestCase):
         end = time.time()-start
         # pity I had to add a 1 second sleep
         self.failUnless( end > 5.9 and end < 6.1,
-                         "took %s seconds, expected ~6" % (end,)) 
+                         "took %s seconds, expected ~6" % (end,))
 
 def suite():
     return unittest.makeSuite(testQueueCommands, 'test')

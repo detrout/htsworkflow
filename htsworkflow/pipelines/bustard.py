@@ -1,8 +1,8 @@
 """
 Extract configuration from Illumina Bustard Directory.
 
-This includes the version number, run date, bustard executable parameters, and 
-phasing estimates. 
+This includes the version number, run date, bustard executable parameters, and
+phasing estimates.
 """
 from copy import copy
 from datetime import date
@@ -17,6 +17,8 @@ from htsworkflow.pipelines.runfolder import \
    ElementTree, \
    VERSION_RE, \
    EUROPEAN_STRPTIME
+
+LOGGER = logging.getLogger(__name__)
 
 # make epydoc happy
 __docformat__ = "restructuredtext en"
@@ -95,7 +97,7 @@ class CrosstalkMatrix(object):
             self.base['A'] = [ float(v) for v in data[:4] ]
             self.base['C'] = [ float(v) for v in data[4:8] ]
             self.base['G'] = [ float(v) for v in data[8:12] ]
-            self.base['T'] = [ float(v) for v in data[12:16] ]            
+            self.base['T'] = [ float(v) for v in data[12:16] ]
         else:
             raise RuntimeError("matrix file %s is unusual" % (pathname,))
     def get_elements(self):
@@ -171,7 +173,7 @@ def crosstalk_matrix_from_bustard_config(bustard_path, bustard_config_tree):
             auto_lane_fragment = ""
         else:
             auto_lane_fragment = "_%d" % ( matrix_auto_lane,)
-            
+
         for matrix_name in ['s%s_02_matrix.txt' % (auto_lane_fragment,),
                             's%s_1_matrix.txt' % (auto_lane_fragment,),
                             ]:
@@ -228,7 +230,7 @@ class Bustard(object):
         ElementTree.dump(self.get_elements())
 
     def get_elements(self):
-        root = ElementTree.Element('Bustard', 
+        root = ElementTree.Element('Bustard',
                                    {'version': str(Bustard.XML_VERSION)})
         version = ElementTree.SubElement(root, Bustard.SOFTWARE_VERSION)
         version.text = self.version
@@ -248,7 +250,7 @@ class Bustard(object):
         # add crosstalk matrix if it exists
         if self.crosstalk is not None:
             root.append(self.crosstalk.get_elements())
-       
+
         # add bustard config if it exists
         if self.bustard_config is not None:
             root.append(self.bustard_config)
@@ -259,7 +261,7 @@ class Bustard(object):
             raise ValueError('Expected "Bustard" SubElements')
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > Bustard.XML_VERSION:
-            logging.warn('Bustard XML tree is a higher version than this class')
+            LOGGER.warn('Bustard XML tree is a higher version than this class')
         for element in list(tree):
             if element.tag == Bustard.SOFTWARE_VERSION:
                 self.version = element.text
@@ -277,7 +279,7 @@ class Bustard(object):
                 self.bustard_config = element
             else:
                 raise ValueError("Unrecognized tag: %s" % (element.tag,))
-        
+
 def bustard(pathname):
     """
     Construct a Bustard object by analyzing an Illumina Bustard directory.
@@ -349,7 +351,7 @@ def main(cmdline):
     for bustard_dir in args:
         print u'analyzing bustard directory: ' + unicode(bustard_dir)
         bustard_object = bustard(bustard_dir)
-        bustard_object.dump() 
+        bustard_object.dump()
 
         bustard_object2 = Bustard(xml=bustard_object.get_elements())
         print ('-------------------------------------')

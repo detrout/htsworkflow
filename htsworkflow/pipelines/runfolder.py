@@ -17,6 +17,8 @@ try:
 except ImportError, e:
   from elementtree import ElementTree
 
+LOGGER = logging.getLogger(__name__)
+
 EUROPEAN_STRPTIME = "%d-%m-%Y"
 EUROPEAN_DATE_RE = "([0-9]{1,2}-[0-9]{1,2}-[0-9]{4,4})"
 VERSION_RE = "([0-9\.]+)"
@@ -68,7 +70,7 @@ class PipelineRun(object):
             else:
               flowcell_id = 'unknown'
 
-	    logging.warning(
+	    LOGGER.warning(
 	      "Flowcell id was not found, guessing %s" % (
 	         flowcell_id))
 	    self._flowcell_id = flowcell_id
@@ -121,7 +123,7 @@ class PipelineRun(object):
           elif tag == gerald.Gerald.GERALD.lower():
             self.gerald = gerald.Gerald(xml=element)
           else:
-            logging.warn('PipelineRun unrecognized tag %s' % (tag,))
+            LOGGER.warn('PipelineRun unrecognized tag %s' % (tag,))
 
     def _get_run_name(self):
         """
@@ -137,14 +139,14 @@ class PipelineRun(object):
     def save(self, destdir=None):
         if destdir is None:
             destdir = ''
-        logging.info("Saving run report " + self.name)
+        LOGGER.info("Saving run report " + self.name)
         xml = self.get_elements()
         indent(xml)
         dest_pathname = os.path.join(destdir, self.name)
         ElementTree.ElementTree(xml).write(dest_pathname)
 
     def load(self, filename):
-        logging.info("Loading run report from " + filename)
+        LOGGER.info("Loading run report from " + filename)
         tree = ElementTree.parse(filename).getroot()
         self.set_elements(tree)
 
@@ -152,7 +154,7 @@ def load_pipeline_run_xml(pathname):
     """
     Load and instantiate a Pipeline run from a run xml file
 
-    :Parameters: 
+    :Parameters:
       - `pathname` : location of an run xml file
 
     :Returns: initialized PipelineRun object
@@ -176,17 +178,17 @@ def get_runs(runfolder):
     from htsworkflow.pipelines import gerald
 
     def scan_post_image_analysis(runs, runfolder, image_analysis, pathname):
-        logging.info("Looking for bustard directories in %s" % (pathname,))
+        LOGGER.info("Looking for bustard directories in %s" % (pathname,))
         bustard_dirs = glob(os.path.join(pathname, "Bustard*"))
         # RTA BaseCalls looks enough like Bustard.
         bustard_dirs.extend(glob(os.path.join(pathname, "BaseCalls")))
         for bustard_pathname in bustard_dirs:
-            logging.info("Found bustard directory %s" % (bustard_pathname,))
+            LOGGER.info("Found bustard directory %s" % (bustard_pathname,))
             b = bustard.bustard(bustard_pathname)
             gerald_glob = os.path.join(bustard_pathname, 'GERALD*')
-            logging.info("Looking for gerald directories in %s" % (pathname,))
+            LOGGER.info("Looking for gerald directories in %s" % (pathname,))
             for gerald_pathname in glob(gerald_glob):
-                logging.info("Found gerald directory %s" % (gerald_pathname,))
+                LOGGER.info("Found gerald directory %s" % (gerald_pathname,))
                 try:
                     g = gerald.gerald(gerald_pathname)
                     p = PipelineRun(runfolder)
@@ -195,18 +197,18 @@ def get_runs(runfolder):
                     p.gerald = g
                     runs.append(p)
                 except IOError, e:
-                    logging.error("Ignoring " + str(e))
+                    LOGGER.error("Ignoring " + str(e))
 
     datadir = os.path.join(runfolder, 'Data')
 
-    logging.info('Searching for runs in ' + datadir)
+    LOGGER.info('Searching for runs in ' + datadir)
     runs = []
     # scan for firecrest directories
     for firecrest_pathname in glob(os.path.join(datadir, "*Firecrest*")):
-        logging.info('Found firecrest in ' + datadir)
+        LOGGER.info('Found firecrest in ' + datadir)
         image_analysis = firecrest.firecrest(firecrest_pathname)
         if image_analysis is None:
-            logging.warn(
+            LOGGER.warn(
                 "%s is an empty or invalid firecrest directory" % (firecrest_pathname,)
             )
         else:
@@ -218,10 +220,10 @@ def get_runs(runfolder):
     # The Intensities directory from the RTA software looks a lot like IPAR
     ipar_dirs.extend(glob(os.path.join(datadir, 'Intensities')))
     for ipar_pathname in ipar_dirs:
-        logging.info('Found ipar directories in ' + datadir)
+        LOGGER.info('Found ipar directories in ' + datadir)
         image_analysis = ipar.ipar(ipar_pathname)
         if image_analysis is None:
-            logging.warn(
+            LOGGER.warn(
                 "%s is an empty or invalid IPAR directory" % (ipar_pathname,)
             )
         else:
@@ -250,19 +252,19 @@ def get_specific_run(gerald_dir):
 
     runfolder_dir = os.path.abspath(os.path.join(image_dir, '..', '..'))
 
-    logging.info('--- use-run detected options ---')
-    logging.info('runfolder: %s' % (runfolder_dir,))
-    logging.info('image_dir: %s' % (image_dir,))
-    logging.info('bustard_dir: %s' % (bustard_dir,))
-    logging.info('gerald_dir: %s' % (gerald_dir,))
+    LOGGER.info('--- use-run detected options ---')
+    LOGGER.info('runfolder: %s' % (runfolder_dir,))
+    LOGGER.info('image_dir: %s' % (image_dir,))
+    LOGGER.info('bustard_dir: %s' % (bustard_dir,))
+    LOGGER.info('gerald_dir: %s' % (gerald_dir,))
 
     # find our processed image dir
     image_run = None
     # split into parent, and leaf directory
     # leaf directory should be an IPAR or firecrest directory
     data_dir, short_image_dir = os.path.split(image_dir)
-    logging.info('data_dir: %s' % (data_dir,))
-    logging.info('short_iamge_dir: %s' % (short_image_dir,))
+    LOGGER.info('data_dir: %s' % (data_dir,))
+    LOGGER.info('short_iamge_dir: %s' % (short_image_dir,))
 
     # guess which type of image processing directory we have by looking
     # in the leaf directory name
@@ -273,22 +275,22 @@ def get_specific_run(gerald_dir):
     elif re.search('Intensities', short_image_dir, re.IGNORECASE) is not None:
         image_run = ipar.ipar(image_dir)
 
-    # if we din't find a run, report the error and return 
+    # if we din't find a run, report the error and return
     if image_run is None:
         msg = '%s does not contain an image processing step' % (image_dir,)
-        logging.error(msg)
+        LOGGER.error(msg)
         return None
 
     # find our base calling
     base_calling_run = bustard.bustard(bustard_dir)
     if base_calling_run is None:
-        logging.error('%s does not contain a bustard run' % (bustard_dir,))
+        LOGGER.error('%s does not contain a bustard run' % (bustard_dir,))
         return None
 
     # find alignments
     gerald_run = gerald.gerald(gerald_dir)
     if gerald_run is None:
-        logging.error('%s does not contain a gerald run' % (gerald_dir,))
+        LOGGER.error('%s does not contain a gerald run' % (gerald_dir,))
         return None
 
     p = PipelineRun(runfolder_dir)
@@ -296,7 +298,7 @@ def get_specific_run(gerald_dir):
     p.bustard = base_calling_run
     p.gerald = gerald_run
 
-    logging.info('Constructed PipelineRun from %s' % (gerald_dir,))
+    LOGGER.info('Constructed PipelineRun from %s' % (gerald_dir,))
     return p
 
 def extract_run_parameters(runs):
@@ -397,7 +399,7 @@ def save_flowcell_reports(data_dir, cycle_dir):
         cmd_list = [ 'tar', 'cjvf', reports_dest, 'reports/' ]
         if os.path.exists(status_file):
             cmd_list.extend(['Status.xml', 'Status.xsl'])
-        logging.info("Saving reports from " + reports_dir)
+        LOGGER.info("Saving reports from " + reports_dir)
         cwd = os.getcwd()
         os.chdir(data_dir)
         q = QueueCommands([" ".join(cmd_list)])
@@ -409,10 +411,10 @@ def save_summary_file(gerald_object, cycle_dir):
     # Copy Summary.htm
     summary_path = os.path.join(gerald_object.pathname, 'Summary.htm')
     if os.path.exists(summary_path):
-        logging.info('Copying %s to %s' % (summary_path, cycle_dir))
+        LOGGER.info('Copying %s to %s' % (summary_path, cycle_dir))
         shutil.copy(summary_path, cycle_dir)
     else:
-        logging.info('Summary file %s was not found' % (summary_path,))
+        LOGGER.info('Summary file %s was not found' % (summary_path,))
 
 def save_ivc_plot(bustard_object, cycle_dir):
     """
@@ -425,15 +427,15 @@ def save_ivc_plot(bustard_object, cycle_dir):
     plot_target_path = os.path.join(cycle_dir, 'Plots')
 
     if os.path.exists(plot_html):
-        logging.debug("Saving %s" % (plot_html,))
-        logging.debug("Saving %s" % (plot_images,))
+        LOGGER.debug("Saving %s" % (plot_html,))
+        LOGGER.debug("Saving %s" % (plot_images,))
         shutil.copy(plot_html, cycle_dir)
         if not os.path.exists(plot_target_path):
             os.mkdir(plot_target_path)
         for plot_file in glob(plot_images):
             shutil.copy(plot_file, plot_target_path)
     else:
-        logging.warning('Missing IVC.html file, not archiving')
+        LOGGER.warning('Missing IVC.html file, not archiving')
 
 
 def compress_score_files(bustard_object, cycle_dir):
@@ -456,10 +458,10 @@ def compress_score_files(bustard_object, cycle_dir):
     bzip_cmd = [ 'bzip2', '-9', '-c' ]
     tar_dest_name = os.path.join(cycle_dir, 'scores.tar.bz2')
     tar_dest = open(tar_dest_name, 'w')
-    logging.info("Compressing score files from %s" % (scores_path,))
-    logging.info("Running tar: " + " ".join(tar_cmd[:10]))
-    logging.info("Running bzip2: " + " ".join(bzip_cmd))
-    logging.info("Writing to %s" % (tar_dest_name,))
+    LOGGER.info("Compressing score files from %s" % (scores_path,))
+    LOGGER.info("Running tar: " + " ".join(tar_cmd[:10]))
+    LOGGER.info("Running bzip2: " + " ".join(bzip_cmd))
+    LOGGER.info("Writing to %s" % (tar_dest_name,))
 
     env = {'BZIP': '-9'}
     tar = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, shell=False, env=env,
@@ -479,26 +481,26 @@ def compress_eland_results(gerald_object, cycle_dir, num_jobs=1):
         for eland_lane in lanes_dictionary.values():
             source_name = eland_lane.pathname
             if source_name is None:
-              logging.info(
+              LOGGER.info(
                 "Lane ID %s does not have a filename." % (eland_lane.lane_id,))
             else:
               path, name = os.path.split(source_name)
               dest_name = os.path.join(cycle_dir, name)
-              logging.info("Saving eland file %s to %s" % \
+              LOGGER.info("Saving eland file %s to %s" % \
                          (source_name, dest_name))
 
               if is_compressed(name):
-                logging.info('Already compressed, Saving to %s' % (dest_name,))
+                LOGGER.info('Already compressed, Saving to %s' % (dest_name,))
                 shutil.copy(source_name, dest_name)
               else:
                 # not compressed
                 dest_name += '.bz2'
                 args = ['bzip2', '-9', '-c', source_name, '>', dest_name ]
                 bz_commands.append(" ".join(args))
-                #logging.info('Running: %s' % ( " ".join(args) ))
+                #LOGGER.info('Running: %s' % ( " ".join(args) ))
                 #bzip_dest = open(dest_name, 'w')
                 #bzip = subprocess.Popen(args, stdout=bzip_dest)
-                #logging.info('Saving to %s' % (dest_name, ))
+                #LOGGER.info('Saving to %s' % (dest_name, ))
                 #bzip.wait()
 
     if len(bz_commands) > 0:
@@ -520,17 +522,17 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, r
 
     for r in runs:
       result_dir = os.path.join(output_base_dir, r.flowcell_id)
-      logging.info("Using %s as result directory" % (result_dir,))
+      LOGGER.info("Using %s as result directory" % (result_dir,))
       if not os.path.exists(result_dir):
         os.mkdir(result_dir)
 
       # create cycle_dir
       cycle = "C%d-%d" % (r.image_analysis.start, r.image_analysis.stop)
-      logging.info("Filling in %s" % (cycle,))
+      LOGGER.info("Filling in %s" % (cycle,))
       cycle_dir = os.path.join(result_dir, cycle)
       cycle_dir = os.path.abspath(cycle_dir)
       if os.path.exists(cycle_dir):
-        logging.error("%s already exists, not overwriting" % (cycle_dir,))
+        LOGGER.error("%s already exists, not overwriting" % (cycle_dir,))
         continue
       else:
         os.mkdir(cycle_dir)
@@ -578,24 +580,24 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, r
 def rm_list(files, dry_run=True):
     for f in files:
         if os.path.exists(f):
-            logging.info('deleting %s' % (f,))
+            LOGGER.info('deleting %s' % (f,))
             if not dry_run:
                 if os.path.isdir(f):
                     shutil.rmtree(f)
                 else:
                     os.unlink(f)
         else:
-            logging.warn("%s doesn't exist." % (f,))
+            LOGGER.warn("%s doesn't exist." % (f,))
 
 def clean_runs(runs, dry_run=True):
     """
     Clean up run folders to optimize for compression.
     """
     if dry_run:
-        logging.info('In dry-run mode')
+        LOGGER.info('In dry-run mode')
 
     for run in runs:
-        logging.info('Cleaninging %s' % (run.pathname,))
+        LOGGER.info('Cleaninging %s' % (run.pathname,))
         # rm RunLog*.xml
         runlogs = glob(os.path.join(run.pathname, 'RunLog*xml'))
         rm_list(runlogs, dry_run)
@@ -611,11 +613,11 @@ def clean_runs(runs, dry_run=True):
         calibration_dir = glob(os.path.join(run.pathname, 'Calibration_*'))
         rm_list(calibration_dir, dry_run)
         # rm Images/L*
-        logging.info("Cleaning images")
+        LOGGER.info("Cleaning images")
         image_dirs = glob(os.path.join(run.pathname, 'Images', 'L*'))
         rm_list(image_dirs, dry_run)
         # cd Data/C1-*_Firecrest*
-        logging.info("Cleaning intermediate files")
+        LOGGER.info("Cleaning intermediate files")
         # make clean_intermediate
         if os.path.exists(os.path.join(run.image_analysis.pathname, 'Makefile')):
             clean_process = subprocess.Popen(['make', 'clean_intermediate'],

@@ -11,6 +11,8 @@ import shelve
 from htsworkflow.util import api
 from htsworkflow.pipelines.sequences import scan_for_sequences
 
+LOGGER = logging.getLogger(__name__)
+
 def build_flowcell_db(fcdb_filename, sequences, baseurl, apiid, apikey):
     """
     compare our flowcell database with our list of sequences and return
@@ -36,7 +38,7 @@ def build_flowcell_db(fcdb_filename, sequences, baseurl, apiid, apikey):
         if flowcell_info is not None:
             seq_library_id = flowcell_info['lane_set'][unicode(seq.lane)]['library_id']
             libdb.setdefault(seq_library_id, []).append(seq)
-           
+
     fcdb.sync()
     return fcdb, libdb
 
@@ -51,21 +53,21 @@ def carefully_make_hardlink(source, destination, dry_run=False):
     If we didn't update anything return 0, if we did update
     return 1.
     """
-    logging.debug("CHECKING: %s -> %s", source, destination)
+    LOGGER.debug("CHECKING: %s -> %s", source, destination)
 
     if not os.path.exists(source):
-        logging.warning("%s doesn't exist", source)
+        LOGGER.warning("%s doesn't exist", source)
         return 0
 
     if os.path.exists(destination):
         if os.path.samefile(source, destination):
-            logging.debug('SAME: %s -> %s' % (source, destination))
+            LOGGER.debug('SAME: %s -> %s' % (source, destination))
             return 0
         else:
-            logging.error('%s and %s are different files, skipping' % \
-                          (source, destination)) 
+            LOGGER.error('%s and %s are different files, skipping' % \
+                          (source, destination))
             return 0
-    logging.debug('Linking: %s -> %s' % (source, destination))
+    LOGGER.debug('Linking: %s -> %s' % (source, destination))
 
     # we would do something by this part
     if dry_run: return 1
@@ -74,7 +76,7 @@ def carefully_make_hardlink(source, destination, dry_run=False):
     os.chmod(destination,
              stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH )
     return 1
-    
+
 def make_library_links(root, library_db, dry_run=False):
     """
     Make a tree of sequencer roots organized by library id
@@ -87,10 +89,10 @@ def make_library_links(root, library_db, dry_run=False):
     for lib_id, sequences in library_db.items():
         target_dir = os.path.join(root, lib_id)
         if not os.path.exists(target_dir):
-            logging.info("mkdir %s" % (target_dir,))
+            LOGGER.info("mkdir %s" % (target_dir,))
             if not dry_run:
                 os.mkdir(target_dir)
-            
+
         for s in sequences:
             count += carefully_make_hardlink(s.path,
                                              s.make_target_name(target_dir),
@@ -105,7 +107,7 @@ def configure_logging(opts):
     if opts.debug:
         level = logging.DEBUG
     logging.basicConfig(level=level)
-    
+
 
 def configure_opts(opts):
     """
@@ -152,7 +154,7 @@ def configure_opts(opts):
 
     if opts.apikey is None and config_file.has_option(SECTION_NAME, APIKEY_OPT):
         opts.apikey = config_file.get(SECTION_NAME, APIKEY_OPT)
-      
+
     return opts
 
 def make_parser():
@@ -165,14 +167,14 @@ def make_parser():
                            'sequence archive section')
     parser.add_option('--cache', default=None,
                       help="default flowcell cache")
-    
+
     parser.add_option('--host', default=None,
                       help="specify http://host for quering flowcell information")
     parser.add_option('--apiid', default=None,
                       help="API ID to use when retriving information")
     parser.add_option("--apikey", default=None,
                       help="API Key for when retriving information")
-    
+
     parser.add_option('-a', '--sequence-archive', default=None,
                       help='path to where the sequence archive lives')
 
@@ -180,7 +182,7 @@ def make_parser():
                       help='be more verbose')
     parser.add_option('-d', '--debug', action='store_true', default=False,
                       help='report everything')
-             
+
     parser.add_option("--dry-run", dest="dry_run", action="store_true",
                       default=False,
                       help="Don't modify the filesystem")
@@ -192,7 +194,7 @@ def main(cmdline=None):
 
     configure_logging(opts)
     opts = configure_opts(opts)
-  
+
     # complain if critical things are missing
     if opts.cache is None:
        parser.error('Need location of htsworkflow frontend database')
@@ -203,17 +205,17 @@ def main(cmdline=None):
     seq_dirs = [ opts.flowcells, opts.srfs ]
     if len(args) > 0:
         seq_dirs = [os.path.abspath(f) for f in args]
-    
+
     seqs = scan_for_sequences(seq_dirs)
     fcdb, libdb = build_flowcell_db(opts.cache, seqs, opts.host, opts.apiid, opts.apikey)
     updates = make_library_links(opts.library_tree, libdb, dry_run=opts.dry_run)
-    
-    logging.warn("%s flowcells in database" % (len(fcdb),))
-    logging.warn("found %s sequence files" % (len(seqs),))
-    logging.warn("%s libraries being checked" % (len(libdb),))
-    logging.warn("%s sequence files were linked" % (updates,))
-    
+
+    LOGGER.warn("%s flowcells in database" % (len(fcdb),))
+    LOGGER.warn("found %s sequence files" % (len(seqs),))
+    LOGGER.warn("%s libraries being checked" % (len(libdb),))
+    LOGGER.warn("%s sequence files were linked" % (updates,))
+
     return 0
-    
+
 if __name__ == "__main__":
     main()

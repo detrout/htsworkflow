@@ -13,6 +13,8 @@ from htsworkflow.pipelines.runfolder import ElementTree, LANE_LIST
 from htsworkflow.util.ethelp import indent, flatten
 from htsworkflow.util.opener import autoopen
 
+LOGGER = logging.getLogger(__name__)
+
 SAMPLE_NAME = 'SampleName'
 LANE_ID = 'LaneID'
 END = 'End'
@@ -131,7 +133,7 @@ class ElandLane(ResultLane):
         if os.stat(self.pathname)[stat.ST_SIZE] == 0:
             raise RuntimeError("Eland isn't done, try again later.")
 
-        logging.info("summarizing results for %s" % (self.pathname))
+        LOGGER.info("summarizing results for %s" % (self.pathname))
 
         stream = autoopen(self.pathname, 'r')
         if self.eland_type == ELAND_SINGLE:
@@ -427,7 +429,7 @@ class ElandLane(ResultLane):
             elif tag == READS.lower():
                 self._reads = int(element.text)
             else:
-                logging.warn("ElandLane unrecognized tag %s" % (element.tag,))
+                LOGGER.warn("ElandLane unrecognized tag %s" % (element.tag,))
 
 class SequenceLane(ResultLane):
     XML_VERSION=1
@@ -471,7 +473,7 @@ class SequenceLane(ResultLane):
 
         self._guess_sequence_type(self.pathname)
 
-        logging.info("summarizing results for %s" % (self.pathname))
+        LOGGER.info("summarizing results for %s" % (self.pathname))
         lines = 0
         f = open(self.pathname)
         for l in f.xreadlines():
@@ -521,7 +523,7 @@ class SequenceLane(ResultLane):
             elif tag == SequenceLane.SEQUENCE_TYPE.lower():
                 self.sequence_type = lookup_sequence_type.get(element.text, None)
             else:
-                logging.warn("SequenceLane unrecognized tag %s" % (element.tag,))
+                LOGGER.warn("SequenceLane unrecognized tag %s" % (element.tag,))
 
 class ELAND(object):
     """
@@ -580,10 +582,10 @@ def check_for_eland_file(basedir, pattern, lane_id, end):
       full_lane_id = "%d_%d" % ( lane_id, end )
 
    basename = pattern % (full_lane_id,)
-   logging.info("Eland pattern: %s" %(basename,))
+   LOGGER.info("Eland pattern: %s" %(basename,))
    pathname = os.path.join(basedir, basename)
    if os.path.exists(pathname):
-       logging.info('found eland file in %s' % (pathname,))
+       LOGGER.info('found eland file in %s' % (pathname,))
        return pathname
    else:
        return None
@@ -594,7 +596,7 @@ def update_result_with_eland(gerald, results, lane_id, end, pathname, genome_map
     # but I needed to persist the sample_name/lane_id for
     # runfolder summary_report
     path, name = os.path.split(pathname)
-    logging.info("Adding eland file %s" %(name,))
+    LOGGER.info("Adding eland file %s" %(name,))
     # split_name = name.split('_')
     # lane_id = int(split_name[1])
 
@@ -674,14 +676,14 @@ def eland(gerald_dir, gerald=None, genome_maps=None):
                             update_result_with_sequence(gerald, e.results, lane_id, end, pathname)
                         break
                 else:
-                    logging.debug("No eland file found in %s for lane %s and end %s" %(basedir, lane_id, end))
+                    LOGGER.debug("No eland file found in %s for lane %s and end %s" %(basedir, lane_id, end))
                     continue
 
     return e
 
 def build_genome_fasta_map(genome_dir):
     # build fasta to fasta file map
-    logging.info("Building genome map")
+    LOGGER.info("Building genome map")
     genome = genome_dir.split(os.path.sep)[-1]
     fasta_map = {}
     for vld_file in glob(os.path.join(genome_dir, '*.vld')):
@@ -717,9 +719,9 @@ def main(cmdline=None):
     from optparse import OptionParser
     parser = OptionParser("%prog: <gerald dir>+")
     opts, args = parser.parse_args(cmdline)
-    logging.basicConfig(level=logging.DEBUG)
+    LOGGER.basicConfig(level=logging.DEBUG)
     for a in args:
-        logging.info("Starting scan of %s" % (a,))
+        LOGGER.info("Starting scan of %s" % (a,))
         e = eland(a)
         print e.get_elements()
 

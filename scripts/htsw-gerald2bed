@@ -10,6 +10,8 @@ import os
 
 from htsworkflow.util.makebed import make_bed_from_eland_stream, make_description
 
+LOGGER = logging.getLogger(__name__)
+
 def make_bed_for_gerald(eland_dir, output_dir, prefix, database, flowcell):
     """
     convert s_[1-8]_eland_result.txt to corresponding bed files
@@ -19,12 +21,12 @@ def make_bed_for_gerald(eland_dir, output_dir, prefix, database, flowcell):
     if len(out_files) > 0:
         raise RuntimeError("please move old bedfiles")
 
-    logging.info('Processing %s using flowcell id %s' % (eland_dir, flowcell))
+    LOGGER.info('Processing %s using flowcell id %s' % (eland_dir, flowcell))
     for pathname in eland_files:
         path, name = os.path.split(pathname)
         lane = int(name[2])
         outname = 's_%d_eland_result.bed' %(lane,)
-        logging.info('Converting lane %d to %s' % (lane, outname))
+        LOGGER.info('Converting lane %d to %s' % (lane, outname))
 
         outpathname = os.path.join(eland_dir, outname)
         # look up descriptions
@@ -66,7 +68,7 @@ s_[12345678]_eland_result.txt"""
   return parser
 
 def main(command_line=None):
-    logging.basicConfig(level=logging.WARNING)
+    LOGGER.basicConfig(level=logging.WARNING)
     if command_line is None:
         command_line = sys.argv[1:]
 

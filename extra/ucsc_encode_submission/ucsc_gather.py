@@ -146,7 +146,7 @@ def make_tree_from(source_path, library_result_map):
     """
     for lib_id, lib_path in library_result_map:
         if not os.path.exists(lib_path):
-            logging.info("Making dir {0}".format(lib_path))
+            logger.info("Making dir {0}".format(lib_path))
             os.mkdir(lib_path)
         source_lib_dir = os.path.abspath(os.path.join(source_path, lib_path))
         if os.path.exists(source_lib_dir):
@@ -158,7 +158,7 @@ def make_tree_from(source_path, library_result_map):
                 raise IOError("{0} does not exist".format(source_pathname))
             if not os.path.exists(target_pathname):
                 os.symlink(source_pathname, target_pathname)
-                logging.info(
+                logger.info(
                     'LINK {0} to {1}'.format(source_pathname, target_pathname))
 
 
@@ -182,11 +182,11 @@ def scan_submission_dirs(view_map, library_result_map):
     """Look through our submission directories and collect needed information
     """
     for lib_id, result_dir in library_result_map:
-        logging.info("Importing %s from %s" % (lib_id, result_dir))
+        logger.info("Importing %s from %s" % (lib_id, result_dir))
         try:
             view_map.import_submission_dir(result_dir, lib_id)
         except MetadataLookupException, e:
-            logging.error("Skipping %s: %s" % (lib_id, str(e)))
+            logger.error("Skipping %s: %s" % (lib_id, str(e)))
 
 def make_all_ddfs(view_map, library_result_map, daf_name, make_condor=True, force=False):
     dag_fragment = []
@@ -199,7 +199,7 @@ def make_all_ddfs(view_map, library_result_map, daf_name, make_condor=True, forc
     if make_condor and len(dag_fragment) > 0:
         dag_filename = 'submission.dagman'
         if not force and os.path.exists(dag_filename):
-            logging.warn("%s exists, please delete" % (dag_filename,))
+            logger.warn("%s exists, please delete" % (dag_filename,))
         else:
             f = open(dag_filename,'w')
             f.write( os.linesep.join(dag_fragment))
@@ -245,7 +245,7 @@ ORDER BY  ?submitView"""
 
     name = fromTypedNode(view_map.model.get_target(submissionNode, submissionOntology['name']))
     if name is None:
-        logging.error("Need name for %s" % (str(submissionNode)))
+        logger.error("Need name for %s" % (str(submissionNode)))
         return []
 
     ddf_name = name + '.ddf'
@@ -275,7 +275,7 @@ ORDER BY  ?submitView"""
         for variable_name in variables:
             value = str(fromTypedNode(row[variable_name]))
             if value is None or value == 'None':
-                logging.warn("{0}: {1} was None".format(outfile, variable_name))
+                logger.warn("{0}: {1} was None".format(outfile, variable_name))
             if variable_name in ('files', 'md5sum'):
                 current.setdefault(variable_name,[]).append(value)
             else:
@@ -292,7 +292,7 @@ ORDER BY  ?submitView"""
         output.write(os.linesep)
         all_files.extend(all_views[view]['files'])
 
-    logging.info(
+    logger.info(
         "Examined {0}, found files: {1}".format(
             str(submissionNode), ", ".join(all_files)))
 

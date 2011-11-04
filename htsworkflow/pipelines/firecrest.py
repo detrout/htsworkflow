@@ -1,17 +1,18 @@
 """
 Extract information about the Firecrest run
 
-Firecrest 
+Firecrest
   class holding the properties we found
-firecrest 
+firecrest
   Firecrest factory function initalized from a directory name
-fromxml 
+fromxml
   Firecrest factory function initalized from an xml dump from
   the Firecrest object.
 """
 
 from datetime import date
 from glob import glob
+import logging
 import os
 import re
 import time
@@ -20,6 +21,8 @@ from htsworkflow.pipelines.runfolder import \
    ElementTree, \
    VERSION_RE, \
    EUROPEAN_STRPTIME
+
+LOGGER = logging.getLogger(__name__)
 
 __docformat__ = "restructuredtext en"
 
@@ -45,7 +48,7 @@ class Firecrest(object):
 
         if xml is not None:
             self.set_elements(xml)
-        
+
     def _get_time(self):
         return time.mktime(self.date.timetuple())
     time = property(_get_time, doc='return run time as seconds since epoch')
@@ -80,7 +83,7 @@ class Firecrest(object):
             raise ValueError('Expected "Firecrest" SubElements')
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > Firecrest.XML_VERSION:
-            logging.warn('Firecrest XML tree is a higher version than this class')
+            LOGGER.warn('Firecrest XML tree is a higher version than this class')
         for element in list(tree):
             if element.tag == Firecrest.SOFTWARE_VERSION:
                 self.version = element.text
@@ -121,7 +124,7 @@ def firecrest(pathname):
     f.user = groups[3]
 
     bustard_pattern = os.path.join(pathname, 'Bustard*')
-    # should I parse this deeper than just stashing the 
+    # should I parse this deeper than just stashing the
     # contents of the matrix file?
     matrix_pathname = os.path.join(pathname, 'Matrix', 's_matrix.txt')
     if os.path.exists(matrix_pathname):

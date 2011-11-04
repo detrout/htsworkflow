@@ -16,8 +16,10 @@ from htsworkflow.pipelines.run_status import GARunStatus
 from pyinotify import WatchManager, ThreadedNotifier
 from pyinotify import EventsCodes, ProcessEvent
 
+LOGGER = logging.getLogger(__name__)
+
 class ConfigInfo:
-  
+
   def __init__(self):
     #run_path = firecrest analysis directory to run analysis from
     self.run_path = None
@@ -70,12 +72,12 @@ class RunEvent(ProcessEvent):
     self._ci = conf_info
 
     ProcessEvent.__init__(self)
-    
+
 
   def process_IN_CREATE(self, event):
     fullpath = os.path.join(event.path, event.name)
     if s_finished.search(fullpath):
-      logging.info("File Found: %s" % (fullpath))
+      LOGGER.info("File Found: %s" % (fullpath))
 
       if s_firecrest_finished.search(fullpath):
         self.run_status_dict['firecrest'] = True
@@ -99,7 +101,7 @@ class RunEvent(ProcessEvent):
       self._ci.status.updateBustard(event.name)
     elif s_firecrest_all.search(fullpath):
       self._ci.status.updateFirecrest(event.name)
-      
+
     #print "Create: %s" % (os.path.join(event.path, event.name))
 
   def process_IN_DELETE(self, event):
@@ -209,19 +211,19 @@ def config_stdout_handler(line, conf_info):
 
   # Detect invalid command-line arguments
   elif s_invalid_cmdline.search(line):
-    logging.error("Invalid commandline options!")
+    LOGGER.error("Invalid commandline options!")
 
   # Detect starting of configuration
   elif s_start.search(line):
-    logging.info('START: Configuring pipeline')
+    LOGGER.info('START: Configuring pipeline')
 
   # Detect it made it past invalid arguments
   elif s_gerald.search(line):
-    logging.info('Running make now')
+    LOGGER.info('Running make now')
 
   # Detect that make files have been generated (based on output)
   elif s_generating.search(line):
-    logging.info('Make files generted')
+    LOGGER.info('Make files generted')
     return True
 
   # Capture run directory
@@ -238,7 +240,7 @@ def config_stdout_handler(line, conf_info):
 
       conf_info.bustard_path = firecrest_bustard
       conf_info.run_path = firecrest
-    
+
     #Standard output handling
     else:
       print 'Sequence line:', line
@@ -248,7 +250,7 @@ def config_stdout_handler(line, conf_info):
 
   # Log all other output for debugging purposes
   else:
-    logging.warning('CONF:?: %s' % (line))
+    LOGGER.warning('CONF:?: %s' % (line))
 
   return False
 
@@ -271,29 +273,29 @@ def config_stderr_handler(line, conf_info):
 
   # Detect invalid species directory error
   if s_species_dir_err.search(line):
-    logging.error(line)
+    LOGGER.error(line)
     return RUN_ABORT
   # Detect goat_pipeline.py traceback
   elif s_goat_traceb.search(line):
-    logging.error("Goat config script died, traceback in debug output")
+    LOGGER.error("Goat config script died, traceback in debug output")
     return RUN_ABORT
   # Detect indication of successful configuration (from stderr; odd, but ok)
   elif s_stderr_taskcomplete.search(line):
-    logging.info('Configure step successful (from: stderr)')
+    LOGGER.info('Configure step successful (from: stderr)')
     return True
   # Detect missing cycles
   elif s_missing_cycles.search(line):
 
     # Only display error once
     if not SUPPRESS_MISSING_CYCLES:
-      logging.error("Missing cycles detected; Not all cycles copied?")
-      logging.debug("CONF:STDERR:MISSING_CYCLES: %s" % (line))
+      LOGGER.error("Missing cycles detected; Not all cycles copied?")
+      LOGGER.debug("CONF:STDERR:MISSING_CYCLES: %s" % (line))
       SUPPRESS_MISSING_CYCLES = True
     return RUN_ABORT
-  
+
   # Log all other output as debug output
   else:
-    logging.debug('CONF:STDERR:?: %s' % (line))
+    LOGGER.debug('CONF:STDERR:?: %s' % (line))
 
   # Neutral (not failure; nor success)
   return False
@@ -334,19 +336,19 @@ def pipeline_stderr_handler(line, conf_info):
   if pl_stderr_ignore(line):
     pass
   elif s_make_error.search(line):
-    logging.error("make error detected; run failed")
+    LOGGER.error("make error detected; run failed")
     return RUN_FAILED
   elif s_no_gnuplot.search(line):
-    logging.error("gnuplot not found")
+    LOGGER.error("gnuplot not found")
     return RUN_FAILED
   elif s_no_convert.search(line):
-    logging.error("imagemagick's convert command not found")
+    LOGGER.error("imagemagick's convert command not found")
     return RUN_FAILED
   elif s_no_ghostscript.search(line):
-    logging.error("ghostscript not found")
+    LOGGER.error("ghostscript not found")
     return RUN_FAILED
   else:
-    logging.debug('PIPE:STDERR:?: %s' % (line))
+    LOGGER.debug('PIPE:STDERR:?: %s' % (line))
 
   return False
 
@@ -368,7 +370,7 @@ def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir):
   options = getCombinedOptions()
 
   if options.url is None:
-    logging.error("%s or %s missing base_host_url option" % \
+    LOGGER.error("%s or %s missing base_host_url option" % \
                   (CONFIG_USER, CONFIG_SYSTEM))
     return False
 
@@ -376,16 +378,16 @@ def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir):
     saveConfigFile(flowcell, options.url, cfg_filepath)
     conf_info.config_filepath = cfg_filepath
   except FlowCellNotFound, e:
-    logging.error(e)
+    LOGGER.error(e)
     return False
   except WebError404, e:
-    logging.error(e)
+    LOGGER.error(e)
     return False
   except IOError, e:
-    logging.error(e)
+    LOGGER.error(e)
     return False
   except Exception, e:
-    logging.error(e)
+    LOGGER.error(e)
     return False
 
   f = open(cfg_filepath, 'r')
@@ -395,14 +397,14 @@ def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir):
   genome_dict = getAvailableGenomes(genome_dir)
   mapper_dict = constructMapperDict(genome_dict)
 
-  logging.debug(data)
+  LOGGER.debug(data)
 
   f = open(cfg_filepath, 'w')
   f.write(data % (mapper_dict))
   f.close()
-  
+
   return True
-  
+
 
 
 def configure(conf_info):
@@ -448,7 +450,7 @@ def configure(conf_info):
 
   fout = open(stdout_filepath, 'w')
   ferr = open(stderr_filepath, 'w')
-  
+
   pipe = subprocess.Popen(['goat_pipeline.py',
                            '--GERALD=%s' % (conf_info.config_filepath),
                            '--make',
@@ -462,12 +464,12 @@ def configure(conf_info):
   # Clean up
   fout.close()
   ferr.close()
-  
-  
+
+
   ##################
   # Process stdout
   fout = open(stdout_filepath, 'r')
-  
+
   stdout_line = fout.readline()
 
   complete = False
@@ -482,9 +484,9 @@ def configure(conf_info):
 
   #error_code = pipe.wait()
   if error_code:
-    logging.error('Recieved error_code: %s' % (error_code))
+    LOGGER.error('Recieved error_code: %s' % (error_code))
   else:
-    logging.info('We are go for launch!')
+    LOGGER.info('We are go for launch!')
 
   #Process stderr
   ferr = open(stderr_filepath, 'r')
@@ -518,9 +520,9 @@ def configure(conf_info):
   #  we didn't retrieve the path info, log it.
   if status is True:
     if conf_info.bustard_path is None or conf_info.run_path is None:
-      logging.error("Failed to retrieve run_path")
+      LOGGER.error("Failed to retrieve run_path")
       return False
-  
+
   return status
 
 
@@ -530,7 +532,7 @@ def run_pipeline(conf_info):
   """
   # Fail if the run_path doesn't actually exist
   if not os.path.exists(conf_info.run_path):
-    logging.error('Run path does not exist: %s' \
+    LOGGER.error('Run path does not exist: %s' \
               % (conf_info.run_path))
     return False
 
@@ -550,8 +552,8 @@ def run_pipeline(conf_info):
   wdd = wm.add_watch(conf_info.run_path, mask, rec=True)
 
   # Log pipeline starting
-  logging.info('STARTING PIPELINE @ %s' % (time.ctime()))
-  
+  LOGGER.info('STARTING PIPELINE @ %s' % (time.ctime()))
+
   # Start the pipeline (and hide!)
   #pipe = subprocess.Popen(['make',
   #                         '-j8',

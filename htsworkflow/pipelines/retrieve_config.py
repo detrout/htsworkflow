@@ -25,6 +25,8 @@ from htsworkflow.pipelines.runfolder import LANE_LIST
 # JSON dictionaries use strings
 LANE_LIST_JSON = [ str(l) for l in LANE_LIST ]
 
+LOGGER = logging.getLogger(__name__)
+
 __docformat__ = "restructredtext en"
 
 CONFIG_SYSTEM = '/etc/htsworkflow.ini'
@@ -48,8 +50,8 @@ def retrieve_flowcell_info(base_host_url, flowcell):
         web = urllib2.urlopen(url, apipayload)
     except urllib2.URLError, e:
         errmsg = 'URLError: %d %s' % (e.code, e.msg)
-        logging.error(errmsg)
-        logging.error('opened %s' % (url,))
+        LOGGER.error(errmsg)
+        LOGGER.error('opened %s' % (url,))
         raise IOError(errmsg)
 
     contents = web.read()
@@ -143,10 +145,10 @@ def format_gerald_config(options, flowcell_info, genome_map):
         lane_prefix = u"".join(lane_numbers)
 
         species_path = genome_map.get(species, None)
-        logging.debug("Looked for genome '%s' got location '%s'" % (species, species_path))
+        LOGGER.debug("Looked for genome '%s' got location '%s'" % (species, species_path))
         if not is_sequencing and species_path is None:
             no_genome_msg = "Forcing lanes %s to sequencing as there is no genome for %s"
-            logging.warning(no_genome_msg % (lane_numbers, species))
+            LOGGER.warning(no_genome_msg % (lane_numbers, species))
             is_sequencing = True
 
         if is_sequencing:
@@ -306,25 +308,25 @@ def saveConfigFile(options):
   retrieves the flowcell eland config file, give the base_host_url
   (i.e. http://sub.domain.edu:port)
   """
-  logging.info('USING OPTIONS:')
-  logging.info(u'     URL: %s' % (options.url,))
-  logging.info(u'     OUT: %s' % (options.output_filepath,))
-  logging.info(u'      FC: %s' % (options.flowcell,))
-  #logging.info(': %s' % (options.genome_dir,))
-  logging.info(u'post_run: %s' % ( unicode(options.post_run),))
+  LOGGER.info('USING OPTIONS:')
+  LOGGER.info(u'     URL: %s' % (options.url,))
+  LOGGER.info(u'     OUT: %s' % (options.output_filepath,))
+  LOGGER.info(u'      FC: %s' % (options.flowcell,))
+  #LOGGER.info(': %s' % (options.genome_dir,))
+  LOGGER.info(u'post_run: %s' % ( unicode(options.post_run),))
 
   flowcell_info = retrieve_flowcell_info(options.url, options.flowcell)
 
-  logging.debug('genome_dir: %s' % ( options.genome_dir, ))
+  LOGGER.debug('genome_dir: %s' % ( options.genome_dir, ))
   available_genomes = getAvailableGenomes(options.genome_dir)
   genome_map = constructMapperDict(available_genomes)
-  logging.debug('available genomes: %s' % ( unicode( genome_map.keys() ),))
+  LOGGER.debug('available genomes: %s' % ( unicode( genome_map.keys() ),))
 
   #config = format_gerald_config(options, flowcell_info, genome_map)
   #
   #if options.output_filepath is not None:
   #    outstream = open(options.output_filepath, 'w')
-  #    logging.info('Writing config file to %s' % (options.output_filepath,))
+  #    LOGGER.info('Writing config file to %s' % (options.output_filepath,))
   #else:
   #    outstream = sys.stdout
   #

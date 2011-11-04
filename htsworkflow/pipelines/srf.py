@@ -4,6 +4,8 @@ import os
 
 from htsworkflow.util import queuecommands
 
+LOGGER = logging.getLogger(__name__)
+
 SOLEXA2SRF = 0
 ILLUMINA2SRF10 = 1
 ILLUMINA2SRF11 = 2
@@ -36,17 +38,17 @@ def pathname_to_run_name(base):
 def make_srf_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel=ILLUMINA2SRF11):
   """
   make a subprocess-friendly list of command line arguments to run solexa2srf
-  generates files like: 
+  generates files like:
   woldlab:080514_HWI-EAS229_0029_20768AAXX:8.srf
    site        run name                    lane
-             
+
   run_name - most of the file name (run folder name is a good choice)
   lanes - list of integers corresponding to which lanes to process
   site_name - name of your "sequencing site" or "Individual"
   destdir - where to write all the srf files
   """
   # clean up pathname
-  logging.info("run_name %s" % (run_name,))
+  LOGGER.info("run_name %s" % (run_name,))
 
   cmd_list = []
   for lane in lanes:
@@ -75,7 +77,7 @@ def make_srf_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel
     else:
         raise ValueError("Unrecognized run level %d" % (cmdlevel,))
 
-    logging.info("Generated command: " + " ".join(cmd))
+    LOGGER.info("Generated command: " + " ".join(cmd))
     cmd_list.append(" ".join(cmd))
   return cmd_list
 
@@ -112,17 +114,17 @@ def create_qseq_patterns(bustard_dir):
 def make_qseq_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel=ILLUMINA2SRF11):
   """
   make a subprocess-friendly list of command line arguments to run solexa2srf
-  generates files like: 
+  generates files like:
   woldlab:080514_HWI-EAS229_0029_20768AAXX:8.srf
    site        run name                    lane
-             
+
   run_name - most of the file name (run folder name is a good choice)
   lanes - list of integers corresponding to which lanes to process
   site_name - name of your "sequencing site" or "Individual"
   destdir - where to write all the srf files
   """
   # clean up pathname
-  logging.info("run_name %s" % (run_name,))
+  LOGGER.info("run_name %s" % (run_name,))
 
   cmd_list = []
   for lane in lanes:
@@ -139,13 +141,13 @@ def make_qseq_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdleve
         dest_path = os.path.join(destdir, destname)
 
       cmd = " ".join(['tar', 'cjf', dest_path, pattern % (lane,) ])
-      logging.info("Generated command: " + cmd)
+      LOGGER.info("Generated command: " + cmd)
       cmd_list.append(cmd)
 
   return cmd_list
 
 def run_commands(new_dir, cmd_list, num_jobs):
-    logging.info("chdir to %s" % (new_dir,))
+    LOGGER.info("chdir to %s" % (new_dir,))
     curdir = os.getcwd()
     os.chdir(new_dir)
     q = queuecommands.QueueCommands(cmd_list, num_jobs)
@@ -166,7 +168,7 @@ def make_md5_commands(destdir):
 
   for f in file_list:
       cmd = " ".join(['md5sum', f, '>', f + '.md5'])
-      logging.info('generated command: ' + cmd)
+      LOGGER.info('generated command: ' + cmd)
       cmd_list.append(cmd)
 
   return cmd_list

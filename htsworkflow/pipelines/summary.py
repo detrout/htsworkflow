@@ -8,6 +8,7 @@ from pprint import pprint
 from htsworkflow.pipelines.runfolder import ElementTree
 from htsworkflow.util.ethelp import indent, flatten
 
+LOGGER = logging.getLogger(__name__)
 nan = float('nan')
 
 class Summary(object):
@@ -107,9 +108,9 @@ class Summary(object):
             for GeraldName, LRSName in Summary.LaneResultSummary.GERALD_TAGS.items():
                 node = element.find(GeraldName)
                 if node is None:
-                    logging.info("Couldn't find %s" % (GeraldName))
+                    LOGGER.info("Couldn't find %s" % (GeraldName))
                 setattr(self, LRSName, parse_xml_mean_range(node))
-                                                                      
+
         def get_elements(self):
             lane_result = ElementTree.Element(
                             Summary.LaneResultSummary.LANE_RESULT_SUMMARY,
@@ -145,7 +146,7 @@ class Summary(object):
                     setattr(self, variable_name,
                             parse_summary_element(element))
                 except KeyError, e:
-                    logging.warn('Unrecognized tag %s' % (element.tag,))
+                    LOGGER.warn('Unrecognized tag %s' % (element.tag,))
 
     def __init__(self, filename=None, xml=None):
         # lane results is a list of 1 or 2 ends containing
@@ -186,7 +187,7 @@ class Summary(object):
         Extract just the lane results.
         Currently those are the only ones we care about.
         """
-        
+
         tables = self._extract_named_tables(pathname)
 
 
@@ -220,7 +221,7 @@ class Summary(object):
                     self._extract_lane_results_for_end(tables, name, end)
 
         if len(self.lane_results[0])  == 0:
-            logging.warning("No Lane Results Summary Found in %s" % (pathname,))
+            LOGGER.warning("No Lane Results Summary Found in %s" % (pathname,))
 
     def _extract_named_tables_from_gerald_xml(self, tree):
         """
@@ -243,7 +244,7 @@ class Summary(object):
                         self.lane_results[lrs.end][lrs.lane] = lrs
         # probably not useful
         return tables
-        
+
     ###### START HTML Table Extraction ########
     def _extract_named_tables_from_html(self, tree):
         body = tree.find('body')
@@ -301,7 +302,7 @@ class Summary(object):
             return ValueError("Expected %s" % (Summary.SUMMARY,))
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > Summary.XML_VERSION:
-            logging.warn('Summary XML tree is a higher version than this class')
+            LOGGER.warn('Summary XML tree is a higher version than this class')
         for element in list(tree):
             lrs = Summary.LaneResultSummary()
             lrs.set_elements(element)
@@ -379,17 +380,17 @@ def parse_xml_mean_range(element):
     """
     if element is None:
         return None
-    
+
     mean = element.find('mean')
     stddev = element.find('stdev')
     if mean is None or stddev is None:
         raise RuntimeError("Summary.xml file format changed, expected mean/stddev tags")
-    if mean.text is None: 
+    if mean.text is None:
         mean_value = float('nan')
     else:
         mean_value = tonumber(mean.text)
 
-    if stddev.text is None: 
+    if stddev.text is None:
         stddev_value = float('nan')
     else:
         stddev_value = tonumber(stddev.text)
@@ -407,4 +408,4 @@ if __name__ == "__main__":
     for fname in args:
         s = Summary(fname)
         s.dump()
-        
+

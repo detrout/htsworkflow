@@ -38,6 +38,8 @@ SAMPLES_CONTEXT_DEFAULTS = {
     'bcmagic': BarcodeMagicForm()
 }
 
+LOGGER = logging.getLogger(__name__)
+
 def count_lanes(lane_set):
     single = 0
     paired = 1
@@ -316,7 +318,7 @@ def _summary_stats(flowcell_id, lane_id):
 
         #except Exception, e:
         #    summary_list.append("Summary report needs to be updated.")
-        #    logging.error("Exception: " + str(e))
+        #    LOGGER.error("Exception: " + str(e))
 
     return (summary_list, err_list)
 
