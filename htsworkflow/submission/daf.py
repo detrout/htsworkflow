@@ -530,9 +530,13 @@ class DAFMapper(object):
             errmsg = "%s doesn't have a library type"
             raise ModelException(errmsg % (str(libNode),))
 
-        #single = (1,3,6)
-        single = ['Single End', 'Small RNA', 'CSHL (lacking last nt)']
-        paired = ['Paired End', 'Multiplexing', 'Barcoded']
+        single = ['CSHL (lacking last nt)',
+                  'Single End (non-multiplexed)',
+                  'Small RNA (non-multiplexed)',]
+        paired = ['Barcoded Illumina',
+                  'Multiplexing',
+                  'Nextera',
+                  'Paired End (non-multiplexed)',]
         if library_type in single:
             return False
         elif library_type in paired:
