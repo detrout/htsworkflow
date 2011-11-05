@@ -134,7 +134,7 @@ def make_rta_basecalls_1_10(intensities_dir):
 
     return basecalls_dir
 
-def make_qseqs(bustard_dir, in_temp=True, basecall_info=None):
+def make_qseqs(bustard_dir, basecall_info=None):
     """
     Fill gerald directory with qseq files
     """
@@ -231,6 +231,9 @@ def make_matrix_dir_rta160(bustard_dir):
         destination = os.path.join(destdir, 's%s_1_matrix.txt' % ( fragment, ))
         shutil.copy(source, destination)
 
+def make_matrix_dir_rta_1_10(bustard_dir):
+    make_matrix_dir_rta160(bustard_dir)
+
 def make_phasing_dir(bustard_dir):
     """
     Create several phasing files in <bustard_dir>/Phasing/
@@ -267,8 +270,9 @@ def make_gerald_config_100(gerald_dir):
     destination = os.path.join(gerald_dir, 'config.xml')
     shutil.copy(source, destination)
 
-def make_gerald_config_1_10(gerald_dir):
-    source = os.path.join(TESTDATA_DIR, 'gerald_config_1.10.xml')
+def make_gerald_config_1_7(gerald_dir):
+    """CASAVA 1.7 gerald config"""
+    source = os.path.join(TESTDATA_DIR, 'gerald_config_1.7.xml')
     destination = os.path.join(gerald_dir, 'config.xml')
     shutil.copy(source, destination)
 
@@ -298,8 +302,8 @@ def make_summary_rta160_xml(gerald_dir):
     shutil.copy(source, destination)
 
 
-def make_summary_rta1_10_xml(gerald_dir):
-    source = os.path.join(TESTDATA_DIR, 'Summary-rta1.10.xml')
+def make_summary_casava1_7_xml(gerald_dir):
+    source = os.path.join(TESTDATA_DIR, 'Summary-casava1.7.xml')
     destination = os.path.join(gerald_dir, 'Summary.xml')
     shutil.copy(source, destination)
 
@@ -374,7 +378,7 @@ def make_fastq(gerald_dir, lane_list=LANE_LIST):
     seq = """@HWI-EAS229:1:2:182:712#0/1
 AAAAAAAAAAAAAAAAAAAAANAAAAAAAAAAAAAAA
 +HWI-EAS229:1:2:182:712#0/1
-\bab_bbaabbababbaaa]]D]bb_baabbab\baa
+\\bab_bbaabbababbaaa]]D]bb_baabbab\baa
 @HWI-EAS229:1:2:198:621#0/1
 CCCCCCCCCCCCCCCCCCCCCNCCCCCCCCCCCCCCC
 +HWI-EAS229:1:2:198:621#0/1
@@ -389,6 +393,12 @@ _bbbbbaaababaabbbbab]D]aaaaaaaaaaaaaa
         f = open(pathname,'w')
         f.write(seq)
         f.close()
+
+
+def ls_tree(root):
+    for dirpath, dirnames, filenames in os.walk(root):
+        for filename in filenames:
+            print os.path.join(dirpath, filename)
 
 
 class BaseCallInfo(object):

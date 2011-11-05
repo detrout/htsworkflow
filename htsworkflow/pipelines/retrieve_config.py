@@ -322,15 +322,15 @@ def saveConfigFile(options):
   genome_map = constructMapperDict(available_genomes)
   LOGGER.debug('available genomes: %s' % ( unicode( genome_map.keys() ),))
 
-  #config = format_gerald_config(options, flowcell_info, genome_map)
-  #
-  #if options.output_filepath is not None:
-  #    outstream = open(options.output_filepath, 'w')
-  #    LOGGER.info('Writing config file to %s' % (options.output_filepath,))
-  #else:
-  #    outstream = sys.stdout
-  #
-  #outstream.write(config)
+  config = format_gerald_config(options, flowcell_info, genome_map)
+
+  if options.output_filepath is not None:
+      outstream = open(options.output_filepath, 'w')
+      logging.info('Writing config file to %s' % (options.output_filepath,))
+  else:
+      outstream = sys.stdout
+
+  outstream.write(config)
 
   if options.sample_sheet is None:
       pass

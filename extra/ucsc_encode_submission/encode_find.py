@@ -3,14 +3,15 @@
 Gather information about our submissions into a single RDF store
 """
 
-from lxml.html import fromstring
 from datetime import datetime
+import hashlib
 import httplib2
+import keyring
+import logging
+from lxml.html import fromstring
 from operator import attrgetter
 from optparse import OptionParser, OptionGroup
 # python keyring
-import keyring
-import logging
 import os
 import re
 # redland rdf lib
@@ -185,6 +186,9 @@ def load_my_submissions(model, limit=None, cookie=None):
                                                   subUrn,
                                                   library_urn,
                                                   library_id)
+                else:
+                    errmsg = 'Unable to find library id in {0} for {1}'
+                    LOGGER.warn(errmsg.format(name, str(subUrn)))
 
                 add_submission_creation_date(model, subUrn, cookie)
 
@@ -215,7 +219,7 @@ def add_submission_to_library_urn(model, submissionUrn, predicate, library_id):
 
 
 def find_submissions_with_no_library(model):
-    missing_lib_query = RDF.SPARQLQuery("""
+    missing_lib_query_text = """
 PREFIX submissionOntology:<{submissionOntology}>
 
 SELECT
@@ -224,7 +228,8 @@ WHERE {{
   ?subid submissionOntology:name ?name
   OPTIONAL {{ ?subid submissionOntology:library_urn ?libid }}
   FILTER  (!bound(?libid))
-}}""".format(submissionOntology=submissionOntology[''].uri))
+}}""".format(submissionOntology=submissionOntology[''].uri)
+    missing_lib_query = RDF.SPARQLQuery(missing_lib_query_text)
 
     results = missing_lib_query.execute(model)
     for row in results:
@@ -246,7 +251,7 @@ def add_submission_creation_date(model, subUrn, cookie):
     if len(creation_dates) == 0:
         LOGGER.info("Getting creation date for: {0}".format(str(subUrn)))
         tree = get_url_as_tree(str(subUrn), 'GET', cookie)
-        cells = tree.xpath('//div[@id="content"]/table/tr/td')
+        cells = tree.findall('.//td')
         created_label = [x for x in cells
                          if x.text_content().startswith('Created')]
         if len(created_label) == 1:
@@ -254,6 +259,10 @@ def add_submission_creation_date(model, subUrn, cookie):
             created_date_node = RDF.Node(literal=created_date.isoformat(),
                                          datatype=dateTimeType.uri)
             add_stmt(model, subUrn, creationDateN, created_date_node)
+        else:
+            msg = 'Unable to find creation date for {0}'.format(str(subUrn))
+            LOGGER.warn(msg)
+            raise Warning(msg)
     else:
         LOGGER.debug("Found creation date for: {0}".format(str(subUrn)))
 
@@ -271,7 +280,7 @@ def update_submission_detail(model, subUrn, status, recent_update, cookie):
         LOGGER.info("Adding status node to {0}".format(subUrn))
         status_node = create_status_node(subUrn, recent_update)
         add_stmt(model, subUrn, HasStatusN, status_node)
-        add_stmt(model, status_node, rdfsNS['type'], StatusN)
+        add_stmt(model, status_node, rdfNS['type'], StatusN)
         add_stmt(model, status_node, StatusN, status)
         add_stmt(model, status_node, LastModifyN, recent_update)
         update_ddf(model, subUrn, status_node, cookie=cookie)
@@ -301,6 +310,11 @@ def update_daf(model, submission_url, status_node, cookie):
         LOGGER.info('Adding daf to {0}, {1}'.format(submission_url,
                                                      status_node))
         daf_text = get_url_as_text(download_daf_uri, 'GET', cookie)
+        daf_hash = hashlib.md5(daf_text).hexdigest()
+        daf_hash_stmt = RDF.Statement(status_node,
+                                      dafTermOntology['md5sum'],
+                                      daf_hash)
+        model.add_statement(daf_hash_stmt)
         daf.fromstring_into_model(model, status_node, daf_text)
 
 
@@ -341,7 +355,7 @@ def add_ddf_statements(model, statusNode, ddf_string):
                      statusNode,
                      submissionOntology['has_file'],
                      fileNode)
-            add_stmt(model, fileNode, rdfsNS['type'], DDF_NS['file'])
+            add_stmt(model, fileNode, rdfNS['type'], DDF_NS['file'])
             add_stmt(model, fileNode, DDF_NS['filename'], f)
 
             for predicate, object in zip(attributes[1:], file_attributes):

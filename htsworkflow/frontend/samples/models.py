@@ -164,7 +164,7 @@ class Library(models.Model):
       Affiliation,related_name='library_affiliations',null=True)
   tags = models.ManyToManyField(Tag,related_name='library_tags',
                                 blank=True,null=True)
-  REPLICATE_NUM = ((1,1),(2,2),(3,3),(4,4))
+  REPLICATE_NUM = [(x,x) for x in range(1,7)]
   replicate =  models.PositiveSmallIntegerField(choices=REPLICATE_NUM,
                                                 blank=True,null=True)
   experiment_type = models.ForeignKey(ExperimentType)

@@ -1,0 +1,19 @@
+# Produce list of submissions associated with a cell/replicate
+PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ucscSubmission:<http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
+PREFIX libraryOntology:<http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+PREFIX daf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
+PREFIX ddf: <http://encodesubmit.ucsc.edu/pipeline/download_ddf#>
+
+construct { ?library ddf:treatment ?treatment ;
+                     ddf:protocol ?pcr . }
+WHERE {
+   ?status ucscSubmission:has_file ?file .
+   ?submission ucscSubmission:has_status ?status ;
+               ucscSubmission:library_urn ?library ;
+               ucscSubmission:name ?name .
+   ?file ddf:treatment ?treatment ;
+         ddf:protocol ?pcr .
+}
+

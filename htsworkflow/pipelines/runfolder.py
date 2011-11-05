@@ -13,9 +13,9 @@ import tarfile
 import time
 
 try:
-  from xml.etree import ElementTree
+    from xml.etree import ElementTree
 except ImportError, e:
-  from elementtree import ElementTree
+    from elementtree import ElementTree
 
 LOGGER = logging.getLogger(__name__)
 
@@ -40,13 +40,13 @@ class PipelineRun(object):
     PIPELINE_RUN = 'PipelineRun'
     FLOWCELL_ID = 'FlowcellID'
 
-    def __init__(self, pathname=None, xml=None):
+    def __init__(self, pathname=None, flowcell_id=None, xml=None):
         if pathname is not None:
           self.pathname = os.path.normpath(pathname)
         else:
           self.pathname = None
         self._name = None
-        self._flowcell_id = None
+        self._flowcell_id = flowcell_id
         self.image_analysis = None
         self.bustard = None
         self.gerald = None
@@ -57,23 +57,23 @@ class PipelineRun(object):
     def _get_flowcell_id(self):
         # extract flowcell ID
         if self._flowcell_id is None:
-          config_dir = os.path.join(self.pathname, 'Config')
-          flowcell_id_path = os.path.join(config_dir, 'FlowcellId.xml')
-	  if os.path.exists(flowcell_id_path):
-            flowcell_id_tree = ElementTree.parse(flowcell_id_path)
-            self._flowcell_id = flowcell_id_tree.findtext('Text')
-	  else:
-            path_fields = self.pathname.split('_')
-            if len(path_fields) > 0:
-              # guessing last element of filename
-              flowcell_id = path_fields[-1]
+            config_dir = os.path.join(self.pathname, 'Config')
+            flowcell_id_path = os.path.join(config_dir, 'FlowcellId.xml')
+            if os.path.exists(flowcell_id_path):
+                flowcell_id_tree = ElementTree.parse(flowcell_id_path)
+                self._flowcell_id = flowcell_id_tree.findtext('Text')
             else:
-              flowcell_id = 'unknown'
+                path_fields = self.pathname.split('_')
+                if len(path_fields) > 0:
+                    # guessing last element of filename
+                   self._flowcell_id = path_fields[-1]
+                else:
+                   self._flowcell_id = 'unknown'
 
-	    LOGGER.warning(
-	      "Flowcell id was not found, guessing %s" % (
-	         flowcell_id))
-	    self._flowcell_id = flowcell_id
+                   LOGGER.warning(
+                       "Flowcell id was not found, guessing %s" % (
+                       self._flowcell_id))
+
         return self._flowcell_id
     flowcell_id = property(_get_flowcell_id)
 
@@ -163,7 +163,7 @@ def load_pipeline_run_xml(pathname):
     run = PipelineRun(xml=tree)
     return run
 
-def get_runs(runfolder):
+def get_runs(runfolder, flowcell_id=None):
     """
     Search through a run folder for all the various sub component runs
     and then return a PipelineRun for each different combination.
@@ -191,7 +191,7 @@ def get_runs(runfolder):
                 LOGGER.info("Found gerald directory %s" % (gerald_pathname,))
                 try:
                     g = gerald.gerald(gerald_pathname)
-                    p = PipelineRun(runfolder)
+                    p = PipelineRun(runfolder, flowcell_id)
                     p.image_analysis = image_analysis
                     p.bustard = b
                     p.gerald = g
@@ -616,9 +616,17 @@ def clean_runs(runs, dry_run=True):
         LOGGER.info("Cleaning images")
         image_dirs = glob(os.path.join(run.pathname, 'Images', 'L*'))
         rm_list(image_dirs, dry_run)
-        # cd Data/C1-*_Firecrest*
-        LOGGER.info("Cleaning intermediate files")
+        # rm ReadPrep
+        LOGGER.info("Cleaning ReadPrep*")
+        read_prep_dirs = glob(os.path.join(run.pathname, 'ReadPrep*'))
+        rm_list(read_prep_dirs, dry_run)
+        # rm ReadPrep
+        LOGGER.info("Cleaning Thubmnail_images")
+        thumbnail_dirs = glob(os.path.join(run.pathname, 'Thumbnail_Images'))
+        rm_list(thumbnail_dirs, dry_run)
+
         # make clean_intermediate
+        logging.info("Cleaning intermediate files")
         if os.path.exists(os.path.join(run.image_analysis.pathname, 'Makefile')):
             clean_process = subprocess.Popen(['make', 'clean_intermediate'],
                                              cwd=run.image_analysis.pathname,)

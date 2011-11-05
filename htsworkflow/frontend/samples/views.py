@@ -91,21 +91,26 @@ def create_library_context(cl):
     cl.result_count = unicode(cl.paginator._count)
     return {'library_list': records }
 
-def library(request):
+def library(request, todo_only=False):
+    queryset = Library.objects.filter(hidden__exact=0)
+    if todo_only:
+        queryset = queryset.filter(lane=None)
     # build changelist
     fcl = ChangeList(request, Library,
         list_filter=['affiliations', 'library_species'],
         search_fields=['id', 'library_name', 'amplified_from_sample__id'],
         list_per_page=200,
-        queryset=Library.objects.filter(hidden__exact=0)
+        queryset=queryset
     )
 
-    context = { 'cl': fcl, 'title': 'Library Index'}
+    context = { 'cl': fcl, 'title': 'Library Index', 'todo_only': todo_only}
     context.update(create_library_context(fcl))
     t = get_template('samples/library_index.html')
     c = RequestContext(request, context)
     return HttpResponse( t.render(c) )
 
+def library_not_run(request):
+    return library(request, todo_only=True)
 
 def library_to_flowcells(request, lib_id):
     """

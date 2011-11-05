@@ -125,12 +125,14 @@ class LibraryOptions(admin.ModelAdmin):
     )
     list_filter = (
         'hidden',
-        'affiliations',
-        'library_species',
         'experiment_type',
+        'library_type',
+        #'cell_line',
+        'stopping_point',
         'made_by',
-        'cell_line',
-        'stopping_point',)
+        'library_species',
+        'affiliations',
+        )
     list_display_links = ('id', 'library_name',)
     fieldsets = (
       (None, {

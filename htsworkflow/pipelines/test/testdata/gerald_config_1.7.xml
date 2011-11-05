@@ -1,0 +1,246 @@
+<RunParameters>
+<ChipWideRunParameters>
+  <ALIGN_PARAMS></ALIGN_PARAMS>
+  <ANALYSIS>none</ANALYSIS>
+  <BAD_TILES></BAD_TILES>
+  <BIN_DIR>/usr/local/casava-1.7.0/bin/../bin</BIN_DIR>
+  <CHASTITY_THRESHOLD>0.6</CHASTITY_THRESHOLD>
+  <CMDPREFIX></CMDPREFIX>
+  <COMPRESSION>gzip</COMPRESSION>
+  <COMPRESSIONSUFFIX>.gz</COMPRESSIONSUFFIX>
+  <ELAND_GENOME>Need_to_specify_ELAND_genome_directory</ELAND_GENOME>
+  <ELAND_MAX_MATCHES></ELAND_MAX_MATCHES>
+  <ELAND_MULTIPLE_INSTANCES></ELAND_MULTIPLE_INSTANCES>
+  <ELAND_REPEAT></ELAND_REPEAT>
+  <ELAND_RNA_GENOME_CONTAM></ELAND_RNA_GENOME_CONTAM>
+  <ELAND_RNA_GENOME_REF_FLAT_GZ></ELAND_RNA_GENOME_REF_FLAT_GZ>
+  <ELAND_RNA_GENOME_SEQ_GENE_MD_GZ></ELAND_RNA_GENOME_SEQ_GENE_MD_GZ>
+  <ELAND_SEED_LENGTH></ELAND_SEED_LENGTH>
+  <ELAND_SET_SIZE>20</ELAND_SET_SIZE>
+  <EMAIL_DOMAIN>domain.com</EMAIL_DOMAIN>
+  <EMAIL_LIST>igor</EMAIL_LIST>
+  <EMAIL_SERVER>localhost:25</EMAIL_SERVER>
+  <EXPT_DIR>/mmjggl/thornvalley/tardigrade/110420_SN787_0069_AB08VPABXX/Data/Intensities/BaseCalls</EXPT_DIR>
+  <EXPT_DIR_ROOT>/mmjggl/thornvalley/tardigrade</EXPT_DIR_ROOT>
+  <FLOW_CELL>v4</FLOW_CELL>
+  <FLOW_CELL_ID></FLOW_CELL_ID>
+  <FORCE>1</FORCE>
+  <GENOME_DIR>/usr/local/casava-1.7.0/bin/../../Genomes</GENOME_DIR>
+  <GENOME_FILE>Need_to_specify_genome_file_name</GENOME_FILE>
+  <GROUP_LANES></GROUP_LANES>
+  <INDEXING_READ_POSITION></INDEXING_READ_POSITION>
+  <INDEX_BASES></INDEX_BASES>
+  <KEEP_INTERMEDIARY>false</KEEP_INTERMEDIARY>
+  <LANE_POST_RUN_COMMAND></LANE_POST_RUN_COMMAND>
+  <NUM_LEADING_DIRS_TO_STRIP>2</NUM_LEADING_DIRS_TO_STRIP>
+  <ORIG_READ_LENGTHS>100:100</ORIG_READ_LENGTHS>
+  <OUT_DIR>/mmjggl/thornvalley/tardigrade/110420_SN787_0069_AB08VPABXX/Data/Intensities/BaseCalls/GERALD_02-05-2011_igor</OUT_DIR>
+  <PAIR_PARAMS></PAIR_PARAMS>
+  <POST_RUN_COMMAND>/home/diane/.local/bin/htsw-runfolder -j 4 --site=woldlab -o /woldlab/loxcyc/data00/solexa-sequence/flowcells/ --extract-results /mmjggl/thornvalley/tardigrade/110420_SN787_0069_AB08VPABXX</POST_RUN_COMMAND>
+  <PRB_FILE_SUFFIX>_prb.txt</PRB_FILE_SUFFIX>
+  <PURE_BASES>25</PURE_BASES>
+  <QCAL_SOURCE>upstream</QCAL_SOURCE>
+  <QCAL_SOURCE1></QCAL_SOURCE1>
+  <QCAL_SOURCE2></QCAL_SOURCE2>
+  <QHG_FILE_SUFFIX>_qhg.txt</QHG_FILE_SUFFIX>
+  <QSEQ_READS>1 2</QSEQ_READS>
+  <QTABLE_PATH></QTABLE_PATH>
+  <QTABLE_PATH1></QTABLE_PATH1>
+  <QTABLE_PATH2></QTABLE_PATH2>
+  <QTABLE_PATH3></QTABLE_PATH3>
+  <QTABLE_REQUIRED>0</QTABLE_REQUIRED>
+  <QTABLE_REQUIRED1>0</QTABLE_REQUIRED1>
+  <QTABLE_REQUIRED2>0</QTABLE_REQUIRED2>
+  <QTABLE_REQUIRED3>0</QTABLE_REQUIRED3>
+  <QUALITY_CALIBRATION>QualityCalibration.xml</QUALITY_CALIBRATION>
+  <RAMM_REPORT_TYPE></RAMM_REPORT_TYPE>
+  <READ_LENGTH>100</READ_LENGTH>
+  <READ_LENGTH1>100</READ_LENGTH1>
+  <READ_LENGTH2>0</READ_LENGTH2>
+  <RNAQC_COUNT_CLUSTERS_CMD>$(WC) -l</RNAQC_COUNT_CLUSTERS_CMD>
+  <RNAQC_COUNT_CLUSTERS_NAME>totalClusters</RNAQC_COUNT_CLUSTERS_NAME>
+  <RNAQC_COUNT_CONTAM_1_CMD>($(EGREP) -c 'c.*M' || exit 0)</RNAQC_COUNT_CONTAM_1_CMD>
+  <RNAQC_COUNT_CONTAM_1_NAME>mito</RNAQC_COUNT_CONTAM_1_NAME>
+  <RNAQC_COUNT_CONTAM_2_CMD>($(FGREP) -c newcontam || exit 0)</RNAQC_COUNT_CONTAM_2_CMD>
+  <RNAQC_COUNT_CONTAM_2_NAME>adapters</RNAQC_COUNT_CONTAM_2_NAME>
+  <RNAQC_COUNT_CONTAM_3_CMD>($(FGREP) -c Ribosomal || exit 0)</RNAQC_COUNT_CONTAM_3_CMD>
+  <RNAQC_COUNT_CONTAM_3_NAME>ribosomal</RNAQC_COUNT_CONTAM_3_NAME>
+  <RNAQC_COUNT_CONTAM_4_CMD>($(FGREP) -c 5S || exit 0)</RNAQC_COUNT_CONTAM_4_CMD>
+  <RNAQC_COUNT_CONTAM_4_NAME>5S</RNAQC_COUNT_CONTAM_4_NAME>
+  <RNAQC_COUNT_CONTAM_5_CMD>($(FGREP) -c phi || exit 0)</RNAQC_COUNT_CONTAM_5_CMD>
+  <RNAQC_COUNT_CONTAM_5_NAME>phiX</RNAQC_COUNT_CONTAM_5_NAME>
+  <RNAQC_COUNT_CONTAM_6_CMD>($(FGREP) -c indexed || exit 0)</RNAQC_COUNT_CONTAM_6_CMD>
+  <RNAQC_COUNT_CONTAM_6_NAME>indAdp</RNAQC_COUNT_CONTAM_6_NAME>
+  <RNAQC_COUNT_GENOME_CMD>($(EGREP) -c '^c' || exit 0)</RNAQC_COUNT_GENOME_CMD>
+  <RNAQC_COUNT_GENOME_NAME>genomeUsable</RNAQC_COUNT_GENOME_NAME>
+  <RNAQC_COUNT_NM_CMD>($(FGREP) -wc NM || exit 0)</RNAQC_COUNT_NM_CMD>
+  <RNAQC_COUNT_NM_NAME>noMatch</RNAQC_COUNT_NM_NAME>
+  <RNAQC_COUNT_PF_CMD>$(WC) -l</RNAQC_COUNT_PF_CMD>
+  <RNAQC_COUNT_PF_NAME>PFClusters</RNAQC_COUNT_PF_NAME>
+  <RNAQC_COUNT_QC_CMD>($(FGREP) -wc QC || exit 0)</RNAQC_COUNT_QC_CMD>
+  <RNAQC_COUNT_QC_NAME>QC</RNAQC_COUNT_QC_NAME>
+  <RNAQC_COUNT_RM_CMD>($(FGREP) -wc RM || exit 0)</RNAQC_COUNT_RM_CMD>
+  <RNAQC_COUNT_RM_NAME>repeatMasked</RNAQC_COUNT_RM_NAME>
+  <RNAQC_COUNT_SPLICE_CMD>($(FGREP) -c splice_sites || exit 0)</RNAQC_COUNT_SPLICE_CMD>
+  <RNAQC_COUNT_SPLICE_NAME>spliceUsable</RNAQC_COUNT_SPLICE_NAME>
+  <RNAQC_COUNT_USABLE_CMD>$(CUT) -f13 |($(EGREP) [0-9] || exit 0)|$(WC) -l</RNAQC_COUNT_USABLE_CMD>
+  <RNAQC_COUNT_USABLE_NAME>usable</RNAQC_COUNT_USABLE_NAME>
+  <SEQUENCE_FORMAT>--fastq</SEQUENCE_FORMAT>
+  <SEQ_FILE_SUFFIX>_seq.txt</SEQ_FILE_SUFFIX>
+  <SIG2_COMPRESSION></SIG2_COMPRESSION>
+  <SIG2_COMPRESSION_SUFFIX></SIG2_COMPRESSION_SUFFIX>
+  <SIG_FILE_SUFFIX_DEPHASED>_sig2.txt</SIG_FILE_SUFFIX_DEPHASED>
+  <SIG_FILE_SUFFIX_NOT_DEPHASED>_sig.txt</SIG_FILE_SUFFIX_NOT_DEPHASED>
+  <SINGLESEED></SINGLESEED>
+  <SOFTWARE_VERSION>CASAVA-1.7.0</SOFTWARE_VERSION>
+  <SRF_2ND_CYCLE></SRF_2ND_CYCLE>
+  <SRF_ARCHIVE_REQUIRED></SRF_ARCHIVE_REQUIRED>
+  <SRF_CHASTITY>0.6</SRF_CHASTITY>
+  <SRF_FILE_SUFFIX>_traces.srf</SRF_FILE_SUFFIX>
+  <SRF_PROCESSED>-P</SRF_PROCESSED>
+  <SRF_QCAL></SRF_QCAL>
+  <SRF_RAW></SRF_RAW>
+  <TILE_AREA></TILE_AREA>
+  <TILE_READ1_REGEX>s_[1-8]_1_[0-9][0-9][0-9][0-9]</TILE_READ1_REGEX>
+  <TILE_REGEX>s_[1-8]_[0-9][0-9][0-9][0-9]</TILE_REGEX>
+  <TILE_ROOT>s</TILE_ROOT>
+  <TIME_STAMP>Mon May  2 19:19:49 2011</TIME_STAMP>
+  <UNGAPPED></UNGAPPED>
+  <USE_BASES>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn</USE_BASES>
+  <USE_BASES1>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</USE_BASES1>
+  <USE_BASES2>nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn</USE_BASES2>
+  <USE_BASES3></USE_BASES3>
+  <WEB_DIR_ROOT>http://host.domain.com/yourshare/</WEB_DIR_ROOT>
+  <WITH_SEQUENCE>false</WITH_SEQUENCE>
+  <WITH_SORTED>false</WITH_SORTED>
+</ChipWideRunParameters>
+<LaneSpecificRunParameters>
+  <ANALYSIS>
+    <s_1>sequence_pair</s_1>
+    <s_2>sequence_pair</s_2>
+    <s_3>sequence_pair</s_3>
+    <s_4>eland_pair</s_4>
+    <s_5>eland_pair</s_5>
+    <s_6>eland_pair</s_6>
+    <s_7>eland_pair</s_7>
+    <s_8>eland_pair</s_8>
+  </ANALYSIS>
+  <ELAND_GENOME>
+    <s_4>/g/hg18</s_4>
+    <s_5>/g/elegans190</s_5>
+    <s_6>/g/elegans190</s_6>
+    <s_7>/g/elegans190</s_7>
+    <s_8>/g/phi</s_8>
+  </ELAND_GENOME>
+  <QTABLE_REQUIRED>
+    <s_1>0</s_1>
+    <s_2>0</s_2>
+    <s_3>0</s_3>
+    <s_4>0</s_4>
+    <s_5>0</s_5>
+    <s_6>0</s_6>
+    <s_7>0</s_7>
+    <s_8>0</s_8>
+  </QTABLE_REQUIRED>
+  <READ_LENGTH1>
+    <s_1>100</s_1>
+    <s_2>100</s_2>
+    <s_3>100</s_3>
+    <s_4>100</s_4>
+    <s_5>100</s_5>
+    <s_6>100</s_6>
+    <s_7>100</s_7>
+    <s_8>100</s_8>
+  </READ_LENGTH1>
+  <READ_LENGTH2>
+    <s_1>100</s_1>
+    <s_2>100</s_2>
+    <s_3>100</s_3>
+    <s_4>100</s_4>
+    <s_5>100</s_5>
+    <s_6>100</s_6>
+    <s_7>100</s_7>
+    <s_8>100</s_8>
+  </READ_LENGTH2>
+  <SRF_2ND_CYCLE>
+    <s_1>-2 101</s_1>
+    <s_2>-2 101</s_2>
+    <s_3>-2 101</s_3>
+    <s_4>-2 101</s_4>
+    <s_5>-2 101</s_5>
+    <s_6>-2 101</s_6>
+    <s_7>-2 101</s_7>
+    <s_8>-2 101</s_8>
+  </SRF_2ND_CYCLE>
+  <SRF_ARCHIVE_REQUIRED>
+    <s_1></s_1>
+    <s_2></s_2>
+    <s_3></s_3>
+    <s_4></s_4>
+    <s_5></s_5>
+    <s_6></s_6>
+    <s_7></s_7>
+    <s_8></s_8>
+  </SRF_ARCHIVE_REQUIRED>
+  <SRF_QCAL>
+    <s_1></s_1>
+    <s_2></s_2>
+    <s_3></s_3>
+    <s_4></s_4>
+    <s_5></s_5>
+    <s_6></s_6>
+    <s_7></s_7>
+    <s_8></s_8>
+  </SRF_QCAL>
+  <USE_BASES>
+    <s_1>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_1>
+    <s_2>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_2>
+    <s_3>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_3>
+    <s_4>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_4>
+    <s_5>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_5>
+    <s_6>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_6>
+    <s_7>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_7>
+    <s_8>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_8>
+  </USE_BASES>
+  <USE_BASES1>
+    <s_1>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_1>
+    <s_2>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_2>
+    <s_3>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_3>
+    <s_4>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_4>
+    <s_5>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_5>
+    <s_6>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_6>
+    <s_7>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_7>
+    <s_8>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</s_8>
+  </USE_BASES1>
+  <USE_BASES2>
+    <s_1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_1>
+    <s_2>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_2>
+    <s_3>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_3>
+    <s_4>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_4>
+    <s_5>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_5>
+    <s_6>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_6>
+    <s_7>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_7>
+    <s_8>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</s_8>
+  </USE_BASES2>
+  <USE_BASES3>
+    <s_1></s_1>
+    <s_2></s_2>
+    <s_3></s_3>
+    <s_4></s_4>
+    <s_5></s_5>
+    <s_6></s_6>
+    <s_7></s_7>
+    <s_8></s_8>
+  </USE_BASES3>
+  <WITH_SEQUENCE>
+    <s_1>true</s_1>
+    <s_2>true</s_2>
+    <s_3>true</s_3>
+    <s_4>true</s_4>
+    <s_5>true</s_5>
+    <s_6>true</s_6>
+    <s_7>true</s_7>
+    <s_8>true</s_8>
+  </WITH_SEQUENCE>
+</LaneSpecificRunParameters>
+</RunParameters>
