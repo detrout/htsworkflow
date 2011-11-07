@@ -20,14 +20,13 @@ class testQueueCommands(unittest.TestCase):
                 '/bin/sleep 1',
                 '/bin/sleep 2',]
 
-        q = QueueCommands(cmds)
+        q = QueueCommands(cmds, 3)
         start = time.time()
         q.run()
         end = time.time()-start
         # we should only take the length of the longest sleep
-        # pity I had to add a 1 second sleep
-        self.failUnless( end > 2.9 and end < 3.1,
-                         "took %s seconds, exected ~3" % (end,))
+        self.failUnless( end > 1.9 and end < 2.1,
+                         "took %s seconds, exected ~2" % (end,))
 
     def test_limited_run_slow(self):
         """
@@ -42,9 +41,8 @@ class testQueueCommands(unittest.TestCase):
         start = time.time()
         q.run()
         end = time.time()-start
-        # pity I had to add a 1 second sleep
-        self.failUnless( end > 5.9 and end < 6.1,
-                         "took %s seconds, expected ~6" % (end,))
+        self.failUnless( end > 3.9 and end < 4.1,
+                         "took %s seconds, expected ~4" % (end,))
 
 def suite():
     return unittest.makeSuite(testQueueCommands, 'test')

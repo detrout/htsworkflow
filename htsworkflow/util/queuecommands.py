@@ -95,4 +95,3 @@ class QueueCommands(object):
                     buffer = buffer.strip()
                     msg = "%d:(%d) %s" %(pending.pid, len(buffer), buffer)
                     LOGGER.debug(msg)
-            time.sleep(1)
