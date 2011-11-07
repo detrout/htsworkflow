@@ -258,6 +258,9 @@ class Library(models.Model):
   def index_sequence_text(self, seperator=' '):
       """Return formatted multiplex index sequences"""
       sequences = self.index_sequences()
+      if sequences is None:
+          return ""
+
       multiplex_ids = sequences.keys()
       multiplex_ids.sort()
       return seperator.join(( "%s:%s" %(i,sequences[i]) for i in multiplex_ids))
