@@ -27,7 +27,7 @@
      "model": "samples.LibraryType",
      "pk": 1,
      "fields": {
-        "name": "Single End",
+        "name": "Single End (non-multiplexed)",
         "can_multiplex": false,
         "is_paired_end": false
      }
@@ -36,7 +36,7 @@
      "model": "samples.LibraryType",
      "pk": 2,
      "fields": {
-        "name": "Paired End",
+        "name": "Paired End (non-multiplexed)",
         "can_multiplex": false,
         "is_paired_end": true
      }
@@ -45,7 +45,7 @@
      "model": "samples.LibraryType",
      "pk": 5,
      "fields": {
-        "name": "Barcoded",
+        "name": "Barcoded Illumina",
         "can_multiplex": true,
         "is_paired_end": true
      }
