@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from datetime import datetime
 import os
 import unittest
 
@@ -6,7 +7,7 @@ import RDF
 
 import encode_find
 from htsworkflow.submission.ucsc import submission_view_url
-from htsworkflow.util.rdfhelp import dump_model, get_model
+from htsworkflow.util.rdfhelp import dump_model, get_model, fromTypedNode
 
 SOURCE_PATH = os.path.split(os.path.abspath(__file__))[0]
 print SOURCE_PATH
@@ -40,7 +41,9 @@ class TestEncodeFind(unittest.TestCase):
         encode_find.parse_submission_page(model, tree, subNode)
         dates = encode_find.get_creation_dates(model, subNode)
         self.assertEqual(len(dates), 1)
-        self.assertEqual(str(dates[0].object), '2011-12-07T15:23:00')
+        object_date = fromTypedNode(dates[0].object)
+        self.assertEqual(object_date, datetime(2011,12,7,15,23,0))
+
 
 def suite():
     return unittest.makeSuite(TestEncodeFind, "test")

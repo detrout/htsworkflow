@@ -1,5 +1,6 @@
 """Helper features for working with librdf
 """
+from datetime import datetime
 import logging
 import os
 import types
@@ -21,6 +22,9 @@ dafTermOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/UcscDaf#")
 libraryOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
 inventoryOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/InventoryOntology#")
 submissionLog = RDF.NS("http://jumpgate.caltech.edu/wiki/SubmissionsLog/")
+
+ISOFORMAT_MS = "%Y-%m-%dT%H:%M:%S.%f"
+ISOFORMAT_SHORT = "%Y-%m-%dT%H:%M:%S"
 
 def sparql_query(model, query_filename):
     """Execute sparql query from file
@@ -61,6 +65,12 @@ def toTypedNode(value):
     elif type(value) == types.FloatType:
         value_type = xsdNS['float'].uri
         value = unicode(value)
+    elif isinstance(value, datetime):
+        value_type = xsdNS['dateTime'].uri
+        if value.microsecond == 0:
+            value = value.strftime(ISOFORMAT_SHORT)
+        else:
+            value = value.strftime(ISOFORMAT_MS)
     else:
         value_type = None
         value = unicode(value)
@@ -95,8 +105,10 @@ def fromTypedNode(node):
     elif value_type in ('string'):
         return literal
     elif value_type in ('dateTime'):
-        raise NotImplemented('need to parse isoformat date-time')
-
+        try:
+            return datetime.strptime(literal, ISOFORMAT_MS)
+        except ValueError, e:
+            return datetime.strptime(literal, ISOFORMAT_SHORT)
     return literal
 
 
