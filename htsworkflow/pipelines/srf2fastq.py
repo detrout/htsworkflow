@@ -103,7 +103,6 @@ def srf_open(filename, srf2fastq_cmd, cnf1=False):
 
 
 def convert_single_to_fastq(instream, target1, header=''):
-
     state = FASTQ_HEADER
     for line in instream:
         line = line.strip()
