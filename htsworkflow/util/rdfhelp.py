@@ -33,7 +33,7 @@ def sparql_query(model, query_filename):
         output = []
         for k,v in row.items()[::-1]:
             print "{0}: {1}".format(k,v)
-        print 
+        print
 
 
 def blankOrUri(value=None):
@@ -99,11 +99,11 @@ def fromTypedNode(node):
 
     return literal
 
-    
+
 def get_model(model_name=None, directory=None):
     if directory is None:
         directory = os.getcwd()
-        
+
     if model_name is None:
         storage = RDF.MemoryStorage()
         logger.info("Using RDF Memory model")
@@ -114,12 +114,12 @@ def get_model(model_name=None, directory=None):
         logger.info("Using {0} with options {1}".format(model_name, options))
     model = RDF.Model(storage)
     return model
-        
+
 
 def load_into_model(model, parser_name, filename, ns=None):
     if not os.path.exists(filename):
         raise IOError("Can't find {0}".format(filename))
-    
+
     data = open(filename, 'r').read()
     load_string_into_model(model, parser_name, data, ns)
 
@@ -127,7 +127,7 @@ def load_into_model(model, parser_name, filename, ns=None):
 def load_string_into_model(model, parser_name, data, ns=None):
     if ns is None:
         ns = "http://localhost/"
-        
+
     rdf_parser = RDF.Parser(name=parser_name)
     rdf_parser.parse_string_into_model(model, data, ns)
 
@@ -148,3 +148,6 @@ def get_serializer(name='turtle'):
     writer.set_namespace('ucscDaf', dafTermOntology._prefix)
     return writer
 
+def dump_model(model):
+    serializer = get_serializer()
+    print serializer.serialize_model_to_string(model)
