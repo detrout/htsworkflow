@@ -20,7 +20,7 @@ import sys
 import urllib
 import urlparse
 
-from htsworkflow.submission import daf
+from htsworkflow.submission import daf, ucsc
 
 from htsworkflow.util import api
 from htsworkflow.util.rdfhelp import \
@@ -36,6 +36,7 @@ from htsworkflow.util.rdfhelp import \
      rdfsNS, \
      xsdNS
 TYPE_N = rdfNS['type']
+CREATION_DATE = libraryOntology['date']
 
 # URL mappings
 LIBRARY_NS = RDF.NS("http://jumpgate.caltech.edu/library/")
@@ -43,11 +44,11 @@ LIBRARY_NS = RDF.NS("http://jumpgate.caltech.edu/library/")
 from htsworkflow.submission.ucsc import \
      daf_download_url, \
      ddf_download_url, \
+     get_ucsc_file_index, \
      submission_view_url, \
      UCSCEncodePipeline
 
-DOWNLOAD_DDF = UCSCEncodePipeline + "download_ddf#"
-DDF_NS = RDF.NS(DOWNLOAD_DDF)
+DCC_NS = RDF.NS(UCSCEncodePipeline + 'download_ddf#')
 
 DBDIR = os.path.expanduser("~diane/proj/submission")
 
@@ -59,7 +60,8 @@ USER_URL = 'http://encodesubmit.ucsc.edu/pipeline/show_user'
 USERNAME = 'detrout'
 CHARSET = 'utf-8'
 
-
+GOLDEN_PATH_TEST = "http://hgdownload-test.cse.ucsc.edu/goldenPath/"\
+                   "{genome}/encodeDCC/{composite}/"
 def main(cmdline=None):
     """
     Parse command line arguments
@@ -94,6 +96,15 @@ def main(cmdline=None):
         cookie = login(cookie=cookie)
         load_my_submissions(model, limit=limit, cookie=cookie)
         load_encode_libraries(model, htswapi)
+        our_tracks = [
+            {'genome':'hg19', 'composite':'wgEncodeCaltechRnaSeq'},
+            {'genome':'mm9',  'composite':'wgEncodeCaltechHist'},
+            {'genome':'mm9',  'composite':'wgEncodeCaltechHistone'},
+            {'genome':'mm9',  'composite':'wgEncodeCaltechTfbs'}
+        ]
+        for track_info in our_tracks:
+            load_encodedcc_files(model, GOLDEN_PATH_TEST.format(**track_info))
+
 
     if opts.sparql is not None:
         sparql_query(model, opts.sparql)
@@ -171,7 +182,14 @@ def load_my_submissions(model, limit=None, cookie=None):
             if limit is None or submission_id in limit:
                 subUrn = RDF.Uri(submission_view_url(submission_id))
 
-                add_stmt(model, subUrn, TYPE_N, submissionOntology['Submission'])
+                add_stmt(model,
+                         subUrn,
+                         TYPE_N,
+                         submissionOntology['Submission'])
+                add_stmt(model,
+                         subUrn,
+                         DCC_NS['subId'],
+                         RDF.Node(submission_id))
 
                 name = str(cell[4].text_content())
                 add_stmt(model, subUrn, name_n, name)
@@ -201,8 +219,6 @@ def load_my_submissions(model, limit=None, cookie=None):
                                          cookie=cookie)
 
                 LOGGER.info("Processed {0}".format(subUrn))
-
-
 
 
 def add_submission_to_library_urn(model, submissionUrn, predicate, library_id):
@@ -244,27 +260,33 @@ WHERE {{
 
 def add_submission_creation_date(model, subUrn, cookie):
     # in theory the submission page might have more information on it.
-    creationDateN = libraryOntology['date']
-    dateTimeType = xsdNS['dateTime']
-    query = RDF.Statement(subUrn, creationDateN, None)
-    creation_dates = list(model.find_statements(query))
+    creation_dates = get_creation_dates(model, subUrn)
     if len(creation_dates) == 0:
         LOGGER.info("Getting creation date for: {0}".format(str(subUrn)))
-        tree = get_url_as_tree(str(subUrn), 'GET', cookie)
-        cells = tree.findall('.//td')
-        created_label = [x for x in cells
-                         if x.text_content().startswith('Created')]
-        if len(created_label) == 1:
-            created_date = get_date_contents(created_label[0].getnext())
-            created_date_node = RDF.Node(literal=created_date.isoformat(),
-                                         datatype=dateTimeType.uri)
-            add_stmt(model, subUrn, creationDateN, created_date_node)
-        else:
-            msg = 'Unable to find creation date for {0}'.format(str(subUrn))
-            LOGGER.warn(msg)
-            raise Warning(msg)
+        submissionTree = get_url_as_tree(str(subUrn), 'GET', cookie)
+        parse_submission_page(model, cells, subUrn)
     else:
         LOGGER.debug("Found creation date for: {0}".format(str(subUrn)))
+
+def get_creation_dates(model, subUrn):
+    query = RDF.Statement(subUrn, CREATION_DATE, None)
+    creation_dates = list(model.find_statements(query))
+    return creation_dates
+
+def parse_submission_page(model, submissionTree, subUrn):
+    cells = submissionTree.findall('.//td')
+    dateTimeType = xsdNS['dateTime']
+    created_label = [x for x in cells
+                     if x.text_content().startswith('Created')]
+    if len(created_label) == 1:
+        created_date = get_date_contents(created_label[0].getnext())
+        created_date_node = RDF.Node(literal=created_date.isoformat(),
+                                     datatype=dateTimeType.uri)
+        add_stmt(model, subUrn, CREATION_DATE, created_date_node)
+    else:
+        msg = 'Unable to find creation date for {0}'.format(str(subUrn))
+        LOGGER.warn(msg)
+        raise Warning(msg)
 
 
 def update_submission_detail(model, subUrn, status, recent_update, cookie):
@@ -322,7 +344,7 @@ def update_ddf(model, subUrn, statusNode, cookie):
     download_ddf_url = str(subUrn).replace('show', 'download_ddf')
     ddfUrn = RDF.Uri(download_ddf_url)
 
-    status_is_ddf = RDF.Statement(statusNode, TYPE_N, DDF_NS[''])
+    status_is_ddf = RDF.Statement(statusNode, TYPE_N, DCC_NS[''])
     if not model.contains_statement(status_is_ddf):
         LOGGER.info('Adding ddf to {0}, {1}'.format(subUrn, statusNode))
         ddf_text = get_url_as_text(download_ddf_url, 'GET', cookie)
@@ -336,7 +358,7 @@ def add_ddf_statements(model, statusNode, ddf_string):
     ddf_lines = ddf_string.split('\n')
     # first line is header
     header = ddf_lines[0].split()
-    attributes = [DDF_NS[x] for x in header]
+    attributes = [DCC_NS[x] for x in header]
 
     for ddf_line in ddf_lines[1:]:
         ddf_line = ddf_line.strip()
@@ -355,8 +377,8 @@ def add_ddf_statements(model, statusNode, ddf_string):
                      statusNode,
                      submissionOntology['has_file'],
                      fileNode)
-            add_stmt(model, fileNode, rdfNS['type'], DDF_NS['file'])
-            add_stmt(model, fileNode, DDF_NS['filename'], f)
+            add_stmt(model, fileNode, rdfNS['type'], DCC_NS['file'])
+            add_stmt(model, fileNode, DCC_NS['filename'], f)
 
             for predicate, object in zip(attributes[1:], file_attributes):
                 add_stmt(model, fileNode, predicate, object)
@@ -381,6 +403,18 @@ def load_encode_libraries(model, htswapi):
             LOGGER.info("Scanning {0}".format(str(libraryUrn)))
             load_library_detail(model, libraryUrn)
 
+
+def load_encodedcc_files(model, base_url):
+    if base_url[-1] != '/':
+        base_url += '/'
+
+    file_index = ucsc.get_ucsc_file_index(base_url)
+    for filename, attributes in file_index.items():
+        s = RDF.Node(RDF.Uri(base_url + filename))
+        for name, value in attributes.items():
+            p = RDF.Node(DCC_NS[name])
+            o = RDF.Node(value)
+            model.add_statement(RDF.Statement(s,p,o))
 
 def load_library_detail(model, libraryUrn):
     """Grab detail information from library page
@@ -429,7 +463,9 @@ def get_contents(element):
 
 def create_status_node(submission_uri, timestamp):
     submission_uri = daf.submission_uri_to_string(submission_uri)
-    status_uri = urlparse.urljoin(submission_uri, timestamp)
+    if submission_uri[-1] != '/':
+        sumbission_uri += '/'
+    status_uri = submission_uri + timestamp
     return RDF.Node(RDF.Uri(status_uri))
 
 
