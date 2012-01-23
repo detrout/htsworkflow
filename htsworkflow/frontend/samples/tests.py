@@ -5,7 +5,7 @@ try:
     import json
 except ImportError, e:
     import simplejson as json
-    
+
 from django.test import TestCase
 
 from htsworkflow.frontend.samples.models import \
@@ -27,14 +27,14 @@ class LibraryTestCase(TestCase):
 
     def setUp(self):
         create_db(self)
-               
+
     def testOrganism(self):
         self.assertEquals(self.library_10001.organism(), 'human')
 
     def testAffiliations(self):
         self.library_10001.affiliations.add(self.affiliation_alice)
         self.library_10002.affiliations.add(
-                self.affiliation_alice, 
+                self.affiliation_alice,
                 self.affiliation_bob
         )
         self.failUnless(len(self.library_10001.affiliations.all()), 1)
@@ -104,14 +104,20 @@ class SampleWebTestCase(TestCase):
                     self.failUnlessEqual(len(d['lane_set']), 1)
                     self.failUnlessEqual(d['lane_set'][0], lane_set)
 
-    def test_invalid_library(self):
+
+    def test_invalid_library_json(self):
         """
         Make sure we get a 404 if we request an invalid library id
         """
         response = self.client.get('/samples/library/nottheone/json', apidata)
         self.failUnlessEqual(response.status_code, 404)
 
-            
+
+    def test_invalid_library(self):
+        response = self.client.get('/library/nottheone/')
+        self.failUnlessEqual(response.status_code, 404)
+
+
     def test_library_no_key(self):
         """
         Make sure we get a 302 if we're not logged in
@@ -121,6 +127,7 @@ class SampleWebTestCase(TestCase):
         response = self.client.get('/samples/library/10981/json', apidata)
         self.failUnlessEqual(response.status_code, 200)
 
+
 # The django test runner flushes the database between test suites not cases,
 # so to be more compatible with running via nose we flush the database tables
 # of interest before creating our sample data.
@@ -129,7 +136,7 @@ def create_db(obj):
     obj.experiment_rna_seq = ExperimentType.objects.get(pk=4)
     obj.affiliation_alice = Affiliation.objects.get(pk=1)
     obj.affiliation_bob = Affiliation.objects.get(pk=2)
-    
+
     Library.objects.all().delete()
     obj.library_10001 = Library(
         id = "10001",
@@ -157,7 +164,7 @@ def create_db(obj):
         hidden = False,
     )
     obj.library_10002.save()
- 
+
 try:
     import RDF
     HAVE_RDF = True
@@ -168,7 +175,7 @@ try:
 except ImportError,e:
     HAVE_RDF = False
 
-    
+
 class TestRDFaLibrary(TestCase):
     fixtures = ['test_samples.json']
 
@@ -178,7 +185,7 @@ class TestRDFaLibrary(TestCase):
         url = '/library/10981/'
         lib_response = self.client.get(url)
         self.failIfEqual(len(lib_response.content), 0)
-        
+
         parser.parse_string_into_model(model,
                                        lib_response.content,
                                        'http://localhost'+url)
@@ -197,7 +204,7 @@ class TestRDFaLibrary(TestCase):
         self.check_literal_object(model,
                                   [u"303TUAAXX"],
                                   s=RDF.Uri('http://localhost/flowcell/303TUAAXX/'))
-                                  
+
     def check_literal_object(self, model, values, s=None, p=None, o=None):
         statements = list(model.find_statements(
             RDF.Statement(s,p,o)))

@@ -116,11 +116,10 @@ def library_to_flowcells(request, lib_id):
     """
     Display information about all the flowcells a library has been run on.
     """
-
     try:
-      lib = Library.objects.get(id=lib_id)
+        lib = Library.objects.get(id=lib_id)
     except:
-      return HttpResponse("Library %s does not exist" % (lib_id))
+        raise Http404('Library %s does not exist' % (lib_id,))
 
     flowcell_list = []
     flowcell_run_results = {} # aka flowcells we're looking at
