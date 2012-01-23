@@ -16,8 +16,8 @@ class TestUCSCInfo(unittest.TestCase):
         self.assertEquals(len(file_index), 2)
 
         for attributes in file_index.values():
-            self.assertIn('subId', attributes)
-            self.assertIn('project', attributes)
+            self.failUnless('subId' in attributes)
+            self.failUnless('project' in attributes)
             self.assertEquals(attributes['project'], 'wgEncode')
 
 def suite():
