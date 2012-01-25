@@ -61,7 +61,7 @@
 
 # woldlab jun 18 1x75-Directional-H1-hESC-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/1633>
-    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/10947> .
+    ucscSubmission:library_urn <http://jumpgate.caltech.edu/library/10947/> .
 
 # woldlab jun 18 1x75-Directional-HeLa-Rep1
 <http://encodesubmit.ucsc.edu/pipeline/show/1634>
