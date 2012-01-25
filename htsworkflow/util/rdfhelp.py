@@ -33,6 +33,9 @@ def sparql_query(model, query_filename):
     query_body = open(query_filename,'r').read()
     query = RDF.SPARQLQuery(query_body)
     results = query.execute(model)
+    display_query_results(results)
+
+def display_query_results(results):
     for row in results:
         output = []
         for k,v in row.items()[::-1]:
