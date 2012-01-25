@@ -44,7 +44,7 @@ LIBRARY_NS = RDF.NS("http://jumpgate.caltech.edu/library/")
 from htsworkflow.submission.ucsc import \
      daf_download_url, \
      ddf_download_url, \
-     get_ucsc_file_index, \
+     get_encodedcc_file_index, \
      submission_view_url, \
      UCSCEncodePipeline
 
@@ -60,8 +60,10 @@ USER_URL = 'http://encodesubmit.ucsc.edu/pipeline/show_user'
 USERNAME = 'detrout'
 CHARSET = 'utf-8'
 
-GOLDEN_PATH_TEST = "http://hgdownload-test.cse.ucsc.edu/goldenPath/"\
-                   "{genome}/encodeDCC/{composite}/"
+SL_MAP = {'SL2970': '02970',
+          'SL2971': '02971',
+          'SL2973': '02973',}
+
 def main(cmdline=None):
     """
     Parse command line arguments
@@ -76,12 +78,14 @@ def main(cmdline=None):
         logging.basicConfig(level=logging.DEBUG)
     elif opts.verbose:
         logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.ERROR)
 
     htsw_authdata = api.make_auth_from_opts(opts, parser)
     htswapi = api.HtswApi(opts.host, htsw_authdata)
 
     cookie = None
-    model = get_model(opts.load_model, DBDIR)
+    model = get_model(opts.model, DBDIR)
 
     if opts.load_rdf is not None:
         ns_uri = submissionOntology[''].uri
@@ -93,24 +97,33 @@ def main(cmdline=None):
         limit = args
 
     if opts.update:
+        opts.update_submission = True
+        opts.update_libraries = True
+        opts.update_ucsc_downloads = True
+
+    if opts.update_submission:
         cookie = login(cookie=cookie)
         load_my_submissions(model, limit=limit, cookie=cookie)
-        load_encode_libraries(model, htswapi)
+
+    if opts.update_libraries:
+        load_encode_assigned_libraries(model, htswapi)
+        load_unassigned_submitted_libraries(model)
+
+    if opts.update_ucsc_downloads:
         our_tracks = [
             {'genome':'hg19', 'composite':'wgEncodeCaltechRnaSeq'},
             {'genome':'mm9',  'composite':'wgEncodeCaltechHist'},
-            {'genome':'mm9',  'composite':'wgEncodeCaltechHistone'},
+            #{'genome':'mm9',  'composite':'wgEncodeCaltechHistone'},
             {'genome':'mm9',  'composite':'wgEncodeCaltechTfbs'}
         ]
         for track_info in our_tracks:
-            load_encodedcc_files(model, GOLDEN_PATH_TEST.format(**track_info))
-
+            load_encodedcc_files(model, **track_info )
 
     if opts.sparql is not None:
         sparql_query(model, opts.sparql)
 
     if opts.find_submission_with_no_library:
-        find_submissions_with_no_library(model)
+        report_submissions_with_no_library(model)
 
     if opts.print_rdf:
         serializer = get_serializer(name=opts.rdf_parser_name)
@@ -122,21 +135,23 @@ def make_parser():
     """
     parser = OptionParser()
     commands = OptionGroup(parser, "Commands")
-    commands.add_option('--load-model', default=None,
+    commands.add_option('--model', default=None,
       help="Load model database")
     commands.add_option('--load-rdf', default=None,
       help="load rdf statements into model")
     commands.add_option('--print-rdf', action="store_true", default=False,
       help="print ending model state")
     commands.add_option('--update', action="store_true", default=False,
-      help="Query remote data sources and update our database")
-    #commands.add_option('--update-ucsc-status', default=None,
-    #  help="download status from ucsc, requires filename for extra rules")
-    #commands.add_option('--update-ddfs', action="store_true", default=False,
-    #  help="download ddf information for known submission")
-    #commands.add_option('--update-library', default=None,
-    #  help="download library info from htsw, "\
-    #       "requires filename for extra rules")
+      help="Do all updates")
+    commands.add_option('--update-submission', action="store_true",
+                        default=False,
+      help="download status from ucsc")
+    commands.add_option('--update-ucsc-downloads', action="store_true",
+                        default=False,
+      help="Update download locations from UCSC")
+    commands.add_option('--update-libraries', action="store_true",
+                        default=False,
+      help="download library info from htsw")
     parser.add_option_group(commands)
 
     queries = OptionGroup(parser, "Queries")
@@ -234,6 +249,17 @@ def add_submission_to_library_urn(model, submissionUrn, predicate, library_id):
         LOGGER.debug("Found: {0}".format(str(query)))
 
 
+def report_submissions_with_no_library(model):
+    missing = find_submissions_with_no_library(model)
+    for row in results:
+        subid = row['subid']
+        name = row['name']
+        print "# {0}".format(name)
+        print "<{0}>".format(subid.uri)
+        print "  encodeSubmit:library_urn "\
+              "<http://jumpgate.caltech.edu/library/> ."
+        print ""
+
 def find_submissions_with_no_library(model):
     missing_lib_query_text = """
 PREFIX submissionOntology:<{submissionOntology}>
@@ -247,15 +273,24 @@ WHERE {{
 }}""".format(submissionOntology=submissionOntology[''].uri)
     missing_lib_query = RDF.SPARQLQuery(missing_lib_query_text)
 
-    results = missing_lib_query.execute(model)
-    for row in results:
-        subid = row['subid']
-        name = row['name']
-        print "# {0}".format(name)
-        print "<{0}>".format(subid.uri)
-        print "  encodeSubmit:library_urn "\
-              "<http://jumpgate.caltech.edu/library/> ."
-        print ""
+    return missing_lib_query.execute(model)
+
+
+def find_unscanned_submitted_libraries(model):
+    """Scan model for libraries that don't have library details loaded
+    """
+    unscanned_libraries = """
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX submissionOntology:<{submissionOntology}>
+
+SELECT distinct ?submission ?library_urn
+WHERE {{
+  ?submission submissionOntology:library_urn ?library_urn .
+  OPTIONAL {{ ?library_urn rdf:type ?library_type  }}
+  FILTER(!BOUND(?library_type))
+}}""".format(submissionOntology=submissionOntology[''].uri)
+    query = RDF.SPARQLQuery(unscanned_libraries)
+    return query.execute(model)
 
 
 def add_submission_creation_date(model, subUrn, cookie):
@@ -264,14 +299,16 @@ def add_submission_creation_date(model, subUrn, cookie):
     if len(creation_dates) == 0:
         LOGGER.info("Getting creation date for: {0}".format(str(subUrn)))
         submissionTree = get_url_as_tree(str(subUrn), 'GET', cookie)
-        parse_submission_page(model, cells, subUrn)
+        parse_submission_page(model, submissionTree, subUrn)
     else:
         LOGGER.debug("Found creation date for: {0}".format(str(subUrn)))
+
 
 def get_creation_dates(model, subUrn):
     query = RDF.Statement(subUrn, CREATION_DATE, None)
     creation_dates = list(model.find_statements(query))
     return creation_dates
+
 
 def parse_submission_page(model, submissionTree, subUrn):
     cells = submissionTree.findall('.//td')
@@ -384,7 +421,7 @@ def add_ddf_statements(model, statusNode, ddf_string):
                 add_stmt(model, fileNode, predicate, object)
 
 
-def load_encode_libraries(model, htswapi):
+def load_encode_assigned_libraries(model, htswapi):
     """Get libraries associated with encode.
     """
     encodeFilters = ["/library/?affiliations__id__exact=44",
@@ -400,21 +437,29 @@ def load_encode_libraries(model, htswapi):
         libraries = model.find_statements(query)
         for statement in libraries:
             libraryUrn = statement.subject
-            LOGGER.info("Scanning {0}".format(str(libraryUrn)))
             load_library_detail(model, libraryUrn)
 
 
-def load_encodedcc_files(model, base_url):
-    if base_url[-1] != '/':
-        base_url += '/'
+def load_unassigned_submitted_libraries(model):
+    unassigned = find_unscanned_submitted_libraries(model)
+    for query_record in unassigned:
+        library_urn = query_record['library_urn']
+        LOGGER.warn("Unassigned, submitted library: {0}".format(library_urn))
+        load_library_detail(model, library_urn)
 
-    file_index = ucsc.get_ucsc_file_index(base_url)
+
+def load_encodedcc_files(model, genome, composite):
+    file_index = ucsc.get_encodedcc_file_index(genome, composite)
+    if file_index is None:
+        return
+
     for filename, attributes in file_index.items():
-        s = RDF.Node(RDF.Uri(base_url + filename))
+        s = RDF.Node(RDF.Uri(filename))
         for name, value in attributes.items():
             p = RDF.Node(DCC_NS[name])
             o = RDF.Node(value)
             model.add_statement(RDF.Statement(s,p,o))
+
 
 def load_library_detail(model, libraryUrn):
     """Grab detail information from library page
@@ -426,7 +471,11 @@ def load_library_detail(model, libraryUrn):
     LOGGER.debug(log_message.format(len(results), libraryUrn))
     if len(results) == 0:
         LOGGER.info("Loading {0}".format(str(libraryUrn)))
-        rdfaParser.parse_into_model(model, libraryUrn.uri)
+        try:
+            body = get_url_as_text(str(libraryUrn.uri), 'GET')
+            rdfaParser.parse_string_into_model(model, body, libraryUrn.uri)
+        except httplib2.HttpLib2ErrorWithResponse, e:
+            LOGGER.error(str(e))
     elif len(results) == 1:
         pass  # Assuming that a loaded dataset has one record
     else:
@@ -440,11 +489,15 @@ def get_library_id(name):
     '11039'
     >>> get_library_id('10150 C2C12-24h-myogenin-2PCR-Rep1.32mers')
     '10150'
+    >>> get_library_id('2x75-GM12892-rep2-SL2970')
+    '02970'
     """
     match = re.search(r"([ -]|^)(?P<id>([\d]{5})|(SL[\d]{4}))", name)
     library_id = None
     if match is not None:
         library_id = match.group('id')
+    if library_id in SL_MAP:
+        library_id = SL_MAP[library_id]
     return library_id
 
 
@@ -522,6 +575,7 @@ def get_url_as_tree(url, method, cookie=None):
         msg = "error accessing {0}, status {1}"
         msg = msg.format(url, response['status'])
         e = httplib2.HttpLib2ErrorWithResponse(msg, response, content)
+        raise e
 
 
 def get_url_as_text(url, method, cookie=None):
@@ -536,6 +590,7 @@ def get_url_as_text(url, method, cookie=None):
         msg = "error accessing {0}, status {1}"
         msg = msg.format(url, response['status'])
         e = httplib2.HttpLib2ErrorWithResponse(msg, response, content)
+        raise e
 
 ################
 #  old stuff

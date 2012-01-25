@@ -1,9 +1,17 @@
 """Utilities for extracting information from the ENCODE DCC
 """
+import logging
 import urlparse
 import urllib2
 
+LOGGER = logging.getLogger(__name__)
+
 UCSCEncodePipeline = "http://encodesubmit.ucsc.edu/pipeline/"
+
+GOLDEN_PATHS = ["http://hgdownload-test.cse.ucsc.edu/goldenPath/"\
+                "{genome}/encodeDCC/{composite}/",
+                "http://hgdownload.cse.ucsc.edu/goldenPath/"\
+                "{genome}/encodeDCC/{composite}/"]
 
 
 def ddf_download_url(submission_id):
@@ -36,21 +44,41 @@ def submission_view_url(submission_id):
     return urlparse.urljoin(UCSCEncodePipeline, fragment)
 
 
-def get_ucsc_file_index(base_url):
+def get_encodedcc_file_index(genome, composite):
     """Get index of files for a ENCODE collection
+
+    returns None on error
     """
-    if base_url[-1] != '/': base_url += '/'
-    request = urllib2.urlopen(base_url + 'files.txt')
-    file_index = parse_ucsc_file_index(request)
-    return file_index
+    err = None
+    params = {'genome': genome,
+              'composite': composite}
+
+    for path in GOLDEN_PATHS:
+        base_url = path.format(**params)
+        request_url = base_url + 'files.txt'
+
+        try:
+            request = urllib2.urlopen(request_url)
+            file_index = parse_ucsc_file_index(request, base_url)
+            return file_index
+        except urllib2.HTTPError, e:
+            err = e
+            pass
+
+    if err is not None:
+        errmsg = "get_ucsc_file_index <{0}>: {1}"
+        LOGGER.error(errmsg.format(request_url, str(e)))
+
+    return None
 
 
-def parse_ucsc_file_index(stream):
+def parse_ucsc_file_index(stream, base_url):
     """Turn a UCSC DCC files.txt index into a dictionary of name-value pairs
     """
     file_index = {}
     for line in stream:
         filename, attribute_line = line.split('\t')
+        filename = base_url + filename
         attributes = {}
         for assignment in  attribute_line.split(';'):
             name, value = assignment.split('=')
