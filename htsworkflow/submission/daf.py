@@ -2,6 +2,7 @@
 """
 import logging
 import os
+from pprint import pformat
 import re
 import string
 from StringIO import StringIO
@@ -12,6 +13,7 @@ import RDF
 from htsworkflow.util.rdfhelp import \
      blankOrUri, \
      dafTermOntology, \
+     dump_model, \
      get_model, \
      libraryOntology, \
      owlNS, \
@@ -128,6 +130,7 @@ def parse_stream(stream):
     if view_name is not None:
         attributes['views'][view_name] = view_attributes
 
+    logger.debug("DAF Attributes" + pformat(attributes))
     return attributes
 
 
@@ -558,3 +561,33 @@ class DAFMapper(object):
                 return True
 
         return False
+
+if __name__ == "__main__":
+    example_daf = """# Lab and general info
+grant             Hardison
+lab               Caltech-m
+dataType          ChipSeq
+variables         cell, antibody,sex,age,strain,control
+compositeSuffix   CaltechHistone
+assembly          mm9
+dafVersion        2.0
+validationSettings validateFiles.bam:mismatches=2,bamPercent=99.9;validateFiles.fastq:quick=1000
+
+# Track/view definition
+view             FastqRd1
+longLabelPrefix  Caltech Fastq Read 1
+type             fastq
+hasReplicates    yes
+required         no
+
+view             Signal
+longLabelPrefix  Caltech Histone Signal
+type             bigWig
+hasReplicates    yes
+required         no
+"""
+    model = get_model()
+    example_daf_stream = StringIO(example_daf)
+    name = "test_rep"
+    mapper = DAFMapper(name, daf_file = example_daf_stream, model=model)
+    dump_model(model)
