@@ -120,7 +120,7 @@ _:bnode110110
     libns:has_lane <http://jumpgate.caltech.edu/lane/1903> ;
     libns:library_id "12097"@en ;
     libns:library_type "Paired End (non-multiplexed)"@en ;
-    a "libns:library"@en ;
+    a "libns:library"@en .
 
 _:bnode120970
     libns:mapped_to "newcontam_UK.fa"@en ;
