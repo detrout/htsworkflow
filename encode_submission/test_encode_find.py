@@ -44,6 +44,101 @@ class TestEncodeFind(unittest.TestCase):
         object_date = fromTypedNode(dates[0].object)
         self.assertEqual(object_date, datetime(2011,12,7,15,23,0))
 
+    def test_delete_simple_lane(self):
+        model = get_model()
+        parser = RDF.Parser(name='turtle')
+        parser.parse_string_into_model(model, '''@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://www.w3.org/1999/xhtml> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#> .
+
+<http://jumpgate.caltech.edu/lane/1232>
+    libns:flowcell <http://jumpgate.caltech.edu/flowcell/42JV5AAXX/> ;
+    libns:total_unique_locations 5789938 .
+
+''', 'http://jumpgate.caltech.edu/library/')
+        urn = RDF.Node(RDF.Uri('http://jumpgate.caltech.edu/lane/1232'))
+        encode_find.delete_lane(model, urn)
+        self.failUnlessEqual(len(model), 0)
+
+    def test_delete_lane_with_mapping(self):
+        model = get_model()
+        parser = RDF.Parser(name='turtle')
+        parser.parse_string_into_model(model, '''@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://www.w3.org/1999/xhtml> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#> .
+
+<http://jumpgate.caltech.edu/lane/1232>
+    libns:flowcell <http://jumpgate.caltech.edu/flowcell/42JV5AAXX/> ;
+    libns:has_mappings _:bnode110110 ;
+    libns:total_unique_locations 5789938 .
+
+_:bnode110110
+    libns:mapped_to "newcontam_UK.fa"@en ;
+    libns:reads 42473 .
+''', 'http://jumpgate.caltech.edu/library/')
+        self.failUnlessEqual(len(model), 5)
+        urn = RDF.Node(RDF.Uri('http://jumpgate.caltech.edu/lane/1232'))
+        encode_find.delete_lane(model, urn)
+        self.failUnlessEqual(len(model), 0)
+
+    def test_delete_library(self):
+        model = get_model()
+        parser = RDF.Parser(name='turtle')
+        parser.parse_string_into_model(model, '''@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://www.w3.org/1999/xhtml> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#> .
+
+<http://jumpgate.caltech.edu/lane/1232>
+    libns:flowcell <http://jumpgate.caltech.edu/flowcell/42JV5AAXX/> ;
+    libns:has_mappings _:bnode110110 ;
+    libns:total_unique_locations 5789938 .
+
+<http://jumpgate.caltech.edu/library/11011/>
+    libns:affiliation "ENCODE"@en, "ENCODE_Tier1"@en, "Georgi Marinov"@en ;
+    libns:has_lane <http://jumpgate.caltech.edu/lane/1232> ;
+    libns:library_id "11011"@en ;
+    libns:library_type "None"@en ;
+    a "libns:library"@en ;
+    <http://www.w3.org/1999/xhtml/vocab#stylesheet> <http://jumpgate.caltech.edu/static/css/app.css>, <http://jumpgate.caltech.edu/static/css/data-browse-index.css> .
+
+_:bnode110110
+    libns:mapped_to "newcontam_UK.fa"@en ;
+    libns:reads 42473 .
+
+<http://jumpgate.caltech.edu/lane/1903>
+    libns:flowcell <http://jumpgate.caltech.edu/flowcell/62WCKAAXX/> ;
+    libns:has_mappings _:bnode120970 ;
+    libns:total_unique_locations 39172114 .
+
+<http://jumpgate.caltech.edu/library/12097/>
+    libns:has_lane <http://jumpgate.caltech.edu/lane/1903> ;
+    libns:library_id "12097"@en ;
+    libns:library_type "Paired End (non-multiplexed)"@en ;
+    a "libns:library"@en ;
+
+_:bnode120970
+    libns:mapped_to "newcontam_UK.fa"@en ;
+    libns:reads 64 .
+''', 'http://jumpgate.caltech.edu/library')
+        urn = RDF.Node(RDF.Uri('http://jumpgate.caltech.edu/library/11011/'))
+        encode_find.delete_library(model, urn)
+        q = RDF.Statement(None, encode_find.libraryOntology['reads'], None)
+        stmts = list(model.find_statements(q))
+        self.failUnlessEqual(len(stmts), 1)
+        self.failUnlessEqual(fromTypedNode(stmts[0].object),
+                             64)
+
+        q = RDF.Statement(None, encode_find.libraryOntology['library_id'], None)
+        stmts = list(model.find_statements(q))
+        self.failUnlessEqual(len(stmts), 1)
+        self.failUnlessEqual(fromTypedNode(stmts[0].object),
+                             '12097')
 
 def suite():
     return unittest.makeSuite(TestEncodeFind, "test")

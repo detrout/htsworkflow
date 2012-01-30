@@ -96,6 +96,10 @@ def main(cmdline=None):
     else:
         limit = args
 
+    if opts.reload_libraries:
+        reload_libraries(model, args)
+        return
+
     if opts.update:
         opts.update_submission = True
         opts.update_libraries = True
@@ -152,6 +156,10 @@ def make_parser():
     commands.add_option('--update-libraries', action="store_true",
                         default=False,
       help="download library info from htsw")
+    commands.add_option('--reload-libraries', action="store_true",
+                        default=False,
+                        help="Delete and redownload library information. "\
+                             "Optionally list specific library IDs.")
     parser.add_option_group(commands)
 
     queries = OptionGroup(parser, "Queries")
@@ -290,6 +298,21 @@ WHERE {{
   FILTER(!BOUND(?library_type))
 }}""".format(submissionOntology=submissionOntology[''].uri)
     query = RDF.SPARQLQuery(unscanned_libraries)
+    return query.execute(model)
+
+def find_all_libraries(model):
+    """Scan model for every library marked as
+    """
+    libraries = """
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX libraryOntology:<{libraryOntology}>
+
+SELECT distinct ?library_urn
+WHERE {{
+  ?library_urn rdf:type ?library_type .
+  FILTER(regex(?libray
+}}""".format(libraryOntology=libraryOntology[''].uri)
+    query = RDF.SPARQLQuery(libraries)
     return query.execute(model)
 
 
@@ -446,6 +469,65 @@ def load_unassigned_submitted_libraries(model):
         library_urn = query_record['library_urn']
         LOGGER.warn("Unassigned, submitted library: {0}".format(library_urn))
         load_library_detail(model, library_urn)
+
+def reload_libraries(model, library_list):
+    if len(library_list) == 0:
+        # reload everything.
+        queryset = find_all_libraries(model)
+        libraries = ( str(s['library_urn']) for s in queryset )
+    else:
+        libraries = ( user_library_id_to_library_urn(l) for l in library_list )
+
+    for library_urn in libraries:
+        delete_library(model, library_urn)
+        load_library_detail(model, library_urn)
+
+def user_library_id_to_library_urn(library_id):
+    split_url = urlparse.urlsplit(library_id)
+    if len(split_url.scheme) == 0:
+        return LIBRARY_NS[library_id]
+    else:
+        return library_id
+
+def delete_library(model, library_urn):
+    if not isinstance(library_urn, RDF.Node):
+        raise ValueError("library urn must be a RDF.Node")
+
+    LOGGER.info("Deleting {0}".format(str(library_urn.uri)))
+    lane_query = RDF.Statement(library_urn, libraryOntology['has_lane'],None)
+    for lane in model.find_statements(lane_query):
+        delete_lane(model, lane.object)
+    library_attrib_query = RDF.Statement(library_urn, None, None)
+    for library_attrib in model.find_statements(library_attrib_query):
+        LOGGER.debug("Deleting {0}".format(str(library_attrib)))
+        del model[library_attrib]
+
+
+def delete_lane(model, lane_urn):
+    if not isinstance(lane_urn, RDF.Node):
+        raise ValueError("lane urn must be a RDF.Node")
+
+    delete_lane_mapping(model, lane_urn)
+    lane_attrib_query = RDF.Statement(lane_urn,None,None)
+    for lane_attrib in model.find_statements(lane_attrib_query):
+        LOGGER.debug("Deleting {0}".format(str(lane_attrib)))
+        del model[lane_attrib]
+
+
+def delete_lane_mapping(model, lane_urn):
+    if not isinstance(lane_urn, RDF.Node):
+        raise ValueError("lane urn must be a RDF.Node")
+
+    lane_mapping_query = RDF.Statement(lane_urn,
+                                       libraryOntology['has_mappings'],
+                                       None)
+    for lane_mapping in model.find_statements(lane_mapping_query):
+        mapping_attrib_query = RDF.Statement(lane_mapping.object,
+                                             None,
+                                             None)
+        for mapping_attrib in model.find_statements(mapping_attrib_query):
+            LOGGER.debug("Deleting {0}".format(str(mapping_attrib)))
+            del model[mapping_attrib]
 
 
 def load_encodedcc_files(model, genome, composite):

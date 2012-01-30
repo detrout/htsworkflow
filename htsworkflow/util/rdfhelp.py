@@ -101,6 +101,8 @@ def fromTypedNode(node):
             return False
         else:
             raise ValueError("Unrecognized boolean %s" % (literal,))
+    elif value_type == 'integer':
+        return int(literal)
     elif value_type == 'decimal' and literal.find('.') == -1:
         return int(literal)
     elif value_type in ('decimal', 'float', 'double'):
