@@ -1,3 +1,4 @@
+import argparse
 import RDF
 import jinja2
 
@@ -18,9 +19,19 @@ CREATION_DATE = libraryOntology['date']
 
 from encode_find import DBDIR
 
-def main():
+def main(cmdline=None):
+    parser = make_parser()
+    args = parser.parse_args(cmdline)
     model = get_model('encode', DBDIR)
-    what_have_we_done(model)
+    report = what_have_we_done(model, genome=args.genome)
+    print report
+
+
+def make_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--genome', default=None,
+                        help='limit to one genome')
+    return parser
 
 SUBMISSION_QUERY = """
 PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>
@@ -30,19 +41,19 @@ PREFIX libraryOntology:<http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 PREFIX daf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
 PREFIX ddf: <http://encodesubmit.ucsc.edu/pipeline/download_ddf#>
 
-SELECT distinct ?library_urn ?library_name ?assembly ?submission ?submission_status ?date
-WHERE {
+SELECT distinct ?assembly ?experiment ?library_urn ?library_name ?submission ?submission_status ?date
+WHERE {{
   ?submission ucscSubmission:library_urn ?library_urn ;
               ucscSubmission:has_status ?status ;
               libraryOntology:date ?date .
   ?status daf:assembly ?assembly ;
           ucscSubmission:status ?submission_status .
-  OPTIONAL { ?library_urn libraryOntology:name ?library_name . }
+  OPTIONAL {{ ?library_urn libraryOntology:name ?library_name . }}
+  OPTIONAL {{ ?library_urn libraryOntology:experiment_type ?experiment . }}
   FILTER(!regex(?submission_status, "revoked", "i"))
-  FILTER(regex(?assembly, "mm9", "i"))
-  #FILTER(!BOUND(?library_name))
-}
-ORDER BY ?library_urn ?submission
+  {assembly_filter}
+}}
+ORDER BY ?assembly ?experiment ?library_urn ?submission
 """
 
 SUBMISSION_TEMPLATE = """
@@ -57,13 +68,19 @@ th,td { border-width: 1px 1px 0 0; border-style: solid; margin: 0;}
 <table>
 <thead>
   <tr>
-  <td>Library ID</td><td>Submission ID</td><td>Last Updated</td><td>Status</td>
+  <td>Assembly</td>
+  <td>Experiment</td>
+  <td>Library ID</td>
+  <td>Submission ID</td>
+  <td>Last Updated</td><td>Status</td>
   <td>Library Name</td>
   </tr>
 </thead>
 <tbody>
 {% for record in submissions %}
   <tr>
+    <td>{{record.assembly}}</td>
+    <td>{{record.experiment}}</td>
     <td><a href="{{record.library_urn}}">{{ record.library_urn | trim_rdf}}</a></td>
     <td><a href="{{record.submission}}">{{record.submission|trim_rdf}}</a></td>
     <td>{{ record.date|timestamp_to_date }}</td>
@@ -77,14 +94,21 @@ th,td { border-width: 1px 1px 0 0; border-style: solid; margin: 0;}
 </html>
 """
 
-def what_have_we_done(model):
-    compiled_query = RDF.SPARQLQuery(SUBMISSION_QUERY)
+def what_have_we_done(model, genome=None):
+    assembly_filter = ''
+    if genome is not None:
+        assembly_filter = 'FILTER(regex(?assembly, "{0}", "i"))'.format(genome)
+
+    query = SUBMISSION_QUERY.format(
+        assembly_filter=assembly_filter
+    )
+    compiled_query = RDF.SPARQLQuery(query)
     submissions = compiled_query.execute(model)
     environment = jinja2.Environment()
     environment.filters['trim_rdf'] = trim_rdf
     environment.filters['timestamp_to_date'] = timestamp_to_date
     template = environment.from_string(SUBMISSION_TEMPLATE)
-    print template.render(submissions = submissions)
+    return template.render(submissions = submissions)
 
 def trim_rdf(value):
     if value is None:
