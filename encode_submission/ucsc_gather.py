@@ -51,7 +51,7 @@ def main(cmdline=None):
 
     apidata = api.make_auth_from_opts(opts, parser)
 
-    model = get_model(opts.load_model)
+    model = get_model(opts.model, opts.db_path)
     if opts.name:
         mapper = DAFMapper(opts.name, opts.daf,  model)
         if opts.library_url is not None:
@@ -103,7 +103,9 @@ def make_parser():
 
     model = OptionGroup(parser, 'model')
     model.add_option('--name', help="Set submission name")
-    model.add_option('--load-model', default=None,
+    model.add_option('--db-path', default=None,
+                     help="set rdf database path")
+    model.add_option('--model', default=None,
       help="Load model database")
     model.add_option('--load-rdf', default=None,
       help="load rdf statements into model")
