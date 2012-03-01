@@ -582,7 +582,6 @@ class DemultiplexedPaths(object):
         self.sample_dir = os.path.join(self.project_dir, self.sample_dir)
         self.summary_dir = 'Summary_Stats_{0}'.format(self.flowcell_id)
         self.summary_dir = os.path.join(self.project_dir, self.summary_dir)
-        print "HI:", self.summary_dir
 
 
     def make_sample_dirs(self):
@@ -592,7 +591,6 @@ class DemultiplexedPaths(object):
             os.mkdir(self.sample_dir)
 
     def make_summary_dirs(self):
-        print "HI:", self.summary_dir
         if not os.path.isdir(self.summary_dir):
             os.mkdir(self.summary_dir)
 
@@ -600,6 +598,7 @@ class DemultiplexedPaths(object):
         filename = self.rootname + suffix
         pathname = os.path.join(self.sample_dir, filename)
         return pathname
+
     def dump(self):
         print ('index seq: {0}'.format(self.index_seq))
 
