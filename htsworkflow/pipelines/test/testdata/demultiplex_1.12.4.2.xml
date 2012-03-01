@@ -1,0 +1,71 @@
+<DemultiplexConfig>
+  <Software Version="CASAVA-1.8.1" CmdAndArgs="/mmjggl/nicodemus/data01/casava-v1.8.1/bin/configureBclToFastq.pl --input-dir Data/Intensities/BaseCalls/ --output-dir Unaligned --sample-sheet Data/Intensities/BaseCalls/SampleSheet.csv" Name="configureBclToFastq.pl">
+    <Software Version="1.12.4.2" Name="RTA">
+      <Software Version="1.12.4.2" Name="RTA">
+        <Software Version="1.4.8" Platform="HiSeq" Name="HiSeq Control Software" />
+      </Software>
+    </Software>
+  </Software>
+  <FlowcellInfo ID="D07K6ACXX" Operator="Lorian" Recipe="SR_indexing" Desc="">
+    <Lane Number="1">
+      <Sample ProjectId="12281" Control="N" Index="ACAGTG" SampleId="12281" Desc="Index #5 AWCon cell#3_N2" Ref="elegans190" />
+      <Sample ProjectId="12279" Control="N" Index="CGATGT" SampleId="12279" Desc="Index #2 AWCon cell#1_N2" Ref="elegans190" />
+      <Sample ProjectId="12280" Control="N" Index="TGACCA" SampleId="12280" Desc="Index #4 AWCon cell#2_N2" Ref="elegans190" />
+      <Sample ProjectId="Undetermined_indices" Control="N" Index="Undetermined" SampleId="lane1" Desc="Clusters with unmatched barcodes for lane 1" Ref="unknown" />
+    </Lane>
+    <Lane Number="2">
+      <Sample ProjectId="12345" Control="N" Index="ACAGTG" SampleId="12345" Desc="Index #5 3 AWC ablated CX3695" Ref="elegans190" />
+      <Sample ProjectId="12283" Control="N" Index="CAGATC" SampleId="12283" Desc="Index #7 AWCon cell#5_N2" Ref="elegans190" />
+      <Sample ProjectId="12282" Control="N" Index="GCCAAT" SampleId="12282" Desc="Index #6 AWCon cell#4_N2" Ref="elegans190" />
+      <Sample ProjectId="Undetermined_indices" Control="N" Index="Undetermined" SampleId="lane2" Desc="Clusters with unmatched barcodes for lane 2" Ref="unknown" />
+    </Lane>
+    <Lane Number="3">
+      <Sample ProjectId="12331" Control="N" Index="ACAGTG" SampleId="12331" Desc="Index #5 060111 FLDN2b(d8.5) H3K4me3 ChIP" Ref="mm9" />
+      <Sample ProjectId="12383" Control="N" Index="CGATGT" SampleId="12383" Desc="Index #2 jwp ix-65 ni 16h" Ref="hg18" />
+      <Sample ProjectId="12330" Control="N" Index="TGACCA" SampleId="12330" Desc="Index #4 060111 Bcl11bKO DL4 FLDN2a H3K4me3 ChIP" Ref="mm9" />
+      <Sample ProjectId="Undetermined_indices" Control="N" Index="Undetermined" SampleId="lane3" Desc="Clusters with unmatched barcodes for lane 3" Ref="unknown" />
+    </Lane>
+    <Lane Number="4">
+      <Sample ProjectId="12385" Control="N" Index="ACAGTG" SampleId="12385" Desc="Index #5 jwp ix-65 i 16h" Ref="hg18" />
+      <Sample ProjectId="12386" Control="N" Index="GCCAAT" SampleId="12386" Desc="Index #6 jwp ix-71 NI 16h" Ref="hg18" />
+      <Sample ProjectId="12384" Control="N" Index="TGACCA" SampleId="12384" Desc="index #4 jwp ix-65 RD 16h" Ref="hg18" />
+      <Sample ProjectId="Undetermined_indices" Control="N" Index="Undetermined" SampleId="lane4" Desc="Clusters with unmatched barcodes for lane 4" Ref="unknown" />
+    </Lane>
+    <Lane Number="5">
+      <Sample ProjectId="12387" Control="N" Index="CAGATC" SampleId="12387" Desc="Index #7 jwp ix-71 RD 16h" Ref="hg18" />
+      <Sample ProjectId="12388" Control="N" Index="CTTGTA" SampleId="12388" Desc="Index #12 jwp ix-71 i 16h" Ref="hg18" />
+      <Sample ProjectId="Undetermined_indices" Control="N" Index="Undetermined" SampleId="lane5" Desc="Clusters with unmatched barcodes for lane 5" Ref="unknown" />
+    </Lane>
+    <Lane Number="6">
+      <Sample ProjectId="12391" Control="N" Index="ACTTGA" SampleId="12391" Desc="Index #8 jwp ix-63 NI 4h" Ref="hg18" />
+      <Sample ProjectId="12392" Control="N" Index="GATCAG" SampleId="12392" Desc="Index #9 jwp ix-63 DHT 10uM PA 4h" Ref="hg18" />
+      <Sample ProjectId="12393" Control="N" Index="TAGCTT" SampleId="12393" Desc="Index #10 jwp ix-63 DHT 4h" Ref="hg18" />
+      <Sample ProjectId="Undetermined_indices" Control="N" Index="Undetermined" SampleId="lane6" Desc="Clusters with unmatched barcodes for lane 6" Ref="unknown" />
+    </Lane>
+    <Lane Number="7">
+      <Sample ProjectId="12348_Index5" Control="N" Index="ACAGTG" SampleId="12348" Desc="Indices #1-9 Small RNA OSS TJ-GFP and constr.E-H" Ref="dm3" />
+      <Sample ProjectId="12348_Index8" Control="N" Index="ACTTGA" SampleId="12348" Desc="Indices #1-9 Small RNA OSS TJ-GFP and constr.E-H" Ref="dm3" />
+      <Sample ProjectId="12348_Index1" Control="N" Index="ATCACG" SampleId="12348" Desc="Indices #1-9 Small RNA OSS TJ-GFP and constr.E-H" Ref="dm3" />
+      <Sample ProjectId="12348_Index7" Control="N" Index="CAGATC" SampleId="12348" Desc="Indices #1-9 Small RNA OSS TJ-GFP and constr.E-H" Ref="dm3" />
+      <Sample ProjectId="12348_Index2" Control="N" Index="CGATGT" SampleId="12348" Desc="Indices #1-9 Small RNA OSS TJ-GFP and constr.E-H" Ref="dm3" />
+      <Sample ProjectId="12348_Index9" Control="N" Index="GATCAG" SampleId="12348" Desc="Indices #1-9 Small RNA OSS TJ-GFP and constr.E-H" Ref="dm3" />
+      <Sample ProjectId="12348_Index6" Control="N" Index="GCCAAT" SampleId="12348" Desc="Indices #1-9 Small RNA OSS TJ-GFP and constr.E-H" Ref="dm3" />
+      <Sample ProjectId="12348_Index4" Control="N" Index="TGACCA" SampleId="12348" Desc="Indices #1-9 Small RNA OSS TJ-GFP and constr.E-H" Ref="dm3" />
+      <Sample ProjectId="12348_Index3" Control="N" Index="TTAGGC" SampleId="12348" Desc="Indices #1-9 Small RNA OSS TJ-GFP and constr.E-H" Ref="dm3" />
+      <Sample ProjectId="Undetermined_indices" Control="N" Index="Undetermined" SampleId="lane7" Desc="Clusters with unmatched barcodes for lane 7" Ref="unknown" />
+    </Lane>
+    <Lane Number="8">
+      <Sample ProjectId="12382_Index5" Control="N" Index="ACAGTG" SampleId="12382" Desc="Small RNA Index #RPI1-RPI10 Human bladder cancer small RNA" Ref="hg18" />
+      <Sample ProjectId="12382_Index8" Control="N" Index="ACTTGA" SampleId="12382" Desc="Small RNA Index #RPI1-RPI10 Human bladder cancer small RNA" Ref="hg18" />
+      <Sample ProjectId="12382_Index1" Control="N" Index="ATCACG" SampleId="12382" Desc="Small RNA Index #RPI1-RPI10 Human bladder cancer small RNA" Ref="hg18" />
+      <Sample ProjectId="12382_Index7" Control="N" Index="CAGATC" SampleId="12382" Desc="Small RNA Index #RPI1-RPI10 Human bladder cancer small RNA" Ref="hg18" />
+      <Sample ProjectId="12382_Index2" Control="N" Index="CGATGT" SampleId="12382" Desc="Small RNA Index #RPI1-RPI10 Human bladder cancer small RNA" Ref="hg18" />
+      <Sample ProjectId="12382_Index9" Control="N" Index="GATCAG" SampleId="12382" Desc="Small RNA Index #RPI1-RPI10 Human bladder cancer small RNA" Ref="hg18" />
+      <Sample ProjectId="12382_Index6" Control="N" Index="GCCAAT" SampleId="12382" Desc="Small RNA Index #RPI1-RPI10 Human bladder cancer small RNA" Ref="hg18" />
+      <Sample ProjectId="12382_Index10" Control="N" Index="TAGCTT" SampleId="12382" Desc="Small RNA Index #RPI1-RPI10 Human bladder cancer small RNA" Ref="hg18" />
+      <Sample ProjectId="12382_Index4" Control="N" Index="TGACCA" SampleId="12382" Desc="Small RNA Index #RPI1-RPI10 Human bladder cancer small RNA" Ref="hg18" />
+      <Sample ProjectId="12382_Index3" Control="N" Index="TTAGGC" SampleId="12382" Desc="Small RNA Index #RPI1-RPI10 Human bladder cancer small RNA" Ref="hg18" />
+      <Sample ProjectId="Undetermined_indices" Control="N" Index="Undetermined" SampleId="lane8" Desc="Clusters with unmatched barcodes for lane 8" Ref="unknown" />
+    </Lane>
+  </FlowcellInfo>
+</DemultiplexConfig>
