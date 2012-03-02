@@ -1,6 +1,7 @@
 from glob import glob
 import logging
 import os
+import shutil
 
 from htsworkflow.util import queuecommands
 
@@ -149,6 +150,32 @@ def make_qseq_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdleve
       cmd_list.append(cmd)
 
   return cmd_list
+
+def copy_hiseq_project_fastqs(run_name, basecall_dir, site_name, destdir):
+    """
+    make a subprocess-friendly list of command line arguments to save HiSeq fastq files
+
+    run_name - most of the file name (run folder name is a good choice)
+    basecall_dir - location of unaligned files.
+    site_name - name of your "sequencing site" or "Individual"
+    destdir - root of where to save fastq files
+    """
+    # clean up pathname
+    LOGGER.info("run_name %s" % (run_name,))
+
+    cmd_list = []
+    project_dirs = glob(os.path.join(basecall_dir, 'Project_*'))
+    for project_dir in project_dirs:
+        _, project_name = os.path.split(project_dir)
+        sample_files = glob(os.path.join(project_dir, 'Sample*', '*.fastq*'))
+        project_dest = os.path.join(destdir, project_name)
+        if not os.path.exists(project_dest):
+            LOGGER.info("Making: %s" % (project_dest))
+            os.mkdir(project_dest)
+
+        for fastq_file in sample_files:
+            shutil.copy(fastq_file, project_dest)
+
 
 def run_commands(new_dir, cmd_list, num_jobs):
     LOGGER.info("chdir to %s" % (new_dir,))

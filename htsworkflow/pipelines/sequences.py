@@ -34,7 +34,9 @@ class SequenceFile(object):
     Simple container class that holds the path to a sequence archive
     and basic descriptive information.
     """
-    def __init__(self, filetype, path, flowcell, lane, read=None, pf=None, cycle=None):
+    def __init__(self, filetype, path, flowcell, lane, read=None, pf=None, cycle=None,
+                 project=None,
+                 index=None):
         self.filetype = filetype
         self.path = path
         self.flowcell = flowcell
@@ -42,6 +44,8 @@ class SequenceFile(object):
         self.read = read
         self.pf = pf
         self.cycle = cycle
+        self.project = project
+        self.index = index
 
     def __hash__(self):
         return hash(self.key())
@@ -56,7 +60,7 @@ class SequenceFile(object):
         """
         Equality is defined if everything but the path matches
         """
-        attributes = ['filetype','flowcell', 'lane', 'read', 'pf', 'cycle']
+        attributes = ['filetype','flowcell', 'lane', 'read', 'pf', 'cycle', 'project', 'index']
         for a in attributes:
             if getattr(self, a) != getattr(other, a):
                 return False
@@ -114,7 +118,15 @@ def get_flowcell_cycle(path):
     """
     Extract flowcell, cycle from pathname
     """
-    rest, cycle = os.path.split(path)
+    project = None
+    rest, tail = os.path.split(path)
+    if tail.startswith('Project_'):
+        # we're in a multiplexed sample
+        project = tail
+        rest, cycle = os.path.split(rest)
+    else:
+        cycle = tail
+
     rest, flowcell = os.path.split(rest)
     cycle_match = re.match("C(?P<start>[0-9]+)-(?P<stop>[0-9]+)", cycle)
     if cycle_match is None:
@@ -128,10 +140,10 @@ def get_flowcell_cycle(path):
     if stop is not None:
         stop = int(stop)
 
-    return flowcell, start, stop
+    return flowcell, start, stop, project
 
 def parse_srf(path, filename):
-    flowcell_dir, start, stop = get_flowcell_cycle(path)
+    flowcell_dir, start, stop, project = get_flowcell_cycle(path)
     basename, ext = os.path.splitext(filename)
     records = basename.split('_')
     flowcell = records[4]
@@ -145,7 +157,7 @@ def parse_srf(path, filename):
     return SequenceFile('srf', fullpath, flowcell, lane, cycle=stop)
 
 def parse_qseq(path, filename):
-    flowcell_dir, start, stop = get_flowcell_cycle(path)
+    flowcell_dir, start, stop, project = get_flowcell_cycle(path)
     basename, ext = os.path.splitext(filename)
     records = basename.split('_')
     fullpath = os.path.join(path, filename)
@@ -162,20 +174,35 @@ def parse_qseq(path, filename):
 def parse_fastq(path, filename):
     """Parse fastq names
     """
-    flowcell_dir, start, stop = get_flowcell_cycle(path)
+    flowcell_dir, start, stop, project = get_flowcell_cycle(path)
     basename, ext = os.path.splitext(filename)
     records = basename.split('_')
     fullpath = os.path.join(path, filename)
-    flowcell = records[4]
-    lane = int(records[5][1])
-    read = int(records[6][1])
-    pf = parse_fastq_pf_flag(records)
+    if project is not None:
+        # demultiplexed sample!
+        flowcell = flowcell_dir
+        lane = int(records[2][-1])
+        read = int(records[3][-1])
+        pf = True # as I understand it hiseq runs toss the ones that fail filter
+        index = records[1]
+        project_id = records[0]
+    else:
+        flowcell = records[4]
+        lane = int(records[5][1])
+        read = int(records[6][1])
+        pf = parse_fastq_pf_flag(records)
+        index = None
+        project_id = None
 
     if flowcell_dir != flowcell:
         LOGGER.warn("flowcell %s found in wrong directory %s" % \
                          (flowcell, path))
 
-    return SequenceFile('fastq', fullpath, flowcell, lane, read, pf=pf, cycle=stop)
+    return SequenceFile('fastq', fullpath, flowcell, lane, read,
+                        pf=pf,
+                        cycle=stop,
+                        project=project_id,
+                        index=index)
 
 def parse_fastq_pf_flag(records):
     """Take a fastq filename split on _ and look for the pass-filter flag
@@ -200,7 +227,7 @@ def parse_eland(path, filename, eland_match=None):
     if eland_match is None:
         eland_match = eland_re.match(filename)
     fullpath = os.path.join(path, filename)
-    flowcell, start, stop = get_flowcell_cycle(path)
+    flowcell, start, stop, project = get_flowcell_cycle(path)
     if eland_match.group('lane'):
         lane = int(eland_match.group('lane'))
     else:
@@ -233,7 +260,9 @@ def scan_for_sequences(dirs):
                         seq = parse_srf(path, f)
                     elif qseq_re.match(f):
                         seq = parse_qseq(path, f)
-                    elif f.endswith('fastq') or f.endswith('.fastq.bz2'):
+                    elif f.endswith('.fastq') or \
+                         f.endswith('.fastq.bz2') or \
+                         f.endswith('.fastq.gz'):
                         seq = parse_fastq(path, f)
                 eland_match = eland_re.match(f)
                 if eland_match:
