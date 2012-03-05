@@ -1,8 +1,10 @@
 """
 Utilities to work with the various eras of sequence archive files
 """
+import collections
 import logging
 import os
+import types
 import re
 
 LOGGER = logging.getLogger(__name__)
@@ -28,6 +30,9 @@ CREATE TABLE %(table)s (
 );
 """ %( {'table': SEQUENCE_TABLE_NAME} )
     return cursor.execute(sql)
+
+FlowcellPath = collections.namedtuple('FlowcellPath',
+                                      'flowcell start stop project')
 
 class SequenceFile(object):
     """
@@ -118,6 +123,7 @@ def get_flowcell_cycle(path):
     """
     Extract flowcell, cycle from pathname
     """
+    path = os.path.normpath(path)
     project = None
     rest, tail = os.path.split(path)
     if tail.startswith('Project_'):
@@ -140,7 +146,7 @@ def get_flowcell_cycle(path):
     if stop is not None:
         stop = int(stop)
 
-    return flowcell, start, stop, project
+    return FlowcellPath(flowcell, start, stop, project)
 
 def parse_srf(path, filename):
     flowcell_dir, start, stop, project = get_flowcell_cycle(path)
@@ -243,6 +249,9 @@ def scan_for_sequences(dirs):
     Scan through a list of directories for sequence like files
     """
     sequences = []
+    if type(dirs) in types.StringTypes:
+        raise ValueError("You probably want a list or set, not a string")
+
     for d in dirs:
         LOGGER.info("Scanning %s for sequences" % (d,))
         if not os.path.exists(d):

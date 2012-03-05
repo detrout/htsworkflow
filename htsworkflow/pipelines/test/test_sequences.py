@@ -4,10 +4,27 @@ import unittest
 
 from htsworkflow.pipelines import sequences
 
+
 class SequenceFileTests(unittest.TestCase):
     """
     Make sure the sequence archive class works
     """
+    def test_get_flowcell_cycle(self):
+        tests = [
+            ('/root/42BW9AAXX/C1-152',
+             sequences.FlowcellPath('42BW9AAXX', 1, 152, None)),
+            ('/root/42BW9AAXX/C1-152/',
+             sequences.FlowcellPath('42BW9AAXX', 1, 152, None)),
+            ('/root/42BW9AAXX/C1-152/Project_12345',
+             sequences.FlowcellPath('42BW9AAXX', 1, 152, 'Project_12345')),
+            ('/root/42BW9AAXX/C1-152/Project_12345/',
+             sequences.FlowcellPath('42BW9AAXX', 1, 152, 'Project_12345')),
+        ]
+
+        for t in tests:
+            path = sequences.get_flowcell_cycle(t[0])
+            self.failUnlessEqual(path, t[1])
+
     def test_flowcell_cycle(self):
         """
         Make sure code to parse directory heirarchy works
@@ -37,7 +54,6 @@ class SequenceFileTests(unittest.TestCase):
 
         path = '/root/42BW9AAXX/other'
         self.failUnlessRaises(ValueError, sequences.get_flowcell_cycle, path)
-
 
     def test_srf(self):
         path = '/root/42BW9AAXX/C1-38'
