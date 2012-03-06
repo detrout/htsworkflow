@@ -47,12 +47,16 @@ def add_auth_options(parser):
     group.add_option('--sequence', default=sequence_archive,
                      help="sequence repository")
     parser.add_option_group(group)
+    return parser
 
-def make_auth_from_opts(opts, parser):
+def make_auth_from_opts(opts, parser=None):
     """Create htsw auth info dictionary from optparse info
     """
     if opts.host is None or opts.apiid is None or opts.apikey is None:
-        parser.error("Please specify host url, apiid, apikey")
+        if parser is not None:
+            parser.error("Please specify host url, apiid, apikey")
+        else:
+            raise RuntimeError("Need host, api id api key")
 
     return {'apiid': opts.apiid, 'apikey': opts.apikey }
 
@@ -157,4 +161,22 @@ class HtswApi(object):
 
   def get_url(self, url):
     return retrieve_info(url, self.authdata)
+
+if __name__ == "__main__":
+    from optparse import OptionParser
+    from pprint import pprint
+    parser = OptionParser()
+    parser = add_auth_options(parser)
+    parser.add_option('--flowcell', default=None)
+    parser.add_option('--library', default=None)
+
+    opts, args = parser.parse_args()
+    apidata =  make_auth_from_opts(opts)
+
+    api = HtswApi(opts.host, apidata)
+
+    if opts.flowcell is not None:
+        pprint(api.get_flowcell(opts.flowcell))
+    if opts.library is not None:
+        pprint(api.get_library(opts.library))
 
