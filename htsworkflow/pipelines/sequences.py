@@ -39,9 +39,26 @@ class SequenceFile(object):
     Simple container class that holds the path to a sequence archive
     and basic descriptive information.
     """
-    def __init__(self, filetype, path, flowcell, lane, read=None, pf=None, cycle=None,
+    def __init__(self, filetype, path, flowcell, lane,
+                 read=None,
+                 pf=None,
+                 cycle=None,
                  project=None,
-                 index=None):
+                 index=None,
+                 split=None):
+        """Store various fields used in our sequence files
+
+        filetype is one of 'qseq', 'srf', 'fastq'
+        path = location of file
+        flowcell = files flowcell id
+        lane = which lane
+        read = which sequencer read, usually 1 or 2
+        pf = did it pass filter
+        cycle = cycle dir name e.g. C1-202
+        project = projed name from HiSeq, probably library ID
+        index = HiSeq barcode index sequence
+        split = file fragment from HiSeq (Since one file is split into many)
+        """
         self.filetype = filetype
         self.path = path
         self.flowcell = flowcell
@@ -51,12 +68,13 @@ class SequenceFile(object):
         self.cycle = cycle
         self.project = project
         self.index = index
+        self.split = split
 
     def __hash__(self):
         return hash(self.key())
 
     def key(self):
-        return (self.flowcell, self.lane)
+        return (self.flowcell, self.lane, self.read, self.project, self.split)
 
     def unicode(self):
         return unicode(self.path)
@@ -181,7 +199,7 @@ def parse_fastq(path, filename):
     """Parse fastq names
     """
     flowcell_dir, start, stop, project = get_flowcell_cycle(path)
-    basename, ext = os.path.splitext(filename)
+    basename = re.sub('\.fastq(\.gz|\.bz2)?$', '', filename)
     records = basename.split('_')
     fullpath = os.path.join(path, filename)
     if project is not None:
@@ -192,6 +210,8 @@ def parse_fastq(path, filename):
         pf = True # as I understand it hiseq runs toss the ones that fail filter
         index = records[1]
         project_id = records[0]
+        split = records[4]
+        sequence_type = 'split_fastq'
     else:
         flowcell = records[4]
         lane = int(records[5][1])
@@ -199,16 +219,19 @@ def parse_fastq(path, filename):
         pf = parse_fastq_pf_flag(records)
         index = None
         project_id = None
+        split = None
+        sequence_type = 'fastq'
 
     if flowcell_dir != flowcell:
         LOGGER.warn("flowcell %s found in wrong directory %s" % \
                          (flowcell, path))
 
-    return SequenceFile('fastq', fullpath, flowcell, lane, read,
+    return SequenceFile(sequence_type, fullpath, flowcell, lane, read,
                         pf=pf,
                         cycle=stop,
                         project=project_id,
-                        index=index)
+                        index=index,
+                        split=split)
 
 def parse_fastq_pf_flag(records):
     """Take a fastq filename split on _ and look for the pass-filter flag
@@ -262,17 +285,16 @@ def scan_for_sequences(dirs):
             for f in filenames:
                 seq = None
                 # find sequence files
-                if raw_seq_re.match(f):
-                    if f.endswith('.md5'):
-                        continue
-                    elif f.endswith('.srf') or f.endswith('.srf.bz2'):
-                        seq = parse_srf(path, f)
-                    elif qseq_re.match(f):
-                        seq = parse_qseq(path, f)
-                    elif f.endswith('.fastq') or \
-                         f.endswith('.fastq.bz2') or \
-                         f.endswith('.fastq.gz'):
-                        seq = parse_fastq(path, f)
+                if f.endswith('.md5'):
+                    continue
+                elif f.endswith('.srf') or f.endswith('.srf.bz2'):
+                    seq = parse_srf(path, f)
+                elif qseq_re.match(f):
+                    seq = parse_qseq(path, f)
+                elif f.endswith('.fastq') or \
+                     f.endswith('.fastq.bz2') or \
+                     f.endswith('.fastq.gz'):
+                    seq = parse_fastq(path, f)
                 eland_match = eland_re.match(f)
                 if eland_match:
                     if f.endswith('.md5'):

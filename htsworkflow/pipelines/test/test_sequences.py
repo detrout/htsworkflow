@@ -128,7 +128,7 @@ class SequenceFileTests(unittest.TestCase):
         pathname = os.path.join(path,name)
         f = sequences.parse_fastq(path, name)
 
-        self.failUnlessEqual(f.filetype, 'fastq')
+        self.failUnlessEqual(f.filetype, 'split_fastq')
         self.failUnlessEqual(f.path, pathname)
         self.failUnlessEqual(f.flowcell, '42BW9AAXX')
         self.failUnlessEqual(f.lane, 1)
@@ -142,7 +142,7 @@ class SequenceFileTests(unittest.TestCase):
         pathname = os.path.join(path,name)
         f = sequences.parse_fastq(path, name)
 
-        self.failUnlessEqual(f.filetype, 'fastq')
+        self.failUnlessEqual(f.filetype, 'split_fastq')
         self.failUnlessEqual(f.path, pathname)
         self.failUnlessEqual(f.flowcell, '42BW9AAXX')
         self.failUnlessEqual(f.lane, 1)
@@ -151,6 +151,22 @@ class SequenceFileTests(unittest.TestCase):
         self.failUnlessEqual(f.project, '11112')
         self.failUnlessEqual(f.index, 'AAATTT')
         self.failUnlessEqual(f.cycle, 38)
+
+    def test_project_fastq_hashing(self):
+        """Can we tell the difference between sequence files?
+        """
+        path = '/root/42BW9AAXX/C1-38/Project_12345'
+        names = [('11111_NoIndex_L001_R1_001.fastq.gz',
+                  '11111_NoIndex_L001_R2_001.fastq.gz'),
+                 ('11112_NoIndex_L001_R1_001.fastq.gz',
+                  '11112_NoIndex_L001_R1_002.fastq.gz')
+                 ]
+        for a_name, b_name in names:
+            a = sequences.parse_fastq(path, a_name)
+            b = sequences.parse_fastq(path, b_name)
+            self.failIfEqual(a, b)
+            self.failIfEqual(a.key(), b.key())
+            self.failIfEqual(hash(a), hash(b))
 
     def test_eland(self):
         path = '/root/42BW9AAXX/C1-38'
