@@ -83,7 +83,15 @@ class SequenceFile(object):
         """
         Equality is defined if everything but the path matches
         """
-        attributes = ['filetype','flowcell', 'lane', 'read', 'pf', 'cycle', 'project', 'index']
+        attributes = ['filetype',
+                      'flowcell',
+                      'lane',
+                      'read',
+                      'pf',
+                      'cycle',
+                      'project',
+                      'index',
+                      'split']
         for a in attributes:
             if getattr(self, a) != getattr(other, a):
                 return False
