@@ -90,9 +90,12 @@ executable=%(exe)s
 error=%(log)s/fastq.$(process).out
 output=%(log)s/fastq.$(process).out
 log=%(log)s/fastq.log
+environment="PYTHONPATH=%(env)s"
 
 """ % {'exe': sys.executable,
-       'log': self.log_path }
+       'log': self.log_path,
+       'env': os.environ.get('PYTHONPATH', '')
+      }
 
     def get_qseq_condor_header(self):
         return """Universe=vanilla
@@ -100,9 +103,12 @@ executable=%(exe)s
 error=%(log)s/qseq2fastq.$(process).out
 output=%(log)s/qseq2fastq.$(process).out
 log=%(log)s/qseq2fastq.log
+environment="PYTHONPATH=%(env)s"
 
 """ % {'exe': sys.executable,
-       'log': self.log_path }
+       'log': self.log_path,
+       'env': os.environ.get('PYTHONPATH','')
+      }
 
     def get_srf_condor_header(self):
         return """Universe=vanilla
