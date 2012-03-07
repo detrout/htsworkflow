@@ -176,7 +176,7 @@ def make_parser():
     parser.add_option('--raw-format', dest="raw_format", default='qseq',
                       choices=['qseq', 'srf'],
                       help='Specify which type of raw format to use. '
-                           'Currently supported options: qseq, srf')
+                           'Currently supported options: qseq, srf, fastq')
     parser.add_option('-u', '--use-run', dest='use_run', default=None,
                       help='Specify which run to use instead of autoscanning '
                            'the runfolder. You do this by providing the final '
