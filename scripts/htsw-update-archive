@@ -36,8 +36,12 @@ def build_flowcell_db(fcdb_filename, sequences, baseurl, apiid, apikey):
 
         # make library id db
         if flowcell_info is not None:
-            seq_library_id = flowcell_info['lane_set'][unicode(seq.lane)]['library_id']
-            libdb.setdefault(seq_library_id, []).append(seq)
+            lane_collection = flowcell_info['lane_set'][unicode(seq.lane)]
+            if type(lane_collection) != type([]):
+                lane_collection = [lane_collection]
+            for sample in lane_collection:
+                seq_library_id = sample['library_id']
+                libdb.setdefault(seq_library_id, []).append(seq)
 
     fcdb.sync()
     return fcdb, libdb
