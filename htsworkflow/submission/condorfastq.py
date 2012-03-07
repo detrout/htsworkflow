@@ -2,12 +2,14 @@
 """
 import logging
 import os
+from pprint import pformat
 import sys
 import types
 
 from htsworkflow.pipelines.sequences import scan_for_sequences
 from htsworkflow.pipelines import qseq2fastq
 from htsworkflow.pipelines import srf2fastq
+from htsworkflow.pipelines import desplit_fastq
 from htsworkflow.util.api import HtswApi
 from htsworkflow.util.conversion import parse_flowcell_id
 
@@ -31,17 +33,33 @@ class CondorFastqExtract(object):
         self.log_path = log_path
         self.force = force
 
-    def build_fastqs(self, library_result_map ):
+    def create_scripts(self, library_result_map ):
         """
         Generate condor scripts to build any needed fastq files
 
         Args:
           library_result_map (list):  [(library_id, destination directory), ...]
         """
-        qseq_condor_header = self.get_qseq_condor_header()
-        qseq_condor_entries = []
-        srf_condor_header = self.get_srf_condor_header()
-        srf_condor_entries = []
+        headers = {'srf': self.get_srf_condor_header(),
+                   'qseq': self.get_qseq_condor_header(),
+                   'split_fastq': self.get_split_fastq_condor_header(),
+                  }
+
+        condor_entries = self.build_condor_arguments(library_result_map)
+
+        for script_type in headers.keys():
+            make_submit_script('{0}.condor'.format(script_type),
+                               headers[script_type],
+                               condor_entries[script_type])
+
+    def build_condor_arguments(self, library_result_map):
+        condor_entries = {'srf': [],
+                          'qseq': [],
+                          'split_fastq': []}
+        conversion_funcs = {'srf': self.condor_srf_to_fastq,
+                            'qseq': self.condor_qseq_to_fastq,
+                            'split_fastq': self.condor_desplit_fastq
+                            }
         lib_db = self.find_archive_sequence_files(library_result_map)
 
         needed_targets = self.find_missing_targets(library_result_map, lib_db)
@@ -49,36 +67,32 @@ class CondorFastqExtract(object):
         for target_pathname, available_sources in needed_targets.items():
             LOGGER.debug(' target : %s' % (target_pathname,))
             LOGGER.debug(' candidate sources: %s' % (available_sources,))
-            if available_sources.has_key('qseq'):
-                source = available_sources['qseq']
-                qseq_condor_entries.append(
-                    self.condor_qseq_to_fastq(source.path,
-                                              target_pathname,
-                                              source.flowcell)
-                )
-            elif available_sources.has_key('srf'):
-                source = available_sources['srf']
-                mid = getattr(source, 'mid_point', None)
-                srf_condor_entries.append(
-                    self.condor_srf_to_fastq(source.path,
-                                             target_pathname,
-                                             source.paired,
-                                             source.flowcell,
-                                             mid)
-                )
+            for condor_type in available_sources.keys():
+                conversion = conversion_funcs.get(condor_type, None)
+                if conversion is None:
+                    errmsg = "Unrecognized type: {0} for {1}"
+                    print errmsg.format(condor_type,
+                                        pformat(available_sources))
+                    continue
+                sources = available_sources.get(condor_type, None)
+                if sources is not None:
+                    condor_entries.setdefault(condor_type, []).append(
+                        conversion(sources, target_pathname)
+                    )
             else:
                 print " need file", target_pathname
 
-        if len(srf_condor_entries) > 0:
-            make_submit_script('srf.fastq.condor',
-                               srf_condor_header,
-                               srf_condor_entries)
+        return condor_entries
 
-        if len(qseq_condor_entries) > 0:
-            make_submit_script('qseq.fastq.condor',
-                               qseq_condor_header,
-                               qseq_condor_entries)
+    def get_split_fastq_condor_header(self):
+        return """Universe=vanilla
+executable=%(exe)s
+error=%(log)s/fastq.$(process).out
+output=%(log)s/fastq.$(process).out
+log=%(log)s/fastq.log
 
+""" % {'exe': sys.executable,
+       'log': self.log_path }
 
     def get_qseq_condor_header(self):
         return """Universe=vanilla
@@ -179,27 +193,29 @@ environment="PYTHONPATH=%(env)s"
 
                     # end filters
                     if seq.paired:
-                        target_name = fastq_paired_template % filename_attributes
+                        target_name = fastq_paired_template % \
+                                      filename_attributes
                     else:
-                        target_name = fastq_single_template % filename_attributes
+                        target_name = fastq_single_template % \
+                                      filename_attributes
 
                     target_pathname = os.path.join(result_dir, target_name)
                     if self.force or not os.path.exists(target_pathname):
                         t = needed_targets.setdefault(target_pathname, {})
-                        t[seq.filetype] = seq
+                        t.setdefault(seq.filetype, []).append(seq)
 
         return needed_targets
 
 
-    def condor_srf_to_fastq(self,
-                            srf_file,
-                            target_pathname,
-                            paired,
-                            flowcell=None,
-                            mid=None):
+    def condor_srf_to_fastq(self, sources, target_pathname):
+        if len(sources) > 1:
+            raise ValueError("srf to fastq can only handle one file")
+        source = sources[0]
         py = srf2fastq.__file__
-        args = [ py, srf_file, '--verbose']
-        if paired:
+        flowcell = source.flowcell
+        mid = getattr(source, 'mid_point', None)
+        args = [ py, source.path, '--verbose']
+        if source.paired:
             args.extend(['--left', target_pathname])
             # this is ugly. I did it because I was pregenerating the target
             # names before I tried to figure out what sources could generate
@@ -213,6 +229,7 @@ environment="PYTHONPATH=%(env)s"
                          target_pathname.replace('_r1.fastq', '_r2.fastq')])
         else:
             args.extend(['--single', target_pathname ])
+
         if flowcell is not None:
             args.extend(['--flowcell', flowcell])
 
@@ -229,15 +246,33 @@ queue
         return  script
 
 
-    def condor_qseq_to_fastq(self, qseq_file, target_pathname, flowcell=None):
+    def condor_qseq_to_fastq(self, sources, target_pathname):
+        flowcell = sources[0].flowcell
         py = qseq2fastq.__file__
-        args = [py, '-i', qseq_file, '-o', target_pathname ]
+
+        args = [py, '-o', target_pathname ]
         if flowcell is not None:
             args.extend(['-f', flowcell])
+        if len(sources) == 1:
+            args += (['-i', sources[0].path])
+        else:
+            for source in sources:
+                args += source.path
         script = """arguments="%s"
 queue
 """ % (" ".join(args))
 
+        return script
+
+    def condor_desplit_fastq(self, sources, target_pathname):
+        py = desplit_fastq.__file__
+        args = [py, '-o', target_pathname, ]
+        paths = []
+        for source in sources:
+            paths.append(source.path)
+        paths.sort()
+        args += paths
+        script = 'arguments="%s"\nqueue\n' % ( ' '.join(args))
         return script
 
 def make_submit_script(target, header, body_list):

@@ -82,7 +82,7 @@ def main(cmdline=None):
     if opts.fastq:
         extractor = CondorFastqExtract(opts.host, apidata, opts.sequence,
                                        force=opts.force)
-        extractor.build_fastqs(library_result_map)
+        extractor.create_scripts(library_result_map)
 
     if opts.scan_submission:
         scan_submission_dirs(mapper, library_result_map)
