@@ -28,7 +28,7 @@ def main(cmdline=None):
         print (version())
         return 0
 
-    if opts.output is None:
+    if opts.output is not None:
         output = open(opts.output, 'w')
     else:
         output = sys.stdout
