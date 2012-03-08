@@ -235,7 +235,7 @@ WHERE {
   OPTIONAL { ?library libraryOntology:library_id ?labExpId }
   OPTIONAL { ?library libraryOntology:library_id ?labVersion }
   OPTIONAL { ?library libraryOntology:replicate ?replicate }
-  OPTIONAL { ?library libraryOntology:condition ?treatment }
+  OPTIONAL { ?library libraryOntology:condition_term ?treatment }
   OPTIONAL { ?library ucscDaf:protocol ?protocol }
   OPTIONAL { ?library ucscDaf:readType ?readType }
   OPTIONAL { ?library ucscDaf:strain ?strain }
