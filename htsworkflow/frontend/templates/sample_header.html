@@ -4,7 +4,7 @@
     <b>Library ID</b>:
        <a href="{{lib.get_absolute_url}}"><span property="libns:library_id">{{ lib.id }}</span></a>
        {% if user.is_staff %}<a href="{{lib.get_admin_url}}"><img class="icon_button" src="/media/img/admin/icon_changelink.gif"/></a>{% endif %}
-       <br property="rdf:type" content="libns:library"/>
+       <br rel="rdf:type" resource="libns:library"/>
     <b>Name</b>:
       <span property="libns:name">{{ lib.library_name }}</span>
     <br/>
