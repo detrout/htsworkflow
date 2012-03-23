@@ -537,6 +537,8 @@ def load_encodedcc_files(model, genome, composite):
 
     for filename, attributes in file_index.items():
         s = RDF.Node(RDF.Uri(filename))
+        model.add_statement(
+            RDF.Statement(s, TYPE_N, submissionOntology['ucsc_track']))
         for name, value in attributes.items():
             p = RDF.Node(DCC_NS[name])
             o = RDF.Node(value)
