@@ -557,7 +557,7 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, r
         run_name = srf.pathname_to_run_name(r.pathname)
         seq_cmds = []
         if raw_format == 'fastq':
-            srf.copy_hiseq_project_fastqs(run_name, r.bustard.pathname, lanes, site, cycle_dir)
+            srf.copy_hiseq_project_fastqs(run_name, r.bustard.pathname, site, cycle_dir)
         elif raw_format == 'qseq':
             seq_cmds = srf.make_qseq_commands(run_name, r.bustard.pathname, lanes, site, cycle_dir)
         elif raw_format == 'srf':
