@@ -425,18 +425,6 @@ def get_library_info(host, apidata, library_id):
     return contents
 
 
-def make_submission_section(line_counter, files, attributes):
-    """
-    Create a section in the submission ini file
-    """
-    inifile = [ "[line%s]" % (line_counter,) ]
-    inifile += ["files=%s" % (",".join(files))]
-
-    for k,v in attributes.items():
-        inifile += ["%s=%s" % (k,v)]
-    return inifile
-
-
 def make_base_name(pathname):
     base = os.path.basename(pathname)
     name, ext = os.path.splitext(base)
