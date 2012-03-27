@@ -17,6 +17,7 @@ import types
 import urllib
 import urllib2
 import urlparse
+from zipfile import ZipFile
 
 import RDF
 
@@ -90,6 +91,9 @@ def main(cmdline=None):
     if opts.make_ddf:
         make_all_ddfs(mapper, library_result_map, opts.daf, force=opts.force)
 
+    if opts.zip_ddf:
+        zip_ddfs(mapper, library_result_map, opts.daf)
+
     if opts.sparql:
         sparql_query(model, opts.sparql)
 
@@ -126,6 +130,9 @@ def make_parser():
                         help="link daf into submission directories")
     commands.add_option('--make-ddf', help='make the ddfs', default=False,
                       action="store_true")
+    commands.add_option('--zip-ddf', default=False, action='store_true',
+                        help='zip up just the metadata')
+
     parser.add_option_group(commands)
 
     parser.add_option('--force', default=False, action="store_true",
@@ -190,6 +197,7 @@ def scan_submission_dirs(view_map, library_result_map):
         except MetadataLookupException, e:
             logger.error("Skipping %s: %s" % (lib_id, str(e)))
 
+
 def make_all_ddfs(view_map, library_result_map, daf_name, make_condor=True, force=False):
     dag_fragment = []
     for lib_id, result_dir in library_result_map:
@@ -250,7 +258,7 @@ ORDER BY  ?submitView"""
         logger.error("Need name for %s" % (str(submissionNode)))
         return []
 
-    ddf_name = name + '.ddf'
+    ddf_name = make_ddf_name(name)
     if outdir is not None:
         outfile = os.path.join(outdir, ddf_name)
         output = open(outfile,'w')
@@ -310,6 +318,27 @@ ORDER BY  ?submitView"""
         )
 
     return dag_fragments
+
+
+def zip_ddfs(view_map, library_result_map, daf_name):
+    """zip up just the ddf & daf files
+    """
+    rootdir = os.getcwd()
+    for lib_id, result_dir in library_result_map:
+        submissionNode = view_map.get_submission_node(result_dir)
+        nameNode = view_map.model.get_target(submissionNode,
+                                             submissionOntology['name'])
+        name = fromTypedNode(nameNode)
+        if name is None:
+            logger.error("Need name for %s" % (str(submissionNode)))
+            continue
+
+        zip_name = '../{0}.zip'.format(lib_id)
+        os.chdir(os.path.join(rootdir, result_dir))
+        with ZipFile(zip_name, 'w') as stream:
+            stream.write(make_ddf_name(name))
+            stream.write(daf_name)
+        os.chdir(rootdir)
 
 
 def read_library_result_map(filename):
