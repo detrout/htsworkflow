@@ -19,6 +19,8 @@ FCDIRS = [
     '42JUYAAXX/C1-76',
     '30221AAXX',
     '30221AAXX/C1-33',
+    '30DY0AAXX',
+    '30DY0AAXX/C1-151',
     '61MJTAAXX',
     '61MJTAAXX/C1-76',
 ]
@@ -56,6 +58,14 @@ DATAFILES = [
     '30221AAXX/C1-33/woldlab_090425_HWI-EAS229_0110_30221AAXX_6.srf',
     '30221AAXX/C1-33/woldlab_090425_HWI-EAS229_0110_30221AAXX_7.srf',
     '30221AAXX/C1-33/woldlab_090425_HWI-EAS229_0110_30221AAXX_8.srf',
+    '30DY0AAXX/C1-151/woldlab_090725_HWI-EAS229_0110_30DY0AAXX_1.srf',
+    '30DY0AAXX/C1-151/woldlab_090725_HWI-EAS229_0110_30DY0AAXX_2.srf',
+    '30DY0AAXX/C1-151/woldlab_090725_HWI-EAS229_0110_30DY0AAXX_3.srf',
+    '30DY0AAXX/C1-151/woldlab_090725_HWI-EAS229_0110_30DY0AAXX_4.srf',
+    '30DY0AAXX/C1-151/woldlab_090725_HWI-EAS229_0110_30DY0AAXX_5.srf',
+    '30DY0AAXX/C1-151/woldlab_090725_HWI-EAS229_0110_30DY0AAXX_6.srf',
+    '30DY0AAXX/C1-151/woldlab_090725_HWI-EAS229_0110_30DY0AAXX_7.srf',
+    '30DY0AAXX/C1-151/woldlab_090725_HWI-EAS229_0110_30DY0AAXX_8.srf',
     '61MJTAAXX/C1-76/woldlab_100826_HSI-123_0001_61MJTAAXX_l1_r1.tar.bz2',
     '61MJTAAXX/C1-76/woldlab_100826_HSI-123_0001_61MJTAAXX_l2_r1.tar.bz2',
     '61MJTAAXX/C1-76/woldlab_100826_HSI-123_0001_61MJTAAXX_l3_r1.tar.bz2',
@@ -94,6 +104,12 @@ LIBDATA = {
                             u'read_length': 76,
                             u'status': u'Unknown',
                             u'status_code': None},
+                           {u'flowcell': u'30DY0AAXX',
+                            u'lane_number': 8,
+                            u'paired_end': True,
+                            u'read_length': 76,
+                            u'status': u'Unknown',
+                            u'status_code': None},
                            {u'flowcell': u'C02F9ACXX',
                             u'lane_number': 3,
                             u'paired_end': True,
@@ -127,6 +143,8 @@ class FakeApi(object):
 
 class TestCondorFastq(unittest.TestCase):
     def setUp(self):
+        self.cwd = os.getcwd()
+
         self.tempdir = tempfile.mkdtemp(prefix='condorfastq_test')
         self.flowcelldir = os.path.join(self.tempdir, 'flowcells')
         os.mkdir(self.flowcelldir)
@@ -142,8 +160,13 @@ class TestCondorFastq(unittest.TestCase):
             with open(filename, 'w') as stream:
                 stream.write('testfile')
 
+        self.subname = unicode('sub-11154')
+        self.subdir = os.path.join(self.tempdir, self.subname)
+        os.mkdir(self.subdir)
+
     def tearDown(self):
         shutil.rmtree(self.tempdir)
+        os.chdir(self.cwd)
 
     def test_find_archive_sequence(self):
         extract = condorfastq.CondorFastqExtract('host',
@@ -151,20 +174,22 @@ class TestCondorFastq(unittest.TestCase):
                                                  self.tempdir,
                                                  self.logdir)
         extract.api = FakeApi()
-        result_map = [('11154', '/notarealplace')]
+        result_map = [('11154', self.subname)]
         lib_db = extract.find_archive_sequence_files(result_map)
 
-        self.failUnlessEqual(len(lib_db['11154']['lanes']), 4)
+        self.failUnlessEqual(len(lib_db['11154']['lanes']), 5)
         lanes = [
             lib_db['11154']['lanes'][(u'30221AAXX', 4)],
             lib_db['11154']['lanes'][(u'42JUYAAXX', 5)],
             lib_db['11154']['lanes'][(u'61MJTAAXX', 6)],
+            lib_db['11154']['lanes'][(u'30DY0AAXX', 8)],
             lib_db['11154']['lanes'][(u'C02F9ACXX', 3)],
         ]
         self.failUnlessEqual(len(lanes[0]), 1)
         self.failUnlessEqual(len(lanes[1]), 2)
         self.failUnlessEqual(len(lanes[2]), 1)
-        self.failUnlessEqual(len(lanes[3]), 4)
+        self.failUnlessEqual(len(lanes[3]), 1)
+        self.failUnlessEqual(len(lanes[4]), 4)
 
     def test_find_needed_targets(self):
 
@@ -173,24 +198,24 @@ class TestCondorFastq(unittest.TestCase):
                                                  self.tempdir,
                                                  self.logdir)
         extract.api = FakeApi()
-        result_map = [('11154', '/notarealplace')]
+        result_map = [('11154', self.subname)]
         lib_db = extract.find_archive_sequence_files(result_map)
 
         needed_targets = extract.find_missing_targets(result_map,
                                                       lib_db)
-        self.failUnlessEqual(len(needed_targets), 6)
+        self.failUnlessEqual(len(needed_targets), 7)
         srf_30221 = needed_targets[
-            u'/notarealplace/11154_30221AAXX_c33_l4.fastq']
+            self.subname + u'/11154_30221AAXX_c33_l4.fastq']
         qseq_42JUY_r1 = needed_targets[
-            u'/notarealplace/11154_42JUYAAXX_c76_l5_r1.fastq']
+            self.subname + u'/11154_42JUYAAXX_c76_l5_r1.fastq']
         qseq_42JUY_r2 = needed_targets[
-            u'/notarealplace/11154_42JUYAAXX_c76_l5_r2.fastq']
+            self.subname + u'/11154_42JUYAAXX_c76_l5_r2.fastq']
         qseq_61MJT = needed_targets[
-            u'/notarealplace/11154_61MJTAAXX_c76_l6.fastq']
+            self.subname + u'/11154_61MJTAAXX_c76_l6.fastq']
         split_C02F9_r1 = needed_targets[
-            u'/notarealplace/11154_C02F9ACXX_c202_l3_r1.fastq']
+            self.subname + u'/11154_C02F9ACXX_c202_l3_r1.fastq']
         split_C02F9_r2 = needed_targets[
-            u'/notarealplace/11154_C02F9ACXX_c202_l3_r2.fastq']
+            self.subname + u'/11154_C02F9ACXX_c202_l3_r2.fastq']
 
         self.failUnlessEqual(len(srf_30221['srf']), 1)
         self.failUnlessEqual(len(qseq_42JUY_r1['qseq']), 1)
@@ -208,63 +233,150 @@ class TestCondorFastq(unittest.TestCase):
                                                  self.tempdir,
                                                  self.logdir)
         extract.api = FakeApi()
-        result_map = [('11154', '/notarealplace')]
+        result_map = [('11154', self.subdir)]
         commands = extract.build_condor_arguments(result_map)
 
         srf = commands['srf']
         qseq = commands['qseq']
         split = commands['split_fastq']
 
-        self.failUnlessEqual(len(srf), 1)
+        self.failUnlessEqual(len(srf), 2)
         self.failUnlessEqual(len(qseq), 3)
         self.failUnlessEqual(len(split), 2)
 
-        srf_data = {u'/notarealplace/11154_30221AAXX_c33_l4.fastq':
-                     [u'30221AAXX',
-                      u'woldlab_090425_HWI-EAS229_0110_30221AAXX_4.srf'],
-                     }
+        srf_data = {
+            os.path.join(self.subdir, '11154_30221AAXX_c33_l4.fastq'): {
+                'mid': None,
+                'ispaired': False,
+                'sources': [u'woldlab_090425_HWI-EAS229_0110_30221AAXX_4.srf'],
+                'flowcell': u'30221AAXX',
+                'target': os.path.join(self.subdir,
+                                       u'11154_30221AAXX_c33_l4.fastq'),
+            },
+            os.path.join(self.subdir, '11154_30DY0AAXX_c151_l8_r1.fastq'): {
+                'mid': None,
+                'ispaired': True,
+                'flowcell': u'30DY0AAXX',
+                'sources': [u'woldlab_090725_HWI-EAS229_0110_30DY0AAXX_8.srf'],
+                'mid': 76,
+                'target':
+                    os.path.join(self.subdir,
+                                 u'11154_30DY0AAXX_c151_l8_r1.fastq'),
+                'target_right':
+                    os.path.join(self.subdir,
+                                 u'11154_30DY0AAXX_c151_l8_r2.fastq'),
+            }
+        }
         for args in srf:
-            args = extract_argument_list(args)
-            expected = srf_data[args[3]]
-            self.failUnless(expected[0] in args[5])
-            self.failUnless(expected[1] in args[0])
+            expected = srf_data[args['target']]
+            self.failUnlessEqual(args['ispaired'], expected['ispaired'])
+            self.failUnlessEqual(len(args['sources']), 1)
+            _, source_filename = os.path.split(args['sources'][0])
+            self.failUnlessEqual(source_filename, expected['sources'][0])
+            self.failUnlessEqual(args['target'], expected['target'])
+            if args['ispaired']:
+                self.failUnlessEqual(args['target_right'],
+                                     expected['target_right'])
+            if 'mid' in expected:
+                self.failUnlessEqual(args['mid'], expected['mid'])
 
-        qseq_data = {u'/notarealplace/11154_42JUYAAXX_c76_l5_r1.fastq':
-                     [u'42JUYAAXX',
-                      u'woldlab_100826_HSI-123_0001_42JUYAAXX_l5_r1.tar.bz2'],
-                     u'/notarealplace/11154_61MJTAAXX_c76_l6.fastq':
-                     ['61MJTAAXX',
-                      'woldlab_100826_HSI-123_0001_61MJTAAXX_l6_r1.tar.bz2'],
-                     u'/notarealplace/11154_42JUYAAXX_c76_l5_r2.fastq':
-                     ['42JUYAAXX',
-                      'woldlab_100826_HSI-123_0001_42JUYAAXX_l5_r2.tar.bz2'],
-                     }
+        qseq_data = {
+            os.path.join(self.subdir, '11154_42JUYAAXX_c76_l5_r1.fastq'): {
+                'istar': True,
+                'ispaired': True,
+                'sources': [
+                    u'woldlab_100826_HSI-123_0001_42JUYAAXX_l5_r1.tar.bz2']
+            },
+            os.path.join(self.subdir, '11154_42JUYAAXX_c76_l5_r2.fastq'): {
+                'istar': True,
+                'ispaired': True,
+                'sources': [
+                    u'woldlab_100826_HSI-123_0001_42JUYAAXX_l5_r2.tar.bz2']
+            },
+            os.path.join(self.subdir, '11154_61MJTAAXX_c76_l6.fastq'): {
+                'istar': True,
+                'ispaired': False,
+                'sources': [
+                    u'woldlab_100826_HSI-123_0001_61MJTAAXX_l6_r1.tar.bz2'],
+            },
+        }
         for args in qseq:
-            args = extract_argument_list(args)
-            expected = qseq_data[args[1]]
-            self.failUnless(expected[0] in args[3])
-            self.failUnless(expected[1] in args[5])
+            expected = qseq_data[args['target']]
+            self.failUnlessEqual(args['istar'], expected['istar'])
+            self.failUnlessEqual(args['ispaired'], expected['ispaired'])
+            for i in range(len(expected['sources'])):
+                _, filename = os.path.split(args['sources'][i])
+                self.failUnlessEqual(filename, expected['sources'][i])
 
-        split_data ={u'/notarealplace/11154_C02F9ACXX_c202_l3_r2.fastq':
-                     [u'11154_NoIndex_L003_R2_001.fastq.gz',
-                      u'11154_NoIndex_L003_R2_002.fastq.gz'],
-                     u'/notarealplace/11154_C02F9ACXX_c202_l3_r1.fastq':
-                     [u'11154_NoIndex_L003_R1_001.fastq.gz',
-                      u'11154_NoIndex_L003_R1_002.fastq.gz'],
-                     }
-        for args in split:
-            args = extract_argument_list(args)
-            expected = split_data[args[1]]
-            self.failUnless(expected[0] in args[2])
-            self.failUnless(expected[1] in args[3])
+
+        split_test = { x['target']: x for x in
+            [{'sources': [u'11154_NoIndex_L003_R1_001.fastq.gz',
+                         u'11154_NoIndex_L003_R1_002.fastq.gz'],
+             'pyscript': 'desplit_fastq.pyc',
+             'target': u'11154_C02F9ACXX_c202_l3_r1.fastq'},
+            {'sources': [u'11154_NoIndex_L003_R2_001.fastq.gz',
+                         u'11154_NoIndex_L003_R2_002.fastq.gz'],
+             'pyscript': 'desplit_fastq.pyc',
+             'target': u'11154_C02F9ACXX_c202_l3_r2.fastq'}]
+         }
+        for arg in split:
+            _, target = os.path.split(arg['target'])
+            pyscript = split_test[target]['pyscript']
+            self.failUnless(arg['pyscript'].endswith(pyscript))
+            filename = split_test[target]['target']
+            self.failUnless(arg['target'].endswith(filename))
+            for s_index in range(len(arg['sources'])):
+                s1 = arg['sources'][s_index]
+                s2 = split_test[target]['sources'][s_index]
+                self.failUnless(s1.endswith(s2))
 
         #print '-------commands---------'
         #pprint (commands)
 
-def extract_argument_list(condor_argument):
-    args = condor_argument.split()
-    # eat the command name, and the trailing queue
-    return args[1:-1]
+    def test_create_scripts(self):
+        os.chdir(self.tempdir)
+        extract = condorfastq.CondorFastqExtract('host',
+                                                 FAKE_APIDATA,
+                                                 self.tempdir,
+                                                 self.logdir)
+        extract.api = FakeApi()
+        result_map = [('11154', self.subname)]
+        extract.create_scripts(result_map)
+
+        self.failUnless(os.path.exists('srf.condor'))
+        with open('srf.condor', 'r') as srf:
+            arguments = [ l for l in srf if l.startswith('argument') ]
+            arguments.sort()
+            self.failUnlessEqual(len(arguments), 2)
+            self.failUnless('--single sub-11154/11154_30221AAXX_c33_l4.fastq'
+                            in arguments[0])
+            self.failUnless(
+                '--right sub-11154/11154_30DY0AAXX_c151_l8_r2.fastq' in
+                arguments[1])
+
+        self.failUnless(os.path.exists('qseq.condor'))
+        with open('qseq.condor', 'r') as srf:
+            arguments = [ l for l in srf if l.startswith('argument') ]
+            arguments.sort()
+            self.failUnlessEqual(len(arguments), 3)
+            self.failUnless('-o sub-11154/11154_42JUYAAXX_c76_l5_r1.fastq ' in
+                            arguments[0])
+            self.failUnless(
+                'C1-76/woldlab_100826_HSI-123_0001_42JUYAAXX_l5_r2.tar.bz2' in
+                arguments[1])
+            self.failUnless('61MJTAAXX_c76_l6.fastq -f 61MJTAAXX' in
+                            arguments[2])
+
+        self.failUnless(os.path.exists('split_fastq.condor'))
+        with open('split_fastq.condor', 'r') as split:
+            arguments = [ l for l in split if l.startswith('argument') ]
+            arguments.sort()
+            self.failUnlessEqual(len(arguments), 2)
+            self.failUnless('11154_NoIndex_L003_R1_001.fastq.gz' in \
+                            arguments[0])
+            self.failUnless('11154_NoIndex_L003_R2_002.fastq.gz' in \
+                            arguments[1])
+
 
 def suite():
     suite = unittest.makeSuite(TestCondorFastq, 'test')
