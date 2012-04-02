@@ -36,18 +36,18 @@ class CondorFastqExtract(object):
         self.log_path = log_path
         self.force = force
 
-    def create_scripts(self, library_result_map ):
+    def create_scripts(self, result_map ):
         """
         Generate condor scripts to build any needed fastq files
 
         Args:
-          library_result_map (list):  [(library_id, destination directory), ...]
+          result_map: htsworkflow.submission.results.ResultMap()
         """
         template_map = {'srf': 'srf.condor',
                         'qseq': 'qseq.condor',
                         'split_fastq': 'split_fastq.condor'}
 
-        condor_entries = self.build_condor_arguments(library_result_map)
+        condor_entries = self.build_condor_arguments(result_map)
         for script_type in template_map.keys():
             template = loader.get_template(template_map[script_type])
             variables = {'python': sys.executable,
@@ -61,7 +61,7 @@ class CondorFastqExtract(object):
             with open(script_type + '.condor','w+') as outstream:
                 outstream.write(template.render(context))
 
-    def build_condor_arguments(self, library_result_map):
+    def build_condor_arguments(self, result_map):
         condor_entries = {'srf': [],
                           'qseq': [],
                           'split_fastq': []}
@@ -69,9 +69,9 @@ class CondorFastqExtract(object):
                             'qseq': self.condor_qseq_to_fastq,
                             'split_fastq': self.condor_desplit_fastq
                             }
-        lib_db = self.find_archive_sequence_files(library_result_map)
 
-        needed_targets = self.find_missing_targets(library_result_map, lib_db)
+        lib_db = self.find_archive_sequence_files(result_map)
+        needed_targets = self.find_missing_targets(result_map, lib_db)
 
         for target_pathname, available_sources in needed_targets.items():
             LOGGER.debug(' target : %s' % (target_pathname,))
@@ -93,7 +93,7 @@ class CondorFastqExtract(object):
 
         return condor_entries
 
-    def find_archive_sequence_files(self,  library_result_map):
+    def find_archive_sequence_files(self,  result_map):
         """
         Find archived sequence files associated with our results.
         """
@@ -102,7 +102,7 @@ class CondorFastqExtract(object):
         lib_db = {}
         seq_dirs = set()
         candidate_lanes = {}
-        for lib_id, result_dir in library_result_map:
+        for lib_id in result_map.keys():
             lib_info = self.api.get_library(lib_id)
             lib_info['lanes'] = {}
             lib_db[lib_id] = lib_info
@@ -129,7 +129,7 @@ class CondorFastqExtract(object):
 
         return lib_db
 
-    def find_missing_targets(self, library_result_map, lib_db):
+    def find_missing_targets(self, result_map, lib_db):
         """
         Check if the sequence file exists.
         This requires computing what the sequence name is and checking
@@ -141,7 +141,8 @@ class CondorFastqExtract(object):
         fastq_single_template = '%(lib_id)s_%(flowcell)s_c%(cycle)s_l%(lane)s.fastq'
         # find what targets we're missing
         needed_targets = {}
-        for lib_id, result_dir in library_result_map:
+        for lib_id in result_map.keys():
+            result_dir = result_map[lib_id]
             lib = lib_db[lib_id]
             lane_dict = make_lane_dict(lib_db, lib_id)
 
@@ -188,7 +189,7 @@ class CondorFastqExtract(object):
             raise ValueError("srf to fastq can only handle one file")
 
         return {
-            'sources': [sources[0].path],
+            'sources': [os.path.abspath(sources[0].path)],
             'pyscript': srf2fastq.__file__,
             'flowcell': sources[0].flowcell,
             'ispaired': sources[0].paired,

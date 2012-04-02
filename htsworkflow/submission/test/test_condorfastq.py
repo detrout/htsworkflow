@@ -8,6 +8,7 @@ import tempfile
 import unittest
 
 from htsworkflow.submission import condorfastq
+from htsworkflow.submission.results import ResultMap
 
 FCDIRS = [
     'C02F9ACXX',
@@ -164,6 +165,9 @@ class TestCondorFastq(unittest.TestCase):
         self.subdir = os.path.join(self.tempdir, self.subname)
         os.mkdir(self.subdir)
 
+        self.result_map = ResultMap()
+        self.result_map.add_result('11154', self.subname)
+
     def tearDown(self):
         shutil.rmtree(self.tempdir)
         os.chdir(self.cwd)
@@ -174,8 +178,8 @@ class TestCondorFastq(unittest.TestCase):
                                                  self.tempdir,
                                                  self.logdir)
         extract.api = FakeApi()
-        result_map = [('11154', self.subname)]
-        lib_db = extract.find_archive_sequence_files(result_map)
+
+        lib_db = extract.find_archive_sequence_files(self.result_map)
 
         self.failUnlessEqual(len(lib_db['11154']['lanes']), 5)
         lanes = [
@@ -198,10 +202,9 @@ class TestCondorFastq(unittest.TestCase):
                                                  self.tempdir,
                                                  self.logdir)
         extract.api = FakeApi()
-        result_map = [('11154', self.subname)]
-        lib_db = extract.find_archive_sequence_files(result_map)
+        lib_db = extract.find_archive_sequence_files(self.result_map)
 
-        needed_targets = extract.find_missing_targets(result_map,
+        needed_targets = extract.find_missing_targets(self.result_map,
                                                       lib_db)
         self.failUnlessEqual(len(needed_targets), 7)
         srf_30221 = needed_targets[
@@ -233,8 +236,7 @@ class TestCondorFastq(unittest.TestCase):
                                                  self.tempdir,
                                                  self.logdir)
         extract.api = FakeApi()
-        result_map = [('11154', self.subdir)]
-        commands = extract.build_condor_arguments(result_map)
+        commands = extract.build_condor_arguments(self.result_map)
 
         srf = commands['srf']
         qseq = commands['qseq']
@@ -245,25 +247,25 @@ class TestCondorFastq(unittest.TestCase):
         self.failUnlessEqual(len(split), 2)
 
         srf_data = {
-            os.path.join(self.subdir, '11154_30221AAXX_c33_l4.fastq'): {
+            os.path.join(self.subname, '11154_30221AAXX_c33_l4.fastq'): {
                 'mid': None,
                 'ispaired': False,
                 'sources': [u'woldlab_090425_HWI-EAS229_0110_30221AAXX_4.srf'],
                 'flowcell': u'30221AAXX',
-                'target': os.path.join(self.subdir,
+                'target': os.path.join(self.subname,
                                        u'11154_30221AAXX_c33_l4.fastq'),
             },
-            os.path.join(self.subdir, '11154_30DY0AAXX_c151_l8_r1.fastq'): {
+            os.path.join(self.subname, '11154_30DY0AAXX_c151_l8_r1.fastq'): {
                 'mid': None,
                 'ispaired': True,
                 'flowcell': u'30DY0AAXX',
                 'sources': [u'woldlab_090725_HWI-EAS229_0110_30DY0AAXX_8.srf'],
                 'mid': 76,
                 'target':
-                    os.path.join(self.subdir,
+                    os.path.join(self.subname,
                                  u'11154_30DY0AAXX_c151_l8_r1.fastq'),
                 'target_right':
-                    os.path.join(self.subdir,
+                    os.path.join(self.subname,
                                  u'11154_30DY0AAXX_c151_l8_r2.fastq'),
             }
         }
@@ -281,19 +283,19 @@ class TestCondorFastq(unittest.TestCase):
                 self.failUnlessEqual(args['mid'], expected['mid'])
 
         qseq_data = {
-            os.path.join(self.subdir, '11154_42JUYAAXX_c76_l5_r1.fastq'): {
+            os.path.join(self.subname, '11154_42JUYAAXX_c76_l5_r1.fastq'): {
                 'istar': True,
                 'ispaired': True,
                 'sources': [
                     u'woldlab_100826_HSI-123_0001_42JUYAAXX_l5_r1.tar.bz2']
             },
-            os.path.join(self.subdir, '11154_42JUYAAXX_c76_l5_r2.fastq'): {
+            os.path.join(self.subname, '11154_42JUYAAXX_c76_l5_r2.fastq'): {
                 'istar': True,
                 'ispaired': True,
                 'sources': [
                     u'woldlab_100826_HSI-123_0001_42JUYAAXX_l5_r2.tar.bz2']
             },
-            os.path.join(self.subdir, '11154_61MJTAAXX_c76_l6.fastq'): {
+            os.path.join(self.subname, '11154_61MJTAAXX_c76_l6.fastq'): {
                 'istar': True,
                 'ispaired': False,
                 'sources': [
@@ -340,8 +342,7 @@ class TestCondorFastq(unittest.TestCase):
                                                  self.tempdir,
                                                  self.logdir)
         extract.api = FakeApi()
-        result_map = [('11154', self.subname)]
-        extract.create_scripts(result_map)
+        extract.create_scripts(self.result_map)
 
         self.failUnless(os.path.exists('srf.condor'))
         with open('srf.condor', 'r') as srf:
