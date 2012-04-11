@@ -1,0 +1,33 @@
+PREFIX libraryOntology: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
+PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
+PREFIX ncbiTaxon: <http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=>
+
+select distinct ?name ?filename ?md5sum ?cell ?antibody ?sex ?control ?strain ?controlId ?labExpId ?labVersion ?treatment ?protocol ?readType ?insertLength ?replicate, ?mapAlgorithm ?species_name ?taxon_id
+WHERE {
+  <{{submission}}> a submissionOntology:submission .
+
+  OPTIONAL { ?submission ucscDaf:control ?control }
+  #OPTIONAL { ?submission ucscDaf:controlId ?controlId }
+  #OPTIONAL { ?library libraryOntology:antibody ?antibody }
+  OPTIONAL { ?library libraryOntology:cell_line ?cell } .
+  #OPTIONAL { ?library ucscDaf:sex ?sex }
+  OPTIONAL { ?library libraryOntology:library_id ?labExpId }
+  OPTIONAL { ?library libraryOntology:library_id ?labVersion }
+  OPTIONAL { ?library libraryOntology:replicate ?replicate }
+  OPTIONAL { ?library libraryOntology:species ?species_name }
+  
+  #OPTIONAL { ?library libraryOntology:condition_term ?treatment }
+  #OPTIONAL { ?library ucscDaf:protocol ?protocol }
+  #OPTIONAL { ?library ucscDaf:readType ?readType }
+  #OPTIONAL { ?library ucscDaf:strain ?strain }
+  #OPTIONAL { ?library libraryOntology:insert_size ?insertLength }
+  #OPTIONAL { ?library ucscDaf:mapAlgorithm ?mapAlgorithm }
+
+  <{{submission}}> submissionOntology:library ?library ;
+                   ucscDaf:has_file ?file ;
+                   submissionOntology:name ?name .
+  ?species libraryOntology:species ?species_name ;
+           libraryOntology:taxon_id ?taxon_id .
+  ?file ucscDaf:filename ?filename .
+}
