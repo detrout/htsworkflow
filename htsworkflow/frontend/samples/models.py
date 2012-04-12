@@ -144,7 +144,7 @@ class LibraryType(models.Model):
 class MultiplexIndex(models.Model):
     """Map adapter types to the multiplex sequence"""
     adapter_type = models.ForeignKey(LibraryType)
-    multiplex_id = models.CharField(max_length=3, null=False)
+    multiplex_id = models.CharField(max_length=6, null=False)
     sequence = models.CharField(max_length=12, blank=True, null=True)
 
     class Meta:
@@ -244,23 +244,41 @@ class Library(models.Model):
       if self.multiplex_id is None or len(self.multiplex_id) == 0:
           return 'Err: id empty'
       sequences = {}
-      multiplex_ids = self.multiplex_id.split(',')
-      for multiplex_id in multiplex_ids:
-          try:
-              multiplex = MultiplexIndex.objects.get(
-                  adapter_type = self.library_type.id,
-                  multiplex_id = multiplex_id)
-              sequences[multiplex_id] = multiplex.sequence
-          except MultiplexIndex.DoesNotExist, e:
-              sequences[multiplex_id] = 'Err: index not found'
+      multiplex_expressions = self.multiplex_id.split(',')
+      for multiplex_term in multiplex_expressions:
+          pairs = multiplex_term.split('-')
+          if len(pairs) == 1:
+              key = pairs[0]
+              seq = self._lookup_index(pairs[0])
+          elif len(pairs) == 2:
+              key = pairs[0] + '-' + pairs[1]
+              seq0 = self._lookup_index(pairs[0])
+              seq1 = self._lookup_index(pairs[1])
+              if seq0 is None or seq1 is None:
+                  seq = None
+              else:
+                  seq = seq0 + '-' + seq1
+          else:
+              raise RuntimeError("Too many - seperated sequences")
+          if seq is None:
+              seq = 'Err: index not found'
+          sequences[key] = seq
       return sequences
+
+  def _lookup_index(self, multiplex_id):
+      try:
+          multiplex = MultiplexIndex.objects.get(
+              adapter_type = self.library_type.id,
+              multiplex_id = multiplex_id)
+          return multiplex.sequence
+      except MultiplexIndex.DoesNotExist, e:
+          return None
 
   def index_sequence_text(self, seperator=' '):
       """Return formatted multiplex index sequences"""
       sequences = self.index_sequences()
       if sequences is None:
           return ""
-
       multiplex_ids = sequences.keys()
       multiplex_ids.sort()
       return seperator.join(( "%s:%s" %(i,sequences[i]) for i in multiplex_ids))

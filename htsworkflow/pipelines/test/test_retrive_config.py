@@ -54,19 +54,33 @@ class RetrieveTestCases(TestCase):
 
         output = StringIO()
         save_sample_sheet(output, options, flowcell_info)
+        print output.buf
+
         output.seek(0)
         sheet = list(csv.DictReader(output))
-        expected = [{'SampleProject': '12044_index1', 'Index': 'ATCACG'},
-                    {'SampleProject': '12044_index2', 'Index': 'CGATGT'},
-                    {'SampleProject': '12044_index3', 'Index': 'TTAGGC'},
-                    {'SampleProject': '11045_index1', 'Index': 'ATCACG'},
+        expected = [{'SampleProject': '12044_index1',
+                     'Index': 'ATCACG',
+                     'Lane': '3',
+                     },
+                    {'SampleProject': '12044_index2',
+                     'Index': 'CGATGT',
+                     'Lane': '3',
+                     },
+                    {'SampleProject': '12044_index3',
+                     'Index': 'TTAGGC',
+                     'Lane': '3',
+                     },
+                    {'SampleProject': '11045_index1',
+                     'Index': 'ATCACG',
+                     'Lane': '3',
+                     },
+                    {'SampleProject': '13044_indexN701-N501',
+                     'Index': 'TAAGGCGA-TAGATCGC',
+                     'Lane': '4',
+                     }
                     ]
-        for i in range(4):
-            self.assertEqual(sheet[i]['SampleProject'],
-                             expected[i]['SampleProject'])
-            self.assertEqual(sheet[i]['Index'],
-                             expected[i]['Index'])
-            self.assertEqual(sheet[i]['FCID'], fcid)
-            self.assertEqual(sheet[i]['Lane'], '3')
-
-
+        self.failUnlessEqual(len(sheet), len(expected))
+        for s, e in zip(sheet, expected):
+            for key in e.keys():
+                self.failUnlessEqual(s[key], e[key],
+                  "%s != %s for key %s" % (s[key],e[key], key))
