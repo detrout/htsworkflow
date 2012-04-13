@@ -33,6 +33,9 @@ def sparql_query(model, query_filename):
     query_body = open(query_filename,'r').read()
     query = RDF.SPARQLQuery(query_body)
     results = query.execute(model)
+    display_query_results(results)
+
+def display_query_results(results):
     for row in results:
         output = []
         for k,v in row.items()[::-1]:
@@ -98,6 +101,8 @@ def fromTypedNode(node):
             return False
         else:
             raise ValueError("Unrecognized boolean %s" % (literal,))
+    elif value_type == 'integer':
+        return int(literal)
     elif value_type == 'decimal' and literal.find('.') == -1:
         return int(literal)
     elif value_type in ('decimal', 'float', 'double'):

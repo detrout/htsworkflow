@@ -2,6 +2,7 @@
 """
 import logging
 import os
+from pprint import pformat
 import re
 import string
 from StringIO import StringIO
@@ -12,6 +13,7 @@ import RDF
 from htsworkflow.util.rdfhelp import \
      blankOrUri, \
      dafTermOntology, \
+     dump_model, \
      get_model, \
      libraryOntology, \
      owlNS, \
@@ -128,6 +130,7 @@ def parse_stream(stream):
     if view_name is not None:
         attributes['views'][view_name] = view_attributes
 
+    logger.debug("DAF Attributes" + pformat(attributes))
     return attributes
 
 
@@ -234,8 +237,8 @@ def get_view_namespace(submission_uri):
     return viewNS
 
 
-class DAFMapper(object):
-    """Convert filenames to views in the UCSC Daf
+class UCSCSubmission(object):
+    """Build a submission by examining the DAF for what we need to submit
     """
     def __init__(self, name, daf_file=None, model=None):
         """Construct a RDF backed model of a UCSC DAF
@@ -264,14 +267,22 @@ class DAFMapper(object):
 
         if hasattr(daf_file, 'next'):
             # its some kind of stream
-            fromstream_into_model(self.model, self.submissionSet, daf_file)
+            self.daf = daf_file.read()
         else:
             # file
-            parse_into_model(self.model, self.submissionSet, daf_file)
+            stream = open(daf_file, 'r')
+            self.daf = stream.read()
+            stream.close()
+
+        fromstring_into_model(self.model, self.submissionSet, self.daf)
 
         self.libraryNS = RDF.NS('http://jumpgate.caltech.edu/library/')
         self.submissionSetNS = RDF.NS(str(self.submissionSet) + '/')
         self.__view_map = None
+
+    def _get_daf_name(self):
+        return self.name + '.daf'
+    daf_name = property(_get_daf_name,doc="construct name for DAF file")
 
     def add_pattern(self, view_name, filename_pattern):
         """Map a filename regular expression to a view name
@@ -281,6 +292,16 @@ class DAFMapper(object):
             RDF.Statement(self.viewNS[view_name],
                           dafTermOntology['filename_re'],
                           obj))
+
+    def scan_submission_dirs(self, result_map):
+        """Examine files in our result directory
+        """
+        for lib_id, result_dir in result_map.items():
+            logger.info("Importing %s from %s" % (lib_id, result_dir))
+            try:
+                self.import_submission_dir(result_dir, lib_id)
+            except MetadataLookupException, e:
+                logger.error("Skipping %s: %s" % (lib_id, str(e)))
 
     def import_submission_dir(self, submission_dir, library_id):
         """Import a submission directories and update our model as needed
@@ -558,3 +579,57 @@ class DAFMapper(object):
                 return True
 
         return False
+
+
+    def link_daf(self, result_map):
+        if self.daf is None or len(self.daf) == 0:
+            raise RuntimeError(
+                "DAF data does not exist, how can I link to it?")
+
+        base_daf = self.daf_name
+
+        for result_dir in result_map.values():
+            if not os.path.exists(result_dir):
+                raise RuntimeError(
+                    "Couldn't find target directory %s" %(result_dir,))
+            submission_daf = os.path.join(result_dir, base_daf)
+            if os.path.exists(submission_daf):
+                previous_daf = open(submission_daf, 'r').read()
+                if self.daf != previous_daf:
+                    LOGGER.info("Old daf is different, overwriting it.")
+            stream = open(submission_daf, 'w')
+            stream.write(self.daf)
+            stream.close()
+
+
+if __name__ == "__main__":
+    example_daf = """# Lab and general info
+grant             Hardison
+lab               Caltech-m
+dataType          ChipSeq
+variables         cell, antibody,sex,age,strain,control
+compositeSuffix   CaltechHistone
+assembly          mm9
+dafVersion        2.0
+validationSettings validateFiles.bam:mismatches=2,bamPercent=99.9;validateFiles.fastq:quick=1000
+
+# Track/view definition
+view             FastqRd1
+longLabelPrefix  Caltech Fastq Read 1
+type             fastq
+hasReplicates    yes
+required         no
+
+view             Signal
+longLabelPrefix  Caltech Histone Signal
+type             bigWig
+hasReplicates    yes
+required         no
+"""
+    model = get_model()
+    example_daf_stream = StringIO(example_daf)
+    name = "test_rep"
+    mapper = DAFMapper(name, daf_file = example_daf_stream, model=model)
+    dump_model(model)
+
+

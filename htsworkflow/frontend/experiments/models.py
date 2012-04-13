@@ -28,7 +28,8 @@ RESCAN_DELAY = 1
 try:
     RESCAN_DELAY = int(settings.RESCAN_DELAY)
 except (ValueError, AttributeError):
-    logger.error("Missing or invalid settings.RESCAN_DELAY")
+    logger.error("Missing or invalid settings.RESCAN_DELAY, "\
+                 "defaulting to %s" % (RESCAN_DELAY,))
 
 RUN_STATUS_CHOICES = (
     (0, 'Sequencer running'), ##Solexa Data Pipeline Not Yet Started'),

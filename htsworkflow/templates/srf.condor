@@ -1,0 +1,11 @@
+Universe=vanilla
+executable={{ exe }}
+error={{ logdir }}/fastq.$(process).out
+output={{ logdir }}/fastq.$(process).out
+log={{ logdir }}/fastq.log
+{% if env %}environment={{ env }}{% endif %}
+
+{% for arg in args %}
+arguments="{{ arg.pyscript }}  {{ arg.sources.0 }} --verbose {% if arg.flowcell %}-f {{ arg.flowcell }}{% endif %} {% if arg.ispaired %}--left {{ arg.target }} --right {{ arg.target_right }}{% else %}--single {{ arg.target }}{% endif %}"
+queue
+{% endfor %}

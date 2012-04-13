@@ -1,0 +1,94 @@
+"""Help collect and process results for submission
+"""
+import os
+import logging
+
+from collections import namedtuple
+
+LOGGER = logging.getLogger(__name__)
+
+class ResultMap(object):
+    """Store list of results
+    """
+    def __init__(self):
+        self.results_order = []
+        self.results = {}
+
+    def keys(self):
+        return self.results_order
+
+    def values(self):
+        return ( self.results[r] for r in self.results_order )
+
+    def items(self):
+        return ( (r, self.results[r]) for r in self.results_order )
+
+    def __getitem__(self, key):
+        return self.results[key]
+
+    def add_results_from_file(self, filename):
+        pathname = os.path.abspath(filename)
+        basepath, name = os.path.split(pathname)
+        results = read_result_list(filename)
+        for lib_id, lib_path in results:
+            if not os.path.isabs(lib_path):
+                lib_path = os.path.join(basepath, lib_path)
+            self.add_result(lib_id, lib_path)
+
+    def add_result(self, lib_id, lib_path):
+        self.results_order.append(lib_id)
+        self.results[lib_id] = lib_path
+
+    def make_tree_from(self, source_path, destpath = None):
+        """Create a tree using data files from source path.
+        """
+        print source_path, destpath
+        if destpath is None:
+            destpath = os.getcwd()
+
+        for lib_id in self.results_order:
+            lib_path = self.results[lib_id]
+            lib_destination = os.path.join(destpath, lib_path)
+            if not os.path.exists(lib_destination):
+                LOGGER.info("Making dir {0}".format(lib_destination))
+                os.mkdir(lib_destination)
+
+            source_rel_dir = os.path.join(source_path, lib_path)
+            source_lib_dir = os.path.abspath(source_rel_dir)
+
+            print "source_lib_dir", source_lib_dir
+            for filename in os.listdir(source_lib_dir):
+                source_pathname = os.path.join(source_lib_dir, filename)
+                target_pathname = os.path.join(lib_destination, filename)
+                if not os.path.exists(source_pathname):
+                    raise IOError(
+                        "{0} does not exist".format(source_pathname))
+                print target_pathname
+                if not os.path.exists(target_pathname):
+                    os.symlink(source_pathname, target_pathname)
+                    LOGGER.info(
+                        'LINK {0} to {1}'.format(source_pathname,
+                                                 target_pathname))
+
+def read_result_list(filename):
+    """
+    Read a file that maps library id to result directory.
+    Does not support spaces in filenames.
+
+    For example:
+      10000 result/foo/bar
+    """
+    stream = open(filename, 'r')
+    results = parse_result_list(stream)
+    stream.close()
+    return results
+
+
+def parse_result_list(stream):
+    results = []
+    for line in stream:
+        line = line.rstrip()
+        if not line.startswith('#') and len(line) > 0:
+            library_id, result_dir = line.split()
+            results.append((library_id, result_dir))
+    return results

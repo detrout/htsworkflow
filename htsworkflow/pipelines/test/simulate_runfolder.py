@@ -1,7 +1,7 @@
 """
 Create simulated solexa/illumina runfolders for testing
 """
-
+import gzip
 import os
 import shutil
 
@@ -55,6 +55,25 @@ def make_bustard_config132(image_dir):
     destination = os.path.join(image_dir, 'config.xml')
     shutil.copy(source, destination)
 
+def make_aligned_config_1_12(aligned_dir):
+    """This is rouglhly equivalent to the old gerald file"""
+    source = os.path.join(TESTDATA_DIR, 'aligned_config_1_12.xml')
+    destination = os.path.join(aligned_dir, 'config.xml')
+    shutil.copy(source, destination)
+
+def make_unaligned_config_1_12(unaligned_dir):
+    demultiplex_pairs = [ # (src,
+      # dest),
+        (os.path.join(TESTDATA_DIR, 'demultiplex_1.12.4.2.xml'),
+         os.path.join(unaligned_dir, 'DemultiplexConfig.xml')),
+        (os.path.join(TESTDATA_DIR, 'demultiplexed_bustard_1.12.4.2.xml'),
+         os.path.join(unaligned_dir, 'DemultiplexConfig.xml')),
+        (os.path.join(TESTDATA_DIR, 'demultiplexed_summary_1.12.4.2.xml'),
+         os.path.join(unaligned_dir, 'DemultiplexConfig.xml')),
+    ]
+    for src, dest in demultiplex_pairs:
+        shutil.copy(src, dest)
+
 def make_rta_intensities_1460(data_dir, version='1.4.6.0'):
     """
     Construct an artificial RTA Intensities parameter file and directory
@@ -107,6 +126,19 @@ def make_rta_intensities_1_10(data_dir, version='1.10.36.0'):
 
     return intensities_dir
 
+def make_rta_intensities_1_12(data_dir, version='1.12.4.2'):
+    """
+    Construct an artificial RTA Intensities parameter file and directory
+    """
+    intensities_dir = os.path.join(data_dir, 'Intensities')
+    if not os.path.exists(intensities_dir):
+      os.mkdir(intensities_dir)
+
+    param_file = os.path.join(TESTDATA_DIR, 'rta_intensities_config_1.12.4.2.xml')
+    shutil.copy(param_file, os.path.join(intensities_dir, 'RTAConfig.xml'))
+
+    return intensities_dir
+
 def make_rta_basecalls_1870(intensities_dir):
     """
     Construct an artificial RTA Intensities parameter file and directory
@@ -133,6 +165,21 @@ def make_rta_basecalls_1_10(intensities_dir):
     shutil.copy(param_file, os.path.join(basecalls_dir, 'config.xml'))
 
     return basecalls_dir
+
+def make_rta_basecalls_1_12(intensities_dir):
+    """
+    Construct an artificial RTA Intensities parameter file and directory
+    """
+    basecalls_dir = os.path.join(intensities_dir, 'BaseCalls')
+    if not os.path.exists(basecalls_dir):
+        os.mkdir(basecalls_dir)
+
+    make_qseqs(basecalls_dir, basecall_info=ABXX_BASE_CALL_INFO)
+    param_file = os.path.join(TESTDATA_DIR, 'rta_basecalls_config_1.12.4.2.xml')
+    shutil.copy(param_file, os.path.join(basecalls_dir, 'config.xml'))
+
+    return basecalls_dir
+
 
 def make_qseqs(bustard_dir, basecall_info=None):
     """
@@ -232,6 +279,9 @@ def make_matrix_dir_rta160(bustard_dir):
         shutil.copy(source, destination)
 
 def make_matrix_dir_rta_1_10(bustard_dir):
+    make_matrix_dir_rta160(bustard_dir)
+
+def make_matrix_dir_rta_1_12(bustard_dir):
     make_matrix_dir_rta160(bustard_dir)
 
 def make_phasing_dir(bustard_dir):
@@ -394,6 +444,199 @@ _bbbbbaaababaabbbbab]D]aaaaaaaaaaaaaa
         f.write(seq)
         f.close()
 
+UNALIGNED_READS = [1,2]
+UNALIGNED_SAMPLES = [ (1, UNALIGNED_READS, '11111', None, None),
+                      (2, UNALIGNED_READS, '11112', None, None),
+                      (3, UNALIGNED_READS, '11113', 1, 'ATCACG'),
+                      (3, UNALIGNED_READS, '11113', 2, 'CGATGT'),
+                      (3, UNALIGNED_READS, '11113', 3, 'TTAGGC'),
+                      (4, UNALIGNED_READS, '11114', 6, 'GCCAAT'),
+                      (5, UNALIGNED_READS, '11115', 1, 'ATCACG'),
+                      (5, UNALIGNED_READS, '11116', 7, 'ACTTGA'),
+                      (5, UNALIGNED_READS, '11117', 9, 'GATCAG'),
+                      (6, UNALIGNED_READS, '11118', 1, 'ATCACG'),
+                      (7, UNALIGNED_READS, '11119', 2, 'CGATGT'),
+                      (8, UNALIGNED_READS, '11120', 3, 'TTAGGC'),
+                      (1, UNALIGNED_READS, None, None, None),
+                      (2, UNALIGNED_READS, None, None, None),
+                      (3, UNALIGNED_READS, None, None, None),
+                      (4, UNALIGNED_READS, None, None, None),
+                      (5, UNALIGNED_READS, None, None, None)]
+
+
+def make_aligned_eland_export(aligned_dir, flowcell_id):
+    summary_source = os.path.join(TESTDATA_DIR, 'sample_summary_1_12.htm')
+    for lane, read, project_id, index_id, index_seq in UNALIGNED_SAMPLES:
+        paths = DemultiplexedPaths(aligned_dir,
+                                   flowcell_id,
+                                   lane,
+                                   project_id,
+                                   index_id,
+                                   index_seq)
+        paths.make_sample_dirs()
+        paths.make_summary_dirs()
+        summary_dest = os.path.join(paths.summary_dir, 'Sample_Summary.htm')
+        shutil.copy(summary_source, summary_dest)
+
+        body = get_unaligned_sample_export(lane, index_seq)
+        for split in ['001','002']:
+            for read in UNALIGNED_READS:
+                suffix = 'R{0}_{1}_export.txt.gz'.format(read, split)
+                pathname = paths.make_test_filename(suffix)
+                stream = gzip.open(pathname, 'w')
+                stream.write(body)
+                stream.close()
+
+
+def make_unaligned_fastqs_1_12(unaligned_dir, flowcell_id):
+    """Create a default mix of unaligned sample files
+    """
+    for lane, read, name, index_id, index in UNALIGNED_SAMPLES:
+        make_unaligned_fastq_sample_1_12(unaligned_dir,
+                                         flowcell_id,
+                                         lane,
+                                         read,
+                                         name,
+                                         index_id,
+                                         index)
+
+def make_unaligned_fastq_sample_1_12(unaligned_dir,
+                                     flowcell_id,
+                                     lane,
+                                     reads,
+                                     project_id,
+                                     index_id=None,
+                                     index_seq=None):
+
+    paths = DemultiplexedPaths(unaligned_dir,
+                               flowcell_id,
+                               lane,
+                               project_id,
+                               index_id,
+                               index_seq)
+    paths.make_sample_dirs()
+
+    sample_seq = get_unaligned_sample_fastq_data(flowcell_id, lane, index_seq)
+    for split in ['001','002']:
+        for read in reads:
+            suffix = 'R{0}_{1}.fastq.gz'.format(read, split)
+            pathname = paths.make_test_filename(suffix)
+            stream = gzip.open(pathname, 'w')
+            stream.write(sample_seq)
+            stream.close()
+
+    sheetname = os.path.join(paths.sample_dir, 'SampleSheet.csv')
+    stream = open(sheetname, 'w')
+    stream.write('FCID,Lane,SampleID,SampleRef,Index,Description,Control,Recipe,Operator,SampleProject'+os.linesep)
+    template = '{flowcell},{lane},{id},mm9,{index},Sample #{id},N,PR_indexing,Operator,{sample_project}'+os.linesep
+    stream.write(template.format(flowcell=flowcell_id,
+                                 lane=lane,
+                                 id=paths.sample_id,
+                                 index=paths.index_seq,
+                                 sample_project=paths.sample_project))
+    stream.close()
+
+
+class DemultiplexedPaths(object):
+    def __init__(self, basedir, flowcell_id, lane, project_id, index_id, index_seq):
+        if lane not in LANE_LIST:
+            raise ValueError("Invalid lane ID: {0}".format(lane))
+        self.basedir = basedir
+        self.flowcell_id = flowcell_id
+        self.lane = lane
+
+        if project_id is None:
+            # undetermined
+            self.index_seq = ''
+            self.sample_id = 'lane{0}'.format(lane)
+            self.sample_project = 'Undetermined_indices'
+            self.rootname = 'lane{lane}_Undetermined_L00{lane}_'.format(
+                lane=lane)
+            self.project_dir = 'Undetermined_indices'
+            self.sample_dir = 'Sample_lane{lane}'.format(lane=lane)
+        elif index_seq is None:
+            self.index_seq = ''
+            self.sample_id = project_id
+            self.sample_project = '{project_id}'.format(project_id=project_id)
+            self.rootname = '{project_id}_NoIndex_L00{lane}_'.format(
+                project_id=project_id,
+                lane=lane)
+            self.project_dir = 'Project_' + self.sample_project
+            self.sample_dir = 'Sample_{project_id}'.format(
+                project_id=project_id)
+        else:
+            self.index_seq = index_seq
+            self.sample_id = project_id
+            self.sample_project = '{project_id}_Index{index_id}'.format(
+                project_id=project_id,
+                index_id=index_id)
+            self.rootname = '{project_id}_{index}_L00{lane}_'.format(
+                project_id=project_id,
+                index=index_seq,
+                lane=lane)
+            self.project_dir = 'Project_' + self.sample_project
+            self.sample_dir = 'Sample_{project_id}'.format(
+                project_id=project_id)
+
+        self.project_dir = os.path.join(self.basedir, self.project_dir)
+        self.sample_dir = os.path.join(self.project_dir, self.sample_dir)
+        self.summary_dir = 'Summary_Stats_{0}'.format(self.flowcell_id)
+        self.summary_dir = os.path.join(self.project_dir, self.summary_dir)
+
+
+    def make_sample_dirs(self):
+        if not os.path.isdir(self.project_dir):
+            os.mkdir(self.project_dir)
+        if not os.path.isdir(self.sample_dir):
+            os.mkdir(self.sample_dir)
+
+    def make_summary_dirs(self):
+        if not os.path.isdir(self.summary_dir):
+            os.mkdir(self.summary_dir)
+
+    def make_test_filename(self, suffix):
+        filename = self.rootname + suffix
+        pathname = os.path.join(self.sample_dir, filename)
+        return pathname
+
+    def dump(self):
+        print ('index seq: {0}'.format(self.index_seq))
+
+        print ('project dir: {0}'.format(self.project_dir))
+        print ('sample dir: {0}'.format(self.sample_dir))
+        print ('rootname: {0}'.format(self.rootname))
+        print ('path: {0}'.format(
+            os.path.join(self.project_dir,
+                         self.sample_dir,
+                         self.rootname+'R1_001.fastq.gz')))
+
+
+def get_unaligned_sample_fastq_data(flowcell_id, lane, index_seq):
+    seq = """@HWI-ST0787:101:{flowcell}:{lane}:1101:2416:3469 1:Y:0:{index}
+TCCTTCATTCCACCGGAGTCTGTGGAATTCTCGGGTGCCAAGGAACTCCA
++
+CCCFFFFFHHHHHJJJJJJJJJIJJJJJJJJJJJJJJJJIIJJIIJJJJJ
+@HWI-ST0787:101:{flowcell}:{lane}:1101:2677:3293 1:Y:0:{index}
+TGGAAATCCATTGGGGTTTCCCCTGGAATTCTCGGGTGCCAAGGAACTCC
++
+@CCFF3BDHHHHHIIIIIHHIIIDIIIGIIIEGIIIIIIIIIIIIIIIHH
+@HWI-ST0787:101:{flowcell}:{lane}:1101:2616:3297 1:Y:0:{index}
+TAATACTGCCGGGTAATGATGGCTGGAATTCTCGGGTGCCAAGGAACTCC
++
+CCCFFFFFHHHHHCGHJJJJJJJJJJJJJJJJJIIJJJJJJJJJIHJJJI
+@HWI-ST0787:101:{flowcell}:{lane}:1101:2545:3319 1:N:0:{index}
+TCCTTCATTCCACCGGAGTCTGCTGGAATTCTCGGGTGCCAAGGAACTCC
++
+CCCFFFFFHHHFHJGIGHIJHIIGHIGIGIGEHFIJJJIHIJHJIIJJIH
+""".format(flowcell=flowcell_id, lane=lane, index=index_seq)
+    return seq
+
+def get_unaligned_sample_export(lane, index_seq):
+    body = """HWI-ST0787\t102\t{lane}\t1101\t1207\t1993\t{index}\t1\tAANGGATTCGATCCGGCTTAAGAGATGAAAACCGAAAGGGCCGACCGAA\taaBS`ccceg[`ae[dRR_[[SPPPP__ececfYYWaegh^\\ZLLY\\X`\tNM\t\t\t\t\t\t
+HWI-ST0787\t102     {lane}       1101    1478    1997    {index}  1       CAAGAACCCCGGGGGGGGGGGGGCAGAGAGGGGGAATTTTTTTTTTGTT       BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB       NM                                                                                      N
+HWI-ST0787      102     {lane}       1101    1625    1994    {index}  1       AANAATGCTACAGAGACAAAACAAAACTGATATGAAAGTTGAGAATAAA       \^BS\cccgegg[Q[QQQ[`egdgffbeggfgh^^YcfgfhXaHY^O^c       chrII.fa
+""".format(lane=lane, index=index_seq)
+    return body
 
 def ls_tree(root):
     for dirpath, dirnames, filenames in os.walk(root):

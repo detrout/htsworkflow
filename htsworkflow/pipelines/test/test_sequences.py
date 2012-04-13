@@ -4,24 +4,56 @@ import unittest
 
 from htsworkflow.pipelines import sequences
 
+
 class SequenceFileTests(unittest.TestCase):
     """
     Make sure the sequence archive class works
     """
+    def test_get_flowcell_cycle(self):
+        tests = [
+            ('/root/42BW9AAXX/C1-152',
+             sequences.FlowcellPath('42BW9AAXX', 1, 152, None)),
+            ('/root/42BW9AAXX/C1-152/',
+             sequences.FlowcellPath('42BW9AAXX', 1, 152, None)),
+            ('/root/42BW9AAXX/C1-152/Project_12345',
+             sequences.FlowcellPath('42BW9AAXX', 1, 152, 'Project_12345')),
+            ('/root/42BW9AAXX/C1-152/Project_12345/',
+             sequences.FlowcellPath('42BW9AAXX', 1, 152, 'Project_12345')),
+        ]
+
+        for t in tests:
+            path = sequences.get_flowcell_cycle(t[0])
+            self.failUnlessEqual(path, t[1])
+
     def test_flowcell_cycle(self):
         """
         Make sure code to parse directory heirarchy works
         """
         path = '/root/42BW9AAXX/C1-152'
-        flowcell, start, stop = sequences.get_flowcell_cycle(path)
+        flowcell, start, stop, project = sequences.get_flowcell_cycle(path)
 
         self.failUnlessEqual(flowcell, '42BW9AAXX')
         self.failUnlessEqual(start, 1)
         self.failUnlessEqual(stop, 152)
+        self.failUnlessEqual(project, None)
 
         path = '/root/42BW9AAXX/other'
         self.failUnlessRaises(ValueError, sequences.get_flowcell_cycle, path)
 
+    def test_flowcell_project_cycle(self):
+        """
+        Make sure code to parse directory heirarchy works
+        """
+        path = '/root/42BW9AAXX/C1-152/Project_12345_Index1'
+        flowcell, start, stop, project = sequences.get_flowcell_cycle(path)
+
+        self.failUnlessEqual(flowcell, '42BW9AAXX')
+        self.failUnlessEqual(start, 1)
+        self.failUnlessEqual(stop, 152)
+        self.failUnlessEqual(project, 'Project_12345_Index1')
+
+        path = '/root/42BW9AAXX/other'
+        self.failUnlessRaises(ValueError, sequences.get_flowcell_cycle, path)
 
     def test_srf(self):
         path = '/root/42BW9AAXX/C1-38'
@@ -90,6 +122,52 @@ class SequenceFileTests(unittest.TestCase):
         self.failUnlessEqual(f.pf, False)
         self.failUnlessEqual(f.cycle, 38)
 
+    def test_project_fastq(self):
+        path = '/root/42BW9AAXX/C1-38/Project_12345'
+        name = '11111_NoIndex_L001_R1_001.fastq.gz'
+        pathname = os.path.join(path,name)
+        f = sequences.parse_fastq(path, name)
+
+        self.failUnlessEqual(f.filetype, 'split_fastq')
+        self.failUnlessEqual(f.path, pathname)
+        self.failUnlessEqual(f.flowcell, '42BW9AAXX')
+        self.failUnlessEqual(f.lane, 1)
+        self.failUnlessEqual(f.read, 1)
+        self.failUnlessEqual(f.pf, True)
+        self.failUnlessEqual(f.project, '11111')
+        self.failUnlessEqual(f.index, 'NoIndex')
+        self.failUnlessEqual(f.cycle, 38)
+
+        name = '11112_AAATTT_L001_R2_003.fastq.gz'
+        pathname = os.path.join(path,name)
+        f = sequences.parse_fastq(path, name)
+
+        self.failUnlessEqual(f.filetype, 'split_fastq')
+        self.failUnlessEqual(f.path, pathname)
+        self.failUnlessEqual(f.flowcell, '42BW9AAXX')
+        self.failUnlessEqual(f.lane, 1)
+        self.failUnlessEqual(f.read, 2)
+        self.failUnlessEqual(f.pf, True)
+        self.failUnlessEqual(f.project, '11112')
+        self.failUnlessEqual(f.index, 'AAATTT')
+        self.failUnlessEqual(f.cycle, 38)
+
+    def test_project_fastq_hashing(self):
+        """Can we tell the difference between sequence files?
+        """
+        path = '/root/42BW9AAXX/C1-38/Project_12345'
+        names = [('11111_NoIndex_L001_R1_001.fastq.gz',
+                  '11111_NoIndex_L001_R2_001.fastq.gz'),
+                 ('11112_NoIndex_L001_R1_001.fastq.gz',
+                  '11112_NoIndex_L001_R1_002.fastq.gz')
+                 ]
+        for a_name, b_name in names:
+            a = sequences.parse_fastq(path, a_name)
+            b = sequences.parse_fastq(path, b_name)
+            self.failIfEqual(a, b)
+            self.failIfEqual(a.key(), b.key())
+            self.failIfEqual(hash(a), hash(b))
+
     def test_eland(self):
         path = '/root/42BW9AAXX/C1-38'
         name = 's_4_eland_extended.txt.bz2'
@@ -134,7 +212,7 @@ class SequenceFileTests(unittest.TestCase):
         db = sqlite3.connect(":memory:")
         c = db.cursor()
         sequences.create_sequence_table(c)
-        
+
         data = [('/root/42BW9AAXX/C1-152',
                 'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r1.tar.bz2'),
                 ('/root/42BW9AAXX/C1-152',
@@ -151,7 +229,7 @@ class SequenceFileTests(unittest.TestCase):
         count = c.execute("select count(*) from sequences")
         row = count.fetchone()
         self.failUnlessEqual(row[0], 4)
- 
+
 
 def suite():
     return unittest.makeSuite(SequenceFileTests,'test')

@@ -1,0 +1,11 @@
+Soft template
+!Platform_title = Illumina Genome Analyzer (Homo sapiens)
+!Platform_geo_accession = GPL9052
+{% for sample in samples %}{% for row in sample %}{%if forloop.first %}
+^SAMPLE={{row.name}}
+!Sample_title={{row.name}}
+!Sample_organism_ch1 = {{ row.species_name }}
+!Sample_taxid_ch1 = {{ row.taxon_id }}
+{% spaceless %}{% if row.cell %}!Sample_characteristics_ch1 = cell: {{ row.cell }}
+{% endif %}{% endspaceless %}{% endif %}
+!Sample_supplementary_file_{{forloop.counter}}={{row.filename}}{% endfor %}{% endfor %}

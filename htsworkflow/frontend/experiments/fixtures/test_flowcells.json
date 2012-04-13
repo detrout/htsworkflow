@@ -884,6 +884,36 @@
         }
     },
     {
+        "pk": "13044",
+        "model": "samples.library",
+        "fields": {
+            "ten_nM_dilution": false,
+            "gel_cut_size": 225,
+            "library_name": "Dual Indexed Test",
+            "creation_date": "2009-08-26",
+            "cell_line": null,
+            "library_species": 9,
+            "library_type": 9,
+            "multiplex_id": "N701-N501",
+            "made_by": "Lorian",
+            "affiliations": [
+                2
+            ],
+            "replicate": 1,
+            "condition": null,
+            "hidden": false,
+            "stopping_point": "2A",
+            "tags": [],
+            "made_for": "",
+            "amplified_from_sample": 11043,
+            "notes": "8/21/2009 11:57:54\tColor: Orange",
+            "undiluted_concentration": "22.4",
+            "successful_pM": null,
+            "experiment_type": 2,
+            "antibody": null
+        }
+    },
+    {
         "pk": "11045",
         "model": "samples.library",
         "fields": {
@@ -935,6 +965,18 @@
        "pM": "7"
        }
    },
+  {"pk": 1379,
+   "model": "experiments.lane",
+   "fields": {
+       "comment": "",
+       "library": "13044",
+       "cluster_estimate": 196000,
+       "flowcell": 151,
+       "lane_number": 4,
+       "pM": "7"
+       }
+   },
+
     {
         "pk": "11044",
         "model": "samples.library",

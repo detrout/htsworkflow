@@ -1,6 +1,7 @@
 *~
 *.py[co]
 .coverage
+*,cover
 *.egg-info
 .noseids
 .ropeproject

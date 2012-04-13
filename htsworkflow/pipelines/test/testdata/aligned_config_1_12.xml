@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<RunParameters>
+  <Barcodes>
+  </Barcodes>
+  <Defaults>
+    <ANALYSIS>none</ANALYSIS>
+    <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+    <CHROM_NAME_VALIDATION>on</CHROM_NAME_VALIDATION>
+    <CMDPREFIX></CMDPREFIX>
+    <DATASET_POST_RUN_COMMAND></DATASET_POST_RUN_COMMAND>
+    <ELAND_EXTENDED_MULTI_READS>off</ELAND_EXTENDED_MULTI_READS>
+    <ELAND_FASTQ_FILES_PER_PROCESS>3</ELAND_FASTQ_FILES_PER_PROCESS>
+    <ELAND_GENOME></ELAND_GENOME>
+    <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+    <ELAND_MAX_MATCHES></ELAND_MAX_MATCHES>
+    <ELAND_PARAMS></ELAND_PARAMS>
+    <ELAND_REPEAT></ELAND_REPEAT>
+    <ELAND_RNA_GENE_MD_GROUP_LABEL></ELAND_RNA_GENE_MD_GROUP_LABEL>
+    <ELAND_RNA_GENOME_ANNOTATION></ELAND_RNA_GENOME_ANNOTATION>
+    <ELAND_RNA_GENOME_CONTAM></ELAND_RNA_GENOME_CONTAM>
+    <ELAND_RNA_GENOME_CONTAM_MASK>*.fa</ELAND_RNA_GENOME_CONTAM_MASK>
+    <ELAND_RNA_MULTI_READS>off</ELAND_RNA_MULTI_READS>
+    <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+    <ELAND_SEED_LENGTH2></ELAND_SEED_LENGTH2>
+    <EMAIL_DOMAIN>domain.com</EMAIL_DOMAIN>
+    <EMAIL_LIST>${logName}</EMAIL_LIST>
+    <EMAIL_SERVER>localhost:25</EMAIL_SERVER>
+    <EXPT_DIR>/mmjggl/nicodemus/data01/sequencer/110815_SN787_0101_AD07K6ACXX/Unaligned_1MM</EXPT_DIR>
+    <FLAT_TXT_GZ_SUFFIX>Flat.txt.gz</FLAT_TXT_GZ_SUFFIX>
+    <FLOWCELL>D07K6ACXX</FLOWCELL>
+    <GENE_MD_GZ_SUFFIX>_gene.md.gz</GENE_MD_GZ_SUFFIX>
+    <INCREASED_SENSITIVITY></INCREASED_SENSITIVITY>
+    <KAGU_PAIR_PARAMS>--muf 0</KAGU_PAIR_PARAMS>
+    <KAGU_PARAMS>--mmaq 4</KAGU_PARAMS>
+    <NUM_LEADING_DIRS_TO_STRIP>2</NUM_LEADING_DIRS_TO_STRIP>
+    <OA_SUFFIX>.oa</OA_SUFFIX>
+    <ORIGINAL_READS>1</ORIGINAL_READS>
+    <ORIGINAL_READ_LENGTH1>50</ORIGINAL_READ_LENGTH1>
+    <ORPHAN_ALIGNER_PARAMS>2</ORPHAN_ALIGNER_PARAMS>
+    <OUT_DIR>/mmjggl/nicodemus/data01/sequencer/110815_SN787_0101_AD07K6ACXX/Aligned_1MM</OUT_DIR>
+    <PAS_PARAMS></PAS_PARAMS>
+    <RAMM_REPORT_TYPE></RAMM_REPORT_TYPE>
+    <READS>1</READS>
+    <READ_LENGTH1>49</READ_LENGTH1>
+    <RNAQC_COUNT_CLUSTERS_CMD>$(WC) -l</RNAQC_COUNT_CLUSTERS_CMD>
+    <RNAQC_COUNT_CLUSTERS_NAME>totalClusters</RNAQC_COUNT_CLUSTERS_NAME>
+    <RNAQC_COUNT_GENOME_CMD>($(GREP) -cvE '^((NM|QC|RM|[0-9]+:[0-9]+:[0-9]+)$$|splice_sites)' || exit 0)</RNAQC_COUNT_GENOME_CMD>
+    <RNAQC_COUNT_GENOME_NAME>genomeUsable</RNAQC_COUNT_GENOME_NAME>
+    <RNAQC_COUNT_NM_CMD>($(FGREP) -wc NM || exit 0)</RNAQC_COUNT_NM_CMD>
+    <RNAQC_COUNT_NM_NAME>noMatch</RNAQC_COUNT_NM_NAME>
+    <RNAQC_COUNT_PF_CMD>$(WC) -l</RNAQC_COUNT_PF_CMD>
+    <RNAQC_COUNT_PF_NAME>PFClusters</RNAQC_COUNT_PF_NAME>
+    <RNAQC_COUNT_QC_CMD>($(FGREP) -wc QC || exit 0)</RNAQC_COUNT_QC_CMD>
+    <RNAQC_COUNT_QC_NAME>QC</RNAQC_COUNT_QC_NAME>
+    <RNAQC_COUNT_RM_CMD>($(FGREP) -wc RM || exit 0)</RNAQC_COUNT_RM_CMD>
+    <RNAQC_COUNT_RM_NAME>repeatMasked</RNAQC_COUNT_RM_NAME>
+    <RNAQC_COUNT_SPLICE_CMD>($(FGREP) -c splice_sites || exit 0)</RNAQC_COUNT_SPLICE_CMD>
+    <RNAQC_COUNT_SPLICE_NAME>spliceUsable</RNAQC_COUNT_SPLICE_NAME>
+    <RNAQC_COUNT_USABLE_CMD>$(CUT) -f13 |($(EGREP) [0-9] || exit 0)|$(WC) -l</RNAQC_COUNT_USABLE_CMD>
+    <RNAQC_COUNT_USABLE_NAME>usable</RNAQC_COUNT_USABLE_NAME>
+    <RNAQC_FIND_CONTAMS_CMD>($(GREP) -vE '^(NM|QC|RM|[0-9]+:[0-9]+:[0-9]+)$$' || exit 0)</RNAQC_FIND_CONTAMS_CMD>
+    <SAMTOOLS_GENOME></SAMTOOLS_GENOME>
+    <SEQGENEMD2REFFLAT_PARAMS></SEQGENEMD2REFFLAT_PARAMS>
+    <SINGLESEED></SINGLESEED>
+    <SPLCSTS_PARAMS>-v $(CASAVA_LOG_LEVEL)</SPLCSTS_PARAMS>
+    <SQUASH_GENOME_PARAMS></SQUASH_GENOME_PARAMS>
+    <UNGAPPED></UNGAPPED>
+    <USE_BASES>y*n</USE_BASES>
+    <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    <WEB_DIR_ROOT>http://host.domain.com/yourshare/</WEB_DIR_ROOT>
+    <WITH_ORPHAN_ALIGNER>true</WITH_ORPHAN_ALIGNER>
+  </Defaults>
+  <Lanes>
+    <Lane index="1">
+      <Barcodes></Barcodes>
+      <Defaults>
+        <ANALYSIS>eland_extended</ANALYSIS>
+        <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+        <ELAND_GENOME>/mmjggl/nicodemus/data01/genomes/elegans190/chromosomes/</ELAND_GENOME>
+        <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+        <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+        <READS>1</READS>
+        <READ_LENGTH1>49</READ_LENGTH1>
+        <Tiles>1101 1102 1103 1104 1105 1106 1107 1108 1201 1202 1203 1204 1205 1206 1207 1208 1301 1302 1303 1304 1305 1306 1307 1308 2101 2102 2103 2104 2105 2106 2107 2108 2201 2202 2203 2204 2205 2206 2207 2208 2301 2302 2303 2304 2305 2306 2307 2308</Tiles>
+        <USE_BASES>Y*n</USE_BASES>
+        <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+      </Defaults>
+      <Projects></Projects>
+      <References></References>
+      <Samples></Samples>
+    </Lane>
+    <Lane index="2">
+      <Barcodes></Barcodes>
+      <Defaults>
+        <ANALYSIS>eland_extended</ANALYSIS>
+        <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+        <ELAND_GENOME>/mmjggl/nicodemus/data01/genomes/elegans190/chromosomes/</ELAND_GENOME>
+        <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+        <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+        <READS>1</READS>
+        <READ_LENGTH1>49</READ_LENGTH1>
+        <Tiles>1101 1102 1103 1104 1105 1106 1107 1108 1201 1202 1203 1204 1205 1206 1207 1208 1301 1302 1303 1304 1305 1306 1307 1308 2101 2102 2103 2104 2105 2106 2107 2108 2201 2202 2203 2204 2205 2206 2207 2208 2301 2302 2303 2304 2305 2306 2307 2308</Tiles>
+        <USE_BASES>Y*n</USE_BASES>
+        <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+      </Defaults>
+      <Projects></Projects>
+      <References></References>
+      <Samples></Samples>
+    </Lane>
+    <Lane index="4">
+      <Barcodes></Barcodes>
+      <Defaults>
+        <ANALYSIS>eland_extended</ANALYSIS>
+        <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+        <ELAND_GENOME>/mmjggl/nicodemus/data01/genomes/hg18/chromosomes/</ELAND_GENOME>
+        <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+        <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+        <READS>1</READS>
+        <READ_LENGTH1>49</READ_LENGTH1>
+        <Tiles>1101 1102 1103 1104 1105 1106 1107 1108 1201 1202 1203 1204 1205 1206 1207 1208 1301 1302 1303 1304 1305 1306 1307 1308 2101 2102 2103 2104 2105 2106 2107 2108 2201 2202 2203 2204 2205 2206 2207 2208 2301 2302 2303 2304 2305 2306 2307 2308</Tiles>
+        <USE_BASES>Y*n</USE_BASES>
+        <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+      </Defaults>
+      <Projects></Projects>
+      <References></References>
+      <Samples></Samples>
+    </Lane>
+    <Lane index="5">
+      <Barcodes></Barcodes>
+      <Defaults>
+        <ANALYSIS>eland_extended</ANALYSIS>
+        <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+        <ELAND_GENOME>/mmjggl/nicodemus/data01/genomes/hg18/chromosomes/</ELAND_GENOME>
+        <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+        <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+        <READS>1</READS>
+        <READ_LENGTH1>49</READ_LENGTH1>
+        <Tiles>1101 1102 1103 1104 1105 1106 1107 1108 1201 1202 1203 1204 1205 1206 1207 1208 1301 1302 1303 1304 1305 1306 1307 1308 2101 2102 2103 2104 2105 2106 2107 2108 2201 2202 2203 2204 2205 2206 2207 2208 2301 2302 2303 2304 2305 2306 2307 2308</Tiles>
+        <USE_BASES>Y*n</USE_BASES>
+        <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+      </Defaults>
+      <Projects></Projects>
+      <References></References>
+      <Samples></Samples>
+    </Lane>
+    <Lane index="6">
+      <Barcodes></Barcodes>
+      <Defaults>
+        <ANALYSIS>eland_extended</ANALYSIS>
+        <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+        <ELAND_GENOME>/mmjggl/nicodemus/data01/genomes/hg18/chromosomes/</ELAND_GENOME>
+        <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+        <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+        <READS>1</READS>
+        <READ_LENGTH1>49</READ_LENGTH1>
+        <Tiles>1101 1102 1103 1104 1105 1106 1107 1108 1201 1202 1203 1204 1205 1206 1207 1208 1301 1302 1303 1304 1305 1306 1307 1308 2101 2102 2103 2104 2105 2106 2107 2108 2201 2202 2203 2204 2205 2206 2207 2208 2301 2302 2303 2304 2305 2306 2307 2308</Tiles>
+        <USE_BASES>Y*n</USE_BASES>
+        <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+      </Defaults>
+      <Projects></Projects>
+      <References></References>
+      <Samples></Samples>
+    </Lane>
+    <Lane index="7">
+      <Barcodes></Barcodes>
+      <Defaults>
+        <ANALYSIS>none</ANALYSIS>
+        <Tiles>1101 1102 1103 1104 1105 1106 1107 1108 1201 1202 1203 1204 1205 1206 1207 1208 1301 1302 1303 1304 1305 1306 1307 1308 2101 2102 2103 2104 2105 2106 2107 2108 2201 2202 2203 2204 2205 2206 2207 2208 2301 2302 2303 2304 2305 2306 2307 2308</Tiles>
+      </Defaults>
+      <Projects></Projects>
+      <References></References>
+      <Samples></Samples>
+    </Lane>
+    <Lane index="8">
+      <Barcodes></Barcodes>
+      <Defaults>
+        <ANALYSIS>none</ANALYSIS>
+        <Tiles>1101 1102 1103 1104 1105 1106 1107 1108 1201 1202 1203 1204 1205 1206 1207 1208 1301 1302 1303 1304 1305 1306 1307 1308 2101 2102 2103 2104 2105 2106 2107 2108 2201 2202 2203 2204 2205 2206 2207 2208 2301 2302 2303 2304 2305 2306 2307 2308</Tiles>
+      </Defaults>
+      <Projects></Projects>
+      <References></References>
+      <Samples></Samples>
+    </Lane>
+    <Lane index="3">
+      <Barcodes></Barcodes>
+      <Defaults>
+        <Tiles>1101 1102 1103 1104 1105 1106 1107 1108 1201 1202 1203 1204 1205 1206 1207 1208 1301 1302 1303 1304 1305 1306 1307 1308 2101 2102 2103 2104 2105 2106 2107 2108 2201 2202 2203 2204 2205 2206 2207 2208 2301 2302 2303 2304 2305 2306 2307 2308</Tiles>
+      </Defaults>
+      <Projects></Projects>
+      <References></References>
+      <Samples></Samples>
+    </Lane>
+  </Lanes>
+  <Projects>
+    <Project name="12383">
+      <ANALYSIS>eland_extended</ANALYSIS>
+      <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+      <ELAND_GENOME>/mmjggl/nicodemus/data01/genomes/hg18/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+      <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+      <READS>1</READS>
+      <READ_LENGTH1>49</READ_LENGTH1>
+      <USE_BASES>Y*n</USE_BASES>
+      <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    </Project>
+    <Project name="Undetermined_indices">
+      <ANALYSIS>none</ANALYSIS>
+    </Project>
+  </Projects>
+  <References>
+    <Reference name="mm9">
+      <ANALYSIS>eland_extended</ANALYSIS>
+      <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+      <ELAND_GENOME>/mmjggl/nicodemus/data01/genomes/mm9/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+      <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+      <READS>1</READS>
+      <READ_LENGTH1>49</READ_LENGTH1>
+      <USE_BASES>Y*n</USE_BASES>
+      <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    </Reference>
+  </References>
+  <Samples>
+  </Samples>
+  <Software CmdAndArgs="/mmjggl/nicodemus/data01/casava-v1.8.1/bin/configureAlignment.pl config.txt --EXPT_DIR /mmjggl/nicodemus/data01/sequencer/110815_SN787_0101_AD07K6ACXX/Unaligned_1MM/ --OUT_DIR /mmjggl/nicodemus/data01/sequencer/110815_SN787_0101_AD07K6ACXX/Aligned_1MM -make" Name="configureAlignment.pl" Version="CASAVA-1.8.1">
+    <Software CmdAndArgs="/mmjggl/nicodemus/data01/casava-v1.8.1/bin/configureBclToFastq.pl --input-dir Data/Intensities/BaseCalls/ --output-dir Unaligned_1MM --sample-sheet Data/Intensities/BaseCalls/SampleSheet.csv --mismatches 1" Name="configureBclToFastq.pl" Version="CASAVA-1.8.1">
+      <Software Name="RTA" Version="1.12.4.2">
+        <Software Name="RTA" Version="1.12.4.2">
+          <Software Name="HiSeq Control Software" Platform="HiSeq" Version="1.4.8" />
+        </Software>
+      </Software>
+    </Software>
+  </Software>
+</RunParameters>

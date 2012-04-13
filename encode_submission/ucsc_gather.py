@@ -17,6 +17,7 @@ import types
 import urllib
 import urllib2
 import urlparse
+from zipfile import ZipFile
 
 import RDF
 
@@ -30,9 +31,10 @@ from htsworkflow.util.rdfhelp import \
      sparql_query, \
      submissionOntology
 from htsworkflow.submission.daf import \
-     DAFMapper, \
+     UCSCSubmission, \
      MetadataLookupException, \
      get_submission_uri
+from htsworkflow.submission.results import ResultMap
 from htsworkflow.submission.condorfastq import CondorFastqExtract
 
 logger = logging.getLogger('ucsc_gather')
@@ -51,9 +53,10 @@ def main(cmdline=None):
 
     apidata = api.make_auth_from_opts(opts, parser)
 
-    model = get_model(opts.load_model)
+    model = get_model(opts.model, opts.db_path)
+    mapper = None
     if opts.name:
-        mapper = DAFMapper(opts.name, opts.daf,  model)
+        mapper = UCSCSubmssion(opts.name, opts.daf,  model)
         if opts.library_url is not None:
             mapper.library_url = opts.library_url
         submission_uri = get_submission_uri(opts.name)
@@ -67,28 +70,33 @@ def main(cmdline=None):
     if opts.make_ddf and opts.daf is None:
         parser.error("Please specify your daf when making ddf files")
 
-    library_result_map = []
+    results = ResultMap()
     for a in args:
-        library_result_map.extend(read_library_result_map(a))
+        results.add_results_from_file(a)
 
     if opts.make_tree_from is not None:
-        make_tree_from(opts.make_tree_from, library_result_map)
+        results.make_tree_from(opts.make_tree_from)
 
     if opts.link_daf:
-        if opts.daf is None:
-            parser.error("Please specify daf filename with --daf")
-        link_daf(opts.daf, library_result_map)
+        if mapper is None:
+            parser.error("Specify a submission model")
+        if mapper.daf is None:
+            parser.error("Please load a daf first")
+        mapper.link_daf(results)
 
     if opts.fastq:
         extractor = CondorFastqExtract(opts.host, apidata, opts.sequence,
                                        force=opts.force)
-        extractor.build_fastqs(library_result_map)
+        extractor.create_scripts(results)
 
     if opts.scan_submission:
-        scan_submission_dirs(mapper, library_result_map)
+        mapper.scan_submission_dirs(results)
 
     if opts.make_ddf:
-        make_all_ddfs(mapper, library_result_map, opts.daf, force=opts.force)
+        make_all_ddfs(mapper, results, opts.daf, force=opts.force)
+
+    if opts.zip_ddf:
+        zip_ddfs(mapper, results, opts.daf)
 
     if opts.sparql:
         sparql_query(model, opts.sparql)
@@ -103,7 +111,9 @@ def make_parser():
 
     model = OptionGroup(parser, 'model')
     model.add_option('--name', help="Set submission name")
-    model.add_option('--load-model', default=None,
+    model.add_option('--db-path', default=None,
+                     help="set rdf database path")
+    model.add_option('--model', default=None,
       help="Load model database")
     model.add_option('--load-rdf', default=None,
       help="load rdf statements into model")
@@ -124,6 +134,9 @@ def make_parser():
                         help="link daf into submission directories")
     commands.add_option('--make-ddf', help='make the ddfs', default=False,
                       action="store_true")
+    commands.add_option('--zip-ddf', default=False, action='store_true',
+                        help='zip up just the metadata')
+
     parser.add_option_group(commands)
 
     parser.add_option('--force', default=False, action="store_true",
@@ -141,52 +154,6 @@ def make_parser():
 
     return parser
 
-def make_tree_from(source_path, library_result_map):
-    """Create a tree using data files from source path.
-    """
-    for lib_id, lib_path in library_result_map:
-        if not os.path.exists(lib_path):
-            logger.info("Making dir {0}".format(lib_path))
-            os.mkdir(lib_path)
-        source_lib_dir = os.path.abspath(os.path.join(source_path, lib_path))
-        if os.path.exists(source_lib_dir):
-            pass
-        for filename in os.listdir(source_lib_dir):
-            source_pathname = os.path.join(source_lib_dir, filename)
-            target_pathname = os.path.join(lib_path, filename)
-            if not os.path.exists(source_pathname):
-                raise IOError("{0} does not exist".format(source_pathname))
-            if not os.path.exists(target_pathname):
-                os.symlink(source_pathname, target_pathname)
-                logger.info(
-                    'LINK {0} to {1}'.format(source_pathname, target_pathname))
-
-
-def link_daf(daf_path, library_result_map):
-    if not os.path.exists(daf_path):
-        raise RuntimeError("%s does not exist, how can I link to it?" % (daf_path,))
-
-    base_daf = os.path.basename(daf_path)
-
-    for lib_id, result_dir in library_result_map:
-        if not os.path.exists(result_dir):
-            raise RuntimeError("Couldn't find target directory %s" %(result_dir,))
-        submission_daf = os.path.join(result_dir, base_daf)
-        if not os.path.exists(submission_daf):
-            if not os.path.exists(daf_path):
-                raise RuntimeError("Couldn't find daf: %s" %(daf_path,))
-            os.link(daf_path, submission_daf)
-
-
-def scan_submission_dirs(view_map, library_result_map):
-    """Look through our submission directories and collect needed information
-    """
-    for lib_id, result_dir in library_result_map:
-        logger.info("Importing %s from %s" % (lib_id, result_dir))
-        try:
-            view_map.import_submission_dir(result_dir, lib_id)
-        except MetadataLookupException, e:
-            logger.error("Skipping %s: %s" % (lib_id, str(e)))
 
 def make_all_ddfs(view_map, library_result_map, daf_name, make_condor=True, force=False):
     dag_fragment = []
@@ -233,7 +200,7 @@ WHERE {
   OPTIONAL { ?library libraryOntology:library_id ?labExpId }
   OPTIONAL { ?library libraryOntology:library_id ?labVersion }
   OPTIONAL { ?library libraryOntology:replicate ?replicate }
-  OPTIONAL { ?library libraryOntology:condition ?treatment }
+  OPTIONAL { ?library libraryOntology:condition_term ?treatment }
   OPTIONAL { ?library ucscDaf:protocol ?protocol }
   OPTIONAL { ?library ucscDaf:readType ?readType }
   OPTIONAL { ?library ucscDaf:strain ?strain }
@@ -248,7 +215,7 @@ ORDER BY  ?submitView"""
         logger.error("Need name for %s" % (str(submissionNode)))
         return []
 
-    ddf_name = name + '.ddf'
+    ddf_name = make_ddf_name(name)
     if outdir is not None:
         outfile = os.path.join(outdir, ddf_name)
         output = open(outfile,'w')
@@ -310,23 +277,25 @@ ORDER BY  ?submitView"""
     return dag_fragments
 
 
-def read_library_result_map(filename):
+def zip_ddfs(view_map, library_result_map, daf_name):
+    """zip up just the ddf & daf files
     """
-    Read a file that maps library id to result directory.
-    Does not support spaces in filenames.
+    rootdir = os.getcwd()
+    for lib_id, result_dir in library_result_map:
+        submissionNode = view_map.get_submission_node(result_dir)
+        nameNode = view_map.model.get_target(submissionNode,
+                                             submissionOntology['name'])
+        name = fromTypedNode(nameNode)
+        if name is None:
+            logger.error("Need name for %s" % (str(submissionNode)))
+            continue
 
-    For example:
-      10000 result/foo/bar
-    """
-    stream = open(filename,'r')
-
-    results = []
-    for line in stream:
-        line = line.rstrip()
-        if not line.startswith('#') and len(line) > 0 :
-            library_id, result_dir = line.split()
-            results.append((library_id, result_dir))
-    return results
+        zip_name = '../{0}.zip'.format(lib_id)
+        os.chdir(os.path.join(rootdir, result_dir))
+        with ZipFile(zip_name, 'w') as stream:
+            stream.write(make_ddf_name(name))
+            stream.write(daf_name)
+        os.chdir(rootdir)
 
 
 def make_condor_archive_script(name, files, outdir=None):
@@ -415,24 +384,6 @@ def make_dag_fragment(ininame, archive_condor, upload_condor):
     fragments.append('PARENT %s_archive CHILD %s_upload' % (job_basename, job_basename))
 
     return fragments
-
-
-def get_library_info(host, apidata, library_id):
-    url = api.library_url(host, library_id)
-    contents = api.retrieve_info(url, apidata)
-    return contents
-
-
-def make_submission_section(line_counter, files, attributes):
-    """
-    Create a section in the submission ini file
-    """
-    inifile = [ "[line%s]" % (line_counter,) ]
-    inifile += ["files=%s" % (",".join(files))]
-
-    for k,v in attributes.items():
-        inifile += ["%s=%s" % (k,v)]
-    return inifile
 
 
 def make_base_name(pathname):

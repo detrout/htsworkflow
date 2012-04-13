@@ -12,7 +12,7 @@ wgEncodeCaltechRnaSeqGm12878R2x75Il200FastqRd2Rep1.fastq.tgz	project=wgEncode; g
 class TestUCSCInfo(unittest.TestCase):
     def test_parse_encodedcc_file(self):
         stream = StringIO(ENCODE_FILES)
-        file_index = ucsc.parse_ucsc_file_index(stream)
+        file_index = ucsc.parse_ucsc_file_index(stream, 'http://example.com/files')
         self.assertEquals(len(file_index), 2)
 
         for attributes in file_index.values():
