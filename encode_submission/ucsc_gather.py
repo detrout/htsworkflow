@@ -56,7 +56,7 @@ def main(cmdline=None):
     model = get_model(opts.model, opts.db_path)
     mapper = None
     if opts.name:
-        mapper = UCSCSubmssion(opts.name, opts.daf,  model)
+        mapper = UCSCSubmission(opts.name, opts.daf,  model)
         if opts.library_url is not None:
             mapper.library_url = opts.library_url
         submission_uri = get_submission_uri(opts.name)
@@ -157,7 +157,7 @@ def make_parser():
 
 def make_all_ddfs(view_map, library_result_map, daf_name, make_condor=True, force=False):
     dag_fragment = []
-    for lib_id, result_dir in library_result_map:
+    for lib_id, result_dir in library_result_map.items():
         submissionNode = view_map.get_submission_node(result_dir)
         dag_fragment.extend(
             make_ddf(view_map, submissionNode, daf_name, make_condor, result_dir)
