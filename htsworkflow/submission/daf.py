@@ -24,7 +24,7 @@ from htsworkflow.util.rdfhelp import \
      fromTypedNode
 from htsworkflow.util.hashfile import make_md5sum
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 DAF_VARIABLE_NAMES = ("variables", "extraVariables")
 VARIABLES_TERM_NAME = 'variables'
@@ -130,7 +130,7 @@ def parse_stream(stream):
     if view_name is not None:
         attributes['views'][view_name] = view_attributes
 
-    logger.debug("DAF Attributes" + pformat(attributes))
+    LOGGER.debug("DAF Attributes" + pformat(attributes))
     return attributes
 
 
@@ -254,7 +254,7 @@ class UCSCSubmission(object):
              otherwise specifies model to use
         """
         if daf_file is None and model is None:
-            logger.error("We need a DAF or Model containing a DAF to work")
+            LOGGER.error("We need a DAF or Model containing a DAF to work")
 
         self.name = name
         self.submissionSet = get_submission_uri(self.name)
@@ -297,11 +297,11 @@ class UCSCSubmission(object):
         """Examine files in our result directory
         """
         for lib_id, result_dir in result_map.items():
-            logger.info("Importing %s from %s" % (lib_id, result_dir))
+            LOGGER.info("Importing %s from %s" % (lib_id, result_dir))
             try:
                 self.import_submission_dir(result_dir, lib_id)
             except MetadataLookupException, e:
-                logger.error("Skipping %s: %s" % (lib_id, str(e)))
+                LOGGER.error("Skipping %s: %s" % (lib_id, str(e)))
 
     def import_submission_dir(self, submission_dir, library_id):
         """Import a submission directories and update our model as needed
@@ -324,10 +324,10 @@ class UCSCSubmission(object):
         """
         path, filename = os.path.split(pathname)
 
-        logger.debug("Searching for view")
+        LOGGER.debug("Searching for view")
         view = self.find_view(filename)
         if view is None:
-            logger.warn("Unrecognized file: {0}".format(pathname))
+            LOGGER.warn("Unrecognized file: {0}".format(pathname))
             return None
         if str(view) == str(libraryOntology['ignore']):
             return None
@@ -339,7 +339,7 @@ class UCSCSubmission(object):
                                        dafTermOntology['name']))
         if view_name is None:
             errmsg = 'Could not find view name for {0}'
-            logger.warning(errmsg.format(str(view)))
+            LOGGER.warning(errmsg.format(str(view)))
             return
 
         view_name = str(view_name)
@@ -349,7 +349,7 @@ class UCSCSubmission(object):
             RDF.Statement(self.submissionSet,
                           dafTermOntology['has_submission'],
                           submissionNode))
-        logger.debug("Adding statements to {0}".format(str(submissionNode)))
+        LOGGER.debug("Adding statements to {0}".format(str(submissionNode)))
         self.model.add_statement(RDF.Statement(submissionNode,
                                                submissionOntology['has_view'],
                                                submissionView))
@@ -364,7 +364,7 @@ class UCSCSubmission(object):
                                                submissionOntology['library'],
                                                libNode))
 
-        logger.debug("Adding statements to {0}".format(str(submissionView)))
+        LOGGER.debug("Adding statements to {0}".format(str(submissionView)))
         # add track specific information
         self.model.add_statement(
             RDF.Statement(submissionView, dafTermOntology['view'], view))
@@ -380,11 +380,11 @@ class UCSCSubmission(object):
         # add file specific information
         self.create_file_attributes(filename, submissionView, submission_uri, submission_dir)
 
-        logger.debug("Done.")
+        LOGGER.debug("Done.")
 
     def create_file_attributes(self, filename, submissionView, submission_uri, submission_dir):
         # add file specific information
-        logger.debug("Updating file md5sum")
+        LOGGER.debug("Updating file md5sum")
         fileNode = RDF.Node(RDF.Uri(submission_uri + '/' + filename))
         submission_pathname = os.path.join(submission_dir, filename)
         self.model.add_statement(
@@ -399,7 +399,7 @@ class UCSCSubmission(object):
         md5 = make_md5sum(submission_pathname)
         if md5 is None:
             errmsg = "Unable to produce md5sum for {0}"
-            logger.warning(errmsg.format(submission_pathname))
+            LOGGER.warning(errmsg.format(submission_pathname))
         else:
             self.model.add_statement(
                 RDF.Statement(fileNode, dafTermOntology['md5sum'], md5))
@@ -513,7 +513,7 @@ class UCSCSubmission(object):
         else:
             msg = "Found wrong number of view names for {0} len = {1}"
             msg = msg.format(str(view), len(names))
-            logger.error(msg)
+            LOGGER.error(msg)
             raise RuntimeError(msg)
 
     def _get_filename_view_map(self):
@@ -528,11 +528,11 @@ class UCSCSubmission(object):
         for s in self.model.find_statements(filename_query):
             view_name = s.subject
             literal_re = s.object.literal_value['string']
-            logger.debug("Found: %s" % (literal_re,))
+            LOGGER.debug("Found: %s" % (literal_re,))
             try:
                 filename_re = re.compile(literal_re)
             except re.error, e:
-                logger.error("Unable to compile: %s" % (literal_re,))
+                LOGGER.error("Unable to compile: %s" % (literal_re,))
             patterns[literal_re] = view_name
         return patterns
 
