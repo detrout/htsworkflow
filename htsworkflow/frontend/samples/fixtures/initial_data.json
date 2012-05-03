@@ -11,7 +11,7 @@
      "model": "samples.Cellline",
      "pk": 2,
      "fields": {
-        "cellline_name": "C2C12 Exponential",
+        "cellline_name": "C2C12",
         "notes": ""
      }
   },
