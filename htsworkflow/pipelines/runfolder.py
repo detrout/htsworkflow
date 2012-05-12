@@ -47,6 +47,7 @@ class PipelineRun(object):
           self.pathname = None
         self._name = None
         self._flowcell_id = flowcell_id
+        self.datadir = None
         self.image_analysis = None
         self.bustard = None
         self.gerald = None
@@ -177,7 +178,7 @@ def get_runs(runfolder, flowcell_id=None):
     from htsworkflow.pipelines import bustard
     from htsworkflow.pipelines import gerald
 
-    def scan_post_image_analysis(runs, runfolder, image_analysis, pathname):
+    def scan_post_image_analysis(runs, runfolder, datadir, image_analysis, pathname):
         LOGGER.info("Looking for bustard directories in %s" % (pathname,))
         bustard_dirs = glob(os.path.join(pathname, "Bustard*"))
         # RTA BaseCalls looks enough like Bustard.
@@ -192,6 +193,21 @@ def get_runs(runfolder, flowcell_id=None):
                 try:
                     g = gerald.gerald(gerald_pathname)
                     p = PipelineRun(runfolder, flowcell_id)
+                    p.datadir = datadir
+                    p.image_analysis = image_analysis
+                    p.bustard = b
+                    p.gerald = g
+                    runs.append(p)
+                except IOError, e:
+                    LOGGER.error("Ignoring " + str(e))
+
+            aligned_glob = os.path.join(runfolder, 'Aligned*')
+            for aligned in glob(aligned_glob):
+                LOGGER.info("Found aligned directory %s" % (aligned,))
+                try:
+                    g = gerald.gerald(aligned)
+                    p = PipelineRun(runfolder, flowcell_id)
+                    p.datadir = datadir
                     p.image_analysis = image_analysis
                     p.bustard = b
                     p.gerald = g
@@ -228,7 +244,7 @@ def get_runs(runfolder, flowcell_id=None):
             )
         else:
             scan_post_image_analysis(
-                runs, runfolder, image_analysis, ipar_pathname
+                runs, runfolder, datadir, image_analysis, ipar_pathname
             )
 
     return runs
@@ -407,12 +423,17 @@ def save_flowcell_reports(data_dir, cycle_dir):
         os.chdir(cwd)
 
 
-def save_summary_file(gerald_object, cycle_dir):
+def save_summary_file(pipeline, cycle_dir):
     # Copy Summary.htm
-    summary_path = os.path.join(gerald_object.pathname, 'Summary.htm')
-    if os.path.exists(summary_path):
-        LOGGER.info('Copying %s to %s' % (summary_path, cycle_dir))
-        shutil.copy(summary_path, cycle_dir)
+    gerald_object = pipeline.gerald
+    gerald_summary = os.path.join(gerald_object.pathname, 'Summary.htm')
+    status_files_summary = os.path.join(pipeline.datadir, 'Status_Files', 'Summary.htm')
+    if os.path.exists(gerald_summary):
+        LOGGER.info('Copying %s to %s' % (gerald_summary, cycle_dir))
+        shutil.copy(gerald_summary, cycle_dir)
+    elif os.path.exists(status_files_summary):
+        LOGGER.info('Copying %s to %s' % (status_files_summary, cycle_dir))
+        shutil.copy(status_files_summary, cycle_dir)
     else:
         LOGGER.info('Summary file %s was not found' % (summary_path,))
 
@@ -551,13 +572,17 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, r
       if site is not None:
         lanes = []
         for lane in range(1, 9):
-          if r.gerald.lanes[lane].analysis != 'none':
+          lane_parameters = r.gerald.lanes.get(lane, None)
+          if lane_parameters is not None and lane_parameters.analysis != 'none':
             lanes.append(lane)
 
         run_name = srf.pathname_to_run_name(r.pathname)
         seq_cmds = []
+        LOGGER.info("Raw Format is: %s" % (raw_format, ))
         if raw_format == 'fastq':
-            srf.copy_hiseq_project_fastqs(run_name, r.bustard.pathname, site, cycle_dir)
+            rawpath = os.path.join(r.pathname, r.gerald.runfolder_name)
+            LOGGER.info("raw data = %s" % (rawpath,))
+            srf.copy_hiseq_project_fastqs(run_name, rawpath, site, cycle_dir)
         elif raw_format == 'qseq':
             seq_cmds = srf.make_qseq_commands(run_name, r.bustard.pathname, lanes, site, cycle_dir)
         elif raw_format == 'srf':
@@ -571,7 +596,7 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, r
       g = r.gerald
 
       # save summary file
-      save_summary_file(g, cycle_dir)
+      save_summary_file(r, cycle_dir)
 
       # compress eland result files
       compress_eland_results(g, cycle_dir, num_jobs)

@@ -39,10 +39,18 @@ from htsworkflow.submission.condorfastq import CondorFastqExtract
 
 logger = logging.getLogger('ucsc_gather')
 
+TAR = '/bin/tar'
+LFTP = '/usr/bin/lftp'
+
 def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
     submission_uri = None
+
+    global TAR
+    global LFTP
+    TAR = opts.tar
+    LFTP = opts.lftp
 
     if opts.debug:
         logging.basicConfig(level = logging.DEBUG )
@@ -93,6 +101,10 @@ def main(cmdline=None):
         mapper.scan_submission_dirs(results)
 
     if opts.make_ddf:
+        if not os.path.exists(TAR):
+            parser.error("%s does not exist, please specify --tar" % (TAR,))
+        if not os.path.exists(LFTP):
+            parser.error("%s does not exist, please specify --lftp" % (LFTP,))
         make_all_ddfs(mapper, results, opts.daf, force=opts.force)
 
     if opts.zip_ddf:
@@ -120,6 +132,10 @@ def make_parser():
     model.add_option('--sparql', default=None, help="execute sparql query")
     model.add_option('--print-rdf', action="store_true", default=False,
       help="print ending model state")
+    model.add_option('--tar', default=TAR,
+                     help="override path to tar command")
+    model.add_option('--lftp', default=LFTP,
+                     help="override path to lftp command")
     parser.add_option_group(model)
     # commands
     commands = OptionGroup(parser, 'commands')
@@ -301,7 +317,7 @@ def zip_ddfs(view_map, library_result_map, daf_name):
 def make_condor_archive_script(name, files, outdir=None):
     script = """Universe = vanilla
 
-Executable = /bin/tar
+Executable = %(tar)s
 arguments = czvhf ../%(archivename)s %(filelist)s
 
 Error = compress.out.$(Process).log
@@ -323,7 +339,8 @@ queue
     context = {'archivename': make_submission_name(name),
                'filelist': " ".join(files),
                'initialdir': os.path.abspath(outdir),
-               'user': os.getlogin()}
+               'user': os.getlogin(),
+               'tar': TAR}
 
     condor_script = os.path.join(outdir, make_condor_name(name, 'archive'))
     condor_stream = open(condor_script,'w')
@@ -332,11 +349,11 @@ queue
     return condor_script
 
 
-def make_condor_upload_script(name, outdir=None):
+def make_condor_upload_script(name, lftp, outdir=None):
     script = """Universe = vanilla
 
-Executable = /usr/bin/lftp
-arguments = -c put ../%(archivename)s -o ftp://%(ftpuser)s:%(ftppassword)s@%(ftphost)s/%(archivename)s
+Executable = %(lftp)s
+arguments = -c put %(archivename)s -o ftp://%(ftpuser)s:%(ftppassword)s@%(ftphost)s/%(archivename)s
 
 Error = upload.out.$(Process).log
 Output = upload.out.$(Process).log
@@ -358,7 +375,8 @@ queue
                'user': os.getlogin(),
                'ftpuser': ftpuser,
                'ftppassword': ftppassword,
-               'ftphost': encodeftp}
+               'ftphost': encodeftp,
+               'lftp': LFTP}
 
     condor_script = os.path.join(outdir, make_condor_name(name, 'upload'))
     condor_stream = open(condor_script,'w')

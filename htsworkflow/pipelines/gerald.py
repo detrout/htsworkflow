@@ -4,6 +4,7 @@ Provide access to information stored in the GERALD directory.
 from datetime import datetime, date
 import logging
 import os
+import stat
 import time
 
 from htsworkflow.pipelines.summary import Summary
@@ -91,6 +92,8 @@ class Gerald(object):
             self._lanes = {}
             tree = self._gerald.tree
             analysis = tree.find('LaneSpecificRunParameters/ANALYSIS')
+            if analysis is None:
+                return
             # according to the pipeline specs I think their fields
             # are sampleName_laneID, with sampleName defaulting to s
             # since laneIDs are constant lets just try using
@@ -104,6 +107,10 @@ class Gerald(object):
             if self._lane is None:
                 self._initalize_lanes()
             return self._lanes[key]
+        def get(self, key, default):
+            if self._lane is None:
+                self._initalize_lanes()
+            return self._lanes.get(key, None)
         def keys(self):
             if self._lane is None:
                 self._initalize_lanes()
@@ -138,8 +145,13 @@ class Gerald(object):
         if self.tree is None:
             return datetime.today()
         timestamp = self.tree.findtext('ChipWideRunParameters/TIME_STAMP')
-        epochstamp = time.mktime(time.strptime(timestamp, '%c'))
-        return datetime.fromtimestamp(epochstamp)
+        if timestamp is not None:
+            epochstamp = time.mktime(time.strptime(timestamp, '%c'))
+            return datetime.fromtimestamp(epochstamp)
+        if self.pathname is not None:
+            epochstamp = os.stat(self.pathname)[stat.ST_MTIME]
+            return datetime.fromtimestamp(epochstamp)
+        return datetime.today()
     date = property(_get_date)
 
     def _get_time(self):
@@ -162,10 +174,12 @@ class Gerald(object):
             root = os.path.join(root,'')
 
         experiment_dir = self.tree.findtext('ChipWideRunParameters/EXPT_DIR')
-        if experiment_dir is None:
-            return None
-        experiment_dir = experiment_dir.replace(root, '')
-        if len(experiment_dir) == 0:
+        if experiment_dir is not None:
+            experiment_dir = experiment_dir.replace(root, '')
+        experiment_dir = self.tree.findtext('Defaults/EXPT_DIR')
+        if experiment_dir is not None:
+            _, experiment_dir = os.path.split(experiment_dir)
+        if experiment_dir is None or len(experiment_dir) == 0:
             return None
 
         dirnames = experiment_dir.split(os.path.sep)
@@ -229,12 +243,18 @@ def gerald(pathname):
     g.tree = ElementTree.parse(config_pathname).getroot()
 
     # parse Summary.htm file
-    summary_pathname = os.path.join(g.pathname, 'Summary.xml')
-    if os.path.exists(summary_pathname):
+    summary_xml = os.path.join(g.pathname, 'Summary.xml')
+    summary_htm = os.path.join(g.pathname, 'Summary.htm')
+    status_files_summary = os.path.join(g.pathname, '..', 'Data', 'Status_Files', 'Summary.htm')
+    if os.path.exists(summary_xml):
         LOGGER.info("Parsing Summary.xml")
-    else:
+        summary_pathname = summary_xml
+    elif os.path.exists(summary_htm):
         summary_pathname = os.path.join(g.pathname, 'Summary.htm')
         LOGGER.info("Parsing Summary.htm")
+    else:
+        summary_pathname = status_files_summary
+        LOGGER.info("Parsing %s" % (status_files_summary,))
     g.summary = Summary(summary_pathname)
     # parse eland files
     g.eland_results = eland(g.pathname, g)
