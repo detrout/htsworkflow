@@ -6,12 +6,15 @@ PREFIX libraryOntology:<http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
 SELECT distinct ?liburn ?cell ?replicate ?subid ?name ?submission_date
 WHERE {
-    ?subid ucscSubmission:name ?name .
-    OPTIONAL { ?subid ucscSubmission:library_urn ?liburn ;
-                       libraryOntology:date ?submission_date .
-               ?liburn libraryOntology:cell_line ?cell ;
-                       libraryOntology:replicate ?replicate . }
+    ?subid ucscSubmission:name ?name ;
+           ucscSubmission:library_urn ?liburn ;
+           libraryOntology:date ?submission_date.
+    ?liburn libraryOntology:cell_line ?cell ;
+            libraryOntology:replicate ?replicate ;
+            libraryOntology:species ?species .
+    OPTIONAL { ?liburn libraryOntology:treatement ?treatment . }
+    FILTER(regex(?species, "Homo sapiens", "i"))
     #filter(?submission_date > "2011-04-01T00:00:00Z"^^xsd:dateTime)
     #filter(!bound(?liburn))
 }
-ORDER BY ?submission_date ?cell ?replicate ?liburn
+ORDER BY  ?liburn ?submission_date
