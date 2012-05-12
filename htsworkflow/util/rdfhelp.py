@@ -1,10 +1,14 @@
 """Helper features for working with librdf
 """
 from datetime import datetime
+from urlparse import urlparse, urlunparse
+from urllib2 import urlopen
 import logging
 import os
 import types
 
+import lxml.html
+import lxml.html.clean
 import RDF
 
 logger = logging.getLogger(__name__)
@@ -13,37 +17,45 @@ logger = logging.getLogger(__name__)
 owlNS = RDF.NS('http://www.w3.org/2002/07/owl#')
 dublinCoreNS = RDF.NS("http://purl.org/dc/elements/1.1/")
 rdfNS = RDF.NS("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-rdfsNS= RDF.NS("http://www.w3.org/2000/01/rdf-schema#")
+rdfsNS = RDF.NS("http://www.w3.org/2000/01/rdf-schema#")
 xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
 
 # internal ontologies
-submissionOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#")
+submissionOntology = RDF.NS(
+    "http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#")
 dafTermOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/UcscDaf#")
 libraryOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
-inventoryOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/InventoryOntology#")
+inventoryOntology = RDF.NS(
+    "http://jumpgate.caltech.edu/wiki/InventoryOntology#")
 submissionLog = RDF.NS("http://jumpgate.caltech.edu/wiki/SubmissionsLog/")
+geoSoftNS = RDF.NS('http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#')
 
 ISOFORMAT_MS = "%Y-%m-%dT%H:%M:%S.%f"
 ISOFORMAT_SHORT = "%Y-%m-%dT%H:%M:%S"
+
 
 def sparql_query(model, query_filename):
     """Execute sparql query from file
     """
     logger.info("Opening: %s" % (query_filename,))
-    query_body = open(query_filename,'r').read()
+    query_body = open(query_filename, 'r').read()
     query = RDF.SPARQLQuery(query_body)
     results = query.execute(model)
     display_query_results(results)
 
+
 def display_query_results(results):
+    """A very simple display of sparql query results showing name value pairs
+    """
     for row in results:
-        output = []
-        for k,v in row.items()[::-1]:
-            print "{0}: {1}".format(k,v)
+        for k, v in row.items()[::-1]:
+            print "{0}: {1}".format(k, v)
         print
 
 
 def blankOrUri(value=None):
+    """Return a blank node for None or a resource node for strings.
+    """
     node = None
     if value is None:
         node = RDF.Node()
@@ -56,6 +68,8 @@ def blankOrUri(value=None):
 
 
 def toTypedNode(value):
+    """Convert a python variable to a RDF Node with its closest xsd type
+    """
     if type(value) == types.BooleanType:
         value_type = xsdNS['boolean'].uri
         if value:
@@ -84,13 +98,14 @@ def toTypedNode(value):
         node = RDF.Node(literal=unicode(value).encode('utf-8'))
     return node
 
+
 def fromTypedNode(node):
+    """Convert a typed RDF Node to its closest python equivalent
+    """
     if node is None:
         return None
 
-    value_type = str(node.literal_value['datatype'])
-    # chop off xml schema declaration
-    value_type = value_type.replace(str(xsdNS[''].uri),'')
+    value_type = get_node_type(node)
     literal = node.literal_value['string']
     literal_lower = literal.lower()
 
@@ -112,9 +127,40 @@ def fromTypedNode(node):
     elif value_type in ('dateTime'):
         try:
             return datetime.strptime(literal, ISOFORMAT_MS)
-        except ValueError, e:
+        except ValueError, _:
             return datetime.strptime(literal, ISOFORMAT_SHORT)
     return literal
+
+
+def get_node_type(node):
+    """Return just the base name of a XSD datatype:
+    e.g. http://www.w3.org/2001/XMLSchema#integer -> integer
+    """
+    # chop off xml schema declaration
+    value_type = node.literal_value['datatype']
+    if value_type is None:
+        return "string"
+    else:
+        value_type = str(value_type)
+        return value_type.replace(str(xsdNS[''].uri), '')
+
+
+def simplifyUri(namespace, term):
+    """Remove the namespace portion of a term
+
+    returns None if they aren't in common
+    """
+    if isinstance(term, RDF.Node):
+        if  term.is_resource():
+            term = term.uri
+        else:
+            raise ValueError("This works on resources")
+    elif not isinstance(term, RDF.Uri):
+        raise ValueError("This works on resources")
+    term_s = str(term)
+    if not term_s.startswith(namespace._prefix):
+        return None
+    return term_s.replace(namespace._prefix, "")
 
 
 def get_model(model_name=None, directory=None):
@@ -133,20 +179,79 @@ def get_model(model_name=None, directory=None):
     return model
 
 
-def load_into_model(model, parser_name, filename, ns=None):
-    if not os.path.exists(filename):
-        raise IOError("Can't find {0}".format(filename))
-
-    data = open(filename, 'r').read()
+def load_into_model(model, parser_name, path, ns=None):
+    url_parts = list(urlparse(path))
+    if len(url_parts[0]) == 0:
+        url_parts[0] = 'file'
+        url_parts[2] = os.path.abspath(url_parts[2])
+    url = urlunparse(url_parts)
+    logger.info("Opening %s" % (url,))
+    req = urlopen(url)
+    logger.debug("request status: %s" % (req.code,))
+    if parser_name is None:
+        content_type = req.headers.get('Content-Type', None)
+        parser_name = guess_parser(content_type, path)
+        logger.debug("Guessed parser: %s" % (parser_name,))
+    data = req.read()
     load_string_into_model(model, parser_name, data, ns)
 
 
 def load_string_into_model(model, parser_name, data, ns=None):
     if ns is None:
-        ns = "http://localhost/"
-
+        ns = RDF.NS("http://localhost/")
+    imports = owlNS['imports']
     rdf_parser = RDF.Parser(name=parser_name)
-    rdf_parser.parse_string_into_model(model, data, ns)
+    for s in rdf_parser.parse_string_as_stream(data, ns):
+        if s.predicate == imports:
+            obj = str(s.object)
+            logger.info("Importing %s" % (obj,))
+            load_into_model(model, None, obj, ns)
+        if s.object.is_literal():
+            value_type = get_node_type(s.object)
+            if value_type == 'string':
+                s.object = sanitize_literal(s.object)
+        model.add_statement(s)
+
+
+def sanitize_literal(node):
+    """Clean up a literal string
+    """
+    if not isinstance(node, RDF.Node):
+        raise ValueError("sanitize_literal only works on RDF.Nodes")
+
+    element = lxml.html.fromstring(node.literal_value['string'])
+    cleaner = lxml.html.clean.Cleaner(page_structure=False)
+    element = cleaner.clean_html(element)
+    text = lxml.html.tostring(element)
+    p_len = 3
+    slash_p_len = 4
+
+    args = {'literal': text[p_len:-slash_p_len]}
+    datatype = node.literal_value['datatype']
+    if datatype is not None:
+        args['datatype'] = datatype
+    language = node.literal_value['language']
+    if language is not None:
+        args['language'] = language
+    return RDF.Node(**args)
+
+
+def guess_parser(content_type, pathname):
+    if content_type in ('application/rdf+xml'):
+        return 'rdfxml'
+    elif content_type in ('application/x-turtle'):
+        return 'turtle'
+    elif content_type in ('text/html'):
+        return 'rdfa'
+    elif content_type is None:
+        _, ext = os.path.splitext(pathname)
+        if ext in ('xml', 'rdf'):
+            return 'rdfxml'
+        elif ext in ('html'):
+            return 'rdfa'
+        elif ext in ('turtle'):
+            return 'turtle'
+    return 'guess'
 
 
 def get_serializer(name='turtle'):
@@ -164,6 +269,7 @@ def get_serializer(name='turtle'):
     writer.set_namespace('ucscSubmission', submissionOntology._prefix)
     writer.set_namespace('ucscDaf', dafTermOntology._prefix)
     return writer
+
 
 def dump_model(model):
     serializer = get_serializer()
