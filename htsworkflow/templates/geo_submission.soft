@@ -1,11 +1,39 @@
-Soft template
-!Platform_title = Illumina Genome Analyzer (Homo sapiens)
-!Platform_geo_accession = GPL9052
-{% for sample in samples %}{% for row in sample %}{%if forloop.first %}
+{% for name, value in series %}{{name}} = {{value}}
+{% endfor %}!Series_platform_id = {{ platform_id }}
+{% for row in samples %}
 ^SAMPLE={{row.name}}
+!Sample_type=SRA
 !Sample_title={{row.name}}
+!Sample_series_id = {{ series_id }}
+!Sample_instrument_model = Illumina Genome Analyzer
+!Sample_instrument_model = Illumina Genome Analyzer II
+!Sample_instrument_model = Illumina Genome Analyzer IIx
+!Sample_instrument_model = Illumina HiSeq 2000
+!Sample_channel_count = 1
 !Sample_organism_ch1 = {{ row.species_name }}
 !Sample_taxid_ch1 = {{ row.taxon_id }}
-{% spaceless %}{% if row.cell %}!Sample_characteristics_ch1 = cell: {{ row.cell }}
-{% endif %}{% endspaceless %}{% endif %}
-!Sample_supplementary_file_{{forloop.counter}}={{row.filename}}{% endfor %}{% endfor %}
+!Sample_platform_id = {{ platform_id }}
+!Sample_source_name_ch1={{row.cell}}
+!Sample_library_strategy={{ row.experiment_type }}
+!Sample_library_source={{row.library_source}}
+!Sample_library_selection={{ row.library_selection }}
+!Sample_growth_protocol_ch1={{ row.growthProtocol|safe }}
+!Sample_extract_protocol={{ row.extractProtocol|safe }}
+!Sample_data_processing={{ row.dataProtocol|safe }}
+!Sample_molecule_ch1 = {{ row.extractMolecule }}
+!Sample_characteristics_ch1 = labExpId: {{ row.library_id }}
+!Sample_characteristics_ch1 = replicate: {{ row.replicate }}
+{% if row.cell %}{% spaceless %}
+!Sample_characteristics_ch1 = cell: {{ row.cell }}
+{% endspaceless %}{% endif %}
+{% if row.readType %}{% spaceless %}
+!Sample_characteristics_ch1 = readType: {{ row.readType }}
+{% endspaceless %}{% endif %}{% if row.antibody %}{% spaceless %}
+!Sample_characteristics_ch1 = cell: {{ row.antibody }}
+{% endspaceless %}{% endif %}{% for raw in row.raw %}
+!Sample_raw_file_{{forloop.counter}}={{raw.filename}}
+!Sample_raw_file_type_{{forloop.counter}}={{raw.file_type_label}}
+!Sample_raw_file_checksum_{{forloop.counter}}={{raw.md5sum}}{% endfor %}{% for sup in row.supplimental %}
+!Sample_supplementary_file_{{forloop.counter}}={{sup.filename}}
+!Sample_supplementary_file_checksum_{{forloop.counter}}={{sup.md5sum}}
+{% endfor %}{% endfor %}

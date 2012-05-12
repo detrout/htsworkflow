@@ -24,7 +24,7 @@ from htsworkflow.submission.daf import \
      MetadataLookupException, \
      get_submission_uri
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 class Submission(object):
     def __init__(self, name, model):
@@ -32,7 +32,7 @@ class Submission(object):
         self.model = model
 
         self.submissionSet = get_submission_uri(self.name)
-        self.submissionSetNS = RDF.NS(str(self.submissionSet) + '/')
+        self.submissionSetNS = RDF.NS(str(self.submissionSet) + '#')
         self.libraryNS = RDF.NS('http://jumpgate.caltech.edu/library/')
 
         self.__view_map = None
@@ -41,11 +41,11 @@ class Submission(object):
         """Examine files in our result directory
         """
         for lib_id, result_dir in result_map.items():
-            logger.info("Importing %s from %s" % (lib_id, result_dir))
+            LOGGER.info("Importing %s from %s" % (lib_id, result_dir))
             try:
                 self.import_analysis_dir(result_dir, lib_id)
             except MetadataLookupException, e:
-                logger.error("Skipping %s: %s" % (lib_id, str(e)))
+                LOGGER.error("Skipping %s: %s" % (lib_id, str(e)))
 
     def import_analysis_dir(self, analysis_dir, library_id):
         """Import a submission directories and update our model as needed
@@ -68,18 +68,28 @@ class Submission(object):
         """
         path, filename = os.path.split(pathname)
 
-        logger.debug("Searching for view")
-        file_classification = self.find_best_match(filename)
-        if file_classification is None:
-            logger.warn("Unrecognized file: {0}".format(pathname))
+        LOGGER.debug("Searching for view")
+        file_type = self.find_best_match(filename)
+        if file_type is None:
+            LOGGER.warn("Unrecognized file: {0}".format(pathname))
             return None
-        if str(file_classification) == str(libraryOntology['ignore']):
+        if str(file_type) == str(libraryOntology['ignore']):
             return None
 
         an_analysis_name = self.make_submission_name(analysis_dir)
         an_analysis = self.get_submission_node(analysis_dir)
         an_analysis_uri = str(an_analysis.uri)
+        file_classification = self.model.get_target(file_type,
+                                                    rdfNS['type'])
+        if file_classification is None:
+            errmsg = 'Could not find class for {0}'
+            logger.warning(errmsg.format(str(file_type)))
+            return
 
+        self.model.add_statement(
+            RDF.Statement(self.submissionSetNS[''],
+                          submissionOntology['has_submission'],
+                          an_analysis))
         self.model.add_statement(RDF.Statement(an_analysis,
                                                submissionOntology['name'],
                                                toTypedNode(an_analysis_name)))
@@ -91,7 +101,7 @@ class Submission(object):
                                                submissionOntology['library'],
                                                libNode))
 
-        logger.debug("Adding statements to {0}".format(str(an_analysis)))
+        LOGGER.debug("Adding statements to {0}".format(str(an_analysis)))
         # add track specific information
         self.model.add_statement(
             RDF.Statement(an_analysis,
@@ -108,8 +118,11 @@ class Submission(object):
                                              an_analysis_uri,
                                              analysis_dir)
         self.add_md5s(filename, fileNode, analysis_dir)
-
-        logger.debug("Done.")
+        self.model.add_statement(
+            RDF.Statement(fileNode,
+                          rdfNS['type'],
+                          file_type))
+        LOGGER.debug("Done.")
 
     def link_file_to_classes(self, filename, submissionNode, submission_uri, analysis_dir):
         # add file specific information
@@ -125,12 +138,12 @@ class Submission(object):
         return fileNode
 
     def add_md5s(self, filename, fileNode, analysis_dir):
-        logger.debug("Updating file md5sum")
+        LOGGER.debug("Updating file md5sum")
         submission_pathname = os.path.join(analysis_dir, filename)
         md5 = make_md5sum(submission_pathname)
         if md5 is None:
             errmsg = "Unable to produce md5sum for {0}"
-            logger.warning(errmsg.format(submission_pathname))
+            LOGGER.warning(errmsg.format(submission_pathname))
         else:
             self.model.add_statement(
                 RDF.Statement(fileNode, dafTermOntology['md5sum'], md5))
@@ -178,11 +191,11 @@ class Submission(object):
         for s in self.model.find_statements(filename_query):
             view_name = s.subject
             literal_re = s.object.literal_value['string']
-            logger.debug("Found: %s" % (literal_re,))
+            LOGGER.debug("Found: %s" % (literal_re,))
             try:
                 filename_re = re.compile(literal_re)
             except re.error, e:
-                logger.error("Unable to compile: %s" % (literal_re,))
+                LOGGER.error("Unable to compile: %s" % (literal_re,))
             patterns[literal_re] = view_name
         return patterns
 
@@ -254,3 +267,14 @@ class Submission(object):
                 "Unrecognized library type %s for %s" % \
                 (library_type, str(libNode)))
 
+    def execute_query(self, template, context):
+        """Execute the query, returning the results
+        """
+        formatted_query = template.render(context)
+        LOGGER.debug(formatted_query)
+        query = RDF.SPARQLQuery(str(formatted_query))
+        rdfstream = query.execute(self.model)
+        results = []
+        for r in rdfstream:
+            results.append(r)
+        return results

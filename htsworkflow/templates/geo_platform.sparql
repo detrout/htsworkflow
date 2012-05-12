@@ -1,0 +1,14 @@
+PREFIX libraryOntology: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
+PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
+PREFIX ncbiTaxon: <http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=>
+PREFIX geoSoft: <http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#>
+
+
+select distinct ?name ?value
+WHERE {
+  <{{submission}}> submissionOntology:has_platform ?platform .
+  ?platform a geoSoft:platform .
+
+  ?platform ?name ?value .
+}
