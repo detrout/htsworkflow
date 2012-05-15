@@ -67,9 +67,9 @@ def make_unaligned_config_1_12(unaligned_dir):
         (os.path.join(TESTDATA_DIR, 'demultiplex_1.12.4.2.xml'),
          os.path.join(unaligned_dir, 'DemultiplexConfig.xml')),
         (os.path.join(TESTDATA_DIR, 'demultiplexed_bustard_1.12.4.2.xml'),
-         os.path.join(unaligned_dir, 'DemultiplexConfig.xml')),
+         os.path.join(unaligned_dir, 'DemultiplexedBustardConfig.xml')),
         (os.path.join(TESTDATA_DIR, 'demultiplexed_summary_1.12.4.2.xml'),
-         os.path.join(unaligned_dir, 'DemultiplexConfig.xml')),
+         os.path.join(unaligned_dir, 'DemultiplexedBustardSummary.xml')),
     ]
     for src, dest in demultiplex_pairs:
         shutil.copy(src, dest)
@@ -357,6 +357,10 @@ def make_summary_casava1_7_xml(gerald_dir):
     destination = os.path.join(gerald_dir, 'Summary.xml')
     shutil.copy(source, destination)
 
+def make_summary_rta1_12(status_dir):
+    source = os.path.join(TESTDATA_DIR, 'Summary-rta1_12.htm')
+    destination = os.path.join(status_dir, 'Summary.htm')
+    shutil.copy(source, destination)
 
 def make_eland_results(gerald_dir):
     eland_result = """>HWI-EAS229_24_207BTAAXX:1:7:599:759    ACATAGNCACAGACATAAACATAGACATAGAC U0      1       1       3       chrUextra.fa    28189829        R       D.

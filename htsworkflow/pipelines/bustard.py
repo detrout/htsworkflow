@@ -219,6 +219,25 @@ class Bustard(object):
         if xml is not None:
             self.set_elements(xml)
 
+    def update_attributes_from_pathname(self):
+        """Update version, date, user from bustard directory names
+        Obviously this wont work for BaseCalls or later runfolders
+        """
+        if self.pathname is None:
+            raise ValueError(
+                "Set pathname before calling update_attributes_from_pathname")
+        path, name = os.path.split(self.pathname)
+
+        if not re.match('bustard', name, re.IGNORECASE):
+            return
+
+        groups = name.split("_")
+        version = re.search(VERSION_RE, groups[0])
+        self.version = version.group(1)
+        t = time.strptime(groups[1], EUROPEAN_STRPTIME)
+        self.date = date(*t[0:3])
+        self.user = groups[2]
+
     def _get_time(self):
         if self.date is None:
             return None
@@ -290,46 +309,91 @@ def bustard(pathname):
     :Return:
       Fully initialized Bustard object.
     """
-    b = Bustard()
     pathname = os.path.abspath(pathname)
-    path, name = os.path.split(pathname)
-    groups = name.split("_")
-    if groups[0].lower().startswith('bustard'):
-        version = re.search(VERSION_RE, groups[0])
-        b.version = version.group(1)
-        t = time.strptime(groups[1], EUROPEAN_STRPTIME)
-        b.date = date(*t[0:3])
-        b.user = groups[2]
-    elif groups[0] == 'BaseCalls':
-        # stub values
-        b.version = None
-        b.date = None
-        b.user = None
+    bustard_filename = os.path.join(pathname, 'config.xml')
+    demultiplexed_filename = os.path.join(pathname,
+                                          'DemultiplexedBustardConfig.xml')
 
+    if os.path.exists(demultiplexed_filename):
+        b = bustard_from_hiseq(pathname, demultiplexed_filename)
+    elif os.path.exists(bustard_filename):
+        b = bustard_from_ga2(pathname, bustard_filename)
+    else:
+        b = bustard_from_ga1(pathname)
+
+    return b
+
+def bustard_from_ga1(pathname):
+    """Initialize bustard class from ga1 era runfolders.
+    """
+    path, name = os.path.split(pathname)
+
+    groups = name.split("_")
+    if len(groups) < 3:
+        msg = "Not enough information to create attributes"\
+              " from directory name: %s"
+        LOGGER.error(msg % (self.pathname,))
+        return None
+
+    b = Bustard()
     b.pathname = pathname
-    bustard_config_filename = os.path.join(pathname, 'config.xml')
-    paramfiles = glob(os.path.join(pathname, "params?.xml"))
-    for paramfile in paramfiles:
-        phasing = Phasing(paramfile)
-        assert (phasing.lane >= 1 and phasing.lane <= 8)
-        b.phasing[phasing.lane] = phasing
+    b.update_attributes_from_pathname()
+    version = re.search(VERSION_RE, groups[0])
+    b.version = version.group(1)
+    t = time.strptime(groups[1], EUROPEAN_STRPTIME)
+    b.date = date(*t[0:3])
+    b.user = groups[2]
+
     # I only found these in Bustard1.9.5/1.9.6 directories
     if b.version in ('1.9.5', '1.9.6'):
         # at least for our runfolders for 1.9.5 and 1.9.6 matrix[1-8].txt are always the same
         crosstalk_file = os.path.join(pathname, "matrix1.txt")
         b.crosstalk = CrosstalkMatrix(crosstalk_file)
+
+    add_phasing(b)
+    return b
+
+
+def bustard_from_ga2(pathname, config_filename):
+    """Initialize bustard class from ga2-era runfolder
+    Actually I don't quite remember if it is exactly the GA2s, but
+    its after the original runfolder style and before the HiSeq.
+    """
     # for version 1.3.2 of the pipeline the bustard version number went down
     # to match the rest of the pipeline. However there's now a nifty
     # new (useful) bustard config file.
-    elif os.path.exists(bustard_config_filename):
-        bustard_config_root = ElementTree.parse(bustard_config_filename)
-        b.bustard_config = bustard_config_root.getroot()
-        b.crosstalk = crosstalk_matrix_from_bustard_config(b.pathname, b.bustard_config)
-        software = bustard_config_root.find('*/Software')
-        b.version = software.attrib['Version']
-        #b.version = software.attrib['Name'] + "-" + software.attrib['Version']
+
+    # stub values
+    b = Bustard()
+    b.pathname = pathname
+    b.update_attributes_from_pathname()
+    bustard_config_root = ElementTree.parse(config_filename)
+    b.bustard_config = bustard_config_root.getroot()
+    b.crosstalk = crosstalk_matrix_from_bustard_config(b.pathname,
+                                                       b.bustard_config)
+    software = bustard_config_root.find('*/Software')
+    b.version = software.attrib['Version']
+    add_phasing(b)
 
     return b
+
+def bustard_from_hiseq(pathname, config_filename):
+    b = Bustard()
+    b.pathname = pathname
+    bustard_config_root = ElementTree.parse(config_filename)
+    b.bustard_config = bustard_config_root.getroot()
+    software = bustard_config_root.find('*/Software')
+    b.version = software.attrib['Version']
+    add_phasing(b)
+    return b
+
+def add_phasing(bustard_obj):
+    paramfiles = glob(os.path.join(bustard_obj.pathname,
+                                   "params?.xml"))
+    for paramfile in paramfiles:
+        phasing = Phasing(paramfile)
+        assert (phasing.lane >= 1 and phasing.lane <= 8)
+        bustard_obj.phasing[phasing.lane] = phasing
 
 def fromxml(tree):
     """

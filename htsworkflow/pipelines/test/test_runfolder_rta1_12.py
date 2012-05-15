@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from datetime import datetime, date
+import logging
 import os
 import tempfile
 import shutil
@@ -32,6 +33,10 @@ def make_runfolder(obj=None):
     os.mkdir(data_dir)
 
     intensities_dir = make_rta_intensities_1_12(data_dir)
+
+    status_dir = os.path.join(data_dir, 'Status_Files')
+    os.mkdir(status_dir)
+    make_summary_rta1_12(status_dir)
 
     basecalls_dir = make_rta_basecalls_1_12(intensities_dir)
     make_matrix_dir_rta_1_12(basecalls_dir)
@@ -70,7 +75,7 @@ class RunfolderTests(unittest.TestCase):
     def test_bustard(self):
         """Construct a bustard object"""
         b = bustard.bustard(self.bustard_dir)
-        self.failUnlessEqual(b.version, '1.8.70.0')
+        self.failUnlessEqual(b.version, '1.12.4.2')
         self.failUnlessEqual(b.date,    None)
         self.failUnlessEqual(b.user,    None)
         self.failUnlessEqual(len(b.phasing), 0)
@@ -85,12 +90,9 @@ class RunfolderTests(unittest.TestCase):
         # need to update gerald and make tests for it
         g = gerald.gerald(self.gerald_dir)
 
-        self.failUnlessEqual(g.version,
-            '@(#) Id: GERALD.pl,v 1.171 2008/05/19 17:36:14 mzerara Exp')
-        self.failUnlessEqual(g.date, datetime(2009,2,22,21,15,59))
+        self.failUnlessEqual(g.version, 'CASAVA-1.8.1')
         self.failUnlessEqual(len(g.lanes), len(g.lanes.keys()))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.items()))
-
 
         # list of genomes, matches what was defined up in
         # make_gerald_config.
@@ -283,9 +285,6 @@ def suite():
     return unittest.makeSuite(RunfolderTests,'test')
 
 if __name__ == "__main__":
-    #unittest.main(defaultTest="suite")
-    class Test(object): pass
-    t = Test()
-    make_runfolder(t)
-    print ('path ' + t.runfolder_dir)
+    logging.basicConfig(level=logging.WARN)
+    unittest.main(defaultTest="suite")
 

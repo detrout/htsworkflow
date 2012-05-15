@@ -186,34 +186,41 @@ def get_runs(runfolder, flowcell_id=None):
         for bustard_pathname in bustard_dirs:
             LOGGER.info("Found bustard directory %s" % (bustard_pathname,))
             b = bustard.bustard(bustard_pathname)
-            gerald_glob = os.path.join(bustard_pathname, 'GERALD*')
-            LOGGER.info("Looking for gerald directories in %s" % (pathname,))
-            for gerald_pathname in glob(gerald_glob):
-                LOGGER.info("Found gerald directory %s" % (gerald_pathname,))
-                try:
-                    g = gerald.gerald(gerald_pathname)
-                    p = PipelineRun(runfolder, flowcell_id)
-                    p.datadir = datadir
-                    p.image_analysis = image_analysis
-                    p.bustard = b
-                    p.gerald = g
-                    runs.append(p)
-                except IOError, e:
-                    LOGGER.error("Ignoring " + str(e))
+            build_gerald_runs(runs, b, image_analysis, bustard_pathname, datadir, pathname, runfolder)
 
-            aligned_glob = os.path.join(runfolder, 'Aligned*')
-            for aligned in glob(aligned_glob):
-                LOGGER.info("Found aligned directory %s" % (aligned,))
-                try:
-                    g = gerald.gerald(aligned)
-                    p = PipelineRun(runfolder, flowcell_id)
-                    p.datadir = datadir
-                    p.image_analysis = image_analysis
-                    p.bustard = b
-                    p.gerald = g
-                    runs.append(p)
-                except IOError, e:
-                    LOGGER.error("Ignoring " + str(e))
+            build_aligned_runs(image_analysis, runs, b, datadir, runfolder)
+
+    def build_gerald_runs(runs, b, image_analysis, bustard_pathname, datadir, pathname, runfolder):
+        gerald_glob = os.path.join(bustard_pathname, 'GERALD*')
+        LOGGER.info("Looking for gerald directories in %s" % (pathname,))
+        for gerald_pathname in glob(gerald_glob):
+            LOGGER.info("Found gerald directory %s" % (gerald_pathname,))
+            try:
+                g = gerald.gerald(gerald_pathname)
+                p = PipelineRun(runfolder, flowcell_id)
+                p.datadir = datadir
+                p.image_analysis = image_analysis
+                p.bustard = b
+                p.gerald = g
+                runs.append(p)
+            except IOError, e:
+                LOGGER.error("Ignoring " + str(e))
+
+
+    def build_aligned_runs(image_analysis, runs, b, datadir, runfolder):
+        aligned_glob = os.path.join(runfolder, 'Aligned*')
+        for aligned in glob(aligned_glob):
+            LOGGER.info("Found aligned directory %s" % (aligned,))
+            try:
+                g = gerald.gerald(aligned)
+                p = PipelineRun(runfolder, flowcell_id)
+                p.datadir = datadir
+                p.image_analysis = image_analysis
+                p.bustard = b
+                p.gerald = g
+                runs.append(p)
+            except IOError, e:
+                LOGGER.error("Ignoring " + str(e))
 
     datadir = os.path.join(runfolder, 'Data')
 
@@ -229,7 +236,7 @@ def get_runs(runfolder, flowcell_id=None):
             )
         else:
             scan_post_image_analysis(
-                runs, runfolder, image_analysis, firecrest_pathname
+                runs, runfolder, datadir, image_analysis, firecrest_pathname
             )
     # scan for IPAR directories
     ipar_dirs = glob(os.path.join(datadir, "IPAR_*"))

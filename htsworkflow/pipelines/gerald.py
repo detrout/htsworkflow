@@ -167,29 +167,35 @@ class Gerald(object):
         if self.tree is None:
             return None
 
-        root = self._get_experiment_root()
-        if root is None:
-            root = ''
-        else:
-            root = os.path.join(root,'')
+        expt_root = os.path.normpath(self._get_experiment_root())
+        chip_expt_dir = self.tree.findtext('ChipWideRunParameters/EXPT_DIR')
+        # hiseqs renamed the experiment dir location
+        defaults_expt_dir = self.tree.findtext('Defaults/EXPT_DIR')
 
-        experiment_dir = self.tree.findtext('ChipWideRunParameters/EXPT_DIR')
-        if experiment_dir is not None:
-            experiment_dir = experiment_dir.replace(root, '')
-        experiment_dir = self.tree.findtext('Defaults/EXPT_DIR')
-        if experiment_dir is not None:
-            _, experiment_dir = os.path.split(experiment_dir)
+        experiment_dir = None
+        if defaults_expt_dir is not None:
+            _, experiment_dir = os.path.split(defaults_expt_dir)
+        elif expt_root is not None and chip_expt_dir is not None:
+            experiment_dir = chip_expt_dir.replace(expt_root+os.path.sep, '')
+            experiment_dir = experiment_dir.split(os.path.sep)[0]
+
         if experiment_dir is None or len(experiment_dir) == 0:
             return None
+        return experiment_dir
 
-        dirnames = experiment_dir.split(os.path.sep)
-        return dirnames[0]
     runfolder_name = property(_get_runfolder_name)
 
     def _get_version(self):
         if self.tree is None:
             return None
-        return self.tree.findtext('ChipWideRunParameters/SOFTWARE_VERSION')
+        ga_version = self.tree.findtext(
+            'ChipWideRunParameters/SOFTWARE_VERSION')
+        if ga_version is not None:
+            return ga_version
+        hiseq_software_node = self.tree.find('Software')
+        hiseq_version = hiseq_software_node.attrib['Version']
+        return hiseq_version
+
     version = property(_get_version)
 
     def _get_chip_attribute(self, value):
