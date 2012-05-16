@@ -129,7 +129,7 @@ try:
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 
-_:a owl:imports "{loc}extra.turtle"
+_:a owl:imports "{loc}extra.turtle" .
 '''.format(loc=loc)
             load_string_into_model(model, 'turtle', fragment, loc)
             tc = RDF.Node(RDF.Uri('http://jumpgate.caltech.edu/wiki/TestCase'))
@@ -146,7 +146,8 @@ _:a owl:imports "{loc}extra.turtle"
                                  hello_text)
             hello_str = RDF.Node(literal=hello_text,
                                  datatype=xsdNS['string'].uri)
-            self.failUnlessEqual(str(sanitize_literal(hello_str)),
+            hello_clean = sanitize_literal(hello_str)
+            self.failUnlessEqual(hello_clean.literal_value['string'],
                                  hello_text)
 
         def test_sanitize_literal_html(self):
@@ -155,7 +156,7 @@ _:a owl:imports "{loc}extra.turtle"
             hello_node = RDF.Node(literal=hello,
                                   datatype=xsdNS['string'].uri)
             hello_sanitized = sanitize_literal(hello_node)
-            self.failUnlessEqual(str(hello_sanitized),
+            self.failUnlessEqual(hello_sanitized.literal_value['string'],
                                  hello_clean)
 
             hostile = "hi <b>there</b><script type='text/javascript>alert('boo');</script><a href='javascript:alert('poke')>evil</a> scammer"
