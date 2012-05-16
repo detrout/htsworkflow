@@ -57,18 +57,20 @@ def make_bustard_config132(image_dir):
 
 def make_aligned_config_1_12(aligned_dir):
     """This is rouglhly equivalent to the old gerald file"""
-    source = os.path.join(TESTDATA_DIR, 'aligned_config_1_12.xml')
+    source = os.path.join(TESTDATA_DIR, '1_12', 'aligned_config_1_12.xml')
     destination = os.path.join(aligned_dir, 'config.xml')
     shutil.copy(source, destination)
 
 def make_unaligned_config_1_12(unaligned_dir):
     demultiplex_pairs = [ # (src,
       # dest),
-        (os.path.join(TESTDATA_DIR, 'demultiplex_1.12.4.2.xml'),
+        (os.path.join(TESTDATA_DIR, '1_12', 'demultiplex_1.12.4.2.xml'),
          os.path.join(unaligned_dir, 'DemultiplexConfig.xml')),
-        (os.path.join(TESTDATA_DIR, 'demultiplexed_bustard_1.12.4.2.xml'),
+        (os.path.join(TESTDATA_DIR, '1_12',
+                      'demultiplexed_bustard_1.12.4.2.xml'),
          os.path.join(unaligned_dir, 'DemultiplexedBustardConfig.xml')),
-        (os.path.join(TESTDATA_DIR, 'demultiplexed_summary_1.12.4.2.xml'),
+        (os.path.join(TESTDATA_DIR, '1_12',
+                      'demultiplexed_summary_1.12.4.2.xml'),
          os.path.join(unaligned_dir, 'DemultiplexedBustardSummary.xml')),
     ]
     for src, dest in demultiplex_pairs:
@@ -134,7 +136,8 @@ def make_rta_intensities_1_12(data_dir, version='1.12.4.2'):
     if not os.path.exists(intensities_dir):
       os.mkdir(intensities_dir)
 
-    param_file = os.path.join(TESTDATA_DIR, 'rta_intensities_config_1.12.4.2.xml')
+    param_file = os.path.join(TESTDATA_DIR, '1_12',
+                              'rta_intensities_config_1.12.4.2.xml')
     shutil.copy(param_file, os.path.join(intensities_dir, 'RTAConfig.xml'))
 
     return intensities_dir
@@ -175,7 +178,8 @@ def make_rta_basecalls_1_12(intensities_dir):
         os.mkdir(basecalls_dir)
 
     make_qseqs(basecalls_dir, basecall_info=ABXX_BASE_CALL_INFO)
-    param_file = os.path.join(TESTDATA_DIR, 'rta_basecalls_config_1.12.4.2.xml')
+    param_file = os.path.join(TESTDATA_DIR, '1_12',
+                              'rta_basecalls_config_1.12.4.2.xml')
     shutil.copy(param_file, os.path.join(basecalls_dir, 'config.xml'))
 
     return basecalls_dir
@@ -357,10 +361,19 @@ def make_summary_casava1_7_xml(gerald_dir):
     destination = os.path.join(gerald_dir, 'Summary.xml')
     shutil.copy(source, destination)
 
-def make_summary_rta1_12(status_dir):
-    source = os.path.join(TESTDATA_DIR, 'Summary-rta1_12.htm')
-    destination = os.path.join(status_dir, 'Summary.htm')
-    shutil.copy(source, destination)
+def make_status_rta1_12(datadir):
+    sourcedir = os.path.join(TESTDATA_DIR, '1_12')
+    status_htm = os.path.join(sourcedir, 'Status.htm')
+    destination = os.path.join(datadir, 'Status.htm')
+    shutil.copy(status_htm, destination)
+
+    status_dir = os.path.join(datadir, 'Status_Files')
+    status_source_dir = os.path.join(sourcedir, 'Status_Files')
+    shutil.copytree(status_source_dir, status_dir)
+
+    report_source_dir = os.path.join(sourcedir, 'reports')
+    report_dir = os.path.join(datadir, 'reports')
+    shutil.copytree(report_source_dir, report_dir)
 
 def make_eland_results(gerald_dir):
     eland_result = """>HWI-EAS229_24_207BTAAXX:1:7:599:759    ACATAGNCACAGACATAAACATAGACATAGAC U0      1       1       3       chrUextra.fa    28189829        R       D.

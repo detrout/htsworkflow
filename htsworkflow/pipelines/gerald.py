@@ -7,7 +7,7 @@ import os
 import stat
 import time
 
-from htsworkflow.pipelines.summary import Summary
+from htsworkflow.pipelines.summary import Summary, SummaryGA, SummaryHiSeq
 from htsworkflow.pipelines.eland import eland, ELAND
 
 from htsworkflow.pipelines.runfolder import \
@@ -251,19 +251,21 @@ def gerald(pathname):
     # parse Summary.htm file
     summary_xml = os.path.join(g.pathname, 'Summary.xml')
     summary_htm = os.path.join(g.pathname, 'Summary.htm')
-    status_files_summary = os.path.join(g.pathname, '..', 'Data', 'Status_Files', 'Summary.htm')
+    report_summary = os.path.join(g.pathname, '..', 'Data',
+                                  'reports', 'Summary', )
     if os.path.exists(summary_xml):
         LOGGER.info("Parsing Summary.xml")
-        summary_pathname = summary_xml
+        g.summary = SummaryGA(summary_xml)
+        g.eland_results = eland(g.pathname, g)
     elif os.path.exists(summary_htm):
-        summary_pathname = os.path.join(g.pathname, 'Summary.htm')
         LOGGER.info("Parsing Summary.htm")
-    else:
-        summary_pathname = status_files_summary
-        LOGGER.info("Parsing %s" % (status_files_summary,))
-    g.summary = Summary(summary_pathname)
+        g.summary = SummaryGA(summary_htm)
+        g.eland_results = eland(g.pathname, g)
+    elif os.path.isdir(report_summary):
+        LOGGER.info("Parsing %s" % (report_summary,))
+        g.summary = SummaryHiSeq(report_summary)
+
     # parse eland files
-    g.eland_results = eland(g.pathname, g)
     return g
 
 if __name__ == "__main__":

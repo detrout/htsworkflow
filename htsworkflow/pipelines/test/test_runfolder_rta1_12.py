@@ -33,10 +33,7 @@ def make_runfolder(obj=None):
     os.mkdir(data_dir)
 
     intensities_dir = make_rta_intensities_1_12(data_dir)
-
-    status_dir = os.path.join(data_dir, 'Status_Files')
-    os.mkdir(status_dir)
-    make_summary_rta1_12(status_dir)
+    make_status_rta1_12(data_dir)
 
     basecalls_dir = make_rta_basecalls_1_12(intensities_dir)
     make_matrix_dir_rta_1_12(basecalls_dir)
