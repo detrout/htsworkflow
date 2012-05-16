@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Illumina RTA Status Report-->
+<Status>
+  <Software>Illumina RTA 1.12.4.2</Software>
+  <RunName>110815_SN787_0101_AD07K6ACXX</RunName>
+  <InstrumentName>HWI-ST0787</InstrumentName>
+  <RunStarted>Thursday, August 18, 2011 12:33 PM</RunStarted>
+  <NumCycles>57</NumCycles>
+  <ImgCycle>57</ImgCycle>
+  <ScoreCycle>57</ScoreCycle>
+  <CallCycle>57</CallCycle>
+  <InputDir>D:\Illumina\HiSeqTemp\110815_SN787_0101_AD07K6ACXX</InputDir>
+  <OutputDir>\\NICODEMUS\volvox\110815_SN787_0101_AD07K6ACXX</OutputDir>
+  <Configuration>
+    <CopyAllFiles>true</CopyAllFiles>
+    <CopyImages>False</CopyImages>
+    <DeleteImages>True</DeleteImages>
+    <RunInfoExists>True</RunInfoExists>
+    <IsPairedEndRun>False</IsPairedEndRun>
+    <NumberOfReads>2</NumberOfReads>
+    <NumberOfLanes>8</NumberOfLanes>
+    <TilesPerLane>48</TilesPerLane>
+    <ControlLane>0</ControlLane>
+  </Configuration>
+</Status>

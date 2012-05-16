@@ -133,7 +133,7 @@ class ElandLane(ResultLane):
         if os.stat(self.pathname)[stat.ST_SIZE] == 0:
             raise RuntimeError("Eland isn't done, try again later.")
 
-        LOGGER.info("summarizing results for %s" % (self.pathname))
+        LOGGER.debug("summarizing results for %s" % (self.pathname))
 
         stream = autoopen(self.pathname, 'r')
         if self.eland_type == ELAND_SINGLE:
@@ -582,7 +582,7 @@ def check_for_eland_file(basedir, pattern, lane_id, end):
       full_lane_id = "%d_%d" % ( lane_id, end )
 
    basename = pattern % (full_lane_id,)
-   LOGGER.info("Eland pattern: %s" %(basename,))
+   LOGGER.debug("Eland pattern: %s" %(basename,))
    pathname = os.path.join(basedir, basename)
    if os.path.exists(pathname):
        LOGGER.info('found eland file in %s' % (pathname,))

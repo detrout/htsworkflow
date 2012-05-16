@@ -1,6 +1,7 @@
 """
 Analyze the Summary.htm file produced by GERALD
 """
+import os
 import logging
 import re
 import types
@@ -21,138 +22,6 @@ class Summary(object):
     XML_VERSION = 3
     SUMMARY = 'Summary'
 
-    class LaneResultSummary(object):
-        """
-        Parse the LaneResultSummary table out of Summary.htm
-        Mostly for the cluster number
-        """
-        LANE_RESULT_SUMMARY = 'LaneResultSummary'
-        TAGS = {
-          'LaneYield': 'lane_yield',
-          'Cluster': 'cluster', # Raw
-          'ClusterPF': 'cluster_pass_filter',
-          'AverageFirstCycleIntensity': 'average_first_cycle_intensity',
-          'PercentIntensityAfter20Cycles': 'percent_intensity_after_20_cycles',
-          'PercentPassFilterClusters': 'percent_pass_filter_clusters',
-          'PercentPassFilterAlign': 'percent_pass_filter_align',
-          'AverageAlignmentScore': 'average_alignment_score',
-          'PercentErrorRate': 'percent_error_rate'
-        }
-        # These are tags that have mean/stdev as found in the GERALD Summary.xml file
-        GERALD_TAGS = {
-          #'laneYield': 'lane_yield', #this is just a number
-          'clusterCountRaw': 'cluster', # Raw
-          'clusterCountPF': 'cluster_pass_filter',
-          'oneSig': 'average_first_cycle_intensity',
-          'signal20AsPctOf1': 'percent_intensity_after_20_cycles',
-          'percentClustersPF': 'percent_pass_filter_clusters',
-          'percentUniquelyAlignedPF': 'percent_pass_filter_align',
-          'averageAlignScorePF': 'average_alignment_score',
-          'errorPF': 'percent_error_rate'
-        }
-
-        def __init__(self, html=None, xml=None):
-            self.lane = None
-            self.end = 0
-            self.lane_yield = None
-            self.cluster = None
-            self.cluster_pass_filter = None
-            self.average_first_cycle_intensity = None
-            self.percent_intensity_after_20_cycles = None
-            self.percent_pass_filter_clusters = None
-            self.percent_pass_filter_align = None
-            self.average_alignment_score = None
-            self.percent_error_rate = None
-
-            if html is not None:
-                self.set_elements_from_source(html)
-            if xml is not None:
-                self.set_elements(xml)
-
-        def set_elements_from_source(self, data):
-            """Read from an initial summary data file. Either xml or html
-            """
-            if not len(data) in (8,10):
-                raise RuntimeError("Summary.htm file format changed, len(data)=%d" % (len(data),))
-
-            # same in pre-0.3.0 Summary file and 0.3 summary file
-            self.lane = int(data[0])
-
-            if len(data) == 8:
-                parsed_data = [ parse_mean_range(x) for x in data[1:] ]
-                # this is the < 0.3 Pipeline version
-                self.cluster = parsed_data[0]
-                self.average_first_cycle_intensity = parsed_data[1]
-                self.percent_intensity_after_20_cycles = parsed_data[2]
-                self.percent_pass_filter_clusters = parsed_data[3]
-                self.percent_pass_filter_align = parsed_data[4]
-                self.average_alignment_score = parsed_data[5]
-                self.percent_error_rate = parsed_data[6]
-            elif len(data) == 10:
-                parsed_data = [ parse_mean_range(x) for x in data[2:] ]
-                # this is the >= 0.3 summary file
-                self.lane_yield = data[1]
-                self.cluster = parsed_data[0]
-                self.cluster_pass_filter = parsed_data[1]
-                self.average_first_cycle_intensity = parsed_data[2]
-                self.percent_intensity_after_20_cycles = parsed_data[3]
-                self.percent_pass_filter_clusters = parsed_data[4]
-                self.percent_pass_filter_align = parsed_data[5]
-                self.average_alignment_score = parsed_data[6]
-                self.percent_error_rate = parsed_data[7]
-
-        def set_elements_from_gerald_xml(self, read, element):
-            self.lane = int(element.find('laneNumber').text)
-            self.end = read
-            lane_yield_node = element.find('laneYield')
-            if lane_yield_node is not None:
-                self.lane_yield = int(lane_yield_node.text)
-            else:
-                self.lane_yield = None
-
-            for GeraldName, LRSName in Summary.LaneResultSummary.GERALD_TAGS.items():
-                node = element.find(GeraldName)
-                if node is None:
-                    LOGGER.info("Couldn't find %s" % (GeraldName))
-                setattr(self, LRSName, parse_xml_mean_range(node))
-
-        def get_elements(self):
-            lane_result = etree.Element(
-                            Summary.LaneResultSummary.LANE_RESULT_SUMMARY,
-                            {'lane': unicode(self.lane), 'end': unicode(self.end)})
-            for tag, variable_name in Summary.LaneResultSummary.TAGS.items():
-                value = getattr(self, variable_name)
-                if value is None:
-                    continue
-                # it looks like a sequence
-                elif type(value) in (types.TupleType, types.ListType):
-                    element = make_mean_range_element(
-                      lane_result,
-                      tag,
-                      *value
-                    )
-                else:
-                    element = etree.SubElement(lane_result, tag)
-                    element.text = unicode(value)
-            return lane_result
-
-        def set_elements(self, tree):
-            if tree.tag != Summary.LaneResultSummary.LANE_RESULT_SUMMARY:
-                raise ValueError('Expected %s' % (
-                        Summary.LaneResultSummary.LANE_RESULT_SUMMARY))
-            self.lane = int(tree.attrib['lane'])
-            # default to the first end, for the older summary files
-            # that are single ended
-            self.end = int(tree.attrib.get('end', 0))
-            tags = Summary.LaneResultSummary.TAGS
-            for element in list(tree):
-                try:
-                    variable_name = tags[element.tag]
-                    setattr(self, variable_name,
-                            parse_summary_element(element))
-                except KeyError, e:
-                    LOGGER.warn('Unrecognized tag %s' % (element.tag,))
-
     def __init__(self, filename=None, xml=None):
         # lane results is a list of 1 or 2 ends containing
         # a dictionary of all the lanes reported in this
@@ -169,6 +38,41 @@ class Summary(object):
 
     def __len__(self):
         return len(self.lane_results)
+
+    def get_elements(self):
+        summary = etree.Element(Summary.SUMMARY,
+                                      {'version': unicode(Summary.XML_VERSION)})
+        for end in self.lane_results:
+            for lane in end.values():
+                summary.append(lane.get_elements())
+        return summary
+
+    def set_elements(self, tree):
+        if tree.tag != Summary.SUMMARY:
+            return ValueError("Expected %s" % (Summary.SUMMARY,))
+        xml_version = int(tree.attrib.get('version', 0))
+        if xml_version > Summary.XML_VERSION:
+            LOGGER.warn('Summary XML tree is a higher version than this class')
+        for element in list(tree):
+            lrs = LaneResultSummaryGA()
+            lrs.set_elements(element)
+            if len(self.lane_results) < (lrs.end + 1):
+              self.lane_results.append({})
+            self.lane_results[lrs.end][lrs.lane] = lrs
+
+    def is_paired_end(self):
+      return len(self.lane_results) == 2
+
+    def dump(self):
+        """
+        Debugging function, report current object
+        """
+        tree = self.get_elements()
+        print etree.tostring(tree)
+
+class SummaryGA(Summary):
+    def __init__(self, filename=None, xml=None):
+        super(SummaryGA, self).__init__(filename, xml)
 
     def _flattened_row(self, row):
         """
@@ -249,7 +153,7 @@ class Summary(object):
                 read = int(read_tree.find('readNumber').text)-1
                 for element in read_tree.getchildren():
                     if element.tag.lower() == "lane":
-                        lrs = Summary.LaneResultSummary()
+                        lrs = LaneResultSummaryGA()
                         lrs.set_elements_from_gerald_xml(read, element)
                         self.lane_results[lrs.end][lrs.lane] = lrs
         # probably not useful
@@ -299,41 +203,211 @@ class Summary(object):
           self.lane_results.append({})
 
         for r in lane_summary:
-            lrs = Summary.LaneResultSummary(html=r)
+            lrs = LaneResultSummaryGA(html=r)
             lrs.end = end
             self.lane_results[lrs.end][lrs.lane] = lrs
     ###### END HTML Table Extraction ########
 
-    def get_elements(self):
-        summary = etree.Element(Summary.SUMMARY,
-                                      {'version': unicode(Summary.XML_VERSION)})
-        for end in self.lane_results:
-            for lane in end.values():
-                summary.append(lane.get_elements())
-        return summary
 
-    def set_elements(self, tree):
-        if tree.tag != Summary.SUMMARY:
-            return ValueError("Expected %s" % (Summary.SUMMARY,))
-        xml_version = int(tree.attrib.get('version', 0))
-        if xml_version > Summary.XML_VERSION:
-            LOGGER.warn('Summary XML tree is a higher version than this class')
-        for element in list(tree):
-            lrs = Summary.LaneResultSummary()
-            lrs.set_elements(element)
-            if len(self.lane_results) < (lrs.end + 1):
-              self.lane_results.append({})
+class SummaryHiSeq(Summary):
+    def __init__(self, filename=None, xml=None):
+        super(SummaryHiSeq, self).__init__(filename, xml)
+
+    def _extract_lane_results(self, filename):
+        read1 = os.path.join(filename, 'read1.xml')
+        read2 = os.path.join(filename, 'read2.xml')
+
+        if os.path.exists(read1):
+            self._extract_lane_results_for_end(read1, 0)
+        else:
+            LOGGER.warn("No read1.xml at %s." % (read1,))
+        if os.path.exists(read2):
+            self.lane_results.append({})
+            self._extract_lane_results_for_end(read2, 1)
+
+    def _extract_lane_results_for_end(self, filename, end):
+        self.tree = etree.parse(filename)
+        root = self.tree.getroot()
+        for lane in root.getchildren():
+            lrs = LaneResultSummaryHiSeq(data=lane)
+            lrs.end = end
             self.lane_results[lrs.end][lrs.lane] = lrs
 
-    def is_paired_end(self):
-      return len(self.lane_results) == 2
 
-    def dump(self):
+class LaneResultSummary(object):
+    """
+    Parse the LaneResultSummary table out of Summary.htm
+    Mostly for the cluster number
+    """
+    LANE_RESULT_SUMMARY = 'LaneResultSummary'
+    TAGS = {
+      'LaneYield': 'lane_yield',
+      'Cluster': 'cluster', # Raw
+      'ClusterPF': 'cluster_pass_filter',
+      'AverageFirstCycleIntensity': 'average_first_cycle_intensity',
+      'PercentIntensityAfter20Cycles': 'percent_intensity_after_20_cycles',
+      'PercentPassFilterClusters': 'percent_pass_filter_clusters',
+      'PercentPassFilterAlign': 'percent_pass_filter_align',
+      'AverageAlignmentScore': 'average_alignment_score',
+      'PercentErrorRate': 'percent_error_rate'
+    }
+    # These are tags that have mean/stdev as found in the GERALD Summary.xml file
+    GERALD_TAGS = {
+      #'laneYield': 'lane_yield', #this is just a number
+      'clusterCountRaw': 'cluster', # Raw
+      'clusterCountPF': 'cluster_pass_filter',
+      'oneSig': 'average_first_cycle_intensity',
+      'signal20AsPctOf1': 'percent_intensity_after_20_cycles',
+      'percentClustersPF': 'percent_pass_filter_clusters',
+      'percentUniquelyAlignedPF': 'percent_pass_filter_align',
+      'averageAlignScorePF': 'average_alignment_score',
+      'errorPF': 'percent_error_rate'
+    }
+
+    def __init__(self, html=None, xml=None):
+        self.lane = None
+        self.end = 0
+        self.lane_yield = None
+        self.cluster = None
+        self.cluster_pass_filter = None
+        self.average_first_cycle_intensity = None
+        self.percent_intensity_after_20_cycles = None
+        self.percent_pass_filter_clusters = None
+        self.percent_pass_filter_align = None
+        self.average_alignment_score = None
+        self.percent_error_rate = None
+
+
+    def get_elements(self):
+        lane_result = etree.Element(
+                        LaneResultSummary.LANE_RESULT_SUMMARY,
+                        {'lane': unicode(self.lane), 'end': unicode(self.end)})
+        for tag, variable_name in LaneResultSummary.TAGS.items():
+            value = getattr(self, variable_name)
+            if value is None:
+                continue
+            # it looks like a sequence
+            elif type(value) in (types.TupleType, types.ListType):
+                element = make_mean_range_element(
+                  lane_result,
+                  tag,
+                  *value
+                )
+            else:
+                element = etree.SubElement(lane_result, tag)
+                element.text = unicode(value)
+        return lane_result
+
+    def set_elements(self, tree):
+        if tree.tag != LaneResultSummary.LANE_RESULT_SUMMARY:
+            raise ValueError('Expected %s' % (
+                    LaneResultSummary.LANE_RESULT_SUMMARY))
+        self.lane = int(tree.attrib['lane'])
+        # default to the first end, for the older summary files
+        # that are single ended
+        self.end = int(tree.attrib.get('end', 0))
+        tags = LaneResultSummary.TAGS
+        for element in list(tree):
+            try:
+                variable_name = tags[element.tag]
+                setattr(self, variable_name,
+                        parse_summary_element(element))
+            except KeyError, e:
+                LOGGER.warn('Unrecognized tag %s' % (element.tag,))
+
+
+class LaneResultSummaryGA(LaneResultSummary):
+    def __init__(self, html=None, xml=None):
+        super(LaneResultSummaryGA, self).__init__(html, xml)
+
+        if html is not None:
+            self.set_elements_from_source(html)
+        if xml is not None:
+            self.set_elements(xml)
+
+    def set_elements_from_gerald_xml(self, read, element):
+        self.lane = int(element.find('laneNumber').text)
+        self.end = read
+        lane_yield_node = element.find('laneYield')
+        if lane_yield_node is not None:
+            self.lane_yield = int(lane_yield_node.text)
+        else:
+            self.lane_yield = None
+
+        for GeraldName, LRSName in LaneResultSummary.GERALD_TAGS.items():
+            node = element.find(GeraldName)
+            if node is None:
+                LOGGER.info("Couldn't find %s" % (GeraldName))
+            setattr(self, LRSName, parse_xml_mean_range(node))
+
+    def set_elements_from_source(self, data):
+        """Read from an initial summary data file. Either xml or html
         """
-        Debugging function, report current object
+        if not len(data) in (8,10):
+            raise RuntimeError("Summary.htm file format changed, len(data)=%d" % (len(data),))
+
+        # same in pre-0.3.0 Summary file and 0.3 summary file
+        self.lane = int(data[0])
+
+        if len(data) == 8:
+            parsed_data = [ parse_mean_range(x) for x in data[1:] ]
+            # this is the < 0.3 Pipeline version
+            self.cluster = parsed_data[0]
+            self.average_first_cycle_intensity = parsed_data[1]
+            self.percent_intensity_after_20_cycles = parsed_data[2]
+            self.percent_pass_filter_clusters = parsed_data[3]
+            self.percent_pass_filter_align = parsed_data[4]
+            self.average_alignment_score = parsed_data[5]
+            self.percent_error_rate = parsed_data[6]
+        elif len(data) == 10:
+            parsed_data = [ parse_mean_range(x) for x in data[2:] ]
+            # this is the >= 0.3 summary file
+            self.lane_yield = data[1]
+            self.cluster = parsed_data[0]
+            self.cluster_pass_filter = parsed_data[1]
+            self.average_first_cycle_intensity = parsed_data[2]
+            self.percent_intensity_after_20_cycles = parsed_data[3]
+            self.percent_pass_filter_clusters = parsed_data[4]
+            self.percent_pass_filter_align = parsed_data[5]
+            self.average_alignment_score = parsed_data[6]
+            self.percent_error_rate = parsed_data[7]
+
+
+class LaneResultSummaryHiSeq(LaneResultSummary):
+    def __init__(self, data=None, xml=None):
+        super(LaneResultSummaryHiSeq, self).__init__(data, xml)
+
+        if data is not None:
+            self.set_elements_from_source(data)
+        if xml is not None:
+            self.set_elements(xml)
+
+    def set_elements_from_source(self, element):
+        """Read from an initial summary data file. Either xml or html
         """
-        tree = self.get_elements()
-        print etree.tostring(tree)
+        # same in pre-0.3.0 Summary file and 0.3 summary file
+        lane = element.attrib
+        self.lane = int(lane['key'])
+        #self.lane_yield = data[1]
+        self.cluster = (int(lane['ClustersRaw']),
+                        float(lane['ClustersRawSD']))
+        self.cluster_pass_filter = (int(lane['ClustersPF']),
+                                    float(lane['ClustersPFSD']))
+        self.average_first_cycle_intensity = (int(lane['FirstCycleIntPF']),
+                                              float(lane['FirstCycleIntPFSD']))
+        self.percent_intensity_after_20_cycles = (
+            float(lane['PrcIntensityAfter20CyclesPF']),
+            float(lane['PrcIntensityAfter20CyclesPFSD']))
+        self.percent_pass_filter_clusters = (
+            float(lane['PrcPFClusters']),
+            float(lane['PrcPFClustersSD']))
+        self.percent_pass_filter_align = (
+            float(lane['PrcAlign']),
+            float(lane['PrcAlignSD']))
+        self.percent_error_rate = (
+            float(lane['ErrRatePhiX']),
+            float(lane['ErrRatePhiXSD']),)
+
 
 def tonumber(v):
     """
