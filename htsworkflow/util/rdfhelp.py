@@ -1,5 +1,6 @@
 """Helper features for working with librdf
 """
+import collections
 from datetime import datetime
 from urlparse import urlparse, urlunparse
 from urllib2 import urlopen
@@ -34,14 +35,17 @@ ISOFORMAT_MS = "%Y-%m-%dT%H:%M:%S.%f"
 ISOFORMAT_SHORT = "%Y-%m-%dT%H:%M:%S"
 
 
-def sparql_query(model, query_filename):
+def sparql_query(model, query_filename, output_format='text'):
     """Execute sparql query from file
     """
     logger.info("Opening: %s" % (query_filename,))
     query_body = open(query_filename, 'r').read()
     query = RDF.SPARQLQuery(query_body)
     results = query.execute(model)
-    display_query_results(results)
+    if output_format == 'html':
+        html_query_results(results)
+    else:
+        display_query_results(results)
 
 
 def display_query_results(results):
@@ -52,6 +56,30 @@ def display_query_results(results):
             print "{0}: {1}".format(k, v)
         print
 
+def html_query_results(result_stream):
+    from django.conf import settings
+    from django.template import Context, loader
+
+    # I did this because I couldn't figure out how to
+    # get simplify_rdf into the django template as a filter
+    class Simplified(object):
+        def __init__(self, value):
+            self.simple = simplify_rdf(value)
+            if value.is_resource():
+                self.url = value
+            else:
+                self.url = None
+
+    template = loader.get_template('rdf_report.html')
+    results = []
+    for row in result_stream:
+        new_row = collections.OrderedDict()
+        row_urls = []
+        for k,v in row.items():
+            new_row[k] = Simplified(v)
+        results.append(new_row)
+    context = Context({'results': results,})
+    print template.render(context)
 
 def blankOrUri(value=None):
     """Return a blank node for None or a resource node for strings.
@@ -144,6 +172,47 @@ def get_node_type(node):
         value_type = str(value_type)
         return value_type.replace(str(xsdNS[''].uri), '')
 
+
+def simplify_rdf(value):
+    """Return a short name for a RDF object
+    e.g. The last part of a URI or an untyped string.
+    """
+    if isinstance(value, RDF.Node):
+        if value.is_resource():
+            name = simplify_uri(str(value.uri))
+        elif value.is_blank():
+            name = '<BLANK>'
+        else:
+            name = value.literal_value['string']
+    elif isinstance(value, RDF.Uri):
+        name = split_uri(str(value))
+    else:
+        name = value
+    return str(name)
+
+
+def simplify_uri(uri):
+    """Split off the end of a uri
+
+    >>> simplify_uri('http://asdf.org/foo/bar')
+    'bar'
+    >>> simplify_uri('http://asdf.org/foo/bar#bleem')
+    'bleem'
+    >>> simplify_uri('http://asdf.org/foo/bar/')
+    'bar'
+    >>> simplify_uri('http://asdf.org/foo/bar?was=foo')
+    'was=foo'
+    """
+    parsed = urlparse(uri)
+    if len(parsed.query) > 0:
+        return parsed.query
+    elif len(parsed.fragment) > 0:
+        return parsed.fragment
+    elif len(parsed.path) > 0:
+        for element in reversed(parsed.path.split('/')):
+            if len(element) > 0:
+                return element
+    raise ValueError("Unable to simplify %s" % (uri,))
 
 def simplifyUri(namespace, term):
     """Remove the namespace portion of a term
@@ -252,7 +321,6 @@ def guess_parser(content_type, pathname):
         elif ext in ('turtle'):
             return 'turtle'
     return 'guess'
-
 
 def get_serializer(name='turtle'):
     """Return a serializer with our standard prefixes loaded

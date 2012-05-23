@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Report</title>
+    <style>
+table {
+    border-spacing: 0;
+}
+
+table, td {
+    border-style: solid;
+}
+
+td { margin: 0;
+     border-width: 1px 1px 0 0;
+     padding: 4px;
+}    </style>
+  </head>
+  <body>
+    <table>
+      <thead>
+        <tr>{% for k in results.0 %}
+          <td>{{k}}</td>{% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in results %}<tr>{% for value in row.values %}
+          <td>{% spaceless %}
+            {% if value.url %}<a href="{{ value.url }}">{% endif%}
+            {{value.simple}}
+            {% if value.url %}</a>{% endif %}</td>{% endspaceless %}{% endfor %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

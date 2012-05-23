@@ -20,6 +20,9 @@ import sys
 import urllib
 import urlparse
 
+if not 'DJANGO_SETTINGS_MODULE' in os.environ:
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
+
 from htsworkflow.submission import daf, ucsc
 
 from htsworkflow.util import api
@@ -124,7 +127,7 @@ def main(cmdline=None):
             load_encodedcc_files(model, **track_info )
 
     if opts.sparql is not None:
-        sparql_query(model, opts.sparql)
+        sparql_query(model, opts.sparql, 'html')
 
     if opts.find_submission_with_no_library:
         report_submissions_with_no_library(model)
