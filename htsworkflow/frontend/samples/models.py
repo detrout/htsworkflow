@@ -148,6 +148,7 @@ class MultiplexIndex(models.Model):
     sequence = models.CharField(max_length=12, blank=True, null=True)
 
     class Meta:
+	verbose_name_plural = "multiplex indicies"
         unique_together = ('adapter_type', 'multiplex_id')
 
 class Library(models.Model):
