@@ -186,7 +186,7 @@ def make_parser():
 
 
 def load_my_submissions(model, limit=None, cookie=None):
-    """Parse all the submissions from UCSC into model
+    """Parse all of my submissions from encodesubmit into model
     It will look at the global USER_URL to figure out who to scrape
     cookie contains the session cookie, if none, will attempt to login
     """
