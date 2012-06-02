@@ -28,112 +28,12 @@ class Gerald(object):
     RUN_PARAMETERS='RunParameters'
     SUMMARY='Summary'
 
-    class LaneParameters(object):
-        """
-        Make it easy to access elements of LaneSpecificRunParameters from python
-        """
-        def __init__(self, gerald, lane_id):
-            self._gerald = gerald
-            self._lane_id = lane_id
-
-        def __get_attribute(self, xml_tag):
-            subtree = self._gerald.tree.find('LaneSpecificRunParameters')
-            container = subtree.find(xml_tag)
-            if container is None:
-                return None
-            if len(container.getchildren()) > LANES_PER_FLOWCELL:
-                raise RuntimeError('GERALD config.xml file changed')
-            lanes = [x.tag.split('_')[1] for x in container.getchildren()]
-            try:
-                index = lanes.index(self._lane_id)
-            except ValueError, e:
-                return None
-            element = container[index]
-            return element.text
-        def _get_analysis(self):
-            return self.__get_attribute('ANALYSIS')
-        analysis = property(_get_analysis)
-
-        def _get_eland_genome(self):
-            genome = self.__get_attribute('ELAND_GENOME')
-            # default to the chipwide parameters if there isn't an
-            # entry in the lane specific paramaters
-            if genome is None:
-                genome = self._gerald._get_chip_attribute('ELAND_GENOME')
-            # ignore flag value
-            if genome == 'Need_to_specify_ELAND_genome_directory':
-                genome = None
-            return genome
-        eland_genome = property(_get_eland_genome)
-
-        def _get_read_length(self):
-            read_length = self.__get_attribute('READ_LENGTH')
-            if read_length is None:
-                read_length = self._gerald._get_chip_attribute('READ_LENGTH')
-            return read_length
-        read_length = property(_get_read_length)
-
-        def _get_use_bases(self):
-            return self.__get_attribute('USE_BASES')
-        use_bases = property(_get_use_bases)
-
-    class LaneSpecificRunParameters(object):
-        """
-        Provide access to LaneSpecificRunParameters
-        """
-        def __init__(self, gerald):
-            self._gerald = gerald
-            self._lane = None
-
-        def _initalize_lanes(self):
-            """
-            build dictionary of LaneParameters
-            """
-            self._lanes = {}
-            tree = self._gerald.tree
-            analysis = tree.find('LaneSpecificRunParameters/ANALYSIS')
-            if analysis is None:
-                return
-            # according to the pipeline specs I think their fields
-            # are sampleName_laneID, with sampleName defaulting to s
-            # since laneIDs are constant lets just try using
-            # those consistently.
-            for element in analysis:
-                sample, lane_id = element.tag.split('_')
-                self._lanes[int(lane_id)] = Gerald.LaneParameters(
-                                              self._gerald, lane_id)
-
-        def __getitem__(self, key):
-            if self._lane is None:
-                self._initalize_lanes()
-            return self._lanes[key]
-        def get(self, key, default):
-            if self._lane is None:
-                self._initalize_lanes()
-            return self._lanes.get(key, None)
-        def keys(self):
-            if self._lane is None:
-                self._initalize_lanes()
-            return self._lanes.keys()
-        def values(self):
-            if self._lane is None:
-                self._initalize_lanes()
-            return self._lanes.values()
-        def items(self):
-            if self._lane is None:
-                self._initalize_lanes()
-            return self._lanes.items()
-        def __len__(self):
-            if self._lane is None:
-                self._initalize_lanes()
-            return len(self._lanes)
-
     def __init__(self, xml=None):
         self.pathname = None
         self.tree = None
 
         # parse lane parameters out of the config.xml file
-        self.lanes = Gerald.LaneSpecificRunParameters(self)
+        self.lanes = LaneSpecificRunParameters(self)
 
         self.summary = None
         self.eland_results = None
@@ -239,6 +139,186 @@ class Gerald(object):
                 self.eland_results = ELAND(xml=element)
             else:
                 LOGGER.warn("Unrecognized tag %s" % (element.tag,))
+
+
+class LaneParameters(object):
+    """
+    Make it easy to access elements of LaneSpecificRunParameters from python
+    """
+    def __init__(self, gerald, lane_id):
+        self._gerald = gerald
+        self._lane_id = lane_id
+
+    def _get_analysis(self):
+        raise NotImplemented("abstract class")
+    analysis = property(_get_analysis)
+
+    def _get_eland_genome(self):
+        raise NotImplemented("abstract class")
+    eland_genome = property(_get_eland_genome)
+
+    def _get_read_length(self):
+        raise NotImplemented("abstract class")
+    read_length = property(_get_read_length)
+
+    def _get_use_bases(self):
+        raise NotImplemented("abstract class")
+    use_bases = property(_get_use_bases)
+
+
+class LaneParametersGA(LaneParameters):
+    """
+    Make it easy to access elements of LaneSpecificRunParameters from python
+    """
+    def __init__(self, gerald, lane_id):
+        super(LaneParametersGA, self).__init__(gerald, lane_id)
+
+    def __get_attribute(self, xml_tag):
+        subtree = self._gerald.tree.find('LaneSpecificRunParameters')
+        container = subtree.find(xml_tag)
+        if container is None:
+            return None
+        if len(container.getchildren()) > LANES_PER_FLOWCELL:
+            raise RuntimeError('GERALD config.xml file changed')
+        lanes = [x.tag.split('_')[1] for x in container.getchildren()]
+        try:
+            index = lanes.index(self._lane_id)
+        except ValueError, e:
+            return None
+        element = container[index]
+        return element.text
+    def _get_analysis(self):
+        return self.__get_attribute('ANALYSIS')
+    analysis = property(_get_analysis)
+
+    def _get_eland_genome(self):
+        genome = self.__get_attribute('ELAND_GENOME')
+        # default to the chipwide parameters if there isn't an
+        # entry in the lane specific paramaters
+        if genome is None:
+            genome = self._gerald._get_chip_attribute('ELAND_GENOME')
+        # ignore flag value
+        if genome == 'Need_to_specify_ELAND_genome_directory':
+            genome = None
+        return genome
+    eland_genome = property(_get_eland_genome)
+
+    def _get_read_length(self):
+        read_length = self.__get_attribute('READ_LENGTH')
+        if read_length is None:
+            read_length = self._gerald._get_chip_attribute('READ_LENGTH')
+        return read_length
+    read_length = property(_get_read_length)
+
+    def _get_use_bases(self):
+        return self.__get_attribute('USE_BASES')
+    use_bases = property(_get_use_bases)
+
+
+class LaneParametersHiSeq(LaneParameters):
+    """
+    Make it easy to access elements of LaneSpecificRunParameters from python
+    """
+    def __init__(self, gerald, lane_id, element):
+        super(LaneParametersHiSeq, self).__init__(gerald, lane_id)
+        self.element = element
+
+    def __get_attribute(self, xml_tag):
+        container = self.element.find(xml_tag)
+        if container is None:
+            return None
+        return container.text
+
+    def _get_analysis(self):
+        return self.__get_attribute('ANALYSIS')
+    analysis = property(_get_analysis)
+
+    def _get_eland_genome(self):
+        genome = self.__get_attribute('ELAND_GENOME')
+        # default to the chipwide parameters if there isn't an
+        # entry in the lane specific paramaters
+        if genome is None:
+            genome = self._gerald._get_chip_attribute('ELAND_GENOME')
+        # ignore flag value
+        if genome == 'Need_to_specify_ELAND_genome_directory':
+            genome = None
+        return genome
+    eland_genome = property(_get_eland_genome)
+
+    def _get_read_length(self):
+        return self.__get_attribute('READ_LENGTH1')
+    read_length = property(_get_read_length)
+
+    def _get_use_bases(self):
+        return self.__get_attribute('USE_BASES1')
+    use_bases = property(_get_use_bases)
+
+class LaneSpecificRunParameters(object):
+    """
+    Provide access to LaneSpecificRunParameters
+    """
+    def __init__(self, gerald):
+        self._gerald = gerald
+        self._lane = None
+
+    def _initalize_lanes(self):
+        """
+        build dictionary of LaneParameters
+        """
+        self._lanes = {}
+        tree = self._gerald.tree
+        analysis = tree.find('LaneSpecificRunParameters/ANALYSIS')
+        if analysis is not None:
+            self._extract_ga_analysis_type(analysis)
+        analysis = tree.find('Projects')
+        if analysis is not None:
+            self._extract_hiseq_analysis_type(analysis)
+
+    def _extract_ga_analysis_type(self, analysis):
+        # according to the pipeline specs I think their fields
+        # are sampleName_laneID, with sampleName defaulting to s
+        # since laneIDs are constant lets just try using
+        # those consistently.
+        for element in analysis:
+            sample, lane_id = element.tag.split('_')
+            self._lanes[int(lane_id)] = LaneParametersGA(
+                                          self._gerald, lane_id)
+
+    def _extract_hiseq_analysis_type(self, analysis):
+        """Extract from HiSeq style multiplexed analysis types"""
+        for element in analysis:
+            name = element.attrib['name']
+            self._lanes[name] = LaneParametersHiSeq(self._gerald,
+                                                    name,
+                                                    element)
+
+    def __iter__(self):
+        return self._lanes.iterkeys()
+    def __getitem__(self, key):
+        if self._lane is None:
+            self._initalize_lanes()
+        return self._lanes[key]
+    def get(self, key, default):
+        if self._lane is None:
+            self._initalize_lanes()
+        return self._lanes.get(key, None)
+    def keys(self):
+        if self._lane is None:
+            self._initalize_lanes()
+        return self._lanes.keys()
+    def values(self):
+        if self._lane is None:
+            self._initalize_lanes()
+        return self._lanes.values()
+    def items(self):
+        if self._lane is None:
+            self._initalize_lanes()
+        return self._lanes.items()
+    def __len__(self):
+        if self._lane is None:
+            self._initalize_lanes()
+        return len(self._lanes)
+
 
 def gerald(pathname):
     g = Gerald()

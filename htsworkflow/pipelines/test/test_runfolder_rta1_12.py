@@ -95,38 +95,28 @@ class RunfolderTests(unittest.TestCase):
         # make_gerald_config.
         # the first None is to offset the genomes list to be 1..9
         # instead of pythons default 0..8
-        genomes = [None,
-                   '/g/mm9',
-                   '/g/mm9',
-                   '/g/elegans190',
-                   '/g/arabidopsis01222004',
-                   '/g/mm9',
-                   '/g/mm9',
-                   '/g/mm9',
-                   '/g/mm9', ]
-
         # test lane specific parameters from gerald config file
-        for i in range(1,9):
-            cur_lane = g.lanes[i]
-            self.failUnlessEqual(cur_lane.analysis, 'eland_extended')
-            self.failUnlessEqual(cur_lane.eland_genome, genomes[i])
-            self.failUnlessEqual(cur_lane.read_length, '37')
-            self.failUnlessEqual(cur_lane.use_bases, 'Y'*37)
 
-        # I want to be able to use a simple iterator
-        for l in g.lanes.values():
-          self.failUnlessEqual(l.analysis, 'eland_extended')
-          self.failUnlessEqual(l.read_length, '37')
-          self.failUnlessEqual(l.use_bases, 'Y'*37)
+        undetermined = g.lanes['Undetermined_indices']
+        self.failUnlessEqual(undetermined.analysis, 'none')
+        self.failUnlessEqual(undetermined.read_length, None)
+        self.failUnlessEqual(undetermined.use_bases, None)
+
+        project = g.lanes['12383']
+        self.failUnlessEqual(project.analysis, 'eland_extended')
+        self.failUnlessEqual(project.eland_genome, '/g/hg18/chromosomes/')
+        self.failUnlessEqual(project.read_length, '49')
+        self.failUnlessEqual(project.use_bases, 'y'*49+'n')
 
         # test data extracted from summary file
         clusters = [None,
-                    (281331, 11169), (203841, 13513),
-                    (220889, 15653), (137294, 14666),
-                    (129388, 14525), (262092, 10751),
-                    (185754, 13503), (233765, 9537),]
+                    (3878755,  579626.0), (3920639, 1027332.4),
+                    (5713049,  876187.3), (5852907,  538640.6),
+                    (4006751, 1265247.4), (5678021,  627070.7),
+                    (1854131,  429053.2), (4777517,  592904.0),
+                   ]
 
-        self.failUnlessEqual(len(g.summary), 1)
+        self.failUnlessEqual(len(g.summary), 2)
         for i in range(1,9):
             summary_lane = g.summary[0][i]
             self.failUnlessEqual(summary_lane.cluster, clusters[i])

@@ -195,7 +195,7 @@
     <Project name="12383">
       <ANALYSIS>eland_extended</ANALYSIS>
       <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
-      <ELAND_GENOME>/mmjggl/nicodemus/data01/genomes/hg18/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME>/g/hg18/chromosomes/</ELAND_GENOME>
       <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
       <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
       <READS>1</READS>
