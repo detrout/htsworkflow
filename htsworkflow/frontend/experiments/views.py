@@ -17,7 +17,8 @@ from htsworkflow.frontend.experiments.models import \
      DataRun, \
      DataFile, \
      FlowCell, \
-     Lane
+     Lane, \
+     Sequencer
 from htsworkflow.frontend.experiments.experiments import \
      estimateFlowcellDuration, \
      estimateFlowcellTimeRemaining, \
@@ -31,10 +32,10 @@ def index(request):
     #c = Context({
     #    'data_run_list': all_runs,
     #})
-    #return HttpResponse(t.render(c)) 
+    #return HttpResponse(t.render(c))
     # shortcut to the above module usage
-    return render_to_response('experiments/index.html',{'data_run_list': all_runs}) 
-    
+    return render_to_response('experiments/index.html',{'data_run_list': all_runs})
+
 def detail(request, run_folder):
     html_str = '<h2>Exp Track Details Page</h2>'
     html_str += 'Run Folder: '+run_folder
@@ -89,7 +90,7 @@ def startedEmail(request, pk):
         if user.email is None or len(user.email) == 0:
             warnings.append((user.admin_url(), user.username))
     user=None
-    
+
     for user_email in email_lane.keys():
         sending = ""
         # build body
@@ -99,7 +100,7 @@ def startedEmail(request, pk):
                                   u'runfolder': 'blank',
                                   u'finish_low': estimate_low,
                                   u'finish_high': estimate_high,
-                                  u'now': datetime.now(),        
+                                  u'now': datetime.now(),
                                   })
 
         # build view
@@ -126,7 +127,7 @@ def startedEmail(request, pk):
           'warnings': warnings,
         })
     return HttpResponse(email_verify.render(verify_context))
-    
+
 def finishedEmail(request, pk):
     """
     """
@@ -137,7 +138,7 @@ def flowcell_detail(request, flowcell_id, lane_number=None):
     fc = get_object_or_404(FlowCell, flowcell_id__startswith=flowcell_id)
     fc.update_data_runs()
 
-    
+
     if lane_number is not None:
         lanes = fc.lane_set.filter(lane_number=lane_number)
     else:
@@ -146,7 +147,7 @@ def flowcell_detail(request, flowcell_id, lane_number=None):
     context = RequestContext(request,
                              {'flowcell': fc,
                               'lanes': lanes})
-    
+
     return render_to_response('experiments/flowcell_detail.html',
                               context)
 
@@ -157,13 +158,13 @@ def flowcell_lane_detail(request, lane_pk):
     dataruns = []
     for run in lane.flowcell.datarun_set.all():
         dataruns.append((run, lane.lane_number, run.lane_files()[lane.lane_number]))
-        
+
     context = RequestContext(request,
                              {'lib': lane.library,
                               'lane': lane,
                               'flowcell': lane.flowcell,
                               'filtered_dataruns': dataruns})
-    
+
     return render_to_response('experiments/flowcell_lane_detail.html',
                               context)
 
@@ -171,7 +172,7 @@ def read_result_file(self, key):
     """Return the contents of filename if everything is approved
     """
     data_file = get_object_or_404(DataFile, random_key = key)
-    
+
     mimetype = 'application/octet-stream'
     if data_file.file_type.mimetype is not None:
         mimetype = data_file.file_type.mimetype
@@ -181,5 +182,10 @@ def read_result_file(self, key):
                             mimetype=mimetype)
 
     raise Http404
-      
-  
+
+
+def sequencer(request, sequencer_id):
+    sequencer = get_object_or_404(Sequencer, id=sequencer_id)
+    context = RequestContext(request,
+                             {'sequencer': sequencer})
+    return render_to_response('experiments/sequencer.html', context)

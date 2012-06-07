@@ -49,6 +49,8 @@ urlpatterns = patterns('',
      'htsworkflow.frontend.samples.views.library_id_to_admin_url'),
     # sample / library information
     (r'^samples/', include('htsworkflow.frontend.samples.urls')),
+    (r'^sequencer/(?P<sequencer_id>\w+)',
+       'htsworkflow.frontend.experiments.views.sequencer'),
     # Raw result files
     (r'^results/(?P<flowcell_id>\w+)/(?P<cnm>C[0-9]+-[0-9]+)/summary/',
       'htsworkflow.frontend.samples.views.summaryhtm_fc_cnm'),

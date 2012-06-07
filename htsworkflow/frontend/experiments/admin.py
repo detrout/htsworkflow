@@ -45,12 +45,12 @@ admin.site.register(DataRun, DataRunOptions)
 class FileTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'mimetype', 'regex')
 admin.site.register(FileType, FileTypeAdmin)
-  
+
 # lane form setup needs to come before Flowcell form config
 # as flowcell refers to the LaneInline class
 class LaneForm(ModelForm):
     comment = CharField(widget=TextInput(attrs={'size':'80'}), required=False)
-    
+
     class Meta:
         model = Lane
 
@@ -89,7 +89,7 @@ class LaneOptions(admin.ModelAdmin):
       }),
     )
 admin.site.register(Lane, LaneOptions)
-    
+
 class FlowCellOptions(admin.ModelAdmin):
     date_hierarchy = "run_date"
     save_on_top = True
@@ -126,6 +126,9 @@ class ClusterStationOptions(admin.ModelAdmin):
 admin.site.register(ClusterStation, ClusterStationOptions)
 
 class SequencerOptions(admin.ModelAdmin):
-    list_display = ('name', )
-    fieldsets = ( ( None, { 'fields': ( 'name', ) } ), )
+    list_display = ('name', 'instrument_name', 'model')
+    fieldsets = ( ( None,
+                    { 'fields': (
+                        'name', 'instrument_name', 'serial_number',
+                        'model', 'comment') } ), )
 admin.site.register(Sequencer, SequencerOptions)

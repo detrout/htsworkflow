@@ -51,10 +51,23 @@ class ClusterStation(models.Model):
     return unicode(self.name)
 
 class Sequencer(models.Model):
-  name = models.CharField(max_length=50, unique=True)
+  name = models.CharField(max_length=50, db_index=True)
+  instrument_name = models.CharField(max_length=50, db_index=True)
+  serial_number = models.CharField(max_length=50, db_index=True)
+  model = models.CharField(max_length=255)
+  comment = models.CharField(max_length=255)
 
   def __unicode__(self):
-    return unicode(self.name)
+      name = [unicode(self.name)]
+      if self.instrument_name is not None:
+          name.append("(%s)" % (unicode(self.instrument_name),))
+      return " ".join(name)
+
+  @models.permalink
+  def get_absolute_url(self):
+      return ('htsworkflow.frontend.experiments.views.sequencer',
+              [self.id])
+
 
 class FlowCell(models.Model):
   flowcell_id = models.CharField(max_length=20, unique=True, db_index=True)

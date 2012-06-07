@@ -1,0 +1,24 @@
+{% extends "base_site.html" %}
+{% load adminmedia humanize i18n %}
+{% block extrahead %}
+    <!-- App Stuff -->
+    <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+
+    {% block additional_javascript %}
+    {% endblock %}
+{% endblock %}
+
+{% block content %}
+    <h1>Sequencer</h1>
+    <dl about="{{sequencer.get_absolute_url}}" typeof="libns:sequencer">
+      <dt>Name</dt>
+      <dl property="libns:sequencer_name">{{sequencer.name}}</dl>
+      <dt>Instrument Name</dt>
+      <dl property="libns:insrument_name">{{sequencer.instrument_name}}</dl>
+      <dt>Model</dt>
+      <dl property="libns:model">{{sequencer.model}}</dl>
+      <dt>Comment</dt>
+      <dl></dl>
+    </dl>
+{% endblock %}

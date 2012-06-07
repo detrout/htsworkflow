@@ -409,3 +409,43 @@ def multi_lane_to_dict(lane):
     """Convert a list of lane entries into a dictionary indexed by library ID
     """
     return dict( ((x['library_id'],x) for x in lane) )
+
+class TestSequencer(TestCase):
+    fixtures = ['test_flowcells.json',
+                ]
+
+    def test_name_generation(self):
+        seq = models.Sequencer()
+        seq.name = "Seq1"
+        seq.instrument_name = "HWI-SEQ1"
+        seq.model = "Imaginary 5000"
+
+        self.failUnlessEqual(unicode(seq), "Seq1 (HWI-SEQ1)")
+
+    def test_lookup(self):
+        fc = models.FlowCell.objects.get(pk=153)
+        self.failUnlessEqual(fc.sequencer.model,
+                             "Illumina Genome Analyzer IIx")
+        self.failUnlessEqual(fc.sequencer.instrument_name,
+                             "ILLUMINA-EC5D15")
+
+    def test_rdf(self):
+        response = self.client.get('/flowcell/FC12150/', apidata)
+        tree = fromstring(response.content)
+        divs = tree.xpath('//div[@rel="libns:sequenced_by"]',
+                          namespaces=NSMAP)
+        self.failUnlessEqual(len(divs), 1)
+        self.failUnlessEqual(divs[0].attrib['rel'], 'libns:sequenced_by')
+        self.failUnlessEqual(divs[0].attrib['resource'], '/sequencer/2')
+
+        name = divs[0].xpath('./span[@property="libns:sequencer_name"]')
+        self.failUnlessEqual(len(name), 1)
+        self.failUnlessEqual(name[0].text, 'Tardigrade')
+        instrument = divs[0].xpath(
+            './span[@property="libns:sequencer_instrument"]')
+        self.failUnlessEqual(len(instrument), 1)
+        self.failUnlessEqual(instrument[0].text, 'ILLUMINA-EC5D15')
+        model = divs[0].xpath(
+            './span[@property="libns:sequencer_model"]')
+        self.failUnlessEqual(len(model), 1)
+        self.failUnlessEqual(model[0].text, 'Illumina Genome Analyzer IIx')
