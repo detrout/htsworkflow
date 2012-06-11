@@ -79,7 +79,7 @@ class RunfolderTests(unittest.TestCase):
         self.failUnlessEqual(f.start, 1)
         self.failUnlessEqual(f.stop, 152)
         self.failUnlessEqual(f.user, 'diane')
-        # As of 2008-12-8, the date was being set in 
+        # As of 2008-12-8, the date was being set in
         # simulate_runfolder.make_firecrest_dir
         self.failUnlessEqual(f.date, date(2008,4,12))
 
@@ -122,8 +122,7 @@ class RunfolderTests(unittest.TestCase):
         # need to update gerald and make tests for it
         g = gerald.gerald(self.gerald_dir)
 
-        self.failUnlessEqual(g.version,
-            '@(#) Id: GERALD.pl,v 1.171 2008/05/19 17:36:14 mzerara Exp')
+        self.failUnlessEqual(g.version, '1.171')
         self.failUnlessEqual(g.date, datetime(2009,2,22,21,15,59))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.keys()))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.items()))
@@ -133,14 +132,14 @@ class RunfolderTests(unittest.TestCase):
         # make_gerald_config.
         # the first None is to offset the genomes list to be 1..9
         # instead of pythons default 0..8
-        genomes = [None, 
-                   '/g/mm9', 
-                   '/g/mm9', 
-                   '/g/elegans190', 
+        genomes = [None,
+                   '/g/mm9',
+                   '/g/mm9',
+                   '/g/elegans190',
                    '/g/arabidopsis01222004',
-                   '/g/mm9', 
-                   '/g/mm9', 
-                   '/g/mm9', 
+                   '/g/mm9',
+                   '/g/mm9',
+                   '/g/mm9',
                    '/g/mm9', ]
 
         # test lane specific parameters from gerald config file

@@ -4,6 +4,7 @@ Provide access to information stored in the GERALD directory.
 from datetime import datetime, date
 import logging
 import os
+import re
 import stat
 import time
 
@@ -19,18 +20,17 @@ from htsworkflow.util.ethelp import indent, flatten
 
 LOGGER = logging.getLogger(__name__)
 
-class Gerald(object):
+class Alignment(object):
     """
     Capture meaning out of the GERALD directory
     """
     XML_VERSION = 1
-    GERALD='Gerald'
     RUN_PARAMETERS='RunParameters'
     SUMMARY='Summary'
 
-    def __init__(self, xml=None):
-        self.pathname = None
-        self.tree = None
+    def __init__(self, xml=None, pathname=None, tree=None):
+        self.pathname = pathname
+        self.tree = tree
 
         # parse lane parameters out of the config.xml file
         self.lanes = LaneSpecificRunParameters(self)
@@ -41,62 +41,9 @@ class Gerald(object):
         if xml is not None:
             self.set_elements(xml)
 
-    def _get_date(self):
-        if self.tree is None:
-            return datetime.today()
-        timestamp = self.tree.findtext('ChipWideRunParameters/TIME_STAMP')
-        if timestamp is not None:
-            epochstamp = time.mktime(time.strptime(timestamp, '%c'))
-            return datetime.fromtimestamp(epochstamp)
-        if self.pathname is not None:
-            epochstamp = os.stat(self.pathname)[stat.ST_MTIME]
-            return datetime.fromtimestamp(epochstamp)
-        return datetime.today()
-    date = property(_get_date)
-
     def _get_time(self):
         return time.mktime(self.date.timetuple())
     time = property(_get_time, doc='return run time as seconds since epoch')
-
-    def _get_experiment_root(self):
-        if self.tree is None:
-            return None
-        return self.tree.findtext('ChipWideRunParameters/EXPT_DIR_ROOT')
-
-    def _get_runfolder_name(self):
-        if self.tree is None:
-            return None
-
-        expt_root = os.path.normpath(self._get_experiment_root())
-        chip_expt_dir = self.tree.findtext('ChipWideRunParameters/EXPT_DIR')
-        # hiseqs renamed the experiment dir location
-        defaults_expt_dir = self.tree.findtext('Defaults/EXPT_DIR')
-
-        experiment_dir = None
-        if defaults_expt_dir is not None:
-            _, experiment_dir = os.path.split(defaults_expt_dir)
-        elif expt_root is not None and chip_expt_dir is not None:
-            experiment_dir = chip_expt_dir.replace(expt_root+os.path.sep, '')
-            experiment_dir = experiment_dir.split(os.path.sep)[0]
-
-        if experiment_dir is None or len(experiment_dir) == 0:
-            return None
-        return experiment_dir
-
-    runfolder_name = property(_get_runfolder_name)
-
-    def _get_version(self):
-        if self.tree is None:
-            return None
-        ga_version = self.tree.findtext(
-            'ChipWideRunParameters/SOFTWARE_VERSION')
-        if ga_version is not None:
-            return ga_version
-        hiseq_software_node = self.tree.find('Software')
-        hiseq_version = hiseq_software_node.attrib['Version']
-        return hiseq_version
-
-    version = property(_get_version)
 
     def _get_chip_attribute(self, value):
         return self.tree.findtext('ChipWideRunParameters/%s' % (value,))
@@ -105,9 +52,10 @@ class Gerald(object):
         """
         Debugging function, report current object
         """
-        print 'Gerald version:', self.version
-        print 'Gerald run date:', self.date
-        print 'Gerald config.xml:', self.tree
+        print 'Software:'. self.__class__.__name__
+        print 'Alignment version:', self.version
+        print 'Run date:', self.date
+        print 'config.xml:', self.tree
         self.summary.dump()
 
     def get_elements(self):
@@ -123,8 +71,8 @@ class Gerald(object):
         return gerald
 
     def set_elements(self, tree):
-        if tree.tag !=  Gerald.GERALD:
-            raise ValueError('exptected GERALD')
+        if tree.tag !=  self.__class__.GERALD:
+            raise ValueError('expected GERALD')
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > Gerald.XML_VERSION:
             LOGGER.warn('XML tree is a higher version than this class')
@@ -139,6 +87,82 @@ class Gerald(object):
                 self.eland_results = ELAND(xml=element)
             else:
                 LOGGER.warn("Unrecognized tag %s" % (element.tag,))
+
+class Gerald(Alignment):
+    GERALD='Gerald'
+
+    def _get_date(self):
+        if self.tree is None:
+            return datetime.today()
+        timestamp = self.tree.findtext('ChipWideRunParameters/TIME_STAMP')
+        if timestamp is not None:
+            epochstamp = time.mktime(time.strptime(timestamp, '%c'))
+            return datetime.fromtimestamp(epochstamp)
+        if self.pathname is not None:
+            epochstamp = os.stat(self.pathname)[stat.ST_MTIME]
+            return datetime.fromtimestamp(epochstamp)
+        return datetime.today()
+    date = property(_get_date)
+
+    def _get_experiment_root(self):
+        if self.tree is None:
+            return None
+        return self.tree.findtext('ChipWideRunParameters/EXPT_DIR_ROOT')
+
+    def _get_runfolder_name(self):
+        if self.tree is None:
+            return None
+
+        expt_root = os.path.normpath(self._get_experiment_root())
+        chip_expt_dir = self.tree.findtext('ChipWideRunParameters/EXPT_DIR')
+
+        if expt_root is not None and chip_expt_dir is not None:
+            experiment_dir = chip_expt_dir.replace(expt_root+os.path.sep, '')
+            experiment_dir = experiment_dir.split(os.path.sep)[0]
+
+        if experiment_dir is None or len(experiment_dir) == 0:
+            return None
+        return experiment_dir
+
+    runfolder_name = property(_get_runfolder_name)
+
+    def _get_version(self):
+        if self.tree is None:
+            return None
+        ga_version = self.tree.findtext(
+            'ChipWideRunParameters/SOFTWARE_VERSION')
+        if ga_version is not None:
+            match = re.match("@.*GERALD.pl,v (?P<version>\d+(\.\d+)+)",
+                             ga_version)
+            if match:
+                return match.group('version')
+            return ga_version
+    version = property(_get_version)
+
+class CASAVA(Alignment):
+    GERALD='Casava'
+
+    def _get_runfolder_name(self):
+        if self.tree is None:
+            return None
+
+        # hiseqs renamed the experiment dir location
+        defaults_expt_dir = self.tree.findtext('Defaults/EXPT_DIR')
+        _, experiment_dir = os.path.split(defaults_expt_dir)
+
+        if experiment_dir is None or len(experiment_dir) == 0:
+            return None
+        return experiment_dir
+
+    runfolder_name = property(_get_runfolder_name)
+
+    def _get_version(self):
+        if self.tree is None:
+            return None
+        hiseq_software_node = self.tree.find('Software')
+        hiseq_version = hiseq_software_node.attrib['Version']
+        return hiseq_version
+    version = property(_get_version)
 
 
 class LaneParameters(object):
@@ -321,27 +345,28 @@ class LaneSpecificRunParameters(object):
 
 
 def gerald(pathname):
-    g = Gerald()
-    g.pathname = os.path.expanduser(pathname)
-    path, name = os.path.split(g.pathname)
     LOGGER.info("Parsing gerald config.xml")
-    config_pathname = os.path.join(g.pathname, 'config.xml')
-    g.tree = ElementTree.parse(config_pathname).getroot()
+    pathname = os.path.expanduser(pathname)
+    config_pathname = os.path.join(pathname, 'config.xml')
+    config_tree = ElementTree.parse(config_pathname).getroot()
 
     # parse Summary.htm file
-    summary_xml = os.path.join(g.pathname, 'Summary.xml')
-    summary_htm = os.path.join(g.pathname, 'Summary.htm')
-    report_summary = os.path.join(g.pathname, '..', 'Data',
+    summary_xml = os.path.join(pathname, 'Summary.xml')
+    summary_htm = os.path.join(pathname, 'Summary.htm')
+    report_summary = os.path.join(pathname, '..', 'Data',
                                   'reports', 'Summary', )
     if os.path.exists(summary_xml):
+        g = Gerald(pathname = pathname, tree=config_tree)
         LOGGER.info("Parsing Summary.xml")
         g.summary = SummaryGA(summary_xml)
         g.eland_results = eland(g.pathname, g)
     elif os.path.exists(summary_htm):
+        g = Gerald(pathname=pathname, tree=config_tree)
         LOGGER.info("Parsing Summary.htm")
         g.summary = SummaryGA(summary_htm)
         g.eland_results = eland(g.pathname, g)
     elif os.path.isdir(report_summary):
+        g = CASAVA(pathname=pathname, tree=config_tree)
         LOGGER.info("Parsing %s" % (report_summary,))
         g.summary = SummaryHiSeq(report_summary)
 

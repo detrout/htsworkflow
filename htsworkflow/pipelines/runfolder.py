@@ -123,6 +123,8 @@ class PipelineRun(object):
             self.bustard = bustard.Bustard(xml=element)
           elif tag == gerald.Gerald.GERALD.lower():
             self.gerald = gerald.Gerald(xml=element)
+          elif tag == gerald.CASAVA.GERALD.lower():
+            self.gerald = gerald.CASAVA(xml=element)
           else:
             LOGGER.warn('PipelineRun unrecognized tag %s' % (tag,))
 
@@ -212,7 +214,7 @@ def get_runs(runfolder, flowcell_id=None):
         for aligned in glob(aligned_glob):
             LOGGER.info("Found aligned directory %s" % (aligned,))
             try:
-                g = gerald.gerald(aligned)
+                g = gerald.HiSeq(aligned)
                 p = PipelineRun(runfolder, flowcell_id)
                 p.datadir = datadir
                 p.image_analysis = image_analysis

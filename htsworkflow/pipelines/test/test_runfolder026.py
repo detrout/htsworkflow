@@ -222,12 +222,12 @@ def make_eland_results(gerald_dir):
 >HWI-EAS229_24_207BTAAXX:1:7:205:842    AAACAANNCTCCCAAACACGTAAACTGGAAAA        U1      0       1       0       Lambda.fa        8796855 R       DD      24T
 """
     for i in range(1,9):
-        pathname = os.path.join(gerald_dir, 
+        pathname = os.path.join(gerald_dir,
                                 's_%d_eland_result.txt' % (i,))
         f = open(pathname, 'w')
         f.write(eland_result)
         f.close()
-                     
+
 class RunfolderTests(unittest.TestCase):
     """
     Test components of the runfolder processing code
@@ -237,14 +237,14 @@ class RunfolderTests(unittest.TestCase):
         # make a fake runfolder directory
         self.temp_dir = tempfile.mkdtemp(prefix='tmp_runfolder_')
 
-        self.runfolder_dir = os.path.join(self.temp_dir, 
+        self.runfolder_dir = os.path.join(self.temp_dir,
                                           '080102_HWI-EAS229_0010_207BTAAXX')
         os.mkdir(self.runfolder_dir)
 
         self.data_dir = os.path.join(self.runfolder_dir, 'Data')
         os.mkdir(self.data_dir)
 
-        self.firecrest_dir = os.path.join(self.data_dir, 
+        self.firecrest_dir = os.path.join(self.data_dir,
                                'C1-33_Firecrest1.8.28_12-04-2008_diane'
                              )
         os.mkdir(self.firecrest_dir)
@@ -253,11 +253,11 @@ class RunfolderTests(unittest.TestCase):
         matrix_filename = os.path.join(self.matrix_dir, 's_matrix')
         make_matrix(matrix_filename)
 
-        self.bustard_dir = os.path.join(self.firecrest_dir, 
+        self.bustard_dir = os.path.join(self.firecrest_dir,
                                         'Bustard1.8.28_12-04-2008_diane')
         os.mkdir(self.bustard_dir)
         make_phasing_params(self.bustard_dir)
-        
+
         self.gerald_dir = os.path.join(self.bustard_dir,
                                        'GERALD_12-04-2008_diane')
         os.mkdir(self.gerald_dir)
@@ -300,7 +300,7 @@ class RunfolderTests(unittest.TestCase):
         self.failUnlessEqual(b.user,    'diane')
         self.failUnlessEqual(len(b.phasing), 8)
         self.failUnlessAlmostEqual(b.phasing[8].phasing, 0.0099)
-        
+
         xml = b.get_elements()
         b2 = bustard.Bustard(xml=xml)
         self.failUnlessEqual(b.version, b2.version)
@@ -308,25 +308,24 @@ class RunfolderTests(unittest.TestCase):
         self.failUnlessEqual(b.user,    b2.user)
         self.failUnlessEqual(len(b.phasing), len(b2.phasing))
         for key in b.phasing.keys():
-            self.failUnlessEqual(b.phasing[key].lane, 
+            self.failUnlessEqual(b.phasing[key].lane,
                                  b2.phasing[key].lane)
-            self.failUnlessEqual(b.phasing[key].phasing, 
+            self.failUnlessEqual(b.phasing[key].phasing,
                                  b2.phasing[key].phasing)
-            self.failUnlessEqual(b.phasing[key].prephasing, 
+            self.failUnlessEqual(b.phasing[key].prephasing,
                                  b2.phasing[key].prephasing)
 
     def test_gerald(self):
         # need to update gerald and make tests for it
-        g = gerald.gerald(self.gerald_dir) 
+        g = gerald.gerald(self.gerald_dir)
 
-        self.failUnlessEqual(g.version, 
-            '@(#) Id: GERALD.pl,v 1.68.2.2 2007/06/13 11:08:49 km Exp')
+        self.failUnlessEqual(g.version, '1.68.2.2')
         self.failUnlessEqual(g.date, datetime(2008,4,19,19,8,30))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.keys()))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.items()))
 
-        
-        # list of genomes, matches what was defined up in 
+
+        # list of genomes, matches what was defined up in
         # make_gerald_config.
         # the first None is to offset the genomes list to be 1..9
         # instead of pythons default 0..8
@@ -342,7 +341,7 @@ class RunfolderTests(unittest.TestCase):
             self.failUnlessEqual(cur_lane.use_bases, 'Y'*32)
 
         # test data extracted from summary file
-        clusters = [None, 
+        clusters = [None,
                     (17421, 2139), (20311, 2402), (20193, 2399), (15537, 2531),
                     (32047, 3356), (32946, 4753), (39504, 4171), (37998, 3792)]
 
@@ -385,15 +384,15 @@ class RunfolderTests(unittest.TestCase):
             for lane in g_eland.results[0].keys():
                 g_results = g_eland.results[0][lane]
                 g2_results = g2_eland.results[0][lane]
-                self.failUnlessEqual(g_results.reads, 
+                self.failUnlessEqual(g_results.reads,
                                      g2_results.reads)
-                self.failUnlessEqual(len(g_results.mapped_reads), 
+                self.failUnlessEqual(len(g_results.mapped_reads),
                                      len(g2_results.mapped_reads))
                 for k in g_results.mapped_reads.keys():
                     self.failUnlessEqual(g_results.mapped_reads[k],
                                          g2_results.mapped_reads[k])
 
-                self.failUnlessEqual(len(g_results.match_codes), 
+                self.failUnlessEqual(len(g_results.match_codes),
                                      len(g2_results.match_codes))
                 for k in g_results.match_codes.keys():
                     self.failUnlessEqual(g_results.match_codes[k],
@@ -407,7 +406,7 @@ class RunfolderTests(unittest.TestCase):
         genome_maps = { 1:dm3_map, 2:dm3_map, 3:dm3_map, 4:dm3_map,
                         5:dm3_map, 6:dm3_map, 7:dm3_map, 8:dm3_map }
         eland = gerald.eland(self.gerald_dir, genome_maps=genome_maps)
-        
+
         for i in range(1,9):
             lane = eland.results[0][i]
             self.failUnlessEqual(lane.reads, 4)
@@ -439,12 +438,12 @@ class RunfolderTests(unittest.TestCase):
             self.failUnlessEqual(len(l1.match_codes), 9)
             self.failUnlessEqual(len(l1.match_codes), len(l2.match_codes))
             for k in l1.match_codes.keys():
-                self.failUnlessEqual(l1.match_codes[k], 
+                self.failUnlessEqual(l1.match_codes[k],
                                      l2.match_codes[k])
 
     def test_runfolder(self):
         runs = runfolder.get_runs(self.runfolder_dir)
-        
+
         # do we get the flowcell id from the filename?
         self.failUnlessEqual(len(runs), 1)
         self.failUnlessEqual(runs[0].name, 'run_207BTAAXX_2008-04-19.xml')
@@ -454,7 +453,7 @@ class RunfolderTests(unittest.TestCase):
         runs = runfolder.get_runs(self.runfolder_dir)
         self.failUnlessEqual(len(runs), 1)
         self.failUnlessEqual(runs[0].name, 'run_207BTAAXY_2008-04-19.xml')
-        
+
         r1 = runs[0]
         xml = r1.get_elements()
         xml_str = ElementTree.tostring(xml)
@@ -464,11 +463,11 @@ class RunfolderTests(unittest.TestCase):
         self.failIfEqual(r2.image_analysis, None)
         self.failIfEqual(r2.bustard, None)
         self.failIfEqual(r2.gerald, None)
-        
+
 
 def suite():
     return unittest.makeSuite(RunfolderTests,'test')
 
 if __name__ == "__main__":
     unittest.main(defaultTest="suite")
-    
+
