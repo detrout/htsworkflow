@@ -75,6 +75,19 @@ class IPAR(object):
         if xml is not None:
             self.set_elements(xml)
 
+    def _get_software(self):
+        """Return software name"""
+        if self.tree is None:
+            raise ValueError("Can't determine software name, please load a run")
+        software = self.tree.xpath('Software')
+        if len(software) == 0:
+          return None
+        elif len(software) > 1:
+            raise RuntimeError("Too many software tags, please update ipar.py")
+        else:
+            return software[0].attrib['Name']
+    software = property(_get_software)
+
     def _get_time(self):
         return time.mktime(self.date.timetuple())
     def _set_time(self, value):

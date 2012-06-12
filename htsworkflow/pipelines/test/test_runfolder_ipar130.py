@@ -73,6 +73,7 @@ class RunfolderTests(unittest.TestCase):
         Construct a firecrest object
         """
         i = ipar.ipar(self.image_analysis_dir)
+        self.failUnlessEqual(i.software, 'IPAR')
         self.failUnlessEqual(i.version, '2.01.192.0')
         self.failUnlessEqual(i.start, 1)
         self.failUnlessEqual(i.stop, 37)
@@ -82,6 +83,7 @@ class RunfolderTests(unittest.TestCase):
         xml_str = ElementTree.tostring(xml)
 
         i2 = ipar.IPAR(xml=xml)
+        self.failUnlessEqual(i.software, i2.software)
         self.failUnlessEqual(i.version, i2.version)
         self.failUnlessEqual(i.start,   i2.start)
         self.failUnlessEqual(i.stop,    i2.stop)
@@ -114,6 +116,7 @@ class RunfolderTests(unittest.TestCase):
             self.failUnlessAlmostEqual(crosstalk.base['G'][3], -0.02)
 
         b = bustard.bustard(self.bustard_dir)
+        self.failUnlessEqual(b.software, 'Bustard')
         self.failUnlessEqual(b.version, '1.3.2')
         self.failUnlessEqual(b.date,    date(2008,3,15))
         self.failUnlessEqual(b.user,    'diane')
@@ -124,6 +127,7 @@ class RunfolderTests(unittest.TestCase):
 
         xml = b.get_elements()
         b2 = bustard.Bustard(xml=xml)
+        self.failUnlessEqual(b.software, b2.software)
         self.failUnlessEqual(b.version, b2.version)
         self.failUnlessEqual(b.date,    b2.date )
         self.failUnlessEqual(b.user,    b2.user)
@@ -141,6 +145,7 @@ class RunfolderTests(unittest.TestCase):
         # need to update gerald and make tests for it
         g = gerald.gerald(self.gerald_dir)
 
+        self.failUnlessEqual(g.software, 'GERALD')
         self.failUnlessEqual(g.version, '1.171')
         self.failUnlessEqual(g.date, datetime(2009,2,22,21,15,59))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.keys()))
@@ -194,6 +199,7 @@ class RunfolderTests(unittest.TestCase):
         g2 = gerald.Gerald(xml=xml)
 
         # do it all again after extracting from the xml file
+        self.failUnlessEqual(g.software, g2.software)
         self.failUnlessEqual(g.version, g2.version)
         self.failUnlessEqual(g.date, g2.date)
         self.failUnlessEqual(len(g.lanes.keys()), len(g2.lanes.keys()))

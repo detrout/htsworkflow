@@ -126,17 +126,31 @@ class Gerald(Alignment):
 
     runfolder_name = property(_get_runfolder_name)
 
-    def _get_version(self):
+    def _get_software_version(self):
         if self.tree is None:
             return None
         ga_version = self.tree.findtext(
             'ChipWideRunParameters/SOFTWARE_VERSION')
         if ga_version is not None:
-            match = re.match("@.*GERALD.pl,v (?P<version>\d+(\.\d+)+)",
+            gerald = re.match("@.*GERALD.pl,v (?P<version>\d+(\.\d+)+)",
                              ga_version)
-            if match:
-                return match.group('version')
-            return ga_version
+            if gerald:
+                return ('GERALD', gerald.group('version'))
+            casava = re.match('CASAVA-(?P<version>\d+[.\d]*)',
+                              ga_version)
+            if casava:
+                return ('CASAVA', casava.group('version'))
+
+    def _get_software(self):
+        """Return name of analysis software package"""
+        software_version = self._get_software_version()
+        return software_version[0] if software_version is not None else None
+    software = property(_get_software)
+
+    def _get_version(self):
+        """Return version number of software package"""
+        software_version = self._get_software_version()
+        return software_version[1] if software_version is not None else None
     version = property(_get_version)
 
 class CASAVA(Alignment):
@@ -156,12 +170,29 @@ class CASAVA(Alignment):
 
     runfolder_name = property(_get_runfolder_name)
 
-    def _get_version(self):
+    def _get_software_version(self):
+        if self.tree is None:
+            return None
         if self.tree is None:
             return None
         hiseq_software_node = self.tree.find('Software')
-        hiseq_version = hiseq_software_node.attrib['Version']
-        return hiseq_version
+        software_version = hiseq_software_node.attrib.get('Version',None)
+        if software_version is None:
+            return None
+        return software_version.split('-')
+
+    def _get_software(self):
+        software_version = self._get_software_version()
+        if software_version is None:
+            return None
+        return software_version[0]
+    software = property(_get_software)
+
+    def _get_version(self):
+        software_version = self._get_software_version()
+        if software_version is None:
+            return None
+        return software_version[1]
     version = property(_get_version)
 
 

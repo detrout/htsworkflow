@@ -12,10 +12,7 @@ import sys
 import tarfile
 import time
 
-try:
-    from xml.etree import ElementTree
-except ImportError, e:
-    from elementtree import ElementTree
+import lxml.etree as ElementTree
 
 LOGGER = logging.getLogger(__name__)
 

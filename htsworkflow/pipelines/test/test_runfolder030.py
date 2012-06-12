@@ -695,6 +695,7 @@ class RunfolderTests(unittest.TestCase):
         Construct a firecrest object
         """
         f = firecrest.firecrest(self.firecrest_dir)
+        self.failUnlessEqual(f.software, 'Firecrest')
         self.failUnlessEqual(f.version, '1.8.28')
         self.failUnlessEqual(f.start, 1)
         self.failUnlessEqual(f.stop, 33)
@@ -706,17 +707,19 @@ class RunfolderTests(unittest.TestCase):
         xml_str = ElementTree.tostring(xml)
 
         f2 = firecrest.Firecrest(xml=xml)
-        self.failUnlessEqual(f.version, f2.version)
-        self.failUnlessEqual(f.start,   f2.start)
-        self.failUnlessEqual(f.stop,    f2.stop)
-        self.failUnlessEqual(f.user,    f2.user)
-        self.failUnlessEqual(f.date,    f2.date)
+        self.failUnlessEqual(f.software, f2.software)
+        self.failUnlessEqual(f.version,  f2.version)
+        self.failUnlessEqual(f.start,    f2.start)
+        self.failUnlessEqual(f.stop,     f2.stop)
+        self.failUnlessEqual(f.user,     f2.user)
+        self.failUnlessEqual(f.date,     f2.date)
 
     def test_bustard(self):
         """
         construct a bustard object
         """
         b = bustard.bustard(self.bustard_dir)
+        self.failUnlessEqual(b.software, 'Bustard')
         self.failUnlessEqual(b.version, '1.8.28')
         self.failUnlessEqual(b.date,    date(2008,4,12))
         self.failUnlessEqual(b.user,    'diane')
@@ -725,9 +728,10 @@ class RunfolderTests(unittest.TestCase):
 
         xml = b.get_elements()
         b2 = bustard.Bustard(xml=xml)
-        self.failUnlessEqual(b.version, b2.version)
-        self.failUnlessEqual(b.date,    b2.date )
-        self.failUnlessEqual(b.user,    b2.user)
+        self.failUnlessEqual(b.software, b2.software)
+        self.failUnlessEqual(b.version,  b2.version)
+        self.failUnlessEqual(b.date,     b2.date )
+        self.failUnlessEqual(b.user,     b2.user)
         self.failUnlessEqual(len(b.phasing), len(b2.phasing))
         for key in b.phasing.keys():
             self.failUnlessEqual(b.phasing[key].lane,
@@ -741,6 +745,7 @@ class RunfolderTests(unittest.TestCase):
         # need to update gerald and make tests for it
         g = gerald.gerald(self.gerald_dir)
 
+        self.failUnlessEqual(g.software, 'GERALD')
         self.failUnlessEqual(g.version, '1.68.2.2')
         self.failUnlessEqual(g.date, datetime(2008,4,19,19,8,30))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.keys()))

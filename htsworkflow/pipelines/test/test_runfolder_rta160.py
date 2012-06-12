@@ -75,6 +75,7 @@ class RunfolderTests(unittest.TestCase):
         # need to update gerald and make tests for it
         g = gerald.gerald(self.gerald_dir)
 
+        self.failUnlessEqual(g.software, 'GERALD')
         self.failUnlessEqual(g.version, '1.171')
         self.failUnlessEqual(g.date, datetime(2009,2,22,21,15,59))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.keys()))
@@ -129,6 +130,7 @@ class RunfolderTests(unittest.TestCase):
         return
 
         # do it all again after extracting from the xml file
+        self.failUnlessEqual(g.software, g2.software)
         self.failUnlessEqual(g.version, g2.version)
         self.failUnlessEqual(g.date, g2.date)
         self.failUnlessEqual(len(g.lanes.keys()), len(g2.lanes.keys()))

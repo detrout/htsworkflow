@@ -72,6 +72,7 @@ class RunfolderTests(unittest.TestCase):
     def test_bustard(self):
         """Construct a bustard object"""
         b = bustard.bustard(self.bustard_dir)
+        self.failUnlessEqual(b.software, 'RTA')
         self.failUnlessEqual(b.version, '1.12.4.2')
         self.failUnlessEqual(b.date,    None)
         self.failUnlessEqual(b.user,    None)
@@ -79,15 +80,17 @@ class RunfolderTests(unittest.TestCase):
 
         xml = b.get_elements()
         b2 = bustard.Bustard(xml=xml)
-        self.failUnlessEqual(b.version, b2.version)
-        self.failUnlessEqual(b.date,    b2.date )
-        self.failUnlessEqual(b.user,    b2.user)
+        self.failUnlessEqual(b.software, b2.software)
+        self.failUnlessEqual(b.version,  b2.version)
+        self.failUnlessEqual(b.date,     b2.date )
+        self.failUnlessEqual(b.user,     b2.user)
 
     def test_gerald(self):
         # need to update gerald and make tests for it
         g = gerald.gerald(self.gerald_dir)
 
-        self.failUnlessEqual(g.version, 'CASAVA-1.8.1')
+        self.failUnlessEqual(g.software, 'CASAVA')
+        self.failUnlessEqual(g.version, '1.8.1')
         self.failUnlessEqual(len(g.lanes), len(g.lanes.keys()))
         self.failUnlessEqual(len(g.lanes), len(g.lanes.items()))
 
@@ -129,6 +132,7 @@ class RunfolderTests(unittest.TestCase):
         return
 
         # do it all again after extracting from the xml file
+        self.failUnlessEqual(g.software, g2.software)
         self.failUnlessEqual(g.version, g2.version)
         self.failUnlessEqual(g.date, g2.date)
         self.failUnlessEqual(len(g.lanes.keys()), len(g2.lanes.keys()))

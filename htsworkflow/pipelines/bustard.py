@@ -208,7 +208,7 @@ class Bustard(object):
     BUSTARD_CONFIG = 'BaseCallAnalysis'
 
     def __init__(self, xml=None):
-        self.version = None
+        self._path_version = None # version number from directory name
         self.date = None
         self.user = None
         self.phasing = {}
@@ -233,10 +233,39 @@ class Bustard(object):
 
         groups = name.split("_")
         version = re.search(VERSION_RE, groups[0])
-        self.version = version.group(1)
+        self._path_version = version.group(1)
         t = time.strptime(groups[1], EUROPEAN_STRPTIME)
         self.date = date(*t[0:3])
         self.user = groups[2]
+
+    def _get_software_version(self):
+        """return software name, version tuple"""
+        if self.bustard_config is None:
+            if self._path_version is not None:
+                return 'Bustard', self._path_version
+            else:
+                return None
+        software_nodes = self.bustard_config.xpath('Run/Software')
+        if len(software_nodes) == 0:
+            return None
+        elif len(software_nodes) > 1:
+            raise RuntimeError("Too many software XML elements for bustard.py")
+        else:
+            return (software_nodes[0].attrib['Name'],
+                    software_nodes[0].attrib['Version'])
+
+    def _get_software(self):
+        """Return software name"""
+        software_version = self._get_software_version()
+        return software_version[0] if software_version is not None else None
+    software = property(_get_software)
+
+    def _get_version(self):
+        """Return software name"""
+        software_version = self._get_software_version()
+        return software_version[1] if software_version is not None else None
+    version = property(_get_version)
+
 
     def _get_time(self):
         if self.date is None:
@@ -283,7 +312,7 @@ class Bustard(object):
             LOGGER.warn('Bustard XML tree is a higher version than this class')
         for element in list(tree):
             if element.tag == Bustard.SOFTWARE_VERSION:
-                self.version = element.text
+                self._path_version = element.text
             elif element.tag == Bustard.DATE:
                 self.date = date.fromtimestamp(float(element.text))
             elif element.tag == Bustard.USER:
@@ -339,7 +368,7 @@ def bustard_from_ga1(pathname):
     b.pathname = pathname
     b.update_attributes_from_pathname()
     version = re.search(VERSION_RE, groups[0])
-    b.version = version.group(1)
+    b._path_version = version.group(1)
     t = time.strptime(groups[1], EUROPEAN_STRPTIME)
     b.date = date(*t[0:3])
     b.user = groups[2]
@@ -371,8 +400,6 @@ def bustard_from_ga2(pathname, config_filename):
     b.bustard_config = bustard_config_root.getroot()
     b.crosstalk = crosstalk_matrix_from_bustard_config(b.pathname,
                                                        b.bustard_config)
-    software = bustard_config_root.find('*/Software')
-    b.version = software.attrib['Version']
     add_phasing(b)
 
     return b
@@ -382,8 +409,6 @@ def bustard_from_hiseq(pathname, config_filename):
     b.pathname = pathname
     bustard_config_root = ElementTree.parse(config_filename)
     b.bustard_config = bustard_config_root.getroot()
-    software = bustard_config_root.find('*/Software')
-    b.version = software.attrib['Version']
     add_phasing(b)
     return b
 

@@ -49,6 +49,10 @@ class Firecrest(object):
         if xml is not None:
             self.set_elements(xml)
 
+    def _get_software(self):
+        return "Firecrest"
+    software = property(_get_software)
+
     def _get_time(self):
         return time.mktime(self.date.timetuple())
     time = property(_get_time, doc='return run time as seconds since epoch')
