@@ -17,4 +17,4 @@ WHERE {
     #filter(?submission_date > "2011-04-01T00:00:00Z"^^xsd:dateTime)
     #filter(!bound(?liburn))
 }
-ORDER BY  ?liburn ?submission_date
+ORDER BY ?cell ?replicate ?liburn ?submission_date
