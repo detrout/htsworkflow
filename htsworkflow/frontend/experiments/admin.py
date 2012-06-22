@@ -34,6 +34,9 @@ class DataRunOptions(admin.ModelAdmin):
                    ('runfolder_name', 'cycle_start', 'cycle_stop'),
                    ('result_dir',),
                    ('last_update_time'),
+                   ('image_software', 'image_version'),
+                   ('basecall_software', 'basecall_version'),
+                   ('alignment_software', 'alignment_version'),
                    ('comment',))
       }),
     )
