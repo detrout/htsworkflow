@@ -538,6 +538,8 @@ def load_encodedcc_files(model, genome, composite):
     if file_index is None:
         return
 
+    lib_term = submissionOntology['library_urn']
+    sub_term = submissionOntology['submission_urn']
     for filename, attributes in file_index.items():
         s = RDF.Node(RDF.Uri(filename))
         model.add_statement(
@@ -546,6 +548,13 @@ def load_encodedcc_files(model, genome, composite):
             p = RDF.Node(DCC_NS[name])
             o = RDF.Node(value)
             model.add_statement(RDF.Statement(s,p,o))
+            if name.lower() == 'labexpid':
+                model.add_statement(
+                    RDF.Statement(s, lib_term, LIBRARY_NS[value+'/']))
+            elif name.lower() == 'subid':
+                sub_url = RDF.Uri(submission_view_url(value))
+                model.add_statement(
+                    RDF.Statement(s, sub_term, sub_url))
 
 
 def load_library_detail(model, libraryUrn):
