@@ -174,6 +174,12 @@ class FlowCell(models.Model):
           run.cycle_start = run_xml_data.image_analysis.start
           run.cycle_stop = run_xml_data.image_analysis.stop
           run.run_start_time = run_xml_data.image_analysis.date
+          run.image_software = run_xml_data.image_analysis.software
+          run.image_version = run_xml_data.image_analysis.version
+          run.basecall_software = run_xml_data.bustard.software
+          run.basecall_version = run_xml_data.bustard.version
+          run.alignment_software = run_xml_data.gerald.software
+          run.alignment_version = run_xml_data.gerald.version
 
       run.last_update_time = datetime.datetime.now()
       run.save()
@@ -234,6 +240,12 @@ class DataRun(models.Model):
     cycle_stop = models.IntegerField(null=True, blank=True)
     run_status = models.IntegerField(choices=RUN_STATUS_CHOICES,
                                      null=True, blank=True)
+    image_software = models.CharField(max_length=50)
+    image_version = models.CharField(max_length=50)
+    basecall_software = models.CharField(max_length=50)
+    basecall_version = models.CharField(max_length=50)
+    alignment_software = models.CharField(max_length=50)
+    alignment_version = models.CharField(max_length=50)
     comment = models.TextField(blank=True)
 
     def update_result_files(self):
