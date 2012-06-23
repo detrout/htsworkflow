@@ -55,13 +55,18 @@ class Sequencer(models.Model):
   instrument_name = models.CharField(max_length=50, db_index=True)
   serial_number = models.CharField(max_length=50, db_index=True)
   model = models.CharField(max_length=255)
+  active = models.BooleanField(default=True, null=False)
   comment = models.CharField(max_length=255)
+
+  class Meta:
+    ordering = ["-active", "name"]
 
   def __unicode__(self):
       name = [unicode(self.name)]
       if self.instrument_name is not None:
           name.append("(%s)" % (unicode(self.instrument_name),))
       return " ".join(name)
+
 
   @models.permalink
   def get_absolute_url(self):

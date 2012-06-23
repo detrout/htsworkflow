@@ -4,7 +4,9 @@ from django.contrib import admin
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms import ModelForm
 from django.forms.fields import Field, CharField
-from django.forms.widgets import TextInput
+from django.forms.widgets import TextInput, Select
+from django.utils.encoding import force_unicode
+from django.utils.html import escape, conditional_escape
 from django.utils.translation import ugettext_lazy as _
 
 class DataFileForm(ModelForm):
@@ -94,6 +96,8 @@ class LaneOptions(admin.ModelAdmin):
 admin.site.register(Lane, LaneOptions)
 
 class FlowCellOptions(admin.ModelAdmin):
+    class Media:
+        css = { 'all': ('css/admin_flowcell.css',) }
     date_hierarchy = "run_date"
     save_on_top = True
     search_fields = ('flowcell_id',
@@ -117,8 +121,17 @@ class FlowCellOptions(admin.ModelAdmin):
     def formfield_for_dbfield(self, db_field, **kwargs):
         field = super(FlowCellOptions, self).formfield_for_dbfield(db_field,
                                                                    **kwargs)
+
         # Override field attributes
-        if db_field.name == "notes":
+        if db_field.name == 'sequencer':
+            # seems kind of clunky.
+            # the goal is to replace the default select/combo box with one
+            # that can strike out disabled options.
+            attrs = field.widget.widget.attrs
+            disabled_sequencers = field.queryset.filter(active=False)
+            attrs['disabled_sequencers'] = [ unicode(s.id) for s in disabled_sequencers ]
+            field.widget.widget = SequencerSelect(attrs=attrs)
+        elif db_field.name == "notes":
             field.widget.attrs["rows"] = "3"
         return field
 admin.site.register(FlowCell, FlowCellOptions)
@@ -128,10 +141,21 @@ class ClusterStationOptions(admin.ModelAdmin):
     fieldsets = ( ( None, { 'fields': ( 'name', ) } ), )
 admin.site.register(ClusterStation, ClusterStationOptions)
 
+class SequencerSelect(Select):
+    def render_option(self, selected_choices, option_value, option_label):
+        disabled_sequencers = self.attrs.get('disabled_sequencers', [])
+        option_value = unicode(option_value)
+        selected_html = (option_value in selected_choices) and u' selected="selected"' or ''
+        cssclass = "strikeout" if option_value in disabled_sequencers else ''
+        return u'<option class="%s" value="%s"%s>%s</option>' % (
+            cssclass, escape(option_value), selected_html,
+            conditional_escape(force_unicode(option_label)))
+
 class SequencerOptions(admin.ModelAdmin):
-    list_display = ('name', 'instrument_name', 'model')
+    list_display = ('name', 'active', 'instrument_name', 'model')
     fieldsets = ( ( None,
                     { 'fields': (
-                        'name', 'instrument_name', 'serial_number',
+                        'name', 'active', 'instrument_name', 'serial_number',
                         'model', 'comment') } ), )
+
 admin.site.register(Sequencer, SequencerOptions)

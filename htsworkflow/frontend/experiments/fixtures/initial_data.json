@@ -112,6 +112,7 @@
       "instrument_name": "ILLUMINA-33A494",
       "serial_number": "",
       "model": "Illumina Genome Analyzer II",
+      "active": false,
       "comment": "after 2010 pipeline name, was exchanged for hiseq"
     }
   },
@@ -122,6 +123,7 @@
       "instrument_name": "ILLUMINA-EC5D15",
       "serial_number": "",
       "model": "Illumina Genome Analyzer IIx",
+      "active": true,
       "comment": "after 2010 pipeline name"
     }
   },
@@ -132,6 +134,7 @@
       "instrument_name": "",
       "serial_number": "",
       "model": "Unknown",
+      "active": false,
       "comment": "Sequenced somewhere else"
     }
   },
@@ -142,6 +145,7 @@
       "instrument_name": "HWI-ST0787",
       "serial_number": "",
       "model": "Illumina HiSeq 2000",
+      "active": true,
       "comment": ""
     }
   },
@@ -152,6 +156,7 @@
       "instrument_name": "HWUSI-EAS627",
       "serial_number": "",
       "model": "Illumina Genome Analyzer II",
+      "active": false,
       "comment": "earlier version of tardigrade"
     }
   },
@@ -162,6 +167,7 @@
       "instrument_name": "HWUSI-EAS229",
       "serial_number": "",
       "model": "Illumina Genome Analyzer II",
+      "active": false,
       "comment": "earlier rotifer name"
     }
   },
@@ -172,6 +178,7 @@
       "instrument_name": "USI-EAS44",
       "serial_number": "",
       "model": "Illumina Genome Analyzer I",
+      "active": false,
       "comment": "our first sequencer"
     }
   }
