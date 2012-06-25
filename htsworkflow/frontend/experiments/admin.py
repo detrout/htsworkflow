@@ -1,3 +1,4 @@
+from itertools import chain
 from htsworkflow.frontend.experiments.models import \
      FlowCell, DataRun, DataFile, FileType, ClusterStation, Sequencer, Lane
 from django.contrib import admin
@@ -128,9 +129,7 @@ class FlowCellOptions(admin.ModelAdmin):
             # the goal is to replace the default select/combo box with one
             # that can strike out disabled options.
             attrs = field.widget.widget.attrs
-            disabled_sequencers = field.queryset.filter(active=False)
-            attrs['disabled_sequencers'] = [ unicode(s.id) for s in disabled_sequencers ]
-            field.widget.widget = SequencerSelect(attrs=attrs)
+            field.widget.widget = SequencerSelect(attrs=attrs, queryset=field.queryset)
         elif db_field.name == "notes":
             field.widget.attrs["rows"] = "3"
         return field
@@ -142,8 +141,44 @@ class ClusterStationOptions(admin.ModelAdmin):
 admin.site.register(ClusterStation, ClusterStationOptions)
 
 class SequencerSelect(Select):
+    def __init__(self, queryset=None, *args, **kwargs):
+        super(SequencerSelect, self).__init__(*args, **kwargs)
+        self.queryset = queryset
+
+    def render_options(self, choices, selected_choices):
+        # Normalize to strings.
+        selected_choices = set([force_unicode(v) for v in selected_choices])
+        output = []
+        for option_value, option_label in chain(self.choices, choices):
+            if isinstance(option_label, (list, tuple)):
+                output.append(u'<optgroup label="%s">' % escape(force_unicode(option_value)))
+                for option in option_label:
+                    output.append(self.render_option(selected_choices, *option))
+                output.append(u'</optgroup>')
+            else:
+                output.append(self.render_option(selected_choices, option_value, option_label))
+        return u'\n'.join(output)
+
+    # render_options blatently grabbed from 1.3.1 as the 1.2 version
+    # has render_option, which is what I needed to overload as a
+    # nested function in render_options
+    def render_options(self, choices, selected_choices):
+        # Normalize to strings.
+        selected_choices = set([force_unicode(v) for v in selected_choices])
+        output = []
+        for option_value, option_label in chain(self.choices, choices):
+            if isinstance(option_label, (list, tuple)):
+                output.append(u'<optgroup label="%s">' % escape(force_unicode(option_value)))
+                for option in option_label:
+                    output.append(self.render_option(selected_choices, *option))
+                output.append(u'</optgroup>')
+            else:
+                output.append(self.render_option(selected_choices, option_value, option_label))
+        return u'\n'.join(output)
+
+
     def render_option(self, selected_choices, option_value, option_label):
-        disabled_sequencers = self.attrs.get('disabled_sequencers', [])
+        disabled_sequencers = [ unicode(s.id) for s in self.queryset.filter(active=False) ]
         option_value = unicode(option_value)
         selected_html = (option_value in selected_choices) and u' selected="selected"' or ''
         cssclass = "strikeout" if option_value in disabled_sequencers else ''
