@@ -311,7 +311,7 @@ class TestCondorFastq(unittest.TestCase):
                 self.failUnlessEqual(filename, expected['sources'][i])
 
 
-        split_test = { x['target']: x for x in
+        split_test = dict((( x['target'], x) for x in
             [{'sources': [u'11154_NoIndex_L003_R1_001.fastq.gz',
                          u'11154_NoIndex_L003_R1_002.fastq.gz'],
              'pyscript': 'desplit_fastq.pyc',
@@ -320,7 +320,7 @@ class TestCondorFastq(unittest.TestCase):
                          u'11154_NoIndex_L003_R2_002.fastq.gz'],
              'pyscript': 'desplit_fastq.pyc',
              'target': u'11154_C02F9ACXX_c202_l3_r2.fastq'}]
-         }
+         ))
         for arg in split:
             _, target = os.path.split(arg['target'])
             pyscript = split_test[target]['pyscript']
