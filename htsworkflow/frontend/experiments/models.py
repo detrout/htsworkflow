@@ -48,9 +48,23 @@ RUN_STATUS_REVERSE_MAP = dict(((v, k) for k, v in RUN_STATUS_CHOICES))
 class ClusterStation(models.Model):
     """List of cluster stations"""
     name = models.CharField(max_length=50, unique=True)
+    isdefault = models.BooleanField(default=False, null=False)
+
+    class Meta:
+        ordering = ["-isdefault", "name"]
 
     def __unicode__(self):
         return unicode(self.name)
+
+    @classmethod
+    def default(cls):
+        d = cls.objects.filter(isdefault=True).all()
+        if len(d) > 0:
+            return d[0]
+        d = cls.objects.order_by('-id').all()
+        if len(d) > 0:
+            return d[0]
+        return None
 
 
 class Sequencer(models.Model):
@@ -61,10 +75,11 @@ class Sequencer(models.Model):
     serial_number = models.CharField(max_length=50, db_index=True)
     model = models.CharField(max_length=255)
     active = models.BooleanField(default=True, null=False)
+    isdefault = models.BooleanField(default=False, null=False)
     comment = models.CharField(max_length=255)
 
     class Meta:
-        ordering = ["-active", "name"]
+        ordering = ["-isdefault", "-active", "name"]
 
     def __unicode__(self):
         name = [unicode(self.name)]
@@ -76,6 +91,16 @@ class Sequencer(models.Model):
     def get_absolute_url(self):
         return ('htsworkflow.frontend.experiments.views.sequencer',
                 [self.id])
+
+    @classmethod
+    def default(cls):
+        d = cls.objects.filter(isdefault=True).all()
+        if len(d) > 0:
+            return d[0]
+        d = cls.objects.order_by('active', '-id').all()
+        if len(d) > 0:
+            return d[0]
+        return None
 
 
 class FlowCell(models.Model):
@@ -96,8 +121,8 @@ class FlowCell(models.Model):
                                        null=True,
                                        blank=True)
 
-    cluster_station = models.ForeignKey(ClusterStation, default=3)
-    sequencer = models.ForeignKey(Sequencer, default=1)
+    cluster_station = models.ForeignKey(ClusterStation, default=ClusterStation.default)
+    sequencer = models.ForeignKey(Sequencer, default=Sequencer.default)
 
     notes = models.TextField(blank=True)
 

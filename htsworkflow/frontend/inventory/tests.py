@@ -22,7 +22,7 @@ class InventoryTestCase(TestCase):
 
         user = User.objects.get(pk=5)
         self.failUnlessEqual(user.username, 'test')
-        
+
     def test_item(self):
         url = '/inventory/8a90b6ce522311de99b00015172ce556/'
         self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
@@ -41,7 +41,7 @@ class InventoryTestCase(TestCase):
         indexNode = localhostNode(url)
         diskNode = localhostNode('/inventory/8a90b6ce522311de99b00015172ce556/')
         self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
-        
+
         flowcells = self.get_flowcells_from_content(url, indexNode, diskNode)
         self.failUnlessEqual(len(flowcells), 2)
         self.failUnless('http://localhost/flowcell/11ONEAAXX/' in flowcells)
@@ -97,21 +97,21 @@ class InventoryTestCase(TestCase):
         self.failUnlessEqual('http://localhost/flowcell/%s/' % (flowcell),
                              flowcells[0])
 
-        
+
     def get_flowcells_from_content(self, url, rootNode, diskNode):
         model = get_model()
-        
+
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 200)
-        
+
         load_string_into_model(model, 'rdfa', response.content, rootNode.uri)
         targets = model.get_targets(diskNode, libraryOntology['flowcell_id'])
         flowcells = [ str(x.uri) for x in targets]
         return flowcells
-        
+
 def suite():
     return unittest.makeSuite(InventoryTestCase, 'test')
 
 if __name__ == "__main__":
     unittest.main(defaultTest="suite")
-        
+

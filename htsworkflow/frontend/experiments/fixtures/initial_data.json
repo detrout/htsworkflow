@@ -113,6 +113,7 @@
       "serial_number": "",
       "model": "Illumina Genome Analyzer II",
       "active": false,
+      "isdefault": false,
       "comment": "after 2010 pipeline name, was exchanged for hiseq"
     }
   },
@@ -124,6 +125,7 @@
       "serial_number": "",
       "model": "Illumina Genome Analyzer IIx",
       "active": true,
+      "isdefault": false,
       "comment": "after 2010 pipeline name"
     }
   },
@@ -135,6 +137,7 @@
       "serial_number": "",
       "model": "Unknown",
       "active": false,
+      "isdefault": false,
       "comment": "Sequenced somewhere else"
     }
   },
@@ -146,6 +149,7 @@
       "serial_number": "",
       "model": "Illumina HiSeq 2000",
       "active": true,
+      "isdefault": true,
       "comment": ""
     }
   },
@@ -157,6 +161,7 @@
       "serial_number": "",
       "model": "Illumina Genome Analyzer II",
       "active": false,
+      "isdefault": false,
       "comment": "earlier version of tardigrade"
     }
   },
@@ -168,6 +173,7 @@
       "serial_number": "",
       "model": "Illumina Genome Analyzer II",
       "active": false,
+      "isdefault": false,
       "comment": "earlier rotifer name"
     }
   },
@@ -179,6 +185,7 @@
       "serial_number": "",
       "model": "Illumina Genome Analyzer I",
       "active": false,
+      "isdefault": false,
       "comment": "our first sequencer"
     }
   }

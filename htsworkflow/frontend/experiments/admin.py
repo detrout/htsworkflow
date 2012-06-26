@@ -136,8 +136,8 @@ class FlowCellOptions(admin.ModelAdmin):
 admin.site.register(FlowCell, FlowCellOptions)
 
 class ClusterStationOptions(admin.ModelAdmin):
-    list_display = ('name', )
-    fieldsets = ( ( None, { 'fields': ( 'name', ) } ), )
+    list_display = ('name', 'isdefault',)
+    fieldsets = ( ( None, { 'fields': ( 'name', 'isdefault') } ), )
 admin.site.register(ClusterStation, ClusterStationOptions)
 
 class SequencerSelect(Select):
@@ -187,10 +187,10 @@ class SequencerSelect(Select):
             conditional_escape(force_unicode(option_label)))
 
 class SequencerOptions(admin.ModelAdmin):
-    list_display = ('name', 'active', 'instrument_name', 'model')
+    list_display = ('name', 'active', 'isdefault', 'instrument_name', 'model')
     fieldsets = ( ( None,
                     { 'fields': (
-                        'name', 'active', 'instrument_name', 'serial_number',
+                        'name', ('active', 'isdefault'), 'instrument_name', 'serial_number',
                         'model', 'comment') } ), )
 
 admin.site.register(Sequencer, SequencerOptions)
