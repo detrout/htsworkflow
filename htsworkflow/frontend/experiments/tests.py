@@ -23,6 +23,106 @@ LANE_SET = range(1,9)
 
 NSMAP = {'libns':'http://jumpgate.caltech.edu/wiki/LibraryOntology#'}
 
+class ClusterStationTestCases(TestCase):
+    fixtures = ['test_flowcells.json']
+
+    def test_default(self):
+        c = models.ClusterStation.default()
+        self.failUnlessEqual(c.id, 2)
+
+        c.isdefault = False
+        c.save()
+
+        total = models.ClusterStation.objects.filter(isdefault=True).count()
+        self.failUnlessEqual(total, 0)
+
+        other_default = models.ClusterStation.default()
+        self.failUnlessEqual(other_default.id, 3)
+
+
+    def test_update_default(self):
+        old_default = models.ClusterStation.default()
+
+        c = models.ClusterStation.objects.get(pk=3)
+        c.isdefault = True
+        c.save()
+
+        new_default = models.ClusterStation.default()
+
+        self.failUnless(old_default != new_default)
+        self.failUnlessEqual(new_default, c)
+
+        total = models.ClusterStation.objects.filter(isdefault=True).count()
+        self.failUnlessEqual(total, 1)
+
+    def test_update_other(self):
+        old_default = models.ClusterStation.default()
+        total = models.ClusterStation.objects.filter(isdefault=True).count()
+        self.failUnlessEqual(total, 1)
+
+        c = models.ClusterStation.objects.get(pk=1)
+        c.name = "Primary Key 1"
+        c.save()
+
+        total = models.ClusterStation.objects.filter(isdefault=True).count()
+        self.failUnlessEqual(total, 1)
+
+        new_default = models.ClusterStation.default()
+        self.failUnlessEqual(old_default, new_default)
+
+
+class SequencerTestCases(TestCase):
+    fixtures = ['test_flowcells.json']
+
+    def test_default(self):
+        # starting with no default
+        s = models.Sequencer.default()
+        self.failUnlessEqual(s.id, 2)
+
+        total = models.Sequencer.objects.filter(isdefault=True).count()
+        self.failUnlessEqual(total, 1)
+
+        s.isdefault = False
+        s.save()
+
+        total = models.Sequencer.objects.filter(isdefault=True).count()
+        self.failUnlessEqual(total, 0)
+
+        other_default = models.Sequencer.default()
+        self.failUnlessEqual(other_default.id, 7)
+
+    def test_update_default(self):
+        old_default = models.Sequencer.default()
+
+        s = models.Sequencer.objects.get(pk=1)
+        s.isdefault = True
+        s.save()
+
+        new_default = models.Sequencer.default()
+
+        self.failUnless(old_default != new_default)
+        self.failUnlessEqual(new_default, s)
+
+        total = models.Sequencer.objects.filter(isdefault=True).count()
+        self.failUnlessEqual(total, 1)
+
+
+    def test_update_other(self):
+        old_default = models.Sequencer.default()
+        total = models.Sequencer.objects.filter(isdefault=True).count()
+        self.failUnlessEqual(total, 1)
+
+        s = models.Sequencer.objects.get(pk=1)
+        s.name = "Primary Key 1"
+        s.save()
+
+        total = models.Sequencer.objects.filter(isdefault=True).count()
+        self.failUnlessEqual(total, 1)
+
+        new_default = models.Sequencer.default()
+        self.failUnlessEqual(old_default, new_default)
+
+
 class ExperimentsTestCases(TestCase):
     fixtures = ['test_flowcells.json',
                 ]

@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import urlresolvers
 from django.db import models
-from django.db.models.signals import post_init
+from django.db.models.signals import post_init, pre_save
 
 from htsworkflow.frontend.samples.models import Library
 from htsworkflow.util.conversion import parse_flowcell_id
@@ -66,6 +66,17 @@ class ClusterStation(models.Model):
             return d[0]
         return None
 
+    @staticmethod
+    def update_isdefault(sender, instance, **kwargs):
+        """Clear default if needed
+        """
+        if instance.isdefault:
+            for c in ClusterStation.objects.all():
+                if c.id != instance.id:
+                    c.isdefault = False
+                    c.save()
+
+pre_save.connect(ClusterStation.update_isdefault, sender=ClusterStation)
 
 class Sequencer(models.Model):
     """Sequencers we've owned
@@ -101,6 +112,18 @@ class Sequencer(models.Model):
         if len(d) > 0:
             return d[0]
         return None
+
+    @staticmethod
+    def update_isdefault(sender, instance, **kwargs):
+        """Clear default if needed
+        """
+        if instance.isdefault:
+            for s in Sequencer.objects.all():
+                if s.id != instance.id:
+                    s.isdefault = False
+                    s.save()
+
+pre_save.connect(Sequencer.update_isdefault, sender=Sequencer)
 
 
 class FlowCell(models.Model):
