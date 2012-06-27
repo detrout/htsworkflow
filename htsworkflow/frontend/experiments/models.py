@@ -71,7 +71,7 @@ class ClusterStation(models.Model):
         """Clear default if needed
         """
         if instance.isdefault:
-            for c in ClusterStation.objects.all():
+            for c in ClusterStation.objects.filter(isdefault=True).all():
                 if c.id != instance.id:
                     c.isdefault = False
                     c.save()
@@ -118,7 +118,7 @@ class Sequencer(models.Model):
         """Clear default if needed
         """
         if instance.isdefault:
-            for s in Sequencer.objects.all():
+            for s in Sequencer.objects.filter(isdefault=True).all():
                 if s.id != instance.id:
                     s.isdefault = False
                     s.save()
