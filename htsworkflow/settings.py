@@ -9,8 +9,11 @@ The options understood by this module are (with their defaults):
   [frontend]
   email_host=localhost
   email_port=25
-  database_engine=sqlite3
-  database_name=/path/to/db
+  database=<section_name>
+
+  [database_name]
+  engine=sqlite3
+  name=/path/to/database
 
   [admins]
   #name1=email1
@@ -30,6 +33,8 @@ import shlex
 import htsworkflow
 import django
 from django.conf import global_settings
+
+from htsworkflow.util.api import make_django_secret_key
 
 HTSWORKFLOW_ROOT = os.path.abspath(os.path.split(htsworkflow.__file__)[0])
 
@@ -53,23 +58,18 @@ def options_to_dict(dest, section_name):
       dest[name] = options.get(section_name, name)
 
 # define your defaults here
-options = ConfigParser.SafeConfigParser(
-           { 'email_host': 'localhost',
-             'email_port': '25',
-             'database_engine': 'sqlite3',
-             'database_name':
-                  os.path.join(HTSWORKFLOW_ROOT, '..', 'fctracker.db'),
-             'time_zone': 'America/Los_Angeles',
-             'default_pm': '5',
-             'link_flowcell_storage_device_url': "http://localhost:8000/inventory/lts/link/",
-             'printer1_host': '127.0.0.1',
-             'printer1_port': '9100',
-             'printer2_host': '127.0.0.1',
-             'printer2_port': '9100',
-           })
+options = ConfigParser.SafeConfigParser()
 
-options.read([os.path.expanduser("~/.htsworkflow.ini"),
-              '/etc/htsworkflow.ini',])
+def save_options(filename, options):
+    try:
+        ini_stream = open(filename, 'w')
+        options.write(ini_stream)
+        ini_stream.close()
+    except IOError, e:
+        LOGGER.debug("Error saving setting: %s" % (str(e)))
+
+INI_FILE = options.read([os.path.expanduser("~/.htsworkflow.ini"),
+                         '/etc/htsworkflow.ini',])
 
 # OptionParser will use the dictionary passed into the config parser as
 # 'Default' values in any section. However it still needs an empty section
@@ -91,14 +91,17 @@ options_to_list(options, ADMINS, 'frontend', 'admins')
 MANAGERS = []
 options_to_list(options, MANAGERS, 'frontend', 'managers')
 
-DEFAULT_PM=int(options.get('frontend', 'default_pm'))
+if options.has_option('front', 'default_pm'):
+    DEFAULT_PM=int(options.get('frontend', 'default_pm'))
+else:
+    DEFAULT_PM=5
 
 AUTHENTICATION_BACKENDS = (
   'htsworkflow.frontend.samples.auth_backend.HTSUserModelBackend', )
 CUSTOM_USER_MODEL = 'samples.HTSUser'
 
-EMAIL_HOST = options.get('frontend', 'email_host')
-EMAIL_PORT = int(options.get('frontend', 'email_port'))
+EMAIL_HOST = options.get('frontend', 'email_host', 'localhost')
+EMAIL_PORT = int(options.get('frontend', 'email_port', 25))
 
 if options.has_option('frontend', 'notification_sender'):
     NOTIFICATION_SENDER = options.get('frontend', 'notification_sender')
@@ -134,7 +137,10 @@ elif options.has_option(database_section, 'password'):
 # although not all variations may be possible on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = options.get('frontend', 'time_zone')
+if options.has_option('frontend', 'time_zone'):
+  TIME_ZONE = options.get('frontend', 'time_zone')
+else:
+  TIME_ZONE = 'America/Los_Angeles'
 
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
@@ -161,7 +167,10 @@ MEDIA_URL = '/static/'
 ADMIN_MEDIA_PREFIX = '/media/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '(ekv^=gf(j9f(x25@a7r+8)hqlz%&_1!tw^75l%^041#vi=@4n'
+if not options.has_option('frontend', 'secret'):
+    options.set('frontend', 'secret_key', make_django_secret_key(458))
+    save_options(INI_FILE[0], options)
+SECRET_KEY = options.get('frontend', 'secret_key')
 
 # some of our urls need an api key
 DEFAULT_API_KEY = 'n7HsXGHIi0vp9j5u4TIRJyqAlXYc4wrH'
@@ -232,7 +241,11 @@ if options.has_option('frontend', 'results_dir'):
 else:
     RESULT_HOME_DIR='/tmp'
 
-LINK_FLOWCELL_STORAGE_DEVICE_URL = options.get('frontend', 'link_flowcell_storage_device_url')
+if options.has_option('frontend', 'link_flowcell_storage_device_url'):
+    LINK_FLOWCELL_STORAGE_DEVICE_URL = options.get('frontend',
+                                                   'link_flowcell_storage_device_url')
+else:
+    LINK_FLOWCELL_STORAGE_DEVICE_URL = None
 # PORT 9100 is default for Zebra tabletop/desktop printers
 # PORT 6101 is default for Zebra mobile printers
 BCPRINTER_PRINTER1_HOST = options.get('bcprinter', 'printer1_host')

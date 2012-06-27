@@ -1,6 +1,8 @@
 """Common functions for accessing the HTS Workflow REST API
 """
+import base64
 from ConfigParser import SafeConfigParser
+import random
 import logging
 
 # try to deal with python <2.6
@@ -143,24 +145,38 @@ def retrieve_info(url, apidata):
     return json.loads(contents)
 
 class HtswApi(object):
-  def __init__(self, root_url, authdata):
-    self.root_url = root_url
-    self.authdata = authdata
+    def __init__(self, root_url, authdata):
+        self.root_url = root_url
+        self.authdata = authdata
 
-  def get_flowcell(self, flowcellId):
-    url = flowcell_url(self.root_url, flowcellId)
-    return retrieve_info(url, self.authdata)
+    def get_flowcell(self, flowcellId):
+        url = flowcell_url(self.root_url, flowcellId)
+        return retrieve_info(url, self.authdata)
 
-  def get_library(self, libraryId):
-    url = library_url(self.root_url, libraryId)
-    return retrieve_info(url, self.authdata)
+    def get_library(self, libraryId):
+        url = library_url(self.root_url, libraryId)
+        return retrieve_info(url, self.authdata)
 
-  def get_lanes_for_user(self, user):
-    url = lanes_for_user(self.root_url, user)
-    return retrieve_info(url, self.authdata)
+    def get_lanes_for_user(self, user):
+        url = lanes_for_user(self.root_url, user)
+        return retrieve_info(url, self.authdata)
 
-  def get_url(self, url):
-    return retrieve_info(url, self.authdata)
+    def get_url(self, url):
+        return retrieve_info(url, self.authdata)
+
+def make_django_secret_key(size=216):
+    """return key suitable for use as secret key"""
+    try:
+        source = random.SystemRandom()
+    except AttributeError, e:
+        source = random.random()
+    bits = source.getrandbits(size)
+    chars = []
+    while bits > 0:
+        byte = bits & 0xff
+        chars.append(chr(byte))
+        bits >>= 8
+    return base64.encodestring("".join(chars)).strip()
 
 if __name__ == "__main__":
     from optparse import OptionParser

@@ -20,7 +20,7 @@ def extract_flowcell(runfolder_name):
         return match.group('flowcell')
     else:
         return None
-    
+
 def construct_parser():
     """
     """
@@ -33,7 +33,7 @@ def construct_parser():
                       help="device flowcell is being archived to")
     parser.add_option("-s", "--serial", type="string", help="serial num. of archive device")
     parser.add_option("-v", "--verbose", action="store_true", default=False)
-    
+
     return parser
 
 
@@ -43,7 +43,7 @@ def update_db(root_url, flowcells, serial, debug=False):
     """
     for fc in flowcells:
         url = urlparse.urljoin(root_url, '%s/%s/' % (fc, serial))
-        
+
         req = urllib2.Request(url)
         try:
             response = urllib2.urlopen(req)
@@ -52,19 +52,19 @@ def update_db(root_url, flowcells, serial, debug=False):
             if debug:
                 print e.read()
             sys.exit(e.code)
-        
+
         print "DB Update of %s & %s succeeded" % (fc, serial)
         print response.read()
-    
+
 
 def process_args(parser):
     """
     returns flowcell and serial#
     """
     options, args = parser.parse_args()
-    
+
     msg = []
-    
+
     # Only provide device or serial
     if options.device is not None and options.serial is not None:
         parser.error("Please provide only --device or --serial.\n"\
@@ -77,13 +77,16 @@ def process_args(parser):
     else:
         root_url = settings.LINK_FLOWCELL_STORAGE_DEVICE_URL
 
+    if root_url is None:
+        parser.error("Please set path to flowcell storage url")
+
     # if device and serial missing:
     if options.device is None and options.serial is None:
         parser.error('One of --device or --serial is required')
 
     flowcells = []
-    
-    # sanitize args    
+
+    # sanitize args
     for runfolder in args:
         flowcell_id = extract_flowcell(runfolder)
         if flowcell_id is None:
@@ -91,10 +94,10 @@ def process_args(parser):
                          '(got %s)' % (runfolder,))
         else:
             flowcells.append(flowcell_id)
-            
+
     if options.flowcell is not None:
         flowcells.append(options.flowcell)
-        
+
     if len(flowcells) == 0:
         parser.error('please specify a  --flowcell or list of runfolder archives\n'\
                      'for archival. I need something to do.')
@@ -108,15 +111,15 @@ def process_args(parser):
     else:
         msg ="FATAL should not happen error occured; i.e. the best kind!"
         raise ValueError, msg
-    
-    
+
+
 
 def main():
     """
     """
     parser = construct_parser()
     process_args(parser)
-    
+
     #print "Database Updated."
     sys.exit(0)
 
