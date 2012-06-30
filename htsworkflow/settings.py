@@ -28,6 +28,7 @@ The options understood by this module are (with their defaults):
 
 """
 import ConfigParser
+import logging
 import os
 import shlex
 import htsworkflow
@@ -37,6 +38,7 @@ from django.conf import global_settings
 from htsworkflow.util.api import make_django_secret_key
 
 HTSWORKFLOW_ROOT = os.path.abspath(os.path.split(htsworkflow.__file__)[0])
+LOGGER = logging.getLogger(__name__)
 
 # make epydoc happy
 __docformat__ = "restructuredtext en"
