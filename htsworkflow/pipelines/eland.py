@@ -1,7 +1,7 @@
 """
 Analyze ELAND files
 """
-
+import collections
 from glob import glob
 import logging
 import os
@@ -40,8 +40,8 @@ class ResultLane(object):
     XML_VERSION = 2
     LANE = 'ResultLane'
 
-    def __init__(self, pathname=None, lane_id=None, end=None, xml=None):
-        self.pathname = pathname
+    def __init__(self, pathnames=None, lane_id=None, end=None, xml=None):
+        self.pathnames = pathnames
         self._sample_name = None
         self.lane_id = lane_id
         self.end = end
@@ -58,12 +58,19 @@ class ResultLane(object):
 
     def _update_name(self):
         # extract the sample name
-        if self.pathname is None:
+        if self.pathnames is None or len(self.pathnames) == 0:
             return
 
-        path, name = os.path.split(self.pathname)
-        split_name = name.split('_')
-        self._sample_name = split_name[0]
+        sample_names = set()
+        for pathname in self.pathnames:
+            path, name = os.path.split(pathname)
+            split_name = name.split('_')
+            sample_names.add(split_name[0])
+        if len(sample_names) > 1:
+            errmsg = "Attempting to update from more than one sample %s"
+            raise RuntimeError(errmsg % (",".join(sample_names)))
+        self._sample_name = sample_names.pop()
+        return self._sample_name
 
     def _get_sample_name(self):
         if self._sample_name is None:
@@ -93,8 +100,8 @@ class ElandLane(ResultLane):
     SCORE_QC = 1
     SCORE_READ = 2
 
-    def __init__(self, pathname=None, lane_id=None, end=None, genome_map=None, eland_type=None, xml=None):
-        super(ElandLane, self).__init__(pathname, lane_id, end)
+    def __init__(self, pathnames=None, lane_id=None, end=None, genome_map=None, eland_type=None, xml=None):
+        super(ElandLane, self).__init__(pathnames, lane_id, end)
 
         self._mapped_reads = None
         self._match_codes = None
@@ -126,35 +133,43 @@ class ElandLane(ResultLane):
         Actually read the file and actually count the reads
         """
         # can't do anything if we don't have a file to process
-        if self.pathname is None:
+        if self.pathnames is None or len(self.pathnames) == 0:
             return
-        self._guess_eland_type(self.pathname)
+        pathname = self.pathnames[-1]
+        self._guess_eland_type(pathname)
 
-        if os.stat(self.pathname)[stat.ST_SIZE] == 0:
+        if os.stat(pathname)[stat.ST_SIZE] == 0:
             raise RuntimeError("Eland isn't done, try again later.")
 
-        LOGGER.debug("summarizing results for %s" % (self.pathname))
+        LOGGER.debug("summarizing results for %s" % (pathname))
+        self._match_codes = MatchCodes()
+        self._mapped_reads = MappedReads()
+        self._reads = 0
 
-        stream = autoopen(self.pathname, 'r')
-        if self.eland_type == ELAND_SINGLE:
-            result = self._update_eland_result(stream)
-        elif self.eland_type == ELAND_MULTI or \
-             self.eland_type == ELAND_EXTENDED:
-            result = self._update_eland_multi(stream)
-        elif self.eland_type == ELAND_EXPORT:
-            result = self._update_eland_export(stream)
-        else:
-          raise NotImplementedError("Only support single/multi/extended eland files")
-        self._match_codes, self._mapped_reads, self._reads = result
+        for pathname in self.pathnames:
+            stream = autoopen(pathname, 'r')
+            if self.eland_type == ELAND_SINGLE:
+                result = self._update_eland_result(stream)
+            elif self.eland_type == ELAND_MULTI or \
+                 self.eland_type == ELAND_EXTENDED:
+                result = self._update_eland_multi(stream)
+            elif self.eland_type == ELAND_EXPORT:
+                result = self._update_eland_export(stream)
+            else:
+                errmsg = "Only support single/multi/extended eland files"
+                raise NotImplementedError(errmsg)
+            stream.close()
+
+            match, mapped, reads = result
+            self._match_codes += match
+            self._mapped_reads += mapped
+            self._reads += reads
 
     def _update_eland_result(self, instream):
         reads = 0
-        mapped_reads = {}
+        mapped_reads = MappedReads()
+        match_codes = MatchCodes()
 
-        match_codes = {'NM':0, 'QC':0, 'RM':0,
-                       'U0':0, 'U1':0, 'U2':0,
-                       'R0':0, 'R1':0, 'R2':0,
-                      }
         for line in instream:
             reads += 1
             fields = line.split()
@@ -174,12 +189,9 @@ class ElandLane(ResultLane):
         MATCH_INDEX = 2
         LOCATION_INDEX = 3
         reads = 0
-        mapped_reads = {}
+        mapped_reads = MappedReads()
+        match_codes = MatchCodes()
 
-        match_codes = {'NM':0, 'QC':0, 'RM':0,
-                       'U0':0, 'U1':0, 'U2':0,
-                       'R0':0, 'R1':0, 'R2':0,
-                      }
         for line in instream:
             reads += 1
             fields = line.split()
@@ -204,12 +216,8 @@ class ElandLane(ResultLane):
         LOCATION_INDEX = 10
         DESCRIPTOR_INDEX= 13
         reads = 0
-        mapped_reads = {}
-
-        match_codes = {'NM':0, 'QC':0, 'RM':0,
-                       'U0':0, 'U1':0, 'U2':0,
-                       'R0':0, 'R1':0, 'R2':0,
-                      }
+        mapped_reads = MappedReads()
+        match_codes = MatchCodes()
 
         for line in instream:
             reads += 1
@@ -240,7 +248,7 @@ class ElandLane(ResultLane):
         groups = ElandLane.MATCH_COUNTS_RE.match(match)
         if groups is None:
             # match is not of the form [\d]+:[\d]+:[\d]+
-            if match_codes.has_key(match):
+            if match in match_codes:
                 # match is one quality control codes QC/NM etc
                 match_codes[match] += 1
                 return ElandLane.SCORE_QC
@@ -431,6 +439,93 @@ class ElandLane(ResultLane):
             else:
                 LOGGER.warn("ElandLane unrecognized tag %s" % (element.tag,))
 
+
+class MatchCodes(collections.MutableMapping):
+    """Mapping to hold match counts -
+    supports combining two match count sets together
+    """
+    def __init__(self, initializer=None):
+        self.match_codes = {'NM':0, 'QC':0, 'RM':0,
+                            'U0':0, 'U1':0, 'U2':0,
+                            'R0':0, 'R1':0, 'R2':0,
+                            }
+
+        if initializer is not None:
+            if not isinstance(initializer, collections.Mapping):
+                raise ValueError("Expected dictionary like class")
+            for key in initializer:
+                if key not in self.match_codes:
+                    errmsg = "Initializer can only contain: %s"
+                    raise ValueError(errmsg % (",".join(self.match_codes.keys())))
+                self.match_codes[key] += initializer[key]
+
+    def __iter__(self):
+        return iter(self.match_codes)
+
+    def __delitem__(self, key):
+        raise RuntimeError("delete not allowed")
+
+    def __getitem__(self, key):
+        return self.match_codes[key]
+
+    def __setitem__(self, key, value):
+        if key not in self.match_codes:
+            errmsg = "Unrecognized key, allowed values are: %s"
+            raise ValueError(errmsg % (",".join(self.match_codes.keys())))
+        self.match_codes[key] = value
+
+    def __len__(self):
+        return len(self.match_codes)
+
+    def __add__(self, other):
+        if not isinstance(other, MatchCodes):
+            raise ValueError("Expected a MatchCodes, got %s", str(type(other)))
+
+        newobj = MatchCodes(self)
+        for key, value in other.items():
+            newobj[key] = self.get(key, 0) + other[key]
+
+        return newobj
+
+
+class MappedReads(collections.MutableMapping):
+    """Mapping to hold mapped reads -
+    supports combining two mapped read sets together
+    """
+    def __init__(self, initializer=None):
+        self.mapped_reads = {}
+
+        if initializer is not None:
+            if not isinstance(initializer, collections.Mapping):
+                raise ValueError("Expected dictionary like class")
+            for key in initializer:
+                self[key] = self.setdefault(key, 0) + initializer[key]
+
+    def __iter__(self):
+        return iter(self.mapped_reads)
+
+    def __delitem__(self, key):
+        del self.mapped_reads[key]
+
+    def __getitem__(self, key):
+        return self.mapped_reads[key]
+
+    def __setitem__(self, key, value):
+        self.mapped_reads[key] = value
+
+    def __len__(self):
+        return len(self.mapped_reads)
+
+    def __add__(self, other):
+        if not isinstance(other, MappedReads):
+            raise ValueError("Expected a MappedReads, got %s", str(type(other)))
+
+        newobj = MappedReads(self)
+        for key in other:
+            newobj[key] = self.get(key, 0) + other[key]
+
+        return newobj
+
 class SequenceLane(ResultLane):
     XML_VERSION=1
     LANE = 'SequenceLane'
@@ -465,17 +560,18 @@ class SequenceLane(ResultLane):
         Actually read the file and actually count the reads
         """
         # can't do anything if we don't have a file to process
-        if self.pathname is None:
+        if self.pathnames is None:
             return
 
-        if os.stat(self.pathname)[stat.ST_SIZE] == 0:
+        pathname = self.pathnames[-1]
+        if os.stat(pathname)[stat.ST_SIZE] == 0:
             raise RuntimeError("Sequencing isn't done, try again later.")
 
-        self._guess_sequence_type(self.pathname)
+        self._guess_sequence_type(pathname)
 
-        LOGGER.info("summarizing results for %s" % (self.pathname))
+        LOGGER.info("summarizing results for %s" % (pathname))
         lines = 0
-        f = open(self.pathname)
+        f = open(pathname)
         for l in f.xreadlines():
             lines += 1
         f.close()
@@ -485,7 +581,8 @@ class SequenceLane(ResultLane):
         elif self.sequence_type == SequenceLane.FASTQ_TYPE:
             self._reads = lines / 4
         else:
-          raise NotImplementedError("This only supports scarf or fastq squence files")
+            errmsg = "This only supports scarf or fastq squence files"
+            raise NotImplementedError(errmsg)
 
     def get_elements(self):
         lane = ElementTree.Element(SequenceLane.LANE,
@@ -576,29 +673,28 @@ class ELAND(object):
             self.results[end][lane_id] = lane
 
 def check_for_eland_file(basedir, pattern, lane_id, end):
-   if end is None:
-      full_lane_id = lane_id
-   else:
-      full_lane_id = "%d_%d" % ( lane_id, end )
+   #if end is None:
+   #   full_lane_id = lane_id
+   #else:
+   #   full_lane_id = "%d_%d" % ( lane_id, end )
+   eland_files = []
+   eland_pattern = pattern % (lane_id, end)
+   eland_re = re.compile(eland_pattern)
+   LOGGER.debug("Eland pattern: %s" %(eland_pattern,))
+   for filename in os.listdir(basedir):
+       if eland_re.match(filename):
+           LOGGER.info('found eland file %s' % (filename,))
+           eland_files.append(os.path.join(basedir, filename))
 
-   basename = pattern % (full_lane_id,)
-   LOGGER.debug("Eland pattern: %s" %(basename,))
-   pathname = os.path.join(basedir, basename)
-   if os.path.exists(pathname):
-       LOGGER.info('found eland file in %s' % (pathname,))
-       return pathname
-   else:
-       return None
+   return eland_files
 
-def update_result_with_eland(gerald, results, lane_id, end, pathname, genome_maps):
+def update_result_with_eland(gerald, results, lane_id, end, pathnames, genome_maps):
     # yes the lane_id is also being computed in ElandLane._update
     # I didn't want to clutter up my constructor
     # but I needed to persist the sample_name/lane_id for
     # runfolder summary_report
-    path, name = os.path.split(pathname)
-    LOGGER.info("Adding eland file %s" %(name,))
-    # split_name = name.split('_')
-    # lane_id = int(split_name[1])
+    names = [ os.path.split(p)[1] for p in pathnames]
+    LOGGER.info("Adding eland files %s" %(",".join(names),))
 
     genome_map = {}
     if genome_maps is not None:
@@ -608,7 +704,7 @@ def update_result_with_eland(gerald, results, lane_id, end, pathname, genome_map
         if genome_dir is not None:
             genome_map = build_genome_fasta_map(genome_dir)
 
-    lane = ElandLane(pathname, lane_id, end, genome_map)
+    lane = ElandLane(pathnames, lane_id, end, genome_map)
 
     if end is None:
         effective_end =  0
@@ -645,35 +741,52 @@ def eland(gerald_dir, gerald=None, genome_maps=None):
     if os.path.isdir(basedir_temp):
         basedirs.append(basedir_temp)
 
+    # So how about scanning for Project*/Sample* directories as well
+    sample_pattern = os.path.join(gerald_dir, 'Project_*', 'Sample_*')
+    basedirs.extend(glob(sample_pattern))
 
     # the order in patterns determines the preference for what
     # will be found.
     MAPPED_ELAND = 0
     SEQUENCE = 1
-    patterns = [('s_%s_eland_result.txt', MAPPED_ELAND),
-                ('s_%s_eland_result.txt.bz2', MAPPED_ELAND),
-                ('s_%s_eland_result.txt.gz', MAPPED_ELAND),
-                ('s_%s_eland_extended.txt', MAPPED_ELAND),
-                ('s_%s_eland_extended.txt.bz2', MAPPED_ELAND),
-                ('s_%s_eland_extended.txt.gz', MAPPED_ELAND),
-                ('s_%s_eland_multi.txt', MAPPED_ELAND),
-                ('s_%s_eland_multi.txt.bz2', MAPPED_ELAND),
-                ('s_%s_eland_multi.txt.gz', MAPPED_ELAND),
-                ('s_%s_export.txt', MAPPED_ELAND),
-                ('s_%s_export.txt.bz2', MAPPED_ELAND),
-                ('s_%s_export.txt.gz', MAPPED_ELAND),
-                ('s_%s_sequence.txt', SEQUENCE),]
+    patterns = [
+        ('(?P<sampleId>[^_]+)_(?P<index>(NoIndex|[AGCT])+)_L00%s(_R%s)_(?P<part>[\d]+)_export.txt(?P<ext>(\.bz2|\.gz)?)', MAPPED_ELAND),
+        ('s_(?P<lane>%s)(_(?P<end>%s))?_eland_result.txt(?P<ext>(\.bz2|\.gz)?)',
+         MAPPED_ELAND),
+        ('s_(?P<lane>%s)(_(?P<end>%s))?_eland_extended.txt(?P<ext>(\.bz2|\.gz)?)',
+         MAPPED_ELAND),
+        ('s_(?P<lane>%s)(_(?P<end>%s))?_eland_multi.txt(?P<ext>(\.bz2|\.gz)?)',
+         MAPPED_ELAND),
+        ('s_(?P<lane>%s)(_(?P<end>%s))?_export.txt(?P<ext>(\.bz2|\.gz)?)',
+         MAPPED_ELAND),
+        ('s_(?P<lane>%s)(_(?P<end>%s))?_sequence.txt(?P<ext>(\.bz2|\.gz)?)',
+         SEQUENCE),
+
+        #('s_%s_eland_result.txt', MAPPED_ELAND),
+        #('s_%s_eland_result.txt.bz2', MAPPED_ELAND),
+        #('s_%s_eland_result.txt.gz', MAPPED_ELAND),
+        #('s_%s_eland_extended.txt', MAPPED_ELAND),
+        #('s_%s_eland_extended.txt.bz2', MAPPED_ELAND),
+        #('s_%s_eland_extended.txt.gz', MAPPED_ELAND),
+        #('s_%s_eland_multi.txt', MAPPED_ELAND),
+        #('s_%s_eland_multi.txt.bz2', MAPPED_ELAND),
+        #('s_%s_eland_multi.txt.gz', MAPPED_ELAND),
+        #('s_%s_export.txt', MAPPED_ELAND),
+        #('s_%s_export.txt.bz2', MAPPED_ELAND),
+        #('s_%s_export.txt.gz', MAPPED_ELAND),
+        #('s_%s_sequence.txt', SEQUENCE),
+        ]
 
     for basedir in basedirs:
         for end in ends:
             for lane_id in lane_ids:
                 for p in patterns:
-                    pathname = check_for_eland_file(basedir, p[0], lane_id, end)
-                    if pathname is not None:
+                    pathnames = check_for_eland_file(basedir, p[0], lane_id, end)
+                    if len(pathnames) > 0:
                         if p[1] == MAPPED_ELAND:
-                            update_result_with_eland(gerald, e.results, lane_id, end, pathname, genome_maps)
+                            update_result_with_eland(gerald, e.results, lane_id, end, pathnames, genome_maps)
                         elif p[1] == SEQUENCE:
-                            update_result_with_sequence(gerald, e.results, lane_id, end, pathname)
+                            update_result_with_sequence(gerald, e.results, lane_id, end, pathnames)
                         break
                 else:
                     LOGGER.debug("No eland file found in %s for lane %s and end %s" %(basedir, lane_id, end))
@@ -719,7 +832,7 @@ def main(cmdline=None):
     from optparse import OptionParser
     parser = OptionParser("%prog: <gerald dir>+")
     opts, args = parser.parse_args(cmdline)
-    LOGGER.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG)
     for a in args:
         LOGGER.info("Starting scan of %s" % (a,))
         e = eland(a)
