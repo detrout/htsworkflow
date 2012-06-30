@@ -41,6 +41,12 @@ class Alignment(object):
         if xml is not None:
             self.set_elements(xml)
 
+    def _get_date(self):
+        if self.pathname is not None:
+            epochstamp = os.stat(self.pathname)[stat.ST_MTIME]
+            return datetime.fromtimestamp(epochstamp)
+        return datetime.today()
+
     def _get_time(self):
         return time.mktime(self.date.timetuple())
     time = property(_get_time, doc='return run time as seconds since epoch')
@@ -58,11 +64,11 @@ class Alignment(object):
         print 'config.xml:', self.tree
         self.summary.dump()
 
-    def get_elements(self):
+    def get_elements(self, root_tag):
         if self.tree is None or self.summary is None:
             return None
 
-        gerald = ElementTree.Element(Gerald.GERALD,
+        gerald = ElementTree.Element(root_tag,
                                      {'version': unicode(Gerald.XML_VERSION)})
         gerald.append(self.tree)
         gerald.append(self.summary.get_elements())
@@ -70,9 +76,9 @@ class Alignment(object):
             gerald.append(self.eland_results.get_elements())
         return gerald
 
-    def set_elements(self, tree):
-        if tree.tag !=  self.__class__.GERALD:
-            raise ValueError('expected GERALD')
+    def set_elements(self, tree, root_tag):
+        if tree.tag !=  root_tag:
+            raise ValueError('expected %s' % (self.__class__.GERALD,))
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > Gerald.XML_VERSION:
             LOGGER.warn('XML tree is a higher version than this class')
@@ -94,15 +100,19 @@ class Gerald(Alignment):
     def _get_date(self):
         if self.tree is None:
             return datetime.today()
+
         timestamp = self.tree.findtext('ChipWideRunParameters/TIME_STAMP')
         if timestamp is not None:
             epochstamp = time.mktime(time.strptime(timestamp, '%c'))
             return datetime.fromtimestamp(epochstamp)
-        if self.pathname is not None:
-            epochstamp = os.stat(self.pathname)[stat.ST_MTIME]
-            return datetime.fromtimestamp(epochstamp)
-        return datetime.today()
+        return super(Gerald, self)._get_date()
     date = property(_get_date)
+
+    def get_elements(self):
+        return super(Gerald, self).get_elements(Gerald.GERALD)
+
+    def set_elements(self, tree):
+        return super(Gerald, self).set_elements(tree, Gerald.GERALD)
 
     def _get_experiment_root(self):
         if self.tree is None:
@@ -155,6 +165,37 @@ class Gerald(Alignment):
 
 class CASAVA(Alignment):
     GERALD='Casava'
+
+    def __init__(self, xml=None, pathname=None, tree=None):
+        super(CASAVA, self).__init__(xml=xml, pathname=pathname, tree=tree)
+
+        self._add_timestamp()
+
+    def _add_timestamp(self):
+        """Manually add a time stamp to CASAVA runs"""
+        if self.tree is None:
+            return
+        if len(self.tree.xpath('TIME_STAMP')) == 0:
+            time_stamp = self.date.strftime('%c')
+            time_element = ElementTree.Element('TIME_STAMP')
+            time_element.text = time_stamp
+            self.tree.append(time_element)
+
+    def _get_date(self):
+        if self.tree is None:
+            return None
+        time_element = self.tree.xpath('TIME_STAMP')
+        if len(time_element) == 1:
+            return datetime.strptime(time_element[0].text, '%c')
+        return super(CASAVA, self)._get_date()
+    date = property(_get_date)
+
+    def get_elements(self):
+        tree = super(CASAVA, self).get_elements(CASAVA.GERALD)
+        return tree
+
+    def set_elements(self, tree):
+        return super(CASAVA, self).set_elements(tree, CASAVA.GERALD)
 
     def _get_runfolder_name(self):
         if self.tree is None:
@@ -400,6 +441,7 @@ def gerald(pathname):
         g = CASAVA(pathname=pathname, tree=config_tree)
         LOGGER.info("Parsing %s" % (report_summary,))
         g.summary = SummaryHiSeq(report_summary)
+        g.eland_results = eland(g.pathname, g)
 
     # parse eland files
     return g
