@@ -673,14 +673,10 @@ class ELAND(object):
             self.results[end][lane_id] = lane
 
 def check_for_eland_file(basedir, pattern, lane_id, end):
-   #if end is None:
-   #   full_lane_id = lane_id
-   #else:
-   #   full_lane_id = "%d_%d" % ( lane_id, end )
    eland_files = []
    eland_pattern = pattern % (lane_id, end)
    eland_re = re.compile(eland_pattern)
-   LOGGER.debug("Eland pattern: %s" %(eland_pattern,))
+   #LOGGER.debug("Eland pattern: %s" %(eland_pattern,))
    for filename in os.listdir(basedir):
        if eland_re.match(filename):
            LOGGER.info('found eland file %s' % (filename,))
