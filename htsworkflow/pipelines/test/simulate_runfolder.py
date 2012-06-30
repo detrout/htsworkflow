@@ -495,7 +495,7 @@ def make_aligned_eland_export(aligned_dir, flowcell_id):
         summary_dest = os.path.join(paths.summary_dir, 'Sample_Summary.htm')
         shutil.copy(summary_source, summary_dest)
 
-        body = get_unaligned_sample_export(lane, index_seq)
+        body = get_aligned_sample_export(lane, index_seq)
         for split in ['001','002']:
             for read in UNALIGNED_READS:
                 suffix = 'R{0}_{1}_export.txt.gz'.format(read, split)
@@ -648,10 +648,11 @@ CCCFFFFFHHHFHJGIGHIJHIIGHIGIGIGEHFIJJJIHIJHJIIJJIH
 """.format(flowcell=flowcell_id, lane=lane, index=index_seq)
     return seq
 
-def get_unaligned_sample_export(lane, index_seq):
+def get_aligned_sample_export(lane, index_seq):
     body = """HWI-ST0787\t102\t{lane}\t1101\t1207\t1993\t{index}\t1\tAANGGATTCGATCCGGCTTAAGAGATGAAAACCGAAAGGGCCGACCGAA\taaBS`ccceg[`ae[dRR_[[SPPPP__ececfYYWaegh^\\ZLLY\\X`\tNM\t\t\t\t\t\t
-HWI-ST0787\t102     {lane}       1101    1478    1997    {index}  1       CAAGAACCCCGGGGGGGGGGGGGCAGAGAGGGGGAATTTTTTTTTTGTT       BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB       NM                                                                                      N
-HWI-ST0787      102     {lane}       1101    1625    1994    {index}  1       AANAATGCTACAGAGACAAAACAAAACTGATATGAAAGTTGAGAATAAA       \^BS\cccgegg[Q[QQQ[`egdgffbeggfgh^^YcfgfhXaHY^O^c       chrII.fa
+HWI-ST0787\t102\t{lane}\t1101\t1478\t1997\t{index}\t1\tCAAGAACCCCGGGGGGGGGGGGGCAGAGAGGGGGAATTTTTTTTTTGTT\tBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\tNM\t\t\t\t\t\t\t\t\t\t\tN
+HWI-ST0787\t102\t{lane}\t1101\t1625\t1994\t{index}\t1\tAANAATGCTACAGAGACAAAACAAAACTGATATGAAAGTTGAGAATAAA\tB^BS\cccgegg[Q[QQQ[`egdgffbeggfgh^^YcfgfhXaHY^O^c\tchrII.fa\t67717938\tR\t99\t72
+HWI-ST0787\t102\t{lane}\t1101\t1625\t1994\t{index}\t1\tAANAATGCTACAGAGACAAAACAAAACTGATATGAAAGTTGAGAATAAA\tB^BS\cccgegg[Q[QQQ[`egdgffbeggfgh^^YcfgfhXaHY^O^c\t3:4:3\t\t\t\t\t\t\t\t\t\t\tY
 """.format(lane=lane, index=index_seq)
     return body
 
