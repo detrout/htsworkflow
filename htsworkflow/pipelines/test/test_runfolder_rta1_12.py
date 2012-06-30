@@ -55,6 +55,7 @@ def make_runfolder(obj=None):
         obj.image_analysis_dir = intensities_dir
         obj.bustard_dir = unaligned_dir
         obj.gerald_dir = aligned_dir
+        obj.reads = 2
 
 
 class RunfolderTests(unittest.TestCase):
@@ -119,7 +120,7 @@ class RunfolderTests(unittest.TestCase):
                     (1854131,  429053.2), (4777517,  592904.0),
                    ]
 
-        self.failUnlessEqual(len(g.summary), 2)
+        self.failUnlessEqual(len(g.summary), self.reads)
         for i in range(1,9):
             summary_lane = g.summary[0][i]
             self.failUnlessEqual(summary_lane.cluster, clusters[i])
@@ -128,8 +129,7 @@ class RunfolderTests(unittest.TestCase):
         xml = g.get_elements()
         # just make sure that element tree can serialize the tree
         xml_str = ElementTree.tostring(xml)
-        g2 = gerald.Gerald(xml=xml)
-        return
+        g2 = gerald.CASAVA(xml=xml)
 
         # do it all again after extracting from the xml file
         self.failUnlessEqual(g.software, g2.software)
@@ -139,7 +139,7 @@ class RunfolderTests(unittest.TestCase):
         self.failUnlessEqual(len(g.lanes.items()), len(g2.lanes.items()))
 
         # test lane specific parameters from gerald config file
-        for i in range(1,9):
+        for i in g.lanes.keys():
             g_lane = g.lanes[i]
             g2_lane = g2.lanes[i]
             self.failUnlessEqual(g_lane.analysis, g2_lane.analysis)
@@ -148,7 +148,7 @@ class RunfolderTests(unittest.TestCase):
             self.failUnlessEqual(g_lane.use_bases, g2_lane.use_bases)
 
         # test (some) summary elements
-        self.failUnlessEqual(len(g.summary), 1)
+        self.failUnlessEqual(len(g.summary), self.reads)
         for i in range(1,9):
             g_summary = g.summary[0][i]
             g2_summary = g2.summary[0][i]
@@ -177,7 +177,6 @@ class RunfolderTests(unittest.TestCase):
 
 
     def test_eland(self):
-        return
         hg_map = {'Lambda.fa': 'Lambda.fa'}
         for i in range(1,22):
           short_name = 'chr%d.fa' % (i,)
