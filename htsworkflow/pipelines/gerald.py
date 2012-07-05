@@ -1,6 +1,6 @@
+"""Provide access to information stored in the GERALD directory.
 """
-Provide access to information stored in the GERALD directory.
-"""
+import collections
 from datetime import datetime, date
 import logging
 import os
@@ -349,15 +349,15 @@ class LaneParametersHiSeq(LaneParameters):
         return self.__get_attribute('USE_BASES1')
     use_bases = property(_get_use_bases)
 
-class LaneSpecificRunParameters(object):
+class LaneSpecificRunParameters(collections.MutableMapping):
     """
     Provide access to LaneSpecificRunParameters
     """
     def __init__(self, gerald):
         self._gerald = gerald
-        self._lane = None
+        self._lanes = None
 
-    def _initalize_lanes(self):
+    def _initialize_lanes(self):
         """
         build dictionary of LaneParameters
         """
@@ -389,30 +389,24 @@ class LaneSpecificRunParameters(object):
                                                     element)
 
     def __iter__(self):
+        if self._lanes is None:
+            self._initialize_lanes()
         return self._lanes.iterkeys()
+
     def __getitem__(self, key):
-        if self._lane is None:
-            self._initalize_lanes()
+        if self._lanes is None:
+            self._initialize_lanes()
         return self._lanes[key]
-    def get(self, key, default):
-        if self._lane is None:
-            self._initalize_lanes()
-        return self._lanes.get(key, None)
-    def keys(self):
-        if self._lane is None:
-            self._initalize_lanes()
-        return self._lanes.keys()
-    def values(self):
-        if self._lane is None:
-            self._initalize_lanes()
-        return self._lanes.values()
-    def items(self):
-        if self._lane is None:
-            self._initalize_lanes()
-        return self._lanes.items()
+
+    def __setitem__(self, key, value):
+        self._lanes[key] = value
+
+    def __delitem__(self, key):
+        del self._lanes[key]
+
     def __len__(self):
-        if self._lane is None:
-            self._initalize_lanes()
+        if self._lanes is None:
+            self._initialize_lanes()
         return len(self._lanes)
 
 

@@ -192,7 +192,7 @@
     </Lane>
   </Lanes>
   <Projects>
-    <Project name="12383">
+    <Project name="11111">
       <ANALYSIS>eland_extended</ANALYSIS>
       <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
       <ELAND_GENOME>/g/hg18/chromosomes/</ELAND_GENOME>

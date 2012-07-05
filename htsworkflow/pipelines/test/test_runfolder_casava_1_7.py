@@ -177,9 +177,9 @@ class RunfolderTests(unittest.TestCase):
 
             g_eland = g.eland_results
             g2_eland = g2.eland_results
-            for lane in g_eland.results[0].keys():
-                g_results = g_eland.results[0][lane]
-                g2_results = g2_eland.results[0][lane]
+            for key in g_eland:
+                g_results = g_eland[key]
+                g2_results = g2_eland[key]
                 self.failUnlessEqual(g_results.reads,
                                      g2_results.reads)
                 if isinstance(g_results, eland.ElandLane):
@@ -210,7 +210,8 @@ class RunfolderTests(unittest.TestCase):
 
         # test fastq
         for i in range(1,4):
-            lane = eland_container.results[0][i]
+            key = eland.SampleKey(lane=i, read=1, sample='s')
+            lane = eland_container[key]
             self.failUnlessEqual(lane.reads, 3)
             self.failUnlessEqual(lane.sample_name, 's')
             self.failUnlessEqual(lane.lane_id, i)
@@ -219,7 +220,8 @@ class RunfolderTests(unittest.TestCase):
 
         # I added sequence lanes to the last 2 lanes of this test case
         for i in range(4,9):
-            lane = eland_container.results[0][i]
+            key = eland.SampleKey(lane=i, read=1, sample='s')
+            lane = eland_container[key]
             self.failUnlessEqual(lane.reads, 28)
             self.failUnlessEqual(lane.sample_name, "s")
             self.failUnlessEqual(lane.lane_id, i)
@@ -240,9 +242,9 @@ class RunfolderTests(unittest.TestCase):
         xml_str = ElementTree.tostring(xml)
         e2 = gerald.ELAND(xml=xml)
 
-        for i in range(1,9):
-            l1 = eland_container.results[0][i]
-            l2 = e2.results[0][i]
+        for key in eland_container:
+            l1 = eland_container[key]
+            l2 = e2[key]
             self.failUnlessEqual(l1.reads, l2.reads)
             self.failUnlessEqual(l1.sample_name, l2.sample_name)
             self.failUnlessEqual(l1.lane_id, l2.lane_id)

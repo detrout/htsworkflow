@@ -5,17 +5,19 @@ from StringIO import StringIO
 from simulate_runfolder import TESTDATA_DIR
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 
+from htsworkflow.pipelines.eland import SampleKey
 class testLoadRunXML(unittest.TestCase):
 
-    def _check_run_xml(self, run_xml_name, results):
+    def _check_run_xml(self, run_xml_name, results, eland_results=8):
         run_xml_path = os.path.join(TESTDATA_DIR, run_xml_name)
         run = load_pipeline_run_xml(run_xml_path)
-        
+
         self.failUnlessEqual(run.image_analysis.start, results['cycle_start'])
         self.failUnlessEqual(run.image_analysis.stop, results['cycle_stop'])
-        
-        eland_summary_by_lane = run.gerald.eland_results.results[0]
-        self.failUnlessEqual(len(eland_summary_by_lane), 8)
+
+        query = SampleKey(read=1)
+        eland_summary_by_lane = run.gerald.eland_results.find_keys(query)
+        self.failUnlessEqual(len(list(eland_summary_by_lane)), eland_results)
 
         runfolder_name = results['runfolder_name']
         self.failUnlessEqual(run.runfolder_name, runfolder_name)
@@ -24,10 +26,10 @@ class testLoadRunXML(unittest.TestCase):
         for (end, lane), lane_results in results['lane_results'].items():
             for name, test_value in lane_results.items():
                 xml_value = getattr(run.gerald.summary[end][lane], name)
-                
+
                 self.failUnlessEqual(xml_value, test_value,
                     "%s[%s][%s]: %s %s != %s" % (run_xml_name, end, lane, name, xml_value, test_value))
-        
+
     def testVersion0(self):
         run_xml_name = 'run_FC12150_2007-09-27.xml'
         results = {'runfolder_name': '070924_USI-EAS44_0022_FC12150',
@@ -47,7 +49,7 @@ class testLoadRunXML(unittest.TestCase):
                            }
                        }
                    }
-        self._check_run_xml(run_xml_name, results)
+        self._check_run_xml(run_xml_name, results, eland_results=0)
 
     def testVersion1(self):
 
@@ -59,7 +61,7 @@ class testLoadRunXML(unittest.TestCase):
                        # end, lane
                        }
                    }
-        self._check_run_xml(run_xml_name, results)
+        self._check_run_xml(run_xml_name, results, eland_results=8)
 
     def testVersion2(self):
         run_xml_name = 'run_62DJMAAXX_2011-01-09.xml'
@@ -90,7 +92,7 @@ class testLoadRunXML(unittest.TestCase):
                            }
                        }
                    }
-        self._check_run_xml(run_xml_name, results)
+        self._check_run_xml(run_xml_name, results, eland_results=8)
 
 def suite():
     return unittest.makeSuite(testLoadRunXML,'test')

@@ -810,9 +810,9 @@ class RunfolderTests(unittest.TestCase):
 
             g_eland = g.eland_results
             g2_eland = g2.eland_results
-            for lane in g_eland.results[0].keys():
-                g_results = g_eland.results[0][lane]
-                g2_results = g2_eland.results[0][lane]
+            for key in g_eland:
+                g_results = g_eland[key]
+                g2_results = g2_eland[key]
                 self.failUnlessEqual(g_results.reads,
                                      g2_results.reads)
                 self.failUnlessEqual(len(g_results.mapped_reads),
@@ -836,11 +836,11 @@ class RunfolderTests(unittest.TestCase):
                         5:dm3_map, 6:dm3_map, 7:dm3_map, 8:dm3_map }
         eland = gerald.eland(self.gerald_dir, genome_maps=genome_maps)
 
-        for i in range(1,9):
-            lane = eland.results[0][i]
+        for key in eland:
+            lane = eland[key]
             self.failUnlessEqual(lane.reads, 4)
             self.failUnlessEqual(lane.sample_name, "s")
-            self.failUnlessEqual(lane.lane_id, i)
+            self.failUnlessEqual(lane.lane_id, key.lane)
             self.failUnlessEqual(len(lane.mapped_reads), 3)
             self.failUnlessEqual(lane.mapped_reads['Lambda.fa'], 1)
             self.failUnlessEqual(lane.mapped_reads['dm3/chr2L.fa'], 1)
@@ -852,9 +852,9 @@ class RunfolderTests(unittest.TestCase):
         xml_str = ElementTree.tostring(xml)
         e2 = gerald.ELAND(xml=xml)
 
-        for i in range(1,9):
-            l1 = eland.results[0][i]
-            l2 = e2.results[0][i]
+        for key in eland:
+            l1 = eland[key]
+            l2 = e2[key]
             self.failUnlessEqual(l1.reads, l2.reads)
             self.failUnlessEqual(l1.sample_name, l2.sample_name)
             self.failUnlessEqual(l1.lane_id, l2.lane_id)

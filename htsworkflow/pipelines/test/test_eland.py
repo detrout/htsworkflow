@@ -4,7 +4,8 @@
 from StringIO import StringIO
 import unittest
 
-from htsworkflow.pipelines.eland import ElandLane, MatchCodes, MappedReads
+from htsworkflow.pipelines.eland import ELAND, ElandLane, ElandMatches, \
+     SampleKey, MatchCodes, MappedReads
 
 class MatchCodeTests(unittest.TestCase):
     def test_initializer(self):
@@ -228,6 +229,37 @@ class ElandTests(unittest.TestCase):
         self.assertEqual(len(match_reads), 0)
         self.assertEqual(reads, 1)
 
+class TestElandMatches(unittest.TestCase):
+    def test_eland_replacing(self):
+        key = SampleKey(1, 1, 's')
+        e = ELAND()
+        em = ElandMatches(e)
+        em.add('s_1_sequence.txt')
+        self.assertEqual(len(em), 1)
+        self.assertEqual(len(em[key]), 1)
+        filename = iter(em[key]).next().filename
+        self.assertEqual(filename, 's_1_sequence.txt')
+        self.assertEqual(em.keys(), [key])
+        em.add('s_1_eland_result.txt')
+        self.assertEqual(len(em), 1)
+        self.assertEqual(len(em[key]), 1)
+        filename = iter(em[key]).next().filename
+        self.assertEqual(filename, 's_1_eland_result.txt')
+        self.assertEqual(em.keys(), [key])
+
+    def test_parts(self):
+        key11111 = SampleKey(1, 1, '11111')
+        key11112 = SampleKey(1, 1, '11112')
+        e = ELAND()
+        em = ElandMatches(e)
+        em.add('11111_CCAATT_L001_R1_001_export.txt.gz')
+        em.add('11111_CCAATT_L001_R1_002_export.txt.gz')
+        em.add('11111_CCAATT_L001_R1_003_export.txt.gz')
+        em.add('11112_AAGGTT_L001_R1_001_export.txt.gz')
+        em.add('11112_AAGGTT_L001_R1_002_export.txt.gz')
+        self.assertEqual(len(em), 2)
+        self.assertEqual(len(em[key11111]), 3)
+        self.assertEqual(len(em[key11112]), 2)
 
 if __name__ == "__main__":
     unittest.main()

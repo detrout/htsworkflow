@@ -504,31 +504,31 @@ def compress_eland_results(gerald_object, cycle_dir, num_jobs=1):
     # copy & bzip eland files
     bz_commands = []
 
-    for lanes_dictionary in gerald_object.eland_results.results:
-        for eland_lane in lanes_dictionary.values():
-            for source_name in eland_lane.pathnames:
-                if source_name is None:
-                  LOGGER.info(
-                    "Lane ID %s does not have a filename." % (eland_lane.lane_id,))
-                else:
-                  path, name = os.path.split(source_name)
-                  dest_name = os.path.join(cycle_dir, name)
-                  LOGGER.info("Saving eland file %s to %s" % \
-                             (source_name, dest_name))
+    for key in gerald_object.eland_results:
+        eland_lane = gerald_object.eland_results[key]
+        for source_name in eland_lane.pathnames:
+            if source_name is None:
+              LOGGER.info(
+                "Lane ID %s does not have a filename." % (eland_lane.lane_id,))
+            else:
+              path, name = os.path.split(source_name)
+              dest_name = os.path.join(cycle_dir, name)
+              LOGGER.info("Saving eland file %s to %s" % \
+                         (source_name, dest_name))
 
-                  if is_compressed(name):
-                    LOGGER.info('Already compressed, Saving to %s' % (dest_name,))
-                    shutil.copy(source_name, dest_name)
-                  else:
-                    # not compressed
-                    dest_name += '.bz2'
-                    args = ['bzip2', '-9', '-c', source_name, '>', dest_name ]
-                    bz_commands.append(" ".join(args))
-                    #LOGGER.info('Running: %s' % ( " ".join(args) ))
-                    #bzip_dest = open(dest_name, 'w')
-                    #bzip = subprocess.Popen(args, stdout=bzip_dest)
-                    #LOGGER.info('Saving to %s' % (dest_name, ))
-                    #bzip.wait()
+              if is_compressed(name):
+                LOGGER.info('Already compressed, Saving to %s' % (dest_name,))
+                shutil.copy(source_name, dest_name)
+              else:
+                # not compressed
+                dest_name += '.bz2'
+                args = ['bzip2', '-9', '-c', source_name, '>', dest_name ]
+                bz_commands.append(" ".join(args))
+                #LOGGER.info('Running: %s' % ( " ".join(args) ))
+                #bzip_dest = open(dest_name, 'w')
+                #bzip = subprocess.Popen(args, stdout=bzip_dest)
+                #LOGGER.info('Saving to %s' % (dest_name, ))
+                #bzip.wait()
 
     if len(bz_commands) > 0:
       q = QueueCommands(bz_commands, num_jobs)

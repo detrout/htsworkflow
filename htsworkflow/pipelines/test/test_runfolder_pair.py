@@ -9,6 +9,7 @@ import unittest
 from htsworkflow.pipelines import firecrest
 from htsworkflow.pipelines import bustard
 from htsworkflow.pipelines import gerald
+from htsworkflow.pipelines.eland import SampleKey
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.runfolder import ElementTree
 
@@ -210,9 +211,9 @@ class RunfolderTests(unittest.TestCase):
 
                 g_eland = g.eland_results
                 g2_eland = g2.eland_results
-                for lane in g_eland.results[end].keys():
-                    g_results = g_eland.results[end][lane]
-                    g2_results = g_eland.results[end][lane]
+                for key in g_eland:
+                    g_results = g_eland[key]
+                    g2_results = g2_eland[key]
                     self.failUnlessEqual(g_results.reads,
                                          g2_results.reads)
                     self.failUnlessEqual(len(g_results.mapped_reads),
@@ -240,11 +241,11 @@ class RunfolderTests(unittest.TestCase):
         eland = gerald.eland(self.gerald_dir, genome_maps=genome_maps)
 
         # check first end
-        for i in range(1,9):
-            lane = eland.results[0][i]
+        for key in eland.find_keys(SampleKey(read=1)):
+            lane = eland[key]
             self.failUnlessEqual(lane.reads, 6)
             self.failUnlessEqual(lane.sample_name, "s")
-            self.failUnlessEqual(lane.lane_id, i)
+            self.failUnlessEqual(lane.lane_id, key.lane)
             self.failUnlessEqual(len(lane.mapped_reads), 17)
             self.failUnlessEqual(lane.mapped_reads['hg18/chr5.fa'], 4)
             self.failUnlessEqual(lane.match_codes['U0'], 3)
@@ -257,11 +258,11 @@ class RunfolderTests(unittest.TestCase):
             self.failUnlessEqual(lane.match_codes['QC'], 0)
 
         # check second end
-        for i in range(1,9):
-            lane = eland.results[1][i]
+        for key in eland.find_keys(SampleKey(read=2)):
+            lane = eland[key]
             self.failUnlessEqual(lane.reads, 7)
             self.failUnlessEqual(lane.sample_name, "s")
-            self.failUnlessEqual(lane.lane_id, i)
+            self.failUnlessEqual(lane.lane_id, key.lane)
             self.failUnlessEqual(len(lane.mapped_reads), 17)
             self.failUnlessEqual(lane.mapped_reads['hg18/chr5.fa'], 4)
             self.failUnlessEqual(lane.match_codes['U0'], 3)
@@ -278,24 +279,23 @@ class RunfolderTests(unittest.TestCase):
         xml_str = ElementTree.tostring(xml)
         e2 = gerald.ELAND(xml=xml)
 
-        for end in [0, 1]:
-            for i in range(1,9):
-                l1 = eland.results[end][i]
-                l2 = e2.results[end][i]
-                self.failUnlessEqual(l1.reads, l2.reads)
-                self.failUnlessEqual(l1.sample_name, l2.sample_name)
-                self.failUnlessEqual(l1.lane_id, l2.lane_id)
-                self.failUnlessEqual(len(l1.mapped_reads), len(l2.mapped_reads))
-                self.failUnlessEqual(len(l1.mapped_reads), 17)
-                for k in l1.mapped_reads.keys():
-                    self.failUnlessEqual(l1.mapped_reads[k],
-                                         l2.mapped_reads[k])
+        for key in eland:
+            l1 = eland[key]
+            l2 = e2[key]
+            self.failUnlessEqual(l1.reads, l2.reads)
+            self.failUnlessEqual(l1.sample_name, l2.sample_name)
+            self.failUnlessEqual(l1.lane_id, l2.lane_id)
+            self.failUnlessEqual(len(l1.mapped_reads), len(l2.mapped_reads))
+            self.failUnlessEqual(len(l1.mapped_reads), 17)
+            for k in l1.mapped_reads.keys():
+                self.failUnlessEqual(l1.mapped_reads[k],
+                                     l2.mapped_reads[k])
 
-                self.failUnlessEqual(len(l1.match_codes), 9)
-                self.failUnlessEqual(len(l1.match_codes), len(l2.match_codes))
-                for k in l1.match_codes.keys():
-                    self.failUnlessEqual(l1.match_codes[k],
-                                         l2.match_codes[k])
+            self.failUnlessEqual(len(l1.match_codes), 9)
+            self.failUnlessEqual(len(l1.match_codes), len(l2.match_codes))
+            for k in l1.match_codes.keys():
+                self.failUnlessEqual(l1.match_codes[k],
+                                     l2.match_codes[k])
 
     def test_runfolder(self):
         runs = runfolder.get_runs(self.runfolder_dir)
