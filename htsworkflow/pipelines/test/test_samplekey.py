@@ -16,10 +16,10 @@ class TestSampleKey(unittest.TestCase):
         self.assertEqual(hash(k1), hash(k2))
         self.assertNotEqual(k1, k3)
 
-        self.assertLess(k1, k3)
-        self.assertLessEqual(k1, k2)
+        self.assertTrue(k1 < k3)
+        self.assertTrue(k1 <= k2)
 
-        self.assertGreater(k3, k1)
+        self.assertTrue(k3 > k1)
 
 
     def test_matching(self):

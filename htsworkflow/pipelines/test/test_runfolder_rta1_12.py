@@ -211,7 +211,7 @@ class RunfolderTests(unittest.TestCase):
                 self.assertEqual(lane.match_codes['R2'], 6)
                 self.assertEqual(lane.match_codes['NM'], 4)
 
-            self.assertIn(lane.sample_name, samples)
+            self.assertTrue(lane.sample_name in samples)
             #self.assertEqual(lane.lane_id, 1)
             self.assertEqual(len(lane.mapped_reads), 1)
             self.assertEqual(lane.match_codes['U1'], 0)
