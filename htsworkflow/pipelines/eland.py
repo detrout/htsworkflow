@@ -639,7 +639,7 @@ class ELAND(collections.MutableMapping):
 
     def __init__(self, xml=None):
         # we need information from the gerald config.xml
-        self.results = collections.OrderedDict()
+        self.results = {}
 
         if xml is not None:
             self.set_elements(xml)
@@ -658,7 +658,9 @@ class ELAND(collections.MutableMapping):
         del self.result[key]
 
     def __iter__(self):
-        return self.results.iterkeys()
+        keys = self.results.iterkeys()
+        for k in sorted(keys):
+            yield k
 
     def __len__(self):
         return len(self.results)

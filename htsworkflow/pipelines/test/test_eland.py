@@ -229,6 +229,21 @@ class ElandTests(unittest.TestCase):
         self.assertEqual(len(match_reads), 0)
         self.assertEqual(reads, 1)
 
+    def test_ordering(self):
+        e = ELAND()
+        sl3 = SampleKey(lane=3, read=1, sample='33333')
+        sl1 = SampleKey(lane=1, read=1, sample='11111')
+        sl5 = SampleKey(lane=5, read=1, sample='55555')
+        e.results[sl5] = 'Lane5'
+        e.results[sl3] = 'Lane3'
+        e.results[sl1] = 'Lane1'
+
+        e_list = e.values()
+        print e.items()
+        self.assertEqual(e_list[0], 'Lane1')
+        self.assertEqual(e_list[1], 'Lane3')
+        self.assertEqual(e_list[2], 'Lane5')
+
 class TestElandMatches(unittest.TestCase):
     def test_eland_replacing(self):
         key = SampleKey(1, 1, 's')
