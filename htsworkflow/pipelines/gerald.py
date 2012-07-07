@@ -10,6 +10,7 @@ import time
 
 from htsworkflow.pipelines.summary import Summary, SummaryGA, SummaryHiSeq
 from htsworkflow.pipelines.eland import eland, ELAND
+from htsworkflow.pipelines.samplekey import SampleKey
 
 from htsworkflow.pipelines.runfolder import \
    ElementTree, \
@@ -377,16 +378,18 @@ class LaneSpecificRunParameters(collections.MutableMapping):
         # those consistently.
         for element in analysis:
             sample, lane_id = element.tag.split('_')
-            self._lanes[int(lane_id)] = LaneParametersGA(
+            key = SampleKey(lane=int(lane_id), sample=sample)
+            self._lanes[key] = LaneParametersGA(
                                           self._gerald, lane_id)
 
     def _extract_hiseq_analysis_type(self, analysis):
         """Extract from HiSeq style multiplexed analysis types"""
         for element in analysis:
             name = element.attrib['name']
-            self._lanes[name] = LaneParametersHiSeq(self._gerald,
-                                                    name,
-                                                    element)
+            key = SampleKey(sample=name)
+            self._lanes[key] = LaneParametersHiSeq(self._gerald,
+                                                   name,
+                                                   element)
 
     def __iter__(self):
         if self._lanes is None:
@@ -396,19 +399,49 @@ class LaneSpecificRunParameters(collections.MutableMapping):
     def __getitem__(self, key):
         if self._lanes is None:
             self._initialize_lanes()
-        return self._lanes[key]
+        value = self._lanes.get(key, None)
+        if value is not None:
+            return value
+        real_key = self._find_key(key)
+        if real_key is not None:
+            return self._lanes[real_key]
+        raise KeyError("%s not found" % (repr(key),))
 
     def __setitem__(self, key, value):
+        if len(self._lanes) > 100:
+            LOGGER.warn("many projects loaded, consider improving dictionary")
+        real_key = self._find_key(key)
+        if real_key is not None:
+            key = real_key
         self._lanes[key] = value
 
     def __delitem__(self, key):
-        del self._lanes[key]
+        if key in self._lanes:
+            del self._lanes[key]
+        else:
+            real_key = self._find_key(key)
+            if real_key is not None:
+                del self._lanes[real_key]
 
     def __len__(self):
         if self._lanes is None:
             self._initialize_lanes()
         return len(self._lanes)
 
+    def _find_key(self, lookup_key):
+        if not isinstance(lookup_key, SampleKey):
+            lookup_key = SampleKey(lane=lookup_key)
+
+        results = []
+        for k in self._lanes:
+            if k.matches(lookup_key):
+                results.append(k)
+        if len(results) > 1:
+            raise ValueError("More than one key matched query %s" % (str(lookup_key),))
+        elif len(results) == 1:
+            return results[0]
+        else:
+            return None
 
 def gerald(pathname):
     LOGGER.info("Parsing gerald config.xml")

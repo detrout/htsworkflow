@@ -716,7 +716,7 @@ class ELAND(collections.MutableMapping):
         if genome_maps is not None:
             genome_map = genome_maps[key.lane]
         elif gerald is not None:
-            genome_dir = gerald.lanes[key.lane].eland_genome
+            genome_dir = gerald.lanes[key].eland_genome
             if genome_dir is not None:
                 genome_map = build_genome_fasta_map(genome_dir)
 

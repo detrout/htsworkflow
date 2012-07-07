@@ -203,6 +203,105 @@
       <USE_BASES>Y*n</USE_BASES>
       <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
     </Project>
+    <Project name="11112">
+      <ANALYSIS>eland_extended</ANALYSIS>
+      <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+      <ELAND_GENOME>/g/hg18/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+      <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+      <READS>1</READS>
+      <READ_LENGTH1>49</READ_LENGTH1>
+      <USE_BASES>Y*n</USE_BASES>
+      <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    </Project>
+    <Project name="11113">
+      <ANALYSIS>eland_extended</ANALYSIS>
+      <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+      <ELAND_GENOME>/g/hg18/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+      <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+      <READS>1</READS>
+      <READ_LENGTH1>49</READ_LENGTH1>
+      <USE_BASES>Y*n</USE_BASES>
+      <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    </Project>
+    <Project name="11114">
+      <ANALYSIS>eland_extended</ANALYSIS>
+      <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+      <ELAND_GENOME>/g/hg18/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+      <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+      <READS>1</READS>
+      <READ_LENGTH1>49</READ_LENGTH1>
+      <USE_BASES>Y*n</USE_BASES>
+      <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    </Project>
+    <Project name="11115">
+      <ANALYSIS>eland_extended</ANALYSIS>
+      <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+      <ELAND_GENOME>/g/hg18/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+      <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+      <READS>1</READS>
+      <READ_LENGTH1>49</READ_LENGTH1>
+      <USE_BASES>Y*n</USE_BASES>
+      <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    </Project>
+    <Project name="11116">
+      <ANALYSIS>eland_extended</ANALYSIS>
+      <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+      <ELAND_GENOME>/g/hg18/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+      <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+      <READS>1</READS>
+      <READ_LENGTH1>49</READ_LENGTH1>
+      <USE_BASES>Y*n</USE_BASES>
+      <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    </Project>
+    <Project name="11117">
+      <ANALYSIS>eland_extended</ANALYSIS>
+      <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+      <ELAND_GENOME>/g/hg18/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+      <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+      <READS>1</READS>
+      <READ_LENGTH1>49</READ_LENGTH1>
+      <USE_BASES>Y*n</USE_BASES>
+      <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    </Project>
+    <Project name="11118">
+      <ANALYSIS>eland_extended</ANALYSIS>
+      <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+      <ELAND_GENOME>/g/hg18/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+      <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+      <READS>1</READS>
+      <READ_LENGTH1>49</READ_LENGTH1>
+      <USE_BASES>Y*n</USE_BASES>
+      <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    </Project>
+    <Project name="11119">
+      <ANALYSIS>eland_extended</ANALYSIS>
+      <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+      <ELAND_GENOME>/g/hg18/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+      <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+      <READS>1</READS>
+      <READ_LENGTH1>49</READ_LENGTH1>
+      <USE_BASES>Y*n</USE_BASES>
+      <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    </Project>
+    <Project name="11120">
+      <ANALYSIS>eland_extended</ANALYSIS>
+      <CHROM_NAME_SOURCE>fileName</CHROM_NAME_SOURCE>
+      <ELAND_GENOME>/g/hg18/chromosomes/</ELAND_GENOME>
+      <ELAND_GENOME_MASK>*.fa</ELAND_GENOME_MASK>
+      <ELAND_SEED_LENGTH1>32</ELAND_SEED_LENGTH1>
+      <READS>1</READS>
+      <READ_LENGTH1>49</READ_LENGTH1>
+      <USE_BASES>Y*n</USE_BASES>
+      <USE_BASES1>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyn</USE_BASES1>
+    </Project>
     <Project name="Undetermined_indices">
       <ANALYSIS>none</ANALYSIS>
     </Project>

@@ -102,12 +102,12 @@ class RunfolderTests(unittest.TestCase):
         # instead of pythons default 0..8
         # test lane specific parameters from gerald config file
 
-        undetermined = g.lanes['Undetermined_indices']
+        undetermined = g.lanes[SampleKey(sample='Undetermined_indices')]
         self.failUnlessEqual(undetermined.analysis, 'none')
         self.failUnlessEqual(undetermined.read_length, None)
         self.failUnlessEqual(undetermined.use_bases, None)
 
-        project = g.lanes['12383']
+        project = g.lanes[SampleKey(sample='11115')]
         self.failUnlessEqual(project.analysis, 'eland_extended')
         self.failUnlessEqual(project.eland_genome, '/g/hg18/chromosomes/')
         self.failUnlessEqual(project.read_length, '49')
