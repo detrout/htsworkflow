@@ -3,6 +3,7 @@
 from glob import glob
 import os
 import collections
+from htsworkflow.pipelines.runfolder import ElementTree
 
 vldInfo = collections.namedtuple('vldInfo', 'name is_link')
 
@@ -78,7 +79,7 @@ def guess_genome(contig_sizes):
     genomes = {'chr1': {197195432: 'mm9',
                         247249719: 'hg19',
                         },
-               'chrI': {230218, 'sacCer3'},
+               'chrI': {230218: 'sacCer3'},
                }
 
     for key in genomes:

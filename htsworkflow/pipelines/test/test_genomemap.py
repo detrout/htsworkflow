@@ -57,5 +57,7 @@ class TestGenomeMap(unittest.TestCase):
         self.assertTrue('chr1.fa' in g)
         self.assertEqual(len(g), 3)
         self.assertEqual(g['chr1.fa'], '{0}/chr1.fa'.format(tempgenome))
+
+
 if __name__ == "__main__":
     unittest.main()
