@@ -102,8 +102,13 @@ AUTHENTICATION_BACKENDS = (
   'htsworkflow.frontend.samples.auth_backend.HTSUserModelBackend', )
 CUSTOM_USER_MODEL = 'samples.HTSUser'
 
-EMAIL_HOST = options.get('frontend', 'email_host', 'localhost')
-EMAIL_PORT = int(options.get('frontend', 'email_port', 25))
+EMAIL_HOST='localhost'
+if options.has_option('frontend', 'email_host'):
+  EMAIL_HOST = options.get('frontend', 'email_host')
+
+EMAIL_PORT = 25
+if options.has_option('frontend', 'email_port'):
+  EMAIL_PORT = int(options.get('frontend', 'email_port'))
 
 if options.has_option('frontend', 'notification_sender'):
     NOTIFICATION_SENDER = options.get('frontend', 'notification_sender')
@@ -112,7 +117,11 @@ else:
 NOTIFICATION_BCC = []
 options_to_list(options, NOTIFICATION_BCC, 'frontend', 'notification_bcc')
 
-database_section = options.get('frontend', 'database', 'database')
+if not options.has_option('frontend', 'database'):
+  raise ConfigParser.NoSectionError(
+    "Please define [frontend] database=<Section>")
+
+database_section = options.get('frontend', 'database')
 
 if not options.has_section(database_section):
     raise ConfigParser.NoSectionError(
@@ -250,8 +259,16 @@ else:
     LINK_FLOWCELL_STORAGE_DEVICE_URL = None
 # PORT 9100 is default for Zebra tabletop/desktop printers
 # PORT 6101 is default for Zebra mobile printers
-BCPRINTER_PRINTER1_HOST = options.get('bcprinter', 'printer1_host')
-BCPRINTER_PRINTER1_PORT = int(options.get('bcprinter', 'printer1_port'))
-BCPRINTER_PRINTER2_HOST = options.get('bcprinter', 'printer2_host')
-BCPRINTER_PRINTER2_PORT = int(options.get('bcprinter', 'printer2_port'))
+BCPRINTER_PRINTER1_HOST = None
+if options.has_option('bcprinter', 'printer1_host'):
+    BCPRINTER_PRINTER1_HOST = options.get('bcprinter', 'printer1_host')
+BCPRINTER_PRINTER1_PORT=9100
+if options.has_option('bcprinter', 'printer1_port'):
+    BCPRINTER_PRINTER1_PORT = int(options.get('bcprinter', 'printer1_port'))
+BCPRINTER_PRINTER2_HOST = None
+if options.has_option('bcprinter', 'printer2_host'):
+    BCPRINTER_PRINTER1_HOST = options.get('bcprinter', 'printer2_host')
+BCPRINTER_PRINTER2_PORT=9100
+if options.has_option('bcprinter', 'printer2_port'):
+    BCPRINTER_PRINTER2_PORT = int(options.get('bcprinter', 'printer2_port'))
 
