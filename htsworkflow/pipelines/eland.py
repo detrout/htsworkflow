@@ -12,6 +12,7 @@ import types
 
 from htsworkflow.pipelines.runfolder import ElementTree, LANE_LIST
 from htsworkflow.pipelines.samplekey import SampleKey
+from htsworkflow.pipelines.genomemap import GenomeMap
 from htsworkflow.util.ethelp import indent, flatten
 from htsworkflow.util.opener import autoopen
 
@@ -97,9 +98,7 @@ class ElandLane(ResultLane):
         self._mapped_reads = None
         self._match_codes = None
         self._reads = None
-        if genome_map is None:
-            genome_map = {}
-        self.genome_map = genome_map
+        self.genome_map = GenomeMap(genome_map)
         self.eland_type = None
 
         if xml is not None:
@@ -718,16 +717,16 @@ class ELAND(collections.MutableMapping):
                          gs_template.format(key.sample, key.lane)))
 
 
-        genome_map = {}
+        genome_map = GenomeMap()
         if genome_maps is not None:
-            genome_map = genome_maps[key.lane]
+            genome_map = GenomeMap(genome_maps[key.lane])
         elif len(genomesize) > 0:
-            print "Found {0}".format(genomesize)
-            genome_map = build_genome_size_map(genomesize[0])
+            LOGGER.info("Found {0}".format(genomesize))
+            genome_map.parse_genomesize(genomesize[0])
         elif gerald is not None:
             genome_dir = gerald.lanes[key].eland_genome
             if genome_dir is not None:
-                genome_map = build_genome_fasta_map(genome_dir)
+                genome_map.scan_genome_dir(genome_dir)
 
         lane = ElandLane(pathnames, key.sample, key.lane, key.read, genome_map)
 
@@ -872,50 +871,6 @@ class ElandMatch(object):
         if self._part is not None: name.append('P%s' % (self.part,))
         return '<ElandMatch(' + "_".join(name) + ')>'
 
-def build_genome_fasta_map(genome_dir):
-    # build fasta to fasta file map
-    LOGGER.info("Building genome map")
-    genome = genome_dir.split(os.path.sep)[-1]
-    fasta_map = {}
-    for vld_file in glob(os.path.join(genome_dir, '*.vld')):
-        is_link = False
-        if os.path.islink(vld_file):
-            is_link = True
-        vld_file = os.path.realpath(vld_file)
-        path, vld_name = os.path.split(vld_file)
-        name, ext = os.path.splitext(vld_name)
-        if is_link:
-            fasta_map[name] = name
-        else:
-            fasta_map[name] = os.path.join(genome, name)
-    return fasta_map
-
-def build_genome_size_map(pathname):
-    """Guess what genome we're using"""
-    sizes = {}
-    tree = ElementTree.parse(pathname)
-    for element in tree.getroot():
-        name = element.attrib['contigName']
-        bases = int(element.attrib['totalBases'])
-        sizes[name] = bases
-
-    # guess genome names
-    if sizes.get('chr1', 0) == 197195432:
-        genome = 'mm9'
-    elif sizes.get('chr1', 0) == 247249719:
-        genome = 'hg19'
-    elif sizes.get('chrI', 0) == 230218:
-        genome = 'sacCer3'
-    elif len(sizes) == 1:
-        genome = os.path.splitext(sizes.keys()[0])[0]
-    else:
-        raise RuntimeError("Unrecognized genome type, update detection")
-
-    fasta_map = {}
-    for k,v in sizes.items():
-        fasta_map[k] = genome + '/' + k
-
-    return fasta_map
 
 def extract_eland_sequence(instream, outstream, start, end):
     """
