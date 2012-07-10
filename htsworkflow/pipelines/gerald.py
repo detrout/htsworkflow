@@ -405,7 +405,9 @@ class LaneSpecificRunParameters(collections.MutableMapping):
         real_key = self._find_key(key)
         if real_key is not None:
             return self._lanes[real_key]
-        raise KeyError("%s not found" % (repr(key),))
+        raise KeyError("%s not found in %s" % (
+            repr(key),
+            ",".join((repr(k) for k in self._lanes.keys()))))
 
     def __setitem__(self, key, value):
         if len(self._lanes) > 100:

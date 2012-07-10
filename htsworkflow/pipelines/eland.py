@@ -711,10 +711,19 @@ class ELAND(collections.MutableMapping):
         # runfolder summary_report
         names = [ os.path.split(p)[1] for p in pathnames]
         LOGGER.info("Adding eland files %s" %(",".join(names),))
+        basedir = os.path.split(pathnames[0])[0]
+        gs_template = "{0}_*_L{1:03}_genomesize.xml"
+        genomesize = glob(
+            os.path.join(basedir,
+                         gs_template.format(key.sample, key.lane)))
+
 
         genome_map = {}
         if genome_maps is not None:
             genome_map = genome_maps[key.lane]
+        elif len(genomesize) > 0:
+            print "Found {0}".format(genomesize)
+            genome_map = build_genome_size_map(genomesize[0])
         elif gerald is not None:
             genome_dir = gerald.lanes[key].eland_genome
             if genome_dir is not None:
@@ -881,6 +890,32 @@ def build_genome_fasta_map(genome_dir):
             fasta_map[name] = os.path.join(genome, name)
     return fasta_map
 
+def build_genome_size_map(pathname):
+    """Guess what genome we're using"""
+    sizes = {}
+    tree = ElementTree.parse(pathname)
+    for element in tree.getroot():
+        name = element.attrib['contigName']
+        bases = int(element.attrib['totalBases'])
+        sizes[name] = bases
+
+    # guess genome names
+    if sizes.get('chr1', 0) == 197195432:
+        genome = 'mm9'
+    elif sizes.get('chr1', 0) == 247249719:
+        genome = 'hg19'
+    elif sizes.get('chrI', 0) == 230218:
+        genome = 'sacCer3'
+    elif len(sizes) == 1:
+        genome = os.path.splitext(sizes.keys()[0])[0]
+    else:
+        raise RuntimeError("Unrecognized genome type, update detection")
+
+    fasta_map = {}
+    for k,v in sizes.items():
+        fasta_map[k] = genome + '/' + k
+
+    return fasta_map
 
 def extract_eland_sequence(instream, outstream, start, end):
     """

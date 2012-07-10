@@ -211,7 +211,7 @@ def get_runs(runfolder, flowcell_id=None):
         for aligned in glob(aligned_glob):
             LOGGER.info("Found aligned directory %s" % (aligned,))
             try:
-                g = gerald.HiSeq(aligned)
+                g = gerald.gerald(aligned)
                 p = PipelineRun(runfolder, flowcell_id)
                 p.datadir = datadir
                 p.image_analysis = image_analysis
