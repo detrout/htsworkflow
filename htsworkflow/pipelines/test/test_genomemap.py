@@ -10,17 +10,34 @@ import unittest
 from htsworkflow.pipelines.runfolder import ElementTree
 from htsworkflow.pipelines import genomemap
 
-class TestGenomeMap(unittest.TestCase):
-    def test_genomesizes_xml(self):
-        xml = ElementTree.fromstring("""<sequenceSizes>
+MINI_GENOME_XML = '''<sequenceSizes>
         <chromosome fileName="chr2.fa" contigName="chr2" totalBases="181748087"/>
         <chromosome fileName="chr1.fa" contigName="chr1" totalBases="197195432"/>
- </sequenceSizes>
-""")
+</sequenceSizes>
+'''
+class TestGenomeMap(unittest.TestCase):
+    def test_genomesizes_xml(self):
+        xml = ElementTree.fromstring(MINI_GENOME_XML)
         g = genomemap.GenomeMap()
         g.build_map_from_element(xml)
 
         self.assertTrue('chr1.fa' in g)
+        self.assertEqual(g['chr1.fa'], 'mm9/chr1.fa')
+
+    def test_genomesizes_file(self):
+        g = genomemap.GenomeMap()
+        try:
+            tempdir = tempfile.mkdtemp(prefix='tmp_genome')
+            name = os.path.join(tempdir, '11111_NoIndex_L001_genomesize.xml')
+            stream = open(name, 'w')
+            stream.write(MINI_GENOME_XML)
+            stream.close()
+            g.parse_genomesize(name)
+        finally:
+            shutil.rmtree(tempdir)
+
+        self.assertTrue('chr1.fa' in g)
+        self.assertEqual(len(g), 2)
         self.assertEqual(g['chr1.fa'], 'mm9/chr1.fa')
 
     def test_simulated_genome_dir(self):
