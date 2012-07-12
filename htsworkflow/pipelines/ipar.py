@@ -226,7 +226,8 @@ def ipar(pathname):
         # its still live.
 
     # look for parameter xml file
-    paramfiles = [os.path.join(pathname, 'config.xml'),
+    paramfiles = [os.path.join(pathname, 'RTAConfig.xml'),
+                  os.path.join(pathname, 'config.xml'),
                   os.path.join(path, '.params')]
     for paramfile in paramfiles:
         if os.path.exists(paramfile):
