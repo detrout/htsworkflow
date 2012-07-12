@@ -55,25 +55,49 @@ class PipelineRun(object):
     def _get_flowcell_id(self):
         # extract flowcell ID
         if self._flowcell_id is None:
-            config_dir = os.path.join(self.pathname, 'Config')
-            flowcell_id_path = os.path.join(config_dir, 'FlowcellId.xml')
-            if os.path.exists(flowcell_id_path):
-                flowcell_id_tree = ElementTree.parse(flowcell_id_path)
-                self._flowcell_id = flowcell_id_tree.findtext('Text')
-            else:
-                path_fields = self.pathname.split('_')
-                if len(path_fields) > 0:
-                    # guessing last element of filename
-                   self._flowcell_id = path_fields[-1]
-                else:
-                   self._flowcell_id = 'unknown'
+            self._flowcell_id = self._get_flowcell_id_from_runinfo()
+        if self._flowcell_id is None:
+            self._flowcell_id = self._get_flowcell_id_from_flowcellid()
+        if self._flowcell_id is None:
+            self._flowcell_id = self._get_flowcell_id_from_path()
+        if self._flowcell_id is None:
+            self._flowcell_id = 'unknown'
 
-                   LOGGER.warning(
-                       "Flowcell id was not found, guessing %s" % (
-                       self._flowcell_id))
+            LOGGER.warning(
+                "Flowcell id was not found, guessing %s" % (
+                    self._flowcell_id))
 
         return self._flowcell_id
     flowcell_id = property(_get_flowcell_id)
+
+    def _get_flowcell_id_from_flowcellid(self):
+        """Extract flowcell id from a Config/FlowcellId.xml file
+        """
+        config_dir = os.path.join(self.pathname, 'Config')
+        flowcell_id_path = os.path.join(config_dir, 'FlowcellId.xml')
+        if os.path.exists(flowcell_id_path):
+            flowcell_id_tree = ElementTree.parse(flowcell_id_path)
+            return flowcell_id_tree.findtext('Text')
+
+    def _get_flowcell_id_from_runinfo(self):
+        """Read RunInfo file for flowcell id
+        """
+        runinfo = os.path.join(self.pathname, 'RunInfo.xml')
+        if os.path.exists(runinfo):
+            tree = ElementTree.parse(runinfo)
+            root = tree.getroot()
+            fc_nodes = root.xpath('/RunInfo/Run/Flowcell')
+            if len(fc_nodes) == 1:
+                return fc_nodes[0].text
+
+
+    def _get_flowcell_id_from_path(self):
+        """Guess a flowcell name from the path
+        """
+        path_fields = self.pathname.split('_')
+        if len(path_fields) > 0:
+            # guessing last element of filename
+            return path_fields[-1]
 
     def _get_runfolder_name(self):
         if self.gerald is None:
@@ -340,7 +364,7 @@ def summarize_mapped_reads(genome_map, mapped_reads):
     genome = 'unknown'
     for k, v in mapped_reads.items():
         path, k = os.path.split(k)
-        if len(path) > 0 and not genome_map.has_key(path):
+        if len(path) > 0 and path not in genome_map:
             genome = path
             genome_reads += v
         else:
@@ -350,37 +374,40 @@ def summarize_mapped_reads(genome_map, mapped_reads):
 
 def summarize_lane(gerald, lane_id):
     report = []
-    summary_results = gerald.summary.lane_results
-    for end in range(len(summary_results)):
-      eland_result = gerald.eland_results.results[end][lane_id]
-      report.append("Sample name %s" % (eland_result.sample_name))
-      report.append("Lane id %s end %s" % (eland_result.lane_id, end))
-      if end < len(summary_results) and summary_results[end].has_key(eland_result.lane_id):
-          cluster = summary_results[end][eland_result.lane_id].cluster
-          report.append("Clusters %d +/- %d" % (cluster[0], cluster[1]))
-      report.append("Total Reads: %d" % (eland_result.reads))
+    lane_results = gerald.summary.lane_results
+    eland_result = gerald.eland_results[lane_id]
+    report.append("Sample name %s" % (eland_result.sample_name))
+    report.append("Lane id %s end %s" % (lane_id.lane, lane_id.read))
 
-      if hasattr(eland_result, 'match_codes'):
-          mc = eland_result.match_codes
-          nm = mc['NM']
-          nm_percent = float(nm) / eland_result.reads * 100
-          qc = mc['QC']
-          qc_percent = float(qc) / eland_result.reads * 100
+    if lane_id.read < len(lane_results) and \
+           lane_id.lane in lane_results[lane_id.read]:
+        summary_results = lane_results[lane_id.read][lane_id.lane]
+        cluster = summary_results.cluster
+        report.append("Clusters %d +/- %d" % (cluster[0], cluster[1]))
+    report.append("Total Reads: %d" % (eland_result.reads))
 
-          report.append("No Match: %d (%2.2g %%)" % (nm, nm_percent))
-          report.append("QC Failed: %d (%2.2g %%)" % (qc, qc_percent))
-          report.append('Unique (0,1,2 mismatches) %d %d %d' % \
-                        (mc['U0'], mc['U1'], mc['U2']))
-          report.append('Repeat (0,1,2 mismatches) %d %d %d' % \
-                        (mc['R0'], mc['R1'], mc['R2']))
+    if hasattr(eland_result, 'match_codes'):
+        mc = eland_result.match_codes
+        nm = mc['NM']
+        nm_percent = float(nm) / eland_result.reads * 100
+        qc = mc['QC']
+        qc_percent = float(qc) / eland_result.reads * 100
 
-      if hasattr(eland_result, 'genome_map'):
-          report.append("Mapped Reads")
-          mapped_reads = summarize_mapped_reads(eland_result.genome_map, eland_result.mapped_reads)
-          for name, counts in mapped_reads.items():
+        report.append("No Match: %d (%2.2g %%)" % (nm, nm_percent))
+        report.append("QC Failed: %d (%2.2g %%)" % (qc, qc_percent))
+        report.append('Unique (0,1,2 mismatches) %d %d %d' % \
+                      (mc['U0'], mc['U1'], mc['U2']))
+        report.append('Repeat (0,1,2 mismatches) %d %d %d' % \
+                      (mc['R0'], mc['R1'], mc['R2']))
+
+    if hasattr(eland_result, 'genome_map'):
+        report.append("Mapped Reads")
+        mapped_reads = summarize_mapped_reads(eland_result.genome_map,
+                                              eland_result.mapped_reads)
+        for name, counts in mapped_reads.items():
             report.append("  %s: %d" % (name, counts))
 
-      report.append('')
+        report.append('')
     return report
 
 def summary_report(runs):
@@ -392,14 +419,12 @@ def summary_report(runs):
         # print a run name?
         report.append('Summary for %s' % (run.name,))
 	# sort the report
-	eland_keys = run.gerald.eland_results.results[0].keys()
-	eland_keys.sort(alphanum)
-
-	for lane_id in eland_keys:
-            report.extend(summarize_lane(run.gerald, lane_id))
-            report.append('---')
-            report.append('')
-        return os.linesep.join(report)
+	eland_keys = sorted(run.gerald.eland_results.keys())
+    for lane_id in eland_keys:
+        report.extend(summarize_lane(run.gerald, lane_id))
+        report.append('---')
+        report.append('')
+    return os.linesep.join(report)
 
 def is_compressed(filename):
     if os.path.splitext(filename)[1] == ".gz":
