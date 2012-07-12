@@ -26,9 +26,12 @@ def make_runfolder(obj=None):
     flowcell_id = 'D07K6ACXX'
     temp_dir = tempfile.mkdtemp(prefix='tmp_runfolder_')
 
-    runfolder_dir = os.path.join(temp_dir,
-                                 '110815_SN787_0101_A{0}'.format(flowcell_id))
+    runfolder_dir = os.path.join(
+        temp_dir,
+        '110815_SN787_0101_A{0}'.format(flowcell_id))
     os.mkdir(runfolder_dir)
+
+    make_runinfo(runfolder_dir, flowcell_id)
 
     data_dir = os.path.join(runfolder_dir, 'Data')
     os.mkdir(data_dir)
@@ -50,6 +53,7 @@ def make_runfolder(obj=None):
     make_aligned_config_1_12(aligned_dir)
 
     if obj is not None:
+        obj.flowcell_id = flowcell_id
         obj.temp_dir = temp_dir
         obj.runfolder_dir = runfolder_dir
         obj.data_dir = data_dir
@@ -245,19 +249,13 @@ class RunfolderTests(unittest.TestCase):
                 self.failUnlessEqual(l1.sequence_type, l2.sequence_type)
 
     def test_runfolder(self):
-        return
         runs = runfolder.get_runs(self.runfolder_dir)
 
         # do we get the flowcell id from the filename?
         self.failUnlessEqual(len(runs), 1)
-        name = 'run_4286GAAXX_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
-        self.failUnlessEqual(runs[0].name, name)
-
-        # do we get the flowcell id from the FlowcellId.xml file
-        make_flowcell_id(self.runfolder_dir, '207BTAAXY')
-        runs = runfolder.get_runs(self.runfolder_dir)
-        self.failUnlessEqual(len(runs), 1)
-        name = 'run_207BTAAXY_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
+        self.assertEqual(runs[0].flowcell_id, self.flowcell_id)
+        name = 'run_%s_%s.xml' % ( self.flowcell_id,
+                                   date.today().strftime('%Y-%m-%d'),)
         self.failUnlessEqual(runs[0].name, name)
 
         r1 = runs[0]

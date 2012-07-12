@@ -11,6 +11,7 @@ from htsworkflow.pipelines import ipar
 from htsworkflow.pipelines import bustard
 from htsworkflow.pipelines import gerald
 from htsworkflow.pipelines import runfolder
+from htsworkflow.pipelines.samplekey import SampleKey
 from htsworkflow.pipelines.runfolder import ElementTree
 
 from htsworkflow.pipelines.test.simulate_runfolder import *
@@ -157,7 +158,6 @@ class RunfolderTests(unittest.TestCase):
         # just make sure that element tree can serialize the tree
         xml_str = ElementTree.tostring(xml)
         g2 = gerald.Gerald(xml=xml)
-        return
 
         # do it all again after extracting from the xml file
         self.failUnlessEqual(g.version, g2.version)
@@ -184,9 +184,9 @@ class RunfolderTests(unittest.TestCase):
 
             g_eland = g.eland_results
             g2_eland = g2.eland_results
-            for lane in g_eland.results[0].keys():
-                g_results = g_eland.results[0][lane]
-                g2_results = g2_eland.results[0][lane]
+            for lane in g_eland:
+                g_results = g_eland[lane]
+                g2_results = g2_eland[lane]
                 self.failUnlessEqual(g_results.reads,
                                      g2_results.reads)
                 if isinstance(g_results, eland.ElandLane):
@@ -204,7 +204,6 @@ class RunfolderTests(unittest.TestCase):
 
 
     def test_eland(self):
-        return
         hg_map = {'Lambda.fa': 'Lambda.fa'}
         for i in range(1,22):
           short_name = 'chr%d.fa' % (i,)
@@ -216,11 +215,12 @@ class RunfolderTests(unittest.TestCase):
         eland_container = gerald.eland(self.gerald_dir, genome_maps=genome_maps)
 
         # I added sequence lanes to the last 2 lanes of this test case
-        for i in range(1,7):
-            lane = eland_container.results[0][i]
+        lanes = [ SampleKey(lane=i, read=1, sample='s') for i in range(1,7) ]
+        for key in lanes:
+            lane = eland_container[key]
             self.failUnlessEqual(lane.reads, 6)
             self.failUnlessEqual(lane.sample_name, "s")
-            self.failUnlessEqual(lane.lane_id, i)
+            self.failUnlessEqual(lane.lane_id, key.lane)
             self.failUnlessEqual(len(lane.mapped_reads), 17)
             self.failUnlessEqual(lane.mapped_reads['hg18/chr5.fa'], 4)
             self.failUnlessEqual(lane.match_codes['U0'], 3)
@@ -233,14 +233,14 @@ class RunfolderTests(unittest.TestCase):
             self.failUnlessEqual(lane.match_codes['QC'], 0)
 
         # test scarf
-        lane = eland_container.results[0][7]
+        lane = eland_container[SampleKey(lane=7, read=1, sample='s')]
         self.failUnlessEqual(lane.reads, 5)
         self.failUnlessEqual(lane.sample_name, 's')
         self.failUnlessEqual(lane.lane_id, 7)
         self.failUnlessEqual(lane.sequence_type, eland.SequenceLane.SCARF_TYPE)
 
         # test fastq
-        lane = eland_container.results[0][8]
+        lane = eland_container[SampleKey(lane=8, read=1, sample='s')]
         self.failUnlessEqual(lane.reads, 3)
         self.failUnlessEqual(lane.sample_name, 's')
         self.failUnlessEqual(lane.lane_id, 8)
@@ -251,9 +251,9 @@ class RunfolderTests(unittest.TestCase):
         xml_str = ElementTree.tostring(xml)
         e2 = gerald.ELAND(xml=xml)
 
-        for i in range(1,9):
-            l1 = eland_container.results[0][i]
-            l2 = e2.results[0][i]
+        for key in eland_container:
+            l1 = eland_container[key]
+            l2 = e2[key]
             self.failUnlessEqual(l1.reads, l2.reads)
             self.failUnlessEqual(l1.sample_name, l2.sample_name)
             self.failUnlessEqual(l1.lane_id, l2.lane_id)
@@ -273,7 +273,6 @@ class RunfolderTests(unittest.TestCase):
                 self.failUnlessEqual(l1.sequence_type, l2.sequence_type)
 
     def test_runfolder(self):
-        return
         runs = runfolder.get_runs(self.runfolder_dir)
 
         # do we get the flowcell id from the filename?

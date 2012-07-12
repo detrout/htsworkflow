@@ -50,6 +50,31 @@ def make_flowcell_id(runfolder_dir, flowcell_id=None):
     f.write(config)
     f.close()
 
+def make_runinfo(runfolder_dir, flowcell_id):
+    """Simulate a RunInfo.xml file created by >= RTA 1.9
+    """
+    xml = '''<?xml version="1.0"?>
+<RunInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="2">
+  <Run Id="{runfolder}" Number="101">
+    <Flowcell>{flowcell}</Flowcell>
+    <Instrument>SN787</Instrument>
+    <Date>110815</Date>
+    <Reads>
+      <Read Number="1" NumCycles="50" IsIndexedRead="N" />
+      <Read Number="2" NumCycles="7" IsIndexedRead="Y" />
+    </Reads>
+    <FlowcellLayout LaneCount="8" SurfaceCount="2" SwathCount="3" TileCount="8" />
+    <AlignToPhiX />
+  </Run>
+</RunInfo>
+'''
+    path, runfolder = os.path.split(runfolder_dir)
+    runinfo = os.path.join(runfolder_dir, 'RunInfo.xml')
+    stream = open(runinfo, 'w')
+    stream.write(xml.format(runfolder=runfolder, flowcell=flowcell_id))
+    stream.close()
+    return runinfo
+
 def make_bustard_config132(image_dir):
     source = os.path.join(TESTDATA_DIR, 'bustard-config132.xml')
     destination = os.path.join(image_dir, 'config.xml')
