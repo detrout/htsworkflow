@@ -86,8 +86,8 @@ def load_run_xml_file(parser, args, opts):
     runs = []
     if opts.run_xml:
         # handle ~ shortcut
-        opt.run_xml = os.path.expanduser(opt.run_xml)
-        tree = ElementTree.parse(opt.run_xml).getroot()
+        opts.run_xml = os.path.expanduser(opts.run_xml)
+        tree = ElementTree.parse(opts.run_xml).getroot()
         runs.append(runfolder.PipelineRun(xml=tree))
     return runs
 
