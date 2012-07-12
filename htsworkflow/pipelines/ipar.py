@@ -71,7 +71,7 @@ class IPAR(object):
     def __init__(self, xml=None):
         self.tree = None
         self.date = datetime.datetime.today()
-	self._tiles = None
+        self._tiles = None
         if xml is not None:
             self.set_elements(xml)
 
