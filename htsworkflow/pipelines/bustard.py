@@ -170,7 +170,8 @@ def crosstalk_matrix_from_bustard_config(bustard_path, bustard_config_tree):
         # we estimated the matrix from something in this run.
         # though we don't really care which lane it was
         if matrix_auto_lane == 0:
-            auto_lane_fragment = ""
+            # its defaulting to all of the lanes, so just pick one
+            auto_lane_fragment = "_1"
         else:
             auto_lane_fragment = "_%d" % ( matrix_auto_lane,)
 
