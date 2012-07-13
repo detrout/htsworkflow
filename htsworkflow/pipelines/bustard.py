@@ -362,7 +362,7 @@ def bustard_from_ga1(pathname):
     if len(groups) < 3:
         msg = "Not enough information to create attributes"\
               " from directory name: %s"
-        LOGGER.error(msg % (self.pathname,))
+        LOGGER.error(msg % (pathname,))
         return None
 
     b = Bustard()
