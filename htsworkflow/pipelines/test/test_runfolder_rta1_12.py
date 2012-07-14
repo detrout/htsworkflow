@@ -258,7 +258,12 @@ class RunfolderTests(unittest.TestCase):
                                    date.today().strftime('%Y-%m-%d'),)
         self.failUnlessEqual(runs[0].name, name)
 
+        bustard_dir = os.path.join(self.runfolder_dir, 'Unaligned')
         r1 = runs[0]
+        self.failUnlessEqual(r1.bustard.sequence_format, 'fastq')
+        self.failUnlessEqual(r1.bustard.pathname, bustard_dir)
+        self.failUnlessEqual(r1.gerald.runfolder_name, 'Unaligned')
+
         xml = r1.get_elements()
         xml_str = ElementTree.tostring(xml)
 
@@ -267,7 +272,6 @@ class RunfolderTests(unittest.TestCase):
         self.failIfEqual(r2.image_analysis, None)
         self.failIfEqual(r2.bustard, None)
         self.failIfEqual(r2.gerald, None)
-
 
 def suite():
     return unittest.makeSuite(RunfolderTests,'test')

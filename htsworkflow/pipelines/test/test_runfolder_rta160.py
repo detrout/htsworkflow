@@ -258,15 +258,22 @@ class RunfolderTests(unittest.TestCase):
         name = 'run_207BTAAXY_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
         self.failUnlessEqual(runs[0].name, name)
 
+        bustard_dir = os.path.join(self.runfolder_dir, 'Data',
+                                   'Intensities', 'BaseCalls')
         r1 = runs[0]
         xml = r1.get_elements()
         xml_str = ElementTree.tostring(xml)
+        self.failUnlessEqual(r1.bustard.sequence_format, 'qseq')
+        self.failUnlessEqual(r1.bustard.pathname, bustard_dir)
+        self.failUnlessEqual(r1.gerald.runfolder_name,
+                             '090220_HWI-EAS229_0093_30VR0AAXX')
 
         r2 = runfolder.PipelineRun(xml=xml)
         self.failUnlessEqual(r1.name, r2.name)
         self.failIfEqual(r2.image_analysis, None)
         self.failIfEqual(r2.bustard, None)
         self.failIfEqual(r2.gerald, None)
+
 
 
 def suite():

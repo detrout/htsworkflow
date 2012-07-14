@@ -25,7 +25,7 @@
     <EMAIL_DOMAIN>domain.com</EMAIL_DOMAIN>
     <EMAIL_LIST>${logName}</EMAIL_LIST>
     <EMAIL_SERVER>localhost:25</EMAIL_SERVER>
-    <EXPT_DIR>/mmjggl/nicodemus/data01/sequencer/110815_SN787_0101_AD07K6ACXX/Unaligned_1MM</EXPT_DIR>
+    <EXPT_DIR>/mmjggl/nicodemus/data01/sequencer/110815_SN787_0101_AD07K6ACXX/Unaligned</EXPT_DIR>
     <FLAT_TXT_GZ_SUFFIX>Flat.txt.gz</FLAT_TXT_GZ_SUFFIX>
     <FLOWCELL>D07K6ACXX</FLOWCELL>
     <GENE_MD_GZ_SUFFIX>_gene.md.gz</GENE_MD_GZ_SUFFIX>

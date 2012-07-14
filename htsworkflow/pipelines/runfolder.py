@@ -201,7 +201,13 @@ def get_runs(runfolder, flowcell_id=None):
     from htsworkflow.pipelines import bustard
     from htsworkflow.pipelines import gerald
 
-    def scan_post_image_analysis(runs, runfolder, datadir, image_analysis, pathname):
+    def scan_post_image_analysis(runs, runfolder, datadir, image_analysis,
+                                 pathname):
+        added = build_aligned_runs(image_analysis, runs, datadir, runfolder)
+        # If we're a multiplexed run, don't look for older run type.
+        if added > 0:
+            return
+
         LOGGER.info("Looking for bustard directories in %s" % (pathname,))
         bustard_dirs = glob(os.path.join(pathname, "Bustard*"))
         # RTA BaseCalls looks enough like Bustard.
@@ -211,9 +217,9 @@ def get_runs(runfolder, flowcell_id=None):
             b = bustard.bustard(bustard_pathname)
             build_gerald_runs(runs, b, image_analysis, bustard_pathname, datadir, pathname, runfolder)
 
-            build_aligned_runs(image_analysis, runs, b, datadir, runfolder)
 
     def build_gerald_runs(runs, b, image_analysis, bustard_pathname, datadir, pathname, runfolder):
+        start = len(runs)
         gerald_glob = os.path.join(bustard_pathname, 'GERALD*')
         LOGGER.info("Looking for gerald directories in %s" % (pathname,))
         for gerald_pathname in glob(gerald_glob):
@@ -228,23 +234,27 @@ def get_runs(runfolder, flowcell_id=None):
                 runs.append(p)
             except IOError, e:
                 LOGGER.error("Ignoring " + str(e))
+        return len(runs) - start
 
 
-    def build_aligned_runs(image_analysis, runs, b, datadir, runfolder):
+    def build_aligned_runs(image_analysis, runs, datadir, runfolder):
+        start = len(runs)
         aligned_glob = os.path.join(runfolder, 'Aligned*')
         for aligned in glob(aligned_glob):
             LOGGER.info("Found aligned directory %s" % (aligned,))
             try:
                 g = gerald.gerald(aligned)
                 p = PipelineRun(runfolder, flowcell_id)
+                bustard_pathname = os.path.join(runfolder, g.runfolder_name)
+
                 p.datadir = datadir
                 p.image_analysis = image_analysis
-                p.bustard = b
+                p.bustard = bustard.bustard(bustard_pathname)
                 p.gerald = g
                 runs.append(p)
             except IOError, e:
                 LOGGER.error("Ignoring " + str(e))
-
+        return len(runs) - start
     datadir = os.path.join(runfolder, 'Data')
 
     LOGGER.info('Searching for runs in ' + datadir)
@@ -560,7 +570,7 @@ def compress_eland_results(gerald_object, cycle_dir, num_jobs=1):
       q.run()
 
 
-def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, raw_format='qseq'):
+def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, raw_format=None):
     """
     Iterate over runfolders in runs extracting the most useful information.
       * run parameters (in run-*.xml)
@@ -593,7 +603,8 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, r
       r.save(cycle_dir)
 
       # save illumina flowcell status report
-      save_flowcell_reports(os.path.join(r.image_analysis.pathname, '..'), cycle_dir)
+      save_flowcell_reports(os.path.join(r.image_analysis.pathname, '..'),
+                            cycle_dir)
 
       # save stuff from bustard
       # grab IVC plot
@@ -601,26 +612,7 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, r
 
       # build base call saving commands
       if site is not None:
-        lanes = []
-        for lane in range(1, 9):
-          lane_parameters = r.gerald.lanes.get(lane, None)
-          if lane_parameters is not None and lane_parameters.analysis != 'none':
-            lanes.append(lane)
-
-        run_name = srf.pathname_to_run_name(r.pathname)
-        seq_cmds = []
-        LOGGER.info("Raw Format is: %s" % (raw_format, ))
-        if raw_format == 'fastq':
-            rawpath = os.path.join(r.pathname, r.gerald.runfolder_name)
-            LOGGER.info("raw data = %s" % (rawpath,))
-            srf.copy_hiseq_project_fastqs(run_name, rawpath, site, cycle_dir)
-        elif raw_format == 'qseq':
-            seq_cmds = srf.make_qseq_commands(run_name, r.bustard.pathname, lanes, site, cycle_dir)
-        elif raw_format == 'srf':
-            seq_cmds = srf.make_srf_commands(run_name, r.bustard.pathname, lanes, site, cycle_dir, 0)
-        else:
-            raise ValueError('Unknown --raw-format=%s' % (raw_format))
-        srf.run_commands(r.bustard.pathname, seq_cmds, num_jobs)
+          save_raw_data(num_jobs, r, site, raw_format, cycle_dir)
 
       # save stuff from GERALD
       # copy stuff out of the main run
@@ -635,6 +627,31 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, r
       # md5 all the compressed files once we're done
       md5_commands = srf.make_md5_commands(cycle_dir)
       srf.run_commands(cycle_dir, md5_commands, num_jobs)
+
+def save_raw_data(num_jobs, r, site, raw_format, cycle_dir):
+    lanes = []
+    for lane in range(1, 9):
+        lane_parameters = r.gerald.lanes.get(lane, None)
+        if lane_parameters is not None and lane_parameters.analysis != 'none':
+            lanes.append(lane)
+
+    run_name = srf.pathname_to_run_name(r.pathname)
+    seq_cmds = []
+    if raw_format is None:
+        raw_format = r.bustard.sequence_format
+
+    LOGGER.info("Raw Format is: %s" % (raw_format, ))
+    if raw_format == 'fastq':
+        rawpath = os.path.join(r.pathname, r.gerald.runfolder_name)
+        LOGGER.info("raw data = %s" % (rawpath,))
+        srf.copy_hiseq_project_fastqs(run_name, rawpath, site, cycle_dir)
+    elif raw_format == 'qseq':
+        seq_cmds = srf.make_qseq_commands(run_name, r.bustard.pathname, lanes, site, cycle_dir)
+    elif raw_format == 'srf':
+        seq_cmds = srf.make_srf_commands(run_name, r.bustard.pathname, lanes, site, cycle_dir, 0)
+    else:
+        raise ValueError('Unknown --raw-format=%s' % (raw_format))
+    srf.run_commands(r.bustard.pathname, seq_cmds, num_jobs)
 
 def rm_list(files, dry_run=True):
     for f in files:
