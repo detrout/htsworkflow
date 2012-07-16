@@ -241,18 +241,16 @@ class Bustard(object):
 
     def _get_sequence_format(self):
         """Guess sequence format"""
-        projects = glob(os.path.join(self.pathname, 'Project_*'))
+        project_glob = os.path.join(self.pathname, 'Project_*')
+        LOGGER.debug("Scanning: %s" % (project_glob,))
+        projects = glob(project_glob)
         if len(projects) > 0:
             # Hey we look like a demultiplexed run
             return 'fastq'
+        seqs = glob(os.path.join(self.pathname, '*_seq.txt'))
+        if len(seqs) > 0:
+            return 'srf'
         return 'qseq'
-        #qseqs = glob(os.path.join(self.pathname, '*_qseq.txt'))
-        #if len(qseqs) > 0:
-        #    return 'qseq'
-        #seqs = glob(os.path.join(self.pathname, '*_seq.txt'))
-        #if len(seqs) > 0:
-        #    return 'srf'
-        return None
     sequence_format = property(_get_sequence_format)
 
     def _get_software_version(self):

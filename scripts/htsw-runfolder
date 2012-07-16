@@ -173,8 +173,8 @@ def make_parser():
     parser.add_option('--site', default=None,
                       help='create srf files tagged with the provided '\
                       'site name')
-    parser.add_option('--raw-format', dest="raw_format", default='qseq',
-                      choices=['qseq', 'srf', 'fastq'],
+    parser.add_option('--raw-format', dest="raw_format", default=None,
+                      choices=['qseq', 'srf', 'fastq', None],
                       help='Specify which type of raw format to use. '
                            'Currently supported options: qseq, srf, fastq')
     parser.add_option('-u', '--use-run', dest='use_run', default=None,

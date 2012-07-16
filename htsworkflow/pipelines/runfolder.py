@@ -583,50 +583,50 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, r
         output_base_dir = os.getcwd()
 
     for r in runs:
-      result_dir = os.path.join(output_base_dir, r.flowcell_id)
-      LOGGER.info("Using %s as result directory" % (result_dir,))
-      if not os.path.exists(result_dir):
-        os.mkdir(result_dir)
+        result_dir = os.path.join(output_base_dir, r.flowcell_id)
+        LOGGER.info("Using %s as result directory" % (result_dir,))
+        if not os.path.exists(result_dir):
+            os.mkdir(result_dir)
 
-      # create cycle_dir
-      cycle = "C%d-%d" % (r.image_analysis.start, r.image_analysis.stop)
-      LOGGER.info("Filling in %s" % (cycle,))
-      cycle_dir = os.path.join(result_dir, cycle)
-      cycle_dir = os.path.abspath(cycle_dir)
-      if os.path.exists(cycle_dir):
-        LOGGER.error("%s already exists, not overwriting" % (cycle_dir,))
-        continue
-      else:
-        os.mkdir(cycle_dir)
+        # create cycle_dir
+        cycle = "C%d-%d" % (r.image_analysis.start, r.image_analysis.stop)
+        LOGGER.info("Filling in %s" % (cycle,))
+        cycle_dir = os.path.join(result_dir, cycle)
+        cycle_dir = os.path.abspath(cycle_dir)
+        if os.path.exists(cycle_dir):
+            LOGGER.error("%s already exists, not overwriting" % (cycle_dir,))
+            continue
+        else:
+            os.mkdir(cycle_dir)
 
-      # save run file
-      r.save(cycle_dir)
+        # save run file
+        r.save(cycle_dir)
 
-      # save illumina flowcell status report
-      save_flowcell_reports(os.path.join(r.image_analysis.pathname, '..'),
-                            cycle_dir)
+        # save illumina flowcell status report
+        save_flowcell_reports(os.path.join(r.image_analysis.pathname, '..'),
+                              cycle_dir)
 
-      # save stuff from bustard
-      # grab IVC plot
-      save_ivc_plot(r.bustard, cycle_dir)
+        # save stuff from bustard
+        # grab IVC plot
+        save_ivc_plot(r.bustard, cycle_dir)
 
-      # build base call saving commands
-      if site is not None:
-          save_raw_data(num_jobs, r, site, raw_format, cycle_dir)
+        # build base call saving commands
+        if site is not None:
+            save_raw_data(num_jobs, r, site, raw_format, cycle_dir)
 
-      # save stuff from GERALD
-      # copy stuff out of the main run
-      g = r.gerald
+        # save stuff from GERALD
+        # copy stuff out of the main run
+        g = r.gerald
 
-      # save summary file
-      save_summary_file(r, cycle_dir)
+        # save summary file
+        save_summary_file(r, cycle_dir)
 
-      # compress eland result files
-      compress_eland_results(g, cycle_dir, num_jobs)
+        # compress eland result files
+        compress_eland_results(g, cycle_dir, num_jobs)
 
-      # md5 all the compressed files once we're done
-      md5_commands = srf.make_md5_commands(cycle_dir)
-      srf.run_commands(cycle_dir, md5_commands, num_jobs)
+        # md5 all the compressed files once we're done
+        md5_commands = srf.make_md5_commands(cycle_dir)
+        srf.run_commands(cycle_dir, md5_commands, num_jobs)
 
 def save_raw_data(num_jobs, r, site, raw_format, cycle_dir):
     lanes = []
