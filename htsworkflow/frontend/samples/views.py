@@ -19,6 +19,7 @@ from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.eland import ResultLane
+from htsworkflow.pipelines.samplekey import SampleKey
 from htsworkflow.util.conversion import unicode_or_none, parse_flowcell_id
 from htsworkflow.util import makebed
 from htsworkflow.util import opener
@@ -134,7 +135,7 @@ def library_to_flowcells(request, lib_id):
     lane_summary_list = []
     eland_results = []
     for fc, lane_number in flowcell_list:
-        lane_summary, err_list = _summary_stats(fc, lane_number)
+        lane_summary, err_list = _summary_stats(fc, lane_number, lib_id)
         lane_summary_list.extend(lane_summary)
 
         eland_results.extend(_make_eland_results(fc, lane_number, flowcell_run_results))
@@ -270,7 +271,7 @@ def bedfile_fc_cnm_eland_lane(request, flowcell_id, cnm, lane, ucsc_compatible=F
         return HttpResponse(bedgen, mimetype="application/x-bedfile")
 
 
-def _summary_stats(flowcell_id, lane_id):
+def _summary_stats(flowcell_id, lane_id, library_id):
     """
     Return the summary statistics for a given flowcell, lane, and end.
     """
@@ -293,18 +294,20 @@ def _summary_stats(flowcell_id, lane_id):
 
         run = load_pipeline_run_xml(xmlpath)
         gerald_summary = run.gerald.summary.lane_results
-        for end in range(len(gerald_summary)):
-            end_summary = run.gerald.eland_results.results[end]
-            if end_summary.has_key(lane_id):
-                eland_summary = run.gerald.eland_results.results[end][lane_id]
-            else:
-                eland_summary = ResultLane(lane_id=lane_id, end=end)
+        key = SampleKey(lane=lane_id, sample='s')
+        eland_results = list(run.gerald.eland_results.find_keys(key))
+        key = SampleKey(lane=lane_id, sample=library_id)
+        eland_results.extend(run.gerald.eland_results.find_keys(key))
+        for key in eland_results:
+            eland_summary = run.gerald.eland_results.results[key]
             # add information to lane_summary
             eland_summary.flowcell_id = flowcell_id
-            if len(gerald_summary) > end and gerald_summary[end].has_key(lane_id):
-                eland_summary.clusters = gerald_summary[end][lane_id].cluster
-            else:
-                eland_summary.clusters = None
+
+            read = key.read-1 if key.read is not None else 0
+            try:
+                eland_summary.clusters = gerald_summary[read][key.lane].cluster
+            except IndexError as e:
+                eland_summary.clustes = None
             eland_summary.cycle_width = cycle_width
             if hasattr(eland_summary, 'genome_map'):
                 eland_summary.summarized_reads = runfolder.summarize_mapped_reads(
@@ -314,9 +317,9 @@ def _summary_stats(flowcell_id, lane_id):
             # grab some more information out of the flowcell db
             flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
             #pm_field = 'lane_%d_pM' % (lane_id)
-            lane_obj = flowcell.lane_set.get(lane_number=lane_id)
+            lanes = flowcell.lane_set.filter(lane_number=lane_id)
             eland_summary.flowcell = flowcell
-            eland_summary.lane = lane_obj
+            eland_summary.lanes = lanes
 
             summary_list.append(eland_summary)
 
@@ -348,7 +351,7 @@ def _make_eland_results(flowcell_id, lane_number, interesting_flowcells):
       return []
 
     flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
-    lane = flowcell.lane_set.get(lane_number=lane_number)
+    lanes = flowcell.lane_set.filter(lane_number=lane_number)
     # Loop throw storage devices if a result has been archived
     storage_id_list = []
     if cur_fc is not None:
@@ -369,13 +372,13 @@ def _make_eland_results(flowcell_id, lane_number, interesting_flowcells):
 
     results = []
     for cycle in cur_fc.keys():
-        result_path = cur_fc[cycle]['eland_results'].get(lane, None)
-        result_link = make_result_link(fc_id, cycle, lane, result_path)
+        result_path = cur_fc[cycle]['eland_results'].get(lanes[0], None)
+        result_link = make_result_link(fc_id, cycle, lanes[0], result_path)
         results.append({'flowcell_id': fc_id,
                         'flowcell': flowcell,
                         'run_date': flowcell.run_date,
                         'cycle': cycle,
-                        'lane': lane,
+                        'lane': lanes[0],
                         'summary_url': make_summary_url(flowcell_id, cycle),
                         'result_url': result_link[0],
                         'result_label': result_link[1],

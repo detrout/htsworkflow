@@ -1,3 +1,4 @@
+import types
 import logging
 import urlparse
 from django.db import models
@@ -280,6 +281,8 @@ class Library(models.Model):
       sequences = self.index_sequences()
       if sequences is None:
           return ""
+      if type(sequences) in types.StringTypes:
+          return sequences
       multiplex_ids = sequences.keys()
       multiplex_ids.sort()
       return seperator.join(( "%s:%s" %(i,sequences[i]) for i in multiplex_ids))
