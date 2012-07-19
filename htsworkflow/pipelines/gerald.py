@@ -439,7 +439,10 @@ class LaneSpecificRunParameters(collections.MutableMapping):
             if k.matches(lookup_key):
                 results.append(k)
         if len(results) > 1:
-            raise ValueError("More than one key matched query %s" % (str(lookup_key),))
+            errmsg = "Key %s matched multiple keys: %s"
+            raise ValueError(errmsg % (str(lookup_key),
+                                       ",".join((str(x) for x in results))))
+
         elif len(results) == 1:
             return results[0]
         else:

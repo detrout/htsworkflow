@@ -630,7 +630,7 @@ def extract_results(runs, output_base_dir=None, site="individual", num_jobs=1, r
 
 def save_raw_data(num_jobs, r, site, raw_format, cycle_dir):
     lanes = []
-    for lane in range(1, 9):
+    for lane in r.gerald.lanes:
         lane_parameters = r.gerald.lanes.get(lane, None)
         if lane_parameters is not None and lane_parameters.analysis != 'none':
             lanes.append(lane)
