@@ -4,6 +4,7 @@ import os
 import shutil
 
 from htsworkflow.util import queuecommands
+from htsworkflow.pipelines.samplekey import SampleKey
 
 LOGGER = logging.getLogger(__name__)
 
@@ -52,12 +53,15 @@ def make_srf_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel
   LOGGER.info("run_name %s" % (run_name,))
 
   cmd_list = []
-  for lane in lanes:
+  for key in lanes:
+    if not isinstance(key, SampleKey):
+       errmsg = "Expected %s got %s"
+       raise ValueError(errmsg % (str(SampleKey), str(type(key))))
     name_prefix = '%s_%%l_' % (run_name,)
-    destname = '%s_%s_%d.srf' % (site_name, run_name, lane)
+    destname = '%s_%s_%d.srf' % (site_name, run_name, key.lane)
     destdir = os.path.normpath(destdir)
     dest_path = os.path.join(destdir, destname)
-    seq_pattern = 's_%d_*_seq.txt' % (lane,)
+    seq_pattern = 's_%d_*_seq.txt' % (key.lane,)
 
     if cmdlevel == SOLEXA2SRF:
         cmd = ['solexa2srf',
@@ -71,7 +75,7 @@ def make_srf_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel
                '-o', dest_path,
                seq_pattern]
     elif cmdlevel == ILLUMINA2SRF11:
-        seq_pattern = 's_%d_*_qseq.txt' % (lane,)
+        seq_pattern = 's_%d_*_qseq.txt' % (key.lane,)
         cmd = ['illumina2srf',
                '-o', dest_path,
                seq_pattern]
@@ -132,20 +136,23 @@ def make_qseq_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdleve
   LOGGER.info("run_name %s" % (run_name,))
 
   cmd_list = []
-  for lane in lanes:
+  for key in lanes:
+    if not isinstance(key, SampleKey):
+      errmsg = "Expected %s got %s"
+      raise ValueError(errmsg % (str(SampleKey), str(type(key))))
     name_prefix = '%s_%%l_%%t_' % (run_name,)
     destdir = os.path.normpath(destdir)
     qseq_patterns = create_qseq_patterns(bustard_dir)
 
     for read, pattern in qseq_patterns:
       if read is None:
-        destname = '%s_%s_l%d.tar.bz2' % (site_name, run_name, lane)
+        destname = '%s_%s_l%d.tar.bz2' % (site_name, run_name, key.lane)
         dest_path = os.path.join(destdir, destname)
       else:
-        destname = '%s_%s_l%d_r%d.tar.bz2' % (site_name, run_name, lane, read)
+        destname = '%s_%s_l%d_r%d.tar.bz2' % (site_name, run_name, key.lane, read)
         dest_path = os.path.join(destdir, destname)
 
-      cmd = " ".join(['tar', 'cjf', dest_path, pattern % (lane,) ])
+      cmd = " ".join(['tar', 'cjf', dest_path, pattern % (key.lane,) ])
       LOGGER.info("Generated command: " + cmd)
       cmd_list.append(cmd)
 
