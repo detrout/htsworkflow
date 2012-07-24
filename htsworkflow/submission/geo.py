@@ -40,6 +40,7 @@ class GEOSubmission(Submission):
             metadata['supplimental'] = self.get_sample_files(
                 an_analysis,
                 geoSoftNS['supplemental'])
+            metadata['run'] = self.get_run_details(an_analysis)
             samples.append(metadata)
 
         soft_template = loader.get_template('geo_submission.soft')
@@ -98,8 +99,8 @@ class GEOSubmission(Submission):
 
         results = self.execute_query(query_template, context)
         for r in results:
-
             r['dataProtocol'] = str(r['dataProtocol']).replace('\n', ' ')
+
         return results
 
     def get_sample_files(self, analysis_node, file_class):
@@ -110,6 +111,17 @@ class GEOSubmission(Submission):
         context = Context({
             'submission': str(analysis_node.uri),
             'file_class': str(file_class)
+            })
+
+        return self.execute_query(query_template, context)
+
+    def get_run_details(self, analysis_node):
+        """Get information about runs
+        """
+        query_template = loader.get_template('geo_run_details.sparql')
+
+        context = Context({
+            'submission': str(analysis_node.uri),
             })
 
         return self.execute_query(query_template, context)

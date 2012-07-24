@@ -149,13 +149,44 @@ class Submission(object):
                 RDF.Statement(fileNode, dafTermOntology['md5sum'], md5))
 
     def _add_library_details_to_model(self, libNode):
+        # attributes that can have multiple values
+        set_attributes = set((libraryOntology['has_lane'],
+                              libraryOntology['has_mappings'],
+                              dafTermOntology['has_file']))
         parser = RDF.Parser(name='rdfa')
         new_statements = parser.parse_as_stream(libNode.uri)
+        toadd = []
         for s in new_statements:
+            # always add "collections"
+            if s.predicate in set_attributes:
+                toadd.append(s)
+                continue
             # don't override things we already have in the model
             targets = list(self.model.get_targets(s.subject, s.predicate))
             if len(targets) == 0:
-                self.model.append(s)
+                toadd.append(s)
+
+        for s in toadd:
+            self.model.append(s)
+
+        self._add_lane_details(libNode)
+
+    def _add_lane_details(self, libNode):
+        """Import lane details
+        """
+        query = RDF.Statement(libNode, libraryOntology['has_lane'], None)
+        lanes = []
+        for lane_stmt in self.model.find_statements(query):
+            lanes.append(lane_stmt.object)
+
+        parser = RDF.Parser(name='rdfa')
+        for lane in lanes:
+            LOGGER.debug("Importing %s" % (lane.uri,))
+            try:
+                parser.parse_into_model(self.model, lane.uri)
+            except RDF.RedlandError, e:
+                LOGGER.error("Error accessing %s" % (lane.uri,))
+                raise e
 
 
     def find_best_match(self, filename):

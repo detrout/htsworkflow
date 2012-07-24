@@ -1,0 +1,27 @@
+PREFIX libraryOntology: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
+PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
+PREFIX ncbiTaxon: <http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=>
+PREFIX geoSoft: <http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#>
+PREFIX cells: <http://encodewiki.ucsc.edu/EncodeDCC/index.php/Cell_lines#>
+
+# right now we're just grabbing the sequencer model
+# it might make sense to report each of the flowcell/image software.
+#select distinct ?flowcell ?image_software ?image_version ?basecall_software ?basecall_version ?sequencer_model
+select distinct ?sequencer_model
+where {
+  <{{submission}}> submissionOntology:library ?library ;
+                   a submissionOntology:submission .
+
+  ?library libraryOntology:library_id ?library_id ;
+           libraryOntology:has_lane ?lane ;
+           a libraryOntology:library .
+  OPTIONAL { ?flowcell libraryOntology:has_lane ?lane .
+             ?flowcell libraryOntology:image_software ?image_software ;
+                       libraryOntology:image_version ?image_version ;
+                       libraryOntology:basecall_software ?basecall_software ;
+                       libraryOntology:basecall_version ?basecall_version ;
+                       libraryOntology:sequenced_by ?sequencer .
+             ?sequencer libraryOntology:sequencer_model ?sequencer_model
+  }
+}

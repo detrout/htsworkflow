@@ -4,11 +4,8 @@
 ^SAMPLE={{row.name}}
 !Sample_type=SRA
 !Sample_title={{row.name}}
-!Sample_series_id = {{ series_id }}
-!Sample_instrument_model = Illumina Genome Analyzer
-!Sample_instrument_model = Illumina Genome Analyzer II
-!Sample_instrument_model = Illumina Genome Analyzer IIx
-!Sample_instrument_model = Illumina HiSeq 2000
+!Sample_series_id = {{ series_id }}{% for run in row.run %}
+!Sample_instrument_model = {{ run.sequencer_model }}{% endfor %}
 !Sample_channel_count = 1
 !Sample_organism_ch1 = {{ row.species_name }}
 !Sample_taxid_ch1 = {{ row.taxon_id }}
