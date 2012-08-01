@@ -1,15 +1,13 @@
 {% for name, value in series %}{{name}} = {{value}}
-{% endfor %}!Series_platform_id = {{ platform_id }}
+{% endfor %}
 {% for row in samples %}
 ^SAMPLE={{row.name}}
 !Sample_type=SRA
 !Sample_title={{row.name}}
-!Sample_series_id = {{ series_id }}{% for run in row.run %}
-!Sample_instrument_model = {{ run.sequencer_model }}{% endfor %}
-!Sample_channel_count = 1
-!Sample_organism_ch1 = {{ row.species_name }}
-!Sample_taxid_ch1 = {{ row.taxon_id }}
-!Sample_platform_id = {{ platform_id }}
+!Sample_series_id={{ series_id }}
+!Sample_channel_count=1
+!Sample_organism_ch1={{ row.species_name }}
+!Sample_taxid_ch1={{ row.taxon_id }}
 !Sample_source_name_ch1={{row.cell}}
 !Sample_library_strategy={{ row.experiment_type }}
 !Sample_library_source={{row.library_source}}
@@ -17,20 +15,26 @@
 !Sample_growth_protocol_ch1={{ row.growthProtocol|safe }}
 !Sample_extract_protocol={{ row.extractProtocol|safe }}
 !Sample_data_processing={{ row.dataProtocol|safe }}
-!Sample_molecule_ch1 = {{ row.extractMolecule }}
-!Sample_characteristics_ch1 = labExpId: {{ row.library_id }}
-!Sample_characteristics_ch1 = replicate: {{ row.replicate }}
+!Sample_molecule_ch1={{ row.extractMolecule }}
+!Sample_characteristics_ch1=labExpId: {{ row.library_id }}
+!Sample_characteristics_ch1=replicate: {{ row.replicate }}
 {% if row.cell %}{% spaceless %}
-!Sample_characteristics_ch1 = cell: {{ row.cell }}
+!Sample_characteristics_ch1=cell: {{ row.cell }}
 {% endspaceless %}{% endif %}
 {% if row.readType %}{% spaceless %}
-!Sample_characteristics_ch1 = readType: {{ row.readType }}
+!Sample_characteristics_ch1=readType: {{ row.readType }}
 {% endspaceless %}{% endif %}{% if row.antibody %}{% spaceless %}
-!Sample_characteristics_ch1 = cell: {{ row.antibody }}
-{% endspaceless %}{% endif %}{% for raw in row.raw %}
-!Sample_raw_file_{{forloop.counter}}={{raw.filename}}
+!Sample_characteristics_ch1=cell: {{ row.antibody }}
+{% endspaceless %}{% endif %}{% for run in row.run %}
+!Sample_characteristics_ch1=Illumina image processing pipeline version: {{ run.image_software }}-{{ run.image_version }}
+!Sample_characteristics_ch1=Illumina base-calling pipeline version: {{ run.image_software }}-{{ run.image_version }}{% endfor %}{% for raw in row.raw %}
+!Sample_raw_file_{{forloop.counter}}={{ raw.filename }}
 !Sample_raw_file_type_{{forloop.counter}}={{raw.file_type_label}}
-!Sample_raw_file_checksum_{{forloop.counter}}={{raw.md5sum}}{% endfor %}{% for sup in row.supplimental %}
+!Sample_raw_file_insert_size_{{forloop.counter}}={{ row.insertLength }}
+!Sample_raw_file_read_length_{{forloop.counter}}={{raw.read_length}}
+!Sample_raw_file_instrument_model_{{forloop.counter}}={{raw.sequencer_model}}
+!Sample_raw_file_checksum_{{forloop.counter}}={{raw.md5sum}}
+!sample_raw_file_single_or_paired-end={{raw.flowcell_type}}{% endfor %}{% for sup in row.supplimental %}
 !Sample_supplementary_file_{{forloop.counter}}={{sup.filename}}
 !Sample_supplementary_file_checksum_{{forloop.counter}}={{sup.md5sum}}
 {% endfor %}{% endfor %}
