@@ -21,6 +21,9 @@ from zipfile import ZipFile
 
 import RDF
 
+if not 'DJANGO_SETTINGS_MODULE' in os.environ:
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
+
 from htsworkflow.util import api
 from htsworkflow.util.rdfhelp import \
      dafTermOntology, \
