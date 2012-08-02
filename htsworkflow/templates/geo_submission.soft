@@ -1,7 +1,5 @@
-{% for name, value in series %}{{name}} = {{value}}
-{% endfor %}
-{% for row in samples %}
-^SAMPLE={{row.name}}
+{% for name, value in series %}{{name}}={{value}}
+{% endfor %}{% for row in samples %}^SAMPLE={{row.name}}
 !Sample_type=SRA
 !Sample_title={{row.name}}
 !Sample_series_id={{ series_id }}
@@ -34,7 +32,7 @@
 !Sample_raw_file_read_length_{{forloop.counter}}={{raw.read_length}}
 !Sample_raw_file_instrument_model_{{forloop.counter}}={{raw.sequencer_model}}
 !Sample_raw_file_checksum_{{forloop.counter}}={{raw.md5sum}}
-!sample_raw_file_single_or_paired-end={{raw.flowcell_type}}{% endfor %}{% for sup in row.supplimental %}
+!sample_raw_file_single_or_paired-end_{{forloop.counter}}={{raw.flowcell_type}}{% endfor %}{% for sup in row.supplimental %}
 !Sample_supplementary_file_{{forloop.counter}}={{sup.filename}}
 !Sample_supplementary_file_checksum_{{forloop.counter}}={{sup.md5sum}}
 {% endfor %}{% endfor %}
