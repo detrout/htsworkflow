@@ -322,41 +322,52 @@ class SequenceFileTests(unittest.TestCase):
 
     def test_scan_for_sequences(self):
         # simulate tree
-        seen = set()
-        should_see = set(['fastq', 'srf', 'eland', 'qseq'])
-        with SimulateTree() as tree:
+        file_types_seen = set()
+        file_types_to_see = set(['fastq', 'srf', 'eland', 'qseq'])
+        lanes = set()
+        lanes_to_see = set((1,2,3))
+        with SimulateSimpleTree() as tree:
             seqs = sequences.scan_for_sequences([tree.root, '/a/b/c/98345'])
             for s in seqs:
                 self.assertEquals(s.flowcell, '42BW9AAXX')
                 self.assertEquals(s.cycle, 33)
-                seen.add(s.filetype)
+                self.assertEquals(s.project, None)
+                lanes.add(s.lane)
+                file_types_seen.add(s.filetype)
 
             self.assertEquals(len(seqs), 8)
 
+        self.assertEqual(lanes, lanes_to_see)
+        self.assertEqual(file_types_to_see, file_types_seen)
         self.assertRaises(ValueError, sequences.scan_for_sequences, '/tmp')
-        self.assertEqual(len(should_see.difference(seen)), 0)
+
+    def test_scan_for_hiseq_sequences(self):
+        # simulate tree
+        file_types_seen = set()
+        file_types_to_see = set(['split_fastq'])
+        lanes = set()
+        lanes_to_see = set((1,2))
+        projects_seen = set()
+        projects_to_see = set(('11111', '21111', '31111'))
+        with SimulateHiSeqTree() as tree:
+            seqs = sequences.scan_for_sequences([tree.root, '/a/b/c/98345'])
+            for s in seqs:
+                self.assertEquals(s.flowcell, 'C02AAACXX')
+                self.assertEquals(s.cycle, 101)
+                lanes.add(s.lane)
+                file_types_seen.add(s.filetype)
+                projects_seen.add(s.project)
+
+            self.assertEquals(len(seqs), 12)
+
+        self.assertEqual(lanes, lanes_to_see)
+        self.assertEqual(file_types_to_see, file_types_seen)
+        self.assertEqual(projects_to_see, projects_seen)
+        # make sure we require a list, and not the confusing iterating over
+        # a string
+        self.assertRaises(ValueError, sequences.scan_for_sequences, '/tmp')
 
 class SimulateTree(object):
-    def __init__(self):
-        self.root = tempfile.mkdtemp(prefix='sequences_')
-
-        fc = self.mkflowcell(self.root, '42BW9AAXX', 'C1-33')
-        files = [
-            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r1.tar.bz2',
-            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r2.tar.bz2',
-            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r1.tar.bz2.md5',
-            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r2.tar.bz2.md5',
-            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_2.srf',
-            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l3_r1_pass.fastq.bz2',
-            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l3_r2_pass.fastq.bz2',
-            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l3_r1_nopass.fastq.bz2',
-            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l3_r2_nopass.fastq.bz2',
-            's_1_eland_extended.txt.bz2',
-            's_1_eland_extended.txt.bz2.md5',
-            ]
-        for f in files:
-            self.mkfile(fc, f)
-
     def __enter__(self):
         return self
 
@@ -377,6 +388,62 @@ class SimulateTree(object):
         stream.write(pathname)
         stream.write(os.linesep)
         stream.close()
+
+class SimulateHiSeqTree(SimulateTree):
+    def __init__(self):
+        self.root = tempfile.mkdtemp(prefix='sequences_')
+
+        files = [
+            ('Project_11111', '11111_AAGGCC_L001_R1_001.fastq.gz',),
+            ('Project_11111', '11111_AAGGCC_L001_R1_002.fastq.gz',),
+            ('Project_11111', '11111_AAGGCC_L001_R2_001.fastq.gz',),
+            ('Project_11111', '11111_AAGGCC_L001_R2_002.fastq.gz',),
+            ('Project_21111', '21111_TTTTTT_L001_R1_001.fastq.gz',),
+            ('Project_21111', '21111_TTTTTT_L001_R1_002.fastq.gz',),
+            ('Project_21111', '21111_TTTTTT_L001_R2_001.fastq.gz',),
+            ('Project_21111', '21111_TTTTTT_L001_R2_002.fastq.gz',),
+            ('Project_31111', '31111_NoIndex_L002_R1_001.fastq.gz',),
+            ('Project_31111', '31111_NoIndex_L002_R1_002.fastq.gz',),
+            ('Project_31111', '31111_NoIndex_L002_R2_001.fastq.gz',),
+            ('Project_31111', '31111_NoIndex_L002_R2_002.fastq.gz',),
+            ('.', '11111_AAGGCC_L001_R1_001_export.txt.gz'),
+            ('.', '11111_AAGGCC_L001_R1_002_export.txt.gz'),
+            ('.', '11111_AAGGCC_L001_R2_001_export.txt.gz'),
+            ('.', '11111_AAGGCC_L001_R2_002_export.txt.gz'),
+            ('.', '21111_AAGGCC_L001_R1_001_export.txt.gz'),
+            ('.', '21111_AAGGCC_L001_R1_002_export.txt.gz'),
+            ('.', '21111_AAGGCC_L001_R2_001_export.txt.gz'),
+            ('.', '21111_AAGGCC_L001_R2_002_export.txt.gz'),
+            ('.', '31111_NoIndex_L002_R1_001_export.txt.gz'),
+            ('.', '31111_NoIndex_L002_R1_002_export.txt.gz'),
+            ('.', '31111_NoIndex_L002_R2_001_export.txt.gz'),
+            ('.', '31111_NoIndex_L002_R2_002_export.txt.gz'),
+            ]
+        for d, f in files:
+            fc = self.mkflowcell(self.root, 'C02AAACXX', 'C1-101', d)
+            self.mkfile(fc, f)
+
+class SimulateSimpleTree(SimulateTree):
+    def __init__(self):
+        self.root = tempfile.mkdtemp(prefix='sequences_')
+
+        fc = self.mkflowcell(self.root, '42BW9AAXX', 'C1-33')
+        files = [
+            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r1.tar.bz2',
+            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r2.tar.bz2',
+            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r1.tar.bz2.md5',
+            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r2.tar.bz2.md5',
+            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_2.srf',
+            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l3_r1_pass.fastq.bz2',
+            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l3_r2_pass.fastq.bz2',
+            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l3_r1_nopass.fastq.bz2',
+            'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l3_r2_nopass.fastq.bz2',
+            's_1_eland_extended.txt.bz2',
+            's_1_eland_extended.txt.bz2.md5',
+            ]
+        for f in files:
+            self.mkfile(fc, f)
+
 
 def suite():
     return unittest.makeSuite(SequenceFileTests,'test')
