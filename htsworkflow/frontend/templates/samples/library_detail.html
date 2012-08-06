@@ -33,7 +33,7 @@
       <td property="libns:date" content="{{result.run_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ result.run_date|date}}</td>
       <td>{{ result.cycle }}</td>
       <td><a href="{{result.flowcell.get_absolute_url}}"><span property="libns:flowcell_id">{{ result.flowcell_id }}</span></a>{% if user.is_staff %}<a href="{{result.flowcell.get_admin_url}}"><img class="icon_button" src="/media/img/admin/icon_changelink.gif" alt="Edit"/></a>{% endif%}</td>
-      <td><a href="{{result.lane.get_absolute_url}}" rel="libns:has_lane"><span property="libns:lane_number" datatype="xsd:decimal">{{ result.lane.lane_number }}</span></a></td>
+      <td>{{ result.lane.lane_number }}</td>
       <td><a href="{{ result.summary_url }}">Summary</a></td>
       <td><a href="{{ result.result_url }}">{{ result.result_label }}</a></td>
       <td>
