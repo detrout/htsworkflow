@@ -3,23 +3,20 @@ PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntol
 PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
 PREFIX ncbiTaxon: <http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=>
 PREFIX geoSoft: <http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#>
+PREFIX cells: <http://encodewiki.ucsc.edu/EncodeDCC/index.php/Cell_lines#>
 
-select distinct ?filename, ?md5sum, ?file_type ?file_type_label ?flowcell_id ?read_length ?flowcell_type ?image_software ?image_version ?basecall_software ?basecall_version ?sequencer_model
-WHERE {
-  <{{submission}}> ucscDaf:has_file ?file ;
+# right now we're just grabbing the sequencer model
+# it might make sense to report each of the flowcell/image software.
+select ?flowcell ?read_length ?image_software ?image_version ?basecall_software ?basecall_version
+where {
+  <{{submission}}> submissionOntology:library ?library ;
                    a submissionOntology:submission .
 
-  ?file ucscDaf:filename ?filename ;
-        ucscDaf:md5sum ?md5sum ;
-        libraryOntology:has_lane ?lane ;
-        a ?file_type .
-  ?file_type a <{{file_class}}> ;
-             geoSoft:fileTypeLabel ?file_type_label .
-
-  OPTIONAL { ?lane libraryOntology:flowcell ?flowcell .
-             ?flowcell libraryOntology:flowcell_id ?flowcell_id ;
-                       libraryOntology:read_length ?read_length ;
-                       libraryOntology:flowcell_type ?flowcell_type ;
+  ?library libraryOntology:library_id ?library_id ;
+           libraryOntology:has_lane ?lane ;
+           a libraryOntology:library .
+  OPTIONAL { ?flowcell libraryOntology:has_lane ?lane .
+             ?flowcell libraryOntology:read_length ?read_length ;
                        libraryOntology:image_software ?image_software ;
                        libraryOntology:image_version ?image_version ;
                        libraryOntology:basecall_software ?basecall_software ;

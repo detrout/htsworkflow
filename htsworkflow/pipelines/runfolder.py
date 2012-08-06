@@ -632,7 +632,7 @@ def save_raw_data(num_jobs, r, site, raw_format, cycle_dir):
     lanes = []
     for lane in r.gerald.lanes:
         lane_parameters = r.gerald.lanes.get(lane, None)
-        if lane_parameters is not None and lane_parameters.analysis != 'none':
+        if lane_parameters is not None:
             lanes.append(lane)
 
     run_name = srf.pathname_to_run_name(r.pathname)

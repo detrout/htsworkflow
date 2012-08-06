@@ -35,11 +35,9 @@ class GEOSubmission(Submission):
                 errmsg = 'Confused there are more than one samples for %s'
                 LOGGER.debug(errmsg % (str(an_analysis,)))
             metadata = metadata[0]
-            metadata['raw'] = self.get_sample_files(an_analysis,
-                                                    geoSoftNS['raw'])
-            metadata['supplimental'] = self.get_sample_files(
-                an_analysis,
-                geoSoftNS['supplemental'])
+            metadata['raw'] = self.get_raw_files(an_analysis)
+            metadata['supplimental'] = self.get_sample_files(an_analysis)
+            metadata['run'] = self.get_run_details(an_analysis)
             samples.append(metadata)
 
         soft_template = loader.get_template('geo_submission.soft')
@@ -98,18 +96,106 @@ class GEOSubmission(Submission):
 
         results = self.execute_query(query_template, context)
         for r in results:
-
             r['dataProtocol'] = str(r['dataProtocol']).replace('\n', ' ')
+
         return results
 
-    def get_sample_files(self, analysis_node, file_class):
-        """Gather files
+    def get_sample_files(self, analysis_node):
+        """Gather derived files
         """
         query_template = loader.get_template('geo_files.sparql')
 
         context = Context({
             'submission': str(analysis_node.uri),
-            'file_class': str(file_class)
+            'file_class': str(geoSoftNS['supplemental'])
+            })
+
+        return self.execute_query(query_template, context)
+
+    def get_raw_files(self, analysis_node):
+        """Gather raw data e.g. fastq files.
+        """
+        query_template = loader.get_template('geo_fastqs.sparql')
+
+        context = Context({
+            'submission': str(analysis_node.uri),
+            'file_class': str(geoSoftNS['raw']),
+            })
+
+        lanes = {}
+        for row in self.execute_query(query_template, context):
+            data = {}
+            for k, v in row.items():
+                data[k] = v
+            lane = str(data['lane'])
+            lanes.setdefault(lane, []).append(data)
+        result = []
+        for lane, files in lanes.items():
+            if len(files) > 2:
+                errmsg = "Don't know what to do with more than 2 raw files"
+                raise ValueError(errmsg)
+            elif len(files) == 2:
+                is_paired = True
+            elif len(files) == 1:
+                is_paired = False
+            elif len(files) == 0:
+                raise RuntimeError("Empty lane list discovered")
+            files = self._format_filename(files, is_paired)
+            files = self._format_flowcell_type(files, is_paired)
+            files = self._format_read_length(files, is_paired)
+            result.append(files[0])
+        return result
+
+    def _format_flowcell_type(self, files, is_paired):
+        """Used by get_raw_files to format value for single_or_paired-end
+        """
+        for f in files:
+            if 'flowcell_type' in f:
+                flowcell_type = fromTypedNode(f['flowcell_type'])
+                if flowcell_type is None:
+                    pass
+                elif flowcell_type.lower() == "paired":
+                    f['flowcell_type'] = 'paired-end'
+                else:
+                    f['flowcell_type'] = 'single'
+
+        return files
+
+    def _format_read_length(self, files, is_paired):
+        """Format
+        """
+        read_count = 2 if is_paired else 1
+        for f in files:
+            if 'read_length' in f:
+                read_length = str(fromTypedNode(f['read_length']))
+                f['read_length'] = ",".join([read_length] * read_count)
+        return files
+
+    def _format_filename(self, files, is_paired):
+        """Format file name for get_raw_files, also report if paired
+        """
+        if len(files) == 2:
+            # should be paired
+            f0 = files[0]
+            f1 = files[1]
+            f0['filename'] = "%s, %s" % (str(f0['filename']),
+                                         str(f1['filename']))
+            f0['md5sum'] = "%s, %s" % (str(f0['md5sum']),
+                                       str(f1['md5sum']))
+            del files[1]
+        else:
+            files[0]['filename'] = str(files[0]['filename'])
+            files[0]['md5sum'] = str(files[0]['md5sum'])
+        return files
+
+
+    def get_run_details(self, analysis_node):
+        """Get information about runs
+        """
+        query_template = loader.get_template('geo_run_details.sparql')
+
+        context = Context({
+            'submission': str(analysis_node.uri),
             })
 
         return self.execute_query(query_template, context)

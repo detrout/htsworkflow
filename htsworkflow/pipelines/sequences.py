@@ -76,7 +76,7 @@ class SequenceFile(object):
     def key(self):
         return (self.flowcell, self.lane, self.read, self.project, self.split)
 
-    def unicode(self):
+    def __unicode__(self):
         return unicode(self.path)
 
     def __eq__(self, other):
@@ -97,6 +97,9 @@ class SequenceFile(object):
                 return False
 
         return True
+
+    def __ne__(self, other):
+        return not self == other
 
     def __repr__(self):
         return u"<%s %s %s %s>" % (self.filetype, self.flowcell, self.lane, self.path)
@@ -255,8 +258,8 @@ def parse_fastq_pf_flag(records):
         elif fastq_type.startswith('all'):
             pf = None
         else:
-            raise ValueError("Unrecognized fastq name %s at %s" % \
-                             (records[-1], os.path.join(path,filename)))
+            raise ValueError("Unrecognized fastq name: %s" % (
+                "_".join(records),))
 
     return pf
 
