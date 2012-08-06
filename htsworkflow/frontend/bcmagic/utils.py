@@ -5,7 +5,7 @@ import socket
 import StringIO
 
 
-def print_zpl(zpl_text, host):
+def print_zpl(zpl_text, host=settings.BCPRINTER_PRINTER1_HOST):
     """
     Sends zpl_text to printer
     """
@@ -15,7 +15,9 @@ def print_zpl(zpl_text, host):
     ftp.quit()
 
 
-def print_zpl_socket(zpl_text, host, port):
+def print_zpl_socket(zpl_text,
+                     host=settings.BCPRINTER_PRINTER1_HOST,
+                     port=settings.BCPRINTER_PRINTER1_PORT):
     """
     Sends zpl_text to printer via a socket
 
