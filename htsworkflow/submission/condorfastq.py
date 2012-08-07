@@ -7,6 +7,7 @@ import sys
 import types
 
 from htsworkflow.pipelines.sequences import scan_for_sequences
+from htsworkflow.pipelines.samplekey import SampleKey
 from htsworkflow.pipelines import qseq2fastq
 from htsworkflow.pipelines import srf2fastq
 from htsworkflow.pipelines import desplit_fastq
@@ -17,6 +18,7 @@ from django.conf import settings
 from django.template import Context, loader
 
 LOGGER = logging.getLogger(__name__)
+
 
 class CondorFastqExtract(object):
     def __init__(self, host, apidata, sequences_path,
@@ -45,7 +47,9 @@ class CondorFastqExtract(object):
         """
         template_map = {'srf': 'srf.condor',
                         'qseq': 'qseq.condor',
-                        'split_fastq': 'split_fastq.condor'}
+                        'split_fastq': 'split_fastq.condor',
+                        'by_sample': 'lane_to_fastq.turtle',
+                        }
 
         condor_entries = self.build_condor_arguments(result_map)
         for script_type in template_map.keys():
@@ -54,8 +58,8 @@ class CondorFastqExtract(object):
                          'logdir': self.log_path,
                          'env': os.environ.get('PYTHONPATH', None),
                          'args': condor_entries[script_type],
+                         'root_url': self.api.root_url,
                          }
-
             context = Context(variables)
 
             with open(script_type + '.condor','w+') as outstream:
@@ -65,11 +69,12 @@ class CondorFastqExtract(object):
         condor_entries = {'srf': [],
                           'qseq': [],
                           'split_fastq': []}
+
         conversion_funcs = {'srf': self.condor_srf_to_fastq,
                             'qseq': self.condor_qseq_to_fastq,
                             'split_fastq': self.condor_desplit_fastq
                             }
-
+        by_sample = {}
         lib_db = self.find_archive_sequence_files(result_map)
         needed_targets = self.find_missing_targets(result_map, lib_db)
 
@@ -88,9 +93,13 @@ class CondorFastqExtract(object):
                 if sources is not None:
                     condor_entries.setdefault(condor_type, []).append(
                         conversion(sources, target_pathname))
+                    for s in sources:
+                        by_sample.setdefault(s.lane_id,[]).append(
+                            target_pathname)
             else:
                 print " need file", target_pathname
 
+        condor_entries['by_sample'] = by_sample
         return condor_entries
 
     def find_archive_sequence_files(self,  result_map):
@@ -109,7 +118,7 @@ class CondorFastqExtract(object):
 
             for lane in lib_info['lane_set']:
                 lane_key = (lane['flowcell'], lane['lane_number'])
-                candidate_lanes[lane_key] = lib_id
+                candidate_lanes[lane_key] = (lib_id, lane['lane_id'])
                 seq_dirs.add(os.path.join(self.sequences_path,
                                              'flowcells',
                                              lane['flowcell']))
@@ -122,8 +131,10 @@ class CondorFastqExtract(object):
 
         for seq in candidate_seq_list:
             lane_key = (seq.flowcell, seq.lane)
-            lib_id = candidate_lanes.get(lane_key, None)
-            if lib_id is not None:
+            candidate_key = candidate_lanes.get(lane_key, None)
+            if candidate_key is not None:
+                lib_id, lane_id = candidate_key
+                seq.lane_id = lane_id
                 lib_info = lib_db[lib_id]
                 lib_info['lanes'].setdefault(lane_key, set()).add(seq)
 
@@ -224,6 +235,9 @@ class CondorFastqExtract(object):
             'sources': paths,
             'ispaired': sources[0].paired,
         }
+
+    def lane_rdf(self, sources, target_pathname):
+        pass
 
 def make_lane_dict(lib_db, lib_id):
     """

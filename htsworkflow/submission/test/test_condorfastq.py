@@ -89,30 +89,35 @@ LIBDATA = {
              u'insert_size': 200,
              u'lane_set': [{u'flowcell': u'30221AAXX',
                             u'lane_number': 4,
+                            u'lane_id': 3400,
                             u'paired_end': False,
                             u'read_length': 33,
                             u'status': u'Unknown',
                             u'status_code': None},
                            {u'flowcell': u'42JUYAAXX',
                             u'lane_number': 5,
+                            u'lane_id': 4200,
                             u'paired_end': True,
                             u'read_length': 76,
                             u'status': u'Unknown',
                             u'status_code': None},
                            {u'flowcell': u'61MJTAAXX',
                             u'lane_number': 6,
+                            u'lane_id': 6600,
                             u'paired_end': False,
                             u'read_length': 76,
                             u'status': u'Unknown',
                             u'status_code': None},
                            {u'flowcell': u'30DY0AAXX',
                             u'lane_number': 8,
+                            u'lane_id': 3800,
                             u'paired_end': True,
                             u'read_length': 76,
                             u'status': u'Unknown',
                             u'status_code': None},
                            {u'flowcell': u'C02F9ACXX',
                             u'lane_number': 3,
+                            u'lane_id': 12300,
                             u'paired_end': True,
                             u'read_length': 101,
                             u'status': u'Unknown',
@@ -136,11 +141,13 @@ FAKE_APIDATA = {'apiid':0, 'apikey': 'foo'}
 
 class FakeApi(object):
     def __init__(self, *args, **kwargs):
-        pass
+        self.root_url = 'http://localhost'
 
     def get_library(self, libid):
         lib_data = LIBDATA[libid]
         return copy.deepcopy(lib_data)
+
+
 
 class TestCondorFastq(unittest.TestCase):
     def setUp(self):
@@ -377,7 +384,6 @@ class TestCondorFastq(unittest.TestCase):
                             arguments[0])
             self.failUnless('11154_NoIndex_L003_R2_002.fastq.gz' in \
                             arguments[1])
-
 
 def suite():
     suite = unittest.makeSuite(TestCondorFastq, 'test')

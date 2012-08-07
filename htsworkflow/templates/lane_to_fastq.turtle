@@ -1,0 +1,3 @@
+{% for key, files in args.items %}{% for f in files %}
+<file://{{ f }}> libraryOntology:has_lane <{{host}}/lane/{{key}}> .
+{% endfor %}{% endfor %}

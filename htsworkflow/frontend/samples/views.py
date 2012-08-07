@@ -92,6 +92,7 @@ def create_library_context(cl):
     cl.result_count = unicode(cl.paginator._count)
     return {'library_list': records }
 
+
 def library(request, todo_only=False):
     queryset = Library.objects.filter(hidden__exact=0)
     if todo_only:
@@ -110,8 +111,10 @@ def library(request, todo_only=False):
     c = RequestContext(request, context)
     return HttpResponse( t.render(c) )
 
+
 def library_not_run(request):
     return library(request, todo_only=True)
+
 
 def library_to_flowcells(request, lib_id):
     """
@@ -459,6 +462,7 @@ def library_dict(library_id):
     for lane in lib.lane_set.all():
         lane_info.append( {'flowcell':lane.flowcell.flowcell_id,
                            'lane_number': lane.lane_number,
+                           'lane_id': lane.id,
                            'paired_end': lane.flowcell.paired_end,
                            'read_length': lane.flowcell.read_length,
                            'status_code': lane.status,
