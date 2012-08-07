@@ -28,16 +28,16 @@ class ClusterStationTestCases(TestCase):
 
     def test_default(self):
         c = models.ClusterStation.default()
-        self.failUnlessEqual(c.id, 2)
+        self.assertEqual(c.id, 2)
 
         c.isdefault = False
         c.save()
 
         total = models.ClusterStation.objects.filter(isdefault=True).count()
-        self.failUnlessEqual(total, 0)
+        self.assertEqual(total, 0)
 
         other_default = models.ClusterStation.default()
-        self.failUnlessEqual(other_default.id, 3)
+        self.assertEqual(other_default.id, 3)
 
 
     def test_update_default(self):
@@ -49,26 +49,26 @@ class ClusterStationTestCases(TestCase):
 
         new_default = models.ClusterStation.default()
 
-        self.failUnless(old_default != new_default)
-        self.failUnlessEqual(new_default, c)
+        self.assertNotEqual(old_default, new_default)
+        self.assertEqual(new_default, c)
 
         total = models.ClusterStation.objects.filter(isdefault=True).count()
-        self.failUnlessEqual(total, 1)
+        self.assertEqual(total, 1)
 
     def test_update_other(self):
         old_default = models.ClusterStation.default()
         total = models.ClusterStation.objects.filter(isdefault=True).count()
-        self.failUnlessEqual(total, 1)
+        self.assertEqual(total, 1)
 
         c = models.ClusterStation.objects.get(pk=1)
         c.name = "Primary Key 1"
         c.save()
 
         total = models.ClusterStation.objects.filter(isdefault=True).count()
-        self.failUnlessEqual(total, 1)
+        self.assertEqual(total, 1)
 
         new_default = models.ClusterStation.default()
-        self.failUnlessEqual(old_default, new_default)
+        self.assertEqual(old_default, new_default)
 
 
 class SequencerTestCases(TestCase):
@@ -77,19 +77,19 @@ class SequencerTestCases(TestCase):
     def test_default(self):
         # starting with no default
         s = models.Sequencer.default()
-        self.failUnlessEqual(s.id, 2)
+        self.assertEqual(s.id, 2)
 
         total = models.Sequencer.objects.filter(isdefault=True).count()
-        self.failUnlessEqual(total, 1)
+        self.assertEqual(total, 1)
 
         s.isdefault = False
         s.save()
 
         total = models.Sequencer.objects.filter(isdefault=True).count()
-        self.failUnlessEqual(total, 0)
+        self.assertEqual(total, 0)
 
         other_default = models.Sequencer.default()
-        self.failUnlessEqual(other_default.id, 7)
+        self.assertEqual(other_default.id, 7)
 
     def test_update_default(self):
         old_default = models.Sequencer.default()
@@ -100,27 +100,27 @@ class SequencerTestCases(TestCase):
 
         new_default = models.Sequencer.default()
 
-        self.failUnless(old_default != new_default)
-        self.failUnlessEqual(new_default, s)
+        self.assertNotEqual(old_default, new_default)
+        self.assertEqual(new_default, s)
 
         total = models.Sequencer.objects.filter(isdefault=True).count()
-        self.failUnlessEqual(total, 1)
+        self.assertEqual(total, 1)
 
 
     def test_update_other(self):
         old_default = models.Sequencer.default()
         total = models.Sequencer.objects.filter(isdefault=True).count()
-        self.failUnlessEqual(total, 1)
+        self.assertEqual(total, 1)
 
         s = models.Sequencer.objects.get(pk=1)
         s.name = "Primary Key 1"
         s.save()
 
         total = models.Sequencer.objects.filter(isdefault=True).count()
-        self.failUnlessEqual(total, 1)
+        self.assertEqual(total, 1)
 
         new_default = models.Sequencer.default()
-        self.failUnlessEqual(old_default, new_default)
+        self.assertEqual(old_default, new_default)
 
 
 class ExperimentsTestCases(TestCase):
@@ -163,48 +163,48 @@ class ExperimentsTestCases(TestCase):
         for fc_id in [u'FC12150', u"42JTNAAXX", "42JU1AAXX"]:
             fc_dict = experiments.flowcell_information(fc_id)
             fc_django = models.FlowCell.objects.get(flowcell_id=fc_id)
-            self.failUnlessEqual(fc_dict['flowcell_id'], fc_id)
-            self.failUnlessEqual(fc_django.flowcell_id, fc_id)
-            self.failUnlessEqual(fc_dict['sequencer'], fc_django.sequencer.name)
-            self.failUnlessEqual(fc_dict['read_length'], fc_django.read_length)
-            self.failUnlessEqual(fc_dict['notes'], fc_django.notes)
-            self.failUnlessEqual(fc_dict['cluster_station'], fc_django.cluster_station.name)
+            self.assertEqual(fc_dict['flowcell_id'], fc_id)
+            self.assertEqual(fc_django.flowcell_id, fc_id)
+            self.assertEqual(fc_dict['sequencer'], fc_django.sequencer.name)
+            self.assertEqual(fc_dict['read_length'], fc_django.read_length)
+            self.assertEqual(fc_dict['notes'], fc_django.notes)
+            self.assertEqual(fc_dict['cluster_station'], fc_django.cluster_station.name)
 
             for lane in fc_django.lane_set.all():
                 lane_contents = fc_dict['lane_set'][lane.lane_number]
                 lane_dict = multi_lane_to_dict(lane_contents)[lane.library_id]
-                self.failUnlessEqual(lane_dict['cluster_estimate'], lane.cluster_estimate)
-                self.failUnlessEqual(lane_dict['comment'], lane.comment)
-                self.failUnlessEqual(lane_dict['flowcell'], lane.flowcell.flowcell_id)
-                self.failUnlessEqual(lane_dict['lane_number'], lane.lane_number)
-                self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
-                self.failUnlessEqual(lane_dict['library_id'], lane.library.id)
-                self.failUnlessAlmostEqual(float(lane_dict['pM']), float(lane.pM))
-                self.failUnlessEqual(lane_dict['library_species'],
+                self.assertEqual(lane_dict['cluster_estimate'], lane.cluster_estimate)
+                self.assertEqual(lane_dict['comment'], lane.comment)
+                self.assertEqual(lane_dict['flowcell'], lane.flowcell.flowcell_id)
+                self.assertEqual(lane_dict['lane_number'], lane.lane_number)
+                self.assertEqual(lane_dict['library_name'], lane.library.library_name)
+                self.assertEqual(lane_dict['library_id'], lane.library.id)
+                self.assertAlmostEqual(float(lane_dict['pM']), float(lane.pM))
+                self.assertEqual(lane_dict['library_species'],
                                      lane.library.library_species.scientific_name)
 
             response = self.client.get('/experiments/config/%s/json' % (fc_id,), apidata)
             # strptime isoformat string = '%Y-%m-%dT%H:%M:%S'
             fc_json = json.loads(response.content)
-            self.failUnlessEqual(fc_json['flowcell_id'], fc_id)
-            self.failUnlessEqual(fc_json['sequencer'], fc_django.sequencer.name)
-            self.failUnlessEqual(fc_json['read_length'], fc_django.read_length)
-            self.failUnlessEqual(fc_json['notes'], fc_django.notes)
-            self.failUnlessEqual(fc_json['cluster_station'], fc_django.cluster_station.name)
+            self.assertEqual(fc_json['flowcell_id'], fc_id)
+            self.assertEqual(fc_json['sequencer'], fc_django.sequencer.name)
+            self.assertEqual(fc_json['read_length'], fc_django.read_length)
+            self.assertEqual(fc_json['notes'], fc_django.notes)
+            self.assertEqual(fc_json['cluster_station'], fc_django.cluster_station.name)
 
 
             for lane in fc_django.lane_set.all():
                 lane_contents = fc_json['lane_set'][unicode(lane.lane_number)]
                 lane_dict = multi_lane_to_dict(lane_contents)[lane.library_id]
 
-                self.failUnlessEqual(lane_dict['cluster_estimate'], lane.cluster_estimate)
-                self.failUnlessEqual(lane_dict['comment'], lane.comment)
-                self.failUnlessEqual(lane_dict['flowcell'], lane.flowcell.flowcell_id)
-                self.failUnlessEqual(lane_dict['lane_number'], lane.lane_number)
-                self.failUnlessEqual(lane_dict['library_name'], lane.library.library_name)
-                self.failUnlessEqual(lane_dict['library_id'], lane.library.id)
-                self.failUnlessAlmostEqual(float(lane_dict['pM']), float(lane.pM))
-                self.failUnlessEqual(lane_dict['library_species'],
+                self.assertEqual(lane_dict['cluster_estimate'], lane.cluster_estimate)
+                self.assertEqual(lane_dict['comment'], lane.comment)
+                self.assertEqual(lane_dict['flowcell'], lane.flowcell.flowcell_id)
+                self.assertEqual(lane_dict['lane_number'], lane.lane_number)
+                self.assertEqual(lane_dict['library_name'], lane.library.library_name)
+                self.assertEqual(lane_dict['library_id'], lane.library.id)
+                self.assertAlmostEqual(float(lane_dict['pM']), float(lane.pM))
+                self.assertEqual(lane_dict['library_species'],
                                      lane.library.library_species.scientific_name)
 
     def test_invalid_flowcell(self):
@@ -212,32 +212,32 @@ class ExperimentsTestCases(TestCase):
         Make sure we get a 404 if we request an invalid flowcell ID
         """
         response = self.client.get('/experiments/config/nottheone/json', apidata)
-        self.failUnlessEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
     def test_no_key(self):
         """
         Require logging in to retrieve meta data
         """
         response = self.client.get(u'/experiments/config/FC12150/json')
-        self.failUnlessEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_library_id(self):
         """
         Library IDs should be flexible, so make sure we can retrive a non-numeric ID
         """
         response = self.client.get('/experiments/config/FC12150/json', apidata)
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         flowcell = json.loads(response.content)
 
         lane_contents = flowcell['lane_set']['3']
         lane_library = lane_contents[0]
-        self.failUnlessEqual(lane_library['library_id'], 'SL039')
+        self.assertEqual(lane_library['library_id'], 'SL039')
 
         response = self.client.get('/samples/library/SL039/json', apidata)
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         library_sl039 = json.loads(response.content)
 
-        self.failUnlessEqual(library_sl039['library_id'], 'SL039')
+        self.assertEqual(library_sl039['library_id'], 'SL039')
 
     def test_raw_id_field(self):
         """
@@ -263,8 +263,8 @@ class ExperimentsTestCases(TestCase):
             library_id, library_name = library_field.text.split(':')
             # strip leading '#' sign from name
             library_id = library_id[1:]
-            self.failUnlessEqual(library_id, expected_ids[i])
-            self.failUnlessEqual(input_field.attrib['value'], library_id)
+            self.assertEqual(library_id, expected_ids[i])
+            self.assertEqual(input_field.attrib['value'], library_id)
 
     def test_library_to_flowcell_link(self):
         """
@@ -280,12 +280,12 @@ class ExperimentsTestCases(TestCase):
         failed_fc_span = flowcell_spans[0]
         failed_fc_a = failed_fc_span.getparent()
         # make sure some of our RDF made it.
-        self.failUnlessEqual(failed_fc_a.get('rel'), 'libns:flowcell')
-        self.failUnlessEqual(failed_fc_a.get('href'), '/flowcell/30012AAXX/')
+        self.assertEqual(failed_fc_a.get('rel'), 'libns:flowcell')
+        self.assertEqual(failed_fc_a.get('href'), '/flowcell/30012AAXX/')
         fc_response = self.client.get(failed_fc_a.get('href'))
-        self.failUnlessEqual(fc_response.status_code, 200)
+        self.assertEqual(fc_response.status_code, 200)
         fc_lane_response = self.client.get('/flowcell/30012AAXX/8/')
-        self.failUnlessEqual(fc_lane_response.status_code, 200)
+        self.assertEqual(fc_lane_response.status_code, 200)
 
     def test_pooled_multiplex_id(self):
         fc_dict = experiments.flowcell_information('42JU1AAXX')
@@ -308,16 +308,16 @@ class ExperimentsTestCases(TestCase):
         """
         user = 'test'
         lanes = experiments.lanes_for(user)
-        self.failUnlessEqual(len(lanes), 5)
+        self.assertEqual(len(lanes), 5)
 
         response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
         lanes_json = json.loads(response.content)
-        self.failUnlessEqual(len(lanes), len(lanes_json))
+        self.assertEqual(len(lanes), len(lanes_json))
         for i in range(len(lanes)):
-            self.failUnlessEqual(lanes[i]['comment'], lanes_json[i]['comment'])
-            self.failUnlessEqual(lanes[i]['lane_number'], lanes_json[i]['lane_number'])
-            self.failUnlessEqual(lanes[i]['flowcell'], lanes_json[i]['flowcell'])
-            self.failUnlessEqual(lanes[i]['run_date'], lanes_json[i]['run_date'])
+            self.assertEqual(lanes[i]['comment'], lanes_json[i]['comment'])
+            self.assertEqual(lanes[i]['lane_number'], lanes_json[i]['lane_number'])
+            self.assertEqual(lanes[i]['flowcell'], lanes_json[i]['flowcell'])
+            self.assertEqual(lanes[i]['run_date'], lanes_json[i]['run_date'])
 
     def test_lanes_for_no_lanes(self):
         """
@@ -325,7 +325,7 @@ class ExperimentsTestCases(TestCase):
         """
         user = 'supertest'
         lanes = experiments.lanes_for(user)
-        self.failUnlessEqual(len(lanes), 0)
+        self.assertEqual(len(lanes), 0)
 
         response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
         lanes_json = json.loads(response.content)
@@ -335,10 +335,10 @@ class ExperimentsTestCases(TestCase):
         Do we get something meaningful back when its the wrong user
         """
         user = 'not a real user'
-        self.failUnlessRaises(ObjectDoesNotExist, experiments.lanes_for, user)
+        self.assertRaises(ObjectDoesNotExist, experiments.lanes_for, user)
 
         response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
-        self.failUnlessEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
 
     def test_raw_data_dir(self):
@@ -347,10 +347,10 @@ class ExperimentsTestCases(TestCase):
         raw_dir = os.path.join(settings.RESULT_HOME_DIR, flowcell_id)
 
         fc = models.FlowCell.objects.get(flowcell_id=flowcell_id)
-        self.failUnlessEqual(fc.get_raw_data_directory(), raw_dir)
+        self.assertEqual(fc.get_raw_data_directory(), raw_dir)
 
         fc.flowcell_id = flowcell_id + " (failed)"
-        self.failUnlessEqual(fc.get_raw_data_directory(), raw_dir)
+        self.assertEqual(fc.get_raw_data_directory(), raw_dir)
 
 
     def test_data_run_import(self):
@@ -359,30 +359,37 @@ class ExperimentsTestCases(TestCase):
         flowcell_id = self.fc1_id
         flowcell = models.FlowCell.objects.get(flowcell_id=flowcell_id)
         flowcell.update_data_runs()
-        self.failUnlessEqual(len(flowcell.datarun_set.all()), 1)
+        self.assertEqual(len(flowcell.datarun_set.all()), 1)
 
         run = flowcell.datarun_set.all()[0]
         result_files = run.datafile_set.all()
         result_dict = dict(((rf.relative_pathname, rf) for rf in result_files))
 
         srf4 = result_dict['FC12150/C1-37/woldlab_070829_SERIAL_FC12150_4.srf']
-        self.failUnlessEqual(srf4.file_type, srf_file_type)
-        self.failUnlessEqual(srf4.library_id, '11060')
-        self.failUnlessEqual(srf4.data_run.flowcell.flowcell_id, 'FC12150')
-        self.failUnlessEqual(
+        self.assertEqual(srf4.file_type, srf_file_type)
+        self.assertEqual(srf4.library_id, '11060')
+        self.assertEqual(srf4.data_run.flowcell.flowcell_id, 'FC12150')
+        self.assertEqual(
             srf4.data_run.flowcell.lane_set.get(lane_number=4).library_id,
             '11060')
-        self.failUnlessEqual(
+        self.assertEqual(
             srf4.pathname,
             os.path.join(settings.RESULT_HOME_DIR, srf4.relative_pathname))
 
         lane_files = run.lane_files()
-        self.failUnlessEqual(lane_files[4]['srf'], srf4)
+        self.assertEqual(lane_files[4]['srf'], srf4)
 
         runxml= result_dict['FC12150/C1-37/run_FC12150_2007-09-27.xml']
-        self.failUnlessEqual(runxml.file_type, runxml_file_type)
-        self.failUnlessEqual(runxml.library_id, None)
+        self.assertEqual(runxml.file_type, runxml_file_type)
+        self.assertEqual(runxml.library_id, None)
 
+        import1 = len(models.DataRun.objects.filter(result_dir='FC12150/C1-37'))
+        # what happens if we import twice?
+        flowcell.import_data_run('FC12150/C1-37',
+                                 'run_FC12150_2007-09-27.xml')
+        self.assertEqual(
+            len(models.DataRun.objects.filter(result_dir='FC12150/C1-37')),
+            import1)
 
     def test_read_result_file(self):
         """make sure we can return a result file
@@ -397,19 +404,19 @@ class ExperimentsTestCases(TestCase):
         for f in result_files:
             url = '/experiments/file/%s' % ( f.random_key,)
             response = self.client.get(url)
-            self.failUnlessEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
             mimetype = f.file_type.mimetype
             if mimetype is None:
                 mimetype = 'application/octet-stream'
 
-            self.failUnlessEqual(mimetype, response['content-type'])
+            self.assertEqual(mimetype, response['content-type'])
 
 class TestFileType(TestCase):
     def test_file_type_unicode(self):
         file_type_objects = models.FileType.objects
         name = 'QSEQ tarfile'
         file_type_object = file_type_objects.get(name=name)
-        self.failUnlessEqual(u"<FileType: QSEQ tarfile>",
+        self.assertEqual(u"<FileType: QSEQ tarfile>",
                              unicode(file_type_object))
 
 class TestFileType(TestCase):
@@ -433,10 +440,10 @@ class TestFileType(TestCase):
          ]
         for filename, typename, lane, end in cases:
             ft = models.find_file_type_metadata_from_filename(filename)
-            self.failUnlessEqual(ft['file_type'],
+            self.assertEqual(ft['file_type'],
                                  file_type_objects.get(name=typename))
-            self.failUnlessEqual(ft.get('lane', None), lane)
-            self.failUnlessEqual(ft.get('end', None), end)
+            self.assertEqual(ft.get('lane', None), lane)
+            self.assertEqual(ft.get('end', None), end)
 
     def test_assign_file_type_complex_path(self):
         file_type_objects = models.FileType.objects
@@ -458,41 +465,41 @@ class TestFileType(TestCase):
          ]
         for filename, typename, lane, end in cases:
             result = models.find_file_type_metadata_from_filename(filename)
-            self.failUnlessEqual(result['file_type'],
+            self.assertEqual(result['file_type'],
                                  file_type_objects.get(name=typename))
-            self.failUnlessEqual(result.get('lane',None), lane)
-            self.failUnlessEqual(result.get('end', None), end)
+            self.assertEqual(result.get('lane',None), lane)
+            self.assertEqual(result.get('end', None), end)
 
 class TestEmailNotify(TestCase):
     fixtures = ['test_flowcells.json']
 
     def test_started_email_not_logged_in(self):
         response = self.client.get('/experiments/started/153/')
-        self.failUnlessEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_started_email_logged_in_user(self):
         self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
         response = self.client.get('/experiments/started/153/')
-        self.failUnlessEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_started_email_logged_in_staff(self):
         self.client.login(username='admintest', password='BJOKL5kAj6aFZ6A5')
         response = self.client.get('/experiments/started/153/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_started_email_send(self):
         self.client.login(username='admintest', password='BJOKL5kAj6aFZ6A5')
         response = self.client.get('/experiments/started/153/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
-        self.failUnless('pk1@example.com' in response.content)
-        self.failUnless('Lane #8 : (11064) Paired ends 104' in response.content)
+        self.assertTrue('pk1@example.com' in response.content)
+        self.assertTrue('Lane #8 : (11064) Paired ends 104' in response.content)
 
         response = self.client.get('/experiments/started/153/', {'send':'1','bcc':'on'})
-        self.failUnlessEqual(response.status_code, 200)
-        self.failUnlessEqual(len(mail.outbox), 4)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 4)
         for m in mail.outbox:
-            self.failUnless(len(m.body) > 0)
+            self.assertTrue(len(m.body) > 0)
 
     def test_email_navigation(self):
         """
@@ -500,10 +507,10 @@ class TestEmailNotify(TestCase):
         """
         self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5')
         response = self.client.get('/experiments/started/153/')
-        self.failUnlessEqual(response.status_code, 200)
-        self.failUnless(re.search('Flowcell FC12150', response.content))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(re.search('Flowcell FC12150', response.content))
         # require that navigation back to the admin page exists
-        self.failUnless(re.search('<a href="/admin/experiments/flowcell/153/">[^<]+</a>', response.content))
+        self.assertTrue(re.search('<a href="/admin/experiments/flowcell/153/">[^<]+</a>', response.content))
 
 def multi_lane_to_dict(lane):
     """Convert a list of lane entries into a dictionary indexed by library ID
@@ -520,13 +527,13 @@ class TestSequencer(TestCase):
         seq.instrument_name = "HWI-SEQ1"
         seq.model = "Imaginary 5000"
 
-        self.failUnlessEqual(unicode(seq), "Seq1 (HWI-SEQ1)")
+        self.assertEqual(unicode(seq), "Seq1 (HWI-SEQ1)")
 
     def test_lookup(self):
         fc = models.FlowCell.objects.get(pk=153)
-        self.failUnlessEqual(fc.sequencer.model,
+        self.assertEqual(fc.sequencer.model,
                              "Illumina Genome Analyzer IIx")
-        self.failUnlessEqual(fc.sequencer.instrument_name,
+        self.assertEqual(fc.sequencer.instrument_name,
                              "ILLUMINA-EC5D15")
 
     def test_rdf(self):
@@ -534,18 +541,18 @@ class TestSequencer(TestCase):
         tree = fromstring(response.content)
         divs = tree.xpath('//div[@rel="libns:sequenced_by"]',
                           namespaces=NSMAP)
-        self.failUnlessEqual(len(divs), 1)
-        self.failUnlessEqual(divs[0].attrib['rel'], 'libns:sequenced_by')
-        self.failUnlessEqual(divs[0].attrib['resource'], '/sequencer/2')
+        self.assertEqual(len(divs), 1)
+        self.assertEqual(divs[0].attrib['rel'], 'libns:sequenced_by')
+        self.assertEqual(divs[0].attrib['resource'], '/sequencer/2')
 
         name = divs[0].xpath('./span[@property="libns:sequencer_name"]')
-        self.failUnlessEqual(len(name), 1)
-        self.failUnlessEqual(name[0].text, 'Tardigrade')
+        self.assertEqual(len(name), 1)
+        self.assertEqual(name[0].text, 'Tardigrade')
         instrument = divs[0].xpath(
             './span[@property="libns:sequencer_instrument"]')
-        self.failUnlessEqual(len(instrument), 1)
-        self.failUnlessEqual(instrument[0].text, 'ILLUMINA-EC5D15')
+        self.assertEqual(len(instrument), 1)
+        self.assertEqual(instrument[0].text, 'ILLUMINA-EC5D15')
         model = divs[0].xpath(
             './span[@property="libns:sequencer_model"]')
-        self.failUnlessEqual(len(model), 1)
-        self.failUnlessEqual(model[0].text, 'Illumina Genome Analyzer IIx')
+        self.assertEqual(len(model), 1)
+        self.assertEqual(model[0].text, 'Illumina Genome Analyzer IIx')

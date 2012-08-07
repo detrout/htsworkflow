@@ -156,8 +156,12 @@ def flowcell_lane_detail(request, lane_pk):
     lane.flowcell.update_data_runs()
 
     dataruns = []
+    lane.flowcell.update_data_runs()
     for run in lane.flowcell.datarun_set.all():
-        dataruns.append((run, lane.lane_number, run.lane_files()[lane.lane_number]))
+        files = run.lane_files().get(lane.lane_number, None)
+        dataruns.append((run,
+                         lane.lane_number,
+                         files))
 
     context = RequestContext(request,
                              {'lib': lane.library,

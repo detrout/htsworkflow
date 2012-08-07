@@ -209,32 +209,34 @@ class FlowCell(models.Model):
         result_home_dir = os.path.join(settings.RESULT_HOME_DIR, '')
         run_xml_re = re.compile(glob.fnmatch.translate('run*.xml'))
 
-        dataruns = dict([(x.result_dir, x) for x in self.datarun_set.all()])
-
         result_dirs = []
         for dirpath, dirnames, filenames in os.walk(result_root):
             for filename in filenames:
                 if run_xml_re.match(filename):
                     # we have a run directory
                     relative_pathname = get_relative_pathname(dirpath)
-                    cached_run = dataruns.get(relative_pathname, None)
-                    now = datetime.datetime.now()
-                    if (cached_run is None):
-                        self.import_data_run(relative_pathname, filename)
-                    elif (now - cached_run.last_update_time).days > \
-                             RESCAN_DELAY:
-                        self.import_data_run(relative_pathname,
-                                             filename, cached_run)
+                    self.import_data_run(relative_pathname, filename)
 
-    def import_data_run(self, relative_pathname, run_xml_name, run=None):
+    def import_data_run(self, relative_pathname, run_xml_name, force=False):
         """Given a result directory import files"""
+        now = datetime.datetime.now()
         run_dir = get_absolute_pathname(relative_pathname)
         run_xml_path = os.path.join(run_dir, run_xml_name)
-        run_xml_data = runfolder.load_pipeline_run_xml(run_xml_path)
-        LOGGER.debug("Importing run from %s" % (relative_pathname,))
 
-        if run is None:
+        runs = DataRun.objects.filter(result_dir = relative_pathname)
+        if len(runs) == 0:
             run = DataRun()
+            created = True
+        elif len(runs) > 1:
+            raise RuntimeError("Too many data runs for %s" % (
+                relative_pathname,))
+        else:
+            run = runs[0]
+            created = False
+
+        if created or force or (now-run.last_update_time).days > RESCAN_DELAY:
+            LOGGER.debug("Importing run from %s" % (relative_pathname,))
+            run_xml_data = runfolder.load_pipeline_run_xml(run_xml_path)
             run.flowcell = self
             run.status = RUN_STATUS_REVERSE_MAP['DONE']
             run.result_dir = relative_pathname
@@ -249,10 +251,10 @@ class FlowCell(models.Model):
             run.alignment_software = run_xml_data.gerald.software
             run.alignment_version = run_xml_data.gerald.version
 
-        run.last_update_time = datetime.datetime.now()
-        run.save()
+            run.last_update_time = datetime.datetime.now()
+            run.save()
 
-        run.update_result_files()
+            run.update_result_files()
 
 
 # FIXME: should we automatically update dataruns?
