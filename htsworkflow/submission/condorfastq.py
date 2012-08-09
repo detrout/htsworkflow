@@ -51,12 +51,16 @@ class CondorFastqExtract(object):
                         'by_sample': 'lane_to_fastq.turtle',
                         }
 
+        env = None
+        pythonpath = os.environ.get('PYTHONPATH', None)
+        if pythonpath is not None:
+            env = "PYTHONPATH=%s" % (pythonpath,)
         condor_entries = self.build_condor_arguments(result_map)
         for script_type in template_map.keys():
             template = loader.get_template(template_map[script_type])
             variables = {'python': sys.executable,
                          'logdir': self.log_path,
-                         'env': os.environ.get('PYTHONPATH', None),
+                         'env': env,
                          'args': condor_entries[script_type],
                          'root_url': self.api.root_url,
                          }

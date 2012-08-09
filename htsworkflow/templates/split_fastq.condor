@@ -1,11 +1,11 @@
 Universe=vanilla
-executable={{ exe }}
+executable={{ python }}
 error={{ logdir }}/fastq.$(process).out
 output={{ logdir }}/fastq.$(process).out
 log={{ logdir }}/fastq.log
-{% if env %}environment={{ env }}{% endif %}
+{% if env %}environment="{{env}}"{% endif %}
 
 {% for arg in args %}
-arguments="{{ arg.pyscript }} -o {{ arg.target }} {% for s in arg.sources %}{{ s }} {% endfor %}
+arguments="{{ arg.pyscript }} -o {{ arg.target }} {% for s in arg.sources %}{{ s }} {% endfor %}"
 queue
 {% endfor %}
