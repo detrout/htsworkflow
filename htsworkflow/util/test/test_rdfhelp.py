@@ -150,6 +150,11 @@ _:a owl:imports "{loc}extra.turtle" .
             self.failUnlessEqual(hello_clean.literal_value['string'],
                                  hello_text)
 
+        def test_sanitize_literal_empty_string(self):
+            value = ""
+            value_node = RDF.Node(value)
+            self.assertEqual(str(sanitize_literal(value_node)), value)
+
         def test_sanitize_literal_html(self):
             hello = "hello <a onload='javascript:alert(\"foo\");' href='http://google.com'>google.com</a>, whats up?"
             hello_clean = 'hello <a href="http://google.com">google.com</a>, whats up?'

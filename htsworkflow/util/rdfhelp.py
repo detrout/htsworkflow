@@ -267,7 +267,7 @@ def load_into_model(model, parser_name, path, ns=None):
 
 def load_string_into_model(model, parser_name, data, ns=None):
     if ns is None:
-        ns = RDF.NS("http://localhost/")
+        ns = RDF.Uri("http://localhost/")
     imports = owlNS['imports']
     rdf_parser = RDF.Parser(name=parser_name)
     for s in rdf_parser.parse_string_as_stream(data, ns):
@@ -288,14 +288,18 @@ def sanitize_literal(node):
     if not isinstance(node, RDF.Node):
         raise ValueError("sanitize_literal only works on RDF.Nodes")
 
-    element = lxml.html.fromstring(node.literal_value['string'])
-    cleaner = lxml.html.clean.Cleaner(page_structure=False)
-    element = cleaner.clean_html(element)
-    text = lxml.html.tostring(element)
-    p_len = 3
-    slash_p_len = 4
+    s = node.literal_value['string']
+    if len(s) > 0:
+        element = lxml.html.fromstring(s)
+        cleaner = lxml.html.clean.Cleaner(page_structure=False)
+        element = cleaner.clean_html(element)
+        text = lxml.html.tostring(element)
+        p_len = 3
+        slash_p_len = 4
 
-    args = {'literal': text[p_len:-slash_p_len]}
+        args = {'literal': text[p_len:-slash_p_len]}
+    else:
+        args = {'literal': ''}
     datatype = node.literal_value['datatype']
     if datatype is not None:
         args['datatype'] = datatype
