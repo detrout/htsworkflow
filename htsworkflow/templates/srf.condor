@@ -1,9 +1,9 @@
 Universe=vanilla
-executable={{ exe }}
+executable={{ python }}
 error={{ logdir }}/fastq.$(process).out
 output={{ logdir }}/fastq.$(process).out
 log={{ logdir }}/fastq.log
-{% if env %}environment={{ env }}{% endif %}
+{% if env %}environment="{{env}}"{% endif %}
 
 {% for arg in args %}
 arguments="{{ arg.pyscript }}  {{ arg.sources.0 }} --verbose {% if arg.flowcell %}--flowcell {{ arg.flowcell }}{% endif %} {% if arg.ispaired %}--left {{ arg.target }} --right {{ arg.target_right }}{% else %}--single {{ arg.target }}{% endif %}"
