@@ -105,6 +105,13 @@
       "regex": ".*_l(?P<lane>[1-8])_r(?P<end>[1-4])\\.tar\\.bz2\\Z(?ms)"
     }
   },
+  { "model": "experiments.FileType",
+    "pk": 15,
+    "fields": {
+      "name": "HiSeq Fastq",
+      "regex": "(?P<library>[0-9]+)_(NoIndex|[AGCT]+)_L(?P<lane>[0-9]+)_R(?<end>[12])_(?<split>[0-9]+)\\.fastq\\.gz"
+    }
+  },
   { "model": "experiments.Sequencer",
     "pk": 1,
     "fields": {
