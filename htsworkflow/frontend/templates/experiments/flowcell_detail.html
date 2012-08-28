@@ -28,7 +28,7 @@
       {% for lane in lanes %}
         <tr rel="libns:has_lane" resource="{{lane.get_absolute_url}}" >
           <td><a href="{{lane.get_absolute_url}}">
-              <span property="libns:lane_number">{{lane.lane_number}}</span></a></td>
+              <span property="libns:lane_number" datatype="xsd:decimal">{{lane.lane_number}}</span></a></td>
           <td><a href="{{lane.library.get_absolute_url}}"
                  rel="libns:library"><span property="libns:library_id"
               >{{lane.library.id}}</span></a>

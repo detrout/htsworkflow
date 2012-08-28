@@ -2,7 +2,7 @@
   <h2>About this Flowcell</h2>
   <b>Flowcell</b>:
     <a href="{{flowcell.get_absolute_url}}" property="libns:flowcell_id">{{flowcell.flowcell_id}}</a>{% if user.is_staff %}<a href="{{flowcell.get_admin_url}}"><img class="icon_button" src="/media/img/admin/icon_changelink.gif" alt="Edit"/></a>{% endif%}
-  <br property="rdf:type" content="libns:illumina_flowcell"/>
+  <br rel="rdf:type" resource="http://jumpgate.caltech.edu/wiki/LibraryOntology#illumina_flowcell"/>
   <div rel="libns:sequenced_by"
        resource="{{flowcell.sequencer.get_absolute_url}}">
   <b>Instrument</b>:
@@ -33,7 +33,7 @@
   <b>Read Length</b>:
     <span property="libns:read_length" datatype="xsd:decimal">{{flowcell.read_length}}</span><br/>
   <b>Control Lane</b>:
-    <span property="libns:control_lane">{{flowcell.control_lane}}</span><br/>
+    <span property="libns:control_lane" datatype="xsd:decimal">{{flowcell.control_lane}}</span><br/>
 
   <b>Notes</b>:
     <pre property="libns:flowcell_notes">{{flowcell.notes}}</pre>

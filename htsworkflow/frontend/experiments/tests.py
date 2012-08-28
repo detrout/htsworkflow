@@ -8,6 +8,7 @@ import os
 import shutil
 import sys
 import tempfile
+from urlparse import urljoin
 
 from django.conf import settings
 from django.core import mail
@@ -411,6 +412,53 @@ class ExperimentsTestCases(TestCase):
 
             self.assertEqual(mimetype, response['content-type'])
 
+    def test_flowcell_rdf(self):
+        import RDF
+        from htsworkflow.util.rdfhelp import get_model, \
+             fromTypedNode, \
+             load_string_into_model, \
+             rdfNS, \
+             libraryOntology, \
+             dump_model
+
+        model = get_model()
+
+        expected = {1: ['11034'],
+                    2: ['11036'],
+                    3: ['12044','11045'],
+                    4: ['11047','13044'],
+                    5: ['11055'],
+                    6: ['11067'],
+                    7: ['11069'],
+                    8: ['11070']}
+        url = '/flowcell/42JU1AAXX/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        ns = urljoin('http://localhost', url)
+        load_string_into_model(model, 'rdfa', response.content, ns=ns)
+        body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+
+        select ?flowcell ?flowcell_id ?lane_id ?library_id
+        where {
+          ?flowcell a libns:illumina_flowcell ;
+                    libns:flowcell_id ?flowcell_id ;
+                    libns:has_lane ?lane .
+          ?lane libns:lane_number ?lane_id ;
+                libns:library ?library .
+          ?library libns:library_id ?library_id .
+        }"""
+        query = RDF.SPARQLQuery(body)
+        count = 0
+        for r in query.execute(model):
+            count += 1
+            self.assertEqual(fromTypedNode(r['flowcell_id']), u'42JU1AAXX')
+            lane_id = fromTypedNode(r['lane_id'])
+            library_id = fromTypedNode(r['library_id'])
+            self.assertTrue(library_id in expected[lane_id])
+        self.assertEqual(count, 10)
+
+
 class TestFileType(TestCase):
     def test_file_type_unicode(self):
         file_type_objects = models.FileType.objects
@@ -535,6 +583,9 @@ class TestSequencer(TestCase):
                              "Illumina Genome Analyzer IIx")
         self.assertEqual(fc.sequencer.instrument_name,
                              "ILLUMINA-EC5D15")
+        # well actually we let the browser tack on the host name
+        url = fc.get_absolute_url()
+        self.assertEqual(url, '/flowcell/FC12150/')
 
     def test_rdf(self):
         response = self.client.get('/flowcell/FC12150/', apidata)

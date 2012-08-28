@@ -139,6 +139,37 @@ class SampleWebTestCase(TestCase):
         response = self.client.get('/samples/library/10981/json', apidata)
         self.failUnlessEqual(response.status_code, 200)
 
+    def test_library_rdf(self):
+        import RDF
+        from htsworkflow.util.rdfhelp import get_model, \
+             fromTypedNode, \
+             load_string_into_model, \
+             rdfNS, \
+             libraryOntology
+        model = get_model()
+
+        response = self.client.get('/library/10981/')
+        self.assertEqual(response.status_code, 200)
+        load_string_into_model(model, 'rdfa', response.content)
+
+        body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+
+        select ?library ?name ?library_id ?gel_cut ?made_by
+        where {
+           ?library a libns:library ;
+                    libns:name ?name ;
+                    libns:library_id ?library_id ;
+                    libns:gel_cut ?gel_cut ;
+                    libns:made_by ?made_by
+        }"""
+        query = RDF.SPARQLQuery(body)
+        for r in query.execute(model):
+            self.assertEqual(fromTypedNode(r['library_id']), u'10981')
+            self.assertEqual(fromTypedNode(r['name']),
+                             u'Paired End Multiplexed Sp-BAC')
+            self.assertEqual(fromTypedNode(r['gel_cut']), 400)
+            self.assertEqual(fromTypedNode(r['made_by']), u'Igor')
 
 # The django test runner flushes the database between test suites not cases,
 # so to be more compatible with running via nose we flush the database tables
