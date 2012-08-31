@@ -2,26 +2,34 @@
 """
 import logging
 import os
-from pprint import pformat
+from pprint import pformat,pprint
 import sys
 import types
+from urlparse import urljoin, urlparse
 
-from htsworkflow.pipelines.sequences import scan_for_sequences
+from htsworkflow.pipelines.sequences import scan_for_sequences, \
+     update_model_sequence_library
 from htsworkflow.pipelines.samplekey import SampleKey
 from htsworkflow.pipelines import qseq2fastq
 from htsworkflow.pipelines import srf2fastq
 from htsworkflow.pipelines import desplit_fastq
-from htsworkflow.util.api import HtswApi
+from htsworkflow.util.rdfhelp import get_model, dump_model, load_into_model, \
+     fromTypedNode, \
+     libraryOntology, \
+     stripNamespace, \
+     rdfNS
 from htsworkflow.util.conversion import parse_flowcell_id
 
 from django.conf import settings
 from django.template import Context, loader
 
+import RDF
+
 LOGGER = logging.getLogger(__name__)
 
 
 class CondorFastqExtract(object):
-    def __init__(self, host, apidata, sequences_path,
+    def __init__(self, host, sequences_path,
                  log_path='log',
                  force=False):
         """Extract fastqs from results archive
@@ -33,7 +41,8 @@ class CondorFastqExtract(object):
           log_path (str): where to put condor log files
           force (bool): do we force overwriting current files?
         """
-        self.api = HtswApi(host, apidata)
+        self.host = host
+        self.model = get_model()
         self.sequences_path = sequences_path
         self.log_path = log_path
         self.force = force
@@ -62,7 +71,7 @@ class CondorFastqExtract(object):
                          'logdir': self.log_path,
                          'env': env,
                          'args': condor_entries[script_type],
-                         'root_url': self.api.root_url,
+                         'root_url': self.host,
                          }
             context = Context(variables)
 
@@ -79,8 +88,8 @@ class CondorFastqExtract(object):
                             'split_fastq': self.condor_desplit_fastq
                             }
         by_sample = {}
-        lib_db = self.find_archive_sequence_files(result_map)
-        needed_targets = self.find_missing_targets(result_map, lib_db)
+        sequences = self.find_archive_sequence_files(result_map)
+        needed_targets = self.find_missing_targets(result_map, sequences)
 
         for target_pathname, available_sources in needed_targets.items():
             LOGGER.debug(' target : %s' % (target_pathname,))
@@ -98,7 +107,7 @@ class CondorFastqExtract(object):
                     condor_entries.setdefault(condor_type, []).append(
                         conversion(sources, target_pathname))
                     for s in sources:
-                        by_sample.setdefault(s.lane_id,[]).append(
+                        by_sample.setdefault(s.lane_number,[]).append(
                             target_pathname)
             else:
                 print " need file", target_pathname
@@ -110,41 +119,83 @@ class CondorFastqExtract(object):
         """
         Find archived sequence files associated with our results.
         """
-        LOGGER.debug("Searching for sequence files in: %s" %(self.sequences_path,))
+        self.import_libraries(result_map)
+        flowcell_ids = self.find_relavant_flowcell_ids()
+        self.import_sequences(flowcell_ids)
 
-        lib_db = {}
-        seq_dirs = set()
-        candidate_lanes = {}
+        query = RDF.SPARQLQuery("""
+        prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+        prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+
+        select ?filenode ?filetype ?cycle ?lane_number ?read
+               ?library  ?library_id
+               ?flowcell ?flowcell_id ?read_length
+               ?flowcell_type ?flowcell_status
+        where {
+            ?filenode libns:cycle ?cycle ;
+                      libns:lane_number ?lane_number ;
+                      libns:read ?read ;
+                      libns:flowcell ?flowcell ;
+                      libns:flowcell_id ?flowcell_id ;
+                      libns:library ?library ;
+                      libns:library_id ?library_id ;
+                      rdf:type ?filetype ;
+                      a libns:raw_file .
+            ?flowcell libns:read_length ?read_length ;
+                      libns:flowcell_type ?flowcell_type .
+            OPTIONAL { ?flowcell libns:flowcell_status ?flowcell_status }
+            FILTER(?filetype != libns:raw_file)
+        }
+        """)
+        results = []
+        for r in query.execute(self.model):
+            library_id = fromTypedNode(r['library_id'])
+            if library_id in result_map:
+                results.append(SequenceResult(r))
+        return results
+
+    def import_libraries(self, result_map):
         for lib_id in result_map.keys():
-            lib_info = self.api.get_library(lib_id)
-            lib_info['lanes'] = {}
-            lib_db[lib_id] = lib_info
+            liburl = urljoin(self.host, 'library/%s/' % (lib_id,))
+            library = RDF.Node(RDF.Uri(liburl))
+            self.import_library(library)
 
-            for lane in lib_info['lane_set']:
-                lane_key = (lane['flowcell'], lane['lane_number'])
-                candidate_lanes[lane_key] = (lib_id, lane['lane_id'])
-                seq_dirs.add(os.path.join(self.sequences_path,
-                                             'flowcells',
-                                             lane['flowcell']))
-        LOGGER.debug("Seq_dirs = %s" %(unicode(seq_dirs)))
-        candidate_seq_list = scan_for_sequences(seq_dirs)
+    def import_library(self, library):
+        """Import library data into our model if we don't have it already
+        """
+        q = RDF.Statement(library, rdfNS['type'], libraryOntology['library'])
+        if not self.model.contains_statement(q):
+            load_into_model(self.model, 'rdfa', library)
 
-        # at this point we have too many sequences as scan_for_sequences
-        # returns all the sequences in a flowcell directory
-        # so lets filter out the extras
+    def find_relavant_flowcell_ids(self):
+        """Generate set of flowcell ids that had samples of interest on them
+        """
+        flowcell_query =RDF.SPARQLQuery("""
+prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
-        for seq in candidate_seq_list:
-            lane_key = (seq.flowcell, seq.lane)
-            candidate_key = candidate_lanes.get(lane_key, None)
-            if candidate_key is not None:
-                lib_id, lane_id = candidate_key
-                seq.lane_id = lane_id
-                lib_info = lib_db[lib_id]
-                lib_info['lanes'].setdefault(lane_key, set()).add(seq)
+select distinct ?library ?flowcell ?flowcell_id
+WHERE {
+  ?library a libns:library ;
+           libns:has_lane ?lane .
+  ?lane libns:flowcell ?flowcell .
+  ?flowcell libns:flowcell_id ?flowcell_id .
+}""")
+        flowcell_ids = set()
+        for r in flowcell_query.execute(self.model):
+            flowcell_ids.add( fromTypedNode(r['flowcell_id']) )
+        LOGGER.debug("Flowcells = %s" %(unicode(flowcell_ids)))
+        return flowcell_ids
 
-        return lib_db
+    def import_sequences(self, flowcell_ids):
+        seq_dirs = ( os.path.join(self.sequences_path, f)
+                     for f in flowcell_ids )
+        sequences = scan_for_sequences(seq_dirs)
+        for seq in sequences:
+            seq.save_to_model(self.model)
+        update_model_sequence_library(self.model, self.host)
 
-    def find_missing_targets(self, result_map, lib_db):
+    def find_missing_targets(self, result_map, raw_files):
         """
         Check if the sequence file exists.
         This requires computing what the sequence name is and checking
@@ -156,61 +207,48 @@ class CondorFastqExtract(object):
         fastq_single_template = '%(lib_id)s_%(flowcell)s_c%(cycle)s_l%(lane)s.fastq'
         # find what targets we're missing
         needed_targets = {}
-        for lib_id in result_map.keys():
-            result_dir = result_map[lib_id]
-            lib = lib_db[lib_id]
-            lane_dict = make_lane_dict(lib_db, lib_id)
+        for seq in raw_files:
+            if not seq.isgood:
+                continue
+            filename_attributes = {
+                'flowcell': seq.flowcell_id,
+                'lib_id': seq.library_id,
+                'lane': seq.lane_number,
+                'read': seq.read,
+                'cycle': seq.cycle
+            }
 
-            for lane_key, sequences in lib['lanes'].items():
-                for seq in sequences:
-                    seq.paired = lane_dict[seq.flowcell]['paired_end']
-                    lane_status = lane_dict[seq.flowcell]['status']
+            if seq.ispaired:
+                target_name = fastq_paired_template % \
+                              filename_attributes
+            else:
+                target_name = fastq_single_template % \
+                              filename_attributes
 
-                    if seq.paired and seq.read is None:
-                        seq.read = 1
-                    filename_attributes = {
-                        'flowcell': seq.flowcell,
-                        'lib_id': lib_id,
-                        'lane': seq.lane,
-                        'read': seq.read,
-                        'cycle': seq.cycle
-                        }
-                    # skip bad runs
-                    if lane_status == 'Failed':
-                        continue
-                    if seq.flowcell == '30DY0AAXX':
-                        # 30DY0 only ran for 151 bases instead of 152
-                        # it is actually 76 1st read, 75 2nd read
-                        seq.mid_point = 76
-
-                    # end filters
-                    if seq.paired:
-                        target_name = fastq_paired_template % \
-                                      filename_attributes
-                    else:
-                        target_name = fastq_single_template % \
-                                      filename_attributes
-
-                    target_pathname = os.path.join(result_dir, target_name)
-                    if self.force or not os.path.exists(target_pathname):
-                        t = needed_targets.setdefault(target_pathname, {})
-                        t.setdefault(seq.filetype, []).append(seq)
+            result_dir = result_map[seq.library_id]
+            target_pathname = os.path.join(result_dir, target_name)
+            if self.force or not os.path.exists(target_pathname):
+                t = needed_targets.setdefault(target_pathname, {})
+                t.setdefault(seq.filetype, []).append(seq)
 
         return needed_targets
-
 
     def condor_srf_to_fastq(self, sources, target_pathname):
         if len(sources) > 1:
             raise ValueError("srf to fastq can only handle one file")
 
+        mid_point = None
+        if sources[0].flowcell_id == '30DY0AAXX':
+            mid_point = 76
+
         return {
-            'sources': [os.path.abspath(sources[0].path)],
+            'sources': [sources[0].path],
             'pyscript': srf2fastq.__file__,
-            'flowcell': sources[0].flowcell,
-            'ispaired': sources[0].paired,
+            'flowcell': sources[0].flowcell_id,
+            'ispaired': sources[0].ispaired,
             'target': target_pathname,
             'target_right': target_pathname.replace('_r1.fastq', '_r2.fastq'),
-            'mid': getattr(sources[0], 'mid_point', None),
+            'mid': mid_point,
             'force': self.force,
         }
 
@@ -221,10 +259,10 @@ class CondorFastqExtract(object):
         paths.sort()
         return {
             'pyscript': qseq2fastq.__file__,
-            'flowcell': sources[0].flowcell,
+            'flowcell': sources[0].flowcell_id,
             'target': target_pathname,
             'sources': paths,
-            'ispaired': sources[0].paired,
+            'ispaired': sources[0].ispaired,
             'istar': len(sources) == 1,
         }
 
@@ -237,11 +275,9 @@ class CondorFastqExtract(object):
             'pyscript': desplit_fastq.__file__,
             'target': target_pathname,
             'sources': paths,
-            'ispaired': sources[0].paired,
+            'ispaired': sources[0].ispaired,
         }
 
-    def lane_rdf(self, sources, target_pathname):
-        pass
 
 def make_lane_dict(lib_db, lib_id):
     """
@@ -255,3 +291,48 @@ def make_lane_dict(lib_db, lib_id):
         result.append((lane['flowcell'], lane))
     return dict(result)
 
+class SequenceResult(object):
+    """Convert the sparql query result from find_archive_sequence_files
+    """
+    def __init__(self, result):
+        self.filenode = result['filenode']
+        self._filetype = result['filetype']
+        self.cycle = fromTypedNode(result['cycle'])
+        self.lane_number = fromTypedNode(result['lane_number'])
+        self.read = fromTypedNode(result['read'])
+        if type(self.read) in types.StringTypes:
+            self.read = 1
+        self.library = result['library']
+        self.library_id = fromTypedNode(result['library_id'])
+        self.flowcell = result['flowcell']
+        self.flowcell_id = fromTypedNode(result['flowcell_id'])
+        self.flowcell_type = fromTypedNode(result['flowcell_type'])
+        self.flowcell_status = fromTypedNode(result['flowcell_status'])
+
+    def _is_good(self):
+        """is this sequence / flowcell 'good enough'"""
+        if self.flowcell_status is not None and \
+           self.flowcell_status.lower() == "failed":
+            return False
+        return True
+    isgood = property(_is_good)
+
+    def _get_ispaired(self):
+        if self.flowcell_type.lower() == "paired":
+            return True
+        else:
+            return False
+    ispaired = property(_get_ispaired)
+
+    def _get_filetype(self):
+        return stripNamespace(libraryOntology, self._filetype)
+    filetype = property(_get_filetype)
+
+    def _get_path(self):
+        url = urlparse(str(self.filenode.uri))
+        if url.scheme == 'file':
+            return url.path
+        else:
+            errmsg = u"Unsupported scheme {0} for {1}"
+            raise ValueError(errmsg.format(url.scheme, unicode(url)))
+    path = property(_get_path)
