@@ -1,5 +1,6 @@
 """Help collect and process results for submission
 """
+from collections import MutableMapping
 import os
 import logging
 
@@ -7,24 +8,33 @@ from collections import namedtuple
 
 LOGGER = logging.getLogger(__name__)
 
-class ResultMap(object):
+class ResultMap(MutableMapping):
     """Store list of results
     """
     def __init__(self):
         self.results_order = []
         self.results = {}
 
-    def keys(self):
-        return self.results_order
+    def __iter__(self):
+        for item in self.results_order:
+            yield item
 
-    def values(self):
-        return ( self.results[r] for r in self.results_order )
+    def __len__(self):
+        l = len(self.results)
+        assert l == len(self.results_order)
+        return l
 
-    def items(self):
-        return ( (r, self.results[r]) for r in self.results_order )
+    def __setitem__(self, key, value):
+        self.results_order.append(key)
+        self.results[key] = value
 
     def __getitem__(self, key):
         return self.results[key]
+
+    def __delitem__(self, key):
+        del self.results[key]
+        i = self.results_order.index(key)
+        del self.results_order[i]
 
     def add_results_from_file(self, filename):
         pathname = os.path.abspath(filename)
@@ -33,11 +43,7 @@ class ResultMap(object):
         for lib_id, lib_path in results:
             if not os.path.isabs(lib_path):
                 lib_path = os.path.join(basepath, lib_path)
-            self.add_result(lib_id, lib_path)
-
-    def add_result(self, lib_id, lib_path):
-        self.results_order.append(lib_id)
-        self.results[lib_id] = lib_path
+            self[lib_id] = lib_path
 
     def make_tree_from(self, source_path, destpath = None):
         """Create a tree using data files from source path.

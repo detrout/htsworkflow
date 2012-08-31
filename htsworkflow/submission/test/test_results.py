@@ -48,14 +48,13 @@ class TestResultMap(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tempdir)
 
-
     def test_dict_like(self):
         """Make sure the result map works like an ordered dictionary
         """
         results = ResultMap()
-        results.add_result('1000', 'dir1000')
-        results.add_result('2000', 'dir2000')
-        results.add_result('1500', 'dir1500')
+        results['1000'] = 'dir1000'
+        results['2000'] = 'dir2000'
+        results['1500'] = 'dir1500'
 
         self.failUnlessEqual(results.keys(), ['1000', '2000', '1500'])
         self.failUnlessEqual(list(results.values()),
@@ -69,10 +68,15 @@ class TestResultMap(unittest.TestCase):
         self.failUnlessEqual(results['1500'], 'dir1500')
         self.failUnlessEqual(results['2000'], 'dir2000')
 
+        self.assertTrue(u'2000' in results)
+        self.assertTrue('2000' in results)
+        self.assertFalse(u'77777' in results)
+        self.assertFalse('77777' in results)
+
     def test_make_from(self):
         results = ResultMap()
-        results.add_result('1000', S1_NAME)
-        results.add_result('2000', S2_NAME)
+        results['1000'] =  S1_NAME
+        results['2000'] =  S2_NAME
 
         results.make_tree_from(self.sourcedir, self.resultdir)
 

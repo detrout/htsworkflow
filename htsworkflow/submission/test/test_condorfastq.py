@@ -173,7 +173,7 @@ class TestCondorFastq(unittest.TestCase):
         os.mkdir(self.subdir)
 
         self.result_map = ResultMap()
-        self.result_map.add_result('11154', self.subname)
+        self.result_map['11154'] = self.subname
 
     def tearDown(self):
         shutil.rmtree(self.tempdir)

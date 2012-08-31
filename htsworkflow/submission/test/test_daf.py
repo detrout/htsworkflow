@@ -301,7 +301,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         result_map = results.ResultMap()
         result_dir = os.path.join(self.sourcedir,
                                   test_results.S1_NAME)
-        result_map.add_result('1000', result_dir)
+        result_map['1000'] = result_dir
 
         submission.link_daf(result_map)
 
