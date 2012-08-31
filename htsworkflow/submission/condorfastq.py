@@ -157,7 +157,8 @@ class CondorFastqExtract(object):
 
     def import_libraries(self, result_map):
         for lib_id in result_map.keys():
-            liburl = urljoin(self.host, 'library/%s/' % (lib_id,))
+            lib_id_encoded = lib_id.encode('utf-8')
+            liburl = urljoin(self.host, 'library/%s/' % (lib_id_encoded,))
             library = RDF.Node(RDF.Uri(liburl))
             self.import_library(library)
 

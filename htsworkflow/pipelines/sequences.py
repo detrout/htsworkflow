@@ -161,7 +161,9 @@ class SequenceFile(object):
                 model.add_statement(RDF.Statement(s, p, toTypedNode(o)))
         def add(model, s, p, o):
             model.add_statement(RDF.Statement(s,p,o))
-        fileNode = RDF.Node(RDF.Uri('file://' + os.path.abspath(self.path)))
+        # a bit unreliable... assumes filesystem is encoded in utf-8
+        path = os.path.abspath(self.path.encode('utf-8'))
+        fileNode = RDF.Node(RDF.Uri('file://' + path))
         add(model, fileNode, rdfNS['type'], libNS['raw_file'])
         add_lit(model, fileNode, libNS['flowcell_id'], self.flowcell)
         add_lit(model, fileNode, libNS['lane_number'], self.lane)
