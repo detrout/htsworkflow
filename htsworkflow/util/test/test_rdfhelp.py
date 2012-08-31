@@ -13,7 +13,8 @@ from htsworkflow.util.rdfhelp import \
      load_string_into_model, \
      rdfsNS, \
      toTypedNode, \
-     simplifyUri, \
+     stripNamespace, \
+     simplify_uri, \
      sanitize_literal, \
      xsdNS
 
@@ -102,23 +103,44 @@ try:
             self.assertEqual(fromTypedNode(toTypedNode(long_datetime)),
                              long_datetime)
 
-        def test_simplify_uri(self):
+        def test_strip_namespace_uri(self):
             nsOrg = RDF.NS('example.org/example#')
             nsCom = RDF.NS('example.com/example#')
 
             term = 'foo'
             node = nsOrg[term]
-            self.failUnlessEqual(simplifyUri(nsOrg, node), term)
-            self.failUnlessEqual(simplifyUri(nsCom, node), None)
-            self.failUnlessEqual(simplifyUri(nsOrg, node.uri), term)
+            self.failUnlessEqual(stripNamespace(nsOrg, node), term)
+            self.failUnlessEqual(stripNamespace(nsCom, node), None)
+            self.failUnlessEqual(stripNamespace(nsOrg, node.uri), term)
 
-        def test_simplify_uri_exceptions(self):
+        def test_strip_namespace_exceptions(self):
             nsOrg = RDF.NS('example.org/example#')
             nsCom = RDF.NS('example.com/example#')
 
             node = toTypedNode('bad')
-            self.failUnlessRaises(ValueError, simplifyUri, nsOrg, node)
-            self.failUnlessRaises(ValueError, simplifyUri, nsOrg, nsOrg)
+            self.failUnlessRaises(ValueError, stripNamespace, nsOrg, node)
+            self.failUnlessRaises(ValueError, stripNamespace, nsOrg, nsOrg)
+
+        def test_simplify_uri(self):
+            DATA = [('http://asdf.org/foo/bar', 'bar'),
+                    ('http://asdf.org/foo/bar#bleem', 'bleem'),
+                    ('http://asdf.org/foo/bar/', 'bar'),
+                    ('http://asdf.org/foo/bar?was=foo', 'was=foo')]
+
+            for uri, expected in DATA:
+                self.assertEqual(simplify_uri(uri), expected)
+
+            for uri, expected in DATA:
+                n = RDF.Uri(uri)
+                self.assertEqual(simplify_uri(n), expected)
+
+            for uri, expected in DATA:
+                n = RDF.Node(RDF.Uri(uri))
+                self.assertEqual(simplify_uri(n), expected)
+
+            # decoding literals is questionable
+            n = toTypedNode('http://foo/bar')
+            self.assertRaises(ValueError, simplify_uri, n)
 
         def test_owl_import(self):
             path, name = os.path.split(__file__)

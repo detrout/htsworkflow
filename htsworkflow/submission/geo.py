@@ -8,7 +8,7 @@ from htsworkflow.submission.submission import Submission
 from htsworkflow.util.rdfhelp import \
      fromTypedNode, \
      geoSoftNS, \
-     simplifyUri, \
+     stripNamespace, \
      submissionOntology
 
 from django.conf import settings
@@ -203,7 +203,7 @@ class GEOSubmission(Submission):
     def query_to_soft_dictionary(self, results, heading):
         attributes = []
         for r in results:
-            name = simplifyUri(geoSoftNS, r['name'])
+            name = stripNamespace(geoSoftNS, r['name'])
             if name is not None:
                 if name.lower() == heading.lower():
                     name = '^' + name

@@ -203,6 +203,14 @@ def simplify_uri(uri):
     >>> simplify_uri('http://asdf.org/foo/bar?was=foo')
     'was=foo'
     """
+    if isinstance(uri, RDF.Node):
+        if uri.is_resource():
+            uri = uri.uri
+        else:
+            raise ValueError("Can't simplify an RDF literal")
+    if isinstance(uri, RDF.Uri):
+        uri = str(uri)
+
     parsed = urlparse(uri)
     if len(parsed.query) > 0:
         return parsed.query
@@ -214,7 +222,7 @@ def simplify_uri(uri):
                 return element
     raise ValueError("Unable to simplify %s" % (uri,))
 
-def simplifyUri(namespace, term):
+def stripNamespace(namespace, term):
     """Remove the namespace portion of a term
 
     returns None if they aren't in common
@@ -249,6 +257,12 @@ def get_model(model_name=None, directory=None):
 
 
 def load_into_model(model, parser_name, path, ns=None):
+    if isinstance(path, RDF.Node):
+        if path.is_resource():
+            path = str(path.uri)
+        else:
+            raise ValueError("url to load can't be a RDF literal")
+
     url_parts = list(urlparse(path))
     if len(url_parts[0]) == 0:
         url_parts[0] = 'file'

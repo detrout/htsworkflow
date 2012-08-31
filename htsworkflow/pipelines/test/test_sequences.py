@@ -4,8 +4,11 @@ import shutil
 import tempfile
 import unittest
 
-from htsworkflow.pipelines import sequences
+import RDF
 
+from htsworkflow.pipelines import sequences
+from htsworkflow.util.rdfhelp import get_model, load_string_into_model, \
+     rdfNS, libraryOntology, dump_model, fromTypedNode
 
 class SequenceFileTests(unittest.TestCase):
     """
@@ -294,15 +297,8 @@ class SequenceFileTests(unittest.TestCase):
         self.assertEqual(f.make_target_name('/tmp'),
                          '/tmp/42BW9AAXX_152_s_4_1_eland_extended.txt.bz2')
 
-    def test_sql(self):
-        """
-        Make sure that the quick and dirty sql interface in sequences works
-        """
-        import sqlite3
-        db = sqlite3.connect(":memory:")
-        c = db.cursor()
-        sequences.create_sequence_table(c)
-
+    def _generate_sequences(self):
+        seqs = []
         data = [('/root/42BW9AAXX/C1-152',
                 'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r1.tar.bz2'),
                 ('/root/42BW9AAXX/C1-152',
@@ -313,12 +309,176 @@ class SequenceFileTests(unittest.TestCase):
                 'woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l2_r21.tar.bz2'),]
 
         for path, name in data:
-            seq = sequences.parse_qseq(path, name)
-            seq.save(c)
+            seqs.append(sequences.parse_qseq(path, name))
+
+        path = '/root/42BW9AAXX/C1-38/Project_12345'
+        name = '12345_AAATTT_L003_R1_001.fastq.gz'
+        pathname = os.path.join(path,name)
+        seqs.append(sequences.parse_fastq(path, name))
+        self.assertEqual(len(seqs), 5)
+        return seqs
+
+
+    def test_sql(self):
+        """
+        Make sure that the quick and dirty sql interface in sequences works
+        """
+        import sqlite3
+        db = sqlite3.connect(":memory:")
+        c = db.cursor()
+        sequences.create_sequence_table(c)
+
+        for seq in self._generate_sequences():
+            seq.save_to_sql(c)
 
         count = c.execute("select count(*) from sequences")
         row = count.fetchone()
-        self.assertEqual(row[0], 4)
+        self.assertEqual(row[0], 5)
+
+    def test_basic_rdf_scan(self):
+        """Make sure we can save to RDF model"""
+        import RDF
+        model = get_model()
+
+        for seq in self._generate_sequences():
+            seq.save_to_model(model)
+
+        files = list(model.find_statements(
+            RDF.Statement(None, rdfNS['type'], libraryOntology['raw_file'])))
+        self.assertEqual(len(files), 5)
+        files = list(model.find_statements(
+            RDF.Statement(None, rdfNS['type'], libraryOntology['qseq'])))
+        self.assertEqual(len(files), 4)
+        files = list(model.find_statements(
+            RDF.Statement(None, rdfNS['type'], libraryOntology['split_fastq'])))
+        self.assertEqual(len(files), 1)
+
+        files = list(model.find_statements(
+            RDF.Statement(None, libraryOntology['library_id'], None)))
+        self.assertEqual(len(files), 1)
+
+        files = list(model.find_statements(
+            RDF.Statement(None, libraryOntology['flowcell_id'], None)))
+        self.assertEqual(len(files), 5)
+
+        files = list(model.find_statements(
+            RDF.Statement(None, libraryOntology['flowcell'], None)))
+        self.assertEqual(len(files), 0)
+
+        files = list(model.find_statements(
+            RDF.Statement(None, libraryOntology['library'], None)))
+        self.assertEqual(len(files), 0)
+
+    def test_rdf_scan_with_url(self):
+        """Make sure we can save to RDF model"""
+        import RDF
+        model = get_model()
+        base_url = 'http://localhost'
+        for seq in self._generate_sequences():
+            seq.save_to_model(model, base_url=base_url)
+        localFC = RDF.NS(base_url + '/flowcell/')
+        localLibrary = RDF.NS(base_url + '/library/')
+
+        files = list(model.find_statements(
+            RDF.Statement(None, libraryOntology['flowcell'], None)))
+        self.assertEqual(len(files), 5)
+        for f in files:
+            self.assertEqual(f.object, localFC['42BW9AAXX/'])
+
+        files = list(model.find_statements(
+            RDF.Statement(None, libraryOntology['library'], None)))
+        self.assertEqual(len(files), 1)
+        self.assertEqual(files[0].object, localLibrary['12345'])
+
+    def test_rdf_fixup_library(self):
+        """Make sure we can save to RDF model"""
+        base_url = 'http://localhost'
+        localLibrary = RDF.NS(base_url + '/library/')
+
+        flowcellInfo = """@prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#> .
+
+<{base}/flowcell/42BW9AAXX/>
+    libns:flowcell_id "42BW9AXX"@en ;
+    libns:has_lane <{base}/lane/1169>, <{base}/lane/1170>,
+                   <{base}/lane/1171>, <{base}/lane/1172> ;
+    libns:read_length 75 ;
+    a libns:illumina_flowcell .
+
+<{base}/lane/1169>
+    libns:lane_number 1 ; libns:library <{base}/library/10923/> .
+<{base}/lane/1170>
+    libns:lane_number 2 ; libns:library <{base}/library/10924/> .
+<{base}/lane/1171>
+    libns:lane_number 3 ; libns:library <{base}/library/12345/> .
+<{base}/lane/1172>
+    libns:lane_number 3 ; libns:library <{base}/library/10930/> .
+""".format(base=base_url)
+        model = get_model()
+        load_string_into_model(model, 'turtle', flowcellInfo)
+        for seq in self._generate_sequences():
+            seq.save_to_model(model)
+        f = sequences.update_model_sequence_library(model, base_url=base_url)
+
+        libTerm = libraryOntology['library']
+        libIdTerm = libraryOntology['library_id']
+
+        url = 'file:///root/42BW9AAXX/C1-152/woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r2.tar.bz2'
+        nodes = list(model.get_targets(RDF.Uri(url), libTerm))
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0], localLibrary['10923/'])
+        nodes = list(model.get_targets(RDF.Uri(url), libIdTerm))
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(fromTypedNode(nodes[0]), '10923')
+
+        url = 'file:///root/42BW9AAXX/C1-152/woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l2_r1.tar.bz2'
+        nodes = list(model.get_targets(RDF.Uri(url), libTerm))
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0], localLibrary['10924/'])
+        nodes = list(model.get_targets(RDF.Uri(url), libIdTerm))
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(fromTypedNode(nodes[0]), '10924')
+
+        url = 'file:///root/42BW9AAXX/C1-38/Project_12345/12345_AAATTT_L003_R1_001.fastq.gz'
+        nodes = list(model.get_targets(RDF.Uri(url), libTerm))
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0], localLibrary['12345/'])
+        nodes = list(model.get_targets(RDF.Uri(url), libIdTerm))
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(fromTypedNode(nodes[0]), '12345')
+
+    def test_load_from_model(self):
+        """Can we round trip through a RDF model"""
+        model = get_model()
+        path = '/root/42BW9AAXX/C1-38/Project_12345/'
+        filename = '12345_AAATTT_L003_R1_001.fastq.gz'
+        seq = sequences.parse_fastq(path, filename)
+        seq.save_to_model(model)
+
+        seq_id = 'file://'+path+filename
+        seqNode = RDF.Node(RDF.Uri(seq_id))
+        libNode = RDF.Node(RDF.Uri('http://localhost/library/12345'))
+        model.add_statement(
+            RDF.Statement(seqNode, libraryOntology['library'], libNode))
+        seq2 = sequences.SequenceFile.load_from_model(model, seq_id)
+
+        self.assertEqual(seq.flowcell, seq2.flowcell)
+        self.assertEqual(seq.flowcell, '42BW9AAXX')
+        self.assertEqual(seq.filetype, seq2.filetype)
+        self.assertEqual(seq2.filetype, 'split_fastq')
+        self.assertEqual(seq.lane, seq2.lane)
+        self.assertEqual(seq2.lane, 3)
+        self.assertEqual(seq.read, seq2.read)
+        self.assertEqual(seq2.read, 1)
+        self.assertEqual(seq.project, seq2.project)
+        self.assertEqual(seq2.project, '12345')
+        self.assertEqual(seq.index, seq2.index)
+        self.assertEqual(seq2.index, 'AAATTT')
+        self.assertEqual(seq.split, seq2.split)
+        self.assertEqual(seq2.split, '001')
+        self.assertEqual(seq.cycle, seq2.cycle)
+        self.assertEqual(seq.pf, seq2.pf)
+        self.assertEqual(seq2.libraryNode, libNode)
+        self.assertEqual(seq.path, seq2.path)
 
     def test_scan_for_sequences(self):
         # simulate tree
