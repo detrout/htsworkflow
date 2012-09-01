@@ -77,7 +77,8 @@ def main(cmdline=None):
         results.make_tree_from(opts.make_tree_from)
 
     if opts.fastq:
-        extractor = CondorFastqExtract(opts.host, apidata, opts.sequence,
+        flowcells = os.path.join(opts.sequence, 'flowcells')
+        extractor = CondorFastqExtract(opts.host, flowcells,
                                        force=opts.force)
         extractor.create_scripts(results)
 
