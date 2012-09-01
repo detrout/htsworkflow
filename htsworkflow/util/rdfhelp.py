@@ -257,6 +257,9 @@ def get_model(model_name=None, directory=None):
 
 
 def load_into_model(model, parser_name, path, ns=None):
+    if type(ns) in types.StringTypes:
+        ns = RDF.Uri(ns)
+
     if isinstance(path, RDF.Node):
         if path.is_resource():
             path = str(path.uri)
@@ -264,37 +267,48 @@ def load_into_model(model, parser_name, path, ns=None):
             raise ValueError("url to load can't be a RDF literal")
 
     url_parts = list(urlparse(path))
-    if len(url_parts[0]) == 0:
+    if len(url_parts[0]) == 0 or url_parts[0] == 'file':
         url_parts[0] = 'file'
         url_parts[2] = os.path.abspath(url_parts[2])
+        if parser_name is None or parser_name == 'guess':
+            parser_name = guess_parser_by_extension(path)
     url = urlunparse(url_parts)
-    logger.info("Opening %s" % (url,))
-    req = urlopen(url)
-    logger.debug("request status: %s" % (req.code,))
-    if parser_name is None:
-        content_type = req.headers.get('Content-Type', None)
-        parser_name = guess_parser(content_type, path)
-        logger.debug("Guessed parser: %s" % (parser_name,))
-    data = req.read()
-    load_string_into_model(model, parser_name, data, ns)
+    logger.info("Opening {0} with parser {1}".format(url, parser_name))
 
+    rdf_parser = RDF.Parser(name=parser_name)
+    for s in rdf_parser.parse_as_stream(url, ns):
+        conditionally_add_statement(model, s, ns)
 
 def load_string_into_model(model, parser_name, data, ns=None):
+    ns = fixup_namespace(ns)
+    logger.debug("load_string_into_model parser={0}, len={1}".format(
+        parser_name, len(data)))
+    rdf_parser = RDF.Parser(name=parser_name)
+
+    for s in rdf_parser.parse_string_as_stream(data, ns):
+        conditionally_add_statement(model, s, ns)
+
+def fixup_namespace(ns):
     if ns is None:
         ns = RDF.Uri("http://localhost/")
-    imports = owlNS['imports']
-    rdf_parser = RDF.Parser(name=parser_name)
-    for s in rdf_parser.parse_string_as_stream(data, ns):
-        if s.predicate == imports:
-            obj = str(s.object)
-            logger.info("Importing %s" % (obj,))
-            load_into_model(model, None, obj, ns)
-        if s.object.is_literal():
-            value_type = get_node_type(s.object)
-            if value_type == 'string':
-                s.object = sanitize_literal(s.object)
-        model.add_statement(s)
+    elif type(ns) in types.StringTypes:
+        ns = RDF.Uri(ns)
+    elif not(isinstance(ns, RDF.Uri)):
+        errmsg = "Namespace should be string or uri not {0}"
+        raise ValueError(errmsg.format(str(type(ns))))
+    return ns
 
+def conditionally_add_statement(model, s, ns):
+    imports = owlNS['imports']
+    if s.predicate == imports:
+        obj = str(s.object)
+        logger.info("Importing %s" % (obj,))
+        load_into_model(model, None, obj, ns)
+    if s.object.is_literal():
+        value_type = get_node_type(s.object)
+        if value_type == 'string':
+            s.object = sanitize_literal(s.object)
+    model.add_statement(s)
 
 def sanitize_literal(node):
     """Clean up a literal string
@@ -324,20 +338,23 @@ def sanitize_literal(node):
 
 
 def guess_parser(content_type, pathname):
-    if content_type in ('application/rdf+xml'):
+    if content_type in ('application/rdf+xml',):
         return 'rdfxml'
-    elif content_type in ('application/x-turtle'):
+    elif content_type in ('application/x-turtle',):
         return 'turtle'
-    elif content_type in ('text/html'):
+    elif content_type in ('text/html',):
         return 'rdfa'
     elif content_type is None:
-        _, ext = os.path.splitext(pathname)
-        if ext in ('xml', 'rdf'):
-            return 'rdfxml'
-        elif ext in ('html'):
-            return 'rdfa'
-        elif ext in ('turtle'):
-            return 'turtle'
+        return guess_parser_by_extension(pathname)
+
+def guess_parser_by_extension(pathname):
+    _, ext = os.path.splitext(pathname)
+    if ext in ('.xml', '.rdf'):
+        return 'rdfxml'
+    elif ext in ('.html'):
+        return 'rdfa'
+    elif ext in ('.turtle'):
+        return 'turtle'
     return 'guess'
 
 def get_serializer(name='turtle'):

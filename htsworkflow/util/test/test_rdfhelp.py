@@ -10,6 +10,8 @@ from htsworkflow.util.rdfhelp import \
      dump_model, \
      fromTypedNode, \
      get_model, \
+     guess_parser, \
+     guess_parser_by_extension, \
      load_string_into_model, \
      rdfsNS, \
      toTypedNode, \
@@ -144,7 +146,8 @@ try:
 
         def test_owl_import(self):
             path, name = os.path.split(__file__)
-            loc = 'file://'+os.path.abspath(path)+'/'
+            #loc = 'file://'+os.path.abspath(path)+'/'
+            loc = os.path.abspath(path)+'/'
             model = get_model()
             fragment = '''
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -194,6 +197,23 @@ _:a owl:imports "{loc}extra.turtle" .
             hostile_result = """hi <b>there</b>"""
             self.failUnlessEqual(str(hostile_sanitized), hostile_result)
 
+        def test_guess_parser_from_file(self):
+            DATA = [
+                ('/a/b/c.rdf', 'rdfxml'),
+                ('/a/b/c.xml', 'rdfxml'),
+                ('/a/b/c.html', 'rdfa'),
+                ('/a/b/c.turtle', 'turtle')]
+            for path, parser in DATA:
+                self.assertEqual(guess_parser_by_extension(path), parser)
+                self.assertEqual(guess_parser(None, path), parser)
+
+            DATA = [
+                ('application/rdf+xml', 'http://a.org/b/c', 'rdfxml'),
+                ('application/x-turtle', 'http://a.org/b/c', 'turtle'),
+                ('text/html', 'http://a.org/b/c', 'rdfa')
+            ]
+            for contenttype, url, parser in DATA:
+                self.assertEqual(guess_parser(contenttype, url), parser)
 
     def suite():
         return unittest.makeSuite(TestRDFHelp, 'test')
