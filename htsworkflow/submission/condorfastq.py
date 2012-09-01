@@ -46,6 +46,9 @@ class CondorFastqExtract(object):
         self.sequences_path = sequences_path
         self.log_path = log_path
         self.force = force
+        LOGGER.info("CondorFastq host={0}".format(self.host))
+        LOGGER.info("CondorFastq sequences_path={0}".format(self.sequences_path))
+        LOGGER.info("CondorFastq log_path={0}".format(self.log_path))
 
     def create_scripts(self, result_map ):
         """
@@ -123,6 +126,7 @@ class CondorFastqExtract(object):
         flowcell_ids = self.find_relavant_flowcell_ids()
         self.import_sequences(flowcell_ids)
 
+
         query = RDF.SPARQLQuery("""
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
         prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -185,15 +189,23 @@ WHERE {
         flowcell_ids = set()
         for r in flowcell_query.execute(self.model):
             flowcell_ids.add( fromTypedNode(r['flowcell_id']) )
-        LOGGER.debug("Flowcells = %s" %(unicode(flowcell_ids)))
+            LOGGER.debug("Flowcells = %s" %(unicode(flowcell_ids)))
+            flowcell_test = RDF.Statement(r['flowcell'],
+                                          rdfNS['type'],
+                                          libraryOntology['illumina_flowcell'])
+        if not self.model.contains_statement(flowcell_test):
+            # we probably lack full information about the flowcell.
+            load_into_model(self.model, 'rdfa', r['flowcell'])
         return flowcell_ids
 
     def import_sequences(self, flowcell_ids):
-        seq_dirs = ( os.path.join(self.sequences_path, f)
-                     for f in flowcell_ids )
+
+        seq_dirs = []
+        for f in flowcell_ids:
+            seq_dirs.append(os.path.join(self.sequences_path, str(f)))
         sequences = scan_for_sequences(seq_dirs)
         for seq in sequences:
-            seq.save_to_model(self.model)
+            seq.save_to_model(self.model, self.host)
         update_model_sequence_library(self.model, self.host)
 
     def find_missing_targets(self, result_map, raw_files):
