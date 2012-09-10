@@ -79,6 +79,7 @@ def main(cmdline=None):
     if opts.fastq:
         flowcells = os.path.join(opts.sequence, 'flowcells')
         extractor = CondorFastqExtract(opts.host, flowcells,
+                                       model=opts.model,
                                        force=opts.force)
         extractor.create_scripts(results)
 

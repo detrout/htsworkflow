@@ -31,6 +31,7 @@ LOGGER = logging.getLogger(__name__)
 class CondorFastqExtract(object):
     def __init__(self, host, sequences_path,
                  log_path='log',
+                 model=None,
                  force=False):
         """Extract fastqs from results archive
 
@@ -42,7 +43,7 @@ class CondorFastqExtract(object):
           force (bool): do we force overwriting current files?
         """
         self.host = host
-        self.model = get_model()
+        self.model = get_model(model)
         self.sequences_path = sequences_path
         self.log_path = log_path
         self.force = force
@@ -179,7 +180,7 @@ class CondorFastqExtract(object):
         flowcell_query =RDF.SPARQLQuery("""
 prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
-select distinct ?library ?flowcell ?flowcell_id
+select distinct ?flowcell ?flowcell_id
 WHERE {
   ?library a libns:library ;
            libns:has_lane ?lane .
@@ -193,9 +194,9 @@ WHERE {
             flowcell_test = RDF.Statement(r['flowcell'],
                                           rdfNS['type'],
                                           libraryOntology['illumina_flowcell'])
-        if not self.model.contains_statement(flowcell_test):
-            # we probably lack full information about the flowcell.
-            load_into_model(self.model, 'rdfa', r['flowcell'])
+            if not self.model.contains_statement(flowcell_test):
+                # we probably lack full information about the flowcell.
+                load_into_model(self.model, 'rdfa', r['flowcell'])
         return flowcell_ids
 
     def import_sequences(self, flowcell_ids):
