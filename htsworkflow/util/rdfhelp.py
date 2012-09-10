@@ -276,7 +276,18 @@ def load_into_model(model, parser_name, path, ns=None):
     logger.info("Opening {0} with parser {1}".format(url, parser_name))
 
     rdf_parser = RDF.Parser(name=parser_name)
-    for s in rdf_parser.parse_as_stream(url, ns):
+
+    retries = 3
+    while retries > 0:
+        try:
+            retries -= 1
+            statements = rdf_parser.parse_as_stream(url, ns)
+            retries = 0
+        except RDF.RedlandError, e:
+            errmsg = "RDF.RedlandError: {0} {1} tries remaining"
+            logger.error(errmsg.format(str(e), tries))
+
+    for s in statements:
         conditionally_add_statement(model, s, ns)
 
 def load_string_into_model(model, parser_name, data, ns=None):
