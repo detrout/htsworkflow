@@ -202,7 +202,8 @@ _:a owl:imports "{loc}extra.turtle" .
                 ('/a/b/c.rdf', 'rdfxml'),
                 ('/a/b/c.xml', 'rdfxml'),
                 ('/a/b/c.html', 'rdfa'),
-                ('/a/b/c.turtle', 'turtle')]
+                ('/a/b/c.turtle', 'turtle'),
+                ('http://foo.bar/bleem.turtle', 'turtle')]
             for path, parser in DATA:
                 self.assertEqual(guess_parser_by_extension(path), parser)
                 self.assertEqual(guess_parser(None, path), parser)
@@ -210,7 +211,10 @@ _:a owl:imports "{loc}extra.turtle" .
             DATA = [
                 ('application/rdf+xml', 'http://a.org/b/c', 'rdfxml'),
                 ('application/x-turtle', 'http://a.org/b/c', 'turtle'),
-                ('text/html', 'http://a.org/b/c', 'rdfa')
+                ('text/html', 'http://a.org/b/c', 'rdfa'),
+                ('text/html', 'http://a.org/b/c.html', 'rdfa'),
+                ('text/plain', 'http://a.org/b/c.turtle', 'turtle'),
+                ('text/plain', 'http://a.org/b/c', 'guess')
             ]
             for contenttype, url, parser in DATA:
                 self.assertEqual(guess_parser(contenttype, url), parser)

@@ -277,6 +277,7 @@ def load_into_model(model, parser_name, path, ns=None):
 
     rdf_parser = RDF.Parser(name=parser_name)
 
+    statements = []
     retries = 3
     while retries > 0:
         try:
@@ -285,7 +286,7 @@ def load_into_model(model, parser_name, path, ns=None):
             retries = 0
         except RDF.RedlandError, e:
             errmsg = "RDF.RedlandError: {0} {1} tries remaining"
-            logger.error(errmsg.format(str(e), tries))
+            logger.error(errmsg.format(str(e), retries))
 
     for s in statements:
         conditionally_add_statement(model, s, ns)
@@ -355,16 +356,16 @@ def guess_parser(content_type, pathname):
         return 'turtle'
     elif content_type in ('text/html',):
         return 'rdfa'
-    elif content_type is None:
+    elif content_type is None or content_type in ('text/plain',):
         return guess_parser_by_extension(pathname)
 
 def guess_parser_by_extension(pathname):
     _, ext = os.path.splitext(pathname)
     if ext in ('.xml', '.rdf'):
         return 'rdfxml'
-    elif ext in ('.html'):
+    elif ext in ('.html',):
         return 'rdfa'
-    elif ext in ('.turtle'):
+    elif ext in ('.turtle',):
         return 'turtle'
     return 'guess'
 
