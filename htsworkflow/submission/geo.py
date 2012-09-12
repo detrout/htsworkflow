@@ -31,9 +31,13 @@ class GEOSubmission(Submission):
         for lib_id, result_dir in result_map.items():
             an_analysis = self.get_submission_node(result_dir)
             metadata = self.get_sample_metadata(an_analysis)
-            if len(metadata) > 1:
+            if len(metadata) == 0:
+                errmsg = 'No metadata found for {0}'
+                LOGGER.error(errmsg.format(str(an_analysis),))
+                continue
+            elif len(metadata) > 1:
                 errmsg = 'Confused there are more than one samples for %s'
-                LOGGER.debug(errmsg % (str(an_analysis,)))
+                LOGGER.debug(errmsg % (str(an_analysis),))
             metadata = metadata[0]
             metadata['raw'] = self.get_raw_files(an_analysis)
             metadata['supplimental'] = self.get_sample_files(an_analysis)
