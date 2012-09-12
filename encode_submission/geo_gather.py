@@ -84,6 +84,8 @@ def main(cmdline=None):
         extractor.create_scripts(results)
 
     if opts.scan_submission:
+        if opts.name is None:
+            parser.error("Please define a submission name")
         mapper.scan_submission_dirs(results)
 
     if opts.make_soft:
