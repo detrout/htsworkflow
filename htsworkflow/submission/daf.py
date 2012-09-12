@@ -361,7 +361,7 @@ class UCSCSubmission(object):
                           rdfNS['type'],
                           submissionOntology['submission']))
         self.model.add_statement(RDF.Statement(submissionNode,
-                                               submissionOntology['library'],
+                                               libraryOntology['library'],
                                                libNode))
 
         LOGGER.debug("Adding statements to {0}".format(str(submissionView)))
