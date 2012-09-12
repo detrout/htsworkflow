@@ -270,8 +270,8 @@ def load_into_model(model, parser_name, path, ns=None):
     if len(url_parts[0]) == 0 or url_parts[0] == 'file':
         url_parts[0] = 'file'
         url_parts[2] = os.path.abspath(url_parts[2])
-        if parser_name is None or parser_name == 'guess':
-            parser_name = guess_parser_by_extension(path)
+    if parser_name is None or parser_name == 'guess':
+        parser_name = guess_parser_by_extension(path)
     url = urlunparse(url_parts)
     logger.info("Opening {0} with parser {1}".format(url, parser_name))
 
