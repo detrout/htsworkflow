@@ -6,14 +6,19 @@ import types
 from datetime import datetime
 
 from htsworkflow.util.rdfhelp import \
+     add_default_schemas, \
      blankOrUri, \
+     dcNS, \
      dump_model, \
      fromTypedNode, \
      get_model, \
      guess_parser, \
      guess_parser_by_extension, \
      load_string_into_model, \
+     owlNS, \
+     rdfNS, \
      rdfsNS, \
+     remove_schemas, \
      toTypedNode, \
      stripNamespace, \
      simplify_uri, \
@@ -214,6 +219,38 @@ _:a owl:imports "{loc}extra.turtle" .
             ]
             for contenttype, url, parser in DATA:
                 self.assertEqual(guess_parser(contenttype, url), parser)
+
+    class TestRDFSchemas(unittest.TestCase):
+        def test_rdf_schema(self):
+            """Does it basically work?
+            """
+            model = get_model()
+            self.assertEqual(model.size(), 0)
+            add_default_schemas(model)
+            self.assertGreater(model.size(), 0)
+            remove_schemas(model)
+            self.assertEqual(model.size(), 0)
+
+        def test_included_schemas(self):
+            model = get_model()
+            add_default_schemas(model)
+
+            # rdf test
+            s = RDF.Statement(rdfNS[''], dcNS['title'], None)
+            title = model.get_target(rdfNS[''], dcNS['title'])
+            self.assertTrue(title is not None)
+
+            s = RDF.Statement(rdfNS['Property'], rdfNS['type'], rdfsNS['Class'])
+            self.assertTrue(model.contains_statement(s))
+
+            # rdfs test
+            s = RDF.Statement(rdfsNS['Class'], rdfNS['type'], rdfsNS['Class'])
+            self.assertTrue(model.contains_statement(s))
+
+            s = RDF.Statement(owlNS['inverseOf'], rdfNS['type'],
+                              rdfNS['Property'])
+            self.assertTrue(model.contains_statement(s))
+
 
     def suite():
         return unittest.makeSuite(TestRDFHelp, 'test')
