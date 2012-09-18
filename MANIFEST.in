@@ -1,2 +1,3 @@
 include RELEASE-VERSION
 include version.py
+include htsworkflow/util/schemas/*.turtle

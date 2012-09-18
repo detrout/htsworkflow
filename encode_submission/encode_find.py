@@ -26,18 +26,14 @@ if not 'DJANGO_SETTINGS_MODULE' in os.environ:
 from htsworkflow.submission import daf, ucsc
 
 from htsworkflow.util import api
+from htsworkflow.util.rdfns import *
 from htsworkflow.util.rdfhelp import \
-     dafTermOntology, \
-     dublinCoreNS, \
      get_model, \
      get_serializer, \
      sparql_query, \
      submissionOntology, \
      libraryOntology, \
-     load_into_model, \
-     rdfNS, \
-     rdfsNS, \
-     xsdNS
+     load_into_model
 TYPE_N = rdfNS['type']
 CREATION_DATE = libraryOntology['date']
 

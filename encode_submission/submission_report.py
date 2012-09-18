@@ -4,17 +4,12 @@ import jinja2
 from pprint import pprint
 
 from htsworkflow.util.rdfhelp import \
-     dafTermOntology, \
-     dublinCoreNS, \
      get_model, \
      get_serializer, \
      sparql_query, \
-     submissionOntology, \
      libraryOntology, \
-     load_into_model, \
-     rdfNS, \
-     rdfsNS, \
-     xsdNS
+     load_into_model
+from htsworkflow.util.rdfns import *
 TYPE_N = rdfNS['type']
 CREATION_DATE = libraryOntology['date']
 

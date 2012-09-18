@@ -2,6 +2,7 @@
 """
 import collections
 from datetime import datetime
+from glob import glob
 from urlparse import urlparse, urlunparse
 from urllib2 import urlopen
 import logging
@@ -14,26 +15,13 @@ import RDF
 
 logger = logging.getLogger(__name__)
 
-# standard ontology namespaces
-owlNS = RDF.NS('http://www.w3.org/2002/07/owl#')
-dublinCoreNS = RDF.NS("http://purl.org/dc/elements/1.1/")
-rdfNS = RDF.NS("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-rdfsNS = RDF.NS("http://www.w3.org/2000/01/rdf-schema#")
-xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
+from htsworkflow.util.rdfns import *
 
-# internal ontologies
-submissionOntology = RDF.NS(
-    "http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#")
-dafTermOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/UcscDaf#")
-libraryOntology = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
-inventoryOntology = RDF.NS(
-    "http://jumpgate.caltech.edu/wiki/InventoryOntology#")
-submissionLog = RDF.NS("http://jumpgate.caltech.edu/wiki/SubmissionsLog/")
-geoSoftNS = RDF.NS('http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#')
+SCHEMAS_URL='http://jumpgate.caltech.edu/phony/schemas'
+INFERENCE_URL='http://jumpgate.caltech.edu/phony/inference'
 
 ISOFORMAT_MS = "%Y-%m-%dT%H:%M:%S.%f"
 ISOFORMAT_SHORT = "%Y-%m-%dT%H:%M:%S"
-
 
 def sparql_query(model, query_filename, output_format='text'):
     """Execute sparql query from file
@@ -245,10 +233,10 @@ def get_model(model_name=None, directory=None):
         directory = os.getcwd()
 
     if model_name is None:
-        storage = RDF.MemoryStorage()
+        storage = RDF.MemoryStorage(options_string="contexts='yes'")
         logger.info("Using RDF Memory model")
     else:
-        options = "hash-type='bdb',dir='{0}'".format(directory)
+        options = "contexts='yes',hash-type='bdb',dir='{0}'".format(directory)
         storage = RDF.HashStorage(model_name,
                       options=options)
         logger.info("Using {0} with options {1}".format(model_name, options))
@@ -300,6 +288,7 @@ def load_string_into_model(model, parser_name, data, ns=None):
     for s in rdf_parser.parse_string_as_stream(data, ns):
         conditionally_add_statement(model, s, ns)
 
+
 def fixup_namespace(ns):
     if ns is None:
         ns = RDF.Uri("http://localhost/")
@@ -309,6 +298,7 @@ def fixup_namespace(ns):
         errmsg = "Namespace should be string or uri not {0}"
         raise ValueError(errmsg.format(str(type(ns))))
     return ns
+
 
 def conditionally_add_statement(model, s, ns):
     imports = owlNS['imports']
@@ -321,6 +311,45 @@ def conditionally_add_statement(model, s, ns):
         if value_type == 'string':
             s.object = sanitize_literal(s.object)
     model.add_statement(s)
+
+
+def add_default_schemas(model, schema_path=None):
+    """Add default schemas to a model
+    Looks for turtle files in either htsworkflow/util/schemas
+    or in the list of directories provided in schema_path
+    """
+
+    if schema_path is None:
+        path, _ = os.path.split(__file__)
+        schema_path = [os.path.join(path, 'schemas')]
+    elif type(schema_path) in types.StringTypes:
+        schema_path = [schema_path]
+
+    for p in schema_path:
+        for f in glob(os.path.join(p, '*.turtle')):
+            add_schema(model, f)
+
+def add_schema(model, filename):
+    """Add a schema to a model.
+
+    Main difference from 'load_into_model' is it tags it with
+    a RDFlib context so I can remove them later.
+    """
+    parser = RDF.Parser(name='turtle')
+    context = RDF.Node(RDF.Uri(SCHEMAS_URL))
+    url = 'file://' + filename
+    for s in parser.parse_as_stream(url):
+        try:
+            model.append(s, context)
+        except RDF.RedlandError as e:
+            logger.error("%s with %s", str(e), str(s))
+
+
+def remove_schemas(model):
+    """Remove statements labeled with our schema context"""
+    context = RDF.Node(RDF.Uri(SCHEMAS_URL))
+    model.context_remove_statements(context)
+
 
 def sanitize_literal(node):
     """Clean up a literal string
@@ -374,10 +403,14 @@ def get_serializer(name='turtle'):
     """
     writer = RDF.Serializer(name=name)
     # really standard stuff
-    writer.set_namespace('owl', owlNS._prefix)
     writer.set_namespace('rdf', rdfNS._prefix)
     writer.set_namespace('rdfs', rdfsNS._prefix)
+    writer.set_namespace('owl', owlNS._prefix)
+    writer.set_namespace('dc', dcNS._prefix)
+    writer.set_namespace('xml', xmlNS._prefix)
     writer.set_namespace('xsd', xsdNS._prefix)
+    writer.set_namespace('vs', vsNS._prefix)
+    writer.set_namespace('wot', wotNS._prefix)
 
     # should these be here, kind of specific to an application
     writer.set_namespace('libraryOntology', libraryOntology._prefix)

@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from version import get_git_version
 
 setup(
@@ -7,19 +7,7 @@ setup(
     description="Utilities to help manage high-through-put sequencing",
     author="Diane Trout, Brandon King",
     author_email="diane@caltech.edu",
-    packages=["htsworkflow", 
-              "htsworkflow.automation",
-              "htsworkflow.pipelines",
-              "htsworkflow.util",
-              # django site
-              "htsworkflow.frontend",
-              "htsworkflow.frontend.analysis",
-              "htsworkflow.frontend.eland_config",
-              "htsworkflow.frontend.experiments",
-              "htsworkflow.frontend.inventory",
-              "htsworkflow.frontend.reports",
-              "htsworkflow.frontend.samples",
-              ],
+    packages=find_packages(),
     scripts=[
         "scripts/htsw-copier",
         "scripts/htsw-eland2bed",
@@ -36,4 +24,7 @@ setup(
         "scripts/htsw-update-archive",
         "scripts/htsw-validate",
         ],
+    package_data = {
+        '': ['*.turtle']
+        },
     )
