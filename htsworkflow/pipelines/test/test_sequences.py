@@ -344,13 +344,19 @@ class SequenceFileTests(unittest.TestCase):
             seq.save_to_model(model)
 
         files = list(model.find_statements(
-            RDF.Statement(None, rdfNS['type'], libraryOntology['raw_file'])))
+            RDF.Statement(None,
+                          rdfNS['type'],
+                          libraryOntology['illumina_result'])))
         self.assertEqual(len(files), 5)
         files = list(model.find_statements(
-            RDF.Statement(None, rdfNS['type'], libraryOntology['qseq'])))
+            RDF.Statement(None,
+                          libraryOntology['file_type'],
+                          libraryOntology['qseq'])))
         self.assertEqual(len(files), 4)
         files = list(model.find_statements(
-            RDF.Statement(None, rdfNS['type'], libraryOntology['split_fastq'])))
+            RDF.Statement(None,
+                          libraryOntology['file_type'],
+                          libraryOntology['split_fastq'])))
         self.assertEqual(len(files), 1)
 
         files = list(model.find_statements(

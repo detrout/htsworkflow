@@ -83,7 +83,7 @@ class Submission(object):
                                                     rdfNS['type'])
         if file_classification is None:
             errmsg = 'Could not find class for {0}'
-            logger.warning(errmsg.format(str(file_type)))
+            LOGGER.warning(errmsg.format(str(file_type)))
             return
 
         self.model.add_statement(

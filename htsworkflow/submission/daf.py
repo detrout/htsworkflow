@@ -361,7 +361,7 @@ class UCSCSubmission(object):
                           rdfNS['type'],
                           submissionOntology['submission']))
         self.model.add_statement(RDF.Statement(submissionNode,
-                                               submissionOntology['library'],
+                                               libraryOntology['library'],
                                                libNode))
 
         LOGGER.debug("Adding statements to {0}".format(str(submissionView)))
@@ -385,8 +385,8 @@ class UCSCSubmission(object):
     def create_file_attributes(self, filename, submissionView, submission_uri, submission_dir):
         # add file specific information
         LOGGER.debug("Updating file md5sum")
-        fileNode = RDF.Node(RDF.Uri(submission_uri + '/' + filename))
         submission_pathname = os.path.join(submission_dir, filename)
+        fileNode = RDF.Node(RDF.Uri("file://" + submission_pathname))
         self.model.add_statement(
             RDF.Statement(submissionView,
                           dafTermOntology['has_file'],

@@ -164,7 +164,7 @@ class SequenceFile(object):
         # a bit unreliable... assumes filesystem is encoded in utf-8
         path = os.path.abspath(self.path.encode('utf-8'))
         fileNode = RDF.Node(RDF.Uri('file://' + path))
-        add(model, fileNode, rdfNS['type'], libNS['raw_file'])
+        add(model, fileNode, rdfNS['type'], libNS['illumina_result'])
         add_lit(model, fileNode, libNS['flowcell_id'], self.flowcell)
         add_lit(model, fileNode, libNS['lane_number'], self.lane)
         if self.read is not None:
@@ -177,7 +177,7 @@ class SequenceFile(object):
         add_lit(model, fileNode, libNS['split_id'], self.split)
         add_lit(model, fileNode, libNS['cycle'], self.cycle)
         add_lit(model, fileNode, libNS['passed_filter'], self.pf)
-        add(model, fileNode, rdfNS['type'], libNS[self.filetype])
+        add(model, fileNode, libNS['file_type'], libNS[self.filetype])
 
         if base_url is not None:
             flowcell = RDF.Node(RDF.Uri("{base}/flowcell/{flowcell}/".format(
@@ -215,17 +215,14 @@ class SequenceFile(object):
 
         if not isinstance(seq_id, RDF.Node):
             seq_id = RDF.Node(RDF.Uri(seq_id))
-        seqTypesStmt = RDF.Statement(seq_id, rdfNS['type'], None)
-        seqTypes = model.find_statements(seqTypesStmt)
-        isSequenceFile = False
-        for s in seqTypes:
-            if s.object == libNS['raw_file']:
-                isSequenceFile = True
-            else:
-                seq_type = stripNamespace(libNS, s.object)
-
-        if not isSequenceFile:
+        result_statement = RDF.Statement(seq_id,
+                                         rdfNS['type'],
+                                         libNS['illumina_result'])
+        if not model.contains_statement(result_statement):
             raise KeyError(u"%s not found" % (unicode(seq_id),))
+
+        seq_type_node = model.get_target(seq_id, libNS['file_type'])
+        seq_type = stripNamespace(libNS, seq_type_node)
 
         path = urlparse(str(seq_id.uri)).path
         flowcellNode = get_one(seq_id, libNS['flowcell'])
@@ -421,7 +418,7 @@ def update_model_sequence_library(model, base_url):
     prefix libNS: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
     select ?filenode ?flowcell_id ?lane_id ?library_id ?flowcell ?library
     where {
-       ?filenode a libNS:raw_file ;
+       ?filenode a libNS:illumina_result ;
                  libNS:flowcell_id ?flowcell_id ;
                  libNS:lane_number ?lane_id .
        OPTIONAL { ?filenode libNS:flowcell ?flowcell . }
@@ -429,6 +426,7 @@ def update_model_sequence_library(model, base_url):
        OPTIONAL { ?filenode libNS:library_id ?library_id .}
     }
     """
+    LOGGER.debug("update_model_sequence_library query %s", file_body)
     file_query = RDF.SPARQLQuery(file_body)
     files = file_query.execute(model)
 
@@ -436,9 +434,13 @@ def update_model_sequence_library(model, base_url):
     flowcellNS = RDF.NS(urljoin(base_url, 'flowcell/'))
     for f in files:
         filenode = f['filenode']
+        LOGGER.debug("Updating file node %s", str(filenode))
         lane_id = fromTypedNode(f['lane_id'])
         if f['flowcell'] is None:
             flowcell = flowcellNS[str(f['flowcell_id'])+'/']
+            LOGGER.debug("Adding file (%s) to flowcell (%s) link",
+                         str(filenode),
+                         str(flowcell))
             model.add_statement(
                 RDF.Statement(filenode, libNS['flowcell'], flowcell))
         else:
@@ -452,6 +454,9 @@ def update_model_sequence_library(model, base_url):
                                                    flowcell,
                                                    lane_id)
                 library_id = toTypedNode(simplify_uri(library))
+                LOGGER.debug("Adding file (%s) to library (%s) link",
+                             str(filenode),
+                             str(library))
                 model.add_statement(
                     RDF.Statement(filenode, libNS['library_id'], library_id))
             if library is not None:

@@ -11,7 +11,7 @@ WHERE {
 
   ?file ucscDaf:filename ?filename ;
         ucscDaf:md5sum ?md5sum ;
-        libraryOntology:has_lane ?lane ;
+        libraryOntology:library ?library ;
         a ?file_type .
   ?file_type a <{{file_class}}> ;
              geoSoft:fileTypeLabel ?file_type_label .
