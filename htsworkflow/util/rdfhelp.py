@@ -418,6 +418,9 @@ def get_serializer(name='turtle'):
     return writer
 
 
-def dump_model(model):
+def dump_model(model, destination=None):
+    if destination is None:
+        destination = sys.stdout
     serializer = get_serializer()
-    print serializer.serialize_model_to_string(model)
+    destination.write(serializer.serialize_model_to_string(model))
+    destination.write(os.linesep)
