@@ -441,7 +441,7 @@ class TestCondorFastq(unittest.TestCase):
     def test_find_needed_targets(self):
         lib_db = self.extract.find_archive_sequence_files(self.result_map)
 
-        needed_targets = self.extract.find_missing_targets(self.result_map,
+        needed_targets = self.extract.update_fastq_targets(self.result_map,
                                                            lib_db)
         self.assertEqual(len(needed_targets), 9)
         srf_30221 = needed_targets[
