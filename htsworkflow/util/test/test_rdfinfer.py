@@ -94,6 +94,19 @@ class TestInfer(unittest.TestCase):
         add_default_schemas(self.model)
         load_string_into_model(self.model, 'turtle', MINI_FOAF_ONTOLOGY)
 
+    def test_class(self):
+        fooNS = RDF.NS('http://example.org/')
+        load_string_into_model(self.model, 'turtle', FOAF_DATA)
+        inference = Infer(self.model)
+
+        s = RDF.Statement(fooNS['me.jpg'], rdfNS['type'], rdfsNS['Class'])
+        found = list(self.model.find_statements(s))
+        self.assertEqual(len(found), 0)
+        inference._rule_class()
+        s = RDF.Statement(fooNS['me.jpg'], rdfNS['type'], rdfsNS['Class'])
+        found = list(self.model.find_statements(s))
+        self.assertEqual(len(found), 1)
+
     def test_inverse_of(self):
         fooNS = RDF.NS('http://example.org/')
         load_string_into_model(self.model, 'turtle', FOAF_DATA)

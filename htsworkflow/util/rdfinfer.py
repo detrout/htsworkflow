@@ -1,3 +1,7 @@
+import logging
+import os
+import sys
+
 import RDF
 
 from htsworkflow.util.rdfns import *
@@ -15,7 +19,7 @@ class Infer(object):
         self._context = RDF.Node(RDF.Uri(INFER_URL))
 
 
-    def update(self, max_iterations=None):
+    def think(self, max_iterations=None):
         """Update model with with inferred statements.
 
         max_iterations puts a limit on the number of times we
@@ -37,6 +41,64 @@ class Infer(object):
             if self.model.size() == starting_size:
                 # we didn't add anything new
                 return
+
+    def validate(self, destination=None):
+        if destination is None:
+            destination = sys.stdout
+
+        for msg in self.run_validation():
+            destination.write(msg)
+            destination.write(os.linesep)
+
+    def run_validation(self):
+        """Apply validation rules to our model.
+        """
+        for method_name in dir(self):
+            if method_name.startswith('_validate_'):
+                method = getattr(self, method_name)
+                for msg in method():
+                    yield msg
+
+
+    def _rule_class(self):
+        """resolve class chains.
+        e.g. if a is an BClass, and a BClass is an AClass
+        then a is both a BClass and AClass.
+        """
+        body = """
+        prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        prefix owl: <http://www.w3.org/2002/07/owl#>
+
+        select ?obj ?class
+        where  {
+          ?alias a ?class .
+          ?obj a ?alias .
+        }"""
+        query = RDF.SPARQLQuery(body)
+        for r in query.execute(self.model):
+            s = RDF.Statement(r['obj'], rdfNS['type'], r['class'])
+            if s not in self.model:
+                self.model.append(s, self._context)
+
+    def _rule_subclass(self):
+        """A subclass is a parent class
+        """
+        body = """
+        prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        prefix owl: <http://www.w3.org/2002/07/owl#>
+
+        select ?obj ?subclass ?parent
+        where  {
+          ?subclass rdfs:subClassOf ?parent .
+          ?obj a ?subclass .
+        }"""
+        query = RDF.SPARQLQuery(body)
+        for r in query.execute(self.model):
+            s = RDF.Statement(r['obj'], rdfNS['type'], r['parent'])
+            if s not in self.model:
+                self.model.append(s, self._context)
 
     def _rule_inverse_of(self):
         """Add statements computed with inverseOf
@@ -118,8 +180,8 @@ class Infer(object):
                         {space} ?type .
         }}"""
 
-        wrong_domain_type = "Domain of {0} {1} {2} not {3}"
-        wrong_range_type = "Range of {0} {1} {2} not {3}"
+        wrong_domain_type = "Domain of {0} was not {1}"
+        wrong_range_type = "Range of {0} was not {1}"
 
         count = 0
         schema = RDF.Node(RDF.Uri(SCHEMAS_URL))
@@ -135,9 +197,7 @@ class Infer(object):
                     continue
                 check = RDF.Statement(s.subject, rdfNS['type'], r['type'])
                 if not self.model.contains_statement(check):
-                    yield wrong_domain_type.format(str(s.subject),
-                                                   str(s.predicate),
-                                                   str(s.object),
+                    yield wrong_domain_type.format(str(s),
                                                    str(r['type']))
             # check range
             query = RDF.SPARQLQuery(property_template.format(
@@ -148,9 +208,8 @@ class Infer(object):
                     continue
                 check = RDF.Statement(s.object, rdfNS['type'], r['type'])
                 if not self.model.contains_statement(check):
-                    yield wrong_range_type.format(str(s.subject),
-                                                  str(s.predicate),
-                                                  str(s.object),
+                    yield wrong_range_type.format(str(s),
                                                   str(r['type']))
 
         return
+
