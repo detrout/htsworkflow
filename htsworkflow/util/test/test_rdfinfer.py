@@ -172,7 +172,10 @@ class TestInfer(unittest.TestCase):
         self.model.append(s)
         errors = list(inference._validate_property_types())
         self.assertEqual(len(errors), 1)
-        self.assertTrue(errors[0].startswith('Domain of http://example.org'))
+        startswith = 'Domain of <http://example.org/me.jpg>'
+        self.assertEqual(errors[0][:len(startswith)], startswith)
+        endswith = 'http://xmlns.com/foaf/0.1/Person'
+        self.assertEqual(errors[0][-len(endswith):], endswith)
         del self.model[s]
 
         errors = list(inference._validate_property_types())
@@ -186,8 +189,42 @@ class TestInfer(unittest.TestCase):
 
         errors = list(inference._validate_property_types())
         self.assertEqual(len(errors), 1)
-        self.assertTrue(errors[0].startswith('Range of http://example.org'))
+        startswith = 'Range of <http://example.org/me.jpg>'
+        self.assertEqual(errors[0][:len(startswith)], startswith)
+        endswith = 'http://www.w3.org/2002/07/owl#Thing'
+        self.assertEqual(errors[0][-len(endswith):], endswith)
         del self.model[s]
+
+    def test_property_multiple_domain_types(self):
+        """Can we process a property with multiple domain types?
+        """
+        turtle = """
+        @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+        @prefix foo: <http://example.org/> .
+        @prefix bar: <http://example.com/> .
+
+        foo:AClass a rdfs:Class .
+        foo:BClass a rdfs:Class .
+        bar:ABarClass a rdfs:Class .
+
+        foo:aprop a rdf:Property ;
+            rdfs:domain foo:AClass ;
+            rdfs:domain bar:ABarClass ;
+            rdfs:range foo:BClass .
+
+        foo:object a foo:BClass .
+        foo:subject a foo:AClass ;
+           foo:aprop foo:object .
+        bar:subject a bar:ABarClass ;
+           foo:aprop foo:object .
+        """
+        load_string_into_model(self.model, 'turtle', turtle)
+        inference = Infer(self.model)
+
+        errmsg = list(inference._validate_property_types())
+        print errmsg
+        self.failUnlessEqual(len(errmsg), 0)
 
 def suite():
     return unittest.makeSuite(TestInfer, 'test')

@@ -59,7 +59,6 @@ class Infer(object):
                 for msg in method():
                     yield msg
 
-
     def _rule_class(self):
         """resolve class chains.
         e.g. if a is an BClass, and a BClass is an AClass
@@ -180,8 +179,33 @@ class Infer(object):
                         {space} ?type .
         }}"""
 
-        wrong_domain_type = "Domain of {0} was not {1}"
-        wrong_range_type = "Range of {0} was not {1}"
+        def check_node_space(node, predicate, space, errmsg):
+            """Check that a node conforms to it's allowable space of types.
+
+            e.g. is a subject (node) the domain (space) of this property
+            and is the object (node) the range of of this property.
+            """
+            # check domain
+            query = RDF.SPARQLQuery(property_template.format(
+                predicate=predicate,
+                space=space))
+            seen = []
+            for r in query.execute(self.model):
+                if r['type'] == rdfsNS['Resource']:
+                    continue
+                seen.append(str(r['type']))
+                check = RDF.Statement(node, rdfNS['type'], r['type'])
+                if self.model.contains_statement(check):
+                    return
+
+            # need the seen check, because we're surpressing checking
+            # rdfs:Resource types
+            if len(seen) > 0:
+                return errmsg + ",".join(seen)
+
+
+        wrong_domain_type = "Domain of {0} was not in:"
+        wrong_range_type = "Range of {0} was not in:"
 
         count = 0
         schema = RDF.Node(RDF.Uri(SCHEMAS_URL))
@@ -189,27 +213,13 @@ class Infer(object):
             if context == schema:
                 continue
             # check domain
-            query = RDF.SPARQLQuery(property_template.format(
-                predicate=s.predicate,
-                space='rdfs:domain'))
-            for r in query.execute(self.model):
-                if r['type'] == rdfsNS['Resource']:
-                    continue
-                check = RDF.Statement(s.subject, rdfNS['type'], r['type'])
-                if not self.model.contains_statement(check):
-                    yield wrong_domain_type.format(str(s),
-                                                   str(r['type']))
+            msg = check_node_space(s.subject, s.predicate, 'rdfs:domain',
+                                   wrong_domain_type.format(str(s)))
+            if msg is not None: yield msg
             # check range
-            query = RDF.SPARQLQuery(property_template.format(
-                predicate=s.predicate,
-                space='rdfs:range'))
-            for r in query.execute(self.model):
-                if r['type'] == rdfsNS['Resource']:
-                    continue
-                check = RDF.Statement(s.object, rdfNS['type'], r['type'])
-                if not self.model.contains_statement(check):
-                    yield wrong_range_type.format(str(s),
-                                                  str(r['type']))
-
+            msg = check_node_space(s.object, s.predicate, 'rdfs:range',
+                                   wrong_range_type.format(str(s)))
+            if msg is not None: yield msg
         return
+
 
