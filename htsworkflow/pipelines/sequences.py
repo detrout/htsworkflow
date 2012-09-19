@@ -477,7 +477,7 @@ def guess_library_from_model(model, base_url, flowcell, lane_id):
     select ?library ?lane
     where {{
       <{flowcell}> libNS:has_lane ?lane ;
-                   a libNS:illumina_flowcell .
+                   a libNS:IlluminaFlowcell .
       ?lane libNS:lane_number {lane_id} ;
             libNS:library ?library .
     }}

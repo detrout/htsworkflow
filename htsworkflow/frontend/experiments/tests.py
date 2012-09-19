@@ -281,7 +281,7 @@ class ExperimentsTestCases(TestCase):
         failed_fc_span = flowcell_spans[0]
         failed_fc_a = failed_fc_span.getparent()
         # make sure some of our RDF made it.
-        self.assertEqual(failed_fc_a.get('rel'), 'libns:flowcell')
+        self.assertEqual(failed_fc_a.get('typeof'), 'libns:IlluminaFlowcell')
         self.assertEqual(failed_fc_a.get('href'), '/flowcell/30012AAXX/')
         fc_response = self.client.get(failed_fc_a.get('href'))
         self.assertEqual(fc_response.status_code, 200)
@@ -441,7 +441,7 @@ class ExperimentsTestCases(TestCase):
 
         select ?flowcell ?flowcell_id ?lane_id ?library_id
         where {
-          ?flowcell a libns:illumina_flowcell ;
+          ?flowcell a libns:IlluminaFlowcell ;
                     libns:flowcell_id ?flowcell_id ;
                     libns:has_lane ?lane .
           ?lane libns:lane_number ?lane_id ;
@@ -590,20 +590,23 @@ class TestSequencer(TestCase):
     def test_rdf(self):
         response = self.client.get('/flowcell/FC12150/', apidata)
         tree = fromstring(response.content)
-        divs = tree.xpath('//div[@rel="libns:sequenced_by"]',
-                          namespaces=NSMAP)
-        self.assertEqual(len(divs), 1)
-        self.assertEqual(divs[0].attrib['rel'], 'libns:sequenced_by')
-        self.assertEqual(divs[0].attrib['resource'], '/sequencer/2')
+        seq_by = tree.xpath('//div[@rel="libns:sequenced_by"]',
+                            namespaces=NSMAP)
+        self.assertEqual(len(seq_by), 1)
+        self.assertEqual(seq_by[0].attrib['rel'], 'libns:sequenced_by')
+        seq = seq_by[0].getchildren()
+        self.assertEqual(len(seq), 1)
+        self.assertEqual(seq[0].attrib['about'], '/sequencer/2')
+        self.assertEqual(seq[0].attrib['typeof'], 'libns:Sequencer')
 
-        name = divs[0].xpath('./span[@property="libns:sequencer_name"]')
+        name = seq[0].xpath('./span[@property="libns:sequencer_name"]')
         self.assertEqual(len(name), 1)
         self.assertEqual(name[0].text, 'Tardigrade')
-        instrument = divs[0].xpath(
+        instrument = seq[0].xpath(
             './span[@property="libns:sequencer_instrument"]')
         self.assertEqual(len(instrument), 1)
         self.assertEqual(instrument[0].text, 'ILLUMINA-EC5D15')
-        model = divs[0].xpath(
+        model = seq[0].xpath(
             './span[@property="libns:sequencer_model"]')
         self.assertEqual(len(model), 1)
         self.assertEqual(model[0].text, 'Illumina Genome Analyzer IIx')

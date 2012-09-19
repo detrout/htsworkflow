@@ -126,8 +126,10 @@
     <tbody>
       {% for lane in lib.lane_set.all %}
       <tr rel="libns:has_lane" resource="{{lane.get_absolute_url}}">
-        <td><a href="{{lane.flowcell.get_absolute_url}}" rel="libns:flowcell"
-            ><span property="libns:flowcell_id">{{ lane.flowcell.flowcell_id }}</span></a>
+        <td>
+          <a typeof="libns:IlluminaFlowcell" href="{{lane.flowcell.get_absolute_url}}">
+            <span property="libns:flowcell_id"
+                  >{{lane.flowcell.flowcell_id}}</span></a>
           {% if user.is_staff %}
             <a href="{{lane.flowcell.get_admin_url}}">
                <img class="icon_button"
@@ -135,9 +137,12 @@
             </a>
           {% endif%}
         </td>
-        <td><a href="{{lane.get_absolute_url}}">
+        <td typeof="libns:IlluminaLane" about="{{lane.get_absolute_url}}">
+          <span rel="libns:flowcell" resource="{{lane.flowcell.get_absolute_url}}"></span>
+          <a href="{{lane.get_absolute_url}}">
             <span property="libns:lane_number"  datatype="xsd:decimal"
-               >{{ lane.lane_number }}</span></a></td>
+               >{{ lane.lane_number }}</span>
+            </a></td>
         <td>{{ lane.comment }}</td>
       </tr>
 	  {% endfor %}

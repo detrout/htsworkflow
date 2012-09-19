@@ -9,7 +9,9 @@ import unittest
 
 from htsworkflow.submission.condorfastq import CondorFastqExtract
 from htsworkflow.submission.results import ResultMap
-from htsworkflow.util.rdfhelp import load_string_into_model, dump_model
+from htsworkflow.util.rdfhelp import \
+     add_default_schemas, load_string_into_model, dump_model
+from htsworkflow.util.rdfinfer import Infer
 
 FCDIRS = [
     'C02F9ACXX',
@@ -96,8 +98,13 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
 @prefix seqns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#> .
 @prefix invns: <http://jumpgate.caltech.edu/wiki/InventoryOntology#> .
 
+<http://localhost/library/10000/> a libns:Library .
+<http://localhost/library/1331/> a libns:Library .
+<http://localhost/library/1421/> a libns:Library .
+<http://localhost/library/1661/> a libns:Library .
+
 <http://localhost/flowcell/30221AAXX/>
-        a libns:illumina_flowcell ;
+        a libns:IlluminaFlowcell ;
         libns:read_length 33 ;
         libns:flowcell_type "Single"@en ;
         libns:date "2012-01-19T20:23:26"^^xsd:dateTime;
@@ -112,18 +119,22 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         libns:flowcell_id "30221AAXX"@en .
 
 <http://localhost/lane/3401>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
         libns:lane_number 1 .
 <http://localhost/lane/3402>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
         libns:lane_number 2 .
 <http://localhost/lane/3403>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
         libns:lane_number 3 .
 <http://localhost/lane/3404>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/11154/> ;
         libns:lane_number 4 .
@@ -131,24 +142,28 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         # read_length 33;
         # status "Unknown"@en .
 <http://localhost/lane/3405>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
         libns:lane_number 5 .
 <http://localhost/lane/3406>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
         libns:lane_number 6 .
 <http://localhost/lane/3407>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
         libns:lane_number 7 .
 <http://localhost/lane/3408>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
         libns:lane_number 8 .
 
 <http://localhost/flowcell/42JUYAAXX/>
-        a libns:illumina_flowcell ;
+        a libns:IlluminaFlowcell ;
         libns:read_length 76 ;
         libns:flowcell_type "Paired"@en ;
         libns:date "2012-01-19T20:23:26"^^xsd:dateTime;
@@ -163,22 +178,27 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         libns:flowcell_id "42JUYAAXX"@en .
 
 <http://localhost/lane/4201>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
         libns:lane_number 1 .
 <http://localhost/lane/4202>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
         libns:lane_number 2 .
 <http://localhost/lane/4203>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
         libns:lane_number 3 .
 <http://localhost/lane/4204>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
         libns:lane_number 4 .
 <http://localhost/lane/4205>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/11154/> ;
         libns:lane_number 5 .
@@ -186,20 +206,23 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         # read_length 76;
         # status "Unknown"@en .
 <http://localhost/lane/4206>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
         libns:lane_number 6 .
 <http://localhost/lane/4207>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
         libns:lane_number 7 .
 <http://localhost/lane/4208>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
         libns:lane_number 8 .
 
 <http://localhost/flowcell/61MJTAAXX/>
-        a libns:illumina_flowcell ;
+        a libns:IlluminaFlowcell ;
         libns:read_length 76 ;
         libns:flowcell_type "Single"@en ;
         libns:date "2012-01-19T20:23:26"^^xsd:dateTime;
@@ -214,26 +237,32 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         libns:flowcell_id "61MJTAAXX"@en .
 
 <http://localhost/lane/6601>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
         libns:lane_number 1 .
 <http://localhost/lane/6602>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
         libns:lane_number 2 .
 <http://localhost/lane/6603>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
         libns:lane_number 3 .
 <http://localhost/lane/6604>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
         libns:lane_number 4 .
 <http://localhost/lane/6605>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
         libns:lane_number 5 .
 <http://localhost/lane/6606>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/11154/> ;
         libns:lane_number 6 .
@@ -241,16 +270,18 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         # read_length 76;
         # status "Unknown"@en .
 <http://localhost/lane/6607>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
         libns:lane_number 7 .
 <http://localhost/lane/6608>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
         libns:lane_number 8 .
 
 <http://localhost/flowcell/30DY0AAXX/>
-        a libns:illumina_flowcell ;
+        a libns:IlluminaFlowcell ;
         libns:read_length 76 ;
         libns:flowcell_type "Paired"@en ;
         libns:date "2012-01-19T20:23:26"^^xsd:dateTime;
@@ -265,34 +296,42 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         libns:flowcell_id "30DY0AAXX"@en .
 
 <http://localhost/lane/3801>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
         libns:lane_number 1 .
 <http://localhost/lane/3802>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
         libns:lane_number 2 .
 <http://localhost/lane/3803>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
         libns:lane_number 3 .
 <http://localhost/lane/3804>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
         libns:lane_number 4 .
 <http://localhost/lane/3805>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
         libns:lane_number 5 .
 <http://localhost/lane/3806>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
         libns:lane_number 6 .
 <http://localhost/lane/3807>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
         libns:lane_number 7 .
 <http://localhost/lane/3808>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/11154/> ;
         libns:lane_number 8 .
@@ -301,7 +340,7 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         # status "Unknown"@en .
 
 <http://localhost/flowcell/C02F9ACXX/>
-        a libns:illumina_flowcell ;
+        a libns:IlluminaFlowcell ;
         libns:read_length 101 ;
         libns:flowcell_type "Paired"@en ;
         libns:date "2012-01-19T20:23:26"^^xsd:dateTime;
@@ -310,6 +349,7 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         libns:flowcell_id "C02F9ACXX"@en .
 
 <http://localhost/lane/12300>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/C02F9ACXX/> ;
         libns:library <http://localhost/library/12345/> ;
         libns:lane_number 3 .
@@ -318,6 +358,7 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         # status "Unknown"@en .
 
 <http://localhost/lane/12500>
+        a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/C02F9ACXX/> ;
         libns:library <http://localhost/library/11154/> ;
         libns:lane_number 3 .
@@ -326,7 +367,7 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         # status "Unknown"@en .
 
 <http://localhost/library/11154/>
-        a libns:library ;
+        a libns:Library ;
         libns:affiliation "TSR"@en;
         libns:concentration "29.7";
         libns:date "2012-12-28T00:00:00"^^xsd:dateTime ;
@@ -350,7 +391,7 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
 
 
 <http://localhost/library/12345/>
-        a libns:library ;
+        a libns:Library ;
         libns:affiliation "TSR"@en;
         libns:concentration "12.345";
         libns:cell_line "Unknown"@en ;
@@ -401,6 +442,10 @@ class TestCondorFastq(unittest.TestCase):
                                           self.flowcelldir,
                                           self.logdir)
         load_string_into_model(self.extract.model, 'turtle', lib_turtle)
+        add_default_schemas(self.extract.model)
+        inference = Infer(self.extract.model)
+        errmsgs = list(inference.run_validation())
+        self.assertEqual(len(errmsgs), 0)
 
     def tearDown(self):
         shutil.rmtree(self.tempdir)

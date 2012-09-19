@@ -26,22 +26,37 @@
       </thead>
       <tbody>
       {% for lane in lanes %}
-        <tr rel="libns:has_lane" resource="{{lane.get_absolute_url}}" >
-          <td><a href="{{lane.get_absolute_url}}">
-              <span property="libns:lane_number" datatype="xsd:decimal">{{lane.lane_number}}</span></a></td>
-          <td><a href="{{lane.library.get_absolute_url}}"
-                 rel="libns:library"><span property="libns:library_id"
-              >{{lane.library.id}}</span></a>
+        <tr rel="libns:has_lane">
+          <div typeof="libns:IlluminaLane" about="{{lane.get_absolute_url}}">
+          <td>
+            <a href="{{lane.get_absolute_url}}">
+              <span property="libns:lane_number" datatype="xsd:decimal"
+                    >{{lane.lane_number}}</span>
+            </a>
+          </td>
+          <div rel="libns:library">
+          <div typeof="libns:Library" about="{{lane.library.get_absolute_url}}">
+          <td>
+            <a href="{{lane.library.get_absolute_url}}">
+              <span property="libns:library_id"
+                    >{{lane.library.id}}</span></a>
               {% if user.is_staff %}
               <a href="{{lane.library.get_admin_url}}">
                   <img class="icon_button"
                        src="/media/img/admin/icon_changelink.gif"/>
               </a>{% endif %}
           </td>
-          <td><a href="{{lane.library.get_absolute_url}}" rel="libns:library"><span property="libns:name">{{lane.library.library_name}}</span></a></td>
-          <td><a href="{{lane.library.library_species.get_absolute_url}}" rel="libns:species">
+          <td><a href="{{lane.library.get_absolute_url}}">
+              <span property="libns:name">{{lane.library.library_name}}</span>
+          </a></td>
+          <td rel="libns:species">
+            <a href="{{lane.library.library_species.get_absolute_url}}"
+               typeof="libns:Species">
               <span property="libns:species_name">{{ lane.library.library_species.scientific_name }}</span></a></td>
+          </div> <!-- end library class -->
+          </div> <!-- end library relation -->
           <td><span property="libns:comment">{{lane.comment}}</span></td>
+          </div> <!-- end lane -->
         </tr>
       {% endfor %}
       </tbody>

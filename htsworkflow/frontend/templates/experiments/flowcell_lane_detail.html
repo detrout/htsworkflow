@@ -4,27 +4,27 @@
     <!-- App Stuff -->
     <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
     <script type="text/javascript" src="/static/js/jquery.min.js"></script>
-    
+
     {% block additional_javascript %}
     {% endblock %}
 {% endblock %}
 
 {% block content %}
-<div id="lane_detail" class="htswdetail">
+<div id="lane_detail" class="htswdetail" rel="rdf:type" resource="libns:IlluminaLane">
   <div rel="libns:flowcell" resource="{{flowcell.get_absolute_url}}">
   {% include "experiments/flowcell_header.html" %}
   <div class="flowcell_lane_detail">
   <h2>About this lane</h2>
-  <b>Lane</b>: 
+  <b>Lane</b>:
     <span property="libns:lane_number" datatype="xsd:decimal">{{lane.lane_number}}</span><br/>
   <b>pM</b>:
     <span property="libns:pM" datatype="xsd:decimal">{{ lane.pM }}</span><br/>
   <b>Cluster Estimate</b>:
     <span property="libns:cluster_estimate" datatype="xsd:decimal"
           content="{{lane.cluster_estimate}}">{{ lane.cluster_estimate|intcomma }}</span><br/>
-  <b>Lane Status</b>: 
+  <b>Lane Status</b>:
     <span property="libns:status">{{ lane.status }}</span><br/>
-  <b>Comments</b>: 
+  <b>Comments</b>:
     <span property="libns:comment">{{ lane.comment }}</span><br/>
   </div>
   <hr/>
@@ -74,7 +74,7 @@
             </td>
           </tr>
           {% endif %}
-          {% endfor %} 
+          {% endfor %}
        </tbody>
      </table>
   {% endfor %}

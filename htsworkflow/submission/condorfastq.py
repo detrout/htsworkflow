@@ -169,7 +169,7 @@ class CondorFastqExtract(object):
     def import_library(self, library):
         """Import library data into our model if we don't have it already
         """
-        q = RDF.Statement(library, rdfNS['type'], libraryOntology['library'])
+        q = RDF.Statement(library, rdfNS['type'], libraryOntology['Library'])
         present = False
         if not self.model.contains_statement(q):
             present = True
@@ -184,7 +184,7 @@ prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
 select distinct ?flowcell ?flowcell_id
 WHERE {
-  ?library a libns:library ;
+  ?library a libns:Library ;
            libns:has_lane ?lane .
   ?lane libns:flowcell ?flowcell .
   ?flowcell libns:flowcell_id ?flowcell_id .
@@ -195,7 +195,7 @@ WHERE {
             LOGGER.debug("Flowcells = %s" %(unicode(flowcell_ids)))
             flowcell_test = RDF.Statement(r['flowcell'],
                                           rdfNS['type'],
-                                          libraryOntology['illumina_flowcell'])
+                                          libraryOntology['IlluminaFlowcell'])
             if not self.model.contains_statement(flowcell_test):
                 # we probably lack full information about the flowcell.
                 load_into_model(self.model, 'rdfa', r['flowcell'])

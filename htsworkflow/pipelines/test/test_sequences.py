@@ -408,7 +408,7 @@ class SequenceFileTests(unittest.TestCase):
     libns:has_lane <{base}/lane/1169>, <{base}/lane/1170>,
                    <{base}/lane/1171>, <{base}/lane/1172> ;
     libns:read_length 75 ;
-    a libns:illumina_flowcell .
+    a libns:IlluminaFlowcell .
 
 <{base}/lane/1169>
     libns:lane_number 1 ; libns:library <{base}/library/10923/> .

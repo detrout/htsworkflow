@@ -2,9 +2,10 @@
   <h2>About this Flowcell</h2>
   <b>Flowcell</b>:
     <a href="{{flowcell.get_absolute_url}}" property="libns:flowcell_id">{{flowcell.flowcell_id}}</a>{% if user.is_staff %}<a href="{{flowcell.get_admin_url}}"><img class="icon_button" src="/media/img/admin/icon_changelink.gif" alt="Edit"/></a>{% endif%}
-  <br rel="rdf:type" resource="http://jumpgate.caltech.edu/wiki/LibraryOntology#illumina_flowcell"/>
-  <div rel="libns:sequenced_by"
-       resource="{{flowcell.sequencer.get_absolute_url}}">
+  <br rel="rdf:type" resource="http://jumpgate.caltech.edu/wiki/LibraryOntology#IlluminaFlowcell"/>
+  <div rel="libns:sequenced_by">
+  <div typeof="libns:Sequencer"
+       about="{{flowcell.sequencer.get_absolute_url}}">
   <b>Instrument</b>:
     <span property="libns:sequencer_name">{{ flowcell.sequencer.name }}</span>
     {% if flowcell.sequencer.instrument_name %}
@@ -14,6 +15,7 @@
   <b>Instrument Model</b>:
     <span property="libns:sequencer_model">{{flowcell.sequencer.model}}</span>
     <br/>
+  </div>
   </div>
   {% for datarun in flowcell.datarun_set.all %}
   <b>Image Analysis</b>:
