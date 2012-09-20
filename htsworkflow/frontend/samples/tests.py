@@ -52,7 +52,6 @@ class SampleWebTestCase(TestCase):
     fixtures = ['test_samples.json']
 
     def test_library_info(self):
-
         for lib in Library.objects.all():
             lib_dict = library_dict(lib.id)
             url = '/samples/library/%s/json' % (lib.id,)
@@ -170,6 +169,48 @@ class SampleWebTestCase(TestCase):
                              u'Paired End Multiplexed Sp-BAC')
             self.assertEqual(fromTypedNode(r['gel_cut']), 400)
             self.assertEqual(fromTypedNode(r['made_by']), u'Igor')
+
+    def test_library_index_rdfa(self):
+        from htsworkflow.util.rdfhelp import \
+             add_default_schemas, get_model, load_string_into_model
+
+        from htsworkflow.util.rdfinfer import Infer
+
+        model = get_model()
+        add_default_schemas(model)
+        inference = Infer(model)
+
+        response = self.client.get('/library/')
+        self.assertEqual(response.status_code, 200)
+        load_string_into_model(model, 'rdfa', response.content)
+
+        errmsgs = list(inference.run_validation())
+        self.assertEqual(len(errmsgs), 2)
+        # didn't feel like giving the index page a type since all
+        # its doing is showing a list of things.
+        for err in errmsgs:
+            self.assertEqual(err, 'Missing type for: http://localhost/')
+
+        body =  """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+
+        select ?library ?library_id ?name ?species
+        where {
+           ?library a libns:Library .
+           OPTIONAL { ?library libns:library_id ?library_id . }
+           OPTIONAL { ?library libns:species ?species . }
+           OPTIONAL { ?library libns:name ?name . }
+        }"""
+        bindings = set(['library', 'library_id', 'name', 'species'])
+        query = RDF.SPARQLQuery(body)
+        count = 0
+        for r in query.execute(model):
+            count += 1
+            for name, value in r.items():
+                self.assertTrue(name in bindings)
+                self.assertTrue(value is not None)
+
+        self.assertEqual(count, len(Library.objects.filter(hidden=False)))
 
 # The django test runner flushes the database between test suites not cases,
 # so to be more compatible with running via nose we flush the database tables
