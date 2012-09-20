@@ -172,8 +172,9 @@ class TestInfer(unittest.TestCase):
         self.model.append(s)
         errors = list(inference._validate_property_types())
         self.assertEqual(len(errors), 1)
-        startswith = 'Domain of <http://example.org/me.jpg>'
+        startswith = 'Domain of '
         self.assertEqual(errors[0][:len(startswith)], startswith)
+        self.assertTrue('http://example.org/me.jpg' in errors[0])
         endswith = 'http://xmlns.com/foaf/0.1/Person'
         self.assertEqual(errors[0][-len(endswith):], endswith)
         del self.model[s]
@@ -189,8 +190,9 @@ class TestInfer(unittest.TestCase):
 
         errors = list(inference._validate_property_types())
         self.assertEqual(len(errors), 1)
-        startswith = 'Range of <http://example.org/me.jpg>'
+        startswith = 'Range of '
         self.assertEqual(errors[0][:len(startswith)], startswith)
+        self.assertTrue('http://example.org/me.jpg' in errors[0])
         endswith = 'http://www.w3.org/2002/07/owl#Thing'
         self.assertEqual(errors[0][-len(endswith):], endswith)
         del self.model[s]

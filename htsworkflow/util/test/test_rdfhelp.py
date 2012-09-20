@@ -231,7 +231,7 @@ _:a owl:imports "{loc}extra.turtle" .
             model = get_model()
             self.assertEqual(model.size(), 0)
             add_default_schemas(model)
-            self.assertGreater(model.size(), 0)
+            self.assertTrue(model.size() > 0)
             remove_schemas(model)
             self.assertEqual(model.size(), 0)
 

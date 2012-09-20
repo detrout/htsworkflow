@@ -7,6 +7,7 @@ from urlparse import urlparse, urlunparse
 from urllib2 import urlopen
 import logging
 import os
+import sys
 import types
 
 import lxml.html

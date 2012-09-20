@@ -187,13 +187,13 @@ class Infer(object):
             """
             # check domain
             query = RDF.SPARQLQuery(property_template.format(
-                predicate=predicate,
+                predicate=predicate.uri,
                 space=space))
             seen = []
             for r in query.execute(self.model):
                 if r['type'] == rdfsNS['Resource']:
                     continue
-                seen.append(str(r['type']))
+                seen.append(str(r['type'].uri))
                 check = RDF.Statement(node, rdfNS['type'], r['type'])
                 if self.model.contains_statement(check):
                     return
