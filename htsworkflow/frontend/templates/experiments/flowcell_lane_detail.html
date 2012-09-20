@@ -13,6 +13,7 @@
 <div id="lane_detail" class="htswdetail" rel="rdf:type" resource="libns:IlluminaLane">
   <div rel="libns:flowcell" resource="{{flowcell.get_absolute_url}}">
   {% include "experiments/flowcell_header.html" %}
+  </div>
   <div class="flowcell_lane_detail">
   <h2>About this lane</h2>
   <b>Lane</b>:
@@ -42,6 +43,7 @@
            <td>IVC Percent Base</td>
            <td>IVC Percent Base All</td>
            <td>IVC Percent Base Called</td>
+         </tr>
        </thead>
        <tbody>
           {% for run, lane_number, lane_file_set in filtered_dataruns %}
@@ -79,4 +81,6 @@
      </table>
   {% endfor %}
   </div>
+</div>
+
 {% endblock %}
