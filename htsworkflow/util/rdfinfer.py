@@ -143,7 +143,7 @@ class Infer(object):
         query = RDF.SPARQLQuery(body)
         errmsg = "Missing type for: {0}"
         for r in query.execute(self.model):
-            yield errmsg.format(str(r['subject']))
+            yield errmsg.format(str(r['subject'].uri))
 
     def _validate_undefined_properties(self):
         """Find properties that aren't defined.
