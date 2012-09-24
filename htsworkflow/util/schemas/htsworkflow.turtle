@@ -193,6 +193,28 @@ htswlib:sequencer_name
     rdfs:domain htswlib:Sequencer ;
     rdfs:range rdfs:Literal .
 
+# lane properties
+htswlib:status
+   a rdf:Proprety ;
+   rdfs:comment "Operators opinion of lane status, e.g. were there spots in the pictures" ;
+   rdfs:label "Status" ;
+   rdfs:domain htswlib:IlluminaLane ;
+   rdfs:range htswlib:Literal .
+
+htswlib:cluster_estimate
+   a rdf:Proprety ;
+   rdfs:comment "Estimate of clusters per tile" ;
+   rdfs:label "Cluster Estimate" ;
+   rdfs:domain htswlib:IlluminaLane ;
+   rdfs:range htswlib:Literal .
+
+htswlib:pM
+   a rdf:Proprety ;
+   rdfs:comment "picoMolarity" ;
+   rdfs:label "picoMolarity" ;
+   rdfs:domain htswlib:IlluminaLane ;
+   rdfs:range htswlib:Literal .
+
 
 # library only properties
 htswlib:library_id
@@ -216,6 +238,13 @@ htswlib:library_type
     rdfs:label "Library Type" ;
     rdfs:domain htswlib:Library ;
     rdfs:range rdfs:Literal .
+
+htswlib:condition
+   a rdf:Property ;
+   rdfs:comment "Describes what treatment has been applied to the cells" ;
+   rdfs:label "Condition" ;
+   rdfs:domain htswlib:Library ;
+   rdfs:range rdfs:Literal .
 
 htswlib:stopping_point
     a rdf:Property ;

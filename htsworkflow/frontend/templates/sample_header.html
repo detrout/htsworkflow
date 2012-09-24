@@ -5,7 +5,7 @@
     <h2>Library Name</h2>
     <b>Library ID</b>:
        <a href="{{lib.get_absolute_url}}"><span property="libns:library_id">{{ lib.id }}</span></a>
-       {% if user.is_staff %}<a href="{{lib.get_admin_url}}"><img class="icon_button" src="/media/img/admin/icon_changelink.gif"/></a>{% endif %}
+       {% if user.is_staff %}<a href="{{lib.get_admin_url}}"><img class="icon_button" src="/media/img/admin/icon_changelink.gif" alt="Edit"/></a>{% endif %}
        <br />
     <b>Name</b>:
       <span property="libns:name">{{ lib.library_name }}</span>
@@ -70,12 +70,12 @@
     <br/>
     {% if lib.gel_cut_size %}
     <b>Gel Cut Size</b>:
-      <span property="libns:gel_cut" datatype="xsd:decimal">{{ lib.gel_cut_size }}</span>
+      <span property="libns:gel_cut" datatype="xsd:integer">{{ lib.gel_cut_size }}</span>
     <br/>
     {% endif %}
     {% if lib.insert_size %}
     <b>Insert Size</b>:
-      <span property="libns:insert_size" datatype="xsd:decimal">{{ lib.insert_size }}</span>
+      <span property="libns:insert_size" datatype="xsd:integer">{{ lib.insert_size }}</span>
     <br/>
     {% endif %}
     {% if lib.undiluted_concentration %}

@@ -10,23 +10,26 @@
 {% endblock %}
 
 {% block content %}
-<div id="lane_detail" class="htswdetail" rel="rdf:type" resource="libns:IlluminaLane">
+<div id="lane_detail" class="htswdetail" typeof="libns:IlluminaLane" resource="{{lane.get_absolute_url}}">
   <div rel="libns:flowcell" resource="{{flowcell.get_absolute_url}}">
   {% include "experiments/flowcell_header.html" %}
   </div>
   <div class="flowcell_lane_detail">
   <h2>About this lane</h2>
   <b>Lane</b>:
-    <span property="libns:lane_number" datatype="xsd:decimal">{{lane.lane_number}}</span><br/>
+    <span property="libns:lane_number">{{lane.lane_number}}</span><br/>
   <b>pM</b>:
     <span property="libns:pM" datatype="xsd:decimal">{{ lane.pM }}</span><br/>
+  {% if lane.cluster_estimate %}
   <b>Cluster Estimate</b>:
     <span property="libns:cluster_estimate" datatype="xsd:decimal"
-          content="{{lane.cluster_estimate}}">{{ lane.cluster_estimate|intcomma }}</span><br/>
+          content="{{lane.cluster_estimate}}">{{ lane.cluster_estimate|intcomma }}</span><br/>{% endif %}
+  {% if lane.status %}
   <b>Lane Status</b>:
-    <span property="libns:status">{{ lane.status }}</span><br/>
+    <span property="libns:status">{{ lane.status }}</span><br/>{% endif %}
+  {% if lane.comment %}
   <b>Comments</b>:
-    <span property="libns:comment">{{ lane.comment }}</span><br/>
+    <span property="libns:comment">{{ lane.comment }}</span><br/>{% endif %}
   </div>
   <hr/>
   {% include "sample_header.html" %}
@@ -52,29 +55,37 @@
             <td>{{lane_number}}</td>
             <td>
               <a href="{{ lane_file_set.ivc_all.get_absolute_url }}">
-              <img height="84" width="126" src="{{ lane_file_set.ivc_all.get_absolute_url }}"/></a>
+              <img height="84" width="126" alt="Lane {{lane_id }} IVC All"
+                   src="{{ lane_file_set.ivc_all.get_absolute_url }}"/></a>
             </td>
             <td>
               <a href="{{ lane_file_set.ivc_call.get_absolute_url }}">
-              <img height="84" width="126" src="{{ lane_file_set.ivc_call.get_absolute_url }}"/>
+              <img height="84" width="126" alt="Lane {{lane_id }} IVC Call"
+                   src="{{ lane_file_set.ivc_call.get_absolute_url }}"/>
               </a>
             </td>
             <td>
               <a href="{{ lane_file_set.ivc_percent_base.get_absolute_url }}">
-              <img height="84" width="126" src="{{ lane_file_set.ivc_percent_base.get_absolute_url }}"/>
+              <img height="84" width="126" alt="Lane {{lane_id }} IVC % Base"
+                   src="{{ lane_file_set.ivc_percent_base.get_absolute_url }}"/>
               </a>
             </td>
             <td>
               <a href="{{ lane_file_set.ivc_percent_all.get_absolute_url }}">
-              <img height="84" width="126" src="{{ lane_file_set.ivc_percent_all.get_absolute_url }}"/>
+              <img height="84" width="126" alt="Lane {{lane_id }} IVC % Base All"
+                   src="{{ lane_file_set.ivc_percent_all.get_absolute_url }}"/>
               </a>
             </td>
             <td>
               <a href="{{ lane_file_set.ivc_percent_call.get_absolute_url }}">
-              <img height="84" width="126" src="{{ lane_file_set.ivc_percent_call.get_absolute_url }}"/>
+              <img height="84" width="126"
+                   alt="Lane {{lane_id }} IVC % Base Called"
+                   src="{{ lane_file_set.ivc_percent_call.get_absolute_url }}"/>
               </a>
             </td>
           </tr>
+          {% else %}
+            <tr><td colspan="6">No data</td></tr>
           {% endif %}
           {% endfor %}
        </tbody>

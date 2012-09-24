@@ -10,9 +10,9 @@
 {% endblock %}
 
 {% block content %}
-<div id="flowcell_detail">
+<div>
   {% include "experiments/flowcell_header.html" %}
-  <div class="htswdetail">
+  <div class="htswdetail" typeof="libns:IlluminaFlowcell" resource="{{flowcell.get_absolute_url}}">
     <h2>Lanes</h2>
     <table>
       <thead>
@@ -26,18 +26,16 @@
       </thead>
       <tbody>
       {% for lane in lanes %}
-        <tr rel="libns:has_lane">
-          <div typeof="libns:IlluminaLane" about="{{lane.get_absolute_url}}">
-          <td>
-            <a href="{{lane.get_absolute_url}}">
-              <span property="libns:lane_number" datatype="xsd:decimal"
-                    >{{lane.lane_number}}</span>
+        <tr>
+          <td rel="libns:has_lane">
+            <a href="{{lane.get_absolute_url}}" typeof="libns:IlluminaLane">
+              <span property="libns:lane_number">{{lane.lane_number}}</span>
             </a>
           </td>
-          <div rel="libns:library">
-          <div typeof="libns:Library" about="{{lane.library.get_absolute_url}}">
-          <td>
-            <a href="{{lane.library.get_absolute_url}}">
+          <td rel="libns:library"
+              about="{{lane.get_absolute_url}}"
+              resource="{{lane.library.get_absolute_url}}">
+            <a typeof="libns:Library" href="{{lane.library.get_absolute_url}}">
               <span property="libns:library_id"
                     >{{lane.library.id}}</span></a>
               {% if user.is_staff %}
@@ -46,25 +44,29 @@
                        src="/media/img/admin/icon_changelink.gif"/>
               </a>{% endif %}
           </td>
-          <td><a href="{{lane.library.get_absolute_url}}">
-              <span property="libns:name">{{lane.library.library_name}}</span>
-          </a></td>
-          <td rel="libns:species">
+          <td>
+            <a href="{{lane.library.get_absolute_url}}">
+              <span property="libns:name"
+                    about="{{lane.library.get_absolute_url}}"
+                    >{{lane.library.library_name}}</span>
+            </a>
+          </td>
+          <td about="{{lane.library.get_absolute_url}}" rel="libns:species">
             <a href="{{lane.library.library_species.get_absolute_url}}"
                typeof="libns:Species">
-              <span property="libns:species_name">{{ lane.library.library_species.scientific_name }}</span></a></td>
-          </div> <!-- end library class -->
-          </div> <!-- end library relation -->
-          <td><span property="libns:comment">{{lane.comment}}</span></td>
-          </div> <!-- end lane -->
+              <span property="libns:species_name">{{ lane.library.library_species.scientific_name }}</span></a>
+          </td>
+          <td about="{{lane.get_absolute_url}}">
+            <span property="libns:comment">{{lane.comment}}</span>
+          </td>
         </tr>
       {% endfor %}
       </tbody>
     </table>
-    </div>
     <div class="htsw_flowcell_ivc">
     {% for run in flowcell.datarun_set.all %}
        <h2>Run {{ run.runfolder_name }}</h2>
+       {% if run.lane_files %}
        <table>
          <thead>
            <tr>
@@ -74,34 +76,41 @@
              <td>IVC Percent Base</td>
              <td>IVC Percent Base All</td>
              <td>IVC Percent Base Called</td>
+           </tr>
          </thead>
          <tbody>
             {% for lane_id, lane_file_set in run.lane_files.items %}
-	    {% if lane_file_set.ivc_all %}
+            {% if lane_file_set.ivc_all %}
             <tr>
               <td>{{ lane_id }}</td>
               <td>
                 <a href="{{ lane_file_set.ivc_all.get_absolute_url }}">
-                <img height="84" width="126" src="{{ lane_file_set.ivc_all.get_absolute_url }}"/></a>
+                <img height="84" width="126" alt="Lane {{lane_id }} IVC All"
+                     src="{{ lane_file_set.ivc_all.get_absolute_url }}"/></a>
               </td>
               <td>
                 <a href="{{ lane_file_set.ivc_call.get_absolute_url }}">
-                <img height="84" width="126" src="{{ lane_file_set.ivc_call.get_absolute_url }}"/>
+                <img height="84" width="126" alt="Lane {{lane_id }} IVC Call"
+                     src="{{ lane_file_set.ivc_call.get_absolute_url }}"/>
                 </a>
               </td>
               <td>
                 <a href="{{ lane_file_set.ivc_percent_base.get_absolute_url }}">
-                <img height="84" width="126" src="{{ lane_file_set.ivc_percent_base.get_absolute_url }}"/>
+                <img height="84" width="126" alt="Lane {{lane_id }} IVC % Base"
+                     src="{{ lane_file_set.ivc_percent_base.get_absolute_url }}"/>
                 </a>
               </td>
               <td>
                 <a href="{{ lane_file_set.ivc_percent_all.get_absolute_url }}">
-                <img height="84" width="126" src="{{ lane_file_set.ivc_percent_all.get_absolute_url }}"/>
+                <img height="84" width="126" alt="Lane {{lane_id }} IVC % Base All"
+                     src="{{ lane_file_set.ivc_percent_all.get_absolute_url }}"/>
                 </a>
               </td>
               <td>
                 <a href="{{ lane_file_set.ivc_percent_call.get_absolute_url }}">
-                <img height="84" width="126" src="{{ lane_file_set.ivc_percent_call.get_absolute_url }}"/>
+                <img height="84" width="126"
+                     alt="Lane {{lane_id }} IVC % Base Called"
+                     src="{{ lane_file_set.ivc_percent_call.get_absolute_url }}"/>
                 </a>
               </td>
             </tr>
@@ -109,7 +118,10 @@
             {% endfor %}
          </tbody>
        </table>
+       {% endif %}
     {% endfor %}
     </div>
+  </div>
 </div>
+<!-- end flowcell_detail -->
 {% endblock %}

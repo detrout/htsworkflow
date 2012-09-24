@@ -20,7 +20,7 @@ from htsworkflow.frontend.samples.views import \
 
 from htsworkflow.frontend.auth import apidata
 from htsworkflow.util.conversion import unicode_or_none
-
+from htsworkflow.util.ethelp import validate_xhtml
 
 class LibraryTestCase(TestCase):
     fixtures = ['test_samples.json']
@@ -149,7 +149,8 @@ class SampleWebTestCase(TestCase):
 
         response = self.client.get('/library/10981/')
         self.assertEqual(response.status_code, 200)
-        load_string_into_model(model, 'rdfa', response.content)
+        content = response.content
+        load_string_into_model(model, 'rdfa', content)
 
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
@@ -169,6 +170,9 @@ class SampleWebTestCase(TestCase):
                              u'Paired End Multiplexed Sp-BAC')
             self.assertEqual(fromTypedNode(r['gel_cut']), 400)
             self.assertEqual(fromTypedNode(r['made_by']), u'Igor')
+
+        state = validate_xhtml(content)
+        if state is not None: self.assertTrue(state)
 
     def test_library_index_rdfa(self):
         from htsworkflow.util.rdfhelp import \
@@ -212,6 +216,8 @@ class SampleWebTestCase(TestCase):
 
         self.assertEqual(count, len(Library.objects.filter(hidden=False)))
 
+        state = validate_xhtml(response.content)
+        if state is not None: self.assertTrue(state)
 # The django test runner flushes the database between test suites not cases,
 # so to be more compatible with running via nose we flush the database tables
 # of interest before creating our sample data.

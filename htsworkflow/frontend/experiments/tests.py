@@ -17,6 +17,7 @@ from django.test import TestCase
 from htsworkflow.frontend.experiments import models
 from htsworkflow.frontend.experiments import experiments
 from htsworkflow.frontend.auth import apidata
+from htsworkflow.util.ethelp import validate_xhtml
 
 from htsworkflow.pipelines.test.simulate_runfolder import TESTDATA_DIR
 
@@ -256,6 +257,7 @@ class ExperimentsTestCases(TestCase):
                         u'11061',u'11062',u'11063',u'11064']
         self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5')
         response = self.client.get('/admin/experiments/flowcell/153/')
+
         tree = fromstring(response.content)
         for i in range(0,8):
             xpath_expression = '//input[@id="id_lane_set-%d-library"]'
@@ -274,6 +276,10 @@ class ExperimentsTestCases(TestCase):
         """
         self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5')
         response = self.client.get('/library/11070/')
+        self.assertEqual(response.status_code, 200)
+        status = validate_xhtml(response.content)
+        if status is not None: self.assertTrue(status)
+
         tree = fromstring(response.content)
         flowcell_spans = tree.xpath('//span[@property="libns:flowcell_id"]',
                                     namespaces=NSMAP)
@@ -285,8 +291,14 @@ class ExperimentsTestCases(TestCase):
         self.assertEqual(failed_fc_a.get('href'), '/flowcell/30012AAXX/')
         fc_response = self.client.get(failed_fc_a.get('href'))
         self.assertEqual(fc_response.status_code, 200)
+        status = validate_xhtml(response.content)
+        if status is not None: self.assertTrue(status)
+
         fc_lane_response = self.client.get('/flowcell/30012AAXX/8/')
         self.assertEqual(fc_lane_response.status_code, 200)
+        status = validate_xhtml(response.content)
+        if status is not None: self.assertTrue(status)
+
 
     def test_pooled_multiplex_id(self):
         fc_dict = experiments.flowcell_information('42JU1AAXX')
@@ -423,17 +435,20 @@ class ExperimentsTestCases(TestCase):
 
         model = get_model()
 
-        expected = {1: ['11034'],
-                    2: ['11036'],
-                    3: ['12044','11045'],
-                    4: ['11047','13044'],
-                    5: ['11055'],
-                    6: ['11067'],
-                    7: ['11069'],
-                    8: ['11070']}
+        expected = {'1': ['11034'],
+                    '2': ['11036'],
+                    '3': ['12044','11045'],
+                    '4': ['11047','13044'],
+                    '5': ['11055'],
+                    '6': ['11067'],
+                    '7': ['11069'],
+                    '8': ['11070']}
         url = '/flowcell/42JU1AAXX/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+        status = validate_xhtml(response.content)
+        if status is not None: self.assertTrue(status)
+
         ns = urljoin('http://localhost', url)
         load_string_into_model(model, 'rdfa', response.content, ns=ns)
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -610,3 +625,51 @@ class TestSequencer(TestCase):
             './span[@property="libns:sequencer_model"]')
         self.assertEqual(len(model), 1)
         self.assertEqual(model[0].text, 'Illumina Genome Analyzer IIx')
+
+    def test_flowcell_with_rdf_validation(self):
+        from htsworkflow.util.rdfhelp import add_default_schemas, \
+             dump_model, \
+             get_model, \
+             load_string_into_model
+        from htsworkflow.util.rdfinfer import Infer
+
+        model = get_model()
+        add_default_schemas(model)
+        inference = Infer(model)
+
+        url ='/flowcell/FC12150/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        status = validate_xhtml(response.content)
+        if status is not None: self.assertTrue(status)
+
+        load_string_into_model(model, 'rdfa', response.content)
+
+        errmsgs = list(inference.run_validation())
+        self.assertEqual(len(errmsgs), 2)
+        for errmsg in errmsgs:
+            self.assertEqual(errmsg, 'Missing type for: http://localhost/')
+
+    def test_lane_with_rdf_validation(self):
+        from htsworkflow.util.rdfhelp import add_default_schemas, \
+             dump_model, \
+             get_model, \
+             load_string_into_model
+        from htsworkflow.util.rdfinfer import Infer
+
+        model = get_model()
+        add_default_schemas(model)
+        inference = Infer(model)
+
+        url = '/lane/1193'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        status = validate_xhtml(response.content)
+        if status is not None: self.assertTrue(status)
+
+        load_string_into_model(model, 'rdfa', response.content)
+
+        errmsgs = list(inference.run_validation())
+        self.assertEqual(len(errmsgs), 2)
+        for errmsg in errmsgs:
+            self.assertEqual(errmsg, 'Missing type for: http://localhost/')
