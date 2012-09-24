@@ -8,6 +8,7 @@ import lxml.etree
 try:
     XHTML_RDF_DTD = lxml.etree.DTD(external_id='-//W3C//DTD XHTML+RDFa 1.0//EN')
 except lxml.etree.DTDParseError as e:
+    XHTML_RDF_DTD = None
     LOGGER.warn("Unable to load XHTML DTD %s" % (str(e),))
 
 def indent(elem, level=0):
