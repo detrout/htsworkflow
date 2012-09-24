@@ -28,12 +28,6 @@ from htsworkflow.frontend.experiments.experiments import \
 
 def index(request):
     all_runs = DataRun.objects.order_by('-run_start_time')
-    #t = loader.get_template('experiments/index.html')
-    #c = Context({
-    #    'data_run_list': all_runs,
-    #})
-    #return HttpResponse(t.render(c))
-    # shortcut to the above module usage
     return render_to_response('experiments/index.html',{'data_run_list': all_runs})
 
 def detail(request, run_folder):
