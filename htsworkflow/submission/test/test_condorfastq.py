@@ -122,22 +122,22 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
-        libns:lane_number 1 .
+        libns:lane_number "1" .
 <http://localhost/lane/3402>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
-        libns:lane_number 2 .
+        libns:lane_number "2" .
 <http://localhost/lane/3403>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
-        libns:lane_number 3 .
+        libns:lane_number "3" .
 <http://localhost/lane/3404>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/11154/> ;
-        libns:lane_number 4 .
+        libns:lane_number "4" .
         # paired_end 1;
         # read_length 33;
         # status "Unknown"@en .
@@ -145,22 +145,22 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
-        libns:lane_number 5 .
+        libns:lane_number "5" .
 <http://localhost/lane/3406>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
-        libns:lane_number 6 .
+        libns:lane_number "6" .
 <http://localhost/lane/3407>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
-        libns:lane_number 7 .
+        libns:lane_number "7" .
 <http://localhost/lane/3408>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30221AAXX/> ;
         libns:library <http://localhost/library/10000/> ;
-        libns:lane_number 8 .
+        libns:lane_number "8" .
 
 <http://localhost/flowcell/42JUYAAXX/>
         a libns:IlluminaFlowcell ;
@@ -181,27 +181,27 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
-        libns:lane_number 1 .
+        libns:lane_number "1" .
 <http://localhost/lane/4202>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
-        libns:lane_number 2 .
+        libns:lane_number "2" .
 <http://localhost/lane/4203>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
-        libns:lane_number 3 .
+        libns:lane_number "3" .
 <http://localhost/lane/4204>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
-        libns:lane_number 4 .
+        libns:lane_number "4" .
 <http://localhost/lane/4205>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/11154/> ;
-        libns:lane_number 5 .
+        libns:lane_number "5" .
         # paired_end 1;
         # read_length 76;
         # status "Unknown"@en .
@@ -209,17 +209,17 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
-        libns:lane_number 6 .
+        libns:lane_number "6" .
 <http://localhost/lane/4207>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
-        libns:lane_number 7 .
+        libns:lane_number "7" .
 <http://localhost/lane/4208>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/42JUYAAXX/> ;
         libns:library <http://localhost/library/1421/> ;
-        libns:lane_number 8 .
+        libns:lane_number "8" .
 
 <http://localhost/flowcell/61MJTAAXX/>
         a libns:IlluminaFlowcell ;
@@ -240,32 +240,32 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
-        libns:lane_number 1 .
+        libns:lane_number "1" .
 <http://localhost/lane/6602>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
-        libns:lane_number 2 .
+        libns:lane_number "2" .
 <http://localhost/lane/6603>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
-        libns:lane_number 3 .
+        libns:lane_number "3" .
 <http://localhost/lane/6604>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
-        libns:lane_number 4 .
+        libns:lane_number "4" .
 <http://localhost/lane/6605>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
-        libns:lane_number 5 .
+        libns:lane_number "5" .
 <http://localhost/lane/6606>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/11154/> ;
-        libns:lane_number 6 .
+        libns:lane_number "6" .
         # paired_end 1;
         # read_length 76;
         # status "Unknown"@en .
@@ -273,12 +273,12 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
-        libns:lane_number 7 .
+        libns:lane_number "7" .
 <http://localhost/lane/6608>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/61MJTAAXX/> ;
         libns:library <http://localhost/library/1661/> ;
-        libns:lane_number 8 .
+        libns:lane_number "8" .
 
 <http://localhost/flowcell/30DY0AAXX/>
         a libns:IlluminaFlowcell ;
@@ -299,42 +299,42 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
-        libns:lane_number 1 .
+        libns:lane_number "1" .
 <http://localhost/lane/3802>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
-        libns:lane_number 2 .
+        libns:lane_number "2" .
 <http://localhost/lane/3803>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
-        libns:lane_number 3 .
+        libns:lane_number "3" .
 <http://localhost/lane/3804>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
-        libns:lane_number 4 .
+        libns:lane_number "4" .
 <http://localhost/lane/3805>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
-        libns:lane_number 5 .
+        libns:lane_number "5" .
 <http://localhost/lane/3806>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
-        libns:lane_number 6 .
+        libns:lane_number "6" .
 <http://localhost/lane/3807>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/1331/> ;
-        libns:lane_number 7 .
+        libns:lane_number "7" .
 <http://localhost/lane/3808>
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/30DY0AAXX/> ;
         libns:library <http://localhost/library/11154/> ;
-        libns:lane_number 8 .
+        libns:lane_number "8" .
         # paired_end 1;
         # read_length 76;
         # status "Unknown"@en .
@@ -352,7 +352,7 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/C02F9ACXX/> ;
         libns:library <http://localhost/library/12345/> ;
-        libns:lane_number 3 .
+        libns:lane_number "3" .
         # paired_end 1;
         # read_length 101;
         # status "Unknown"@en .
@@ -361,7 +361,7 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         a libns:IlluminaLane ;
         libns:flowcell <http://localhost/flowcell/C02F9ACXX/> ;
         libns:library <http://localhost/library/11154/> ;
-        libns:lane_number 3 .
+        libns:lane_number "3" .
         # paired_end 1;
         # read_length 101;
         # status "Unknown"@en .
@@ -446,39 +446,40 @@ class TestCondorFastq(unittest.TestCase):
         inference = Infer(self.extract.model)
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
+        os.chdir(self.tempdir)
 
     def tearDown(self):
         shutil.rmtree(self.tempdir)
         os.chdir(self.cwd)
 
-    def test_find_relavant_flowcell_ids(self):
+    def test_find_relevant_flowcell_ids(self):
         expected = set(('30221AAXX',
                         '42JUYAAXX',
                         '61MJTAAXX',
                         '30DY0AAXX',
                         'C02F9ACXX'))
-        flowcell_ids = self.extract.find_relavant_flowcell_ids()
+        flowcell_ids = self.extract.find_relevant_flowcell_ids()
         self.assertEqual(flowcell_ids, expected)
 
     def test_find_archive_sequence(self):
         seqs = self.extract.find_archive_sequence_files(self.result_map)
 
         expected = set([
-            (u'11154', u'42JUYAAXX', 5, 1, 76, True, 'qseq'),
-            (u'11154', u'42JUYAAXX', 5, 2, 76, True, 'qseq'),
-            (u'11154', u'61MJTAAXX', 6, 1, 76, False, 'qseq'),
-            (u'11154', u'C02F9ACXX', 3, 2, 202, True, 'split_fastq'),
-            (u'11154', u'C02F9ACXX', 3, 1, 202, True, 'split_fastq'),
-            (u'11154', u'C02F9ACXX', 3, 1, 202, True, 'split_fastq'),
-            (u'11154', u'C02F9ACXX', 3, 2, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', 3, 1, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', 3, 2, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', 3, 2, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', 3, 1, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', 3, 1, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', 3, 2, 202, True, 'split_fastq'),
-            (u'11154', u'30221AAXX', 4, 1, 33, False, 'srf'),
-            (u'11154', u'30DY0AAXX', 8, 1, 151, True, 'srf')
+            (u'11154', u'42JUYAAXX', '5', 1, 76, True, 'qseq'),
+            (u'11154', u'42JUYAAXX', '5', 2, 76, True, 'qseq'),
+            (u'11154', u'61MJTAAXX', '6', 1, 76, False, 'qseq'),
+            (u'11154', u'C02F9ACXX', '3', 2, 202, True, 'split_fastq'),
+            (u'11154', u'C02F9ACXX', '3', 1, 202, True, 'split_fastq'),
+            (u'11154', u'C02F9ACXX', '3', 1, 202, True, 'split_fastq'),
+            (u'11154', u'C02F9ACXX', '3', 2, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', '3', 1, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', '3', 2, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', '3', 2, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', '3', 1, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', '3', 1, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', '3', 2, 202, True, 'split_fastq'),
+            (u'11154', u'30221AAXX', '4', 1, 33, False, 'srf'),
+            (u'11154', u'30DY0AAXX', '8', 1, 151, True, 'srf')
         ])
         found = set([(l.library_id, l.flowcell_id, l.lane_number, l.read, l.cycle, l.ispaired, l.filetype) for l in seqs])
         self.assertEqual(expected, found)

@@ -74,7 +74,7 @@ class SequenceFileTests(unittest.TestCase):
         self.assertEqual(unicode(f0), unicode(pathname))
         self.assertEqual(repr(f0), "<srf 42BW9AAXX 4 %s>" % (pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
-        self.assertEqual(f0.lane, 4)
+        self.assertEqual(f0.lane, '4')
         self.assertEqual(f0.read, None)
         self.assertEqual(f0.pf, None)
         self.assertEqual(f0.cycle, 38)
@@ -99,7 +99,7 @@ class SequenceFileTests(unittest.TestCase):
         self.assertEqual(unicode(f0), unicode(pathname))
         self.assertEqual(repr(f0), "<qseq 42BW9AAXX 4 %s>" %(pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
-        self.assertEqual(f0.lane, 4)
+        self.assertEqual(f0.lane, '4')
         self.assertEqual(f0.read, 1)
         self.assertEqual(f0.pf, None)
         self.assertEqual(f0.cycle, 36)
@@ -121,7 +121,7 @@ class SequenceFileTests(unittest.TestCase):
         self.assertEqual(f0.path, pathname)
         self.assertEqual(unicode(f0), unicode(pathname))
         self.assertEqual(repr(f0), "<qseq ilmn200901 1 %s>" %(pathname,))
-        self.assertEqual(f0.lane, 1)
+        self.assertEqual(f0.lane, '1')
         self.assertEqual(f0.read, 1)
         self.assertEqual(f0.pf, None)
         self.assertEqual(f0.cycle, 202)
@@ -145,7 +145,7 @@ class SequenceFileTests(unittest.TestCase):
         self.assertEqual(unicode(f0), unicode(pathname))
         self.assertEqual(repr(f0), "<fastq 42BW9AAXX 4 %s>" % (pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
-        self.assertEqual(f0.lane, 4)
+        self.assertEqual(f0.lane, '4')
         self.assertEqual(f0.read, 1)
         self.assertEqual(f0.pf, True)
         self.assertEqual(f0.cycle, 38)
@@ -167,7 +167,7 @@ class SequenceFileTests(unittest.TestCase):
         self.assertEqual(unicode(f0), unicode(pathname))
         self.assertEqual(repr(f0), "<fastq 42BW9AAXX 4 %s>" %(pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
-        self.assertEqual(f0.lane, 4)
+        self.assertEqual(f0.lane, '4')
         self.assertEqual(f0.read, 2)
         self.assertEqual(f0.pf, False)
         self.assertEqual(f0.cycle, 38)
@@ -191,7 +191,7 @@ class SequenceFileTests(unittest.TestCase):
         self.assertEqual(unicode(f0), unicode(pathname))
         self.assertEqual(repr(f0), "<split_fastq 42BW9AAXX 1 %s>" %(pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
-        self.assertEqual(f0.lane, 1)
+        self.assertEqual(f0.lane, '1')
         self.assertEqual(f0.read, 1)
         self.assertEqual(f0.pf, True)
         self.assertEqual(f0.project, '11111')
@@ -215,7 +215,7 @@ class SequenceFileTests(unittest.TestCase):
         self.assertEqual(unicode(f0), unicode(pathname))
         self.assertEqual(repr(f0), "<split_fastq 42BW9AAXX 1 %s>" % (pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
-        self.assertEqual(f0.lane, 1)
+        self.assertEqual(f0.lane, '1')
         self.assertEqual(f0.read, 2)
         self.assertEqual(f0.pf, True)
         self.assertEqual(f0.project, '11112')
@@ -275,7 +275,7 @@ class SequenceFileTests(unittest.TestCase):
         self.assertEqual(f.filetype, 'eland')
         self.assertEqual(f.path, pathname)
         self.assertEqual(f.flowcell, '42BW9AAXX')
-        self.assertEqual(f.lane, 4)
+        self.assertEqual(f.lane, '4')
         self.assertEqual(f.read, None)
         self.assertEqual(f.pf, None)
         self.assertEqual(f.cycle, 38)
@@ -290,7 +290,7 @@ class SequenceFileTests(unittest.TestCase):
         self.assertEqual(f.filetype, 'eland')
         self.assertEqual(f.path, pathname)
         self.assertEqual(f.flowcell, '42BW9AAXX')
-        self.assertEqual(f.lane, 4)
+        self.assertEqual(f.lane, '4')
         self.assertEqual(f.read, 1)
         self.assertEqual(f.pf, None)
         self.assertEqual(f.cycle, 152)
@@ -346,7 +346,7 @@ class SequenceFileTests(unittest.TestCase):
         files = list(model.find_statements(
             RDF.Statement(None,
                           rdfNS['type'],
-                          libraryOntology['illumina_result'])))
+                          libraryOntology['IlluminaResult'])))
         self.assertEqual(len(files), 5)
         files = list(model.find_statements(
             RDF.Statement(None,
@@ -411,13 +411,13 @@ class SequenceFileTests(unittest.TestCase):
     a libns:IlluminaFlowcell .
 
 <{base}/lane/1169>
-    libns:lane_number 1 ; libns:library <{base}/library/10923/> .
+    libns:lane_number "1" ; libns:library <{base}/library/10923/> .
 <{base}/lane/1170>
-    libns:lane_number 2 ; libns:library <{base}/library/10924/> .
+    libns:lane_number "2" ; libns:library <{base}/library/10924/> .
 <{base}/lane/1171>
-    libns:lane_number 3 ; libns:library <{base}/library/12345/> .
+    libns:lane_number "3" ; libns:library <{base}/library/12345/> .
 <{base}/lane/1172>
-    libns:lane_number 3 ; libns:library <{base}/library/10930/> .
+    libns:lane_number "3" ; libns:library <{base}/library/10930/> .
 """.format(base=base_url)
         model = get_model()
         load_string_into_model(model, 'turtle', flowcellInfo)
@@ -472,7 +472,7 @@ class SequenceFileTests(unittest.TestCase):
         self.assertEqual(seq.filetype, seq2.filetype)
         self.assertEqual(seq2.filetype, 'split_fastq')
         self.assertEqual(seq.lane, seq2.lane)
-        self.assertEqual(seq2.lane, 3)
+        self.assertEqual(seq2.lane, '3')
         self.assertEqual(seq.read, seq2.read)
         self.assertEqual(seq2.read, 1)
         self.assertEqual(seq.project, seq2.project)
@@ -491,7 +491,7 @@ class SequenceFileTests(unittest.TestCase):
         file_types_seen = set()
         file_types_to_see = set(['fastq', 'srf', 'eland', 'qseq'])
         lanes = set()
-        lanes_to_see = set((1,2,3))
+        lanes_to_see = set(('1','2','3'))
         with SimulateSimpleTree() as tree:
             seqs = sequences.scan_for_sequences([tree.root, '/a/b/c/98345'])
             for s in seqs:
@@ -512,7 +512,7 @@ class SequenceFileTests(unittest.TestCase):
         file_types_seen = set()
         file_types_to_see = set(['split_fastq'])
         lanes = set()
-        lanes_to_see = set((1,2))
+        lanes_to_see = set(('1','2'))
         projects_seen = set()
         projects_to_see = set(('11111', '21111', '31111'))
         with SimulateHiSeqTree() as tree:

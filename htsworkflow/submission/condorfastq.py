@@ -117,7 +117,7 @@ class CondorFastqExtract(object):
         Find archived sequence files associated with our results.
         """
         self.import_libraries(result_map)
-        flowcell_ids = self.find_relavant_flowcell_ids()
+        flowcell_ids = self.find_relevant_flowcell_ids()
         self.import_sequences(flowcell_ids)
 
         query_text = """
@@ -138,7 +138,7 @@ class CondorFastqExtract(object):
                       libns:library ?library ;
                       libns:library_id ?library_id ;
                       libns:file_type ?filetype ;
-                      a libns:illumina_result .
+                      a libns:IlluminaResult .
             ?flowcell libns:read_length ?read_length ;
                       libns:flowcell_type ?flowcell_type .
             OPTIONAL { ?flowcell libns:flowcell_status ?flowcell_status }
@@ -174,12 +174,12 @@ class CondorFastqExtract(object):
         if not self.model.contains_statement(q):
             present = True
             load_into_model(self.model, 'rdfa', library)
-        LOGGER.debug("Did we import %s: %s", library, present)
+        LOGGER.debug("Did we import %s: %s", library.uri, present)
 
-    def find_relavant_flowcell_ids(self):
+    def find_relevant_flowcell_ids(self):
         """Generate set of flowcell ids that had samples of interest on them
         """
-        flowcell_query =RDF.SPARQLQuery("""
+        flowcell_query = RDF.SPARQLQuery("""
 prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
 select distinct ?flowcell ?flowcell_id
@@ -192,13 +192,17 @@ WHERE {
         flowcell_ids = set()
         for r in flowcell_query.execute(self.model):
             flowcell_ids.add( fromTypedNode(r['flowcell_id']) )
-            LOGGER.debug("Flowcells = %s" %(unicode(flowcell_ids)))
-            flowcell_test = RDF.Statement(r['flowcell'],
-                                          rdfNS['type'],
-                                          libraryOntology['IlluminaFlowcell'])
-            if not self.model.contains_statement(flowcell_test):
-                # we probably lack full information about the flowcell.
+            imported = False
+            a_lane = self.model.get_target(r['flowcell'],
+                                           libraryOntology['has_lane'])
+            print a_lane
+            if a_lane is None:
+                imported = True
+                # we lack information about which lanes were on this flowcell
                 load_into_model(self.model, 'rdfa', r['flowcell'])
+            LOGGER.debug("Did we imported %s: %s" % (r['flowcell'].uri,
+                                                     imported))
+
         return flowcell_ids
 
     def import_sequences(self, flowcell_ids):

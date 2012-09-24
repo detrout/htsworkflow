@@ -164,7 +164,7 @@ class SequenceFile(object):
         # a bit unreliable... assumes filesystem is encoded in utf-8
         path = os.path.abspath(self.path.encode('utf-8'))
         fileNode = RDF.Node(RDF.Uri('file://' + path))
-        add(model, fileNode, rdfNS['type'], libNS['illumina_result'])
+        add(model, fileNode, rdfNS['type'], libNS['IlluminaResult'])
         add_lit(model, fileNode, libNS['flowcell_id'], self.flowcell)
         add_lit(model, fileNode, libNS['lane_number'], self.lane)
         if self.read is not None:
@@ -217,7 +217,7 @@ class SequenceFile(object):
             seq_id = RDF.Node(RDF.Uri(seq_id))
         result_statement = RDF.Statement(seq_id,
                                          rdfNS['type'],
-                                         libNS['illumina_result'])
+                                         libNS['IlluminaResult'])
         if not model.contains_statement(result_statement):
             raise KeyError(u"%s not found" % (unicode(seq_id),))
 
@@ -275,7 +275,7 @@ def parse_srf(path, filename):
     basename, ext = os.path.splitext(filename)
     records = basename.split('_')
     flowcell = records[4]
-    lane = int(records[5][0])
+    lane = records[5][0]
     fullpath = os.path.join(path, filename)
 
     if flowcell_dir != flowcell:
@@ -290,7 +290,7 @@ def parse_qseq(path, filename):
     records = basename.split('_')
     fullpath = os.path.join(path, filename)
     flowcell = records[4]
-    lane = int(records[5][1])
+    lane = records[5][1]
     read = int(records[6][1])
 
     if flowcell_dir != flowcell:
@@ -309,7 +309,7 @@ def parse_fastq(path, filename):
     if project is not None:
         # demultiplexed sample!
         flowcell = flowcell_dir
-        lane = int(records[2][-1])
+        lane = records[2][-1]
         read = int(records[3][-1])
         pf = True # as I understand it hiseq runs toss the ones that fail filter
         index = records[1]
@@ -318,7 +318,7 @@ def parse_fastq(path, filename):
         sequence_type = 'split_fastq'
     else:
         flowcell = records[4]
-        lane = int(records[5][1])
+        lane = records[5][1]
         read = int(records[6][1])
         pf = parse_fastq_pf_flag(records)
         index = None
@@ -362,7 +362,7 @@ def parse_eland(path, filename, eland_match=None):
     fullpath = os.path.join(path, filename)
     flowcell, start, stop, project = get_flowcell_cycle(path)
     if eland_match.group('lane'):
-        lane = int(eland_match.group('lane'))
+        lane = eland_match.group('lane')
     else:
         lane = None
     if eland_match.group('read'):
@@ -415,15 +415,15 @@ def update_model_sequence_library(model, base_url):
     """Find sequence objects and add library information if its missing
     """
     file_body = """
-    prefix libNS: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+    prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
     select ?filenode ?flowcell_id ?lane_id ?library_id ?flowcell ?library
     where {
-       ?filenode a libNS:illumina_result ;
-                 libNS:flowcell_id ?flowcell_id ;
-                 libNS:lane_number ?lane_id .
-       OPTIONAL { ?filenode libNS:flowcell ?flowcell . }
-       OPTIONAL { ?filenode libNS:library ?library .}
-       OPTIONAL { ?filenode libNS:library_id ?library_id .}
+       ?filenode a libns:IlluminaResult ;
+                 libns:flowcell_id ?flowcell_id ;
+                 libns:lane_number ?lane_id .
+       OPTIONAL { ?filenode libns:flowcell ?flowcell . }
+       OPTIONAL { ?filenode libns:library ?library .}
+       OPTIONAL { ?filenode libns:library_id ?library_id .}
     }
     """
     LOGGER.debug("update_model_sequence_library query %s", file_body)
@@ -470,16 +470,16 @@ def guess_library_from_model(model, base_url, flowcell, lane_id):
     flowcellNode = RDF.Node(flowcell)
     flowcell = str(flowcell.uri)
     lane_body = """
-    prefix libNS: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+    prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
     select ?library ?lane
     where {{
-      <{flowcell}> libNS:has_lane ?lane ;
-                   a libNS:IlluminaFlowcell .
-      ?lane libNS:lane_number {lane_id} ;
-            libNS:library ?library .
+      <{flowcell}> libns:has_lane ?lane ;
+                   a libns:IlluminaFlowcell .
+      ?lane libns:lane_number "{lane_id}" ;
+            libns:library ?library .
     }}
     """
     lane_body = lane_body.format(flowcell=flowcell, lane_id=lane_id)

@@ -126,7 +126,7 @@ class Submission(object):
 
     def link_file_to_classes(self, filename, submissionNode, submission_uri, analysis_dir):
         # add file specific information
-        fileNode = RDF.Node(RDF.Uri(submission_uri + '/' + filename))
+        fileNode = RDF.Node(RDF.Uri('file://'+ os.path.abspath(filename)))
         self.model.add_statement(
             RDF.Statement(submissionNode,
                           dafTermOntology['has_file'],

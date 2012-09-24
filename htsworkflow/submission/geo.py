@@ -111,7 +111,7 @@ class GEOSubmission(Submission):
 
         context = Context({
             'submission': str(analysis_node.uri),
-            'file_class': str(geoSoftNS['supplemental'])
+            'file_class': str(geoSoftNS['supplemental'].uri)
             })
 
         return self.execute_query(query_template, context)
@@ -123,7 +123,7 @@ class GEOSubmission(Submission):
 
         context = Context({
             'submission': str(analysis_node.uri),
-            'file_class': str(geoSoftNS['raw']),
+            'file_class': str(geoSoftNS['raw'].uri),
             })
 
         lanes = {}
