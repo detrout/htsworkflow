@@ -3,21 +3,23 @@ PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntol
 PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
 PREFIX ncbiTaxon: <http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=>
 PREFIX geoSoft: <http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
 
 select distinct ?lane ?filename, ?md5sum, ?file_type ?file_type_label ?flowcell_id ?read_length ?flowcell_type ?image_software ?image_version ?basecall_software ?basecall_version ?sequencer_model
 WHERE {
-  <{{submission}}> submissionOntology:library ?library ;
+  <{{submission}}> ucscDaf:has_file ?file ;
+                   submissionOntology:library ?library ;
                    a submissionOntology:submission .
 
   ?file ucscDaf:filename ?filename ;
         ucscDaf:md5sum ?md5sum ;
-        libraryOntology:library ?library ;
+        dc:source ?source ;
         a ?file_type .
   ?file_type a <{{file_class}}> ;
              geoSoft:fileTypeLabel ?file_type_label .
 
-  ?library libraryOntology:has_lane ?lane .
-  ?lane libraryOntology:flowcell ?flowcell .
+  ?source libraryOntology:flowcell ?flowcell .
+
   ?flowcell libraryOntology:flowcell_id ?flowcell_id ;
             libraryOntology:read_length ?read_length ;
             libraryOntology:flowcell_type ?flowcell_type ;

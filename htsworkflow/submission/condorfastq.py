@@ -195,7 +195,6 @@ WHERE {
             imported = False
             a_lane = self.model.get_target(r['flowcell'],
                                            libraryOntology['has_lane'])
-            print a_lane
             if a_lane is None:
                 imported = True
                 # we lack information about which lanes were on this flowcell

@@ -58,9 +58,7 @@ def main(cmdline=None):
     model = get_model(opts.model, opts.db_path)
     mapper = None
     if opts.name:
-        mapper = GEOSubmission(opts.name,  model)
-        if opts.library_url is not None:
-            mapper.library_url = opts.library_url
+        mapper = GEOSubmission(opts.name,  model, host=opts.host)
         submission_uri = get_submission_uri(opts.name)
 
 

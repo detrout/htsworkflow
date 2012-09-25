@@ -27,13 +27,13 @@ from htsworkflow.submission.daf import \
 LOGGER = logging.getLogger(__name__)
 
 class Submission(object):
-    def __init__(self, name, model):
+    def __init__(self, name, model, host):
         self.name = name
         self.model = model
 
         self.submissionSet = get_submission_uri(self.name)
         self.submissionSetNS = RDF.NS(str(self.submissionSet) + '#')
-        self.libraryNS = RDF.NS('http://jumpgate.caltech.edu/library/')
+        self.libraryNS = RDF.NS('{0}/library/'.format(host))
 
         self.__view_map = None
 
@@ -57,7 +57,8 @@ class Submission(object):
 
         submission_files = os.listdir(analysis_dir)
         for filename in submission_files:
-            self.construct_file_attributes(analysis_dir, libNode, filename)
+            pathname = os.path.abspath(os.path.join(analysis_dir, filename))
+            self.construct_file_attributes(analysis_dir, libNode, pathname)
 
     def construct_file_attributes(self, analysis_dir, libNode, pathname):
         """Looking for the best extension
@@ -113,7 +114,7 @@ class Submission(object):
                           an_analysis))
 
         # add file specific information
-        fileNode = self.link_file_to_classes(filename,
+        fileNode = self.link_file_to_classes(pathname,
                                              an_analysis,
                                              an_analysis_uri,
                                              analysis_dir)
@@ -124,9 +125,10 @@ class Submission(object):
                           file_type))
         LOGGER.debug("Done.")
 
-    def link_file_to_classes(self, filename, submissionNode, submission_uri, analysis_dir):
+    def link_file_to_classes(self, pathname, submissionNode, submission_uri, analysis_dir):
         # add file specific information
-        fileNode = RDF.Node(RDF.Uri('file://'+ os.path.abspath(filename)))
+        path, filename = os.path.split(pathname)
+        fileNode = RDF.Node(RDF.Uri('file://'+ os.path.abspath(pathname)))
         self.model.add_statement(
             RDF.Statement(submissionNode,
                           dafTermOntology['has_file'],

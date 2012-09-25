@@ -17,8 +17,8 @@ from django.template import Context, loader
 LOGGER = logging.getLogger(__name__)
 
 class GEOSubmission(Submission):
-    def __init__(self, name, model):
-        super(GEOSubmission, self).__init__(name, model)
+    def __init__(self, name, model, host):
+        super(GEOSubmission, self).__init__(name, model, host)
 
     def make_soft(self, result_map):
         samples = []
@@ -36,7 +36,7 @@ class GEOSubmission(Submission):
                 LOGGER.error(errmsg.format(str(an_analysis),))
                 continue
             elif len(metadata) > 1:
-                errmsg = 'Confused there are more than one samples for %s'
+                errmsg = 'Confused there are more than one sample for %s'
                 LOGGER.debug(errmsg % (str(an_analysis),))
             metadata = metadata[0]
             metadata['raw'] = self.get_raw_files(an_analysis)
