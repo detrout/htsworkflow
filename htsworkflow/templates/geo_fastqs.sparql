@@ -5,7 +5,7 @@ PREFIX ncbiTaxon: <http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=>
 PREFIX geoSoft: <http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
 
-select distinct ?lane ?filename, ?md5sum, ?file_type ?file_type_label ?flowcell_id ?read_length ?flowcell_type ?image_software ?image_version ?basecall_software ?basecall_version ?sequencer_model
+select distinct ?library ?filename, ?md5sum, ?file_type ?file_type_label ?flowcell_id ?read_length ?flowcell_type ?image_software ?image_version ?basecall_software ?basecall_version ?sequencer_model
 WHERE {
   <{{submission}}> ucscDaf:has_file ?file ;
                    submissionOntology:library ?library ;

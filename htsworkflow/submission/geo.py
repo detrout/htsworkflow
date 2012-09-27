@@ -131,10 +131,10 @@ class GEOSubmission(Submission):
             data = {}
             for k, v in row.items():
                 data[k] = v
-            lane = str(data['lane'])
-            lanes.setdefault(lane, []).append(data)
+            library = str(data['library'])
+            lanes.setdefault(library, []).append(data)
         result = []
-        for lane, files in lanes.items():
+        for library, files in lanes.items():
             if len(files) > 2:
                 errmsg = "Don't know what to do with more than 2 raw files"
                 raise ValueError(errmsg)
@@ -143,7 +143,7 @@ class GEOSubmission(Submission):
             elif len(files) == 1:
                 is_paired = False
             elif len(files) == 0:
-                raise RuntimeError("Empty lane list discovered")
+                raise RuntimeError("Empty library list discovered")
             files = self._format_filename(files, is_paired)
             files = self._format_flowcell_type(files, is_paired)
             files = self._format_read_length(files, is_paired)
