@@ -308,6 +308,9 @@ class Submission(object):
         query = RDF.SPARQLQuery(str(formatted_query))
         rdfstream = query.execute(self.model)
         results = []
-        for r in rdfstream:
-            results.append(r)
+        for record in rdfstream:
+            d = {}
+            for key, value in record.items():
+                d[key] = fromTypedNode(value)
+            results.append(d)
         return results

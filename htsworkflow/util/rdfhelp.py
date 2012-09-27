@@ -119,8 +119,10 @@ def toTypedNode(value):
 def fromTypedNode(node):
     """Convert a typed RDF Node to its closest python equivalent
     """
-    if node is None:
-        return None
+    if not isinstance(node, RDF.Node):
+        return node
+    if node.is_resource():
+        return node
 
     value_type = get_node_type(node)
     literal = node.literal_value['string']
