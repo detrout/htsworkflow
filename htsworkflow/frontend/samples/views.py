@@ -309,7 +309,7 @@ def _summary_stats(flowcell_id, lane_id, library_id):
             read = key.read-1 if key.read is not None else 0
             try:
                 eland_summary.clusters = gerald_summary[read][key.lane].cluster
-            except IndexError as e:
+            except (IndexError, KeyError) as e:
                 eland_summary.clustes = None
             eland_summary.cycle_width = cycle_width
             if hasattr(eland_summary, 'genome_map'):
