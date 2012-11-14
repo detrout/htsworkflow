@@ -69,7 +69,10 @@ def main(cmdline=None):
 
     results = ResultMap()
     for a in args:
-        results.add_results_from_file(a)
+        if os.path.exists(a):
+            results.add_results_from_file(a)
+        else:
+            logger.warn("File %s doesn't exist.", a)
 
     if opts.make_tree_from is not None:
         results.make_tree_from(opts.make_tree_from)
