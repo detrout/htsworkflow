@@ -453,6 +453,10 @@ def update_model_sequence_library(model, base_url):
                 library = guess_library_from_model(model, base_url,
                                                    flowcell,
                                                    lane_id)
+                if library is None:
+                    LOGGER.error("Unable to decypher: %s %s",
+                                 str(flowcell), str(lane_id))
+                    continue
                 library_id = toTypedNode(simplify_uri(library))
                 LOGGER.debug("Adding file (%s) to library (%s) link",
                              str(filenode),
@@ -478,11 +482,13 @@ def guess_library_from_model(model, base_url, flowcell, lane_id):
     where {{
       <{flowcell}> libns:has_lane ?lane ;
                    a libns:IlluminaFlowcell .
-      ?lane libns:lane_number "{lane_id}" ;
+      ?lane libns:lane_number ?lane_id ;
             libns:library ?library .
+      FILTER(str(?lane_id) = "{lane_id}")
     }}
     """
     lane_body = lane_body.format(flowcell=flowcell, lane_id=lane_id)
+    LOGGER.debug("guess_library_from_model: %s", lane_body)
     lanes = []
     tries = 3
     while len(lanes) == 0 and tries > 0:
@@ -503,5 +509,3 @@ def guess_library_from_model(model, base_url, flowcell, lane_id):
         else:
             # try grabbing data
             model.load(flowcellNode.uri, name="rdfa")
-
-

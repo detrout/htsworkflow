@@ -14,10 +14,12 @@
     dc:title "HTS-Workflow ontology" ;
     a owl:Ontology .
 
-htswlib:Class a rdfs:Class .
+htswlib:Class rdfs:subClassOf rdfs:Class ;
+              a rdfs:Class .
+rdfs:Resource a rdfs:Class.
 
 htswlib:IlluminaFlowcell
-    a rdfs:Class, htswlib:Class ;
+    a rdfs:Class, htswlib:Class;
     rdfs:comment "information about a illumina flowcell" ;
     rdfs:label "Flowcell" .
 
@@ -69,7 +71,7 @@ htswlib:date
     rdfs:label "made on" ;
     rdfs:domain htswlib:IlluminaFlowcell ;
     rdfs:domain htswlib:Library ;
-    rdfs:range rdfs:Literal .
+    rdfs:range xsd:dateTime .
 
 htswlib:total_unique_locations
     a rdf:Property ;
@@ -77,7 +79,7 @@ htswlib:total_unique_locations
     rdfs:label "Unique locations" ;
     rdfs:domain htswlib:Library ;
     rdfs:domain htswlib:IlluminaLane ;
-    rdfs:range rdfs:Literal .
+    rdfs:range xsd:integer .
 
 htswlib:has_mappings
     a rdf:Property ;
@@ -272,7 +274,7 @@ htswlib:gel_cut
     rdfs:comment "The estimated fragment sizes cut from gel";
     rdfs:label "Gel Cut" ;
     rdfs:domain htswlib:Library ;
-    rdfs:range rdfs:Literal .
+    rdfs:range xsd:decimal .
 
 htswlib:made_by
     a rdf:Property ;
@@ -330,7 +332,7 @@ htswlib:lane_number
     rdfs:comment "Which lane were we run in" ;
     rdfs:label "lane id" ;
     rdfs:domain htswlib:IlluminaLane ;
-    rdfs:range rdfs:Literal .
+    rdfs:range xsd:string .
 
 # FIXME: should this be note?
 htswlib:comment

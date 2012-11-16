@@ -8,6 +8,7 @@ from htsworkflow.util.rdfns import *
 from htsworkflow.util.rdfhelp import SCHEMAS_URL
 
 INFER_URL='http://jumpgate.caltech.edu/phony/infer'
+LOGGER = logging.getLogger(__name__)
 
 class Infer(object):
     """Provide some simple inference.
@@ -36,6 +37,7 @@ class Infer(object):
 
             for method_name in dir(self):
                 if method_name.startswith('_rule_'):
+                    LOGGER.info("Running: %s", method_name)
                     method = getattr(self, method_name)
                     method()
             if self.model.size() == starting_size:
@@ -55,6 +57,7 @@ class Infer(object):
         """
         for method_name in dir(self):
             if method_name.startswith('_validate_'):
+                LOGGER.info("Running: %s", method_name)
                 method = getattr(self, method_name)
                 for msg in method():
                     yield msg
@@ -143,7 +146,7 @@ class Infer(object):
         query = RDF.SPARQLQuery(body)
         errmsg = "Missing type for: {0}"
         for r in query.execute(self.model):
-            yield errmsg.format(str(r['subject'].uri))
+            yield errmsg.format(str(r['subject']))
 
     def _validate_undefined_properties(self):
         """Find properties that aren't defined.
@@ -185,15 +188,32 @@ class Infer(object):
             e.g. is a subject (node) the domain (space) of this property
             and is the object (node) the range of of this property.
             """
+            resource_error = "Expected resource for {0} in range {1}"
+            type_error = "Type of {0} was {1} not {2}"
             # check domain
             query = RDF.SPARQLQuery(property_template.format(
                 predicate=predicate.uri,
                 space=space))
-            seen = []
+            seen = set()
             for r in query.execute(self.model):
+                # Make sure we have a resource if we're expecting one
                 if r['type'] == rdfsNS['Resource']:
+                    if not node.is_resource():
+                        return resource_error.format(str(node), space)
                     continue
-                seen.append(str(r['type'].uri))
+                seen.add(str(r['type'].uri))
+                if node.is_literal():
+                    # literal is a generic type.
+                    nodetype = node.literal_value['datatype']
+                    if nodetype is None:
+                        # lets default to string
+                        nodetype = xsdNS['string'].uri
+                    if r['type'] == rdfsNS['Literal']:
+                        pass
+                    elif nodetype != r['type'].uri:
+                        return type_error.format(
+                            str(node), nodetype, r['type'])
+                # check that node is the expetected class type
                 check = RDF.Statement(node, rdfNS['type'], r['type'])
                 if self.model.contains_statement(check):
                     return
@@ -221,5 +241,3 @@ class Infer(object):
                                    wrong_range_type.format(str(s)))
             if msg is not None: yield msg
         return
-
-
