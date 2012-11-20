@@ -274,7 +274,7 @@ htswlib:gel_cut
     rdfs:comment "The estimated fragment sizes cut from gel";
     rdfs:label "Gel Cut" ;
     rdfs:domain htswlib:Library ;
-    rdfs:range xsd:decimal .
+    rdfs:range xsd:integer .
 
 htswlib:made_by
     a rdf:Property ;
@@ -313,11 +313,18 @@ htswlib:affiliation
 
 htswlib:species
     a rdf:Property ;
-    rdfs:comment "Scientific name of sample species" ;
+    rdfs:comment "A species class" ;
     rdfs:label "Species" ;
     rdfs:domain htswlib:Library ;
     #rdfs:domain htswlib:IlluminaLane;
     rdfs:range htswlib:Species .
+
+htswlib:species_name
+   a rdf:Property ;
+   rdfs:comment "Scientific name of sample species" ;
+   rdfs:label "Species name";
+   rdfs:domain htswlib:Species, htswlib:Library ;
+   rdfs:range xsd:string .
 
 htswlib:replicate
     a rdf:Property ;

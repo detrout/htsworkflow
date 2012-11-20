@@ -384,11 +384,10 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         libns:made_by "Gary Gygax"@en ;
         libns:name "Paired Ends ASDF"@en ;
         libns:replicate "1"@en;
-        libns:species "Mus musculus"@en ;
+        libns:species_name "Mus musculus"@en ;
         libns:stopping_point "Completed"@en ;
         libns:total_unique_locations 8841201 .
         # cell_line
-
 
 <http://localhost/library/12345/>
         a libns:Library ;
@@ -405,7 +404,7 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
         libns:made_by "Gary Gygax"@en ;
         libns:name "Paired Ends THING"@en ;
         libns:replicate "1"@en;
-        libns:species "Mus musculus"@en ;
+        libns:species_name "Mus musculus"@en ;
         libns:stopping_point "Completed"@en ;
         libns:total_unique_locations 8841201 .
         # cell_line

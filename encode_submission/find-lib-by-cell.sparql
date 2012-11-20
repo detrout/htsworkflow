@@ -11,7 +11,7 @@ WHERE {
            libraryOntology:date ?submission_date.
     ?liburn libraryOntology:cell_line ?cell ;
             libraryOntology:replicate ?replicate ;
-            libraryOntology:species ?species .
+            libraryOntology:species_name ?species .
     OPTIONAL { ?liburn libraryOntology:treatement ?treatment . }
     FILTER(regex(?species, "Homo sapiens", "i"))
     #filter(?submission_date > "2011-04-01T00:00:00Z"^^xsd:dateTime)

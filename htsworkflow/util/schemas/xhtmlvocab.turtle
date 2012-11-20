@@ -17,5 +17,7 @@
       serving as a stylesheet for a resource. """^^xsd:string ;
     rdfs:member <http://www.w3.org/1999/xhtml/vocab#relrev-properties> ;
 #    rdfa:term "stylesheet" ;
-#    rdfa:uri "http://www.w3.org/1999/xhtml/vocab#stylesheet"
+#    rdfa:uri "http://www.w3.org/1999/xhtml/vocab#stylesheet" ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range rdfs:Resource 
     .

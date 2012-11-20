@@ -208,14 +208,14 @@ class SampleWebTestCase(TestCase):
         body =  """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
-        select ?library ?library_id ?name ?species
+        select ?library ?library_id ?name ?species_name
         where {
            ?library a libns:Library .
            OPTIONAL { ?library libns:library_id ?library_id . }
-           OPTIONAL { ?library libns:species ?species . }
+           OPTIONAL { ?library libns:species_name ?species_name . }
            OPTIONAL { ?library libns:name ?name . }
         }"""
-        bindings = set(['library', 'library_id', 'name', 'species'])
+        bindings = set(['library', 'library_id', 'name', 'species_name'])
         query = RDF.SPARQLQuery(body)
         count = 0
         for r in query.execute(model):
@@ -297,7 +297,7 @@ class TestRDFaLibrary(TestCase):
         self.check_literal_object(model, ['400'], p=libNS['gel_cut'])
         self.check_literal_object(model, ['Igor'], p=libNS['made_by'])
         self.check_literal_object(model, ['Paired End Multiplexed Sp-BAC'], p=libNS['name'])
-        self.check_literal_object(model, ['Drosophila melanogaster'], p=libNS['species'])
+        self.check_literal_object(model, ['Drosophila melanogaster'], p=libNS['species_name'])
 
         self.check_uri_object(model,
                               [u'http://localhost/lane/1193'],

@@ -133,7 +133,9 @@
     {% if lib.lane_set.all %}
     <tbody>
       {% for lane in lib.lane_set.all %}
-      <tr rel="libns:has_lane" resource="{{lane.get_absolute_url}}">
+      <tr rel="libns:has_lane" 
+          about="{{lib.get_absolute_url}}"
+          resource="{{lane.get_absolute_url}}">
         <td>
           <a typeof="libns:IlluminaFlowcell" href="{{lane.flowcell.get_absolute_url}}">
             <span property="libns:flowcell_id"
@@ -148,7 +150,7 @@
         <td typeof="libns:IlluminaLane" about="{{lane.get_absolute_url}}">
           <span rel="libns:flowcell" resource="{{lane.flowcell.get_absolute_url}}"></span>
           <a href="{{lane.get_absolute_url}}">
-            <span property="libns:lane_number"  datatype="xsd:decimal"
+            <span property="libns:lane_number"
                >{{ lane.lane_number }}</span>
             </a></td>
         <td>{{ lane.comment }}</td>
