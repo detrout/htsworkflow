@@ -141,6 +141,7 @@ class SampleWebTestCase(TestCase):
     def test_library_rdf(self):
         import RDF
         from htsworkflow.util.rdfhelp import get_model, \
+             dump_model, \
              fromTypedNode, \
              load_string_into_model, \
              rdfNS, \
@@ -172,12 +173,23 @@ class SampleWebTestCase(TestCase):
             self.assertEqual(fromTypedNode(r['made_by']), u'Igor')
 
         state = validate_xhtml(content)
-        if state is not None: self.assertTrue(state)
+        if state is not None:
+            self.assertTrue(state)
+
+        # validate a library page.
+        from htsworkflow.util.rdfhelp import add_default_schemas
+        from htsworkflow.util.rdfinfer import Infer
+        add_default_schemas(model)
+        inference = Infer(model)
+        ignored = {'Missing type for: http://localhost/'}
+        errmsgs = [msg for msg in inference.run_validation()
+                   if msg not in ignored ]
+        self.assertEqual(len(errmsgs), 0)
 
     def test_library_index_rdfa(self):
         from htsworkflow.util.rdfhelp import \
-             add_default_schemas, get_model, load_string_into_model
-
+             add_default_schemas, get_model, load_string_into_model, \
+             dump_model
         from htsworkflow.util.rdfinfer import Infer
 
         model = get_model()
@@ -188,12 +200,10 @@ class SampleWebTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         load_string_into_model(model, 'rdfa', response.content)
 
-        errmsgs = list(inference.run_validation())
-        self.assertEqual(len(errmsgs), 2)
-        # didn't feel like giving the index page a type since all
-        # its doing is showing a list of things.
-        for err in errmsgs:
-            self.assertEqual(err, 'Missing type for: http://localhost/')
+        ignored = {'Missing type for: http://localhost/'}
+        errmsgs = [msg for msg in inference.run_validation()
+                   if msg not in ignored ]
+        self.assertEqual(len(errmsgs), 0)
 
         body =  """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
@@ -218,6 +228,8 @@ class SampleWebTestCase(TestCase):
 
         state = validate_xhtml(response.content)
         if state is not None: self.assertTrue(state)
+
+            
 # The django test runner flushes the database between test suites not cases,
 # so to be more compatible with running via nose we flush the database tables
 # of interest before creating our sample data.
@@ -319,4 +331,3 @@ def get_rdf_memory_model():
     storage = RDF.MemoryStorage()
     model = RDF.Model(storage)
     return model
-
