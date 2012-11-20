@@ -103,9 +103,15 @@ def startedEmail(request, pk):
 
         if send:
             email = EmailMessage(subject, body, sender, to=[user_email])
+            notified = set()
             if bcc_managers:
-                email.bcc = settings.MANAGERS
-            email.bcc = settings.NOTIFICATION_BCC
+                for manager in settings.MANAGERS:
+                    if len(manager) > 0:
+                        notified.add(manager)
+            for user in settings.NOTIFICATION_BCC:
+                if len(user) > 0:
+                    notified.add(user)
+            email.bcc = list(notified)
             email.send()
 
         emails.append((user_email, subject, body, sending))

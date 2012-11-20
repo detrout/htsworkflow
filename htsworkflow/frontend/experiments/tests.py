@@ -561,8 +561,10 @@ class TestEmailNotify(TestCase):
         response = self.client.get('/experiments/started/153/', {'send':'1','bcc':'on'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(mail.outbox), 4)
+        bcc = set(settings.NOTIFICATION_BCC).intersect(set(settings.MANAGERS))
         for m in mail.outbox:
             self.assertTrue(len(m.body) > 0)
+            self.assertEqual(m.bcc, bcc)
 
     def test_email_navigation(self):
         """
