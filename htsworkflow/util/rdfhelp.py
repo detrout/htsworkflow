@@ -9,6 +9,7 @@ import logging
 import os
 import sys
 import types
+from pkg_resources import resource_listdir, resource_string
 
 import lxml.html
 import lxml.html.clean
@@ -322,17 +323,24 @@ def add_default_schemas(model, schema_path=None):
     or in the list of directories provided in schema_path
     """
 
-    if schema_path is None:
-        path, _ = os.path.split(__file__)
-        schema_path = [os.path.join(path, 'schemas')]
-    elif type(schema_path) in types.StringTypes:
-        schema_path = [schema_path]
+    schemas = resource_listdir(__name__, 'schemas')
+    for s in schemas:
+        schema = resource_string(__name__,  'schemas/' + s)
+        namespace = 'file://localhost/htsworkflow/schemas/'+s
+        add_schema(model, schema, namespace)
 
-    for p in schema_path:
-        for f in glob(os.path.join(p, '*.turtle')):
-            add_schema(model, f)
+    if schema_path:    
+        if type(schema_path) in types.StringTypes:
+            schema_path = [schema_path]
 
-def add_schema(model, filename):
+        for path in schema_path:
+            for pathname in glob(os.path.join(path, '*.turtle')):
+                url = 'file://' + os.path.splitext(pathname)[0]
+                stream = open(pathname, 'r')
+                add_schema(model, stream, url)
+                stream.close()
+
+def add_schema(model, schema, url):
     """Add a schema to a model.
 
     Main difference from 'load_into_model' is it tags it with
@@ -340,8 +348,7 @@ def add_schema(model, filename):
     """
     parser = RDF.Parser(name='turtle')
     context = RDF.Node(RDF.Uri(SCHEMAS_URL))
-    url = 'file://' + filename
-    for s in parser.parse_as_stream(url):
+    for s in parser.parse_string_as_stream(schema, url):
         try:
             model.append(s, context)
         except RDF.RedlandError as e:
