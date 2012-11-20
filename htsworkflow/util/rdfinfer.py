@@ -198,7 +198,7 @@ class Infer(object):
             for r in query.execute(self.model):
                 # Make sure we have a resource if we're expecting one
                 if r['type'] == rdfsNS['Resource']:
-                    if not node.is_resource():
+                    if node.is_literal():
                         return resource_error.format(str(node), space)
                     continue
                 seen.add(str(r['type'].uri))
