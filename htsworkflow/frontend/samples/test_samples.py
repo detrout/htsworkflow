@@ -208,14 +208,15 @@ class SampleWebTestCase(TestCase):
         body =  """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
-        select ?library ?library_id ?name ?species_name
+        select ?library ?library_id ?name ?species ?species_name
         where {
            ?library a libns:Library .
            OPTIONAL { ?library libns:library_id ?library_id . }
-           OPTIONAL { ?library libns:species_name ?species_name . }
+           OPTIONAL { ?library libns:species ?species .
+                      ?species libns:species_name ?species_name . }
            OPTIONAL { ?library libns:name ?name . }
         }"""
-        bindings = set(['library', 'library_id', 'name', 'species_name'])
+        bindings = {'library', 'library_id', 'name', 'species', 'species_name'}
         query = RDF.SPARQLQuery(body)
         count = 0
         for r in query.execute(model):
@@ -229,7 +230,7 @@ class SampleWebTestCase(TestCase):
         state = validate_xhtml(response.content)
         if state is not None: self.assertTrue(state)
 
-            
+
 # The django test runner flushes the database between test suites not cases,
 # so to be more compatible with running via nose we flush the database tables
 # of interest before creating our sample data.
