@@ -649,9 +649,7 @@ class TestSequencer(TestCase):
         load_string_into_model(model, 'rdfa', response.content)
 
         errmsgs = list(inference.run_validation())
-        self.assertEqual(len(errmsgs), 2)
-        for errmsg in errmsgs:
-            self.assertEqual(errmsg, 'Missing type for: http://localhost/')
+        self.assertEqual(len(errmsgs), 0)
 
     def test_lane_with_rdf_validation(self):
         from htsworkflow.util.rdfhelp import add_default_schemas, \
@@ -673,6 +671,4 @@ class TestSequencer(TestCase):
         load_string_into_model(model, 'rdfa', response.content)
 
         errmsgs = list(inference.run_validation())
-        self.assertEqual(len(errmsgs), 2)
-        for errmsg in errmsgs:
-            self.assertEqual(errmsg, 'Missing type for: http://localhost/')
+        self.assertEqual(len(errmsgs), 0)

@@ -181,9 +181,7 @@ class SampleWebTestCase(TestCase):
         from htsworkflow.util.rdfinfer import Infer
         add_default_schemas(model)
         inference = Infer(model)
-        ignored = {'Missing type for: http://localhost/'}
-        errmsgs = [msg for msg in inference.run_validation()
-                   if msg not in ignored ]
+        errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
 
     def test_library_index_rdfa(self):
@@ -200,9 +198,7 @@ class SampleWebTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         load_string_into_model(model, 'rdfa', response.content)
 
-        ignored = {'Missing type for: http://localhost/'}
-        errmsgs = [msg for msg in inference.run_validation()
-                   if msg not in ignored ]
+        errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
 
         body =  """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -216,7 +212,7 @@ class SampleWebTestCase(TestCase):
                       ?species libns:species_name ?species_name . }
            OPTIONAL { ?library libns:name ?name . }
         }"""
-        bindings = {'library', 'library_id', 'name', 'species', 'species_name'}
+        bindings = set(['library', 'library_id', 'name', 'species', 'species_name'])
         query = RDF.SPARQLQuery(body)
         count = 0
         for r in query.execute(model):
