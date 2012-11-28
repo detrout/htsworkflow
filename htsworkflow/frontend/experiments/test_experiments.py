@@ -14,6 +14,7 @@ from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
+from django.test.utils import setup_test_environment, teardown_test_environment
 from htsworkflow.frontend.experiments import models
 from htsworkflow.frontend.experiments import experiments
 from htsworkflow.frontend.auth import apidata
@@ -535,6 +536,17 @@ class TestFileType(TestCase):
 
 class TestEmailNotify(TestCase):
     fixtures = ['test_flowcells.json']
+
+    @classmethod
+    def setUpClass(self):
+        # isolate django mail when running under unittest2
+        setup_test_environment()
+
+    @classmethod
+    def tearDownClass(self):
+        # isolate django mail when running under unittest2
+        teardown_test_environment()
+
 
     def test_started_email_not_logged_in(self):
         response = self.client.get('/experiments/started/153/')
