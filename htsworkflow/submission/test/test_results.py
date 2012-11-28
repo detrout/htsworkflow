@@ -5,7 +5,8 @@ import os
 from pprint import pprint
 import shutil
 import tempfile
-import unittest
+
+from unittest2 import TestCase, defaultTestLoader
 
 from htsworkflow.submission.results import ResultMap
 
@@ -41,7 +42,7 @@ def generate_sample_results_tree(obj):
         stream.write(f)
         stream.close()
 
-class TestResultMap(unittest.TestCase):
+class TestResultMap(TestCase):
     def setUp(self):
         generate_sample_results_tree(self)
 
@@ -91,12 +92,10 @@ class TestResultMap(unittest.TestCase):
                     os.path.join(self.resultdir, f)))
 
 
-
-
 def suite():
-    suite = unittest.makeSuite(TestResultMap, 'test')
+    suite = defaultTestLoader.loadTestsFromTestCase(TestResultMap)
     return suite
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
-
+    from unittest2 import main
+    main(defaultTest='suite')

@@ -1,4 +1,4 @@
-import unittest
+from unittest2 import TestCase, TestSuite, defaultTestLoader
 from StringIO import StringIO
 
 from htsworkflow.submission import ucsc
@@ -9,7 +9,7 @@ wgEncodeCaltechRnaSeqGm12878R2x75Il200FastqRd2Rep1.fastq.tgz	project=wgEncode; g
 """
 
 
-class TestUCSCInfo(unittest.TestCase):
+class TestUCSCInfo(TestCase):
     def test_parse_encodedcc_file(self):
         stream = StringIO(ENCODE_FILES)
         file_index = ucsc.parse_ucsc_file_index(stream, 'http://example.com/files')
@@ -21,9 +21,10 @@ class TestUCSCInfo(unittest.TestCase):
             self.assertEquals(attributes['project'], 'wgEncode')
 
 def suite():
-    suite = unittest.makeSuite(TestUCSCInfo, 'test')
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestUCSCInfo))
     return suite
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
-
+    from unittest2 import main
+    main(defaultTest='suite')

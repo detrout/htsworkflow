@@ -21,3 +21,12 @@ Another way to test that 1 + 1 is equal to 2.
 True
 """}
 
+def suite():
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(SimpleTest))
+    return suite
+
+if __name__ == "__main__":
+    from unittest2 import main
+    main(defaultTest="suite")

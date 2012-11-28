@@ -1,12 +1,15 @@
-import unittest
+from unittest2 import TestCase, TestSuite, defaultTestLoader
 
 import ucsc_gather
 
-class testUCSCGather(unittest.TestCase):
+class testUCSCGather(TestCase):
     pass
 
 def suite():
-    return unittest.makeSuite(testUCSCGather,"test")
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testUCSCGather))
+    return suite
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
+    from unittest2 import main
+    main(defaultTest='suite')

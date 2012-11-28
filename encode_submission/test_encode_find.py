@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from datetime import datetime
 import os
-import unittest
+from unittest2 import TestCase
 
 import RDF
 
@@ -14,7 +14,7 @@ from htsworkflow.util.rdfinfer import Infer
 SOURCE_PATH = os.path.split(os.path.abspath(__file__))[0]
 print SOURCE_PATH
 
-class TestEncodeFind(unittest.TestCase):
+class TestEncodeFind(TestCase):
     def setUp(self):
         self.model = get_model()
         add_default_schemas(self.model)
@@ -163,7 +163,12 @@ _:bnode120970
                              '12097')
 
 def suite():
-    return unittest.makeSuite(TestEncodeFind, "test")
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestEncodeFind))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
+    from unittest2 import main
+    main()

@@ -1,10 +1,10 @@
-import unittest
+from unittest2 import TestCase
 
 from StringIO import StringIO
 from htsworkflow.automation import copier
 from htsworkflow.automation.solexa import is_runfolder
 
-class testCopier(unittest.TestCase):        
+class testCopier(TestCase):
     def test_empty_config(self):
         cfg = StringIO("""[fake]
 something: unrelated
@@ -74,8 +74,14 @@ notify_users: user3@example.fake
        self.failUnlessEqual(len(result), 1)
        self.failUnlessEqual(result[0][-1], '4')
 
+
 def suite():
-    return unittest.makeSuite(testCopier,'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testCopier))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
+    from unittest2 import main
+    main(defaultTest="suite")

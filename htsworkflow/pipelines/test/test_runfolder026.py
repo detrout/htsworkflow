@@ -4,7 +4,7 @@ from datetime import datetime, date
 import os
 import tempfile
 import shutil
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.pipelines import firecrest
 from htsworkflow.pipelines import bustard
@@ -228,7 +228,7 @@ def make_eland_results(gerald_dir):
         f.write(eland_result)
         f.close()
 
-class RunfolderTests(unittest.TestCase):
+class RunfolderTests(TestCase):
     """
     Test components of the runfolder processing code
     which includes firecrest, bustard, and gerald
@@ -471,8 +471,12 @@ class RunfolderTests(unittest.TestCase):
 
 
 def suite():
-    return unittest.makeSuite(RunfolderTests,'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(RunfolderTests))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
-
+    from unittest2 import main
+    main(defaultTest="suite")

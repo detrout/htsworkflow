@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import os
 from StringIO import StringIO
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.pipelines import summary
 from simulate_runfolder import TESTDATA_DIR
 
-class SummaryTests(unittest.TestCase):
+class SummaryTests(TestCase):
     """Test elements of the summary file parser
     """
     def test_is_xml(self):
@@ -34,8 +34,14 @@ class SummaryTests(unittest.TestCase):
         pathname = os.path.join(TESTDATA_DIR, 'sample_summary_1_12.htm')
         s = summary.SummaryGA(pathname)
 
+
 def suite():
-    return unittest.makeSuite(SummaryTests,'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(SummaryTests))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
+    from unittest2 import main
+    main(defaultTest="suite")

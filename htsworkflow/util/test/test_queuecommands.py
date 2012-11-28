@@ -1,16 +1,14 @@
 import os
 import logging
 import time
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.util.queuecommands import QueueCommands
 
-class testQueueCommands(unittest.TestCase):
+class testQueueCommands(TestCase):
     def setUp(self):
         logging.basicConfig(level=logging.DEBUG,
                             format='%(asctime)s %(name)-8s %(message)s')
-
-
 
     def test_unlimited_run_slow(self):
         """
@@ -44,12 +42,14 @@ class testQueueCommands(unittest.TestCase):
         self.failUnless( end > 3.9 and end < 4.1,
                          "took %s seconds, expected ~4" % (end,))
 
+
 def suite():
-    return unittest.makeSuite(testQueueCommands, 'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testQueueCommands))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
-
-
-
-
+    from unittest2 import main
+    main(defaultTest="suite")

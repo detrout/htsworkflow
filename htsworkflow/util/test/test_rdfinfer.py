@@ -1,4 +1,4 @@
-import unittest
+from unittest2 import TestCase
 
 import RDF
 
@@ -88,7 +88,7 @@ _:me
      foaf:depicts _:me .
 """
 
-class TestInfer(unittest.TestCase):
+class TestInfer(TestCase):
     def setUp(self):
         self.model = get_model()
         add_default_schemas(self.model)
@@ -228,8 +228,14 @@ class TestInfer(unittest.TestCase):
         print errmsg
         self.failUnlessEqual(len(errmsg), 0)
 
+
 def suite():
-    return unittest.makeSuite(TestInfer, 'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestInfer))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
+    from unittest2 import main
+    main(defaultTest="suite")

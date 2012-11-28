@@ -1,10 +1,10 @@
 import os
 from StringIO import StringIO
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.util import validate
 
-class TestValidate(unittest.TestCase):
+class TestValidate(TestCase):
     def test_phred33_works(self):
         q = StringIO(u"@ abc\nAGCT\n+\nBBBB\n")
         errors = validate.validate_fastq(q)
@@ -45,10 +45,14 @@ class TestValidate(unittest.TestCase):
         errors = validate.validate_fastq(q)
         self.failUnlessEqual(1, errors)
 
+
 def suite():
-    return unittest.makeSuite(testValidate, 'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testValidate))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
-
-
+    from unittest2 import main
+    main(defaultTest="suite")

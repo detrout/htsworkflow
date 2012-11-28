@@ -1,9 +1,9 @@
-import unittest
+from unittest2 import TestCase
 
 from StringIO import StringIO
 from htsworkflow.pipelines import genome_mapper
 
-class testGenomeMapper(unittest.TestCase):
+class testGenomeMapper(TestCase):
     def test_construct_mapper(self):
         genomes = {
         'Arabidopsis thaliana': {'v01212004': '/arabidopsis'},
@@ -27,7 +27,12 @@ class testGenomeMapper(unittest.TestCase):
         
         
 def suite():
-    return unittest.makeSuite(testGenomeMapper,'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testGenomeMapper))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
+    from unittest2 import main
+    main(defaultTest="suite")

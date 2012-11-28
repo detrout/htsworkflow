@@ -5,7 +5,7 @@ import logging
 import os
 import tempfile
 import shutil
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.pipelines import eland
 from htsworkflow.pipelines.samplekey import SampleKey
@@ -63,7 +63,7 @@ def make_runfolder(obj=None):
         obj.reads = 2
 
 
-class RunfolderTests(unittest.TestCase):
+class RunfolderTests(TestCase):
     """
     Test components of the runfolder processing code
     which includes firecrest, bustard, and gerald
@@ -274,9 +274,12 @@ class RunfolderTests(unittest.TestCase):
         self.failIfEqual(r2.gerald, None)
 
 def suite():
-    return unittest.makeSuite(RunfolderTests,'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(RunfolderTests))
+    return suite
+
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.WARN)
-    unittest.main(defaultTest="suite")
-
+    from unittest2 import main
+    main(defaultTest="suite")

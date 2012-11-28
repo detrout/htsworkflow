@@ -6,7 +6,7 @@ import os
 import tempfile
 import shutil
 import sys
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.pipelines import eland
 from htsworkflow.pipelines import ipar
@@ -60,7 +60,7 @@ def make_runfolder(obj=None):
         obj.gerald_dir = gerald_dir
 
 
-class RunfolderExtractTests(unittest.TestCase):
+class RunfolderExtractTests(TestCase):
     """
     Test the extract result code.
     """
@@ -79,10 +79,15 @@ class RunfolderExtractTests(unittest.TestCase):
         self.failUnlessEqual(len(archive), 34)
         self.failUnless('asite_090608_HWI-EAS229_0117_4286GAAXX_l6_r1.tar.bz2' in archive)
 
-        
+
 def suite():
-    return unittest.makeSuite(RunfolderExtractTests,'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(RunfolderExtractTests))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
+    from unittest2 import main
+    main(defaultTest="suite")
 

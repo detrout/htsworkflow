@@ -1,13 +1,14 @@
 import os
-import unittest
+from unittest2 import TestCase
 from StringIO import StringIO
 
 from simulate_runfolder import TESTDATA_DIR
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 
 from htsworkflow.pipelines.eland import SampleKey
-class testLoadRunXML(unittest.TestCase):
 
+
+class testLoadRunXML(TestCase):
     def _check_run_xml(self, run_xml_name, results, eland_results=8):
         run_xml_path = os.path.join(TESTDATA_DIR, run_xml_name)
         run = load_pipeline_run_xml(run_xml_path)
@@ -94,8 +95,14 @@ class testLoadRunXML(unittest.TestCase):
                    }
         self._check_run_xml(run_xml_name, results, eland_results=8)
 
+
 def suite():
-    return unittest.makeSuite(testLoadRunXML,'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testLoadRunXML))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
+    from unittest2 import main
+    main(defaultTest="suite")

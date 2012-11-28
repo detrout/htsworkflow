@@ -1,10 +1,10 @@
 import copy
 import os
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.util import api
 
-class testApi(unittest.TestCase):
+class testApi(TestCase):
     def test_make_key(self):
         k1 = api.make_django_secret_key()
         k2 = api.make_django_secret_key()
@@ -14,7 +14,12 @@ class testApi(unittest.TestCase):
         self.failUnless(k1 != k2)
 
 def suite():
-    return unittest.makeSuite(testApi, 'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestApi))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
+    from unittest2 import main
+    main(defaultTest="suite")
