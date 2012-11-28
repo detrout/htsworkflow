@@ -5,7 +5,7 @@ import os
 from StringIO import StringIO
 import shutil
 import tempfile
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.pipelines.runfolder import ElementTree
 from htsworkflow.pipelines import genomemap
@@ -15,7 +15,7 @@ MINI_GENOME_XML = '''<sequenceSizes>
         <chromosome fileName="chr1.fa" contigName="chr1" totalBases="197195432"/>
 </sequenceSizes>
 '''
-class TestGenomeMap(unittest.TestCase):
+class TestGenomeMap(TestCase):
     def test_genomesizes_xml(self):
         xml = ElementTree.fromstring(MINI_GENOME_XML)
         g = genomemap.GenomeMap()
@@ -76,5 +76,13 @@ class TestGenomeMap(unittest.TestCase):
         self.assertEqual(g['chr1.fa'], '{0}/chr1.fa'.format(tempgenome))
 
 
+def suite():
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestGenomeMap))
+    return suite
+
+
 if __name__ == "__main__":
-    unittest.main()
+    from unittest2 import main
+    main(defaultTest="suite")

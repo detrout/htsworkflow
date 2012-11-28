@@ -1,5 +1,4 @@
 import datetime
-import unittest
 
 try:
     import json

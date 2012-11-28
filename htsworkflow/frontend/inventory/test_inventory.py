@@ -1,5 +1,4 @@
 import RDF
-import unittest
 
 from django.test import TestCase
 from django.contrib.auth.models import User
@@ -110,8 +109,11 @@ class InventoryTestCase(TestCase):
         return flowcells
 
 def suite():
-    return unittest.makeSuite(InventoryTestCase, 'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(InventoryTestCase))
+    return suite
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
-
+    from unittest2 import main
+    main(defaultTest="suite")

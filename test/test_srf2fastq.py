@@ -1,7 +1,7 @@
 import os
 from StringIO import StringIO
 import sys
-import unittest
+from unittest2 import TestCase
 
 _module_path, _module_name = os.path.split(__file__)
 sys.path.append(os.path.join(_module_path, '..', 'scripts'))
@@ -10,7 +10,7 @@ from htsworkflow.pipelines.test.simulate_runfolder import TESTDATA_DIR
 
 from htsworkflow.pipelines import srf2fastq
 
-class testSrf2Fastq(unittest.TestCase):
+class testSrf2Fastq(TestCase):
     def test_split_good(self):
         source = StringIO("""@header
 AGCTTTTT
@@ -135,8 +135,14 @@ IIIIB+++
         self.failUnlessEqual(is_cnf1(cnf4_path), False)
         self.failUnlessEqual(is_cnf1(cnf1_path), True)
 
+
 def suite():
-    return unittest.makeSuite(testSrf2Fastq,'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testSrf2Fastq))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
+    from unittest2 import main
+    main(defaultTest="suite")

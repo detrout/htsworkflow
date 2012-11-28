@@ -5,7 +5,8 @@ import os
 from pprint import pprint
 import shutil
 import tempfile
-import unittest
+
+from django.test import TestCase
 
 from htsworkflow.submission.condorfastq import CondorFastqExtract
 from htsworkflow.submission.results import ResultMap
@@ -411,7 +412,7 @@ lib_turtle = """@prefix : <http://www.w3.org/1999/xhtml> .
 """
 HOST = "http://localhost"
 
-class TestCondorFastq(unittest.TestCase):
+class TestCondorFastq(TestCase):
     def setUp(self):
         self.cwd = os.getcwd()
 
@@ -676,9 +677,11 @@ class TestCondorFastq(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.makeSuite(TestCondorFastq, 'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestCondorFastq))
     return suite
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
-
+    from unittest2 import main
+    main(defaultTest='suite')

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.util import conversion
 
-class TestConversion(unittest.TestCase):
+class TestConversion(TestCase):
     def test_parse_slice(self):
         s = conversion.parse_slice("1:")
         self.failUnlessEqual(s.start, 1)
@@ -15,8 +15,12 @@ class TestConversion(unittest.TestCase):
         self.failUnlessEqual(s.stop, 2)
 
 def suite():
-    return unittest.makeSuite(TestConversion, 'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestConversion))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
-
+    from unittest2 import main
+    main(defaultTest="suite")

@@ -1,5 +1,4 @@
-import unittest
-
+from unittest2 import TestCase
 
 import os
 from htsworkflow.automation.solexa import is_runfolder
@@ -17,13 +16,14 @@ def extract_runfolder_path(watchdir, event):
       return runfolder_path
   return None
 
+
 class Event(object):
   def __init__(self, path=None, name=None):
     self.path = path
     self.name = name
 
-class testRunner(unittest.TestCase):
 
+class testRunner(TestCase):
     def test_extract_runfolder(self):
         watchdir = os.path.join('root', 'server', 'mount')
         runfolder = os.path.join(watchdir, '080909_HWI-EAS229_0052_1234ABCD')
@@ -38,9 +38,15 @@ class testRunner(unittest.TestCase):
 
         event = Event( path=other)
         self.failUnlessEqual(extract_runfolder_path(watchdir, event), None )
-        
+
+
 def suite():
-    return unittest.makeSuite(testRunner,'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testRunner))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
+    from unittest2 import main
+    main(defaultTest="suite")

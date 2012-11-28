@@ -2,11 +2,11 @@
 """More direct synthetic test cases for the eland output file processing
 """
 from StringIO import StringIO
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.pipelines.samplekey import SampleKey
 
-class TestSampleKey(unittest.TestCase):
+class TestSampleKey(TestCase):
     def test_equality(self):
         k1 = SampleKey(lane=1, read='1', sample='12345')
         k2 = SampleKey(lane=1, read=1, sample='12345')
@@ -43,5 +43,13 @@ class TestSampleKey(unittest.TestCase):
         self.assertTrue(k2.matches(q3))
         self.assertTrue(k3.matches(q3))
 
+def suite():
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestSampleKey))
+    return suite
+
+
 if __name__ == "__main__":
-    unittest.main()
+    from unittest2 import main
+    main(defaultTest="suite")

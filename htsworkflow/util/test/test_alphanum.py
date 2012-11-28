@@ -1,10 +1,10 @@
 import copy
 import os
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.util.alphanum import alphanum
 
-class testAlphanum(unittest.TestCase):
+class testAlphanum(TestCase):
     def test_string(self):
       unsorted = ['z5', 'b3', 'b10', 'a001', 'a2']
       sorted = [ 'a001', 'a2', 'b3', 'b10', 'z5']
@@ -42,7 +42,12 @@ class testAlphanum(unittest.TestCase):
 
 
 def suite():
-    return unittest.makeSuite(testAlphanum, 'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testAlphanum))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
+    from unittest2 import main
+    main(defaultTest="suite")

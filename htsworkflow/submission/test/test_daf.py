@@ -3,7 +3,7 @@ import os
 from StringIO import StringIO
 import shutil
 import tempfile
-import unittest
+from unittest2 import TestCase, TestSuite, defaultTestLoader
 
 from htsworkflow.submission import daf, results
 from htsworkflow.util.rdfhelp import \
@@ -80,7 +80,7 @@ required         no
 """
 
 
-class TestDAF(unittest.TestCase):
+class TestDAF(TestCase):
     def test_parse(self):
 
         parsed = daf.fromstring(test_daf)
@@ -165,7 +165,7 @@ def dump_model(model):
     print turtle
 
 
-class TestUCSCSubmission(unittest.TestCase):
+class TestUCSCSubmission(TestCase):
     def setUp(self):
         test_results.generate_sample_results_tree(self)
 
@@ -329,11 +329,11 @@ def mktempfile(suffix='', prefix='tmp', dir=None):
     os.close(fd)
     os.unlink(pathname)
 
-
 def suite():
-    suite = unittest.makeSuite(TestDAF, 'test')
-    suite.addTest(unittest.makeSuite(TestUCSCSubmission, 'test'))
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestUCSCInfo))
     return suite
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
+    from unittest2 import main
+    main(defaultTest='suite')

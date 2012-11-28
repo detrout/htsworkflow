@@ -2,12 +2,12 @@
 """More direct synthetic test cases for the eland output file processing
 """
 from StringIO import StringIO
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.pipelines.eland import ELAND, ElandLane, ElandMatches, \
      SampleKey, MatchCodes, MappedReads
 
-class MatchCodeTests(unittest.TestCase):
+class MatchCodeTests(TestCase):
     def test_initializer(self):
         self.assertRaises(ValueError, MatchCodes, {'foo':'bar'})
         self.assertRaises(ValueError, MatchCodes, 3)
@@ -38,7 +38,7 @@ class MatchCodeTests(unittest.TestCase):
         self.assertEqual(mc1['U0'], 100)
 
 
-class TestMappedReads(unittest.TestCase):
+class TestMappedReads(TestCase):
     def test_initializer(self):
         mr1 = MappedReads()
         self.assertEqual(len(mr1), 0)
@@ -73,7 +73,7 @@ class TestMappedReads(unittest.TestCase):
         mr3['Lambda3'] = 2
         self.assertEqual(mr3['Lambda3'], 2)
 
-class ElandTests(unittest.TestCase):
+class ElandTests(TestCase):
     """Test specific Eland modules
     """
     def compare_match_array(self, current, expected):
@@ -244,7 +244,7 @@ class ElandTests(unittest.TestCase):
         self.assertEqual(e_list[1], 'Lane3')
         self.assertEqual(e_list[2], 'Lane5')
 
-class TestElandMatches(unittest.TestCase):
+class TestElandMatches(TestCase):
     def test_eland_replacing(self):
         key = SampleKey(1, 1, 's')
         e = ELAND()
@@ -276,5 +276,16 @@ class TestElandMatches(unittest.TestCase):
         self.assertEqual(len(em[key11111]), 3)
         self.assertEqual(len(em[key11112]), 2)
 
+def suite():
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(MatchCodeTests))
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestMappedReads))
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(ElandTests))
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestElandMatches))
+    return suite
+
+
 if __name__ == "__main__":
-    unittest.main()
+    from unittest2 import main
+    main(defaultTest="suite")

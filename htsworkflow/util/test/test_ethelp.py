@@ -1,5 +1,5 @@
 import os
-import unittest
+from unittest2 import TestCase
 
 try:
   from xml.etree import ElementTree
@@ -8,7 +8,7 @@ except ImportError, e:
 
 from htsworkflow.util.ethelp import indent, flatten
 
-class testETHelper(unittest.TestCase):
+class testETHelper(TestCase):
     def setUp(self):
         self.foo = '<foo><bar>asdf</bar><br/></foo>'
         self.foo_tree = ElementTree.fromstring(self.foo)
@@ -25,11 +25,12 @@ class testETHelper(unittest.TestCase):
         self.failUnless(flatten(self.foo_tree), 'asdf')
 
 def suite():
-    return unittest.makeSuite(testETHelper, 'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testETHelper))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
-
-
-
-
+    from unittest2 import main
+    main(defaultTest="suite")

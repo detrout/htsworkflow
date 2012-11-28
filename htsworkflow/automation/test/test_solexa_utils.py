@@ -1,9 +1,8 @@
-
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.automation import solexa
 
-class testSolexaRunfolderUtils(unittest.TestCase):
+class testSolexaRunfolderUtils(TestCase):
     def test_is_runfolder(self):
         self.failUnlessEqual(solexa.is_runfolder(""), False)
         self.failUnlessEqual(solexa.is_runfolder("1345_23"), False)
@@ -23,9 +22,14 @@ class testSolexaRunfolderUtils(unittest.TestCase):
         for root, path, response in test_data:
             self.failUnlessEqual(solexa.get_top_dir(root, path), response)
             
+
 def suite():
-    return unittest.makeSuite(testSolexaRunfolderUtils, 'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testSolexaRunfolderUtils))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
-    
+    from unittest2 import main
+    main(defaultTest="suite")

@@ -1,7 +1,6 @@
 import os
-import unittest
 import types
-
+from unittest2 import TestCase
 
 from datetime import datetime
 
@@ -28,7 +27,7 @@ from htsworkflow.util.rdfhelp import \
 try:
     import RDF
 
-    class TestRDFHelp(unittest.TestCase):
+    class TestRDFHelp(TestCase):
         def test_from_none(self):
           self.failUnlessEqual(fromTypedNode(None), None)
 
@@ -224,7 +223,7 @@ _:a owl:imports "{loc}extra.turtle" .
             for contenttype, url, parser in DATA:
                 self.assertEqual(guess_parser(contenttype, url), parser)
 
-    class TestRDFSchemas(unittest.TestCase):
+    class TestRDFSchemas(TestCase):
         def test_rdf_schema(self):
             """Does it basically work?
             """
@@ -256,13 +255,17 @@ _:a owl:imports "{loc}extra.turtle" .
             self.assertTrue(model.contains_statement(s))
 
 
-    def suite():
-        return unittest.makeSuite(TestRDFHelp, 'test')
 except ImportError, e:
     print "Unable to test rdfhelp"
 
-    def suite():
-        return None
+def suite():
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestRDFHelp))
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestRDFSchemas))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
+    from unittest2 import main
+    main(defaultTest="suite")

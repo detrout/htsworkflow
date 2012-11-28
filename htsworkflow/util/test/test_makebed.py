@@ -1,10 +1,10 @@
 import os
 from StringIO import StringIO
-import unittest
+from unittest2 import TestCase
 
 from htsworkflow.util import makebed
 
-class testMakeBed(unittest.TestCase):
+class testMakeBed(TestCase):
     def test_multi_1_0_0_limit_1(self):
       instream = StringIO('>HWI-EAS229_26_209LVAAXX:7:3:112:383    TCAAATCTTATGCTANGAATCNCAAATTTTCT 1:0:0   mm9_chr13_random.fa:1240R0')
       out = StringIO()
@@ -46,10 +46,14 @@ class testMakeBed(unittest.TestCase):
       print out
       self.failUnlessEqual(len(out), 1)
 
+
 def suite():
-    return unittest.makeSuite(testMakeBed, 'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(testMakeBed))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest='suite')
-
-
+    from unittest2 import main
+    main(defaultTest="suite")

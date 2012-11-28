@@ -2,7 +2,7 @@
 import os
 import shutil
 import tempfile
-import unittest
+from unittest2 import TestCase
 
 import RDF
 
@@ -10,7 +10,7 @@ from htsworkflow.pipelines import sequences
 from htsworkflow.util.rdfhelp import get_model, load_string_into_model, \
      rdfNS, libraryOntology, dump_model, fromTypedNode
 
-class SequenceFileTests(unittest.TestCase):
+class SequenceFileTests(TestCase):
     """
     Make sure the sequence archive class works
     """
@@ -612,7 +612,12 @@ class SimulateSimpleTree(SimulateTree):
 
 
 def suite():
-    return unittest.makeSuite(SequenceFileTests,'test')
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(SequenceFileTests))
+    return suite
+
 
 if __name__ == "__main__":
-    unittest.main(defaultTest="suite")
+    from unittest2 import main
+    main(defaultTest="suite")
