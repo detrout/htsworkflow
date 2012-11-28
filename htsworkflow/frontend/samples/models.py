@@ -129,7 +129,7 @@ class Affiliation(models.Model):
 
 class LibraryType(models.Model):
   name = models.CharField(max_length=255, unique=True,
-                          name="Adapter Type")
+                          verbose_name="Adapter Type")
   is_paired_end = models.BooleanField(default=True,
                     help_text="can you do a paired end run with this adapter")
   can_multiplex = models.BooleanField(default=True,
