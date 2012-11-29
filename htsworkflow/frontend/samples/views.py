@@ -9,7 +9,7 @@ try:
 except ImportError, e:
     import simplejson as json
 
-from django.contrib.csrf.middleware import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
 from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend.experiments.models import FlowCell, Lane, LANE_STATUS_MAP
 from htsworkflow.frontend.samples.changelist import ChangeList
@@ -553,5 +553,3 @@ def user_profile(request):
     context.update(SAMPLES_CONTEXT_DEFAULTS)
     return render_to_response('registration/profile.html', context,
                               context_instance=RequestContext(request))
-
-
