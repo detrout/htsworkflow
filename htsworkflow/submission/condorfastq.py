@@ -99,8 +99,8 @@ class CondorFastqExtract(object):
                 conversion = conversion_funcs.get(condor_type, None)
                 if conversion is None:
                     errmsg = "Unrecognized type: {0} for {1}"
-                    print errmsg.format(condor_type,
-                                        pformat(available_sources))
+                    LOGGER.error(errmsg.format(condor_type,
+                                        pformat(available_sources)))
                     continue
                 sources = available_sources.get(condor_type, None)
 
@@ -108,7 +108,7 @@ class CondorFastqExtract(object):
                     condor_entries.setdefault(condor_type, []).append(
                         conversion(sources, target_pathname))
             else:
-                print " need file", target_pathname
+                LOGGER.warn(" need file %s", target_pathname)
 
         return condor_entries
 

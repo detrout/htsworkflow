@@ -43,7 +43,6 @@ class testMakeBed(TestCase):
       out = StringIO()
 
       out = list(makebed.make_bed_from_multi_eland_generator(instream, 'name', 'desc', 'mm9_chr', 1))
-      print out
       self.failUnlessEqual(len(out), 1)
 
 

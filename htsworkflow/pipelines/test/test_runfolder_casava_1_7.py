@@ -197,7 +197,6 @@ class RunfolderTests(TestCase):
 
 
     def test_eland(self):
-        ls_tree(self.runfolder_dir)
         hg_map = {'Lambda.fa': 'Lambda.fa'}
         for i in range(1,22):
           short_name = 'chr%d.fa' % (i,)
@@ -298,8 +297,6 @@ class RunfolderTests(TestCase):
         self.assertEqual(
             glob.fnmatch.fnmatch("s_1_0001_qseq.txt", pattern),
             False)
-
-        print pattern
 
 
 def suite():

@@ -48,7 +48,6 @@ class ResultMap(MutableMapping):
     def make_tree_from(self, source_path, destpath = None):
         """Create a tree using data files from source path.
         """
-        print source_path, destpath
         if destpath is None:
             destpath = os.getcwd()
 
@@ -62,14 +61,12 @@ class ResultMap(MutableMapping):
             source_rel_dir = os.path.join(source_path, lib_path)
             source_lib_dir = os.path.abspath(source_rel_dir)
 
-            print "source_lib_dir", source_lib_dir
             for filename in os.listdir(source_lib_dir):
                 source_pathname = os.path.join(source_lib_dir, filename)
                 target_pathname = os.path.join(lib_destination, filename)
                 if not os.path.exists(source_pathname):
                     raise IOError(
                         "{0} does not exist".format(source_pathname))
-                print target_pathname
                 if not os.path.exists(target_pathname):
                     os.symlink(source_pathname, target_pathname)
                     LOGGER.info(

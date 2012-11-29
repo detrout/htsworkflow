@@ -12,7 +12,6 @@ from htsworkflow.util.rdfhelp import add_default_schemas, \
 from htsworkflow.util.rdfinfer import Infer
 
 SOURCE_PATH = os.path.split(os.path.abspath(__file__))[0]
-print SOURCE_PATH
 
 class TestEncodeFind(TestCase):
     def setUp(self):

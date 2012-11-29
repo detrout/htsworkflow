@@ -239,7 +239,6 @@ class ElandTests(TestCase):
         e.results[sl1] = 'Lane1'
 
         e_list = e.values()
-        print e.items()
         self.assertEqual(e_list[0], 'Lane1')
         self.assertEqual(e_list[1], 'Lane3')
         self.assertEqual(e_list[2], 'Lane5')

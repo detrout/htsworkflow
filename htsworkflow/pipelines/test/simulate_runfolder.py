@@ -681,7 +681,9 @@ HWI-ST0787\t102\t{lane}\t1101\t1625\t1994\t{index}\t1\tAANAATGCTACAGAGACAAAACAAA
 """.format(lane=lane, index=index_seq)
     return body
 
-def ls_tree(root):
+def print_ls_tree(root):
+    """List tree contents, useful for debugging.
+    """
     for dirpath, dirnames, filenames in os.walk(root):
         for filename in filenames:
             print os.path.join(dirpath, filename)
