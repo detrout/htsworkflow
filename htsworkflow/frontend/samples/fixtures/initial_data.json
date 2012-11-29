@@ -23,6 +23,13 @@
         "notes": "Unknown"
      }
   },
+  { "pk": 1, "model": "samples.Condition",
+    "fields": {
+        "condition_name": "Unknown",
+        "nickname": "",
+        "notes": "Unknown"
+    }
+  },
   {
      "model": "samples.LibraryType",
      "pk": 1,
@@ -46,6 +53,24 @@
      "pk": 5,
      "fields": {
         "name": "Barcoded Illumina",
+        "can_multiplex": true,
+        "is_paired_end": true
+     }
+  },
+  {
+     "model": "samples.LibraryType",
+     "pk": 7,
+     "fields": {
+        "name": "Barcoded Small RNA",
+        "can_multiplex": true,
+        "is_paired_end": true
+     }
+  },
+  {
+     "model": "samples.LibraryType",
+     "pk": 8,
+     "fields": {
+        "name": "Nextera",
         "can_multiplex": true,
         "is_paired_end": true
      }

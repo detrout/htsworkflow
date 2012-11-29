@@ -195,5 +195,9 @@
       "isdefault": false,
       "comment": "our first sequencer"
     }
+  },
+  { "model": "experiments.ClusterStation",
+    "pk": 3,
+    "fields": { "name": "new", "isdefault": false }
   }
 ]
