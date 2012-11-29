@@ -15,6 +15,8 @@ from django.core import mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from django.test.utils import setup_test_environment, teardown_test_environment
+from django.db import connection
+from django.conf import settings
 from htsworkflow.frontend.experiments import models
 from htsworkflow.frontend.experiments import experiments
 from htsworkflow.frontend.auth import apidata
@@ -25,6 +27,18 @@ from htsworkflow.pipelines.test.simulate_runfolder import TESTDATA_DIR
 LANE_SET = range(1,9)
 
 NSMAP = {'libns':'http://jumpgate.caltech.edu/wiki/LibraryOntology#'}
+
+from django.db import connection
+OLD_DB_NAME = settings.DATABASE_NAME
+VERBOSITY = 0
+def setUpModule():
+    setup_test_environment()
+    settings.DEBUG = False
+    connection.creation.create_test_db(VERBOSITY)
+
+def tearDownModule():
+    connection.creation.destroy_test_db(OLD_DB_NAME, VERBOSITY)
+    teardown_test_environment()
 
 class ClusterStationTestCases(TestCase):
     fixtures = ['test_flowcells.json']
@@ -483,7 +497,6 @@ class TestFileType(TestCase):
         self.assertEqual(u"<FileType: QSEQ tarfile>",
                              unicode(file_type_object))
 
-class TestFileType(TestCase):
     def test_find_file_type(self):
         file_type_objects = models.FileType.objects
         cases = [('woldlab_090921_HWUSI-EAS627_0009_42FC3AAXX_l7_r1.tar.bz2',
@@ -536,17 +549,6 @@ class TestFileType(TestCase):
 
 class TestEmailNotify(TestCase):
     fixtures = ['test_flowcells.json']
-
-    @classmethod
-    def setUpClass(self):
-        # isolate django mail when running under unittest2
-        setup_test_environment()
-
-    @classmethod
-    def tearDownClass(self):
-        # isolate django mail when running under unittest2
-        teardown_test_environment()
-
 
     def test_started_email_not_logged_in(self):
         response = self.client.get('/experiments/started/153/')
@@ -684,3 +686,29 @@ class TestSequencer(TestCase):
 
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
+
+
+OLD_DB = settings.DATABASES['default']['NAME']
+def setUpModule():
+    setup_test_environment()
+    connection.creation.create_test_db()
+
+def tearDownModule():
+    connection.creation.destroy_test_db(OLD_DB)
+    teardown_test_environment()
+
+def suite():
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    for testcase in [ClusterStationTestCases,
+                     SequencerTestCases,
+                     ExerimentsTestCases,
+                     TestFileType,
+                     TestEmailNotify,
+                     TestSequencer]:
+        suite.addTests(defaultTestLoader.loadTestsFromTestCase(testcase))
+    return suite
+
+if __name__ == "__main__":
+    from unittest2 import main
+    main(defaultTest="suite")

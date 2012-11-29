@@ -1,6 +1,11 @@
 import RDF
 
 from django.test import TestCase
+from django.test.utils import setup_test_environment, \
+     teardown_test_environment
+from django.db import connection
+from django.conf import settings
+
 from django.contrib.auth.models import User
 from django.core import urlresolvers
 
@@ -107,6 +112,15 @@ class InventoryTestCase(TestCase):
         targets = model.get_targets(diskNode, libraryOntology['flowcell_id'])
         flowcells = [ str(x.uri) for x in targets]
         return flowcells
+
+OLD_DB = settings.DATABASES['default']['NAME']
+def setUpModule():
+    setup_test_environment()
+    connection.creation.create_test_db()
+
+def tearDownModule():
+    connection.creation.destroy_test_db(OLD_DB)
+    teardown_test_environment()
 
 def suite():
     from unittest2 import TestSuite, defaultTestLoader
