@@ -494,7 +494,7 @@ class TestFileType(TestCase):
         file_type_objects = models.FileType.objects
         name = 'QSEQ tarfile'
         file_type_object = file_type_objects.get(name=name)
-        self.assertEqual(u"<FileType: QSEQ tarfile>",
+        self.assertEqual(u"QSEQ tarfile",
                              unicode(file_type_object))
 
     def test_find_file_type(self):
