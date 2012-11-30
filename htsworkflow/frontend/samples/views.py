@@ -12,8 +12,10 @@ except ImportError, e:
 from django.views.decorators.csrf import csrf_exempt
 from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend.experiments.models import FlowCell, Lane, LANE_STATUS_MAP
-from htsworkflow.frontend.samples.changelist import ChangeList
+from htsworkflow.frontend.experiments.admin import LaneOptions
+from htsworkflow.frontend.samples.changelist import HTSChangeList
 from htsworkflow.frontend.samples.models import Antibody, Library, Species, HTSUser
+from htsworkflow.frontend.samples.admin import LibraryOptions
 from htsworkflow.frontend.samples.results import get_flowcell_result_dict
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
@@ -95,14 +97,16 @@ def create_library_context(cl):
 
 def library(request, todo_only=False):
     queryset = Library.objects.filter(hidden__exact=0)
+    filters = {'hidden__exact': 0}
     if todo_only:
-        queryset = queryset.filter(lane=None)
+        filters[lane] = None
     # build changelist
-    fcl = ChangeList(request, Library,
+    fcl = HTSChangeList(request, Library,
         list_filter=['affiliations', 'library_species'],
         search_fields=['id', 'library_name', 'amplified_from_sample__id'],
         list_per_page=200,
-        queryset=queryset
+        model_admin=LibraryOptions(Library, None),
+        extra_filters=filters
     )
 
     context = { 'cl': fcl, 'title': 'Library Index', 'todo_only': todo_only}
@@ -164,10 +168,11 @@ def lanes_for(request, username=None):
     if username is not None:
         user = HTSUser.objects.get(username=username)
         query.update({'library__affiliations__users__id':user.id})
-    fcl = ChangeList(request, Lane,
+    fcl = HTSChangeList(request, Lane,
         list_filter=[],
         search_fields=['flowcell__flowcell_id', 'library__id', 'library__library_name'],
         list_per_page=200,
+        model_admin=LaneOptions,
         queryset=Lane.objects.filter(**query)
     )
 
