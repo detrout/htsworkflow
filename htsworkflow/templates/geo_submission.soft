@@ -1,6 +1,6 @@
-{% for name, value in series %}
-{{name}}={{value}}{% endfor %}{% for row in samples %}
-^SAMPLE={{row.name}}
+{% for name, value in series %}{{name}}={{value}}
+{% endfor %}{% for row in samples %}!Series_sample_id={{row.name}}
+{% endfor %}{% for row in samples %}^SAMPLE={{row.name}}
 !Sample_type=SRA
 !Sample_title={{row.name}}
 !Sample_series_id={{ series_id }}
@@ -30,5 +30,5 @@
 !Sample_raw_file_checksum_{{forloop.counter}}={{raw.md5sum}}
 !sample_raw_file_single_or_paired-end_{{forloop.counter}}={{raw.flowcell_type}}{% endfor %}{% for sup in row.supplimental %}
 !Sample_supplementary_file_{{forloop.counter}}={{sup.filename}}
-!Sample_supplementary_file_checksum_{{forloop.counter}}={{sup.md5sum}}
-{% endfor %}{% endfor %}
+!Sample_supplementary_file_checksum_{{forloop.counter}}={{sup.md5sum}}{% endfor %}
+{% endfor %}

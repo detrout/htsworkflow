@@ -10,7 +10,13 @@ FASTQ_RE = re.compile(
     'c(?P<cycle>[\d]+)_l(?P<lane>[\d]+)(_r(?P<read>[\d]))?\.fastq')
 
 class FastqName(collections.Mapping):
+    """Utility class to convert to the standardized submission fastq name.
+    """
     def __init__(self, is_paired=None, **kwargs):
+        """Create a fastq name handler.
+
+        Takes filename or common attributes like flowcell, lib_id, lane, read, cycle
+        """
         self._attributes = ('flowcell', 'lib_id', 'lane', 'read', 'cycle')
         self._is_paired = is_paired
 
@@ -27,7 +33,6 @@ class FastqName(collections.Mapping):
             if k in kwargs:
                 value = kwargs[k]
             self[k] = value
-
 
     def _init_by_filename(self, filename):
         match = FASTQ_RE.match(filename)
