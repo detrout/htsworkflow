@@ -33,7 +33,6 @@ class HTSChangeList(ChangeList):
 
     def get_query_set(self, request):
         qs = super(HTSChangeList, self).get_query_set(request)
-        print qs
         if self.extra_filters:
             new_qs = qs.filter(**self.extra_filters)
             if new_qs is not None:

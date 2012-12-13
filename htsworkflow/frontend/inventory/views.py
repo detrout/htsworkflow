@@ -1,6 +1,6 @@
 from htsworkflow.frontend.samples.changelist import HTSChangeList
 from htsworkflow.frontend.inventory.models import Item, LongTermStorage, ItemType
-from htsworkflow.frontend.inventory.admin import ItemAdmin
+from htsworkflow.frontend.inventory.admin import ItemAdmin, ItemTypeAdmin
 from htsworkflow.frontend.inventory.bcmagic import item_search
 from htsworkflow.frontend.bcmagic.plugin import register_search_plugin
 from htsworkflow.frontend.experiments.models import FlowCell
@@ -162,11 +162,11 @@ def index(request):
     Inventory Index View
     """
     # build changelist
-    item_changelist = HTSChangeList(request, Item,
-        list_filter=['barcode_id',  ],
-        search_fields=[],
+    item_changelist = HTSChangeList(request, ItemType,
+        list_filter=[],
+        search_fields=['name', 'description'],
         list_per_page=50,
-        model_admin=ItemAdmin(Item, None)
+        model_admin=ItemTypeAdmin(ItemType, None)
     )
 
     context_dict = {
@@ -174,7 +174,6 @@ def index(request):
         'page_name': 'Inventory Index'
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
-
     return render_to_response('inventory/inventory_index.html',
                               context_dict,
                               context_instance=RequestContext(request))
