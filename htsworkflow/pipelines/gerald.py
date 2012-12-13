@@ -104,7 +104,7 @@ class Gerald(Alignment):
 
         timestamp = self.tree.findtext('ChipWideRunParameters/TIME_STAMP')
         if timestamp is not None:
-            epochstamp = time.mktime(time.strptime(timestamp, '%c'))
+            epochstamp = time.mktime(time.strptime(timestamp))
             return datetime.fromtimestamp(epochstamp)
         return super(Gerald, self)._get_date()
     date = property(_get_date)
@@ -187,7 +187,10 @@ class CASAVA(Alignment):
             return None
         time_element = self.tree.xpath('TIME_STAMP')
         if len(time_element) == 1:
-            return datetime.strptime(time_element[0].text, '%c')
+	    timetuple = time.strptime(
+	        time_element[0].text.strip(),
+	        "%a %d %b %Y %I:%M:%S %p")
+	    return datetime(*timetuple[:6])
         return super(CASAVA, self)._get_date()
     date = property(_get_date)
 
