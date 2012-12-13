@@ -13,12 +13,11 @@ WHERE {
 
   ?file ucscDaf:filename ?filename ;
         ucscDaf:md5sum ?md5sum ;
-        dc:source ?source ;
+        libraryOntology:flowcell_id ?flowcell_id ;
         a ?file_type .
+        
   ?file_type a <{{file_class}}> ;
              geoSoft:fileTypeLabel ?file_type_label .
-
-  ?source libraryOntology:flowcell ?flowcell .
 
   ?flowcell libraryOntology:flowcell_id ?flowcell_id ;
             libraryOntology:read_length ?read_length ;

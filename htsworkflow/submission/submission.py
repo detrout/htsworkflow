@@ -19,7 +19,7 @@ from htsworkflow.util.rdfhelp import \
      toTypedNode, \
      fromTypedNode
 from htsworkflow.util.hashfile import make_md5sum
-
+from htsworkflow.submission.fastqname import FastqName
 from htsworkflow.submission.daf import \
      MetadataLookupException, \
      get_submission_uri
@@ -114,18 +114,18 @@ class Submission(object):
                           an_analysis))
 
         # add file specific information
-        fileNode = self.link_file_to_classes(pathname,
-                                             an_analysis,
-                                             an_analysis_uri,
-                                             analysis_dir)
+        fileNode = self.make_file_node(pathname, an_analysis)
         self.add_md5s(filename, fileNode, analysis_dir)
+        self.add_fastq_metadata(filename, fileNode)
         self.model.add_statement(
             RDF.Statement(fileNode,
                           rdfNS['type'],
                           file_type))
         LOGGER.debug("Done.")
 
-    def link_file_to_classes(self, pathname, submissionNode, submission_uri, analysis_dir):
+    def make_file_node(self, pathname, submissionNode):
+        """Create file node and attach it to its submission.
+        """
         # add file specific information
         path, filename = os.path.split(pathname)
         fileNode = RDF.Node(RDF.Uri('file://'+ os.path.abspath(pathname)))
@@ -149,6 +149,25 @@ class Submission(object):
         else:
             self.model.add_statement(
                 RDF.Statement(fileNode, dafTermOntology['md5sum'], md5))
+
+    def add_fastq_metadata(self, filename, fileNode):
+        # How should I detect if this is actually a fastq file?
+        try:
+            fqname = FastqName(filename=filename)
+        except ValueError:
+            # currently its just ignore it if the fastq name parser fails
+            return
+        
+        terms = [('flowcell', libraryOntology['flowcell_id']),
+                 ('lib_id', libraryOntology['library_id']),
+                 ('lane', libraryOntology['lane_number']),
+                 ('read', libraryOntology['read']),
+                 ('cycle', libraryOntology['read_length'])]
+        for file_term, model_term in terms:
+            value = fqname.get(file_term)
+            if value is not None:
+                s = RDF.Statement(fileNode, model_term, toTypedNode(value))
+                self.model.append(s)
 
     def _add_library_details_to_model(self, libNode):
         # attributes that can have multiple values

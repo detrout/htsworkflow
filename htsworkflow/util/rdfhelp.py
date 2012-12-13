@@ -85,7 +85,7 @@ def blankOrUri(value=None):
     return node
 
 
-def toTypedNode(value):
+def toTypedNode(value, language="en"):
     """Convert a python variable to a RDF Node with its closest xsd type
     """
     if type(value) == types.BooleanType:
@@ -113,7 +113,7 @@ def toTypedNode(value):
     if value_type is not None:
         node = RDF.Node(literal=value, datatype=value_type)
     else:
-        node = RDF.Node(literal=unicode(value).encode('utf-8'))
+        node = RDF.Node(literal=unicode(value).encode('utf-8'), language=language)
     return node
 
 

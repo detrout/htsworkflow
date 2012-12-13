@@ -13,6 +13,7 @@ from htsworkflow.pipelines.samplekey import SampleKey
 from htsworkflow.pipelines import qseq2fastq
 from htsworkflow.pipelines import srf2fastq
 from htsworkflow.pipelines import desplit_fastq
+from htsworkflow.submission.fastqname import FastqName
 from htsworkflow.util.rdfhelp import get_model, dump_model, load_into_model, \
      fromTypedNode, \
      stripNamespace
@@ -231,18 +232,14 @@ WHERE {
                 'lib_id': seq.library_id,
                 'lane': seq.lane_number,
                 'read': seq.read,
-                'cycle': seq.cycle
+                'cycle': seq.cycle,
+                'is_paired': seq.ispaired
             }
 
-            if seq.ispaired:
-                target_name = fastq_paired_template % \
-                              filename_attributes
-            else:
-                target_name = fastq_single_template % \
-                              filename_attributes
+            fqName = FastqName(**filename_attributes)
 
             result_dir = result_map[seq.library_id]
-            target_pathname = os.path.join(result_dir, target_name)
+            target_pathname = os.path.join(result_dir, fqName.filename)
             if self.force or not os.path.exists(target_pathname):
                 t = needed_targets.setdefault(target_pathname, {})
                 t.setdefault(seq.filetype, []).append(seq)
