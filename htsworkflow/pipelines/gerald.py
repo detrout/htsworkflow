@@ -177,7 +177,7 @@ class CASAVA(Alignment):
         if self.tree is None:
             return
         if len(self.tree.xpath('TIME_STAMP')) == 0:
-            time_stamp = self.date.strftime('%c')
+            time_stamp = self.date.strftime("%a %b %d %H:%M:%S %Y")
             time_element = ElementTree.Element('TIME_STAMP')
             time_element.text = time_stamp
             self.tree.append(time_element)
@@ -189,7 +189,7 @@ class CASAVA(Alignment):
         if len(time_element) == 1:
 	    timetuple = time.strptime(
 	        time_element[0].text.strip(),
-	        "%a %d %b %Y %I:%M:%S %p")
+	        "%a %b %d %H:%M:%S %Y")
 	    return datetime(*timetuple[:6])
         return super(CASAVA, self)._get_date()
     date = property(_get_date)
