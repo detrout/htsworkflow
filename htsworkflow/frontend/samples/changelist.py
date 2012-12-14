@@ -1,3 +1,4 @@
+import django
 from django.contrib.admin.views.main import ChangeList
 
 class HTSChangeList(ChangeList):
@@ -10,20 +11,23 @@ class HTSChangeList(ChangeList):
         queryset.filter
         """
         self.extra_filters = extra_filters
-        super(HTSChangeList, self).__init__(
-            request, #request
-            model, #model
-            [], # list_display
-            None, # list_display_links
-            list_filter, #list_filter
-            None, # date_hierarchy
-            search_fields, #search_fields
-            None, # list_select_related,
-            list_per_page, #list_per_page
-            20000, #list_max_show_all
-            None, # list_editable
-            model_admin #model_admin
-        )
+
+        args = {
+            'request': request, #request
+            'model': model, #model
+            'list_display': [], # list_display
+            'list_display_links': None, # list_display_links
+            'list_filter': list_filter, #list_filter
+            'date_hierarchy': None, # date_hierarchy
+            'search_fields': search_fields, #search_fields
+            'list_select_related': None, # list_select_related,
+            'list_per_page': list_per_page, #list_per_page
+            'list_editable': None, # list_editable
+            'model_admin': model_admin #model_admin
+        }
+        if django.VERSION[0] >= 1 and django.VERSION[1] >= 4:
+            args['list_max_show_all'] = 20000, #list_max_show_all
+        super(HTSChangeList, self).__init__(**args)
 
         self.is_popup = False
         # I removed to field in the first version
@@ -31,8 +35,12 @@ class HTSChangeList(ChangeList):
         self.multi_page = True
         self.can_show_all = False
 
-    def get_query_set(self, request):
-        qs = super(HTSChangeList, self).get_query_set(request)
+    def get_query_set(self, request=None):
+        args = {}
+        if django.VERSION[0] >= 1 and django.VERSION[1] >= 4:
+            args['request'] = request, #list_max_show_all
+        
+        qs = super(HTSChangeList, self).get_query_set(**args)
         if self.extra_filters:
             new_qs = qs.filter(**self.extra_filters)
             if new_qs is not None:
