@@ -201,60 +201,6 @@ def get_runs(runfolder, flowcell_id=None):
     from htsworkflow.pipelines import bustard
     from htsworkflow.pipelines import gerald
 
-    def scan_post_image_analysis(runs, runfolder, datadir, image_analysis,
-                                 pathname):
-        added = build_aligned_runs(image_analysis, runs, datadir, runfolder)
-        # If we're a multiplexed run, don't look for older run type.
-        if added > 0:
-            return
-
-        LOGGER.info("Looking for bustard directories in %s" % (pathname,))
-        bustard_dirs = glob(os.path.join(pathname, "Bustard*"))
-        # RTA BaseCalls looks enough like Bustard.
-        bustard_dirs.extend(glob(os.path.join(pathname, "BaseCalls")))
-        for bustard_pathname in bustard_dirs:
-            LOGGER.info("Found bustard directory %s" % (bustard_pathname,))
-            b = bustard.bustard(bustard_pathname)
-            build_gerald_runs(runs, b, image_analysis, bustard_pathname, datadir, pathname, runfolder)
-
-
-    def build_gerald_runs(runs, b, image_analysis, bustard_pathname, datadir, pathname, runfolder):
-        start = len(runs)
-        gerald_glob = os.path.join(bustard_pathname, 'GERALD*')
-        LOGGER.info("Looking for gerald directories in %s" % (pathname,))
-        for gerald_pathname in glob(gerald_glob):
-            LOGGER.info("Found gerald directory %s" % (gerald_pathname,))
-            try:
-                g = gerald.gerald(gerald_pathname)
-                p = PipelineRun(runfolder, flowcell_id)
-                p.datadir = datadir
-                p.image_analysis = image_analysis
-                p.bustard = b
-                p.gerald = g
-                runs.append(p)
-            except IOError, e:
-                LOGGER.error("Ignoring " + str(e))
-        return len(runs) - start
-
-
-    def build_aligned_runs(image_analysis, runs, datadir, runfolder):
-        start = len(runs)
-        aligned_glob = os.path.join(runfolder, 'Aligned*')
-        for aligned in glob(aligned_glob):
-            LOGGER.info("Found aligned directory %s" % (aligned,))
-            try:
-                g = gerald.gerald(aligned)
-                p = PipelineRun(runfolder, flowcell_id)
-                bustard_pathname = os.path.join(runfolder, g.runfolder_name)
-
-                p.datadir = datadir
-                p.image_analysis = image_analysis
-                p.bustard = bustard.bustard(bustard_pathname)
-                p.gerald = g
-                runs.append(p)
-            except IOError, e:
-                LOGGER.error("Ignoring " + str(e))
-        return len(runs) - start
     datadir = os.path.join(runfolder, 'Data')
 
     LOGGER.info('Searching for runs in ' + datadir)
@@ -269,7 +215,7 @@ def get_runs(runfolder, flowcell_id=None):
             )
         else:
             scan_post_image_analysis(
-                runs, runfolder, datadir, image_analysis, firecrest_pathname
+                runs, runfolder, datadir, image_analysis, firecrest_pathname, flowcell_id
             )
     # scan for IPAR directories
     ipar_dirs = glob(os.path.join(datadir, "IPAR_*"))
@@ -284,10 +230,110 @@ def get_runs(runfolder, flowcell_id=None):
             )
         else:
             scan_post_image_analysis(
-                runs, runfolder, datadir, image_analysis, ipar_pathname
+                runs, runfolder, datadir, image_analysis, ipar_pathname, flowcell_id
             )
 
     return runs
+
+def scan_post_image_analysis(runs, runfolder, datadir, image_analysis,
+                             pathname, flowcell_id):
+    added = build_hiseq_runs(image_analysis, runs, datadir, runfolder, flowcell_id)
+    # If we're a multiplexed run, don't look for older run type.
+    if added > 0:
+        return
+
+    LOGGER.info("Looking for bustard directories in %s" % (pathname,))
+    bustard_dirs = glob(os.path.join(pathname, "Bustard*"))
+    # RTA BaseCalls looks enough like Bustard.
+    bustard_dirs.extend(glob(os.path.join(pathname, "BaseCalls")))
+    for bustard_pathname in bustard_dirs:
+        LOGGER.info("Found bustard directory %s" % (bustard_pathname,))
+        b = bustard.bustard(bustard_pathname)
+        build_gerald_runs(runs, b, image_analysis, bustard_pathname, datadir, pathname,
+                          runfolder, flowcell_id)
+
+
+def build_gerald_runs(runs, b, image_analysis, bustard_pathname, datadir, pathname, runfolder,
+                      flowcell_id):
+    start = len(runs)
+    gerald_glob = os.path.join(bustard_pathname, 'GERALD*')
+    LOGGER.info("Looking for gerald directories in %s" % (pathname,))
+    for gerald_pathname in glob(gerald_glob):
+        LOGGER.info("Found gerald directory %s" % (gerald_pathname,))
+        try:
+            g = gerald.gerald(gerald_pathname)
+            p = PipelineRun(runfolder, flowcell_id)
+            p.datadir = datadir
+            p.image_analysis = image_analysis
+            p.bustard = b
+            p.gerald = g
+            runs.append(p)
+        except IOError, e:
+            LOGGER.error("Ignoring " + str(e))
+    return len(runs) - start
+
+
+def build_hiseq_runs(image_analysis, runs, datadir, runfolder, flowcell_id):
+    start = len(runs)
+    aligned_glob = os.path.join(runfolder, 'Aligned*')
+    unaligned_glob = os.path.join(runfolder, 'Unaligned*')
+
+    aligned_paths = glob(aligned_glob)
+    unaligned_paths = glob(unaligned_glob)
+
+    matched_paths = hiseq_match_aligned_unaligned(aligned_paths, unaligned_paths)
+    LOGGER.debug("Matched HiSeq analysis: %s", str(matched_paths))
+
+    for aligned, unaligned in matched_paths:
+        if unaligned is None:
+            LOGGER.warn("Aligned directory %s without matching unalinged, skipping", aligned)
+            continue
+
+        g = gerald.gerald(aligned)
+        print "scan for aligned then remove them from unaligned list"
+        try:
+            p = PipelineRun(runfolder, flowcell_id)
+            p.datadir = datadir
+            p.image_analysis = image_analysis
+            p.bustard = bustard.bustard(unaligned)
+            if aligned:
+                p.gerald = gerald.gerald(aligned)
+            runs.append(p)
+        except IOError, e:
+            LOGGER.error("Ignoring " + str(e))
+    return len(runs) - start
+
+def hiseq_match_aligned_unaligned(aligned, unaligned):
+    """Match aligned and unaligned folders from seperate lists
+    """
+    unaligned_suffix_re = re.compile('Unaligned(?P<suffix>[\w]*)')
+
+    aligned_by_suffix = build_dir_dict_by_suffix('Aligned', aligned)
+    unaligned_by_suffix = build_dir_dict_by_suffix('Unaligned', unaligned)
+
+    keys = set(aligned_by_suffix.keys()).union(set(unaligned_by_suffix.keys()))
+
+    matches = []
+    for key in keys:
+        a = aligned_by_suffix.get(key)
+        u = unaligned_by_suffix.get(key)
+        matches.append((a, u))
+    return matches
+
+def build_dir_dict_by_suffix(prefix, dirnames):
+    """Build a dictionary indexed by suffix of last directory name.
+
+    It assumes a constant prefix
+    """
+    regex = re.compile('%s(?P<suffix>[\w]*)' % (prefix,))
+
+    by_suffix = {}
+    for absname in dirnames:
+        basename = os.path.basename(absname)
+        match = regex.match(basename)
+        if match:
+            by_suffix[match.group('suffix')] = absname
+    return by_suffix
 
 def get_specific_run(gerald_dir):
     """
