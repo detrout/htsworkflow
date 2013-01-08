@@ -100,6 +100,17 @@ def make_unaligned_config_1_12(unaligned_dir):
     ]
     for src, dest in demultiplex_pairs:
         shutil.copy(src, dest)
+        
+def make_unaligned_status_1_12(unaligned_dir, flowcell_id):
+    basecall_status = ['All.htm', 'Demultiplex_Stats.htm', 'IVC.htm']
+    test_data_root = os.path.join(TESTDATA_DIR, '1_12', 'basecall_stats')
+    basecall_stats = os.path.join(unaligned_dir, 
+                                  'Basecall_Stats_{0}'.format(flowcell_id))
+    os.mkdir(basecall_stats)
+    for filename in basecall_status:
+        source = os.path.join(test_data_root, filename)
+        destination = os.path.join(basecall_stats, filename)
+        shutil.copy(source, destination)
 
 def make_rta_intensities_1460(data_dir, version='1.4.6.0'):
     """

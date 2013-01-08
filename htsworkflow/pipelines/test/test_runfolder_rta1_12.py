@@ -46,6 +46,7 @@ def make_runfolder(obj=None):
     os.mkdir(unaligned_dir)
     make_unaligned_fastqs_1_12(unaligned_dir, flowcell_id)
     make_unaligned_config_1_12(unaligned_dir)
+    make_unaligned_status_1_12(unaligned_dir, flowcell_id)
 
     aligned_dir = os.path.join(runfolder_dir, "Aligned")
     os.mkdir(aligned_dir)
