@@ -12,17 +12,16 @@ import sys
 import tarfile
 import time
 
-import lxml.etree as ElementTree
-
 LOGGER = logging.getLogger(__name__)
 
-EUROPEAN_STRPTIME = "%d-%m-%Y"
-EUROPEAN_DATE_RE = "([0-9]{1,2}-[0-9]{1,2}-[0-9]{4,4})"
-VERSION_RE = "([0-9\.]+)"
-USER_RE = "([a-zA-Z0-9]+)"
-LANES_PER_FLOWCELL = 8
-LANE_LIST = range(1, LANES_PER_FLOWCELL + 1)
-
+from htsworkflow.pipelines import firecrest
+from htsworkflow.pipelines import ipar
+from htsworkflow.pipelines import bustard
+from htsworkflow.pipelines import gerald
+from htsworkflow.pipelines import ElementTree, \
+                                  EUROPEAN_STRPTIME, EUROPEAN_DATE_RE, \
+                                  VERSION_RE, USER_RE, \
+                                  LANES_PER_FLOWCELL, LANE_LIST
 from htsworkflow.util.alphanum import alphanum
 from htsworkflow.util.ethelp import indent, flatten
 from htsworkflow.util.queuecommands import QueueCommands
@@ -121,10 +120,6 @@ class PipelineRun(object):
     def set_elements(self, tree):
         # this file gets imported by all the others,
         # so we need to hide the imports to avoid a cyclic imports
-        from htsworkflow.pipelines import firecrest
-        from htsworkflow.pipelines import ipar
-        from htsworkflow.pipelines import bustard
-        from htsworkflow.pipelines import gerald
 
         tag = tree.tag.lower()
         if tag != PipelineRun.PIPELINE_RUN.lower():

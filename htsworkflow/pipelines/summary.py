@@ -7,7 +7,6 @@ import re
 import types
 from pprint import pprint
 
-#from htsworkflow.pipelines.runfolder import ElementTree
 from lxml import html
 from lxml import etree
 from htsworkflow.util.ethelp import indent, flatten

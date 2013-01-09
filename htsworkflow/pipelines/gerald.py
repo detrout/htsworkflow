@@ -12,7 +12,7 @@ from htsworkflow.pipelines.summary import Summary, SummaryGA, SummaryHiSeq
 from htsworkflow.pipelines.eland import eland, ELAND
 from htsworkflow.pipelines.samplekey import SampleKey
 
-from htsworkflow.pipelines.runfolder import \
+from htsworkflow.pipelines import \
    ElementTree, \
    EUROPEAN_STRPTIME, \
    LANES_PER_FLOWCELL, \

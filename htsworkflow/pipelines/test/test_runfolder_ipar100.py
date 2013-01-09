@@ -10,7 +10,7 @@ from htsworkflow.pipelines import ipar
 from htsworkflow.pipelines import bustard
 from htsworkflow.pipelines import gerald
 from htsworkflow.pipelines import runfolder
-from htsworkflow.pipelines.runfolder import ElementTree
+from htsworkflow.pipelines import ElementTree
 
 from htsworkflow.pipelines.test.simulate_runfolder import *
 
