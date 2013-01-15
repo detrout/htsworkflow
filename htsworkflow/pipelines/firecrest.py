@@ -24,9 +24,9 @@ from htsworkflow.pipelines import \
 
 LOGGER = logging.getLogger(__name__)
 
-__docformat__ = "restructuredtext en"
-
 class Firecrest(object):
+    """Gather information about older firecrest runs
+    """
     XML_VERSION=1
 
     # xml tag names
@@ -39,6 +39,12 @@ class Firecrest(object):
     MATRIX = 'matrix'
 
     def __init__(self, xml=None):
+        """Initialize a Firecrest object
+        
+        consider using factory :function:firecrest
+        
+        :param xml: xml serialzation element to initialze from [optional]
+        """
         self.start = None
         self.stop = None
         self.version = None
@@ -58,6 +64,8 @@ class Firecrest(object):
     time = property(_get_time, doc='return run time as seconds since epoch')
 
     def dump(self):
+        """Report debugginf information
+        """
         print "Starting cycle:", self.start
         print "Ending cycle:", self.stop
         print "Firecrest version:", self.version
@@ -65,6 +73,8 @@ class Firecrest(object):
         print "user:", self.user
 
     def get_elements(self):
+        """Return XML serialization structure.
+        """
         attribs = {'version': str(Firecrest.XML_VERSION) }
         root = ElementTree.Element(Firecrest.FIRECREST, attrib=attribs)
         version = ElementTree.SubElement(root, Firecrest.SOFTWARE_VERSION)

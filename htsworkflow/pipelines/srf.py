@@ -42,7 +42,7 @@ def make_srf_commands(run_name, bustard_dir, lanes, site_name, destdir, cmdlevel
   make a subprocess-friendly list of command line arguments to run solexa2srf
   generates files like:
   woldlab:080514_HWI-EAS229_0029_20768AAXX:8.srf
-   site        run name                    lane
+  site        run name                    lane
 
   run_name - most of the file name (run folder name is a good choice)
   lanes - list of integers corresponding to which lanes to process
