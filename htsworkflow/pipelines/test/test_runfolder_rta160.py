@@ -249,14 +249,14 @@ class RunfolderTests(TestCase):
         # do we get the flowcell id from the filename?
         self.failUnlessEqual(len(runs), 1)
         name = 'run_4286GAAXX_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
-        self.failUnlessEqual(runs[0].name, name)
+        self.failUnlessEqual(runs[0].serialization_filename, name)
 
         # do we get the flowcell id from the FlowcellId.xml file
         make_flowcell_id(self.runfolder_dir, '207BTAAXY')
         runs = runfolder.get_runs(self.runfolder_dir)
         self.failUnlessEqual(len(runs), 1)
         name = 'run_207BTAAXY_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
-        self.failUnlessEqual(runs[0].name, name)
+        self.failUnlessEqual(runs[0].serialization_filename, name)
 
         bustard_dir = os.path.join(self.runfolder_dir, 'Data',
                                    'Intensities', 'BaseCalls')
@@ -269,7 +269,7 @@ class RunfolderTests(TestCase):
                              '090220_HWI-EAS229_0093_30VR0AAXX')
 
         r2 = runfolder.PipelineRun(xml=xml)
-        self.failUnlessEqual(r1.name, r2.name)
+        self.failUnlessEqual(r1.serialization_filename, r2.serialization_filename)
         self.failIfEqual(r2.image_analysis, None)
         self.failIfEqual(r2.bustard, None)
         self.failIfEqual(r2.gerald, None)

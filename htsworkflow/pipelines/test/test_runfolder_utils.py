@@ -10,10 +10,10 @@ class TestRunfolderUtilities(TestCase):
 
         matches = set(runfolder.hiseq_match_aligned_unaligned(aligned, unaligned))
         self.assertEqual(len(matches), 4)
-        self.assertTrue(('/a/b/c/Aligned', '/a/b/c/Unaligned') in matches )
-        self.assertTrue(('/a/b/c/Aligned1234', None) in matches )
-        self.assertTrue(('/a/b/c/Aligned_3mm', '/a/b/c/Unaligned_3mm') in matches )
-        self.assertTrue((None, '/a/b/c/Unaligned_6index') in matches )
+        self.assertTrue(('/a/b/c/Aligned', '/a/b/c/Unaligned', '') in matches )
+        self.assertTrue(('/a/b/c/Aligned1234', None, '1234') in matches )
+        self.assertTrue(('/a/b/c/Aligned_3mm', '/a/b/c/Unaligned_3mm', '_3mm') in matches )
+        self.assertTrue((None, '/a/b/c/Unaligned_6index', '_6index') in matches )
 
     def test_match_aligned_unaligned_relpath(self):
         aligned = ['./Aligned', './Aligned1234', './Aligned_3mm']
@@ -21,10 +21,10 @@ class TestRunfolderUtilities(TestCase):
 
         matches = set(runfolder.hiseq_match_aligned_unaligned(aligned, unaligned))
         self.assertEqual(len(matches), 4)
-        self.assertTrue(('./Aligned', './Unaligned') in matches )
-        self.assertTrue(('./Aligned1234', None) in matches )
-        self.assertTrue(('./Aligned_3mm', './Unaligned_3mm') in matches )
-        self.assertTrue((None, './Unaligned_6index') in matches )
+        self.assertTrue(('./Aligned', './Unaligned', '') in matches )
+        self.assertTrue(('./Aligned1234', None, '1234') in matches )
+        self.assertTrue(('./Aligned_3mm', './Unaligned_3mm', '_3mm') in matches )
+        self.assertTrue((None, './Unaligned_6index', '_6index') in matches )
 
 def suite():
     suite = TestSuite()

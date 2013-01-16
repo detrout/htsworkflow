@@ -304,21 +304,21 @@ class RunfolderTests(TestCase):
         self.failUnlessEqual(len(runs), 1)
         # firecrest's date depends on filename not the create time.
         name = 'run_207BTAAXX_2009-02-22.xml'
-        self.failUnlessEqual(runs[0].name, name)
+        self.failUnlessEqual(runs[0].serialization_filename, name)
 
         # do we get the flowcell id from the FlowcellId.xml file
         make_flowcell_id(self.runfolder_dir, '207BTAAXY')
         runs = runfolder.get_runs(self.runfolder_dir)
         self.failUnlessEqual(len(runs), 1)
         name = 'run_207BTAAXY_2009-02-22.xml'
-        self.failUnlessEqual(runs[0].name, name)
+        self.failUnlessEqual(runs[0].serialization_filename, name)
 
         r1 = runs[0]
         xml = r1.get_elements()
         xml_str = ElementTree.tostring(xml)
 
         r2 = runfolder.PipelineRun(xml=xml)
-        self.failUnlessEqual(r1.name, r2.name)
+        self.failUnlessEqual(r1.serialization_filename, r2.serialization_filename)
         self.failIfEqual(r2.image_analysis, None)
         self.failIfEqual(r2.bustard, None)
         self.failIfEqual(r2.gerald, None)
