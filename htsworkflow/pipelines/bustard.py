@@ -365,6 +365,9 @@ def bustard(pathname):
     else:
         b = bustard_from_ga1(pathname)
 
+    if not b:
+        raise RuntimeError("Unable to parse base-call directory at %s" % (pathname,))
+
     return b
 
 def bustard_from_ga1(pathname):
