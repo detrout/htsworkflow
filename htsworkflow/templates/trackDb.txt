@@ -1,0 +1,30 @@
+track singleCell
+compositeTrack on
+visibility dense
+shortLabel Single RNA-Seq
+longLabel ENCODE Single cell and small pool RNA-Seq
+subGroup1 tier Tier t1=1 t2=2 t3=3
+subGroup2 poolSize \
+          Single=single \
+          Ten=10_cells \
+          Eleven=11_cells
+          Hundred=100_Cells \
+          Pool=Pool
+subGroup3 cellType Cell_Line GM12878=GM12878 H1hESC=H1-hESC K562=K562 HeLaS3=HeLa-S3 HepG2=HepG2 HUVEC=HUVEC T8988T=8988T A549=A549 AG04449=AG04449 AG04450=AG04450 AG09309=AG09309 AG09319=AG09319 AG10803=AG10803 AoAF=AoAF AoSMC=AoSMC BE2C=BE2_C BJ=BJ Caco2=Caco-2 CD20=CD20+ CD34Mobilized=CD34+_Mobilized Chorion=Chorion CLL=CLL CMK=CMK Fibrobl=Fibrobl FibroP=FibroP Gliobla=Gliobla GM06990=GM06990 GM12864=GM12864 GM12865=GM12865 GM12891=GM12891 GM12892=GM12892 GM18507=GM18507 GM19238=GM19238 GM19239=GM19239 GM19240=GM19240 H7hESC=H7-hESC H9ES=H9ES HAh=HA-h HAsp=HA-sp HAc=HAc HAEpiC=HAEpiC HBMEC=HBMEC HCF=HCF HCFaa=HCFaa HCM=HCM HConF=HConF HCPEpiC=HCPEpiC HCT116=HCT-116 HEEpiC=HEEpiC Hepatocytes=Hepatocytes HFF=HFF HFFMyc=HFF-Myc HGF=HGF HIPEpiC=HIPEpiC HL60=HL-60 HMEC=HMEC HMF=HMF HMVECdAd=HMVEC-dAd HMVECdBlAd=HMVEC-dBl-Ad HMVECdBlNeo=HMVEC-dBl-Neo HMVECdLyAd=HMVEC-dLy-Ad HMVECdLyNeo=HMVEC-dLy-Neo HMVECdNeo=HMVEC-dNeo HMVECLBl=HMVEC-LBl HMVECLLy=HMVEC-LLy HNPCEpiC=HNPCEpiC HPAEC=HPAEC HPAF=HPAF HPDE6E6E7=HPDE6-E6E7 HPdLF=HPdLF HPF=HPF HRCEpiC=HRCEpiC HRE=HRE HRGEC=HRGEC HRPEpiC=HRPEpiC HSMM=HSMM HSMMemb=HSMM_emb HSMMtube=HSMMtube HTR8svn=HTR8svn Huh7=Huh-7 Huh75=Huh-7.5 HVMF=HVMF iPS=iPS Ishikawa=Ishikawa Jurkat=Jurkat K562=K562 LNCaP=LNCaP MCF7=MCF-7 Medullo=Medullo Melano=Melano MonocytesCD14RO01746=Monocytes-CD14+_RO01746 Myometr=Myometr NB4=NB4 NHA=NH-A NHDFAd=NHDF-Ad NHDFneo=NHDF-neo NHEK=NHEK NHLF=NHLF NT2D1=NT2-D1 Osteobl=Osteobl PANC1=PANC-1 PanIsletD=PanIsletD PanIslets=PanIslets pHTE=pHTE PrEC=PrEC ProgFib=ProgFib RPTEC=RPTEC RWPE1=RWPE1 SAEC=SAEC SKNMC=SK-N-MC SKNSHRA=SK-N-SH_RA SkMC=SkMC Stellate=Stellate T47D=T-47D Th0=Th0 Th1=Th1 Th2=Th2 Urothelia=Urothelia WERIRb1=WERI-Rb-1 WI38=WI-38 
+subGroup4 readType Read_type R1x100=1x100
+dimensions dimX=poolSize dimY=cellType dimA=readType
+dragAndDrop subTracks
+type bam
+
+{% for sample in samples %}
+    track sample_{{ sample.library_id }}
+    parent singleCell on
+    bigDataUrl {{ sample.bam }}
+    shortLabel {{ sample.library_id }}
+    longLabel {{ sample.name }}
+    type bam
+    subGroups tier=t1 \
+              cellLine={{ sample.cell }} \
+              poolSize={{ sample.input_quantity }} \
+              readType=R1x100
+{% endfor %}

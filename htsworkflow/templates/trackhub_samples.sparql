@@ -1,0 +1,42 @@
+PREFIX libraryOntology: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
+PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
+PREFIX ncbiTaxon: <http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=>
+PREFIX geoSoft: <http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#>
+PREFIX cells: <http://encodewiki.ucsc.edu/EncodeDCC/index.php/Cell_lines#>
+
+select distinct ?name ?bam ?cell ?antibody ?sex ?control ?strain ?controlId ?library_id ?treatment ?protocol ?readType ?insertLength ?replicate ?mapAlgorithm ?species_name ?taxon_id ?extractMolecule ?growthProtocol ?extractProtocol ?dataProtocol ?tier ?experiment_type ?library_selection ?library_source ?input_quantity
+WHERE {
+  <{{submission}}> a submissionOntology:submission ;
+                   submissionOntology:library ?library ;
+                   submissionOntology:name ?name ;
+                   ucscDaf:has_file ?file .
+  ?file ucscDaf:filename ?bam .
+  OPTIONAL { <{{submission}}> ucscDaf:control ?control }
+  OPTIONAL { <{{submission}}> ucscDaf:controlId ?controlId }
+  OPTIONAL { ?library libraryOntology:antibody ?antibody }
+  OPTIONAL { ?library libraryOntology:cell_line ?cell .
+             OPTIONAL { ?cell_line cells:cell ?cell .
+                        OPTIONAL { ?cell_line cells:documents ?growthProtocol . }
+                        OPTIONAL { ?cell_line cells:tier ?tier . } } }
+  OPTIONAL { ?library ucscDaf:sex ?sex }
+  OPTIONAL { ?library libraryOntology:library_id ?library_id }
+  OPTIONAL { ?library libraryOntology:replicate ?replicate }
+  OPTIONAL { ?library libraryOntology:species ?species_name .
+             ?species libraryOntology:species ?species_name ;
+                      libraryOntology:taxon_id ?taxon_id . }
+  OPTIONAL { ?library libraryOntology:condition_term ?treatment }
+  OPTIONAL { ?library libraryOntology:experiment_type ?experiment_type }
+  OPTIONAL { ?library libraryOntology:librarySelection ?library_selection }
+  OPTIONAL { ?library libraryOntology:librarySource ?library_source }
+  OPTIONAL { <{{submissionSet}}> geoSoft:data_processing ?dataProtocol }
+  OPTIONAL { ?library libraryOntology:extractMolecule ?extractMolecule }
+  OPTIONAL { ?library libraryOntology:extractProtocol ?extractProtocol }
+  OPTIONAL { ?library ucscDaf:protocol ?protocol }
+  OPTIONAL { ?library ucscDaf:readType ?readType }
+  OPTIONAL { ?library ucscDaf:strain ?strain }
+  OPTIONAL { ?library libraryOntology:insert_size ?insertLength }
+  OPTIONAL { ?library libraryOntology:inputQuantity ?input_quantity }
+  OPTIONAL { ?library ucscDaf:mapAlgorithm ?mapAlgorithm }
+
+}
