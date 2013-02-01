@@ -22,6 +22,7 @@ from htsworkflow.util.hashfile import make_md5sum
 from htsworkflow.submission.fastqname import FastqName
 from htsworkflow.submission.daf import \
      MetadataLookupException, \
+     ModelException, \
      get_submission_uri
 
 LOGGER = logging.getLogger(__name__)
