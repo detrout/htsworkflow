@@ -21,6 +21,7 @@ from htsworkflow.pipelines import ElementTree, \
                                   EUROPEAN_STRPTIME, EUROPEAN_DATE_RE, \
                                   VERSION_RE, USER_RE, \
                                   LANES_PER_FLOWCELL, LANE_LIST
+from htsworkflow.pipelines.samplekey import LANE_SAMPLE_KEYS
 from htsworkflow.util.alphanum import alphanum
 from htsworkflow.util.ethelp import indent, flatten
 from htsworkflow.util.queuecommands import QueueCommands
@@ -753,7 +754,7 @@ def save_raw_data(num_jobs, r, site, raw_format, run_dirname):
                 lanes.append(lane)
     else:
         # assume default list of lanes
-        lanes = LANE_LIST
+        lanes = LANE_SAMPLE_KEYS
 
     run_name = srf.pathname_to_run_name(r.pathname)
     seq_cmds = []
