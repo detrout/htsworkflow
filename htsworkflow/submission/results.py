@@ -51,9 +51,14 @@ class ResultMap(MutableMapping):
         if destpath is None:
             destpath = os.getcwd()
 
+        LOGGER.debug("Source_path: %s", source_path)
+        LOGGER.debug("Dest_path: %s", destpath)
         for lib_id in self.results_order:
-            abs_lib_path = os.path.abspath(self.results[lib_id])
-            lib_path = os.path.relpath(abs_lib_path, destpath)
+            lib_path = self.results[lib_id]
+            LOGGER.debug("lib_path: %s", lib_path)
+            if os.path.isabs(lib_path):
+                lib_path = os.path.relpath(lib_path, destpath)
+
             LOGGER.debug('lib_path: %s', lib_path)
             lib_destination = os.path.join(destpath, lib_path)
             if not os.path.exists(lib_destination):

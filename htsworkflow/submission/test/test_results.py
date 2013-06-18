@@ -74,13 +74,32 @@ class TestResultMap(TestCase):
         self.assertFalse(u'77777' in results)
         self.assertFalse('77777' in results)
 
-    def test_make_from(self):
+    def test_make_from_absolute(self):
+        """Test that make from works if ResultMap has absolute paths
+        """
+        results = ResultMap()
+        sample1_dir = os.path.join(self.resultdir, S1_NAME)
+        sample2_dir = os.path.join(self.resultdir, S2_NAME)
+        results['1000'] =  sample1_dir
+        results['2000'] =  sample2_dir
+
+        results.make_tree_from(self.sourcedir, self.resultdir)
+        self.failUnless(os.path.isdir(sample1_dir))
+        self.failUnless(os.path.isdir(sample2_dir))
+
+        for f in S1_FILES + S2_FILES:
+            self.failUnless(
+                os.path.islink(
+                    os.path.join(self.resultdir, f)))
+
+    def test_make_from_filename(self):
+        """Test that make from works if ResultMap has no path
+        """
         results = ResultMap()
         results['1000'] =  S1_NAME
         results['2000'] =  S2_NAME
 
         results.make_tree_from(self.sourcedir, self.resultdir)
-
         sample1_dir = os.path.join(self.resultdir, S1_NAME)
         sample2_dir = os.path.join(self.resultdir, S2_NAME)
         self.failUnless(os.path.isdir(sample1_dir))
@@ -97,5 +116,7 @@ def suite():
     return suite
 
 if __name__ == "__main__":
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
     from unittest2 import main
     main(defaultTest='suite')
