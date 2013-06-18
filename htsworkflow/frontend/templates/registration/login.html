@@ -1,9 +1,9 @@
 {% extends "base_site.html" %}
 {% load i18n %}
 
-{% block additional_css %}{% load adminmedia %}{{ block.super }}
-<link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/base.css" />
-<link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/login.css" />
+{% block additional_css %}{% load staticfiles %}{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "css/base.css" %}"/>
+<link rel="stylesheet" type="text/css" href="{% static "css/login.css" %}"/>
 {% endblock %}
 
 {% block title %}Login{% endblock %}

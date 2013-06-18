@@ -17,8 +17,8 @@
     <title>{% block title %}{{ app_name }} - {{ page_name }}{% endblock %}</title>
 
 {% block additional_css %}
-    {% load adminmedia %}
-    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% admin_media_prefix %}css/rtl.css{% endblock %}" />{% endif %}
+    {% load staticfiles %}
+    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "css/rtl.css" %}{% endblock %}" />{% endif %}
     {% block extrastyle %}{% endblock %}
     {% block extrahead %}{% endblock %}
     {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
@@ -39,7 +39,7 @@
         {% trans 'Welcome,' %}
         <strong>{% firstof user.first_name user.username %}</strong>.
         {% block userlinks %}
-            {% url django-admindocs-docroot as docsroot %}
+            {% url "django.admindocs.docroot" as docsroot %}
             {% if docsroot %}
                 <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
             {% endif %}

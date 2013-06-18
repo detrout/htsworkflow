@@ -3,7 +3,7 @@
 {% block content %}
 {% if item %}
         <h2>Item Summary:</h2>
-        <a href="{% url htsworkflow.frontend.inventory.views.index %}{{item.uuid}}/print/">Print</a><br />
+        <a href="{% url "htsworkflow.frontend.inventory.views.index" %}{{item.uuid}}/print/">Print</a><br />
         <br />
         <b>UUID:</b> <span property="invns:uuid">{{item.uuid}}</span><br />
         <b>Barcode ID:</b> <span property="invns:barcode">{{ item.barcode_id }}</span><br />

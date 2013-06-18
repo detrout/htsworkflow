@@ -179,10 +179,9 @@ MEDIA_ROOT = os.path.join(HTSWORKFLOW_ROOT, 'frontend', 'static', '')
 # Example: "http://media.lawrence.com"
 MEDIA_URL = '/static/'
 
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
+# URL prefix for static media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+STATIC_URL = '/media/'
 
 # Make this unique, and don't share it with anybody.
 if not options.has_option('frontend', 'secret'):
@@ -227,6 +226,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.sites',
