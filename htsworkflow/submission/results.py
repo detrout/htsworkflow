@@ -52,7 +52,9 @@ class ResultMap(MutableMapping):
             destpath = os.getcwd()
 
         for lib_id in self.results_order:
-            lib_path = self.results[lib_id]
+            abs_lib_path = os.path.abspath(self.results[lib_id])
+            lib_path = os.path.relpath(abs_lib_path, destpath)
+            LOGGER.debug('lib_path: %s', lib_path)
             lib_destination = os.path.join(destpath, lib_path)
             if not os.path.exists(lib_destination):
                 LOGGER.info("Making dir {0}".format(lib_destination))
@@ -60,6 +62,7 @@ class ResultMap(MutableMapping):
 
             source_rel_dir = os.path.join(source_path, lib_path)
             source_lib_dir = os.path.abspath(source_rel_dir)
+            LOGGER.debug("source_lib_dir: %s", source_lib_dir)
 
             for filename in os.listdir(source_lib_dir):
                 source_pathname = os.path.join(source_lib_dir, filename)
