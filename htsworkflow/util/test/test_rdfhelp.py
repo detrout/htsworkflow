@@ -29,61 +29,67 @@ try:
 
     class TestRDFHelp(TestCase):
         def test_from_none(self):
-          self.failUnlessEqual(fromTypedNode(None), None)
+          self.assertEqual(fromTypedNode(None), None)
 
         def test_typed_node_boolean(self):
             node = toTypedNode(True)
-            self.failUnlessEqual(node.literal_value['string'], u'1')
-            self.failUnlessEqual(str(node.literal_value['datatype']),
+            self.assertIn(node.literal_value['string'], (u'1', u'true'))
+            self.assertEqual(str(node.literal_value['datatype']),
                                  'http://www.w3.org/2001/XMLSchema#boolean')
 
         def test_bad_boolean(self):
             node = RDF.Node(literal='bad', datatype=xsdNS['boolean'].uri)
-            self.failUnlessRaises(ValueError, fromTypedNode, node)
+            # older versions of librdf ~< 1.0.16 left the literal
+            # alone. and thus should fail the fromTypedNode call
+            # newer versions coerced the odd value to false.
+            try:
+                self.assertFalse(fromTypedNode(node))
+            except ValueError as e:
+                pass
 
         def test_typed_node_string(self):
             node = toTypedNode('hello')
-            self.failUnlessEqual(node.literal_value['string'], u'hello')
-            self.failUnless(node.literal_value['datatype'] is None)
+            self.assertEqual(node.literal_value['string'], u'hello')
+            self.assertTrue(node.literal_value['datatype'] is None)
 
         def test_typed_real_like(self):
             num = 3.14
             node = toTypedNode(num)
-            self.failUnlessEqual(fromTypedNode(node), num)
+            self.assertEqual(fromTypedNode(node), num)
 
         def test_typed_integer(self):
             num = 3
             node = toTypedNode(num)
-            self.failUnlessEqual(fromTypedNode(node), num)
-            self.failUnlessEqual(type(fromTypedNode(node)), type(num))
+            self.assertEqual(fromTypedNode(node), num)
+            self.assertEqual(type(fromTypedNode(node)), type(num))
 
         def test_typed_node_string(self):
             s = "Argh matey"
             node = toTypedNode(s)
-            self.failUnlessEqual(fromTypedNode(node), s)
-            self.failUnlessEqual(type(fromTypedNode(node)), types.UnicodeType)
+            self.assertEqual(fromTypedNode(node), s)
+            self.assertEqual(type(fromTypedNode(node)), types.UnicodeType)
 
         def test_blank_or_uri_blank(self):
             node = blankOrUri()
-            self.failUnlessEqual(node.is_blank(), True)
+            self.assertEqual(node.is_blank(), True)
 
         def test_blank_or_uri_url(self):
             s = 'http://google.com'
             node = blankOrUri(s)
-            self.failUnlessEqual(node.is_resource(), True)
-            self.failUnlessEqual(str(node.uri), s)
+            self.assertEqual(node.is_resource(), True)
+            self.assertEqual(str(node.uri), s)
 
         def test_blank_or_uri_node(self):
             s = RDF.Node(RDF.Uri('http://google.com'))
             node = blankOrUri(s)
-            self.failUnlessEqual(node.is_resource(), True)
-            self.failUnlessEqual(node, s)
+            self.assertEqual(node.is_resource(), True)
+            self.assertEqual(node, s)
 
         def test_unicode_node_roundtrip(self):
             literal = u'\u5927'
             roundtrip = fromTypedNode(toTypedNode(literal))
-            self.failUnlessEqual(roundtrip, literal)
-            self.failUnlessEqual(type(roundtrip), types.UnicodeType)
+            self.assertEqual(roundtrip, literal)
+            self.assertEqual(type(roundtrip), types.UnicodeType)
 
         def test_datetime_no_microsecond(self):
             dateTimeType = xsdNS['dateTime'].uri
@@ -115,17 +121,17 @@ try:
 
             term = 'foo'
             node = nsOrg[term]
-            self.failUnlessEqual(stripNamespace(nsOrg, node), term)
-            self.failUnlessEqual(stripNamespace(nsCom, node), None)
-            self.failUnlessEqual(stripNamespace(nsOrg, node.uri), term)
+            self.assertEqual(stripNamespace(nsOrg, node), term)
+            self.assertEqual(stripNamespace(nsCom, node), None)
+            self.assertEqual(stripNamespace(nsOrg, node.uri), term)
 
         def test_strip_namespace_exceptions(self):
             nsOrg = RDF.NS('example.org/example#')
             nsCom = RDF.NS('example.com/example#')
 
             node = toTypedNode('bad')
-            self.failUnlessRaises(ValueError, stripNamespace, nsOrg, node)
-            self.failUnlessRaises(ValueError, stripNamespace, nsOrg, nsOrg)
+            self.assertRaises(ValueError, stripNamespace, nsOrg, node)
+            self.assertRaises(ValueError, stripNamespace, nsOrg, nsOrg)
 
         def test_simplify_uri(self):
             DATA = [('http://asdf.org/foo/bar', 'bar'),
@@ -164,19 +170,19 @@ _:a owl:imports "{loc}extra.turtle" .
             tc = RDF.Node(RDF.Uri('http://jumpgate.caltech.edu/wiki/TestCase'))
             query = RDF.Statement(tc, rdfsNS['label'], None)
             result = list(model.find_statements(query))
-            self.failUnlessEqual(len(result), 1)
-            self.failUnlessEqual(str(result[0].object), 'TestCase')
+            self.assertEqual(len(result), 1)
+            self.assertEqual(str(result[0].object), 'TestCase')
 
         def test_sanitize_literal_text(self):
-            self.failUnlessRaises(ValueError, sanitize_literal, "hi")
+            self.assertRaises(ValueError, sanitize_literal, "hi")
             hello_text = "hello"
             hello_none = RDF.Node(hello_text)
-            self.failUnlessEqual(str(sanitize_literal(hello_none)),
+            self.assertEqual(str(sanitize_literal(hello_none)),
                                  hello_text)
             hello_str = RDF.Node(literal=hello_text,
                                  datatype=xsdNS['string'].uri)
             hello_clean = sanitize_literal(hello_str)
-            self.failUnlessEqual(hello_clean.literal_value['string'],
+            self.assertEqual(hello_clean.literal_value['string'],
                                  hello_text)
 
         def test_sanitize_literal_empty_string(self):
@@ -190,7 +196,7 @@ _:a owl:imports "{loc}extra.turtle" .
             hello_node = RDF.Node(literal=hello,
                                   datatype=xsdNS['string'].uri)
             hello_sanitized = sanitize_literal(hello_node)
-            self.failUnlessEqual(hello_sanitized.literal_value['string'],
+            self.assertEqual(hello_sanitized.literal_value['string'],
                                  hello_clean)
 
             hostile = "hi <b>there</b><script type='text/javascript>alert('boo');</script><a href='javascript:alert('poke')>evil</a> scammer"
@@ -199,7 +205,7 @@ _:a owl:imports "{loc}extra.turtle" .
             # so it drops the stuff after the javascript link.
             # I suppose it could be worse
             hostile_result = """hi <b>there</b>"""
-            self.failUnlessEqual(str(hostile_sanitized), hostile_result)
+            self.assertEqual(str(hostile_sanitized), hostile_result)
 
         def test_guess_parser_from_file(self):
             DATA = [
