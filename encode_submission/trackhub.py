@@ -77,8 +77,11 @@ def main(cmdline=None):
         else:
             logger.warn("File %s doesn't exist.", a)
 
-    if opts.make_tree_from is not None:
-        results.make_tree_from(opts.make_tree_from)
+    if opts.make_link_tree_from is not None:
+        results.make_tree_from(opts.make_tree_from, link=True)
+
+    if opts.copy_tree_from is not None:
+        results.make_tree_from(opts.make_tree_from, link=False)
 
     if opts.fastq:
         logger.info("Building fastq extraction scripts")
@@ -121,8 +124,11 @@ def make_parser():
     parser.add_option_group(model)
     # commands
     commands = OptionGroup(parser, 'commands')
-    commands.add_option('--make-tree-from',
+    commands.add_option('--make-link-tree-from',
                       help="create directories & link data files",
+                      default=None)
+    commands.add_option('--copy-tree-from',
+                      help="create directories & copy data files",
                       default=None)
     commands.add_option('--fastq', default=False, action="store_true",
                         help="generate scripts for making fastq files")
