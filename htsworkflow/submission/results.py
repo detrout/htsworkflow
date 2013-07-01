@@ -2,6 +2,7 @@
 """
 from collections import MutableMapping
 import os
+import shutil
 import logging
 
 from collections import namedtuple
@@ -75,11 +76,11 @@ class ResultMap(MutableMapping):
                 if not os.path.exists(source_pathname):
                     raise IOError(
                         "{0} does not exist".format(source_pathname))
-                if not os.path.exists(target_pathname):
+                if not (os.path.exists(target_pathname) or os.path.isdir(source_pathname)):
                     if link:
                         os.symlink(source_pathname, target_pathname)
                     else:
-                        os.copy(source_pathname, target_pathname)
+                        shutil.copy(source_pathname, target_pathname)
                     LOGGER.info(
                         'LINK {0} to {1}'.format(source_pathname,
                                                  target_pathname))

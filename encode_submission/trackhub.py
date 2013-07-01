@@ -27,7 +27,6 @@ import RDF
 if not 'DJANGO_SETTINGS_MODULE' in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
 
-
 from htsworkflow.util import api
 from htsworkflow.util.rdfhelp import \
      dafTermOntology, \
@@ -78,10 +77,10 @@ def main(cmdline=None):
             logger.warn("File %s doesn't exist.", a)
 
     if opts.make_link_tree_from is not None:
-        results.make_tree_from(opts.make_tree_from, link=True)
+        results.make_tree_from(opts.make_link_tree_from, link=True)
 
     if opts.copy_tree_from is not None:
-        results.make_tree_from(opts.make_tree_from, link=False)
+        results.make_tree_from(opts.copy_tree_from, link=False)
 
     if opts.fastq:
         logger.info("Building fastq extraction scripts")
