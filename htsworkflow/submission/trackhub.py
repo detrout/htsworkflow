@@ -39,7 +39,10 @@ class TrackHubSubmission(Submission):
         context = Context({
             'samples': samples,
         })
-        print str(soft_template.render(context))
+        return str(soft_template.render(context))
+
+    def make_mainifest(self, result_map):
+        pass
         
     def get_sample_metadata(self, analysis_node):
         """Gather information for filling out sample section of a SOFT file

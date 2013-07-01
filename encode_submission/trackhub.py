@@ -96,7 +96,7 @@ def main(cmdline=None):
         mapper.scan_submission_dirs(results)
 
     if opts.make_hub:
-        mapper.make_hub(results)
+        make_hub(results)
 
     if opts.sparql:
         sparql_query(model, opts.sparql)
@@ -106,6 +106,18 @@ def main(cmdline=None):
         print writer.serialize_model_to_string(model)
 
 
+def make_hub(results):
+    trackdb = mapper.make_hub(results)
+    manifest = mapper.make_manifest(results)
+
+    trackstream = sys.stdout
+    #with open('trackDb.txt', 'w') as trackstream:
+    trackstream.write(trackdb)
+
+    #with open('manifest.txt', 'w') as mainifeststream:
+    manifeststream = sys.stdout
+    mainifeststream.write(mainifest)
+        
 def make_parser():
     parser = OptionParser()
 
