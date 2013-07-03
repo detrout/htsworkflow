@@ -35,14 +35,24 @@ class TrackHubSubmission(Submission):
             metadata = metadata[0]
             samples.append(metadata)
 
-        soft_template = loader.get_template('trackDb.txt')
+        template = loader.get_template('trackDb.txt')
         context = Context({
             'samples': samples,
         })
-        return str(soft_template.render(context))
+        return str(template.render(context))
 
-    def make_mainifest(self, result_map):
-        pass
+    def make_manifest(self, result_map):
+        files = []
+        for lib_id, result_dir in result_map.items():
+            an_analysis = self.get_submission_node(result_dir)
+            metadata = self.get_manifest_metadata(an_analysis)
+            files.extend(metadata)
+
+        template = loader.get_template('manifest.txt')
+        context = Context({
+            'files': files
+        })
+        return str(template.render(context))
         
     def get_sample_metadata(self, analysis_node):
         """Gather information for filling out sample section of a SOFT file
@@ -54,5 +64,15 @@ class TrackHubSubmission(Submission):
             'submissionSet': str(self.submissionSetNS[''].uri),
             })
 
+        results = self.execute_query(query_template, context)
+        return results
+
+    def get_manifest_metadata(self, analysis_node):
+        query_template = loader.get_template('trackhub_manifest.sparql')
+
+        context = Context({
+            'submission': str(analysis_node.uri),
+            'submissionSet': str(self.submissionSetNS[''].uri),
+            })
         results = self.execute_query(query_template, context)
         return results

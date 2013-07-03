@@ -1,0 +1,2 @@
+#file_name	format	output_type	experiment	replicate	enriched_in	ucsc_db{% for r in files %}
+{{ r.relative_path }}	{{ r.file_format }}	{{ r.output_type }}	{{ r.dataset_id }}	{{ r.replicate }}	{{ r.enriched_in }}	{{ r.ucsc_db }}{% endfor %}

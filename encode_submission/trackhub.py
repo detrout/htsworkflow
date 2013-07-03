@@ -96,8 +96,11 @@ def main(cmdline=None):
         mapper.scan_submission_dirs(results)
 
     if opts.make_hub:
-        make_hub(results)
+        make_hub(mapper, results, opts.make_hub)
 
+    if opts.make_manifest:
+        make_manifest(mapper, results, opts.make_manifest)
+        
     if opts.sparql:
         sparql_query(model, opts.sparql)
 
@@ -106,17 +109,23 @@ def main(cmdline=None):
         print writer.serialize_model_to_string(model)
 
 
-def make_hub(results):
+def make_hub(mapper, results, filename=None):
     trackdb = mapper.make_hub(results)
+
+    if filename is None or filename == '-':
+        sys.stdout.write(trackdb)
+    else:
+        with open('trackDb.txt', 'w') as trackstream:
+            trackstream.write(trackdb)
+
+def make_manifest(mapper, results, filename=None):
     manifest = mapper.make_manifest(results)
 
-    trackstream = sys.stdout
-    #with open('trackDb.txt', 'w') as trackstream:
-    trackstream.write(trackdb)
-
-    #with open('manifest.txt', 'w') as mainifeststream:
-    manifeststream = sys.stdout
-    mainifeststream.write(mainifest)
+    if filename is None or filename == '-':
+        sys.stdout.write(manifest)
+    else:
+        with open(filename, 'w') as mainifeststream:
+            mainifeststream.write(manifest)
         
 def make_parser():
     parser = OptionParser()
@@ -145,8 +154,12 @@ def make_parser():
                         help="generate scripts for making fastq files")
     commands.add_option('--scan-submission', default=False, action="store_true",
                       help="Import metadata for submission into our model")
-    commands.add_option('--make-hub', help='make the hub file', default=False,
-                      action="store_true")
+    commands.add_option('--make-hub', default=None, 
+                        help='name the hub file or - for stdout to create it')
+    commands.add_option('--make-manifest', 
+                        help='name the manifest file name or - for stdout to create it', 
+                        default=None)
+
 
     parser.add_option_group(commands)
 

@@ -122,6 +122,11 @@ class Submission(object):
             RDF.Statement(fileNode,
                           rdfNS['type'],
                           file_type))
+        self.model.add_statement(
+            RDF.Statement(fileNode,
+                          libraryOntology['library'],
+                          libNode))
+                          
         LOGGER.debug("Done.")
 
     def make_file_node(self, pathname, submissionNode):
@@ -129,7 +134,8 @@ class Submission(object):
         """
         # add file specific information
         path, filename = os.path.split(pathname)
-        fileNode = RDF.Node(RDF.Uri('file://'+ os.path.abspath(pathname)))
+        pathname = os.path.abspath(pathname)
+        fileNode = RDF.Node(RDF.Uri('file://'+ pathname))
         self.model.add_statement(
             RDF.Statement(submissionNode,
                           dafTermOntology['has_file'],
@@ -138,6 +144,10 @@ class Submission(object):
             RDF.Statement(fileNode,
                           dafTermOntology['filename'],
                           filename))
+        self.model.add_statement(
+            RDF.Statement(fileNode,
+                          dafTermOntology['relative_path'],
+                          os.path.relpath(pathname)))
         return fileNode
 
     def add_md5s(self, filename, fileNode, analysis_dir):
@@ -176,7 +186,12 @@ class Submission(object):
                               libraryOntology['has_mappings'],
                               dafTermOntology['has_file']))
         parser = RDF.Parser(name='rdfa')
-        new_statements = parser.parse_as_stream(libNode.uri)
+        try:
+            new_statements = parser.parse_as_stream(libNode.uri)
+        except RDF.RedlandError as e:
+            LOGGER.error(e)
+            return
+        LOGGER.debug("Scanning %s", str(libNode.uri))
         toadd = []
         for s in new_statements:
             # always add "collections"
@@ -310,7 +325,8 @@ class Submission(object):
         paired = ['Barcoded Illumina',
                   'Multiplexing',
                   'Nextera',
-                  'Paired End (non-multiplexed)',]
+                  'Paired End (non-multiplexed)',
+                  'Dual Index Illumina',]
         if library_type in single:
             return False
         elif library_type in paired:
