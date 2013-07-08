@@ -247,7 +247,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         # server is 500 for this library
         self.failUnlessEqual(gel_cut, 100)
 
-        species = daf_mapper._get_library_attribute(libNode, 'species')
+        species = daf_mapper._get_library_attribute(libNode, 'species_name')
         self.failUnlessEqual(species, "Homo sapiens")
 
         with mktempdir('analysis') as analysis_dir:
