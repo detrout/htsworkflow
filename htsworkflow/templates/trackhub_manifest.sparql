@@ -25,8 +25,4 @@ WHERE {
            ucscDaf:genome_build ?ucsc_db .
 
   ?library encode3:dataset_id ?dataset_id .
-  # This is lame! why!!!!
-  # ?library2 encode3:dcc_id ?dcc_library_id .
-  # FILTER (?library = ?library2) 
-
 }
