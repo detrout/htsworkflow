@@ -8,16 +8,12 @@ import RDF
 
 from htsworkflow.util.rdfhelp import \
      blankOrUri, \
-     dafTermOntology, \
      dump_model, \
+     fromTypedNode, \
      get_model, \
-     libraryOntology, \
-     owlNS, \
-     rdfNS, \
-     submissionLog, \
-     submissionOntology, \
-     toTypedNode, \
-     fromTypedNode
+     stripNamespace, \
+     toTypedNode
+from htsworkflow.util.rdfns import *
 from htsworkflow.util.hashfile import make_md5sum
 from htsworkflow.submission.fastqname import FastqName
 from htsworkflow.submission.daf import \
@@ -350,3 +346,21 @@ class Submission(object):
                 d[key] = fromTypedNode(value)
             results.append(d)
         return results
+
+
+def list_submissions(model):
+    """Return generator of submissions in this model.
+    """
+    query_body = """
+      PREFIX subns: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
+
+      select distinct ?submission
+      where { ?submission subns:has_submission ?library_dir }
+    """
+    query = RDF.SPARQLQuery(query_body)
+    rdfstream = query.execute(model)
+    for row in rdfstream:
+        s = stripNamespace(submissionLog, row['submission'])
+        if s[-1] in ['#', '/', '?']:
+            s = s[:-1]
+        yield s
