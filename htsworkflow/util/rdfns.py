@@ -23,3 +23,4 @@ inventoryOntology = NS(
     "http://jumpgate.caltech.edu/wiki/InventoryOntology#")
 submissionLog = NS("http://jumpgate.caltech.edu/wiki/SubmissionsLog/")
 geoSoftNS = NS('http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#')
+encode3NS = NS("http://jumpgate.caltech.edu/wiki/Encode3#")
