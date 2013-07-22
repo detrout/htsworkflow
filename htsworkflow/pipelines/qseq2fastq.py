@@ -8,7 +8,7 @@ import numpy
 import sys
 import tarfile
 
-from htsworkflow.version import version
+from htsworkflow.util.version import version
 from htsworkflow.util.conversion import parse_slice
 
 

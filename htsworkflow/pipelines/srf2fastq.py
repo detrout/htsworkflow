@@ -7,7 +7,7 @@ from subprocess import Popen, PIPE
 import sys
 
 from htsworkflow.util.opener import autoopen
-from htsworkflow.version import version
+from htsworkflow.util.version import version
 
 LOGGER = logging.getLogger(__name__)
 
