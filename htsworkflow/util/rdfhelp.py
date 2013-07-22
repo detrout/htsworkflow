@@ -329,7 +329,7 @@ def add_default_schemas(model, schema_path=None):
         namespace = 'file://localhost/htsworkflow/schemas/'+s
         add_schema(model, schema, namespace)
 
-    if schema_path:    
+    if schema_path:
         if type(schema_path) in types.StringTypes:
             schema_path = [schema_path]
 
@@ -423,11 +423,19 @@ def get_serializer(name='turtle'):
     writer.set_namespace('wot', wotNS._prefix)
 
     # should these be here, kind of specific to an application
-    writer.set_namespace('libraryOntology', libraryOntology._prefix)
+    writer.set_namespace('htswlib', libraryOntology._prefix)
     writer.set_namespace('ucscSubmission', submissionOntology._prefix)
     writer.set_namespace('ucscDaf', dafTermOntology._prefix)
+    writer.set_namespace('geoSoft', geoSoftNS._prefix)
+    writer.set_namespace('encode3', encode3NS._prefix)
     return writer
 
+def get_turtle_header():
+    """Return a turtle header with our typical namespaces
+    """
+    serializer = get_serializer()
+    empty = get_model()
+    return serializer.serialize_model_to_string(empty)
 
 def dump_model(model, destination=None):
     if destination is None:
