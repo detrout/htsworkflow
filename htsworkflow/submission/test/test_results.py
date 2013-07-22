@@ -1,27 +1,12 @@
 #!/usr/bin/env python
 
-import copy
-import os
 from pprint import pprint
 import shutil
-import tempfile
 
 from unittest2 import TestCase, defaultTestLoader
 
 from htsworkflow.submission.results import ResultMap
-
-S1_NAME = '1000-sample'
-S2_NAME = '2000-sample'
-
-S1_FILES = [
-    os.path.join(S1_NAME, 'file1_l8_r1.fastq'),
-    os.path.join(S1_NAME, 'file1_l8_r2.fastq'),
-]
-
-S2_FILES = [
-    os.path.join(S2_NAME, 'file1.bam'),
-    os.path.join(S2_NAME, 'file1_l5.fastq'),
-]
+from submission_test_common import *
 
 def generate_sample_results_tree(obj):
     obj.tempdir = tempfile.mkdtemp(prefix="results_test")
@@ -41,6 +26,7 @@ def generate_sample_results_tree(obj):
         stream = open(os.path.join(obj.sourcedir, f), 'w')
         stream.write(f)
         stream.close()
+
 
 class TestResultMap(TestCase):
     def setUp(self):
