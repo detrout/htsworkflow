@@ -57,6 +57,13 @@ class Submission(object):
             pathname = os.path.abspath(os.path.join(analysis_dir, filename))
             self.construct_file_attributes(analysis_dir, libNode, pathname)
 
+    def analysis_nodes(self, result_map):
+        """Return an iterable of analysis nodes
+        """
+        for result_dir in result_map.values():
+            an_analysis = self.get_submission_node(result_dir)
+            yield an_analysis
+
     def construct_file_attributes(self, analysis_dir, libNode, pathname):
         """Looking for the best extension
         The 'best' is the longest match
