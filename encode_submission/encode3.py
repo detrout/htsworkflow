@@ -37,11 +37,14 @@ from htsworkflow.util.rdfhelp import \
      sparql_query, \
      submissionOntology
 from htsworkflow.submission.daf import get_submission_uri
+from htsworkflow.submission.submission import list_submissions
 from htsworkflow.submission.results import ResultMap
-from htsworkflow.submission.trackhub import TrackHubSubmission
+from htsworkflow.submission.trackhub_submission import TrackHubSubmission
 from htsworkflow.submission.condorfastq import CondorFastqExtract
 
 logger = logging.getLogger(__name__)
+
+INDENTED = "  " + os.linesep
 
 def main(cmdline=None):
     parser = make_parser()
@@ -58,10 +61,31 @@ def main(cmdline=None):
     apidata = api.make_auth_from_opts(opts, parser)
 
     model = get_model(opts.model, opts.db_path)
+
+    submission_names = list(list_submissions(model))
+    name = opts.name
+    if len(submission_names) == 0 and opts.name is None:
+        parser.error("Please name this submission")
+    elif opts.name and submission_names and opts.name not in submission_names:
+        parser.error("{} is not in this model. Choose from: {}{}".format(
+            opts.name,
+            os.linesep,
+            INDENTED.join(submission_names)))
+    elif opts.name is None and len(submission_names) > 1:
+        parser.error("Please choose submission name from: {}{}".format(
+            os.linesep,
+            INDENTED.join(submission_names)))
+    elif len(submission_names) == 1:
+        name = submission_names[0]
+
     mapper = None
-    if opts.name:
-        mapper = TrackHubSubmission(opts.name,  model, host=opts.host)
-        submission_uri = get_submission_uri(opts.name)
+    if opts.make_track_hub:
+        mapper = TrackHubSubmission(name,
+                                    model,
+                                    baseurl=opts.make_track_hub,
+                                    baseupload=opts.track_hub_upload,
+                                    host=opts.host)
+        submission_uri = get_submission_uri(name)
 
 
     if opts.load_rdf is not None:
@@ -91,12 +115,12 @@ def main(cmdline=None):
         extractor.create_scripts(results)
 
     if opts.scan_submission:
-        if opts.name is None:
+        if name is None:
             parser.error("Please define a submission name")
         mapper.scan_submission_dirs(results)
 
-    if opts.make_hub:
-        make_hub(mapper, results, opts.make_hub)
+    if opts.make_track_hub:
+        trackdb = mapper.make_hub(results)
 
     if opts.make_manifest:
         make_manifest(mapper, results, opts.make_manifest)
@@ -108,15 +132,6 @@ def main(cmdline=None):
         writer = get_serializer()
         print writer.serialize_model_to_string(model)
 
-
-def make_hub(mapper, results, filename=None):
-    trackdb = mapper.make_hub(results)
-
-    if filename is None or filename == '-':
-        sys.stdout.write(trackdb)
-    else:
-        with open('trackDb.txt', 'w') as trackstream:
-            trackstream.write(trackdb)
 
 def make_manifest(mapper, results, filename=None):
     manifest = mapper.make_manifest(results)
@@ -154,8 +169,10 @@ def make_parser():
                         help="generate scripts for making fastq files")
     commands.add_option('--scan-submission', default=False, action="store_true",
                       help="Import metadata for submission into our model")
-    commands.add_option('--make-hub', default=None, 
-                        help='name the hub file or - for stdout to create it')
+    commands.add_option('--make-track-hub', default=None,
+                        help='web root that will host the trackhub.')
+    commands.add_option('--track-hub-upload', default=None,
+                        help='where to upload track hub <host>:<path>')
     commands.add_option('--make-manifest', 
                         help='name the manifest file name or - for stdout to create it', 
                         default=None)

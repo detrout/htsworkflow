@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 
 import RDF
 
@@ -10,20 +11,44 @@ from htsworkflow.util.rdfhelp import \
      geoSoftNS, \
      stripNamespace, \
      submissionOntology
+from htsworkflow.util.url import parse_ssh_url
 
 from django.conf import settings
 from django.template import Context, loader
+from trackhub import default_hub, CompositeTrack, Track, SuperTrack, ViewTrack
+from trackhub.track import TRACKTYPES, SubGroupDefinition
+from trackhub.helpers import show_rendered_files
+from trackhub.upload import upload_track, upload_hub
 
 LOGGER = logging.getLogger(__name__)
 
 class TrackHubSubmission(Submission):
-    def __init__(self, name, model, host):
-        super(TrackHubSubmission, self).__init__(name, model, host)
+    def __init__(self, name, model, baseurl, baseupload, host):
+        """Create a trackhub based submission
 
-    def make_hub(self, result_map):
+        :Parameters:
+          - `name`: Name of submission
+          - `model`: librdf model reference
+          - `baseurl`: web root where trackhub will be hosted
+          - `baseupload`: filesystem root where trackhub will be hosted
+          - `host`: hostname for library pages.
+        """
+        super(TrackHubSubmission, self).__init__(name, model, host)
+        if baseurl is None:
+            raise ValueError("Need a web root to make a track hub")
+        self.baseurl = os.path.join(baseurl, self.name)
+        if baseupload:
+            sshurl = parse_ssh_url(baseupload)
+            print sshurl
+            self.user = sshurl.user
+            self.host = sshurl.host
+            self.uploadpath =  sshurl.path
+        else:
+            self.uploadpath = None
+
+    def make_hub_template(self, result_map):
         samples = []
-        for lib_id, result_dir in result_map.items():
-            an_analysis = self.get_submission_node(result_dir)
+        for an_analysis in self.analysis_nodes(result_map):
             metadata = self.get_sample_metadata(an_analysis)
             if len(metadata) == 0:
                 errmsg = 'No metadata found for {0}'
@@ -41,10 +66,84 @@ class TrackHubSubmission(Submission):
         })
         return str(template.render(context))
 
+    def make_hub(self, result_map):
+        genome_db = 'hg19'
+        hub_url = self.baseurl + '/'
+        hub, genomes_file, genome, trackdb = default_hub(
+            hub_name=self.name,
+            short_label=self.name,
+            long_label=self.name,
+            email='email',
+            genome=genome_db)
+
+        hub.remote_dir = self.uploadpath
+
+        # build higher order track types
+        composite = CompositeTrack(
+            name=self.sanitize_name(self.name),
+            short_label = self.sanitize_name(self.name),
+            long_label = str(self.name),
+            tracktype="bigWig",
+            dragAndDrop='subtracks',
+            visibility='full',
+        )
+        trackdb.add_tracks(composite)
+
+        subgroups = self.add_subgroups(composite)
+
+        view_type = None
+        view = None
+
+        for track in self.get_tracks():
+            if track['file_type'] not in TRACKTYPES:
+                LOGGER.info('Unrecognized file type %s', track['file_type'])
+                continue
+
+            view = self.add_new_view_if_needed(composite, view, track)
+            track_name = self.make_track_name(track)
+
+            track_subgroup = self.make_track_subgroups(subgroups, track)
+
+            newtrack = Track(
+                name=track_name,
+                tracktype = str(track['file_type']),
+                url= hub_url + str(track['relative_path']),
+                short_label=str(track['library_id']),
+                long_label=track_name,
+                subgroups=track_subgroup,
+                )
+            view.add_tracks([newtrack])
+
+        results = hub.render()
+        if hub.remote_dir:
+            LOGGER.info("Uploading to %s @ %s : %s",
+                        self.user, self.host, hub.remote_dir)
+            upload_hub(hub=hub, host=self.host, user='diane')
+
+    def add_new_view_if_needed(self, composite, view, track):
+        """Add new trakkhub view if we've hit a new type of track.
+
+        :Parameters:
+          - `composite`: composite track to attach to
+          - `view_type`: name of view type
+          - `track`: current track record
+        """
+        current_view_type = str(track['output_type'])
+        if not view or current_view_type != view.name:
+            view = ViewTrack(
+                name=current_view_type,
+                view=current_view_type,
+                visibility='squish',
+                short_label=current_view_type,
+                tracktype=str(track['file_type']),
+            )
+            composite.add_view(view)
+            view_type = current_view_type
+        return view
+
     def make_manifest(self, result_map):
         files = []
-        for lib_id, result_dir in result_map.items():
-            an_analysis = self.get_submission_node(result_dir)
+        for an_analysis in self.analysis_nodes(result_map):
             metadata = self.get_manifest_metadata(an_analysis)
             files.extend(metadata)
 
@@ -53,21 +152,94 @@ class TrackHubSubmission(Submission):
             'files': files
         })
         return str(template.render(context))
-        
-    def get_sample_metadata(self, analysis_node):
-        """Gather information for filling out sample section of a SOFT file
+
+    def make_track_name(self, track):
+        name = '{}_{}_{}'.format(
+            track['library_id'],
+            track['replicate'],
+            track['output_type'],
+        )
+        return name
+
+    def make_track_subgroups(self, subgroups, track):
+        track_subgroups = {}
+        for k in subgroups:
+            if k in track and track[k]:
+                value = self.sanitize_name(track[k])
+                track_subgroups[k] = value
+        return track_subgroups
+
+    def add_subgroups(self, composite):
+        """Add subgroups to composite track"""
+        search = [ ('htswlib:cell_line', 'cell'),
+                   ('htswlib:replicate', 'replicate'),
+                   ('encode3:library_id', 'library_id'),
+                   ('encode3:assay', 'assay'),
+                   ('encode3:rna_type', 'rna_type'),
+                   ('encode3:protocol', 'protocol'),
+                 ]
+        subgroups = []
+        names = []
+        for term, name in search:
+            subgroups.append(self.make_subgroupdefinition(term, name))
+            names.append(name)
+        composite.add_subgroups(subgroups)
+        return names
+
+
+    def make_subgroupdefinition(self, term, name):
+        """Subgroup attributes need to be an attribute of the library.
+        """
+        template = loader.get_template('trackhub_term_values.sparql')
+        context = Context({'term': term})
+        results = self.execute_query(template, context)
+        values = {}
+        for row in results:
+            value = str(row['name'])
+            values[self.sanitize_name(value)] = value
+
+        return SubGroupDefinition(
+                name=name,
+                label=name,
+                mapping=values,
+        )
+
+    def get_tracks(self):
+        """Collect information needed to describe trackhub tracks.
         """
         query_template = loader.get_template('trackhub_samples.sparql')
 
-        context = Context({
-            'submission': str(analysis_node.uri),
-            'submissionSet': str(self.submissionSetNS[''].uri),
-            })
+        context = Context({ })
 
         results = self.execute_query(query_template, context)
         return results
 
+    def sanitize_name(self, name):
+        replacements = [('poly-?a\+', 'PolyAplus'),
+                        ('poly-?a-', 'PolyAminus'),
+                        ('RNA-Seq', 'RNASeq'),
+                        ('rna-seq', 'rnaseq'),
+                        ('-', '_'),
+                        (' ', '_'),
+                        ('^0', 'Zero'),
+                        ('^1', 'One'),
+                        ('^2', 'Two'),
+                        ('^3', 'Three'),
+                        ('^4', 'Four'),
+                        ('^5', 'Five'),
+                        ('^6', 'Six'),
+                        ('^7', 'Seven'),
+                        ('^8', 'Eight'),
+                        ('^9', 'Nine'),
+                        ]
+
+        for regex, substitution in replacements:
+            name = re.sub(regex, substitution, name, flags=re.IGNORECASE)
+
+        return name
+
     def get_manifest_metadata(self, analysis_node):
+
         query_template = loader.get_template('trackhub_manifest.sparql')
 
         context = Context({
@@ -75,4 +247,6 @@ class TrackHubSubmission(Submission):
             'submissionSet': str(self.submissionSetNS[''].uri),
             })
         results = self.execute_query(query_template, context)
+        LOGGER.info("scanned %s for results found %s",
+                    str(analysis_node), len(results))
         return results
