@@ -1,5 +1,6 @@
 import logging
 import os
+import string
 import re
 
 import RDF
@@ -83,7 +84,7 @@ class TrackHubSubmission(Submission):
             name=self.sanitize_name(self.name),
             short_label = self.sanitize_name(self.name),
             long_label = str(self.name),
-            tracktype="bigWig",
+            tracktype="bed 3",
             dragAndDrop='subtracks',
             visibility='full',
         )
@@ -172,18 +173,32 @@ class TrackHubSubmission(Submission):
     def add_subgroups(self, composite):
         """Add subgroups to composite track"""
         search = [ ('htswlib:cell_line', 'cell'),
+                   ('encode3:rna_type', 'rna_type'),
+                   ('encode3:protocol', 'protocol'),
                    ('htswlib:replicate', 'replicate'),
                    ('encode3:library_id', 'library_id'),
                    ('encode3:assay', 'assay'),
-                   ('encode3:rna_type', 'rna_type'),
-                   ('encode3:protocol', 'protocol'),
                  ]
         subgroups = []
         names = []
+        sortorder = []
+        dimnames = ('dim{}'.format(x) for x in string.ascii_uppercase)
+        dimensions = []
+        filtercomposite = []
         for term, name in search:
-            subgroups.append(self.make_subgroupdefinition(term, name))
-            names.append(name)
+            definitions = self.make_subgroupdefinition(term, name)
+            if definitions:
+                subgroups.append(definitions)
+                names.append(name)
+                sortorder.append("{}=+".format(name))
+                d = dimnames.next()
+                dimensions.append("{}={}".format(d, name))
+                filtercomposite.append("{}=multi".format(d))
+
         composite.add_subgroups(subgroups)
+        composite.add_params(sortOrder=' '.join(sortorder))
+        composite.add_params(dimensions=' '.join(dimensions))
+        composite.add_params(filterComposite=' '.join(filtercomposite))
         return names
 
 
@@ -198,11 +213,14 @@ class TrackHubSubmission(Submission):
             value = str(row['name'])
             values[self.sanitize_name(value)] = value
 
-        return SubGroupDefinition(
-                name=name,
-                label=name,
-                mapping=values,
-        )
+        if values:
+            return SubGroupDefinition(
+                    name=name,
+                    label=name,
+                    mapping=values,
+            )
+        else:
+            return None
 
     def get_tracks(self):
         """Collect information needed to describe trackhub tracks.
