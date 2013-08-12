@@ -39,7 +39,7 @@ S2_TURTLE = TURTLE_PREFIX + """
 <http://localhost/library/2000/>
   htswlib:cell_line "Cell2000" ;
   htswlib:library_id "2000" ;
-  htswlib:library_type "Paired" ;
+  htswlib:library_type "Paired End (non-multiplexed)" ;
   htswlib:replicate "2" ;
   htswlib:has_lane <http://localhost/lane/2> ;
   a htswlib:Library .
