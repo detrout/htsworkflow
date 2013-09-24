@@ -8,29 +8,9 @@ from unittest2 import TestCase, defaultTestLoader
 from htsworkflow.submission.results import ResultMap
 from submission_test_common import *
 
-def generate_sample_results_tree(obj):
-    obj.tempdir = tempfile.mkdtemp(prefix="results_test")
-    obj.sourcedir = os.path.join(obj.tempdir, 'source')
-    obj.resultdir = os.path.join(obj.tempdir, 'results')
-
-    for d in [obj.sourcedir,
-              os.path.join(obj.sourcedir, S1_NAME),
-              os.path.join(obj.sourcedir, S2_NAME),
-              obj.resultdir]:
-        os.mkdir(os.path.join(obj.tempdir, d))
-
-    tomake = []
-    tomake.extend(S1_FILES)
-    tomake.extend(S2_FILES)
-    for f in tomake:
-        stream = open(os.path.join(obj.sourcedir, f), 'w')
-        stream.write(f)
-        stream.close()
-
-
 class TestResultMap(TestCase):
     def setUp(self):
-        generate_sample_results_tree(self)
+        generate_sample_results_tree(self, 'results_test')
 
     def tearDown(self):
         shutil.rmtree(self.tempdir)
@@ -96,6 +76,13 @@ class TestResultMap(TestCase):
                 os.path.islink(
                     os.path.join(self.resultdir, f)))
 
+    def test_make_from_shared_directory(self):
+        """Split multiple datasets stored in a single directory
+        """
+        self.skipTest("not implemented yet")
+        results = ResultMap()
+        results['S1'] = os.path.join(SCOMBINED_NAME, 's1*')
+        results['S2'] = os.path.join(SCOMBINED_NAME, 's2*')
 
 def suite():
     suite = defaultTestLoader.loadTestsFromTestCase(TestResultMap)

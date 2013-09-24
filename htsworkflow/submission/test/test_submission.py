@@ -1,3 +1,4 @@
+
 import os
 from StringIO import StringIO
 import shutil
@@ -23,24 +24,6 @@ from submission_test_common import *
 import RDF
 #import logging
 #logging.basicConfig(level=logging.DEBUG)
-
-def generate_sample_results_tree(obj):
-    obj.tempdir = tempfile.mkdtemp(prefix="submission_test")
-    obj.sourcedir = os.path.join(obj.tempdir, 'source')
-    obj.resultdir = os.path.join(obj.tempdir, 'results')
-
-    for d in [os.path.join(obj.tempdir, S1_NAME),
-              os.path.join(obj.tempdir, S2_NAME),
-              ]:
-        os.mkdir(os.path.join(obj.tempdir, d))
-
-    tomake = []
-    tomake.extend(S1_FILES)
-    tomake.extend(S2_FILES)
-    for f in tomake:
-        stream = open(os.path.join(obj.tempdir, f), 'w')
-        stream.write(f)
-        stream.close()
 
 class TestSubmissionModule(TestCase):
     def test_empty_list_submission(self):
@@ -84,7 +67,7 @@ class TestSubmissionModule(TestCase):
 
 class TestSubmission(TestCase):
     def setUp(self):
-        generate_sample_results_tree(self)
+        generate_sample_results_tree(self, 'submission_test')
         self.model = get_model()
 
     def tearDown(self):
@@ -124,8 +107,8 @@ thisView:alignments ucscDaf:filename_re ".*\\.bam$" ;
         map = ResultMap()
         print self.tempdir
         print os.listdir(self.tempdir)
-        map['1000'] = os.path.join(self.tempdir, S1_NAME)
-        map['2000'] = os.path.join(self.tempdir, S2_NAME)
+        map['1000'] = os.path.join(self.sourcedir, S1_NAME)
+        map['2000'] = os.path.join(self.sourcedir, S2_NAME)
 
         s = Submission('foo', self.model, 'http://localhost')
         mock = MockAddDetails(self.model, turtle)
