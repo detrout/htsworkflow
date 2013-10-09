@@ -257,7 +257,6 @@ class TrackHubSubmission(Submission):
         return name
 
     def get_manifest_metadata(self, analysis_node):
-
         query_template = loader.get_template('trackhub_manifest.sparql')
 
         context = Context({
