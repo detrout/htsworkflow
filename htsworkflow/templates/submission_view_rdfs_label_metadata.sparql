@@ -1,0 +1,10 @@
+PREFIX htsw: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+PREFIX encode3: <http://jumpgate.caltech.edu/wiki/Encode3#>
+
+select ?cell_line ?assay ?protocol ?lab
+where {
+    optional { <{{ library }}> htsw:cell_line ?cell_line . }
+    optional { <{{ library }}> encode3:assay ?assay . }
+    optional { <{{ library }}> encode3:protocol ?protocol. }
+    optional { <{{ library }}> encode3:lab ?lab. }
+}

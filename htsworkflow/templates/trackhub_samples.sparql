@@ -1,3 +1,5 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
 PREFIX htswlib: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
 PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
@@ -6,8 +8,7 @@ PREFIX geoSoft: <http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#>
 PREFIX cells: <http://encodewiki.ucsc.edu/EncodeDCC/index.php/Cell_lines#>
 PREFIX encode3: <http://jumpgate.caltech.edu/wiki/Encode3#>
 
-select distinct ?lab_library_id ?library_id ?filename ?relative_path ?output_type ?file_type ?cell ?replicate ?assay ?rna_type ?protocol 
-
+select distinct ?lab_library_id ?library_id ?filename ?relative_path ?output_type ?file_type ?cell ?replicate ?assay ?rna_type ?protocol ?file_label
 WHERE {
   ?trackType geoSoft:fileTypeLabel ?file_type ;
              ucscDaf:output_type ?output_type .
@@ -15,6 +16,7 @@ WHERE {
         ucscDaf:relative_path ?relative_path ;
         htswlib:library ?library ;
         a ?trackType .
+  OPTIONAL { ?file rdfs:label ?file_label . }
   OPTIONAL { ?library htswlib:library_id ?lab_library_id }
   OPTIONAL { ?library encode3:library_id ?library_id }
   OPTIONAL { ?library htswlib:cell_line ?cell . }

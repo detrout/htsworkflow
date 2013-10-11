@@ -21,6 +21,9 @@ from htsworkflow.submission.daf import \
      ModelException, \
      get_submission_uri
 
+from django.conf import settings
+from django.template import Context, Template, loader
+
 LOGGER = logging.getLogger(__name__)
 
 class Submission(object):
@@ -121,6 +124,7 @@ class Submission(object):
         fileNode = self.make_file_node(pathname, an_analysis)
         self.add_md5s(filename, fileNode, analysis_dir)
         self.add_fastq_metadata(filename, fileNode)
+        self.add_label(file_type, fileNode, libNode)
         self.model.add_statement(
             RDF.Statement(fileNode,
                           rdfNS['type'],
@@ -181,6 +185,23 @@ class Submission(object):
             value = fqname.get(file_term)
             if value is not None:
                 s = RDF.Statement(fileNode, model_term, toTypedNode(value))
+                self.model.append(s)
+                
+    def add_label(self, file_type, file_node, lib_node):
+        """Add rdfs:label to a file node
+        """
+        #template_term = libraryOntology['label_template']
+        template_term = libraryOntology['label_template']
+        label_template = self.model.get_target(file_type, template_term)
+        if label_template:
+            template = loader.get_template('submission_view_rdfs_label_metadata.sparql')
+            context = Context({
+                'library': str(lib_node.uri),
+                })
+            for r in self.execute_query(template, context):
+                context = Context(r)
+                label = Template(label_template).render(context)
+                s = RDF.Statement(file_node, rdfsNS['label'], unicode(label))
                 self.model.append(s)
 
     def _add_library_details_to_model(self, libNode):
