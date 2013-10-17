@@ -1,3 +1,4 @@
+import optparse
 from glob import glob
 import logging
 import os
@@ -211,3 +212,47 @@ def make_md5_commands(destdir):
 
   return cmd_list
 
+def main(cmdline=None):
+    parser = make_parser()
+    opts, args = parser.parse_args(cmdline)
+
+    logging.basicConfig(level = logging.DEBUG)
+    if not opts.name:
+        parser.error("Specify run name. Usually runfolder name")
+    if not opts.destination:
+        parser.error("Specify where to write sequence files")
+    if not opts.site_name:
+        parser.error("Specify site name")
+    if len(args) != 1:
+        parser.error("Can only process one directory")
+
+    source = args[0]
+    LOGGER.info("Raw Format is: %s" % (opts.format, ))
+    seq_cmds = []
+    if opts.format == 'fastq':
+        LOGGER.info("raw data = %s" % (source,))
+        copy_hiseq_project_fastqs(opts.name, source, opts.site_name, opts.destination)
+    elif opts.format == 'qseq':
+        seq_cmds = make_qseq_commands(opts.name, source, opts.lanes, opts.site_name, opts.destination)
+    elif opts.format == 'srf':
+        seq_cmds = make_srf_commands(opts.name, source, opts.lanes, opts.site_name, opts.destination, 0)
+    else:
+        raise ValueError('Unknown --format=%s' % (opts.format))
+    print seq_cmds
+    srf.run_commands(args.source, seq_cmds, num_jobs)
+
+def make_parser():
+    parser = optparse.OptionParser()
+    parser.add_option('-f', '--format', default='fastq',
+                        help="Format raw data is in")
+    parser.add_option('-n', '--name', default=None,
+                        help="Specify run name")
+    parser.add_option('-d', '--destination', default=None,
+                        help='specify where to write files  (cycle dir)')
+    parser.add_option('-s', '--site-name', default=None,
+                        help="specify site name")
+    parser.add_option('-l', '--lanes', default="1,2,3,4,5,6,7,8",
+                        help="what lanes to process, defaults to all")
+    return parser
+if __name__ == "__main__":
+    main()
