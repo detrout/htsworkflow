@@ -111,7 +111,7 @@ def format_gerald_header(flowcell_info):
     config += ['Flowcell Notes:']
     config.extend(flowcell_info['notes'].split('\r\n'))
     config += ['']
-    for lane_number in LANE_LIST_JSON:
+    for lane_number in sorted(flowcell_info['lane_set']):
         lane_contents = flowcell_info['lane_set'][lane_number]
         for lane_info in lane_contents:
             config += ['Lane%s: %s | %s' % (lane_number,
@@ -356,8 +356,8 @@ def save_sample_sheet(outstream, options, flowcell_info):
                             'Operator': format_operator_name}
     out = csv.DictWriter(outstream, sample_sheet_fields)
     out.writerow(dict(((x,x) for x in sample_sheet_fields)))
-    for lane_number in LANE_LIST:
-        lane_contents = flowcell_info['lane_set'][str(lane_number)]
+    for lane_number in sorted(flowcell_info['lane_set']):
+        lane_contents = flowcell_info['lane_set'][lane_number]
 
         pooled_lane_contents = []
         for library in lane_contents:
