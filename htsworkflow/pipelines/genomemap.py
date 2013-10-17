@@ -77,13 +77,15 @@ def guess_genome(contig_sizes):
     # guess genome names
 
     genomes = {'chr1': {197195432: 'mm9',
-                        247249719: 'hg19',
+                        247249719: 'hg18',
                         200994015: 'galGal3',
+                        230208: 'saccer1',
                         },
                'chrI': {230218: 'sacCer3',
                         15072421: 'elegans190'},
                '1': {60348388: 'danRe6'},
-               'chr2L': { 23011544: 'dm3' },
+               'chr2L': { 23011544: 'dm3',
+                          49364326: 'Anopheles_gambiae'},
 
                }
 
