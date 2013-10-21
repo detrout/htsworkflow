@@ -1,5 +1,6 @@
 import logging
 import os
+from pprint import pformat
 import string
 import re
 
@@ -13,6 +14,7 @@ from htsworkflow.util.rdfhelp import \
      stripNamespace, \
      submissionOntology
 from htsworkflow.util.url import parse_ssh_url
+from htsworkflow.util.ucsc import bigWigInfo
 
 from django.conf import settings
 from django.template import Context, loader
@@ -104,20 +106,24 @@ class TrackHubSubmission(Submission):
             track_name = self.make_track_name(track)
 
             track_subgroup = self.make_track_subgroups(subgroups, track)
+            track_type = self.make_track_type(track)
 
             if 'file_label' in track:
                 track_label = self.sanitize_name(track['file_label'])
             else:
                 track_label = track_name
 
-            newtrack = Track(
-                name=track_name,
-                tracktype = str(track['file_type']),
-                url= hub_url + str(track['relative_path']),
-                short_label=str(track['library_id']),
-                long_label=str(track_label),
-                subgroups=track_subgroup,
-                )
+            attributes = {
+                'name': track_name,
+                'tracktype': track_type,
+                'url': hub_url + str(track['relative_path']),
+                'short_label': str(track['library_id']),
+                'long_label': str(track_label),
+                'subgroups': track_subgroup,
+            }
+            
+            LOGGER.debug('track attributes: %s', pformat(attributes))       
+            newtrack = Track(**attributes)                    
             view.add_tracks([newtrack])
 
         results = hub.render()
@@ -136,13 +142,20 @@ class TrackHubSubmission(Submission):
         """
         current_view_type = str(track['output_type'])
         if not view or current_view_type != view.name:
-            view = ViewTrack(
-                name=current_view_type,
-                view=current_view_type,
-                visibility='squish',
-                short_label=current_view_type,
-                tracktype=str(track['file_type']),
-            )
+            attributes = {
+                'name': current_view_type,
+                'view': current_view_type,
+                'visibility': str(track.get('visibility', 'squish')),
+                'short_label': current_view_type,
+                'tracktype': str(track['file_type'])
+            }
+            maxHeightPixels = track.get('maxHeightPixels')
+            if maxHeightPixels:
+                attributes['maxHeightPixels'] = str(maxHeightPixels)
+            autoScale = track.get('autoScale')
+            if autoScale:
+                attributes['autoScale'] = str(autoScale)
+            view = ViewTrack(**attributes)
             composite.add_view(view)
             view_type = current_view_type
         return view
@@ -173,6 +186,21 @@ class TrackHubSubmission(Submission):
                 value = self.sanitize_name(track[k])
                 track_subgroups[k] = value
         return track_subgroups
+    
+    def make_track_type(self, track):
+        """Further annotate tracktype.
+        
+        bigWig files can have additional information. Add it if we can
+        """
+        track_type = track['file_type']
+        if track_type.lower() == 'bigwig':
+            # something we can enhance
+            info = bigWigInfo(track['relative_path'])
+            if info.min is not None and info.max is not None:
+                track_type = '{} {} {}'.format(track_type, int(info.min), int(info.max))
+
+        LOGGER.debug("track_type: %s", track_type)
+        return str(track_type)
 
     def add_subgroups(self, composite):
         """Add subgroups to composite track"""
