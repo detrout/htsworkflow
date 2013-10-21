@@ -4,14 +4,18 @@ PREFIX htswlib: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
 PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
 PREFIX ncbiTaxon: <http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=>
+PREFIX trackdb: <http://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html#>
 PREFIX geoSoft: <http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#>
 PREFIX cells: <http://encodewiki.ucsc.edu/EncodeDCC/index.php/Cell_lines#>
 PREFIX encode3: <http://jumpgate.caltech.edu/wiki/Encode3#>
 
-select distinct ?lab_library_id ?library_id ?filename ?relative_path ?output_type ?file_type ?cell ?replicate ?assay ?rna_type ?protocol ?file_label
+select distinct ?lab_library_id ?library_id ?filename ?relative_path ?output_type ?file_type ?cell ?replicate ?assay ?rna_type ?protocol ?file_label ?autoScale ?maxHeightPixels ?visibility
 WHERE {
-  ?trackType geoSoft:fileTypeLabel ?file_type ;
+  ?trackType trackdb:type ?file_type ;
              ucscDaf:output_type ?output_type .
+  OPTIONAL { ?trackType trackdb:autoScale ?autoScale . }
+  OPTIONAL { ?trackType trackdb:maxHeightPixels ?maxHeightPixels . }
+  OPTIONAL { ?trackType trackdb:visibility ?visibility . }
   ?file ucscDaf:filename ?filename ;
         ucscDaf:relative_path ?relative_path ;
         htswlib:library ?library ;
