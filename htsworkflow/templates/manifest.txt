@@ -1,2 +1,2 @@
-#file_name	format	output_type	experiment	replicate	enriched_in	ucsc_db{% for r in files %}
-{{ r.relative_path }}	{{ r.file_format }}	{{ r.output_type }}	{{ r.dataset_id }}	{{ r.replicate }}	{{ r.enriched_in }}	{{ r.ucsc_db }}{% endfor %}
+#file_name	format	output_type	experiment	replicate	enriched_in	ucsc_db	replaces	replace_reason{% for r in files %}
+{{ r.relative_path }}	{{ r.file_format }}	{{ r.output_type }}	{{ r.dataset_id }}	{{ r.replicate }}	{{ r.enriched_in }}	{{ r.ucsc_db }}	{{ r.replaces_accession|default_if_none:"" }}	{{ r.replace_reason|default_if_none:"" }}{% endfor %}

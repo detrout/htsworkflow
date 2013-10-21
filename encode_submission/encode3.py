@@ -77,6 +77,12 @@ def main(cmdline=None):
             INDENTED.join(submission_names)))
     elif len(submission_names) == 1:
         name = submission_names[0]
+        
+    if name:
+        submission_uri = get_submission_uri(name)
+        logger.info('Submission URI: %s', name)
+    else:
+        logger.debug('No name, unable to create submission ur')
 
     mapper = None
     if opts.make_track_hub:
@@ -85,8 +91,6 @@ def main(cmdline=None):
                                     baseurl=opts.make_track_hub,
                                     baseupload=opts.track_hub_upload,
                                     host=opts.host)
-        submission_uri = get_submission_uri(name)
-
 
     if opts.load_rdf is not None:
         if submission_uri is None:
@@ -117,6 +121,8 @@ def main(cmdline=None):
     if opts.scan_submission:
         if name is None:
             parser.error("Please define a submission name")
+        if mapper is None:
+            parser.error("Scan submission needs --make-track-hub=public-url")
         mapper.scan_submission_dirs(results)
 
     if opts.make_track_hub:

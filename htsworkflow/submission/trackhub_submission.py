@@ -105,12 +105,17 @@ class TrackHubSubmission(Submission):
 
             track_subgroup = self.make_track_subgroups(subgroups, track)
 
+            if 'file_label' in track:
+                track_label = self.sanitize_name(track['file_label'])
+            else:
+                track_label = track_name
+
             newtrack = Track(
                 name=track_name,
                 tracktype = str(track['file_type']),
                 url= hub_url + str(track['relative_path']),
                 short_label=str(track['library_id']),
-                long_label=track_name,
+                long_label=str(track_label),
                 subgroups=track_subgroup,
                 )
             view.add_tracks([newtrack])
@@ -155,12 +160,11 @@ class TrackHubSubmission(Submission):
         return str(template.render(context))
 
     def make_track_name(self, track):
-        name = '{}_{}_{}'.format(
+        return '{}_{}_{}'.format(
             track['library_id'],
             track['replicate'],
             track['output_type'],
         )
-        return name
 
     def make_track_subgroups(self, subgroups, track):
         track_subgroups = {}
@@ -257,7 +261,6 @@ class TrackHubSubmission(Submission):
         return name
 
     def get_manifest_metadata(self, analysis_node):
-
         query_template = loader.get_template('trackhub_manifest.sparql')
 
         context = Context({

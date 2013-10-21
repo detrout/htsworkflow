@@ -17,7 +17,7 @@ class TestUCSC(TestCase):
         self.assertEqual(info.version, 4)
         self.assertEqual(info.isCompressed, True)
         # what should i do for byteswapped arch?
-        self.assertEqual(info.isSwapped, True)
+        self.assertEqual(info.isSwapped, False)
         self.assertEqual(info.primaryDataSize, 48)
         self.assertEqual(info.primaryIndexSize, 6204)
         self.assertEqual(info.zoomLevels, 2)
