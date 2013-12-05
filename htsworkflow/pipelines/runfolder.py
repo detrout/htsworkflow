@@ -100,10 +100,12 @@ class PipelineRun(object):
             return path_fields[-1]
 
     def _get_runfolder_name(self):
-        if self.gerald is None:
-            return None
-        else:
+        if self.gerald:
             return self.gerald.runfolder_name
+        elif hasattr(self.image_analysis, 'runfolder_name'):
+            return self.image_analysis.runfolder_name
+        else:
+            return None
     runfolder_name = property(_get_runfolder_name)
 
     def get_elements(self):
