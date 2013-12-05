@@ -81,7 +81,7 @@ class IPAR(object):
             raise ValueError("Can't query an empty run")
         runfolder = self.tree.xpath('RunParameters/Runfolder')
         return runfolder
-    runfolder_name = property(_get_runfolder)
+    runfolder_name = property(_get_runfolder_name)
     
     def _get_software(self):
         """Return software name"""
