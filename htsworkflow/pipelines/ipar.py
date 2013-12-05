@@ -75,6 +75,14 @@ class IPAR(object):
         if xml is not None:
             self.set_elements(xml)
 
+    def _get_runfolder_name(self):
+        """Return runfolder name"""
+        if self.tree is None:
+            raise ValueError("Can't query an empty run")
+        runfolder = self.tree.xpath('RunParameters/Runfolder')
+        return runfolder
+    runfolder_name = property(_get_runfolder)
+    
     def _get_software(self):
         """Return software name"""
         if self.tree is None:

@@ -25,9 +25,8 @@ def make_runfolder(obj=None):
     temp_dir = tempfile.mkdtemp(prefix='tmp_runfolder_')
 
     flowcell_id = '4286GAAXX'
-    runfolder_dir = os.path.join(
-        temp_dir,
-        '090608_HWI-EAS229_0117_{0}'.format(flowcell_id))
+    runfolder = '090608_HWI-EAS229_0117_{0}'.format(flowcell_id)
+    runfolder_dir = os.path.join(temp_dir, runfolder)
     os.mkdir(runfolder_dir)
 
     data_dir = os.path.join(runfolder_dir, 'Data')
@@ -50,6 +49,7 @@ def make_runfolder(obj=None):
     if obj is not None:
         obj.flowcell_id = flowcell_id
         obj.temp_dir = temp_dir
+        obj.runfolder = runfolder
         obj.runfolder_dir = runfolder_dir
         obj.data_dir = data_dir
         obj.image_analysis_dir = intensities_dir
@@ -262,8 +262,9 @@ class RunfolderTests(TestCase):
 
         # do we get the flowcell id from the filename?
         self.failUnlessEqual(len(runs), 1)
-        name = 'run_4286GAAXX_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
+        name = 'run_4286GAAXX_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)        
         self.failUnlessEqual(runs[0].serialization_filename, name)
+        self.assertEqual(runs[0].runfolder_name, '090220_HWI-EAS229_0093_30VR0AAXX')
 
         # do we get the flowcell id from the FlowcellId.xml file
         make_flowcell_id(self.runfolder_dir, '207BTAAXY')
@@ -271,6 +272,7 @@ class RunfolderTests(TestCase):
         self.failUnlessEqual(len(runs), 1)
         name = 'run_207BTAAXY_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
         self.failUnlessEqual(runs[0].serialization_filename, name)
+
 
         r1 = runs[0]
         xml = r1.get_elements()
