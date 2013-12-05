@@ -129,10 +129,12 @@ class PipelineRun(object):
             return path_fields[-1]
 
     def _get_runfolder_name(self):
-        if self.gerald is None:
-            return None
-        else:
+        if self.gerald:
             return self.gerald.runfolder_name
+        elif hasattr(self.image_analysis, 'runfolder_name'):
+            return self.image_analysis.runfolder_name
+        else:
+            return None
     runfolder_name = property(_get_runfolder_name)
 
     def _get_run_dirname(self):
@@ -361,12 +363,12 @@ def build_hiseq_runs(image_analysis, runs, datadir, runfolder, flowcell_id):
             p.suffix = suffix
             p.image_analysis = image_analysis
             p.bustard = bustard.bustard(unaligned)
-            assert p.bustard
             if aligned:
                 p.gerald = gerald.gerald(aligned)
             runs.append(p)
-        except IOError, e:
-            LOGGER.error("Ignoring " + str(e))
+        except (IOError, RuntimeError) as e:
+	    LOGGER.error("Exception %s", str(e))
+            LOGGER.error("Skipping run in %s", flowcell_id)
     return len(runs) - start
 
 def hiseq_match_aligned_unaligned(aligned, unaligned):

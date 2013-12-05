@@ -271,15 +271,20 @@ def load_into_model(model, parser_name, path, ns=None):
 
     statements = []
     retries = 3
+    succeeded = False
     while retries > 0:
         try:
             retries -= 1
             statements = rdf_parser.parse_as_stream(url, ns)
             retries = 0
+            succeeded = True
         except RDF.RedlandError, e:
             errmsg = "RDF.RedlandError: {0} {1} tries remaining"
             logger.error(errmsg.format(str(e), retries))
-
+            
+    if not succeeded:
+        logger.warn("Unable to download %s", url)
+        
     for s in statements:
         conditionally_add_statement(model, s, ns)
 

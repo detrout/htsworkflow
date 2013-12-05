@@ -3,6 +3,7 @@
 
 import logging
 import os
+import sys
 from subprocess import Popen, PIPE
 
 LOGGER = logging.getLogger(__name__)
@@ -51,17 +52,22 @@ class bigWigInfo:
     def scan_file(self, filename):
         cmd = ['bigWigInfo', 
                filename]
-        p = Popen(cmd, stdout=PIPE)
-        stdout, _ = p.communicate()
-        for line in stdout.split(os.linesep):
-            if len(line) > 0:
-                term, value = line.split(': ')
-                if term in ('isCompressed', 'isSwapped'):
-                    value = parseBoolean(value)
-                else:
-                    value = parseNumber(value)
-                LOGGER.debug('%s: %s', term, str(value))
-                setattr(self, term, value)
+        try:
+            p = Popen(cmd, stdout=PIPE)
+            stdout, _ = p.communicate()
+            for line in stdout.split(os.linesep):
+                if len(line) > 0:
+                    term, value = line.split(': ')
+                    if term in ('isCompressed', 'isSwapped'):
+                        value = parseBoolean(value)
+                    else:
+                        value = parseNumber(value)
+                    LOGGER.debug('%s: %s', term, str(value))
+                    setattr(self, term, value)
+        except OSError as e:
+            LOGGER.error("Exception %s trying to run: %s", str(e), ' '.join(cmd))
+            sys.exit(-1)
+
                 
                 
 
