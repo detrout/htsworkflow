@@ -301,6 +301,10 @@ def _summary_stats(flowcell_id, lane_id, library_id):
             continue
 
         run = load_pipeline_run_xml(xmlpath)
+        # skip if we don't have available metadata.
+        if run.gerald is None or run.gerald.summary is None:
+            continue
+        
         gerald_summary = run.gerald.summary.lane_results
         key = SampleKey(lane=lane_id, sample='s')
         eland_results = list(run.gerald.eland_results.find_keys(key))

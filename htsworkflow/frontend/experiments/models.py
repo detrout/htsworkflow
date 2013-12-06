@@ -248,8 +248,10 @@ class FlowCell(models.Model):
             run.image_version = run_xml_data.image_analysis.version
             run.basecall_software = run_xml_data.bustard.software
             run.basecall_version = run_xml_data.bustard.version
-            run.alignment_software = run_xml_data.gerald.software
-            run.alignment_version = run_xml_data.gerald.version
+            # we're frequently not running alignments
+            if run_xml_data.gerald:
+                run.alignment_software = run_xml_data.gerald.software
+                run.alignment_version = run_xml_data.gerald.version
 
             run.last_update_time = datetime.datetime.now()
             run.save()
