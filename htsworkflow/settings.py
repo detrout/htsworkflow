@@ -239,7 +239,6 @@ INSTALLED_APPS = (
     'htsworkflow.frontend.inventory',
     'htsworkflow.frontend.bcmagic',
     'htsworkflow.frontend.labels',
-    'django.contrib.databrowse',
 )
 
 # Project specific settings
