@@ -79,9 +79,14 @@ class IPAR(object):
         """Return runfolder name"""
         if self.tree is None:
             raise ValueError("Can't query an empty run")
-        runfolder = self.tree.xpath('RunParameters/Runfolder')
-        return runfolder
-    runfolder_name = property(_get_runfolder)
+        runfolder = self.tree.xpath('RunParameters/RunFolder')
+        if len(runfolder) == 0:
+            return None
+        elif len(runfolder) > 1:
+            raise RuntimeError("RunXml parse error looking for RunFolder")
+        else:
+            return runfolder[0].text
+    runfolder_name = property(_get_runfolder_name)
     
     def _get_software(self):
         """Return software name"""
