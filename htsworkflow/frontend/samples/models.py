@@ -156,7 +156,7 @@ class Library(models.Model):
   id = models.CharField(max_length=10, primary_key=True)
   library_name = models.CharField(max_length=100, unique=True)
   library_species = models.ForeignKey(Species)
-  hidden = models.BooleanField()
+  hidden = models.BooleanField(default=False)
   account_number = models.CharField(max_length=100, null=True, blank=True)
   cell_line = models.ForeignKey(Cellline, blank=True, null=True,
                                 verbose_name="Background")
@@ -207,7 +207,7 @@ class Library(models.Model):
       # note \u00b5 is the micro symbol in unicode
   successful_pM = models.DecimalField(max_digits=9,
                                       decimal_places=1, blank=True, null=True)
-  ten_nM_dilution = models.BooleanField()
+  ten_nM_dilution = models.BooleanField(default=False)
   gel_cut_size = models.IntegerField(default=225, blank=True, null=True)
   insert_size = models.IntegerField(blank=True, null=True)
   notes = models.TextField(blank=True)
