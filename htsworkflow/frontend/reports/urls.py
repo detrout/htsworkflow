@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns
 
 urlpatterns = patterns('',                                               
     (r'^updLibInfo$', 'htsworkflow.frontend.reports.libinfopar.refreshLibInfoFile'),

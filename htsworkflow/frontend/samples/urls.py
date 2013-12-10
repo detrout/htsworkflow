@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns
 
 urlpatterns = patterns('',
     (r"^library/(?P<library_id>\w+)/json", 'htsworkflow.frontend.samples.views.library_json'),
