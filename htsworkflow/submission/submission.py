@@ -348,6 +348,8 @@ class Submission(object):
                   'Small RNA (non-multiplexed)',]
         paired = ['Barcoded Illumina',
                   'Multiplexing',
+                  'NEBNext Multiplexed',
+                  'NEBNext Small RNA',
                   'Nextera',
                   'Paired End (non-multiplexed)',
                   'Dual Index Illumina',]
