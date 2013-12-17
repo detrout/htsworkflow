@@ -67,7 +67,7 @@ TEMPLATE_DIRS = (
 
 ROOT_URLCONF = 'htsworkflow.frontend.urls'
 
-WSGI_APPLICATION = 'htsworkflow.frontend.wsgi.application'
+WSGI_APPLICATION = 'htsworkflow.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
