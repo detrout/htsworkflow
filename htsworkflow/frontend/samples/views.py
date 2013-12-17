@@ -10,6 +10,14 @@ except ImportError, e:
     import simplejson as json
 
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from django.template.loader import get_template
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+
 from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend.experiments.models import FlowCell, Lane, LANE_STATUS_MAP
 from htsworkflow.frontend.experiments.admin import LaneOptions
@@ -18,7 +26,6 @@ from htsworkflow.frontend.samples.models import Antibody, Library, Species, HTSU
 from htsworkflow.frontend.samples.admin import LibraryOptions
 from htsworkflow.frontend.samples.results import get_flowcell_result_dict
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
-from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.eland import ResultLane
 from htsworkflow.pipelines.samplekey import SampleKey
@@ -27,13 +34,6 @@ from htsworkflow.util import makebed
 from htsworkflow.util import opener
 
 
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
-from django.template.loader import get_template
-from django.contrib.auth.decorators import login_required
-from django.conf import settings
 
 LANE_LIST = [1,2,3,4,5,6,7,8]
 SAMPLES_CONTEXT_DEFAULTS = {
@@ -300,7 +300,7 @@ def _summary_stats(flowcell_id, lane_id, library_id):
             err_list.append('Run xml for Flowcell %s(%s) not found.' % (fc_id, cycle_width))
             continue
 
-        run = load_pipeline_run_xml(xmlpath)
+        run = runfolder.load_pipeline_run_xml(xmlpath)
         # skip if we don't have available metadata.
         if run.gerald is None or run.gerald.summary is None:
             continue
