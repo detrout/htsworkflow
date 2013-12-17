@@ -66,7 +66,6 @@ TEMPLATE_DIRS = (
 )
 
 ROOT_URLCONF = 'htsworkflow.frontend.urls'
-#ROOT_URLCONF='wsgiexample.urls'
 
 WSGI_APPLICATION = 'htsworkflow.frontend.wsgi.application'
 
@@ -97,6 +96,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_URL = '/static/'
+
+
+#####
+# Application specific settings
+# Update this in settings_local to point to your flowcell result directory
+RESULT_HOME_DIR = os.path.join(BASE_DIR, 'test', 'results')
 
 try:
     # allow local customizations
