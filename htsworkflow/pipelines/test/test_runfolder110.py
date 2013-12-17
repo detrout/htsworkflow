@@ -10,7 +10,7 @@ from htsworkflow.pipelines import firecrest
 from htsworkflow.pipelines import bustard
 from htsworkflow.pipelines import gerald
 from htsworkflow.pipelines import runfolder
-from htsworkflow.pipelines.runfolder import ElementTree
+from htsworkflow.pipelines import ElementTree
 
 from htsworkflow.pipelines.test.simulate_runfolder import *
 
@@ -279,21 +279,21 @@ class RunfolderTests(TestCase):
         # do we get the flowcell id from the filename?
         self.failUnlessEqual(len(runs), 1)
         name = 'run_30J55AAXX_2009-02-22.xml'
-        self.failUnlessEqual(runs[0].name, name)
+        self.failUnlessEqual(runs[0].serialization_filename, name)
 
         # do we get the flowcell id from the FlowcellId.xml file
         make_flowcell_id(self.runfolder_dir, '30J55AAXX')
         runs = runfolder.get_runs(self.runfolder_dir)
         self.failUnlessEqual(len(runs), 1)
         name = 'run_30J55AAXX_2009-02-22.xml'
-        self.failUnlessEqual(runs[0].name, name)
+        self.failUnlessEqual(runs[0].serialization_filename, name)
 
         r1 = runs[0]
         xml = r1.get_elements()
         xml_str = ElementTree.tostring(xml)
 
         r2 = runfolder.PipelineRun(xml=xml)
-        self.failUnlessEqual(r1.name, r2.name)
+        self.failUnlessEqual(r1.serialization_filename, r2.serialization_filename)
         self.failIfEqual(r2.image_analysis, None)
         self.failIfEqual(r2.bustard, None)
         self.failIfEqual(r2.gerald, None)

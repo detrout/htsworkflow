@@ -1,0 +1,35 @@
+PREFIX htswlib: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
+PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
+PREFIX encode3: <http://jumpgate.caltech.edu/wiki/Encode3#> 
+PREFIX ncbiTaxon: <http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=>
+PREFIX geoSoft: <http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#>
+PREFIX cells: <http://encodewiki.ucsc.edu/EncodeDCC/index.php/Cell_lines#>
+
+select distinct ?name ?filename ?relative_path ?file_format ?output_type ?dataset_id ?replicate ?enriched_in ?ucsc_db ?paired_end ?technical_replicate ?replaces ?replace_reason
+WHERE {
+  <{{submission}}> a submissionOntology:submission ;
+                   submissionOntology:name ?name ;
+                   ucscDaf:has_file ?file .
+
+  ?file ucscDaf:filename ?filename ;
+        ucscDaf:relative_path ?relative_path ;
+        htswlib:library ?library ;
+        a ?fileClass .
+
+  OPTIONAL { ?file encode3:replaces ?replaces_accession ;
+                   encode3:replace_reason ?replace_reason .
+  }
+
+  ?fileClass geoSoft:fileTypeLabel ?file_format ;
+             ucscDaf:output_type ?output_type .
+  OPTIONAL { ?fileClass ucscDaf:paired_end ?paired_end . }
+  OPTIONAL { ?fileClass ucscDaf:technical_replicate ?technical_replicate . }
+
+  
+  ?library htswlib:replicate ?replicate ;
+           ucscDaf:enriched_in ?enriched_in;
+           ucscDaf:genome_build ?ucsc_db .
+
+  ?library encode3:dataset_id ?dataset_id .
+}

@@ -339,7 +339,7 @@ htswlib:lane_number
     rdfs:comment "Which lane were we run in" ;
     rdfs:label "lane id" ;
     rdfs:domain htswlib:IlluminaLane ;
-    rdfs:range xsd:string .
+    rdfs:range rdfs:Literal .
 
 # FIXME: should this be note?
 htswlib:comment

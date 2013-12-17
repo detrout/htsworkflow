@@ -7,7 +7,7 @@ import shutil
 import tempfile
 from unittest2 import TestCase
 
-from htsworkflow.pipelines.runfolder import ElementTree
+from htsworkflow.pipelines import ElementTree
 from htsworkflow.pipelines import genomemap
 
 MINI_GENOME_XML = '''<sequenceSizes>

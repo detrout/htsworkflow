@@ -7,6 +7,10 @@ import shutil
 import tempfile
 
 from django.test import TestCase
+from django.test.utils import setup_test_environment, \
+     teardown_test_environment
+from django.db import connection
+from django.conf import settings
 
 from htsworkflow.submission.condorfastq import CondorFastqExtract
 from htsworkflow.submission.results import ResultMap
@@ -674,6 +678,16 @@ class TestCondorFastq(TestCase):
             self.assertTrue('12345_CGATGT_L003_R2_002.fastq.gz' in arguments[3])
             self.assertTrue('12345_CGATGT_L003_R2_003.fastq.gz' in arguments[3])
             self.assertTrue('12345_C02F9ACXX_c202_l3_r2.fastq' in arguments[3])
+
+
+OLD_DB = settings.DATABASES['default']['NAME']
+def setUpModule():
+    setup_test_environment()
+    connection.creation.create_test_db()
+
+def tearDownModule():
+    connection.creation.destroy_test_db(OLD_DB)
+    teardown_test_environment()
 
 
 def suite():

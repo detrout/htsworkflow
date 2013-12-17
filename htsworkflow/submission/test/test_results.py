@@ -1,50 +1,16 @@
 #!/usr/bin/env python
 
-import copy
-import os
 from pprint import pprint
 import shutil
-import tempfile
 
 from unittest2 import TestCase, defaultTestLoader
 
 from htsworkflow.submission.results import ResultMap
-
-S1_NAME = '1000-sample'
-S2_NAME = '2000-sample'
-
-S1_FILES = [
-    os.path.join(S1_NAME, 'file1_l8_r1.fastq'),
-    os.path.join(S1_NAME, 'file1_l8_r2.fastq'),
-]
-
-S2_FILES = [
-    os.path.join(S2_NAME, 'file1.bam'),
-    os.path.join(S2_NAME, 'file1_l5.fastq'),
-]
-
-def generate_sample_results_tree(obj):
-    obj.tempdir = tempfile.mkdtemp(prefix="results_test")
-    obj.sourcedir = os.path.join(obj.tempdir, 'source')
-    obj.resultdir = os.path.join(obj.tempdir, 'results')
-
-    for d in [obj.sourcedir,
-              os.path.join(obj.sourcedir, S1_NAME),
-              os.path.join(obj.sourcedir, S2_NAME),
-              obj.resultdir]:
-        os.mkdir(os.path.join(obj.tempdir, d))
-
-    tomake = []
-    tomake.extend(S1_FILES)
-    tomake.extend(S2_FILES)
-    for f in tomake:
-        stream = open(os.path.join(obj.sourcedir, f), 'w')
-        stream.write(f)
-        stream.close()
+from submission_test_common import *
 
 class TestResultMap(TestCase):
     def setUp(self):
-        generate_sample_results_tree(self)
+        generate_sample_results_tree(self, 'results_test')
 
     def tearDown(self):
         shutil.rmtree(self.tempdir)
@@ -74,13 +40,32 @@ class TestResultMap(TestCase):
         self.assertFalse(u'77777' in results)
         self.assertFalse('77777' in results)
 
-    def test_make_from(self):
+    def test_make_from_absolute(self):
+        """Test that make from works if ResultMap has absolute paths
+        """
+        results = ResultMap()
+        sample1_dir = os.path.join(self.resultdir, S1_NAME)
+        sample2_dir = os.path.join(self.resultdir, S2_NAME)
+        results['1000'] =  sample1_dir
+        results['2000'] =  sample2_dir
+
+        results.make_tree_from(self.sourcedir, self.resultdir)
+        self.failUnless(os.path.isdir(sample1_dir))
+        self.failUnless(os.path.isdir(sample2_dir))
+
+        for f in S1_FILES + S2_FILES:
+            self.failUnless(
+                os.path.islink(
+                    os.path.join(self.resultdir, f)))
+
+    def test_make_from_filename(self):
+        """Test that make from works if ResultMap has no path
+        """
         results = ResultMap()
         results['1000'] =  S1_NAME
         results['2000'] =  S2_NAME
 
         results.make_tree_from(self.sourcedir, self.resultdir)
-
         sample1_dir = os.path.join(self.resultdir, S1_NAME)
         sample2_dir = os.path.join(self.resultdir, S2_NAME)
         self.failUnless(os.path.isdir(sample1_dir))
@@ -91,11 +76,20 @@ class TestResultMap(TestCase):
                 os.path.islink(
                     os.path.join(self.resultdir, f)))
 
+    def test_make_from_shared_directory(self):
+        """Split multiple datasets stored in a single directory
+        """
+        self.skipTest("not implemented yet")
+        results = ResultMap()
+        results['S1'] = os.path.join(SCOMBINED_NAME, 's1*')
+        results['S2'] = os.path.join(SCOMBINED_NAME, 's2*')
 
 def suite():
     suite = defaultTestLoader.loadTestsFromTestCase(TestResultMap)
     return suite
 
 if __name__ == "__main__":
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
     from unittest2 import main
     main(defaultTest='suite')

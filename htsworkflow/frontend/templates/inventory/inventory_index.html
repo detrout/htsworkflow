@@ -1,5 +1,5 @@
 {% extends "base_site.html" %}
-{% load adminmedia admin_list i18n %}
+{% load admin_list i18n %}
 {% block extrahead %}
     <script type="text/javascript">
       $(document).ready(function() {
@@ -18,7 +18,7 @@
 {% block coltype %}flex{% endblock %}
 {% block content %}
 <div id="inventory-index-div" >
-  <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+  <div class="module{% if item_changelist.has_filters %} filtered{% endif %}" id="changelist">
     {% block search %}{% search_form item_changelist %}{% endblock %}
  
     {% block pagination %}{% pagination item_changelist %}{% endblock %}
@@ -28,13 +28,13 @@
     <div id="changelist-filter">
       <h2 >{% trans 'Filter' %}</h2>
       {% for spec in item_changelist.filter_specs %}
-         {% admin_list_filter cl spec %}
+         {% admin_list_filter item_changelist spec %}
          {% endfor %}
        </div>
     {% endif %}
     {% endblock %}
   {% block summary_stats %}
-  <table class="{% if cl.has_filters %} filtered{% endif %}">
+  <table class="{% if item_changelist.has_filters %} filtered{% endif %}">
     <thead >
       <tr >
         <td >Name</td>
@@ -42,7 +42,7 @@
       </tr>
     </thead>
     <tbody >
-      {% for itemtype in item_changelist.get_query_set %}
+      {% for itemtype in item_changelist.result_list %}
       <tr >
         <td ><a href="/inventory/it/{{ itemtype.name }}/">{{ itemtype.name }}</a></td>
         <td >{{ itemtype.description }}</td>

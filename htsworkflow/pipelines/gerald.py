@@ -12,7 +12,7 @@ from htsworkflow.pipelines.summary import Summary, SummaryGA, SummaryHiSeq
 from htsworkflow.pipelines.eland import eland, ELAND
 from htsworkflow.pipelines.samplekey import SampleKey
 
-from htsworkflow.pipelines.runfolder import \
+from htsworkflow.pipelines import \
    ElementTree, \
    EUROPEAN_STRPTIME, \
    LANES_PER_FLOWCELL, \
@@ -104,7 +104,7 @@ class Gerald(Alignment):
 
         timestamp = self.tree.findtext('ChipWideRunParameters/TIME_STAMP')
         if timestamp is not None:
-            epochstamp = time.mktime(time.strptime(timestamp, '%c'))
+            epochstamp = time.mktime(time.strptime(timestamp))
             return datetime.fromtimestamp(epochstamp)
         return super(Gerald, self)._get_date()
     date = property(_get_date)
@@ -177,7 +177,7 @@ class CASAVA(Alignment):
         if self.tree is None:
             return
         if len(self.tree.xpath('TIME_STAMP')) == 0:
-            time_stamp = self.date.strftime('%c')
+            time_stamp = self.date.strftime('%a %b %d %H:%M:%S %Y')
             time_element = ElementTree.Element('TIME_STAMP')
             time_element.text = time_stamp
             self.tree.append(time_element)
@@ -187,7 +187,10 @@ class CASAVA(Alignment):
             return None
         time_element = self.tree.xpath('TIME_STAMP')
         if len(time_element) == 1:
-            return datetime.strptime(time_element[0].text, '%c')
+	    timetuple = time.strptime(
+	        time_element[0].text.strip(),
+	        "%a %b %d %H:%M:%S %Y")
+	    return datetime(*timetuple[:6])
         return super(CASAVA, self)._get_date()
     date = property(_get_date)
 

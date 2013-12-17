@@ -30,7 +30,7 @@ setup(
         },
     include_package_data=True,
     install_requires=['distribute',
-                      'django >=1.1, <1.4',
+                      'django >=1.6, <1.7',
                       'lxml >= 2.2.4',
                       'numpy >= 1.3',
                       'benderjab >= 0.2',

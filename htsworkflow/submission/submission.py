@@ -8,21 +8,21 @@ import RDF
 
 from htsworkflow.util.rdfhelp import \
      blankOrUri, \
-     dafTermOntology, \
      dump_model, \
+     fromTypedNode, \
      get_model, \
-     libraryOntology, \
-     owlNS, \
-     rdfNS, \
-     submissionLog, \
-     submissionOntology, \
-     toTypedNode, \
-     fromTypedNode
+     stripNamespace, \
+     toTypedNode
+from htsworkflow.util.rdfns import *
 from htsworkflow.util.hashfile import make_md5sum
 from htsworkflow.submission.fastqname import FastqName
 from htsworkflow.submission.daf import \
      MetadataLookupException, \
+     ModelException, \
      get_submission_uri
+
+from django.conf import settings
+from django.template import Context, Template, loader
 
 LOGGER = logging.getLogger(__name__)
 
@@ -59,6 +59,13 @@ class Submission(object):
         for filename in submission_files:
             pathname = os.path.abspath(os.path.join(analysis_dir, filename))
             self.construct_file_attributes(analysis_dir, libNode, pathname)
+
+    def analysis_nodes(self, result_map):
+        """Return an iterable of analysis nodes
+        """
+        for result_dir in result_map.values():
+            an_analysis = self.get_submission_node(result_dir)
+            yield an_analysis
 
     def construct_file_attributes(self, analysis_dir, libNode, pathname):
         """Looking for the best extension
@@ -117,10 +124,16 @@ class Submission(object):
         fileNode = self.make_file_node(pathname, an_analysis)
         self.add_md5s(filename, fileNode, analysis_dir)
         self.add_fastq_metadata(filename, fileNode)
+        self.add_label(file_type, fileNode, libNode)
         self.model.add_statement(
             RDF.Statement(fileNode,
                           rdfNS['type'],
                           file_type))
+        self.model.add_statement(
+            RDF.Statement(fileNode,
+                          libraryOntology['library'],
+                          libNode))
+                          
         LOGGER.debug("Done.")
 
     def make_file_node(self, pathname, submissionNode):
@@ -128,7 +141,8 @@ class Submission(object):
         """
         # add file specific information
         path, filename = os.path.split(pathname)
-        fileNode = RDF.Node(RDF.Uri('file://'+ os.path.abspath(pathname)))
+        pathname = os.path.abspath(pathname)
+        fileNode = RDF.Node(RDF.Uri('file://'+ pathname))
         self.model.add_statement(
             RDF.Statement(submissionNode,
                           dafTermOntology['has_file'],
@@ -137,6 +151,10 @@ class Submission(object):
             RDF.Statement(fileNode,
                           dafTermOntology['filename'],
                           filename))
+        self.model.add_statement(
+            RDF.Statement(fileNode,
+                          dafTermOntology['relative_path'],
+                          os.path.relpath(pathname)))
         return fileNode
 
     def add_md5s(self, filename, fileNode, analysis_dir):
@@ -168,6 +186,23 @@ class Submission(object):
             if value is not None:
                 s = RDF.Statement(fileNode, model_term, toTypedNode(value))
                 self.model.append(s)
+                
+    def add_label(self, file_type, file_node, lib_node):
+        """Add rdfs:label to a file node
+        """
+        #template_term = libraryOntology['label_template']
+        template_term = libraryOntology['label_template']
+        label_template = self.model.get_target(file_type, template_term)
+        if label_template:
+            template = loader.get_template('submission_view_rdfs_label_metadata.sparql')
+            context = Context({
+                'library': str(lib_node.uri),
+                })
+            for r in self.execute_query(template, context):
+                context = Context(r)
+                label = Template(label_template).render(context)
+                s = RDF.Statement(file_node, rdfsNS['label'], unicode(label))
+                self.model.append(s)
 
     def _add_library_details_to_model(self, libNode):
         # attributes that can have multiple values
@@ -175,7 +210,12 @@ class Submission(object):
                               libraryOntology['has_mappings'],
                               dafTermOntology['has_file']))
         parser = RDF.Parser(name='rdfa')
-        new_statements = parser.parse_as_stream(libNode.uri)
+        try:
+            new_statements = parser.parse_as_stream(libNode.uri)
+        except RDF.RedlandError as e:
+            LOGGER.error(e)
+            return
+        LOGGER.debug("Scanning %s", str(libNode.uri))
         toadd = []
         for s in new_statements:
             # always add "collections"
@@ -308,8 +348,11 @@ class Submission(object):
                   'Small RNA (non-multiplexed)',]
         paired = ['Barcoded Illumina',
                   'Multiplexing',
+                  'NEBNext Multiplexed',
+                  'NEBNext Small RNA',
                   'Nextera',
-                  'Paired End (non-multiplexed)',]
+                  'Paired End (non-multiplexed)',
+                  'Dual Index Illumina',]
         if library_type in single:
             return False
         elif library_type in paired:
@@ -333,3 +376,21 @@ class Submission(object):
                 d[key] = fromTypedNode(value)
             results.append(d)
         return results
+
+
+def list_submissions(model):
+    """Return generator of submissions in this model.
+    """
+    query_body = """
+      PREFIX subns: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
+
+      select distinct ?submission
+      where { ?submission subns:has_submission ?library_dir }
+    """
+    query = RDF.SPARQLQuery(query_body)
+    rdfstream = query.execute(model)
+    for row in rdfstream:
+        s = stripNamespace(submissionLog, row['submission'])
+        if s[-1] in ['#', '/', '?']:
+            s = s[:-1]
+        yield s

@@ -9,7 +9,7 @@ import os
 import re
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.csrf.middleware import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail, mail_admins
 from django.http import HttpResponse, Http404

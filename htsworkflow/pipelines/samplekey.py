@@ -1,3 +1,5 @@
+from htsworkflow.pipelines import LANE_LIST
+
 class SampleKey(object):
     """Identifier for a sample in a particular 'location' on a flowcell.
     """
@@ -72,3 +74,4 @@ class SampleKey(object):
 
         return '<SampleKey(' + ",".join(name) + ')>'
 
+LANE_SAMPLE_KEYS = [ SampleKey(lane=l) for l in LANE_LIST ]

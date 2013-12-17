@@ -271,15 +271,20 @@ def load_into_model(model, parser_name, path, ns=None):
 
     statements = []
     retries = 3
+    succeeded = False
     while retries > 0:
         try:
             retries -= 1
             statements = rdf_parser.parse_as_stream(url, ns)
             retries = 0
+            succeeded = True
         except RDF.RedlandError, e:
             errmsg = "RDF.RedlandError: {0} {1} tries remaining"
             logger.error(errmsg.format(str(e), retries))
-
+            
+    if not succeeded:
+        logger.warn("Unable to download %s", url)
+        
     for s in statements:
         conditionally_add_statement(model, s, ns)
 
@@ -329,7 +334,7 @@ def add_default_schemas(model, schema_path=None):
         namespace = 'file://localhost/htsworkflow/schemas/'+s
         add_schema(model, schema, namespace)
 
-    if schema_path:    
+    if schema_path:
         if type(schema_path) in types.StringTypes:
             schema_path = [schema_path]
 
@@ -423,11 +428,19 @@ def get_serializer(name='turtle'):
     writer.set_namespace('wot', wotNS._prefix)
 
     # should these be here, kind of specific to an application
-    writer.set_namespace('libraryOntology', libraryOntology._prefix)
+    writer.set_namespace('htswlib', libraryOntology._prefix)
     writer.set_namespace('ucscSubmission', submissionOntology._prefix)
     writer.set_namespace('ucscDaf', dafTermOntology._prefix)
+    writer.set_namespace('geoSoft', geoSoftNS._prefix)
+    writer.set_namespace('encode3', encode3NS._prefix)
     return writer
 
+def get_turtle_header():
+    """Return a turtle header with our typical namespaces
+    """
+    serializer = get_serializer()
+    empty = get_model()
+    return serializer.serialize_model_to_string(empty)
 
 def dump_model(model, destination=None):
     if destination is None:

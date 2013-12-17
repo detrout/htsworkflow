@@ -10,7 +10,7 @@ import stat
 import sys
 import types
 
-from htsworkflow.pipelines.runfolder import ElementTree, LANE_LIST
+from htsworkflow.pipelines import ElementTree, LANE_LIST
 from htsworkflow.pipelines.samplekey import SampleKey
 from htsworkflow.pipelines.genomemap import GenomeMap
 from htsworkflow.util.ethelp import indent, flatten

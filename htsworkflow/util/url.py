@@ -1,20 +1,11 @@
 """
 Utilities to help handle urls
 """
+import collections
 
 def normalize_url(url, scheme='http'):
     """
     Make sure there is a http at the head of what should be a url
-
-    >>> normalize_url("google.com")
-    'http://google.com'
-    >>> normalize_url("http://google.com")
-    'http://google.com'
-    >>> normalize_url("foo.com/a/b/c/d/e/f.html")
-    'http://foo.com/a/b/c/d/e/f.html'
-    >>> normalize_url("foo.com", "https")
-    'https://foo.com'
-    >>> normalize_url(None)
     """
     # not much to do with None except avoid an exception
     if url is None:
@@ -25,3 +16,30 @@ def normalize_url(url, scheme='http'):
         return url
     else:
         return scheme + scheme_sep + url
+
+SSHURL = collections.namedtuple("SSHURL", "user host path")
+
+def parse_ssh_url(url):
+    """Parse scp-style username, host and path.
+    """
+    # simple initialization
+    user = None
+    host = None
+    path = None
+    
+    colon = url.find(':')
+    if colon == -1:
+        raise ValueError("Invalid SSH URL: need <host>:<path>")
+    
+    path = url[colon+1:]
+    
+    user_host = url[:colon]
+    atsign = user_host.find('@')
+    if atsign != -1:
+        user = user_host[:atsign]
+        host = user_host[atsign+1:]
+    else:
+        host = user_host
+
+    return SSHURL(user, host, path)
+    

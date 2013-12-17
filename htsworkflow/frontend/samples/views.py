@@ -9,14 +9,23 @@ try:
 except ImportError, e:
     import simplejson as json
 
-from django.contrib.csrf.middleware import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from django.template.loader import get_template
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+
 from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend.experiments.models import FlowCell, Lane, LANE_STATUS_MAP
-from htsworkflow.frontend.samples.changelist import ChangeList
+from htsworkflow.frontend.experiments.admin import LaneOptions
+from htsworkflow.frontend.samples.changelist import HTSChangeList
 from htsworkflow.frontend.samples.models import Antibody, Library, Species, HTSUser
+from htsworkflow.frontend.samples.admin import LibraryOptions
 from htsworkflow.frontend.samples.results import get_flowcell_result_dict
 from htsworkflow.frontend.bcmagic.forms import BarcodeMagicForm
-from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.eland import ResultLane
 from htsworkflow.pipelines.samplekey import SampleKey
@@ -25,13 +34,6 @@ from htsworkflow.util import makebed
 from htsworkflow.util import opener
 
 
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
-from django.template.loader import get_template
-from django.contrib.auth.decorators import login_required
-from django.conf import settings
 
 LANE_LIST = [1,2,3,4,5,6,7,8]
 SAMPLES_CONTEXT_DEFAULTS = {
@@ -95,14 +97,16 @@ def create_library_context(cl):
 
 def library(request, todo_only=False):
     queryset = Library.objects.filter(hidden__exact=0)
+    filters = {'hidden__exact': 0}
     if todo_only:
-        queryset = queryset.filter(lane=None)
+        filters[lane] = None
     # build changelist
-    fcl = ChangeList(request, Library,
+    fcl = HTSChangeList(request, Library,
         list_filter=['affiliations', 'library_species'],
         search_fields=['id', 'library_name', 'amplified_from_sample__id'],
         list_per_page=200,
-        queryset=queryset
+        model_admin=LibraryOptions(Library, None),
+        extra_filters=filters
     )
 
     context = { 'cl': fcl, 'title': 'Library Index', 'todo_only': todo_only}
@@ -164,10 +168,11 @@ def lanes_for(request, username=None):
     if username is not None:
         user = HTSUser.objects.get(username=username)
         query.update({'library__affiliations__users__id':user.id})
-    fcl = ChangeList(request, Lane,
+    fcl = HTSChangeList(request, Lane,
         list_filter=[],
         search_fields=['flowcell__flowcell_id', 'library__id', 'library__library_name'],
         list_per_page=200,
+        model_admin=LaneOptions,
         queryset=Lane.objects.filter(**query)
     )
 
@@ -295,7 +300,7 @@ def _summary_stats(flowcell_id, lane_id, library_id):
             err_list.append('Run xml for Flowcell %s(%s) not found.' % (fc_id, cycle_width))
             continue
 
-        run = load_pipeline_run_xml(xmlpath)
+        run = runfolder.load_pipeline_run_xml(xmlpath)
         # skip if we don't have available metadata.
         if run.gerald is None or run.gerald.summary is None:
             continue
@@ -557,5 +562,3 @@ def user_profile(request):
     context.update(SAMPLES_CONTEXT_DEFAULTS)
     return render_to_response('registration/profile.html', context,
                               context_instance=RequestContext(request))
-
-

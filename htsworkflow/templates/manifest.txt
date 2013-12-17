@@ -1,0 +1,3 @@
+#version 1.7
+#file_name	format	output_type	experiment	replicate	enriched_in	ucsc_db	paired_end	technical_replicate{% for r in files %}
+{{ r.relative_path }}	{{ r.file_format }}	{{ r.output_type }}	{{ r.dataset_id }}	{{ r.replicate }}	{{ r.enriched_in }}	{{ r.ucsc_db }}	{{ r.paired_end|default_if_none:"n/a" }}	{{ r.technical_replicate|default_if_none:"n/a"}}{% endfor %}

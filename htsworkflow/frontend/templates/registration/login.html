@@ -1,9 +1,9 @@
 {% extends "base_site.html" %}
 {% load i18n %}
 
-{% block additional_css %}{% load adminmedia %}{{ block.super }}
-<link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/base.css" />
-<link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/login.css" />
+{% block additional_css %}{% load staticfiles %}{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "css/base.css" %}"/>
+<link rel="stylesheet" type="text/css" href="{% static "css/login.css" %}"/>
 {% endblock %}
 
 {% block title %}Login{% endblock %}
@@ -16,6 +16,7 @@
 <div id="container">
     <h1>Login</h1>
 <form action="{{ app_path }}" method="post" id="login-form">
+  {% csrf_token %}
   <div class="form-row">
     <label for="id_username">{% trans 'Username:' %}</label> <input type="text" name="username" id="id_username" />
   </div>

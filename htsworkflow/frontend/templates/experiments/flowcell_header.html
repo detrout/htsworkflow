@@ -1,7 +1,8 @@
+{% load staticfiles %}
 <div class="flowcell_identity" typeof="libns:IlluminaFlowcell" resource="{{flowcell.get_absolute_url}}">
   <h2>About this Flowcell</h2>
   <b>Flowcell</b>:
-    <a href="{{flowcell.get_absolute_url}}"><span property="libns:flowcell_id">{{flowcell.flowcell_id}}</span></a>{% if user.is_staff %}<a href="{{flowcell.get_admin_url}}"><img class="icon_button" src="/media/img/admin/icon_changelink.gif" alt="Edit"/></a>{% endif%}
+    <a href="{{flowcell.get_absolute_url}}"><span property="libns:flowcell_id">{{flowcell.flowcell_id}}</span></a>{% if user.is_staff %}<a href="{{flowcell.get_admin_url}}"><img class="icon_button" src="{% static "admin/img/icon_changelink.gif" %}" alt="Edit"/></a>{% endif%}
   <br/>
   <div rel="libns:sequenced_by">
   <div typeof="libns:Sequencer"

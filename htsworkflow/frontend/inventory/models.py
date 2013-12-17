@@ -157,7 +157,7 @@ class PrinterTemplate(models.Model):
     item_type = models.ForeignKey(ItemType)
     printer = models.ForeignKey(Printer)
 
-    default = models.BooleanField()
+    default = models.BooleanField(default=False)
 
     template = models.TextField()
 

@@ -1,12 +1,13 @@
 {% extends "base_site.html" %}
-{% load adminmedia admin_list i18n %}
+{% load admin_list i18n %}
+{% load staticfiles %}
 {% block extrahead %}
     <!-- App Stuff -->
-    <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
+    <link type="text/css" rel="stylesheet" href="{% static "css/app.css" %}"/>
 
     {% block additional_javascript %}
-    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/js/htsw.js"></script>
+    <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/htsw.js" %}"></script>
     <script type="text/javascript">
       $(document).ready(function() {
         $(window).resize(function() {
@@ -91,7 +92,7 @@
         <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.1 }}</td>
         <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.2 }}</td>
         {% if lib.is_archived %}
-          <td ><img src="/static/img/hdd_unmount.png" alt="Archived" /></td>
+          <td ><img src="{% static "img/hdd_unmount.png" %}" alt="Archived" /></td>
         {% else %}
           <td ></td>
         {% endif %}

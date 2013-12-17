@@ -6,6 +6,10 @@ except ImportError, e:
     import simplejson as json
 
 from django.test import TestCase
+from django.test.utils import setup_test_environment, \
+     teardown_test_environment
+from django.db import connection
+from django.conf import settings
 
 from htsworkflow.frontend.samples.models import \
         Affiliation, \
@@ -327,3 +331,24 @@ def get_rdf_memory_model():
     storage = RDF.MemoryStorage()
     model = RDF.Model(storage)
     return model
+
+OLD_DB = settings.DATABASES['default']['NAME']
+def setUpModule():
+    setup_test_environment()
+    connection.creation.create_test_db()
+
+def tearDownModule():
+    connection.creation.destroy_test_db(OLD_DB)
+    teardown_test_environment()
+
+def suite():
+    from unittest2 import TestSuite, defaultTestLoader
+    suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(LibraryTestCase))
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(SampleWebTestCase))
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestRDFaLibrary))
+    return suite
+
+if __name__ == "__main__":
+    from unittest2 import main
+    main(defaultTest="suite")

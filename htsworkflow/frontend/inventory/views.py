@@ -1,5 +1,6 @@
-from htsworkflow.frontend.samples.changelist import ChangeList
+from htsworkflow.frontend.samples.changelist import HTSChangeList
 from htsworkflow.frontend.inventory.models import Item, LongTermStorage, ItemType
+from htsworkflow.frontend.inventory.admin import ItemAdmin, ItemTypeAdmin
 from htsworkflow.frontend.inventory.bcmagic import item_search
 from htsworkflow.frontend.bcmagic.plugin import register_search_plugin
 from htsworkflow.frontend.experiments.models import FlowCell
@@ -138,11 +139,11 @@ def all_index(request):
     Inventory Index View
     """
     # build changelist
-    item_changelist = ChangeList(request, Item,
+    item_changelist = HTSChangeList(request, Item,
         list_filter=[],
         search_fields=[],
         list_per_page=200,
-        queryset=Item.objects.all()
+        model_admin=ItemAdmin(Item, None)
     )
 
     context_dict = {
@@ -161,11 +162,11 @@ def index(request):
     Inventory Index View
     """
     # build changelist
-    item_changelist = ChangeList(request, Item,
+    item_changelist = HTSChangeList(request, ItemType,
         list_filter=[],
-        search_fields=['name'],
+        search_fields=['name', 'description'],
         list_per_page=50,
-        queryset=ItemType.objects.all()
+        model_admin=ItemTypeAdmin(ItemType, None)
     )
 
     context_dict = {
@@ -173,7 +174,6 @@ def index(request):
         'page_name': 'Inventory Index'
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
-
     return render_to_response('inventory/inventory_index.html',
                               context_dict,
                               context_instance=RequestContext(request))
@@ -189,11 +189,11 @@ def itemtype_index(request, name):
     itemtype = ItemType.objects.get(name=name)
 
     # build changelist
-    item_changelist = ChangeList(request, Item,
+    item_changelist = HTSChangeList(request, Item,
         list_filter=[],
         search_fields=[],
         list_per_page=200,
-        queryset=itemtype.item_set.all()
+        model_admin=ItemAdmin(Item, None)
     )
 
     context_dict = {

@@ -8,3 +8,4 @@
 .tox
 dist
 RELEASE-VERSION
+docs/build/

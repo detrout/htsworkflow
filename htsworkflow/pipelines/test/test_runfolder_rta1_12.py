@@ -13,7 +13,7 @@ from htsworkflow.pipelines import ipar
 from htsworkflow.pipelines import bustard
 from htsworkflow.pipelines import gerald
 from htsworkflow.pipelines import runfolder
-from htsworkflow.pipelines.runfolder import ElementTree
+from htsworkflow.pipelines import ElementTree
 
 from htsworkflow.pipelines.test.simulate_runfolder import *
 
@@ -46,6 +46,7 @@ def make_runfolder(obj=None):
     os.mkdir(unaligned_dir)
     make_unaligned_fastqs_1_12(unaligned_dir, flowcell_id)
     make_unaligned_config_1_12(unaligned_dir)
+    make_unaligned_status_1_12(unaligned_dir, flowcell_id)
 
     aligned_dir = os.path.join(runfolder_dir, "Aligned")
     os.mkdir(aligned_dir)
@@ -256,7 +257,7 @@ class RunfolderTests(TestCase):
         self.assertEqual(runs[0].flowcell_id, self.flowcell_id)
         name = 'run_%s_%s.xml' % ( self.flowcell_id,
                                    date.today().strftime('%Y-%m-%d'),)
-        self.failUnlessEqual(runs[0].name, name)
+        self.failUnlessEqual(runs[0].serialization_filename, name)
 
         bustard_dir = os.path.join(self.runfolder_dir, 'Unaligned')
         r1 = runs[0]
@@ -268,7 +269,7 @@ class RunfolderTests(TestCase):
         xml_str = ElementTree.tostring(xml)
 
         r2 = runfolder.PipelineRun(xml=xml)
-        self.failUnlessEqual(r1.name, r2.name)
+        self.failUnlessEqual(r1.serialization_filename, r2.serialization_filename)
         self.failIfEqual(r2.image_analysis, None)
         self.failIfEqual(r2.bustard, None)
         self.failIfEqual(r2.gerald, None)

@@ -1,9 +1,10 @@
 {% extends "base_site.html" %}
-{% load adminmedia humanize i18n %}
+{% load staticfiles %}
+{% load humanize i18n %}
 {% block extrahead %}
     <!-- App Stuff -->
-    <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
-    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="{% static "css/app.css" %}" />
+    <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
 
     {% block additional_javascript %}
     {% endblock %}
@@ -41,7 +42,7 @@
               {% if user.is_staff %}
               <a href="{{lane.library.get_admin_url}}">
                   <img class="icon_button"
-                       src="/media/img/admin/icon_changelink.gif"/>
+                       src="{% static "admin/img/icon_changelink.gif" %}"/>
               </a>{% endif %}
           </td>
           <td>

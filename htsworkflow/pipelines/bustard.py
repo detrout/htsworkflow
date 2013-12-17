@@ -13,7 +13,7 @@ import re
 import sys
 import time
 
-from htsworkflow.pipelines.runfolder import \
+from htsworkflow.pipelines import \
    ElementTree, \
    VERSION_RE, \
    EUROPEAN_STRPTIME
@@ -364,6 +364,9 @@ def bustard(pathname):
         b = bustard_from_ga2(pathname, bustard_filename)
     else:
         b = bustard_from_ga1(pathname)
+
+    if not b:
+        raise RuntimeError("Unable to parse base-call directory at %s" % (pathname,))
 
     return b
 

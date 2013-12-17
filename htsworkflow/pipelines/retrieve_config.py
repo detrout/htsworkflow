@@ -22,7 +22,7 @@ from htsworkflow.util.url import normalize_url
 from htsworkflow.pipelines.genome_mapper import \
      getAvailableGenomes, \
      constructMapperDict
-from htsworkflow.pipelines.runfolder import LANE_LIST
+from htsworkflow.pipelines import LANE_LIST
 # JSON dictionaries use strings
 LANE_LIST_JSON = [ str(l) for l in LANE_LIST ]
 

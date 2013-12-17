@@ -7,7 +7,7 @@ import os
 from optparse import OptionParser
 import sys
 
-from htsworkflow.version import version
+from htsworkflow.util.version import version
 from htsworkflow.util.opener import autoopen
 from htsworkflow.util.conversion import parse_slice
 

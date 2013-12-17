@@ -3,7 +3,7 @@
 from glob import glob
 import os
 import collections
-from htsworkflow.pipelines.runfolder import ElementTree
+from htsworkflow.pipelines import ElementTree
 
 vldInfo = collections.namedtuple('vldInfo', 'name is_link')
 

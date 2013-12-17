@@ -1,9 +1,10 @@
 {% extends "base_site.html" %}
-{% load adminmedia humanize i18n %}
+{% load humanize i18n %}
+{% load staticfiles %}
 {% block extrahead %}
     <!-- App Stuff -->
-    <link type="text/css" rel="stylesheet" href="/static/css/app.css" />
-    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="{% static "css/app.css" %}" />
+    <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
 
     {% block additional_javascript %}
     {% endblock %}

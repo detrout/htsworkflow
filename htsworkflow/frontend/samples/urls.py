@@ -1,8 +1,8 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('',
-    (r"^library/(?P<library_id>\w+)/json", 'htsworkflow.frontend.samples.views.library_json'),
-    (r"^species/(?P<species_id>\w+)/json", 'htsworkflow.frontend.samples.views.species_json'),
-    (r"^species/(?P<species_id>\w+)", 'htsworkflow.frontend.samples.views.species'),
-    (r"^antibody/$", 'htsworkflow.frontend.samples.views.antibodies'),                   
+    url(r"^library/(?P<library_id>\w+)/json", 'htsworkflow.frontend.samples.views.library_json'),
+    url(r"^species/(?P<species_id>\w+)/json", 'htsworkflow.frontend.samples.views.species_json'),
+    url(r"^species/(?P<species_id>\w+)", 'htsworkflow.frontend.samples.views.species'),
+    url(r"^antibody/$", 'htsworkflow.frontend.samples.views.antibodies'),
 )

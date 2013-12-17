@@ -12,7 +12,7 @@ from htsworkflow.pipelines import bustard
 from htsworkflow.pipelines import gerald
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.samplekey import SampleKey
-from htsworkflow.pipelines.runfolder import ElementTree
+from htsworkflow.pipelines import ElementTree
 
 from htsworkflow.pipelines.test.simulate_runfolder import *
 
@@ -271,7 +271,8 @@ class RunfolderTests(TestCase):
         runs = runfolder.get_runs(self.runfolder_dir)
         self.failUnlessEqual(len(runs), 1)
         name = 'run_207BTAAXY_%s.xml' % ( date.today().strftime('%Y-%m-%d'),)
-        self.failUnlessEqual(runs[0].name, name)
+        self.failUnlessEqual(runs[0].serialization_filename, name)
+
 
 
         r1 = runs[0]
@@ -279,7 +280,7 @@ class RunfolderTests(TestCase):
         xml_str = ElementTree.tostring(xml)
 
         r2 = runfolder.PipelineRun(xml=xml)
-        self.failUnlessEqual(r1.name, r2.name)
+        self.failUnlessEqual(r1.serialization_filename, r2.serialization_filename)
         self.failIfEqual(r2.image_analysis, None)
         self.failIfEqual(r2.bustard, None)
         self.failIfEqual(r2.gerald, None)
