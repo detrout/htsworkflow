@@ -105,8 +105,6 @@ thisView:alignments ucscDaf:filename_re ".*\\.bam$" ;
 
         """
         map = ResultMap()
-        print self.tempdir
-        print os.listdir(self.tempdir)
         map['1000'] = os.path.join(self.sourcedir, S1_NAME)
         map['2000'] = os.path.join(self.sourcedir, S2_NAME)
 

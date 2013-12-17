@@ -54,7 +54,6 @@ class RetrieveTestCases(TestCase):
 
         output = StringIO()
         save_sample_sheet(output, options, flowcell_info)
-        print output.buf
 
         output.seek(0)
         sheet = list(csv.DictReader(output))
