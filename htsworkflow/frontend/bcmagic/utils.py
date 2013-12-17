@@ -5,25 +5,30 @@ import socket
 import StringIO
 
 
-def print_zpl(zpl_text, host=settings.BCPRINTER_PRINTER1_HOST):
+def print_zpl(zpl_text, host=None):
     """
     Sends zpl_text to printer
     """
+    if not host:
+        host = settings.BCPRINTER_PRINTER1_HOST
     ftp = ftplib.FTP(host=host, user='blank', passwd='')
     ftp.login()
     ftp.storlines("STOR printme.txt", StringIO.StringIO(zpl_text))
     ftp.quit()
 
 
-def print_zpl_socket(zpl_text,
-                     host=settings.BCPRINTER_PRINTER1_HOST,
-                     port=settings.BCPRINTER_PRINTER1_PORT):
+def print_zpl_socket(zpl_text, host=None, port=None):
     """
     Sends zpl_text to printer via a socket
 
     if zpl_text is a list of zpl_texts, it will print each one
     in that list.
     """
+    
+    if not host:
+        host=settings.BCPRINTER_PRINTER1_HOST
+    if not port:
+        port=settings.BCPRINTER_PRINTER1_PORT
 
     # Process anyway if zpl_text is a list.
     if type(zpl_text) is list:
