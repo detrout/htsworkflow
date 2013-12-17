@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <div id="librarydetail"
      about="{{lib.get_absolute_url}}"
      typeof="libns:Library">
@@ -5,7 +6,7 @@
     <h2>Library Name</h2>
     <b>Library ID</b>:
        <a href="{{lib.get_absolute_url}}"><span property="libns:library_id">{{ lib.id }}</span></a>
-       {% if user.is_staff %}<a href="{{lib.get_admin_url}}"><img class="icon_button" src="/media/img/admin/icon_changelink.gif" alt="Edit"/></a>{% endif %}
+       {% if user.is_staff %}<a href="{{lib.get_admin_url}}"><img class="icon_button" src="{% static "admin/img/icon_changelink.gif" %}" alt="Edit"/></a>{% endif %}
        <br />
     <b>Name</b>:
       <span property="libns:name">{{ lib.library_name }}</span>
