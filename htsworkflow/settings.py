@@ -22,12 +22,12 @@ SECRET_KEY = 'c=5&609$7)bm_u+3$2bi=ida$*a)c1(cp_0siua7uyww!1qfg_'
 DEFAULT_API_KEY = 'n7HsXGHIi0vp9j5u4TIRJyqAlXYc4wrH'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# Override in settings_local
 DEBUG = True
 
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ['jumpgate.caltech.edu']
-
 
 # Application definition
 AUTHENTICATION_BACKENDS = (
@@ -67,7 +67,7 @@ TEMPLATE_DIRS = (
 
 ROOT_URLCONF = 'htsworkflow.frontend.urls'
 
-WSGI_APPLICATION = 'htsworkflow.wsgi.application'
+WSGI_APPLICATION = 'wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
@@ -78,6 +78,8 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'fctracker.db'),
     }
 }
+
+EMAIL_HOST = 'localhost'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
