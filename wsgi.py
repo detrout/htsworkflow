@@ -11,7 +11,7 @@ import os
 import sys
 WSGIAPP = os.path.join(os.path.dirname(__file__))
 
-sys.path.append(os.path.abspath(os.path.join(WSGIAPP, '..')))
+sys.path.append(WSGIAPP)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "htsworkflow.settings")
 
