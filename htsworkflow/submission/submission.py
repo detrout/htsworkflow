@@ -11,7 +11,7 @@ from htsworkflow.util.rdfhelp import \
      dump_model, \
      fromTypedNode, \
      get_model, \
-     stripNamespace, \
+     strip_namespace, \
      toTypedNode
 from htsworkflow.util.rdfns import *
 from htsworkflow.util.hashfile import make_md5sum
@@ -390,7 +390,7 @@ def list_submissions(model):
     query = RDF.SPARQLQuery(query_body)
     rdfstream = query.execute(model)
     for row in rdfstream:
-        s = stripNamespace(submissionLog, row['submission'])
+        s = strip_namespace(submissionLog, row['submission'])
         if s[-1] in ['#', '/', '?']:
             s = s[:-1]
         yield s

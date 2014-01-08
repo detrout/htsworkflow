@@ -214,7 +214,7 @@ def simplify_uri(uri):
                 return element
     raise ValueError("Unable to simplify %s" % (uri,))
 
-def stripNamespace(namespace, term):
+def strip_namespace(namespace, term):
     """Remove the namespace portion of a term
 
     returns None if they aren't in common

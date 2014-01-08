@@ -16,7 +16,7 @@ from htsworkflow.pipelines import desplit_fastq
 from htsworkflow.submission.fastqname import FastqName
 from htsworkflow.util.rdfhelp import get_model, dump_model, load_into_model, \
      fromTypedNode, \
-     stripNamespace
+     strip_namespace
 from htsworkflow.util.rdfns import *
 from htsworkflow.util.conversion import parse_flowcell_id
 
@@ -347,7 +347,7 @@ class SequenceResult(object):
     ispaired = property(_get_ispaired)
 
     def _get_filetype(self):
-        return stripNamespace(libraryOntology, self._filetype)
+        return strip_namespace(libraryOntology, self._filetype)
     filetype = property(_get_filetype)
 
     def _get_path(self):

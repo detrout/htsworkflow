@@ -11,7 +11,6 @@ from htsworkflow.submission.submission import Submission
 from htsworkflow.util.rdfhelp import \
      fromTypedNode, \
      geoSoftNS, \
-     stripNamespace, \
      submissionOntology
 from htsworkflow.util.url import parse_ssh_url
 from htsworkflow.util.ucsc import bigWigInfo
