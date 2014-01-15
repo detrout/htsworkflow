@@ -36,6 +36,7 @@ setup(
                       'benderjab >= 0.2',
                       'httplib2',
                       'keyring',
+                      'PyLD',
                       # This dependency is redland librdf, which doesn't have a public egg
                       #'librdf >= 1.0.14',
     ],
