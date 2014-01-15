@@ -1,0 +1,359 @@
+{
+    "properties": {
+        "accession": {
+            "comment": "Only admins are allowed to set or update this value.",
+            "accessionType": "LB",
+            "description": "A unique identifier to be used to reference the object.",
+            "permission": "import_items",
+            "serverDefault": "accession",
+            "format": "accession",
+            "title": "Accession",
+            "type": "string"
+        },
+        "alternate_accessions": {
+            "description": "Accessions previously assigned to objects that have been merged with this object.",
+            "title": "Alternate accessions",
+            "default": [],
+            "items": {
+                "comment": "Only admins are allowed to set or update this value.",
+                "format": "accession",
+                "type": "string",
+                "description": "An accession previously assigned to an object that has been merged with this object.",
+                "title": "Alternate Accession"
+            },
+            "permission": "import_items",
+            "type": "array"
+        },
+        "lot_id": {
+            "type": "string",
+            "description": "The lot identifier provided by the originating lab or vendor.",
+            "title": "Lot ID"
+        },
+        "aliases": {
+            "default": [],
+            "items": {
+                "comment": "Current convention is colon separated lab name and lab identifier. (e.g. john-doe:42).",
+                "pattern": "^\\S+:\\S+",
+                "type": "string",
+                "description": "A lab specific identifier to reference an object.",
+                "title": "Lab alias"
+            },
+            "type": "array",
+            "description": "Lab specific identifiers to reference an object.",
+            "title": "Lab aliases"
+        },
+        "submitted_by": {
+            "comment": "Do not submit, value is assigned by the server. The user that created the object.",
+            "linkTo": "user",
+            "title": "Submitted by",
+            "serverDefault": "userid",
+            "permission": "import_items",
+            "type": "string"
+        },
+        "documents": {
+            "default": [],
+            "items": {
+                "comment": "See document.json for available identifiers.",
+                "type": "string",
+                "description": "A document that describe the preparation of the library. ",
+                "linkTo": "document",
+                "title": "Protocol document"
+            },
+            "type": "array",
+            "description": "Documents that describe the preparation of the library.",
+            "title": "Protocol documents"
+        },
+        "fragmentation_date": {
+            "comment": "Date can be submitted in as YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSTZD (TZD is the time zone designator; use Z to express time in UTC or for time expressed in local time add a time zone offset from UTC +HH:MM or -HH:MM).",
+            "type": "string",
+            "anyOf": [
+                {
+                    "format": "date-time"
+                },
+                {
+                    "format": "date"
+                }
+            ],
+            "description": "The date that the nucleic acid was fragmented.",
+            "title": "Fragmentation date"
+        },
+        "uuid": {
+            "format": "uuid",
+            "serverDefault": "uuid4",
+            "title": "UUID",
+            "requestMethod": "POST",
+            "permission": "import_items",
+            "type": "string"
+        },
+        "strand_specificity": {
+            "default": false,
+            "type": "boolean",
+            "description": "The preparation of the library using a strand-specific protocol.",
+            "title": "Strand specificity"
+        },
+        "fragmentation_method": {
+            "description": "A short description or reference of the nucleic acid fragmentation protocol used in library preparation, if applicable.",
+            "title": "Fragmentation method",
+            "default": "see document",
+            "format": "semi-controlled",
+            "XXXenum": [
+                "sonication",
+                "see document",
+                "covaris shearing",
+                "chemical (part of Illumina TruSeq mRNA Kit)",
+                "Illumina/Nextera tagmentation",
+                "bioruptor twin",
+                "n/a"
+            ],
+            "type": "string"
+        },
+        "schema_version": {
+            "comment": "Do not submit, value is assigned by the server. The version of the JSON schema that the server uses to validate the object. Schema version indicates generation of schema used to save version to to enable upgrade steps to work. Individual schemas should set the default.",
+            "pattern": "^\\d+(\\.\\d+)*$",
+            "default": "2",
+            "type": "string",
+            "requestMethod": []
+        },
+        "lysis_method": {
+            "description": "A short description or reference of the cell lysis protocol used in library preparation, if applicable",
+            "title": "Lysis method",
+            "default": "see document",
+            "format": "semi-controlled",
+            "XXXenum": [
+                "miRNeasy Mini kit (QIAGEN cat#:217004)",
+                "Trizol (LifeTech cat#: 15596-018)",
+                "Ambion mirVana",
+                "Qiagen #74204",
+                "QIAGEN DNeasy Blood & Tissue Kit",
+                "see document",
+                "n/a"
+            ],
+            "type": "string"
+        },
+        "source": {
+            "comment": "See source.json for available identifiers.",
+            "title": "Source",
+            "type": "string",
+            "description": "The originating lab or vendor.",
+            "linkTo": "source"
+        },
+        "biosample": {
+            "comment": "See biosample.json for available identifiers.",
+            "title": "Biosample",
+            "type": "string",
+            "description": "The biosample that nucleic acid was isolated from to generate the library.",
+            "linkTo": "biosample"
+        },
+        "extraction_method": {
+            "description": "A short description or reference of the nucleic acid extraction protocol used in library preparation, if applicable.",
+            "title": "Extraction method",
+            "default": "see document",
+            "format": "semi-controlled",
+            "XXXenum": [
+                "miRNeasy Mini kit (QIAGEN cat#:217004)",
+                "Trizol (LifeTech cat#: 15596-018)",
+                "Ambion mirVana",
+                "Qiagen #74204",
+                "QIAGEN DNeasy Blood & Tissue Kit",
+                "see document",
+                "n/a"
+            ],
+            "type": "string"
+        },
+        "library_size_selection_method": {
+            "description": "A short description or reference of the size selection protocol used in library preparation, if applicable.",
+            "title": "Size selection method",
+            "default": "see document",
+            "format": "semi-controlled",
+            "XXXenum": [
+                "gel",
+                "see document",
+                "SPRI beads"
+            ],
+            "type": "string"
+        },
+        "status": {
+            "default": "CURRENT",
+            "enum": [
+                "CURRENT",
+                "DELETED"
+            ],
+            "type": "string",
+            "title": "Status"
+        },
+        "nucleic_acid_term_name": {
+            "enum": [
+                "DNA",
+                "RNA",
+                "polyadenylated mRNA",
+                "miRNA"
+            ],
+            "type": "string",
+            "description": "SO (Sequence Ontology) term best matching the nucleic acid isolated to generate the library (e.g. 'RNA' for a total RNA library, even if that library is subsequently reverse transcribed for DNA sequencing.)",
+            "title": "Nucleic acid term"
+        },
+        "treatments": {
+            "default": [],
+            "items": {
+                "comment": "See treatment.json for available identifiers.",
+                "type": "string",
+                "linkTo": "treatment",
+                "title": "Treatment"
+            },
+            "type": "array",
+            "title": "Treatments"
+        },
+        "award": {
+            "comment": "See award.json for list of available identifiers.",
+            "title": "Grant",
+            "type": "string",
+            "description": "Grant associated with the submission.",
+            "linkTo": "award"
+        },
+        "depleted_in_term_name": {
+            "default": [],
+            "items": {
+                "enum": [
+                    "rRNA",
+                    "polyadenylated mRNA",
+                    "capped mRNA"
+                ],
+                "type": "string",
+                "description": "SO (Sequence Ontology) term best matching the nucleic acid that was diminished from the library.",
+                "title": "Depleted in term"
+            },
+            "type": "array"
+        },
+        "paired_ended": {
+            "default": false,
+            "XXXnote": "Is this redundant to the field found in replicate.json",
+            "type": "boolean",
+            "description": "Whether or not the library was prepared with paired ends",
+            "title": "Paired ended"
+        },
+        "lab": {
+            "comment": "See lab.json for list of available identifiers.",
+            "title": "Lab",
+            "type": "string",
+            "description": "Lab associated with the submission.",
+            "linkTo": "lab"
+        },
+        "depleted_in_term_id": {
+            "default": [],
+            "items": {
+                "comment": "Based on the choice in depleted_in_term_name use the following guide: rRNA - SO:0000252,  polyadenylated mRNA - SO:0000871 or capped mRNA - SO:0000862",
+                "enum": [
+                    "SO:0000252",
+                    "SO:0000871",
+                    "SO:0000862"
+                ],
+                "type": "string",
+                "description": "SO (Sequence Ontology) identifier best matching the nucleic acid that was diminished from the library.",
+                "title": "Depleted in ID"
+            },
+            "type": "array"
+        },
+        "product_id": {
+            "type": "string",
+            "description": "The product identifier provided by the originating lab or vendor.",
+            "title": "Product ID"
+        },
+        "size_range": {
+            "pattern": "(^[0-9]+-[0-9]+$|^[<>][0-9]+$)",
+            "type": "string",
+            "description": "The measured size range of the purified nucleic acid, in kD.",
+            "title": "Size range"
+        },
+        "notes": {
+            "title": "Notes",
+            "type": "string",
+            "description": "Additional information.",
+            "permission": "import_items"
+        },
+        "nucleic_acid_term_id": {
+            "comment": "Based on the choice in nucleic_acid_term_name use the following guide: DNA - SO:0000352, RNA - SO:0000356,  polyadenylated mRNA - SO:0000871 or miRNA - SO:0000276",
+            "enum": [
+                "SO:0000352",
+                "SO:0000356",
+                "SO:0000871",
+                "SO:0000276"
+            ],
+            "type": "string",
+            "description": "SO (Sequence Ontology) identifier best matching the nucleic acid isolated to generate the library (e.g. 'SO:0000356' for a total RNA library, even if that library is subsequently reverse transcribed for DNA sequencing.)",
+            "title": "Nucleic acid ID"
+        },
+        "nucleic_acid_starting_quantity": {
+            "pattern": "[0-9]+",
+            "type": "string",
+            "description": "The starting amount of nucleic acid before selection and purification.",
+            "title": "Nucleic acid starting quantity"
+        },
+        "date_created": {
+            "comment": "Do not submit, value is assigned by the server. The date the object is created.",
+            "title": "Date created",
+            "serverDefault": "now",
+            "permission": "import_items",
+            "anyOf": [
+                {
+                    "format": "date-time"
+                },
+                {
+                    "format": "date"
+                }
+            ],
+            "type": "string"
+        }
+    },
+    "description": "Schema for submitting a nucleic acid library.",
+    "title": "Library",
+    "required": [
+        "award",
+        "lab",
+        "nucleic_acid_term_id"
+    ],
+    "mixinProperties": [
+        {
+            "$ref": "mixins.json#/schema_version"
+        },
+        {
+            "$ref": "mixins.json#/uuid"
+        },
+        {
+            "$ref": "mixins.json#/accession"
+        },
+        {
+            "$ref": "mixins.json#/aliases"
+        },
+        {
+            "$ref": "mixins.json#/attribution"
+        },
+        {
+            "$ref": "mixins.json#/standard_status"
+        },
+        {
+            "$ref": "mixins.json#/submitted"
+        },
+        {
+            "$ref": "mixins.json#/source"
+        },
+        {
+            "$ref": "mixins.json#/product_id"
+        },
+        {
+            "$ref": "mixins.json#/lot_id"
+        },
+        {
+            "$ref": "mixins.json#/notes"
+        }
+    ],
+    "XXXcomment": "is source required?",
+    "identifyingProperties": [
+        "uuid",
+        "accession",
+        "aliases"
+    ],
+    "additionalProperties": false,
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "id": "/profiles/library.json"
+}
