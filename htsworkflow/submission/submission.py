@@ -133,7 +133,7 @@ class Submission(object):
             RDF.Statement(fileNode,
                           libraryOntology['library'],
                           libNode))
-                          
+
         LOGGER.debug("Done.")
 
     def make_file_node(self, pathname, submissionNode):
@@ -175,7 +175,7 @@ class Submission(object):
         except ValueError:
             # currently its just ignore it if the fastq name parser fails
             return
-        
+
         terms = [('flowcell', libraryOntology['flowcell_id']),
                  ('lib_id', libraryOntology['library_id']),
                  ('lane', libraryOntology['lane_number']),
@@ -186,7 +186,7 @@ class Submission(object):
             if value is not None:
                 s = RDF.Statement(fileNode, model_term, toTypedNode(value))
                 self.model.append(s)
-                
+
     def add_label(self, file_type, file_node, lib_node):
         """Add rdfs:label to a file node
         """
