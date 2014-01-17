@@ -217,7 +217,7 @@ class ENCODED:
     def get_schema_url(self, obj):
         obj_type = self.get_object_type(obj)
         if obj_type:
-            return self.prepare_url(ENCODED_SCHEMA_ROOT + obj_type + '.json')
+            return self.prepare_url(ENCODED_SCHEMA_ROOT + obj_type + '.json') + '#'
 
     def _is_encoded_object(self, obj):
         '''Test to see if an object is a JSON-LD object
