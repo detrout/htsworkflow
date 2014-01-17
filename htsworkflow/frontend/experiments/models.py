@@ -17,6 +17,8 @@ from htsworkflow.frontend.samples.models import Library
 from htsworkflow.util.conversion import parse_flowcell_id
 from htsworkflow.pipelines import runfolder
 
+import pytz
+
 LOGGER = logging.getLogger(__name__)
 default_pM = 5
 try:
@@ -244,7 +246,8 @@ class FlowCell(models.Model):
             run.runfolder_name = run_xml_data.runfolder_name
             run.cycle_start = run_xml_data.image_analysis.start
             run.cycle_stop = run_xml_data.image_analysis.stop
-            run.run_start_time = run_xml_data.image_analysis.date
+            naive_run_start_time = datetime.datetime.fromordinal(run_xml_data.image_analysis.date.toordinal())
+            run.run_start_time = pytz.timezone(settings.TIME_ZONE).localize(naive_run_start_time)
             run.image_software = run_xml_data.image_analysis.software
             run.image_version = run_xml_data.image_analysis.version
             run.basecall_software = run_xml_data.bustard.software
