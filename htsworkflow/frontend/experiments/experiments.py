@@ -14,6 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail, mail_admins
 from django.http import HttpResponse, Http404
 from django.conf import settings
+from django.utils import timezone
 
 from htsworkflow.frontend.auth import require_api_key
 from htsworkflow.frontend.experiments.models import \
@@ -179,7 +180,7 @@ def updStatus(request):
       rec.run_status = UpdatedStatus
 
       #if there's a message update that too
-      mytimestamp = datetime.now().__str__()
+      mytimestamp = timezone.now().__str__()
       mytimestamp = re.sub(pattern=":[^:]*$",repl="",string=mytimestamp)
       if request.REQUEST.has_key('msg'):
         rec.run_note += ", "+request.REQUEST['msg']+" ("+mytimestamp+")"
@@ -325,7 +326,7 @@ def estimateFlowcellTimeRemaining(flowcell):
     estimate_mid = estimateFlowcellDuration(flowcell)
 
     # offset for how long we've been running
-    running_time = datetime.now() - flowcell.run_date
+    running_time = timezone.now() - flowcell.run_date
     estimate_mid -= running_time
 
     return estimate_mid
