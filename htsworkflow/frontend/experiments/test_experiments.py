@@ -29,7 +29,8 @@ LANE_SET = range(1,9)
 NSMAP = {'libns':'http://jumpgate.caltech.edu/wiki/LibraryOntology#'}
 
 from django.db import connection
-OLD_DB_NAME = settings.DATABASE_NAME
+
+OLD_DB_NAME = settings.DATABASES['default']['NAME']
 VERBOSITY = 0
 def setUpModule():
     setup_test_environment()
