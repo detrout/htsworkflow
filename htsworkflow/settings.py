@@ -105,6 +105,10 @@ STATIC_URL = '/static/'
 # Update this in settings_local to point to your flowcell result directory
 RESULT_HOME_DIR = os.path.join(BASE_DIR, 'test', 'results')
 
+# configure who is sending email and who should get BCCs of announcments
+NOTIFICATION_SENDER = "noreply@example.com"
+NOTIFICATION_BCC=[]
+
 try:
     # allow local customizations
     from settings_local import *
