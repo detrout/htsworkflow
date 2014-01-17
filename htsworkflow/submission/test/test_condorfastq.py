@@ -680,16 +680,6 @@ class TestCondorFastq(TestCase):
             self.assertTrue('12345_C02F9ACXX_c202_l3_r2.fastq' in arguments[3])
 
 
-OLD_DB = settings.DATABASES['default']['NAME']
-def setUpModule():
-    setup_test_environment()
-    connection.creation.create_test_db()
-
-def tearDownModule():
-    connection.creation.destroy_test_db(OLD_DB)
-    teardown_test_environment()
-
-
 def suite():
     from unittest2 import TestSuite, defaultTestLoader
     suite = TestSuite()
