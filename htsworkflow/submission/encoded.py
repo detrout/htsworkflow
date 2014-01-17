@@ -109,7 +109,7 @@ class ENCODED:
             self.username = authenticators[0]
             self.password = authenticators[2]
 
-    def add_jsonld_context(self, tree, contexts, base):
+    def add_jsonld_context(self, tree, default_base):
         """Add contexts to various objects in the tree.
 
         tree is a json tree returned from the DCC's encoded database.
@@ -118,11 +118,10 @@ class ENCODED:
         base, if supplied allows setting the base url that relative
             urls will be resolved against.
         """
-        tree['@context'] = contexts[None]
-        tree['@context']['@base'] = base
-        self.add_jsonld_child_context(tree, contexts)
+        self.add_jsonld_child_context(tree, default_base)
+        self.add_jsonld_namespaces(tree['@context'])
 
-    def add_jsonld_child_context(self, obj, contexts):
+    def add_jsonld_child_context(self, obj, default_base):
         '''Add JSON-LD context to the encoded JSON.
 
         This is recursive because some of the IDs were relative URLs
@@ -205,7 +204,7 @@ class ENCODED:
         '''
         url = self.prepare_url(obj_id)
         json = self.get_json(obj_id, **kwargs)
-        self.add_jsonld_context(json, self.context, url)
+        self.add_jsonld_context(json, url)
         return json
 
     def get_object_type(self, obj):
