@@ -3,7 +3,10 @@ import os
 from pprint import pprint
 from unittest2 import TestCase, TestSuite, defaultTestLoader, skip
 
-from htsworkflow.submission.encoded import ENCODED
+from htsworkflow.submission.encoded import (ENCODED,
+     ENCODED_CONTEXT,
+     ENCODED_NAMESPACES
+)
 
 class TestEncoded(TestCase):
     def test_prepare_url(self):
@@ -56,6 +59,20 @@ class TestEncoded(TestCase):
         encode.validate(obj)
         self.assertTrue('@id' in obj)
 
+    def test_create_context(self):
+        linked_id = {'@type': '@id'}
+        library = { '@id': '/libraries/1234', '@type': ['library', 'item'] }
+
+        encode = ENCODED('test.encodedcc.org')
+        url = encode.prepare_url(library['@id'])
+        context = encode.create_jsonld_context(library, url)
+        self.assertEqual(context['award'], linked_id )
+        self._verify_context(context, 'library')
+        # namespaces not added yet.
+        self.assertRaises(AssertionError, self._verify_namespaces, context)
+        encode.add_jsonld_namespaces(context)
+        self._verify_namespaces(context)
+
     def test_add_context(self):
         """Checking to make sure nested @base and @vocab urls are set correctly
         """
@@ -97,7 +114,23 @@ class TestEncoded(TestCase):
 
         self.assertEqual(obj['biosample']['@context']['@base'], bio_base)
         self.assertEqual(obj['@context']['@vocab'], schema_url)
+        self._verify_context(obj['@context'], 'library')
+        self._verify_namespaces(obj['@context'])
+        self._verify_context(obj['biosample']['@context'], 'biosample')
+        self.assertEqual(obj['@context']['rdf'], 'http://www.w3.org/1999/02/22-rdf-syntax-ns#')
+        self.assertEqual(obj['@context']['OBO'], 'http://purl.obolibrary.org/obo/')
 
+
+    def _verify_context(self, context, obj_type):
+        for context_key in [None, obj_type]:
+            for k in ENCODED_CONTEXT[context_key]:
+                self.assertIn(k, context)
+                self.assertEqual(ENCODED_CONTEXT[context_key][k], context[k])
+
+    def _verify_namespaces(self, context):
+        for k in ENCODED_NAMESPACES:
+            self.assertIn(k, context)
+            self.assertEqual(ENCODED_NAMESPACES[k], context[k])
 
 def suite():
     suite = TestSuite()

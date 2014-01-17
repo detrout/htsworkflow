@@ -64,7 +64,7 @@ ENCODED_CONTEXT = {
 }
 
 #FIXME: this needs to be initialized from rdfns
-_encoded_namespaces = {
+ENCODED_NAMESPACES = {
     # JSON-LD lets you define namespaces so you can used the shorted url syntax.
     # (instead of http://www.w3.org/2000/01/rdf-schema#label you can do
     # rdfs:label)
@@ -84,17 +84,17 @@ _encoded_namespaces = {
     # SO: available from http://www.berkeleybop.org/ontologies/so.owl
 
 }
-ENCODED_CONTEXT[None].update(_encoded_namespaces)
+
 ENCODED_SCHEMA_ROOT='/profiles/'
 
 class ENCODED:
     '''Programatic access encoded, the software powering ENCODE3's submit site.
     '''
-    def __init__(self, server, context=None):
+    def __init__(self, server, contexts=None):
         self.server = server
         self.username = None
         self.password = None
-        self.context = context if context else ENCODED_CONTEXT
+        self.contexts = contexts if contexts else ENCODED_CONTEXT
         self.schemas = {}
 
     def get_auth(self):
@@ -136,23 +136,40 @@ class ENCODED:
         if isinstance(obj, collections.Sequence):
             # how should I update lists?
             for v in obj:
-                self.add_jsonld_child_context(v, contexts)
+                self.add_jsonld_child_context(v, default_base)
             return
 
         if isinstance(obj, collections.Mapping):
             for v in obj.values():
-                self.add_jsonld_child_context(v, contexts)
+                self.add_jsonld_child_context(v, default_base)
 
         # we have an object. attach a context to it.
         if self._is_encoded_object(obj):
-            default_base = contexts[None]['@base']
-            context = {'@base': urljoin(default_base, obj['@id']),
-                       '@vocab': self.get_schema_url(obj)}
-            for t in obj['@type']:
-                if t in contexts:
-                    context.update(contexts[t])
+            context = self.create_jsonld_context(obj, default_base)
             if len(context) > 0:
                 obj.setdefault('@context', {}).update(context)
+
+    def add_jsonld_namespaces(self, context):
+        '''Add shortcut namespaces to a context
+
+        Only needs to be run on the top-most context
+        '''
+        context.update(ENCODED_NAMESPACES)
+
+    def create_jsonld_context(self, obj, default_base):
+        '''Synthesize the context for a encoded type
+
+        self.contexts[None] = default context attributes added to any type
+        self.contexts[type] = context attributes for this type.
+        '''
+        context = {'@base': urljoin(default_base, obj['@id']),
+                    '@vocab': self.get_schema_url(obj)}
+        # add in defaults
+        context.update(self.contexts[None])
+        for t in obj['@type']:
+            if t in self.contexts:
+                context.update(self.contexts[t])
+        return context
 
     def get_json(self, obj_id, **kwargs):
         '''GET an ENCODE object as JSON and return as dict
