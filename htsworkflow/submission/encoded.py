@@ -277,6 +277,28 @@ class ENCODED:
         url = urlunparse(url.values())
         return url
 
+    def search_jsonld(self, term, **kwargs):
+        '''Send search request to ENCODED
+        '''
+        url = self.prepare_url('/search/')
+        result = self.get_json(url, searchTerm=term, **kwargs)
+        self.convert_search_to_jsonld(result)
+        return result
+
+    def convert_search_to_jsonld(self, result):
+        '''Add the context to search result
+
+        Also remove hard to handle nested attributes
+          e.g. remove object.term when we have no id
+        '''
+        graph = result['@graph']
+        for i, obj in enumerate(graph):
+            # suppress nested attributes
+            graph[i] = {k: v for k, v in obj.items() if '.' not in k}
+
+        self.add_jsonld_context(result, self.prepare_url(result['@id']))
+        return result
+
     def validate(self, obj):
         obj_type = self.get_object_type(obj)
         schema_url = self.get_schema_url(obj)

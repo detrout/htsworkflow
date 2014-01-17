@@ -122,6 +122,51 @@ class TestEncoded(TestCase):
         self.assertEqual(obj['@context']['OBO'], 'http://purl.obolibrary.org/obo/')
 
 
+    def test_convert_search_to_jsonld(self):
+        example = {'count': {'biosamples': 2},
+                   'portal_title': 'ENCODE',
+                   'title': 'Search',
+                   'notification': 'Success',
+                   'filters': [],
+                   '@id': '/search/?searchTerm=wold',
+                   '@type': ['search'],
+                   'facets': [],
+                    '@graph': [{
+                    u'@id': u'/biosamples/ENCBS125ENC/',
+                    u'@type': [u'biosample', u'item'],
+                    u'accession': u'ENCBS125ENC',
+                    u'award.rfa': u'ENCODE2-Mouse',
+                    u'biosample_term_name': u'myocyte',
+                    u'biosample_type': u'in vitro differentiated cells',
+                    u'characterizations.length': [],
+                    u'constructs.length': [],
+                    u'lab.title': u'Barbara Wold, Caltech',
+                    u'life_stage': u'unknown',
+                    u'organism.name': u'mouse',
+                    u'source.title': u'Barbara Wold',
+                    u'status': u'CURRENT',
+                    u'treatments.length': []},
+                    {u'@id': u'/biosamples/ENCBS126ENC/',
+                    u'@type': [u'biosample', u'item'],
+                    u'accession': u'ENCBS126ENC',
+                    u'award.rfa': u'ENCODE2-Mouse',
+                    u'biosample_term_name': u'myocyte',
+                    u'biosample_type': u'in vitro differentiated cells',
+                    u'characterizations.length': [],
+                    u'constructs.length': [],
+                    u'lab.title': u'Barbara Wold, Caltech',
+                    u'life_stage': u'unknown',
+                    u'organism.name': u'mouse',
+                    u'source.title': u'Barbara Wold',
+                    u'status': u'CURRENT',
+                    u'treatments.length': []},
+                    ]}
+
+        encode = ENCODED('test.encodedcc.org')
+        result = encode.convert_search_to_jsonld(example)
+        for obj in result['@graph']:
+            self.assertNotIn('award.rfa', obj)
+
     def _verify_context(self, context, obj_type):
         for context_key in [None, obj_type]:
             for k in ENCODED_CONTEXT[context_key]:
