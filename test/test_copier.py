@@ -1,9 +1,15 @@
-from unittest2 import TestCase
+from unittest import TestCase, skipIf
 
 from StringIO import StringIO
-from htsworkflow.automation import copier
 from htsworkflow.automation.solexa import is_runfolder
 
+try:
+    from htsworkflow.automation import copier
+    BENDERJAB_UNAVAILABLE = False
+except ImportError as e:
+    BENDERJAB_UNAVAILABLE = True
+
+@skipIf(BENDERJAB_UNAVAILABLE, "Can't test copier daemon without a working benderjab")
 class testCopier(TestCase):
     def test_empty_config(self):
         cfg = StringIO("""[fake]
@@ -11,9 +17,9 @@ something: unrelated
 """)
         bot = copier.CopierBot('fake', configfile=cfg)
         self.failUnlessRaises(RuntimeError, bot.read_config)
-        
+
     def test_full_config(self):
-        cfg = StringIO("""[copier]        
+        cfg = StringIO("""[copier]
 jid: copier@example.fake
 password: badpassword
 authorized_users: user1@example.fake user2@example.fake
@@ -32,7 +38,7 @@ notify_users: user3@example.fake
         self.failUnlessEqual(len(c.authorized_users), 2)
         self.failUnlessEqual(c.authorized_users[0], 'user1@example.fake')
         self.failUnlessEqual(c.authorized_users[1], 'user2@example.fake')
-        self.failUnlessEqual(c.rsync.source_base_list[0], 
+        self.failUnlessEqual(c.rsync.source_base_list[0],
                              'rsync://localhost/tmp/sequencer_source/')
         self.failUnlessEqual(c.rsync.dest_base, '/tmp/sequencer_destination')
         self.failUnlessEqual(len(c.notify_users), 1)
@@ -40,16 +46,16 @@ notify_users: user3@example.fake
         self.failUnlessEqual(c.validate_url('rsync://other/tmp'), None)
         self.failUnlessEqual(c.validate_url('http://localhost/tmp'), None)
         # In the rsync process the URL gets a trailing '/' added to it
-        # But in the bot config its still slash-less. 
+        # But in the bot config its still slash-less.
         # It is debatable when to add the trailing slash.
         self.failUnlessEqual(
-          c.validate_url('rsync://localhost/tmp/sequencer_source'), 
-          'rsync://localhost/tmp/sequencer_source') 
+          c.validate_url('rsync://localhost/tmp/sequencer_source'),
+          'rsync://localhost/tmp/sequencer_source')
         self.failUnlessEqual(
-          c.validate_url('rsync://localhost/tmp/sequencer_source/'), 
+          c.validate_url('rsync://localhost/tmp/sequencer_source/'),
           'rsync://localhost/tmp/sequencer_source/')
         self.failUnlessEqual(
-          c.validate_url('rsync://localhost/tmp/sequencer_source/bleem'), 
+          c.validate_url('rsync://localhost/tmp/sequencer_source/bleem'),
           'rsync://localhost/tmp/sequencer_source/bleem')
         self.failUnlessEqual(
           c.validate_url('rsync://user@server:1234/other_sequencer'),
