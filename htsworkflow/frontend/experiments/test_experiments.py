@@ -31,7 +31,8 @@ NSMAP = {'libns':'http://jumpgate.caltech.edu/wiki/LibraryOntology#'}
 from django.db import connection
 
 class ClusterStationTestCases(TestCase):
-    fixtures = ['test_flowcells.json']
+    fixtures = ['initial_data.json',
+                'test_flowcells.json']
 
     def test_default(self):
         c = models.ClusterStation.default()
@@ -79,7 +80,8 @@ class ClusterStationTestCases(TestCase):
 
 
 class SequencerTestCases(TestCase):
-    fixtures = ['test_flowcells.json']
+    fixtures = ['initial_data.json',
+                'test_flowcells.json']
 
     def test_default(self):
         # starting with no default
@@ -131,7 +133,8 @@ class SequencerTestCases(TestCase):
 
 
 class ExperimentsTestCases(TestCase):
-    fixtures = ['test_flowcells.json',
+    fixtures = ['initial_data.json',
+                'test_flowcells.json',
                 ]
 
     def setUp(self):
@@ -480,6 +483,10 @@ class ExperimentsTestCases(TestCase):
 
 
 class TestFileType(TestCase):
+    fixtures = ['initial_data.json',
+                'test_flowcells.json',
+                ]
+
     def test_file_type_unicode(self):
         file_type_objects = models.FileType.objects
         name = 'QSEQ tarfile'
@@ -538,7 +545,8 @@ class TestFileType(TestCase):
             self.assertEqual(result.get('end', None), end)
 
 class TestEmailNotify(TestCase):
-    fixtures = ['test_flowcells.json']
+    fixtures = ['initial_data.json',
+                'test_flowcells.json']
 
     def test_started_email_not_logged_in(self):
         response = self.client.get('/experiments/started/153/')
@@ -588,7 +596,8 @@ def multi_lane_to_dict(lane):
     return dict( ((x['library_id'],x) for x in lane) )
 
 class TestSequencer(TestCase):
-    fixtures = ['test_flowcells.json',
+    fixtures = ['initial_data.json',
+                'test_flowcells.json',
                 ]
 
     def test_name_generation(self):

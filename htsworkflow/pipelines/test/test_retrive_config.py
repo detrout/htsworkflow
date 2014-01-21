@@ -17,7 +17,8 @@ from htsworkflow.pipelines.retrieve_config import \
      save_sample_sheet
 
 class RetrieveTestCases(TestCase):
-    fixtures = ['test_flowcells.json']
+    fixtures = ['initial_data.json',
+                'test_flowcells.json']
 
     def setUp(self):
         pass

@@ -26,7 +26,8 @@ from htsworkflow.util.conversion import unicode_or_none
 from htsworkflow.util.ethelp import validate_xhtml
 
 class LibraryTestCase(TestCase):
-    fixtures = ['test_samples.json']
+    fixtures = ['initial_data.json',
+                'test_samples.json']
 
     def setUp(self):
         create_db(self)
@@ -52,7 +53,8 @@ class SampleWebTestCase(TestCase):
     Test returning data from our database in rest like ways.
     (like returning json objects)
     """
-    fixtures = ['test_samples.json']
+    fixtures = ['initial_data.json',
+                'test_samples.json']
 
     def test_library_info(self):
         for lib in Library.objects.all():
@@ -279,7 +281,8 @@ except ImportError,e:
 
 
 class TestRDFaLibrary(TestCase):
-    fixtures = ['test_samples.json']
+    fixtures = ['initial_data.json',
+                'test_samples.json']
 
     def test_parse_rdfa(self):
         model = get_rdf_memory_model()
