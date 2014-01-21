@@ -7,12 +7,12 @@
        "is_active": true,
        "is_superuser": false,
        "is_staff": false,
-       "last_login": "2009-01-01 00:00:01",
+       "last_login": "2009-01-01T00:00:01-0800",
        "groups": [],
        "user_permissions": [],
        "password": "sha1$foo$5e4eefec1144a04becfb7da79244f07c487fc345",
        "email": "",
-       "date_joined": "2009-01-01 00:01:01"
+       "date_joined": "2009-01-01T00:01:01-0800"
        }
    },
    {"pk": 1, "model": "samples.affiliation",
@@ -32,7 +32,7 @@
  {"pk": 153, "model": "experiments.flowcell",
   "fields": {
       "paired_end": true,
-      "run_date": "2009-09-11 22:12:13",
+      "run_date": "2009-09-11T22:12:13-0800",
       "read_length": 75,
       "notes": "",
       "advanced_run": false,
