@@ -67,6 +67,7 @@
     "pk": 9,
     "fields": {
       "name": "ELAND Result",
+      "mimetype": "chemical/seq-na-eland",
       "regex": "s_(?P<lane>[0-9])((?P<end>[1-4])_)?_eland_result\\.txt\\.bz2\\Z(?ms)"
     }
   },
@@ -74,6 +75,7 @@
     "pk": 10,
     "fields": {
       "name": "ELAND Multi",
+      "mimetype": "chemical/seq-na-eland",
       "regex": "s_(?P<lane>[0-9])((?P<end>[1-4])_)?_eland_multi\\.txt\\.bz2\\Z(?ms)"
     }
   },
@@ -81,6 +83,7 @@
     "pk": 11,
     "fields": {
       "name": "ELAND Extended",
+      "mimetype": "chemical/seq-na-eland",
       "regex": "s_(?P<lane>[0-9])((?P<end>[1-4])_)?_eland_extended\\.txt\\.bz2\\Z(?ms)"
     }
   },
@@ -88,6 +91,7 @@
     "pk": 12,
     "fields": {
       "name": "ELAND Export",
+      "mimetype": "chemical/seq-na-eland",
       "regex": "s_(?P<lane>[0-9])((?P<end>[1-4])_)?_export\\.txt\\.bz2\\Z(?ms)"
     }
   },
@@ -95,6 +99,7 @@
     "pk": 13,
     "fields": {
       "name": "SRF",
+      "mimetype": "chemical/seq-na-srf",
       "regex": ".*_(?P<lane>[1-8])\\.srf\\Z(?ms)"
     }
   },
@@ -102,6 +107,7 @@
     "pk": 14,
     "fields": {
       "name": "QSEQ tarfile",
+      "mimetype": "chemical/seq-na-qseq",
       "regex": ".*_l(?P<lane>[1-8])_r(?P<end>[1-4])\\.tar\\.bz2\\Z(?ms)"
     }
   },
@@ -109,6 +115,7 @@
     "pk": 15,
     "fields": {
       "name": "HiSeq Fastq",
+      "mimetype": "chemical/seq-na-fastq",
       "regex": "(?P<library>[0-9]+)_(NoIndex|[AGCT]+)_L(?P<lane>[0-9]+)_R(?P<end>[12])_(?P<split>[0-9]+)\\.fastq\\.gz"
     }
   },
