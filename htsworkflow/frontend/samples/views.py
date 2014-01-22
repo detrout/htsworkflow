@@ -99,7 +99,7 @@ def library(request, todo_only=False):
     queryset = Library.objects.filter(hidden__exact=0)
     filters = {'hidden__exact': 0}
     if todo_only:
-        filters[lane] = None
+        filters['lane'] = None
     # build changelist
     fcl = HTSChangeList(request, Library,
         list_filter=['affiliations', 'library_species'],
