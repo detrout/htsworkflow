@@ -11,7 +11,6 @@ from htsworkflow.submission.submission import Submission
 from htsworkflow.util.rdfhelp import \
      fromTypedNode, \
      geoSoftNS, \
-     stripNamespace, \
      submissionOntology
 from htsworkflow.util.url import parse_ssh_url
 from htsworkflow.util.ucsc import bigWigInfo
@@ -121,9 +120,9 @@ class TrackHubSubmission(Submission):
                 'long_label': str(track_label),
                 'subgroups': track_subgroup,
             }
-            
-            LOGGER.debug('track attributes: %s', pformat(attributes))       
-            newtrack = Track(**attributes)                    
+
+            LOGGER.debug('track attributes: %s', pformat(attributes))
+            newtrack = Track(**attributes)
             view.add_tracks([newtrack])
 
         results = hub.render()
@@ -186,10 +185,10 @@ class TrackHubSubmission(Submission):
                 value = self.sanitize_name(track[k])
                 track_subgroups[k] = value
         return track_subgroups
-    
+
     def make_track_type(self, track):
         """Further annotate tracktype.
-        
+
         bigWig files can have additional information. Add it if we can
         """
         track_type = track['file_type']

@@ -9,12 +9,15 @@ import uuid
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import urlresolvers
+from django.utils import timezone
 from django.db import models
 from django.db.models.signals import post_init, pre_save
 
 from htsworkflow.frontend.samples.models import Library
 from htsworkflow.util.conversion import parse_flowcell_id
 from htsworkflow.pipelines import runfolder
+
+import pytz
 
 LOGGER = logging.getLogger(__name__)
 default_pM = 5
@@ -219,7 +222,7 @@ class FlowCell(models.Model):
 
     def import_data_run(self, relative_pathname, run_xml_name, force=False):
         """Given a result directory import files"""
-        now = datetime.datetime.now()
+        now = timezone.now()
         run_dir = get_absolute_pathname(relative_pathname)
         run_xml_path = os.path.join(run_dir, run_xml_name)
 
@@ -243,7 +246,8 @@ class FlowCell(models.Model):
             run.runfolder_name = run_xml_data.runfolder_name
             run.cycle_start = run_xml_data.image_analysis.start
             run.cycle_stop = run_xml_data.image_analysis.stop
-            run.run_start_time = run_xml_data.image_analysis.date
+            naive_run_start_time = datetime.datetime.fromordinal(run_xml_data.image_analysis.date.toordinal())
+            run.run_start_time = pytz.timezone(settings.TIME_ZONE).localize(naive_run_start_time)
             run.image_software = run_xml_data.image_analysis.software
             run.image_version = run_xml_data.image_analysis.version
             run.basecall_software = run_xml_data.bustard.software
@@ -253,7 +257,7 @@ class FlowCell(models.Model):
                 run.alignment_software = run_xml_data.gerald.software
                 run.alignment_version = run_xml_data.gerald.version
 
-            run.last_update_time = datetime.datetime.now()
+            run.last_update_time = timezone.now()
             run.save()
 
             run.update_result_files()
@@ -356,7 +360,7 @@ class DataRun(models.Model):
 
                     self.datafile_set.add(newfile)
 
-        self.last_update_time = datetime.datetime.now()
+        self.last_update_time = timezone.now()
 
     def lane_files(self):
         lanes = {}

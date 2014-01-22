@@ -11,7 +11,7 @@ from htsworkflow.util.rdfhelp import \
      dump_model, \
      fromTypedNode, \
      get_model, \
-     stripNamespace, \
+     strip_namespace, \
      toTypedNode
 from htsworkflow.util.rdfns import *
 from htsworkflow.util.hashfile import make_md5sum
@@ -133,7 +133,7 @@ class Submission(object):
             RDF.Statement(fileNode,
                           libraryOntology['library'],
                           libNode))
-                          
+
         LOGGER.debug("Done.")
 
     def make_file_node(self, pathname, submissionNode):
@@ -175,7 +175,7 @@ class Submission(object):
         except ValueError:
             # currently its just ignore it if the fastq name parser fails
             return
-        
+
         terms = [('flowcell', libraryOntology['flowcell_id']),
                  ('lib_id', libraryOntology['library_id']),
                  ('lane', libraryOntology['lane_number']),
@@ -186,7 +186,7 @@ class Submission(object):
             if value is not None:
                 s = RDF.Statement(fileNode, model_term, toTypedNode(value))
                 self.model.append(s)
-                
+
     def add_label(self, file_type, file_node, lib_node):
         """Add rdfs:label to a file node
         """
@@ -390,7 +390,7 @@ def list_submissions(model):
     query = RDF.SPARQLQuery(query_body)
     rdfstream = query.execute(model)
     for row in rdfstream:
-        s = stripNamespace(submissionLog, row['submission'])
+        s = strip_namespace(submissionLog, row['submission'])
         if s[-1] in ['#', '/', '?']:
             s = s[:-1]
         yield s

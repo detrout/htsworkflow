@@ -12,7 +12,7 @@ from urlparse import urljoin, urlparse
 import RDF
 from htsworkflow.util.rdfhelp import libraryOntology as libNS
 from htsworkflow.util.rdfhelp import toTypedNode, fromTypedNode, rdfNS, \
-     stripNamespace, dump_model, simplify_uri
+     strip_namespace, dump_model, simplify_uri
 
 LOGGER = logging.getLogger(__name__)
 
@@ -222,7 +222,7 @@ class SequenceFile(object):
             raise KeyError(u"%s not found" % (unicode(seq_id),))
 
         seq_type_node = model.get_target(seq_id, libNS['file_type'])
-        seq_type = stripNamespace(libNS, seq_type_node)
+        seq_type = strip_namespace(libNS, seq_type_node)
 
         path = urlparse(str(seq_id.uri)).path
         flowcellNode = get_one(seq_id, libNS['flowcell'])

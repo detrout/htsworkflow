@@ -29,16 +29,6 @@ LANE_SET = range(1,9)
 NSMAP = {'libns':'http://jumpgate.caltech.edu/wiki/LibraryOntology#'}
 
 from django.db import connection
-OLD_DB_NAME = settings.DATABASE_NAME
-VERBOSITY = 0
-def setUpModule():
-    setup_test_environment()
-    settings.DEBUG = False
-    connection.creation.create_test_db(VERBOSITY)
-
-def tearDownModule():
-    connection.creation.destroy_test_db(OLD_DB_NAME, VERBOSITY)
-    teardown_test_environment()
 
 class ClusterStationTestCases(TestCase):
     fixtures = ['test_flowcells.json']
@@ -686,16 +676,6 @@ class TestSequencer(TestCase):
 
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
-
-
-OLD_DB = settings.DATABASES['default']['NAME']
-def setUpModule():
-    setup_test_environment()
-    connection.creation.create_test_db()
-
-def tearDownModule():
-    connection.creation.destroy_test_db(OLD_DB)
-    teardown_test_environment()
 
 def suite():
     from unittest2 import TestSuite, defaultTestLoader

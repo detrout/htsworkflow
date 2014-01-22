@@ -7,12 +7,12 @@
        "is_active": true,
        "is_superuser": false,
        "is_staff": false,
-       "last_login": "2009-01-01 00:00:01",
+       "last_login": "2009-01-01T00:00:01-0800",
        "groups": [],
        "user_permissions": [],
        "password": "sha1$foo$5e4eefec1144a04becfb7da79244f07c487fc345",
        "email": "",
-       "date_joined": "2009-01-01 00:01:01"
+       "date_joined": "2009-01-01T00:01:01-0800"
        }
    },
    {"pk": 5, "model": "samples.htsuser",
@@ -26,12 +26,12 @@
        "is_active": true,
        "is_superuser": false,
        "is_staff": true,
-       "last_login": "2009-01-01 00:00:01",
+       "last_login": "2009-01-01T00:00:01-0800",
        "groups": [],
        "user_permissions": [],
        "password": "sha1$foo$5e4eefec1144a04becfb7da79244f07c487fc345",
        "email": "",
-       "date_joined": "2009-01-01 00:01:01"
+       "date_joined": "2009-01-01T00:01:01-0800"
        }
    },
    {"pk": 6, "model": "samples.htsuser",
@@ -45,12 +45,12 @@
        "is_active": true,
        "is_superuser": true,
        "is_staff": true,
-       "last_login": "2009-01-01 00:00:01",
+       "last_login": "2009-01-01T00:00:01-0800",
        "groups": [],
        "user_permissions": [],
        "password": "sha1$foo$5e4eefec1144a04becfb7da79244f07c487fc345",
        "email": "",
-       "date_joined": "2009-01-01 00:01:01"
+       "date_joined": "2009-01-01T00:01:01-0800"
        }
    },
    {"pk": 7, "model": "samples.htsuser",
@@ -122,7 +122,7 @@
  {"pk": 153, "model": "experiments.flowcell",
   "fields": {
       "paired_end": true,
-      "run_date": "2007-09-27 22:12:13",
+      "run_date": "2007-09-27T22:12:13-0800",
       "read_length": 36,
       "notes": "",
       "advanced_run": false,
@@ -487,7 +487,7 @@
    {"pk": 152, "model": "experiments.flowcell",
    "fields": {
        "paired_end": false,
-       "run_date": "2009-09-10 18:30:15",
+       "run_date": "2009-09-10T18:30:15-0800",
        "read_length": 38,
        "notes": "328461 4897273 RGT-0248815\r\n328479 4897265 RGT-0249274\r\n330421 4822845 SR-0005496",
        "advanced_run": false,
@@ -811,7 +811,7 @@
   {"pk": 151, "model": "experiments.flowcell",
    "fields": {
        "paired_end": false,
-       "run_date": "2009-09-08 15:39:28",
+       "run_date": "2009-09-08T15:39:28-0800",
        "read_length": 38,
        "notes": "Rebuild of broken flowcell\r\n\r\n328461 4820241 RGT-0215719\r\n328479 4897265 RGT-0249510\r\n330421 4822845 SR-0005402\r\n",
        "advanced_run": false,
@@ -1250,7 +1250,7 @@
  {"pk": 200, "model": "experiments.flowcell",
   "fields": {
       "paired_end": true,
-      "run_date": "2007-09-27 22:12:13",
+      "run_date": "2007-09-27T22:12:13-0800",
       "read_length": 36,
       "notes": "",
       "advanced_run": false,

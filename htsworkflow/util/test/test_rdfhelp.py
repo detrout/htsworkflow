@@ -19,7 +19,7 @@ from htsworkflow.util.rdfhelp import \
      rdfsNS, \
      remove_schemas, \
      toTypedNode, \
-     stripNamespace, \
+     strip_namespace, \
      simplify_uri, \
      sanitize_literal, \
      xsdNS
@@ -121,17 +121,17 @@ try:
 
             term = 'foo'
             node = nsOrg[term]
-            self.assertEqual(stripNamespace(nsOrg, node), term)
-            self.assertEqual(stripNamespace(nsCom, node), None)
-            self.assertEqual(stripNamespace(nsOrg, node.uri), term)
+            self.assertEqual(strip_namespace(nsOrg, node), term)
+            self.assertEqual(strip_namespace(nsCom, node), None)
+            self.assertEqual(strip_namespace(nsOrg, node.uri), term)
 
         def test_strip_namespace_exceptions(self):
             nsOrg = RDF.NS('example.org/example#')
             nsCom = RDF.NS('example.com/example#')
 
             node = toTypedNode('bad')
-            self.assertRaises(ValueError, stripNamespace, nsOrg, node)
-            self.assertRaises(ValueError, stripNamespace, nsOrg, nsOrg)
+            self.assertRaises(ValueError, strip_namespace, nsOrg, node)
+            self.assertRaises(ValueError, strip_namespace, nsOrg, nsOrg)
 
         def test_simplify_uri(self):
             DATA = [('http://asdf.org/foo/bar', 'bar'),

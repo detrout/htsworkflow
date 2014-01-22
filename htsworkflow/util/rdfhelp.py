@@ -214,7 +214,7 @@ def simplify_uri(uri):
                 return element
     raise ValueError("Unable to simplify %s" % (uri,))
 
-def stripNamespace(namespace, term):
+def strip_namespace(namespace, term):
     """Remove the namespace portion of a term
 
     returns None if they aren't in common
@@ -232,15 +232,17 @@ def stripNamespace(namespace, term):
     return term_s.replace(namespace._prefix, "")
 
 
-def get_model(model_name=None, directory=None):
+def get_model(model_name=None, directory=None, use_contexts=True):
     if directory is None:
         directory = os.getcwd()
 
+    contexts = 'yes' if use_contexts else 'no'
+
     if model_name is None:
-        storage = RDF.MemoryStorage(options_string="contexts='yes'")
+        storage = RDF.MemoryStorage(options_string="contexts='{}'".format(contexts))
         logger.info("Using RDF Memory model")
     else:
-        options = "contexts='yes',hash-type='bdb',dir='{0}'".format(directory)
+        options = "contexts='{0}',hash-type='bdb',dir='{1}'".format(contexts, directory)
         storage = RDF.HashStorage(model_name,
                       options=options)
         logger.info("Using {0} with options {1}".format(model_name, options))
@@ -281,10 +283,10 @@ def load_into_model(model, parser_name, path, ns=None):
         except RDF.RedlandError, e:
             errmsg = "RDF.RedlandError: {0} {1} tries remaining"
             logger.error(errmsg.format(str(e), retries))
-            
+
     if not succeeded:
         logger.warn("Unable to download %s", url)
-        
+
     for s in statements:
         conditionally_add_statement(model, s, ns)
 

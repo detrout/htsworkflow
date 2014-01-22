@@ -94,6 +94,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+TIME_ZONE='America/Los_Angeles'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
@@ -104,6 +105,10 @@ STATIC_URL = '/static/'
 # Application specific settings
 # Update this in settings_local to point to your flowcell result directory
 RESULT_HOME_DIR = os.path.join(BASE_DIR, 'test', 'results')
+
+# configure who is sending email and who should get BCCs of announcments
+NOTIFICATION_SENDER = "noreply@example.com"
+NOTIFICATION_BCC=[]
 
 try:
     # allow local customizations
