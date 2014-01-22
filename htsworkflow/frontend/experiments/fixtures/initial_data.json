@@ -109,7 +109,7 @@
     "pk": 15,
     "fields": {
       "name": "HiSeq Fastq",
-      "regex": "(?P<library>[0-9]+)_(NoIndex|[AGCT]+)_L(?P<lane>[0-9]+)_R(?<end>[12])_(?<split>[0-9]+)\\.fastq\\.gz"
+      "regex": "(?P<library>[0-9]+)_(NoIndex|[AGCT]+)_L(?P<lane>[0-9]+)_R(?P<end>[12])_(?P<split>[0-9]+)\\.fastq\\.gz"
     }
   },
   { "model": "experiments.Sequencer",
