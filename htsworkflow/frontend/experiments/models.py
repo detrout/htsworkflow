@@ -395,7 +395,7 @@ class FileType(models.Model):
     name = models.CharField(max_length=50)
     mimetype = models.CharField(max_length=50, null=True, blank=True)
     # regular expression from glob.fnmatch.translate
-    regex = models.CharField(max_length=50, null=True, blank=True)
+    regex = models.TextField(null=True, blank=True)
 
     def parse_filename(self, pathname):
         """Does filename match our pattern?
