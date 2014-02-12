@@ -106,6 +106,10 @@ STATIC_URL = '/static/'
 
 #####
 # Application specific settings
+DEFAULT_PM = 5
+
+# How often to recheck the result archive
+RESCAN_DELAY=1
 # Update this in settings_local to point to your flowcell result directory
 RESULT_HOME_DIR = os.path.join(BASE_DIR, 'test', 'results')
 
