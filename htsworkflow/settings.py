@@ -111,7 +111,7 @@ DEFAULT_PM = 5
 # How often to recheck the result archive
 RESCAN_DELAY=1
 # Update this in settings_local to point to your flowcell result directory
-RESULT_HOME_DIR = os.path.join(BASE_DIR, 'test', 'results')
+RESULT_HOME_DIR = os.path.join(BASE_DIR, 'test', 'result', 'flowcells')
 
 # configure who is sending email and who should get BCCs of announcments
 NOTIFICATION_SENDER = "noreply@example.com"
