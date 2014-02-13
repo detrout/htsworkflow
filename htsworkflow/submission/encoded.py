@@ -10,9 +10,8 @@ import logging
 import json
 import jsonschema
 import requests
-from requests.utils import urlparse, urlunparse
 import types
-from urlparse import urljoin
+from urlparse import urljoin, urlparse, urlunparse
 
 LOGGER = logging.getLogger(__name__)
 
