@@ -288,8 +288,8 @@ class ExperimentsTestCases(TestCase):
         tree = fromstring(response.content)
         flowcell_spans = tree.xpath('//span[@property="libns:flowcell_id"]',
                                     namespaces=NSMAP)
-        self.assertEqual(flowcell_spans[0].text, '30012AAXX (failed)')
-        failed_fc_span = flowcell_spans[0]
+        self.assertEqual(flowcell_spans[1].text, '30012AAXX (failed)')
+        failed_fc_span = flowcell_spans[1]
         failed_fc_a = failed_fc_span.getparent()
         # make sure some of our RDF made it.
         self.assertEqual(failed_fc_a.get('typeof'), 'libns:IlluminaFlowcell')
