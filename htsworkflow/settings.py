@@ -46,8 +46,8 @@ INSTALLED_APPS = (
     'htsworkflow.frontend.eland_config',
     'htsworkflow.frontend.samples',
     'htsworkflow.frontend.experiments',
-    'htsworkflow.frontend.inventory',
     'htsworkflow.frontend.bcmagic',
+    'htsworkflow.frontend.inventory',
     'htsworkflow.frontend.labels',
 )
 

@@ -16,7 +16,7 @@ def localhostNode(url):
     return RDF.Node(RDF.Uri('http://localhost%s' % (url,)))
 
 class InventoryTestCase(TestCase):
-    fixtures = ['test_user', 'test_harddisks']
+    fixtures = ['initial_data', 'test_user', 'test_harddisks']
 
     def test_fixture(self):
         # make sure that some of our test data is was loaded

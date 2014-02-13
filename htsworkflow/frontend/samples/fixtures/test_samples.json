@@ -29,6 +29,30 @@
                  "email": "bob@some.where.else"
                }
     },
+    {"pk": 3, "model": "samples.affiliation",
+     "fields": {
+         "users": [],
+         "contact": "group 3",
+         "name": "affiliation 3",
+         "email": "pk3@example.com"
+         }
+     },
+    {"pk": 4, "model": "samples.affiliation",
+     "fields": {
+         "users": [],
+         "contact": "group 4",
+         "name": "affiliation 4",
+         "email": "pk1@example.com"
+         }
+     },
+    {"pk": 5, "model": "samples.affiliation",
+     "fields": {
+         "users": [],
+         "contact": "group 5",
+         "name": "affiliation 5",
+         "email": "pk5@example.com"
+         }
+     },
  {"pk": 153, "model": "experiments.flowcell",
   "fields": {
       "paired_end": true,
@@ -103,7 +127,7 @@
             "library_type": 2,
             "made_by": "Lorian",
             "affiliations": [
-                41
+                3
             ],
             "replicate": 1,
             "condition": 1,
@@ -132,9 +156,9 @@
             "library_type": 2,
             "made_by": "Brian Williams",
             "affiliations": [
-                4,
-                8,
-                12
+                1,
+                2,
+                4
             ],
             "replicate": 1,
             "condition": 1,
@@ -163,7 +187,7 @@
             "library_type": 2,
             "made_by": "Lorian",
             "affiliations": [
-                41
+                4
             ],
             "replicate": 1,
             "condition": 1,
@@ -192,7 +216,7 @@
             "library_type": 2,
             "made_by": "Lorian",
             "affiliations": [
-                41
+                4
             ],
             "replicate": 1,
             "condition": 1,
