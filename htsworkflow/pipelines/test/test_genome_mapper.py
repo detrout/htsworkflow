@@ -1,4 +1,4 @@
-from unittest2 import TestCase
+from unittest import TestCase
 
 from StringIO import StringIO
 from htsworkflow.pipelines import genome_mapper
@@ -27,12 +27,12 @@ class testGenomeMapper(TestCase):
         
         
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(testGenomeMapper))
     return suite
 
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

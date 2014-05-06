@@ -1,6 +1,6 @@
 import os
 import types
-from unittest2 import TestCase
+from unittest import TestCase
 
 from datetime import datetime
 
@@ -265,7 +265,7 @@ except ImportError, e:
     print "Unable to test rdfhelp"
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestRDFHelp))
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestRDFSchemas))
@@ -273,5 +273,5 @@ def suite():
 
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

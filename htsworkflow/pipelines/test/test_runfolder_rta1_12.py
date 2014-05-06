@@ -5,7 +5,7 @@ import logging
 import os
 import tempfile
 import shutil
-from unittest2 import TestCase
+from unittest import TestCase
 
 from htsworkflow.pipelines import eland
 from htsworkflow.pipelines.samplekey import SampleKey
@@ -275,12 +275,12 @@ class RunfolderTests(TestCase):
         self.failIfEqual(r2.gerald, None)
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(RunfolderTests))
     return suite
 
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

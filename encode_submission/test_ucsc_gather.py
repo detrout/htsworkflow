@@ -1,4 +1,4 @@
-from unittest2 import TestCase, TestSuite, defaultTestLoader
+from unittest import TestCase, TestSuite, defaultTestLoader
 
 import ucsc_gather
 
@@ -11,5 +11,5 @@ def suite():
     return suite
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest='suite')

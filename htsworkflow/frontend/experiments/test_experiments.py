@@ -687,7 +687,7 @@ class TestSequencer(TestCase):
         self.assertEqual(len(errmsgs), 0)
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     for testcase in [ClusterStationTestCases,
                      SequencerTestCases,
@@ -699,5 +699,5 @@ def suite():
     return suite
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

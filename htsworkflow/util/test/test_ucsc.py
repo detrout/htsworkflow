@@ -1,7 +1,7 @@
 """Test wrappers around ucsc file formats
 """
 import os
-from unittest2 import TestCase
+from unittest import TestCase
 from htsworkflow.util.test import TEST_DATA_DIR
 from htsworkflow.util.ucsc import bigWigInfo
 

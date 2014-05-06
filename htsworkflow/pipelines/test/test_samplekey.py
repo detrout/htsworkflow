@@ -2,7 +2,7 @@
 """More direct synthetic test cases for the eland output file processing
 """
 from StringIO import StringIO
-from unittest2 import TestCase
+from unittest import TestCase
 
 from htsworkflow.pipelines.samplekey import SampleKey
 
@@ -44,12 +44,12 @@ class TestSampleKey(TestCase):
         self.assertTrue(k3.matches(q3))
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestSampleKey))
     return suite
 
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

@@ -3,7 +3,7 @@
 from pprint import pprint
 import shutil
 
-from unittest2 import TestCase, defaultTestLoader
+from unittest import TestCase, defaultTestLoader
 
 from htsworkflow.submission.results import ResultMap
 from submission_test_common import *
@@ -91,5 +91,5 @@ def suite():
 if __name__ == "__main__":
     import logging
     logging.basicConfig(level=logging.DEBUG)
-    from unittest2 import main
+    from unittest import main
     main(defaultTest='suite')

@@ -2,7 +2,7 @@
 """More direct synthetic test cases for the eland output file processing
 """
 from StringIO import StringIO
-from unittest2 import TestCase
+from unittest import TestCase
 
 from htsworkflow.pipelines.eland import ELAND, ElandLane, ElandMatches, \
      SampleKey, MatchCodes, MappedReads
@@ -276,7 +276,7 @@ class TestElandMatches(TestCase):
         self.assertEqual(len(em[key11112]), 2)
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(MatchCodeTests))
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestMappedReads))
@@ -286,5 +286,5 @@ def suite():
 
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

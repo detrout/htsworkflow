@@ -1,7 +1,7 @@
 import os
 import logging
 import time
-from unittest2 import TestCase
+from unittest import TestCase
 
 from htsworkflow.util.queuecommands import QueueCommands
 
@@ -44,12 +44,12 @@ class testQueueCommands(TestCase):
 
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(testQueueCommands))
     return suite
 
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

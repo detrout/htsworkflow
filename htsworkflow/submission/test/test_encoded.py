@@ -1,7 +1,7 @@
 import json
 import os
 from pprint import pprint
-from unittest2 import TestCase, TestSuite, defaultTestLoader, skip
+from unittest import TestCase, TestSuite, defaultTestLoader, skip
 
 from htsworkflow.submission.encoded import (ENCODED,
      ENCODED_CONTEXT,
@@ -185,5 +185,5 @@ def suite():
     return suite
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest='suite')

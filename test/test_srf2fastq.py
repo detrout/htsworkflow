@@ -1,7 +1,7 @@
 import os
 from StringIO import StringIO
 import sys
-from unittest2 import TestCase
+from unittest import TestCase
 
 _module_path, _module_name = os.path.split(__file__)
 sys.path.append(os.path.join(_module_path, '..', 'scripts'))
@@ -137,12 +137,12 @@ IIIIB+++
 
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(testSrf2Fastq))
     return suite
 
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

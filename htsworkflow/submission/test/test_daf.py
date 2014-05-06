@@ -4,7 +4,7 @@ import os
 from StringIO import StringIO
 import shutil
 import tempfile
-from unittest2 import TestCase, TestSuite, defaultTestLoader
+from unittest import TestCase, TestSuite, defaultTestLoader
 
 from htsworkflow.submission import daf, results
 from htsworkflow.util.rdfhelp import \
@@ -338,5 +338,5 @@ def suite():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    from unittest2 import main
+    from unittest import main
     main(defaultTest='suite')

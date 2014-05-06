@@ -1,6 +1,6 @@
 import copy
 import os
-from unittest2 import TestCase
+from unittest import TestCase
 
 from htsworkflow.util.alphanum import alphanum
 
@@ -42,12 +42,12 @@ class testAlphanum(TestCase):
 
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(testAlphanum))
     return suite
 
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

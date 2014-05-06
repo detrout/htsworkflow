@@ -4,7 +4,7 @@ from datetime import datetime, date
 import os
 import tempfile
 import shutil
-from unittest2 import TestCase
+from unittest import TestCase
 
 from htsworkflow.pipelines import firecrest
 from htsworkflow.pipelines import bustard
@@ -895,11 +895,11 @@ class RunfolderTests(TestCase):
 
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(RunfolderTests))
     return suite
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

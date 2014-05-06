@@ -1,4 +1,4 @@
-from unittest2 import TestCase
+from unittest import TestCase
 
 from htsworkflow.util import version
 
@@ -11,11 +11,11 @@ class TestVersion(TestCase):
         
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTest(defaultTestLoader.loadTestsFromTestCase(TestVersion))
     return suite
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

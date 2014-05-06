@@ -1,4 +1,4 @@
-from unittest2 import TestCase, TestSuite, defaultTestLoader, skip
+from unittest import TestCase, TestSuite, defaultTestLoader, skip
 
 from htsworkflow.util.rdfjsonld import load_into_model, to_node, triple_to_statement
 from htsworkflow.util.rdfhelp import get_model
@@ -52,5 +52,5 @@ def suite():
     return suite
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest='suite')

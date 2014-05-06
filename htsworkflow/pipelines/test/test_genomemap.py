@@ -5,7 +5,7 @@ import os
 from StringIO import StringIO
 import shutil
 import tempfile
-from unittest2 import TestCase
+from unittest import TestCase
 
 from htsworkflow.pipelines import ElementTree
 from htsworkflow.pipelines import genomemap
@@ -77,12 +77,12 @@ class TestGenomeMap(TestCase):
 
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestGenomeMap))
     return suite
 
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")

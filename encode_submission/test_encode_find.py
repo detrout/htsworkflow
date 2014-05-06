@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from datetime import datetime
 import os
-from unittest2 import TestCase
+from unittest import TestCase
 
 import RDF
 
@@ -162,12 +162,12 @@ _:bnode120970
                              '12097')
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestEncodeFind))
     return suite
 
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main()

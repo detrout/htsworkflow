@@ -4,7 +4,7 @@ from datetime import datetime, date
 import os
 import tempfile
 import shutil
-from unittest2 import TestCase
+from unittest import TestCase
 
 from htsworkflow.pipelines.test.simulate_runfolder import TESTDATA_DIR
 
@@ -21,12 +21,12 @@ class AlignmentFreeRunfolderTests(TestCase):
         self.assertEqual(run.runfolder_name, '130508_SN787_0146_BC23KDACXX')
 
 def suite():
-    from unittest2 import TestSuite, defaultTestLoader
+    from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(AlignmentFreeRunfolderTests))
     return suite
 
 
 if __name__ == "__main__":
-    from unittest2 import main
+    from unittest import main
     main(defaultTest="suite")
