@@ -40,8 +40,8 @@ def make_md5sum_unix(filename, md5_cache):
 
 def parse_md5sum_line(lines, filename):
     md5sum, md5sum_filename = lines[0].split()
-    md5sum_filename = os.path.normpath(md5sum_filename)
-    filename = os.path.normpath(filename)
+    md5sum_filename = os.path.basename(md5sum_filename)
+    filename = os.path.basename(filename)
     if md5sum_filename != filename:
         errmsg = "MD5sum and I disagre about filename. {0} != {1}"
         logger.error(errmsg.format(filename, md5sum_filename))
