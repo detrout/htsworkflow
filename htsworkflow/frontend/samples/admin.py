@@ -78,6 +78,7 @@ class HTSUserCreationForm(UserCreationForm):
 class HTSUserChangeForm(UserChangeForm):
     class Meta:
         model = HTSUser
+        fields = ("username",'first_name','last_name')
 
 class HTSUserOptions(UserAdmin):
     form = HTSUserChangeForm

@@ -13,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 class DataFileForm(ModelForm):
     class Meta:
         model = DataFile
+        fields = ('random_key', 'data_run', 'library', 'file_type', 'relative_pathname')
 
 class DataFileInline(admin.TabularInline):
     model = DataFile
@@ -59,6 +60,8 @@ class LaneForm(ModelForm):
 
     class Meta:
         model = Lane
+        fields = ('flowcell', 'lane_number', 'library', 'pM', 'cluster_estimate',
+                  'status', 'comment')
 
 class LaneInline(admin.StackedInline):
     """
