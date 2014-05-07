@@ -35,7 +35,7 @@ class HTSChangeList(ChangeList):
         self.multi_page = True
         self.can_show_all = False
 
-    def get_query_set(self, request=None):
+    def get_queryset(self, request=None):
         args = {}
         if django.VERSION[0] >= 1 and django.VERSION[1] >= 4:
             args['request'] = request #list_max_show_all
