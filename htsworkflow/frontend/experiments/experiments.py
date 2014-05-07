@@ -93,7 +93,7 @@ def flowcell_json(request, fc_id):
         raise Http404
 
     fc_json = json.dumps(fc_dict)
-    return HttpResponse(fc_json, mimetype = 'application/json')
+    return HttpResponse(fc_json, content_type = 'application/json')
 
 def lanes_for(username=None):
     """
@@ -135,7 +135,7 @@ def lanes_for_json(request, username):
     #convert query set to python structure
 
     result_json = json.dumps(result)
-    return HttpResponse(result_json, mimetype='application/json')
+    return HttpResponse(result_json, content_type='application/json')
 
 
 def updStatus(request):
@@ -260,7 +260,7 @@ def getConfile(req):
         except ObjectDoesNotExist:
           cnfgfile = 'Entry not found for RunFolder = '+runfolder
 
-    return HttpResponse(cnfgfile, mimetype='text/plain')
+    return HttpResponse(cnfgfile, content_type='text/plain')
 
 def getLaneLibs(req):
     granted = False
@@ -301,7 +301,7 @@ def getLaneLibs(req):
         outputfile = 'Flowcell entry not found for: '+fcid
     else: outputfile = 'Missing input: flowcell id'
 
-    return HttpResponse(outputfile, mimetype='text/plain')
+    return HttpResponse(outputfile, content_type='text/plain')
 
 def estimateFlowcellDuration(flowcell):
     """

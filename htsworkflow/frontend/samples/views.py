@@ -230,10 +230,10 @@ def result_fc_cnm_eland_lane(request, flowcell_id, cnm, lane):
     filepath = erd[lane]
 
     #f = opener.autoopen(filepath, 'r')
-    # return HttpResponse(f, mimetype="application/x-elandresult")
+    # return HttpResponse(f, content_type="application/x-elandresult")
 
     f = open(filepath, 'r')
-    return HttpResponse(f, mimetype='application/x-bzip2')
+    return HttpResponse(f, content_type='application/x-bzip2')
 
 
 
@@ -276,7 +276,7 @@ def bedfile_fc_cnm_eland_lane(request, flowcell_id, cnm, lane, ucsc_compatible=F
     if ucsc_compatible:
         return HttpResponse(bedgen)
     else:
-        return HttpResponse(bedgen, mimetype="application/x-bedfile")
+        return HttpResponse(bedgen, content_type="application/x-bedfile")
 
 
 def _summary_stats(flowcell_id, lane_id, library_id):
@@ -526,7 +526,7 @@ def library_json(request, library_id):
         raise Http404
 
     lib_json = json.dumps(lib)
-    return HttpResponse(lib_json, mimetype='application/json')
+    return HttpResponse(lib_json, content_type='application/json')
 
 @csrf_exempt
 def species_json(request, species_id):

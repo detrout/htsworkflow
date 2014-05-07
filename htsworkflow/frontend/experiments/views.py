@@ -177,13 +177,13 @@ def read_result_file(self, key):
     """
     data_file = get_object_or_404(DataFile, random_key = key)
 
-    mimetype = 'application/octet-stream'
+    content_type = 'application/octet-stream'
     if data_file.file_type.mimetype is not None:
-        mimetype = data_file.file_type.mimetype
+        content_type = data_file.file_type.mimetype
 
     if os.path.exists(data_file.pathname):
         return HttpResponse(open(data_file.pathname,'r'),
-                            mimetype=mimetype)
+                            content_type=content_type)
 
     raise Http404
 
