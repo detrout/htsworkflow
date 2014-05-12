@@ -2,8 +2,8 @@
 """
 import collections
 import re
-PAIRED_TEMPLATE = '{lib_id}_{flowcell}_c{cycle}_l{lane}_r{read}.fastq'
-SINGLE_TEMPLATE = '{lib_id}_{flowcell}_c{cycle}_l{lane}.fastq'
+PAIRED_TEMPLATE = '{lib_id}_{flowcell}_c{cycle}_l{lane}_r{read}.fastq{compression_extension}'
+SINGLE_TEMPLATE = '{lib_id}_{flowcell}_c{cycle}_l{lane}.fastq{compression_extension}'
 
 FASTQ_RE = re.compile(
     '(?P<lib_id>[^_]+)_(?P<flowcell>[^_]+)_'\
@@ -17,7 +17,7 @@ class FastqName(collections.Mapping):
 
         Takes filename or common attributes like flowcell, lib_id, lane, read, cycle
         """
-        self._attributes = ('flowcell', 'lib_id', 'lane', 'read', 'cycle')
+        self._attributes = ('flowcell', 'lib_id', 'lane', 'read', 'cycle', 'compression_extension')
         self._is_paired = is_paired
 
         if len(kwargs) == 0:

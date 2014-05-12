@@ -27,11 +27,16 @@ import RDF
 
 LOGGER = logging.getLogger(__name__)
 
+COMPRESSION_EXTENSIONS = {
+    None: '',
+    'gzip': '.gz'
+}
 
 class CondorFastqExtract(object):
     def __init__(self, host, sequences_path,
                  log_path='log',
                  model=None,
+                 compression=None,
                  force=False):
         """Extract fastqs from results archive
 
@@ -40,16 +45,19 @@ class CondorFastqExtract(object):
           apidata (dict): id & key to post to the server
           sequences_path (str): root of the directory tree to scan for files
           log_path (str): where to put condor log files
+          compression (str): one of 'gzip', 'bzip2'
           force (bool): do we force overwriting current files?
         """
         self.host = host
         self.model = get_model(model)
         self.sequences_path = sequences_path
         self.log_path = log_path
+        self.compression=compression
         self.force = force
         LOGGER.info("CondorFastq host={0}".format(self.host))
         LOGGER.info("CondorFastq sequences_path={0}".format(self.sequences_path))
         LOGGER.info("CondorFastq log_path={0}".format(self.log_path))
+        LOGGER.info("Compression {0}".format(self.compression))
 
     def create_scripts(self, result_map ):
         """
@@ -231,6 +239,7 @@ WHERE {
                 'lane': seq.lane_number,
                 'read': seq.read,
                 'cycle': seq.cycle,
+                'compression_extension': COMPRESSION_EXTENSIONS[self.compression],
                 'is_paired': seq.ispaired
             }
 
@@ -291,9 +300,14 @@ WHERE {
         for source in sources:
             paths.append(source.path)
         paths.sort()
+        compression_argument = ''
+        if self.compression:
+            compression_argument = '--'+self.compression
+
         return {
             'pyscript': desplit_fastq.__file__,
             'target': target_pathname,
+            'compression': compression_argument,
             'sources': paths,
             'ispaired': sources[0].ispaired,
         }

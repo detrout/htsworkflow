@@ -115,6 +115,7 @@ def main(cmdline=None):
         flowcells = os.path.join(opts.sequence, 'flowcells')
         extractor = CondorFastqExtract(opts.host, flowcells,
                                        model=opts.model,
+                                       compression=opts.compression,
                                        force=opts.force)
         extractor.create_scripts(results)
 
@@ -188,6 +189,9 @@ def make_parser():
 
     parser.add_option('--force', default=False, action="store_true",
                       help="Force regenerating fastqs")
+    parser.add_option('--compression', default=None, type='choice',
+                      choices=['gzip'],
+                      help='select compression type for fastq files')
     parser.add_option('--daf', default=None, help='specify daf name')
     parser.add_option('--library-url', default=None,
                       help="specify an alternate source for library information")
