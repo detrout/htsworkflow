@@ -220,8 +220,6 @@ WHERE {
         Also update model with link between illumina result files
         and our target fastq file.
         """
-        fastq_paired_template = '%(lib_id)s_%(flowcell)s_c%(cycle)s_l%(lane)s_r%(read)s.fastq'
-        fastq_single_template = '%(lib_id)s_%(flowcell)s_c%(cycle)s_l%(lane)s.fastq'
         # find what targets we're missing
         needed_targets = {}
         for seq in raw_files:
