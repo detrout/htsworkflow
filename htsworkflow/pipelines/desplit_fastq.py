@@ -89,7 +89,9 @@ class DesplitFastq(object):
         This is here so we can run via threading/multiprocessing APIs
         """
         state = SEQ_HEADER
+        files_read = 0
         for stream in self.sources:
+            files_read += 1
             for line in stream:
                 line = line.rstrip()
                 if state == SEQ_HEADER:
@@ -106,6 +108,8 @@ class DesplitFastq(object):
                     state = SEQ_HEADER
                 self.destination.write(os.linesep)
 
+        if files_read == 0:
+            raise RuntimeError("No files processed")
 
 if __name__ == "__main__":
     main()
