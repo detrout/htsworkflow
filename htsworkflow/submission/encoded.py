@@ -254,6 +254,15 @@ class ENCODED:
             response.raise_for_status()
         return response.json()
 
+    def post_json(self, collection_id, new_object):
+        url = self.prepare_url(collection_id)
+        payload = json.dumps(new_object)
+        response = requests.post(url, auth=self.auth, headers=self.json_headers, data=payload)
+        if response.status_code != requests.codes.created:
+            LOGGER.error("Error http status: {}".format(response.status_code))
+            response.raise_for_status()
+        return response.json()
+
     def prepare_url(self, request_url):
         '''This attempts to provide some convienence for accessing a URL
 
