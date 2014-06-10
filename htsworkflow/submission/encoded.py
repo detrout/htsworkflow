@@ -270,7 +270,7 @@ class ENCODED:
         # clean up potentially messy urls
         url = urlparse(request_url)._asdict()
         if not url['scheme']:
-            url['scheme'] = 'http'
+            url['scheme'] = 'https'
         if not url['netloc']:
             url['netloc'] = self.server
         url = urlunparse(url.values())
