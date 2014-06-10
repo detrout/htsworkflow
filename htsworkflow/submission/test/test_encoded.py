@@ -13,11 +13,11 @@ class TestEncoded(TestCase):
         encode = ENCODED('test.encodedcc.edu')
 
         tests = [
-            ('/experiments', 'http://test.encodedcc.edu/experiments'),
+            ('/experiments', 'https://test.encodedcc.edu/experiments'),
             ('/experiments/ENCLB045ZZZ',
-             'http://test.encodedcc.edu/experiments/ENCLB045ZZZ'),
-            ('http://submit.encodedcc.edu/experiments/ENCLB045ZZZ',
-             'http://submit.encodedcc.edu/experiments/ENCLB045ZZZ'),
+             'https://test.encodedcc.edu/experiments/ENCLB045ZZZ'),
+            ('https://www.encodedcc.edu/experiments/ENCLB045ZZZ',
+             'https://www.encodedcc.edu/experiments/ENCLB045ZZZ'),
         ]
         for url, result in tests:
             self.assertEqual(encode.prepare_url(url), result)
@@ -66,7 +66,7 @@ class TestEncoded(TestCase):
         encode = ENCODED('test.encodedcc.org')
         url = encode.prepare_url(library['@id'])
         context = encode.create_jsonld_context(library, url)
-        self.assertEqual(context['@vocab'], 'http://test.encodedcc.org/profiles/library.json#')
+        self.assertEqual(context['@vocab'], 'https://test.encodedcc.org/profiles/library.json#')
         self.assertEqual(context['award'], linked_id )
         self._verify_context(context, 'library')
         # namespaces not added yet.
