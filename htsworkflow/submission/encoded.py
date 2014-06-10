@@ -20,13 +20,17 @@ ENCODED_CONTEXT = {
     # provide common defaults.
     None: {
         # terms in multiple encoded objects
+        'award': { '@type': '@id' },
+        'dataset': {'@type': '@id'},
         'description': 'rdf:description',
+        'documents': { '@type': '@id' },
         'experiment': {'@type': '@id'},
         'href': { '@type': '@id' },
         'lab': { '@type': '@id' },
         'library': {'@type': '@id' },
         'pi': { '@type': '@id' },
         'platform': { '@type': '@id' },
+        'replicates': { '@type': '@id' },
         'submitted_by': { '@type': '@id' },
         'url': { '@type': '@id' },
     },
@@ -39,9 +43,8 @@ ENCODED_CONTEXT = {
     },
     'experiment': {
         "assay_term_id": { "@type": "@id" },
-    },
-    'file': {
-        'dataset': {'@type': '@id'},
+        "files": { "@type": "@id" },
+        "original_files": { "@type": "@id"},
     },
     # I tried to use the JSON-LD mapping capabilities to convert the lab
     # contact information into a vcard record, but the encoded model
@@ -53,11 +56,7 @@ ENCODED_CONTEXT = {
     #    "state": "vcard:region",
     #    "country": "vcard:country"
     #},
-    'human_donor': {
-        'award': { '@type': '@id' },
-    },
     'library': {
-        'award': { '@type': '@id' },
         'nucleic_acid_term_id': { '@type': '@id' }
     }
 }
@@ -81,6 +80,7 @@ ENCODED_NAMESPACES = {
     # OBI: available from http://svn.code.sf.net/p/obi/code/releases/2012-07-01/merged/merged-obi-comments.owl
     'SO': 'http://purl.obolibrary.org/obo/SO_', # Sequence ontology
     # SO: available from http://www.berkeleybop.org/ontologies/so.owl
+    # NTR: New Term Request space for DCC to implement new ontology terms
 
 }
 
