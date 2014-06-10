@@ -17,6 +17,20 @@ class TestFastqName(TestCase):
         self.assertEqual(fq.lane, "1")
         self.assertEqual(fq['lane'], "1")
         self.assertEqual(fq.is_paired, False)
+        self.assertEqual(fq.compression_extension, '')
+
+    def test_init_single_filename_gz(self):
+        fq = FastqName(filename="12345_AABBCCDDXX_c100_l1.fastq.gz")
+        self.assertEqual(fq.lib_id, "12345")
+        self.assertEqual(fq['lib_id'], "12345")
+        self.assertEqual(fq.flowcell, "AABBCCDDXX")
+        self.assertEqual(fq['flowcell'], "AABBCCDDXX")
+        self.assertEqual(fq.cycle, "100")
+        self.assertEqual(fq['cycle'], "100")
+        self.assertEqual(fq.lane, "1")
+        self.assertEqual(fq['lane'], "1")
+        self.assertEqual(fq.is_paired, False)
+        self.assertEqual(fq.compression_extension, '.gz')
 
     def test_init_single_filename(self):
         fq = FastqName(filename="12345_AABBCCDDXX_c100_l1_r2.fastq")
@@ -31,6 +45,7 @@ class TestFastqName(TestCase):
         self.assertEqual(fq.read, "2")
         self.assertEqual(fq['read'], "2")
         self.assertEqual(fq.is_paired, True)
+        self.assertEqual(fq.compression_extension, None)
 
     def test_init_bad_filename(self):
         attribs = {'filename': 'asdf.bam'}
@@ -50,6 +65,7 @@ class TestFastqName(TestCase):
         self.assertEqual(fq['lane'], "1")
         self.assertEqual(fq.is_paired, False)
         self.assertEqual(fq.filename, "12345_AABBCCDDXX_c100_l1.fastq")
+        self.assertEqual(fq.compression_extension, None)
 
     def test_init_single_attributes_set_single(self):
         fq = FastqName(lib_id="12345", flowcell="AABBCCDDXX",
@@ -62,6 +78,14 @@ class TestFastqName(TestCase):
                        cycle = "100", lane="1", is_paired=True)
         self.assertEqual(fq.is_valid, False)
         self.assertEqual(fq.is_paired, True)
+
+    def test_init_single_attributes_set_paired_bzip2(self):
+        fq = FastqName(lib_id="12345", flowcell="AABBCCDDXX",
+                       cycle = "100", lane="1", is_paired=True,
+                       compression_extension='.bzip2')
+        self.assertEqual(fq.is_valid, False)
+        self.assertEqual(fq.is_paired, True)
+        self.assertEqual(fq.compression_extension, '.bzip2')
 
     def test_init_paired_attributes(self):
         fq = FastqName(lib_id="12345", flowcell="AABBCCDDXX",

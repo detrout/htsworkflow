@@ -7,7 +7,7 @@ SINGLE_TEMPLATE = '{lib_id}_{flowcell}_c{cycle}_l{lane}.fastq{compression_extens
 
 FASTQ_RE = re.compile(
     '(?P<lib_id>[^_]+)_(?P<flowcell>[^_]+)_'\
-    'c(?P<cycle>[\d]+)_l(?P<lane>[\d]+)(_r(?P<read>[\d]))?\.fastq')
+    'c(?P<cycle>[\d]+)_l(?P<lane>[\d]+)(_r(?P<read>[\d]))?\.fastq(?P<compression_extension>.[\w]+)?')
 
 class FastqName(collections.Mapping):
     """Utility class to convert to the standardized submission fastq name.
@@ -58,7 +58,10 @@ class FastqName(collections.Mapping):
         for k in self.keys():
             if k == 'read':
                 continue
-            if self[k] is None:
+            elif k == 'compression_extension':
+                if self[k] not in (None, '', '.gz', '.bz2'):
+                    return False
+            elif self[k] is None:
                 return False
         return True
     is_valid = property(_is_valid)
@@ -69,7 +72,11 @@ class FastqName(collections.Mapping):
                 "Please set all needed variables before generating a filename")
 
         T = PAIRED_TEMPLATE if self.is_paired else SINGLE_TEMPLATE
-        return T.format(**self)
+        attributes = {}
+        for k in self:
+            v = self[k]
+            attributes[k] = v if v is not None else ''
+        return T.format(**attributes)
     filename = property(_get_filename)
 
     def __iter__(self):
