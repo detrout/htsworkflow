@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 """Write fastq data from multiple compressed files into a single file
 """
-
+import bz2
+import gzip
 from glob import glob
 import os
 from optparse import OptionParser
@@ -29,7 +30,12 @@ def main(cmdline=None):
         return 0
 
     if opts.output is not None:
-        output = open(opts.output, 'w')
+        if opts.bzip:
+            output = bz2.BZ2File(opts.output,'w')
+        elif opts.gzip:
+            output = gzip.GzipFile(opts.output, 'w')
+        else:
+            output = open(opts.output, 'w')
     else:
         output = sys.stdout
 
@@ -51,6 +57,10 @@ def make_parser():
     parser.add_option('-s', '--slice',
                       help="specify python slice, e.g. 0:75, 0:-1",
                       default=None)
+    parser.add_option('--gzip', default=False, action='store_true',
+                      help='gzip output')
+    parser.add_option('--bzip', default=False, action='store_true',
+                      help='bzip output')
     parser.add_option("--version", default=False, action="store_true",
                       help="report software version")
     return parser
