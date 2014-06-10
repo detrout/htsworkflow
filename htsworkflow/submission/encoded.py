@@ -94,6 +94,7 @@ class ENCODED:
         self.username = None
         self.password = None
         self.contexts = contexts if contexts else ENCODED_CONTEXT
+        self.json_headers = {'Content-Type': 'application/json'}
         self.schemas = {}
 
     def get_auth(self):
@@ -188,9 +189,9 @@ class ENCODED:
         LOGGER.info('requesting url: {}'.format(url))
 
         # do the request
-        headers = {'content-type': 'application/json'}
+
         LOGGER.debug('username: %s, password: %s', self.username, self.password)
-        response = requests.get(url, auth=self.auth, headers=headers, params=kwargs)
+        response = requests.get(url, auth=self.auth, headers=self.json_headers, params=kwargs)
         if not response.status_code == requests.codes.ok:
             LOGGER.error("Error http status: {}".format(response.status_code))
             response.raise_for_status()
@@ -237,16 +238,17 @@ class ENCODED:
         """
         url = self.prepare_url(obj_id)
         payload = json.dumps(changes)
-        response = requests.patch(url, auth=self.auth, data=payload)
+        response = requests.patch(url, auth=self.auth, headers=self.json_headers, data=payload)
         if response.status_code != requests.codes.ok:
             LOGGER.error("Error http status: {}".format(response.status_code))
+            LOGGER.error("Response: %s", response.text)
             response.raise_for_status()
         return response.json()
 
     def put_json(self, obj_id, new_object):
         url = self.prepare_url(obj_id)
         payload = json.dumps(new_object)
-        response = requests.put(url, auth=self.auth, data=payload)
+        response = requests.put(url, auth=self.auth, headers=self.json_headers, data=payload)
         if response.status_code != requests.codes.created:
             LOGGER.error("Error http status: {}".format(response.status_code))
             response.raise_for_status()
