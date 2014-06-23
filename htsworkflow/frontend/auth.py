@@ -17,5 +17,3 @@ def require_api_key(request):
         return True
     else:
         raise PermissionDenied
-        
-    
