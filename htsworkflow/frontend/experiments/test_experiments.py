@@ -81,6 +81,7 @@ class ClusterStationTestCases(TestCase):
 
 class SequencerTestCases(TestCase):
     fixtures = ['initial_data.json',
+                'woldlab.json',
                 'test_flowcells.json']
 
     def test_default(self):

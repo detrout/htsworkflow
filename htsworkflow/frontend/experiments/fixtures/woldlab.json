@@ -1,0 +1,89 @@
+[ { "model": "experiments.Sequencer",
+    "pk": 1,
+    "fields": {
+      "name": "Rotifer",
+      "instrument_name": "ILLUMINA-33A494",
+      "serial_number": "",
+      "model": "Illumina Genome Analyzer II",
+      "active": false,
+      "isdefault": false,
+      "comment": "after 2010 pipeline name, was exchanged for hiseq"
+    }
+  },
+  { "model": "experiments.Sequencer",
+    "pk": 2,
+    "fields": {
+      "name": "Tardigrade",
+      "instrument_name": "ILLUMINA-EC5D15",
+      "serial_number": "",
+      "model": "Illumina Genome Analyzer IIx",
+      "active": true,
+      "isdefault": false,
+      "comment": "after 2010 pipeline name"
+    }
+  },
+  { "model": "experiments.Sequencer",
+    "pk": 3,
+    "fields": {
+      "name": "Elsewhere",
+      "instrument_name": "",
+      "serial_number": "",
+      "model": "Unknown",
+      "active": false,
+      "isdefault": false,
+      "comment": "Sequenced somewhere else"
+    }
+  },
+  { "model": "experiments.Sequencer",
+    "pk": 4,
+    "fields": {
+      "name": "Volvox",
+      "instrument_name": "HWI-ST0787",
+      "serial_number": "",
+      "model": "Illumina HiSeq 2000",
+      "active": true,
+      "isdefault": true,
+      "comment": ""
+    }
+  },
+  { "model": "experiments.Sequencer",
+    "pk": 5,
+    "fields": {
+      "name": "Tardigrade (older)",
+      "instrument_name": "HWUSI-EAS627",
+      "serial_number": "",
+      "model": "Illumina Genome Analyzer II",
+      "active": false,
+      "isdefault": false,
+      "comment": "earlier version of tardigrade"
+    }
+  },
+  { "model": "experiments.Sequencer",
+    "pk": 6,
+    "fields": {
+      "name": "Rotifer (older)",
+      "instrument_name": "HWUSI-EAS229",
+      "serial_number": "",
+      "model": "Illumina Genome Analyzer II",
+      "active": false,
+      "isdefault": false,
+      "comment": "earlier rotifer name"
+    }
+  },
+  { "model": "experiments.Sequencer",
+    "pk": 7,
+    "fields": {
+      "name": "First sequencer",
+      "instrument_name": "USI-EAS44",
+      "serial_number": "",
+      "model": "Illumina Genome Analyzer I",
+      "active": false,
+      "isdefault": false,
+      "comment": "our first sequencer"
+    }
+  },
+  { "model": "experiments.ClusterStation",
+    "pk": 3,
+    "fields": { "name": "new", "isdefault": false }
+  }
+]

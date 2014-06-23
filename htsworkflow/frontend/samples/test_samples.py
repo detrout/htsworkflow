@@ -27,6 +27,7 @@ from htsworkflow.util.ethelp import validate_xhtml
 
 class LibraryTestCase(TestCase):
     fixtures = ['initial_data.json',
+                'woldlab.json',
                 'test_samples.json']
 
     def setUp(self):
@@ -54,6 +55,7 @@ class SampleWebTestCase(TestCase):
     (like returning json objects)
     """
     fixtures = ['initial_data.json',
+                'woldlab.json',
                 'test_samples.json']
 
     def test_library_info(self):
@@ -282,6 +284,7 @@ except ImportError,e:
 
 class TestRDFaLibrary(TestCase):
     fixtures = ['initial_data.json',
+                'woldlab.json',
                 'test_samples.json']
 
     def test_parse_rdfa(self):
