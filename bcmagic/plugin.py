@@ -1,5 +1,3 @@
-#from htsworkflow.frontend.samples import bcm_cmds
-
 #BCM_PLUGINS = {'cmd_move_sample': bcm_cmds.cmd_move_sample}
 
 _SEARCH_FUNCTIONS = {}
