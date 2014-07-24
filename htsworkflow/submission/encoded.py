@@ -95,7 +95,7 @@ class ENCODED:
         self.username = None
         self.password = None
         self.contexts = contexts if contexts else ENCODED_CONTEXT
-        self.json_headers = {'Content-Type': 'application/json'}
+        self.json_headers = {'content-type': 'application/json', 'accept': 'application/json'}
         self.schemas = {}
 
     def get_auth(self):
