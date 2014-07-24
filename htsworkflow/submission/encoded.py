@@ -20,31 +20,31 @@ ENCODED_CONTEXT = {
     # provide common defaults.
     None: {
         # terms in multiple encoded objects
-        'award': { '@type': '@id' },
+        'award': {'@type': '@id'},
         'dataset': {'@type': '@id'},
         'description': 'rdf:description',
-        'documents': { '@type': '@id' },
+        'documents': {'@type': '@id'},
         'experiment': {'@type': '@id'},
-        'href': { '@type': '@id' },
-        'lab': { '@type': '@id' },
-        'library': {'@type': '@id' },
-        'pi': { '@type': '@id' },
-        'platform': { '@type': '@id' },
-        'replicates': { '@type': '@id' },
-        'submitted_by': { '@type': '@id' },
-        'url': { '@type': '@id' },
+        'href': {'@type': '@id'},
+        'lab': {'@type': '@id'},
+        'library': {'@type': '@id'},
+        'pi': {'@type': '@id'},
+        'platform': {'@type': '@id'},
+        'replicates': {'@type': '@id'},
+        'submitted_by': {'@type': '@id'},
+        'url': {'@type': '@id'},
     },
     # Identify and markup contained classes.
     # e.g. in the tree there was a sub-dictionary named 'biosample'
     # That dictionary had a term 'biosample_term_id, which is the
     # term that should be used as the @id.
     'biosample': {
-        'biosample_term_id': { '@type': '@id' },
+        'biosample_term_id': {'@type': '@id'},
     },
     'experiment': {
-        "assay_term_id": { "@type": "@id" },
-        "files": { "@type": "@id" },
-        "original_files": { "@type": "@id"},
+        "assay_term_id": {"@type": "@id"},
+        "files": {"@type": "@id"},
+        "original_files": {"@type": "@id"},
     },
     # I tried to use the JSON-LD mapping capabilities to convert the lab
     # contact information into a vcard record, but the encoded model
@@ -57,7 +57,7 @@ ENCODED_CONTEXT = {
     #    "country": "vcard:country"
     #},
     'library': {
-        'nucleic_acid_term_id': { '@type': '@id' }
+        'nucleic_acid_term_id': {'@type': '@id'}
     }
 }
 
@@ -74,17 +74,18 @@ ENCODED_NAMESPACES = {
     "vcard": "http://www.w3.org/2006/vcard/ns#",
 
     # for some namespaces I made a best guess for the ontology root.
-    "EFO": "http://www.ebi.ac.uk/efo/", # EFO ontology
-    "OBO": "http://purl.obolibrary.org/obo/", # OBO ontology
-    "OBI": "http://purl.obolibrary.org/obo/OBI_", # Ontology for Biomedical Investigations
+    "EFO": "http://www.ebi.ac.uk/efo/",  # EFO ontology
+    "OBO": "http://purl.obolibrary.org/obo/",  # OBO ontology
+    "OBI": "http://purl.obolibrary.org/obo/OBI_",  # Ontology for Biomedical Investigations
     # OBI: available from http://svn.code.sf.net/p/obi/code/releases/2012-07-01/merged/merged-obi-comments.owl
-    'SO': 'http://purl.obolibrary.org/obo/SO_', # Sequence ontology
+    'SO': 'http://purl.obolibrary.org/obo/SO_',  # Sequence ontology
     # SO: available from http://www.berkeleybop.org/ontologies/so.owl
     # NTR: New Term Request space for DCC to implement new ontology terms
 
 }
 
-ENCODED_SCHEMA_ROOT='/profiles/'
+ENCODED_SCHEMA_ROOT = '/profiles/'
+
 
 class ENCODED:
     '''Programatic access encoded, the software powering ENCODE3's submit site.
@@ -162,7 +163,7 @@ class ENCODED:
         self.contexts[type] = context attributes for this type.
         '''
         context = {'@base': urljoin(default_base, obj['@id']),
-                    '@vocab': self.get_schema_url(obj)}
+                   '@vocab': self.get_schema_url(obj)}
         # add in defaults
         context.update(self.contexts[None])
         for t in obj['@type']:
@@ -232,7 +233,6 @@ class ENCODED:
             return True
         return False
 
-
     def patch_json(self, obj_id, changes):
         """Given a dictionary of changes push them as a HTTP patch request
         """
@@ -257,6 +257,7 @@ class ENCODED:
     def post_json(self, collection_id, new_object):
         url = self.prepare_url(collection_id)
         payload = json.dumps(new_object)
+
         response = requests.post(url, auth=self.auth, headers=self.json_headers, data=payload)
         if response.status_code != requests.codes.created:
             LOGGER.error("Error http status: {}".format(response.status_code))

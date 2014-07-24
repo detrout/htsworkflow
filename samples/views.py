@@ -36,8 +36,7 @@ from htsworkflow.util import makebed
 from htsworkflow.util import opener
 
 
-
-LANE_LIST = [1,2,3,4,5,6,7,8]
+LANE_LIST = [1, 2, 3, 4, 5, 6, 7, 8]
 SAMPLES_CONTEXT_DEFAULTS = {
     'app_name': 'Flowcell/Library Tracker',
     'bcmagic': BarcodeMagicForm()
@@ -45,13 +44,14 @@ SAMPLES_CONTEXT_DEFAULTS = {
 
 LOGGER = logging.getLogger(__name__)
 
+
 def count_lanes(lane_set):
     single = 0
     paired = 1
     short_read = 0
     medium_read = 1
     long_read = 2
-    counts = [[0,0,0,],[0,0,0]]
+    counts = [[0, 0, 0], [0, 0, 0]]
 
     for lane in lane_set.all():
         if lane.flowcell.paired_end:
@@ -68,6 +68,7 @@ def count_lanes(lane_set):
 
     return counts
 
+
 def create_library_context(cl):
     """
      Create a list of libraries that includes how many lanes were run
@@ -75,26 +76,26 @@ def create_library_context(cl):
     records = []
     #for lib in library_items.object_list:
     for lib in cl.result_list:
-       summary = {}
-       summary['library'] = lib
-       summary['library_id'] = lib.id
-       summary['library_name'] = lib.library_name
-       summary['species_name' ] = lib.library_species.scientific_name
-       if lib.amplified_from_sample is not None:
-           summary['amplified_from'] = lib.amplified_from_sample.id
-       else:
-           summary['amplified_from'] = ''
-       lanes_run = count_lanes(lib.lane_set)
-       # suppress zeros
-       for row in xrange(len(lanes_run)):
-           for col in xrange(len(lanes_run[row])):
-               if lanes_run[row][col] == 0:
-                   lanes_run[row][col] = ''
-       summary['lanes_run'] = lanes_run
-       summary['is_archived'] = lib.is_archived()
-       records.append(summary)
+        summary = {}
+        summary['library'] = lib
+        summary['library_id'] = lib.id
+        summary['library_name'] = lib.library_name
+        summary['species_name'] = lib.library_species.scientific_name
+        if lib.amplified_from_sample is not None:
+            summary['amplified_from'] = lib.amplified_from_sample.id
+        else:
+            summary['amplified_from'] = ''
+        lanes_run = count_lanes(lib.lane_set)
+        # suppress zeros
+        for row in xrange(len(lanes_run)):
+            for col in xrange(len(lanes_run[row])):
+                if lanes_run[row][col] == 0:
+                    lanes_run[row][col] = ''
+        summary['lanes_run'] = lanes_run
+        summary['is_archived'] = lib.is_archived()
+        records.append(summary)
     cl.result_count = unicode(cl.paginator._count)
-    return {'library_list': records }
+    return {'library_list': records}
 
 
 def library(request, todo_only=False):
@@ -104,18 +105,18 @@ def library(request, todo_only=False):
         filters['lane'] = None
     # build changelist
     fcl = HTSChangeList(request, Library,
-        list_filter=['affiliations', 'library_species'],
-        search_fields=['id', 'library_name', 'amplified_from_sample__id'],
-        list_per_page=200,
-        model_admin=LibraryOptions(Library, None),
-        extra_filters=filters
-    )
+                        list_filter=['affiliations', 'library_species'],
+                        search_fields=['id', 'library_name', 'amplified_from_sample__id'],
+                        list_per_page=200,
+                        model_admin=LibraryOptions(Library, None),
+                        extra_filters=filters
+                        )
 
-    context = { 'cl': fcl, 'title': 'Library Index', 'todo_only': todo_only}
+    context = {'cl': fcl, 'title': 'Library Index', 'todo_only': todo_only}
     context.update(create_library_context(fcl))
     t = get_template('samples/library_index.html')
     c = RequestContext(request, context)
-    return HttpResponse( t.render(c) )
+    return HttpResponse(t.render(c))
 
 
 def library_not_run(request):
@@ -132,7 +133,7 @@ def library_to_flowcells(request, lib_id):
         raise Http404('Library %s does not exist' % (lib_id,))
 
     flowcell_list = []
-    flowcell_run_results = {} # aka flowcells we're looking at
+    flowcell_run_results = {}  # aka flowcells we're looking at
     for lane in lib.lane_set.all():
         fc = lane.flowcell
         flowcell_id, id = parse_flowcell_id(fc.flowcell_id)
@@ -160,7 +161,8 @@ def library_to_flowcells(request, lib_id):
     return render_to_response(
         'samples/library_detail.html',
         context,
-        context_instance = RequestContext(request))
+        context_instance=RequestContext(request))
+
 
 def lanes_for(request, username=None):
     """
@@ -169,21 +171,21 @@ def lanes_for(request, username=None):
     query = {}
     if username is not None:
         user = HTSUser.objects.get(username=username)
-        query.update({'library__affiliations__users__id':user.id})
+        query.update({'library__affiliations__users__id': user.id})
     fcl = HTSChangeList(request, Lane,
-        list_filter=[],
-        search_fields=['flowcell__flowcell_id', 'library__id', 'library__library_name'],
-        list_per_page=200,
-        model_admin=LaneOptions,
-        queryset=Lane.objects.filter(**query)
-    )
+                        list_filter=[],
+                        search_fields=['flowcell__flowcell_id', 'library__id', 'library__library_name'],
+                        list_per_page=200,
+                        model_admin=LaneOptions,
+                        queryset=Lane.objects.filter(**query)
+                        )
 
-    context = { 'lanes': fcl, 'title': 'Lane Index'}
+    context = {'lanes': fcl, 'title': 'Lane Index'}
 
     return render_to_response(
         'samples/lanes_for.html',
         context,
-        context_instance = RequestContext(request)
+        context_instance=RequestContext(request)
     )
 
 
@@ -238,7 +240,6 @@ def result_fc_cnm_eland_lane(request, flowcell_id, cnm, lane):
     return HttpResponse(f, content_type='application/x-bzip2')
 
 
-
 def bedfile_fc_cnm_eland_lane_ucsc(request, fc_id, cnm, lane):
     """
     returns a bed file for a given flowcell, CN-M (i.e. C1-33), and lane (ucsc compatible)
@@ -271,7 +272,7 @@ def bedfile_fc_cnm_eland_lane(request, flowcell_id, cnm, lane, ucsc_compatible=F
     fi = opener.autoopen(filepath, 'r')
     # output memory file
 
-    name, description = makebed.make_description( fc_id, lane )
+    name, description = makebed.make_description(fc_id, lane)
 
     bedgen = makebed.make_bed_from_eland_generator(fi, name, description)
 
@@ -306,7 +307,7 @@ def _summary_stats(flowcell_id, lane_id, library_id):
         # skip if we don't have available metadata.
         if run.gerald is None or run.gerald.summary is None:
             continue
-        
+
         gerald_summary = run.gerald.summary.lane_results
         key = SampleKey(lane=lane_id, sample='s')
         eland_results = list(run.gerald.eland_results.find_keys(key))
@@ -325,8 +326,8 @@ def _summary_stats(flowcell_id, lane_id, library_id):
             eland_summary.cycle_width = cycle_width
             if hasattr(eland_summary, 'genome_map'):
                 eland_summary.summarized_reads = runfolder.summarize_mapped_reads(
-                                                   eland_summary.genome_map,
-                                                   eland_summary.mapped_reads)
+                    eland_summary.genome_map,
+                    eland_summary.mapped_reads)
 
             # grab some more information out of the flowcell db
             flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
@@ -358,11 +359,12 @@ def get_eland_result_type(pathname):
     else:
         return 'unknown'
 
+
 def _make_eland_results(flowcell_id, lane_number, interesting_flowcells):
     fc_id, status = parse_flowcell_id(flowcell_id)
     cur_fc = interesting_flowcells.get(fc_id, None)
     if cur_fc is None:
-      return []
+        return []
 
     flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
     lanes = flowcell.lane_set.filter(lane_number=lane_number)
@@ -382,7 +384,7 @@ def _make_eland_results(flowcell_id, lane_number, interesting_flowcells):
     if len(storage_id_list) == 0:
         storage_ids = None
     else:
-        storage_ids = ', '.join([ '<a href="/inventory/%s/">%s</a>' % (s,s) for s in storage_id_list ])
+        storage_ids = ', '.join(['<a href="/inventory/%s/">%s</a>' % (s, s) for s in storage_id_list])
 
     results = []
     for cycle in cur_fc.keys():
@@ -397,13 +399,14 @@ def _make_eland_results(flowcell_id, lane_number, interesting_flowcells):
                         'result_url': result_link[0],
                         'result_label': result_link[1],
                         'bed_url': result_link[2],
-                        'storage_ids': storage_ids
-        })
+                        'storage_ids': storage_ids})
     return results
+
 
 def make_summary_url(flowcell_id, cycle_name):
     url = '/results/%s/%s/summary/' % (flowcell_id, cycle_name)
     return url
+
 
 def make_result_link(flowcell_id, cycle_name, lane, eland_result_path):
     if eland_result_path is None:
@@ -414,10 +417,11 @@ def make_result_link(flowcell_id, cycle_name, lane, eland_result_path):
     result_label = 'eland %s' % (result_type,)
     bed_url = None
     if result_type == 'result':
-       bed_url_pattern = '/results/%s/%s/bedfile/%s'
-       bed_url = bed_url_pattern % (flowcell_id, cycle_name, lane)
+        bed_url_pattern = '/results/%s/%s/bedfile/%s'
+        bed_url = bed_url_pattern % (flowcell_id, cycle_name, lane)
 
     return (result_url, result_label, bed_url)
+
 
 def _files(flowcell_id, lane):
     """
@@ -437,8 +441,8 @@ def _files(flowcell_id, lane):
     for c_name in d:
 
         if d[c_name]['summary'] is not None:
-            output.append('<a href="/results/%s/%s/summary/">summary(%s)</a>' \
-                          % (flowcell_id, c_name, c_name))
+            output.append('<a href="/results/%s/%s/summary/">summary(%s)</a>' %
+                          (flowcell_id, c_name, c_name))
 
         erd = d[c_name]['eland_results']
         if lane in erd:
@@ -454,9 +458,11 @@ def _files(flowcell_id, lane):
 
     return '(' + '|'.join(output) + ')'
 
+
 def library_id_to_admin_url(request, lib_id):
     lib = Library.objects.get(id=lib_id)
     return HttpResponseRedirect('/admin/samples/library/%s' % (lib.id,))
+
 
 def library_dict(library_id):
     """
@@ -464,20 +470,20 @@ def library_dict(library_id):
     return None if nothing was found
     """
     try:
-        lib = Library.objects.get(id = library_id)
+        lib = Library.objects.get(id=library_id)
     except Library.DoesNotExist, e:
         return None
 
     #lane_info = lane_information(lib.lane_set)
     lane_info = []
     for lane in lib.lane_set.all():
-        lane_info.append( {'flowcell':lane.flowcell.flowcell_id,
-                           'lane_number': lane.lane_number,
-                           'lane_id': lane.id,
-                           'paired_end': lane.flowcell.paired_end,
-                           'read_length': lane.flowcell.read_length,
-                           'status_code': lane.status,
-                           'status': LANE_STATUS_MAP[lane.status]} )
+        lane_info.append({'flowcell': lane.flowcell.flowcell_id,
+                          'lane_number': lane.lane_number,
+                          'lane_id': lane.id,
+                          'paired_end': lane.flowcell.paired_end,
+                          'read_length': lane.flowcell.read_length,
+                          'status_code': lane.status,
+                          'status': LANE_STATUS_MAP[lane.status]})
 
     info = {
         # 'affiliations'?
@@ -515,6 +521,7 @@ def library_dict(library_id):
         info['library_type'] = lib.library_type.name
     return info
 
+
 @csrf_exempt
 def library_json(request, library_id):
     """
@@ -530,6 +537,7 @@ def library_json(request, library_id):
     lib_json = json.dumps(lib)
     return HttpResponse(lib_json, content_type='application/json')
 
+
 @csrf_exempt
 def species_json(request, species_id):
     """
@@ -537,18 +545,21 @@ def species_json(request, species_id):
     """
     raise Http404
 
+
 def species(request, species_id):
     species = get_object_or_404(Species, id=species_id)
 
     context = RequestContext(request,
-                             { 'species': species })
+                             {'species': species})
 
     return render_to_response("samples/species_detail.html", context)
+
 
 def antibodies(request):
     context = RequestContext(request,
                              {'antibodies': Antibody.objects.order_by('antigene')})
     return render_to_response("samples/antibody_index.html", context)
+
 
 @login_required
 def user_profile(request):
@@ -556,11 +567,11 @@ def user_profile(request):
     Information about the user
     """
     context = {
-                'page_name': 'User Profile',
-                'media': '',
-                #'bcmagic': BarcodeMagicForm(),
-                #'select': 'settings',
-            }
+        'page_name': 'User Profile',
+        'media': '',
+        #'bcmagic': BarcodeMagicForm(),
+        #'select': 'settings',
+    }
     context.update(SAMPLES_CONTEXT_DEFAULTS)
     return render_to_response('registration/profile.html', context,
                               context_instance=RequestContext(request))

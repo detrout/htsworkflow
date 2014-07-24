@@ -17,10 +17,12 @@ except ImportError, e:
     # Some systems are using python 2.4, which doesn't have uuid
     # this is a stub
     LOGGER.warning('Real uuid is not available, initializing fake uuid module')
+
     class uuid:
         def uuid1(self):
             self.hex = None
             return self
+
 
 def _assign_uuid(sender, instance, **kwargs):
     """
@@ -29,6 +31,7 @@ def _assign_uuid(sender, instance, **kwargs):
     #print 'Entered _assign_uuid'
     if instance.uuid is None or len(instance.uuid) != 32:
         instance.uuid = uuid.uuid1().hex
+
 
 def _switch_default(sender, instance, **kwargs):
     """
@@ -55,7 +58,10 @@ class Location(models.Model):
     name = models.CharField(max_length=256, unique=True)
     location_description = models.TextField()
 
-    uuid = models.CharField(max_length=32, blank=True, help_text="Leave blank for automatic UUID generation", editable=False)
+    uuid = models.CharField(max_length=32,
+                            blank=True,
+                            help_text="Leave blank for automatic UUID generation",
+                            editable=False)
 
     notes = models.TextField(blank=True, null=True)
 
@@ -106,6 +112,7 @@ class ItemType(models.Model):
     def __unicode__(self):
         return u"%s" % (self.name)
 
+
 class ItemStatus(models.Model):
     name = models.CharField(max_length=64, unique=True)
     notes = models.TextField(blank=True, null=True)
@@ -118,12 +125,15 @@ class ItemStatus(models.Model):
 
 
 class Item(models.Model):
-
     item_type = models.ForeignKey(ItemType)
 
     #Automatically assigned uuid; used for barcode if one is not provided in
     # barcode_id
-    uuid = models.CharField(max_length=32, blank=True, help_text="Leave blank for automatic UUID generation", unique=True, editable=False)
+    uuid = models.CharField(max_length=32,
+                            blank=True,
+                            help_text="Leave blank for automatic UUID generation",
+                            unique=True,
+                            editable=False)
 
     # field for existing barcodes; used instead of uuid if provided
     barcode_id = models.CharField(max_length=256, blank=True, null=True)
@@ -173,7 +183,6 @@ pre_save.connect(_switch_default, sender=PrinterTemplate)
 
 
 class LongTermStorage(models.Model):
-
     flowcell = models.ForeignKey(FlowCell)
     libraries = models.ManyToManyField(Library)
 
@@ -183,15 +192,13 @@ class LongTermStorage(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return u"%s: %s" % (str(self.flowcell), ', '.join([ str(s) for s in self.storage_devices.iterator() ]))
+        return u"%s: %s" % (str(self.flowcell), ', '.join([str(s) for s in self.storage_devices.iterator()]))
 
     class Meta:
         verbose_name_plural = "Long Term Storage"
 
 
-
 class ReagentBase(models.Model):
-
     reagent = models.ManyToManyField(Item)
 
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -208,7 +215,7 @@ class ReagentFlowcell(ReagentBase):
     flowcell = models.ForeignKey(FlowCell)
 
     def __unicode__(self):
-        return u"%s: %s" % (str(self.flowcell), ', '.join([ str(s) for s in self.reagent.iterator() ]))
+        return u"%s: %s" % (str(self.flowcell), ', '.join([str(s) for s in self.reagent.iterator()]))
 
 
 class ReagentLibrary(ReagentBase):
@@ -218,4 +225,4 @@ class ReagentLibrary(ReagentBase):
     library = models.ForeignKey(Library)
 
     def __unicode__(self):
-        return u"%s: %s" % (str(self.library), ', '.join([ str(s) for s in self.reagent.iterator() ]))
+        return u"%s: %s" % (str(self.library), ', '.join([str(s) for s in self.reagent.iterator()]))
