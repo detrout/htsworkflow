@@ -10,7 +10,7 @@ except ImportError, e:
 
 from django.test import TestCase
 
-from htsworkflow.frontend.auth import apidata
+from htsworkflow.auth import apidata
 from htsworkflow.pipelines.retrieve_config import \
      format_gerald_config, \
      getCombinedOptions, \

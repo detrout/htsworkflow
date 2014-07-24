@@ -15,7 +15,7 @@ try:
 except ImportError, e:
     import simplejson as json
 
-from htsworkflow.frontend.auth import apidata
+from htsworkflow.auth import apidata
 from htsworkflow.util import api
 from htsworkflow.util import alphanum
 from htsworkflow.util.url import normalize_url

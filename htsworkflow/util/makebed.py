@@ -154,7 +154,7 @@ def make_description(flowcell_id, lane):
     """
     compute a bedfile name and description from the django database
     """
-    from htsworkflow.frontend.experiments import models as experiments
+    from htsworkflow.experiments import models as experiments
 
     lane = int(lane)
     if lane < 1 or lane > 8:

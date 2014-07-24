@@ -10,8 +10,10 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+import sys
 
+DJANGO_ROOT = os.path.dirname(__file__)
+PROJECT_ROOT = os.path.dirname(DJANGO_ROOT)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -31,7 +33,7 @@ ALLOWED_HOSTS = ['jumpgate.caltech.edu']
 
 # Application definition
 AUTHENTICATION_BACKENDS = (
-  'htsworkflow.frontend.samples.auth_backend.HTSUserModelBackend', )
+  'samples.auth_backend.HTSUserModelBackend', )
 CUSTOM_USER_MODEL = 'samples.HTSUser'
 
 INSTALLED_APPS = (
@@ -43,12 +45,12 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
 
-    'htsworkflow.frontend.eland_config',
-    'htsworkflow.frontend.samples',
-    'htsworkflow.frontend.experiments',
-    'htsworkflow.frontend.bcmagic',
-    'htsworkflow.frontend.inventory',
-    'htsworkflow.frontend.labels',
+    'eland_config',
+    'samples',
+    'experiments',
+    'bcmagic',
+    'inventory',
+    'labels',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -61,11 +63,10 @@ MIDDLEWARE_CLASSES = (
 )
 
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'htsworkflow', 'frontend', 'templates'),
-    os.path.join(BASE_DIR, 'htsworkflow', 'templates'),
+    os.path.join(DJANGO_ROOT, 'templates'),
 )
 
-ROOT_URLCONF = 'htsworkflow.frontend.urls'
+ROOT_URLCONF = 'htsworkflow.urls'
 
 WSGI_APPLICATION = 'wsgi.application'
 
@@ -75,7 +76,7 @@ WSGI_APPLICATION = 'wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'fctracker.db'),
+        'NAME': os.path.join(PROJECT_ROOT, 'fctracker.db'),
     }
 }
 
@@ -99,7 +100,7 @@ TIME_ZONE='America/Los_Angeles'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'htsworkflow', 'frontend', 'static'),
+    os.path.join(DJANGO_ROOT, 'static'),
 )
 STATIC_URL = '/static/'
 
@@ -111,7 +112,7 @@ DEFAULT_PM = 5
 # How often to recheck the result archive
 RESCAN_DELAY=1
 # Update this in settings_local to point to your flowcell result directory
-RESULT_HOME_DIR = os.path.join(BASE_DIR, 'test', 'result', 'flowcells')
+RESULT_HOME_DIR = os.path.join(PROJECT_ROOT, 'test', 'result', 'flowcells')
 
 # configure who is sending email and who should get BCCs of announcments
 NOTIFICATION_SENDER = "noreply@example.com"
