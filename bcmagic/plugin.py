@@ -26,7 +26,7 @@ def register_search_plugin(label, search_function):
     
     if label in _SEARCH_FUNCTIONS:
         msg = "search function for label (%s) already registered." % (label)
-        raise ValueError, msg
-    
+        raise ValueError(msg)
+
     _SEARCH_FUNCTIONS[label] = search_function
     
