@@ -1,4 +1,4 @@
-"""Create a track hub 
+"""Create a track hub
 """
 
 #!/usr/bin/env python
@@ -29,13 +29,13 @@ if not 'DJANGO_SETTINGS_MODULE' in os.environ:
 
 from htsworkflow.util import api
 from htsworkflow.util.rdfhelp import \
-     dafTermOntology, \
-     fromTypedNode, \
-     get_model, \
-     get_serializer, \
-     load_into_model, \
-     sparql_query, \
-     submissionOntology
+    dafTermOntology, \
+    fromTypedNode, \
+    get_model, \
+    get_serializer, \
+    load_into_model, \
+    sparql_query, \
+    submissionOntology
 from htsworkflow.submission.daf import get_submission_uri
 from htsworkflow.submission.submission import list_submissions
 from htsworkflow.submission.results import ResultMap
@@ -46,17 +46,18 @@ logger = logging.getLogger(__name__)
 
 INDENTED = "  " + os.linesep
 
+
 def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
     submission_uri = None
 
     if opts.debug:
-        logging.basicConfig(level = logging.DEBUG )
+        logging.basicConfig(level=logging.DEBUG)
     elif opts.verbose:
-        logging.basicConfig(level = logging.INFO )
+        logging.basicConfig(level=logging.INFO)
     else:
-        logging.basicConfig(level = logging.WARNING )
+        logging.basicConfig(level=logging.WARNING)
 
     apidata = api.make_auth_from_opts(opts, parser)
 
@@ -77,7 +78,7 @@ def main(cmdline=None):
             INDENTED.join(submission_names)))
     elif len(submission_names) == 1:
         name = submission_names[0]
-        
+
     if name:
         submission_uri = get_submission_uri(name)
         logger.info('Submission URI: %s', name)
@@ -131,7 +132,7 @@ def main(cmdline=None):
 
     if opts.make_manifest:
         make_manifest(mapper, results, opts.make_manifest)
-        
+
     if opts.sparql:
         sparql_query(model, opts.sparql)
 
@@ -148,7 +149,8 @@ def make_manifest(mapper, results, filename=None):
     else:
         with open(filename, 'w') as mainifeststream:
             mainifeststream.write(manifest)
-        
+
+
 def make_parser():
     parser = OptionParser()
 
@@ -157,33 +159,32 @@ def make_parser():
     model.add_option('--db-path', default=None,
                      help="set rdf database path")
     model.add_option('--model', default=None,
-      help="Load model database")
+                     help="Load model database")
     model.add_option('--load-rdf', default=None,
-      help="load rdf statements into model")
+                     help="load rdf statements into model")
     model.add_option('--sparql', default=None, help="execute sparql query")
     model.add_option('--print-rdf', action="store_true", default=False,
-      help="print ending model state")
+                     help="print ending model state")
     parser.add_option_group(model)
     # commands
     commands = OptionGroup(parser, 'commands')
     commands.add_option('--make-link-tree-from',
-                      help="create directories & link data files",
-                      default=None)
+                        help="create directories & link data files",
+                        default=None)
     commands.add_option('--copy-tree-from',
-                      help="create directories & copy data files",
-                      default=None)
+                        help="create directories & copy data files",
+                        default=None)
     commands.add_option('--fastq', default=False, action="store_true",
                         help="generate scripts for making fastq files")
     commands.add_option('--scan-submission', default=False, action="store_true",
-                      help="Import metadata for submission into our model")
+                        help="Import metadata for submission into our model")
     commands.add_option('--make-track-hub', default=None,
                         help='web root that will host the trackhub.')
     commands.add_option('--track-hub-upload', default=None,
                         help='where to upload track hub <host>:<path>')
-    commands.add_option('--make-manifest', 
-                        help='name the manifest file name or - for stdout to create it', 
+    commands.add_option('--make-manifest',
+                        help='name the manifest file name or - for stdout to create it',
                         default=None)
-
 
     parser.add_option_group(commands)
 
