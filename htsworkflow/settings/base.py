@@ -9,34 +9,32 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
+from os.path import abspath, basename, dirname, join, normpath
 import sys
+import logging
 
-DJANGO_ROOT = os.path.dirname(__file__)
-PROJECT_ROOT = os.path.dirname(DJANGO_ROOT)
+from htsworkflow.util import config_helper
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
+DJANGO_ROOT = dirname(dirname(abspath(__file__)))
+PROJECT_ROOT = dirname(DJANGO_ROOT)
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'c=5&609$7)bm_u+3$2bi=ida$*a)c1(cp_0siua7uyww!1qfg_'
+INI_OPTIONS = config_helper.HTSWConfig()
 
-DEFAULT_API_KEY = 'n7HsXGHIi0vp9j5u4TIRJyqAlXYc4wrH'
+SECRET_KEY = INI_OPTIONS.setdefaultsecret('frontend', 'secret_key')
+DEFAULT_API_KEY = INI_OPTIONS.setdefaultsecret('frontend', 'api')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Override in settings_local
-DEBUG = True
+DEBUG = False
 
-TEMPLATE_DEBUG = True
-
-ALLOWED_HOSTS = ['jumpgate.caltech.edu']
+TEMPLATE_DEBUG = False
 
 # Application definition
 AUTHENTICATION_BACKENDS = (
   'samples.auth_backend.HTSUserModelBackend', )
 CUSTOM_USER_MODEL = 'samples.HTSUser'
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,20 +49,20 @@ INSTALLED_APPS = (
     'bcmagic',
     'inventory',
     'labels',
-)
+]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+]
 
-TEMPLATE_DIRS = (
-    os.path.join(DJANGO_ROOT, 'templates'),
-)
+TEMPLATE_DIRS = [
+    join(DJANGO_ROOT, 'templates'),
+]
 
 ROOT_URLCONF = 'htsworkflow.urls'
 
@@ -73,13 +71,6 @@ WSGI_APPLICATION = 'wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_ROOT, 'fctracker.db'),
-    }
-}
-
 EMAIL_HOST = 'localhost'
 
 # Internationalization
@@ -87,7 +78,7 @@ EMAIL_HOST = 'localhost'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE='America/Los_Angeles'
 
 USE_I18N = True
 
@@ -95,31 +86,23 @@ USE_L10N = True
 
 USE_TZ = True
 
-TIME_ZONE='America/Los_Angeles'
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATICFILES_DIRS = (
-    os.path.join(DJANGO_ROOT, 'static'),
+    join(DJANGO_ROOT, 'static'),
 )
 STATIC_URL = '/static/'
 
-
-#####
+###
 # Application specific settings
 DEFAULT_PM = 5
 
 # How often to recheck the result archive
 RESCAN_DELAY=1
-# Update this in settings_local to point to your flowcell result directory
-RESULT_HOME_DIR = os.path.join(PROJECT_ROOT, 'test', 'result', 'flowcells')
 
 # configure who is sending email and who should get BCCs of announcments
 NOTIFICATION_SENDER = "noreply@example.com"
 NOTIFICATION_BCC=[]
 
-try:
-    # allow local customizations
-    from settings_local import *
-except ImportError as e:
-    pass
+# Update this in settings_local to point to your flowcell result directory
+RESULT_HOME_DIR = join(PROJECT_ROOT, 'test', 'result', 'flowcells')
