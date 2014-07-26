@@ -5,6 +5,22 @@ from unittest import TestCase
 
 import RDF
 
+import keyring.backend
+
+class MockKeyring(keyring.backend.KeyringBackend):
+    priority = 1
+    def set_password(self, servicename, username, password):
+        pass
+
+    def get_password(self, servicename, username):
+        return "example"
+
+    def delete_password(self, servicename, username, password):
+        pass
+
+import keyring
+keyring.set_keyring(MockKeyring())
+
 import encode_find
 from htsworkflow.submission.ucsc import submission_view_url
 from htsworkflow.util.rdfhelp import add_default_schemas, \
@@ -166,7 +182,6 @@ def suite():
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestEncodeFind))
     return suite
-
 
 if __name__ == "__main__":
     from unittest import main
