@@ -1,0 +1,12 @@
+Django==1.6.5
+PyLD==0.5.4
+argparse==1.2.1
+httplib2==0.9
+jsonschema==2.3.0
+keyring==3.8
+lxml==3.3.5
+numpy==1.8.1
+psycopg2==2.5.3
+pytz==2014.4
+requests==2.3.0
+wsgiref==0.1.2
