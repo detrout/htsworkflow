@@ -78,7 +78,7 @@ ENCODED_NAMESPACES = {
     "OBO": "http://purl.obolibrary.org/obo/",  # OBO ontology
     "OBI": "http://purl.obolibrary.org/obo/OBI_",  # Ontology for Biomedical Investigations
     # OBI: available from http://svn.code.sf.net/p/obi/code/releases/2012-07-01/merged/merged-obi-comments.owl
-    'SO': 'http://purl.obolibrary.org/obo/SO_',  # Sequence ontology
+    "SO": "http://purl.obolibrary.org/obo/SO_",  # Sequence ontology
     # SO: available from http://www.berkeleybop.org/ontologies/so.owl
     # NTR: New Term Request space for DCC to implement new ontology terms
 
@@ -90,11 +90,13 @@ ENCODED_SCHEMA_ROOT = '/profiles/'
 class ENCODED:
     '''Programatic access encoded, the software powering ENCODE3's submit site.
     '''
-    def __init__(self, server, contexts=None):
+    def __init__(self, server, contexts=None, namespaces=None):
         self.server = server
+        self.scheme = 'https'
         self.username = None
         self.password = None
         self.contexts = contexts if contexts else ENCODED_CONTEXT
+        self.namespaces = namespaces if namespaces else ENCODED_NAMESPACES
         self.json_headers = {'content-type': 'application/json', 'accept': 'application/json'}
         self.schemas = {}
 
@@ -154,7 +156,7 @@ class ENCODED:
 
         Only needs to be run on the top-most context
         '''
-        context.update(ENCODED_NAMESPACES)
+        context.update(self.namespaces)
 
     def create_jsonld_context(self, obj, default_base):
         '''Synthesize the context for a encoded type
@@ -282,7 +284,7 @@ class ENCODED:
         # clean up potentially messy urls
         url = urlparse(request_url)._asdict()
         if not url['scheme']:
-            url['scheme'] = 'https'
+            url['scheme'] = self.scheme
         if not url['netloc']:
             url['netloc'] = self.server
         url = urlunparse(url.values())
