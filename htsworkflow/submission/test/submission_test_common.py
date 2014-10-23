@@ -10,21 +10,21 @@ S2_NAME = '2000-sample'
 SCOMBINED_NAME = 'directory'
 
 S1_FILES = [
-    os.path.join(S1_NAME, 'file1_l8_r1.fastq'),
-    os.path.join(S1_NAME, 'file1_l8_r2.fastq'),
+    os.path.join(S1_NAME, 'file1_l8_r1.fastq.bz2'),
+    os.path.join(S1_NAME, 'file1_l8_r2.fastq.bz2'),
 ]
 
 S2_FILES = [
     os.path.join(S2_NAME, 'file1.bam'),
-    os.path.join(S2_NAME, 'file1_l5.fastq'),
+    os.path.join(S2_NAME, 'file1_l5.fastq.bz2'),
 ]
 
 SCOMBINED_FILES = [
     os.path.join(SCOMBINED_NAME, 's1_file1.bam'),
-    os.path.join(SCOMBINED_NAME, 's1_l5.fastq'),
+    os.path.join(SCOMBINED_NAME, 's1_l5.fastq.bz2'),
     os.path.join(SCOMBINED_NAME, 's2_file1.bam'),
-    os.path.join(SCOMBINED_NAME, 's2_l4.read1.fastq'),
-    os.path.join(SCOMBINED_NAME, 's2_l4.read2.fastq'),
+    os.path.join(SCOMBINED_NAME, 's2_l4.read1.fastq.bz2'),
+    os.path.join(SCOMBINED_NAME, 's2_l4.read2.fastq.bz2'),
 ]
 
 TURTLE_PREFIX = get_turtle_header()
