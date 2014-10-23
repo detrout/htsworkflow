@@ -1,3 +1,4 @@
+import os
 from .base import *
 
 ALLOWED_HOSTS = ['jumpgate.caltech.edu']
