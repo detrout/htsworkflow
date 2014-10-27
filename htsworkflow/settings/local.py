@@ -20,7 +20,7 @@ LOGGING = {
     'loggers': {
         'htsworkflow': {
             'handlers': ['console'],
-            'level': 'ERROR',
+            'level': 'WARNING',
         }
     }
 }

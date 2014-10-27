@@ -24,9 +24,6 @@ from zipfile import ZipFile
 
 import RDF
 
-if not 'DJANGO_SETTINGS_MODULE' in os.environ:
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
-
 from htsworkflow.util import api
 from htsworkflow.util.rdfhelp import \
     dafTermOntology, \
@@ -46,18 +43,21 @@ logger = logging.getLogger(__name__)
 
 INDENTED = "  " + os.linesep
 
+import django
+if not 'DJANGO_SETTINGS_MODULE' in os.environ:
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings.local'
 
 def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
     submission_uri = None
 
+    from django.conf import settings
+
     if opts.debug:
-        logging.basicConfig(level=logging.DEBUG)
+        settings.LOGGING['loggers']['level'] = 'DEBUG'
     elif opts.verbose:
-        logging.basicConfig(level=logging.INFO)
-    else:
-        logging.basicConfig(level=logging.WARNING)
+        settings.LOGGING['loggers']['level'] = 'INFO'
 
     apidata = api.make_auth_from_opts(opts, parser)
 
@@ -207,4 +207,6 @@ def make_parser():
     return parser
 
 if __name__ == "__main__":
+    django.setup()
+
     main()
