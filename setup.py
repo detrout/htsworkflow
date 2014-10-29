@@ -33,7 +33,7 @@ setup(
                       'django >=1.6, <1.7',
                       'lxml >= 2.2.4',
                       'numpy >= 1.3',
-                      'benderjab >= 0.2',
+                      #'benderjab >= 0.2',
                       'httplib2',
                       'keyring',
                       'PyLD',
