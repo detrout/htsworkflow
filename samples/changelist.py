@@ -42,7 +42,7 @@ class HTSChangeList(ChangeList):
         if django.VERSION[0] >= 1 and django.VERSION[1] >= 4:
             args['request'] = request #list_max_show_all
 
-        qs = super(HTSChangeList, self).get_query_set(**args)
+        qs = super(HTSChangeList, self).get_queryset(**args)
         if self.extra_filters:
             new_qs = qs.filter(**self.extra_filters)
             if new_qs is not None:
