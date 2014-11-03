@@ -29,12 +29,12 @@ class LibraryTestCase(TestCase):
 
         self.assertEqual(len(library.affiliations.all()), 1)
         self.assertEqual(library.affiliation(), 'Alice (contact name)')
-        
+
     def testMultipleAffiliations(self):
         alice = AffiliationFactory.create(name='Alice')
         bob = AffiliationFactory.create(name='Bob')
 
-        library = Library.make_test_object()
+        library = LibraryFactory()
         library.affiliations.add(alice, bob)
 
         self.assertEqual(len(library.affiliations.all()), 2)
