@@ -1,6 +1,7 @@
 #!/usr/bin/python
 """Migrate from sqlite to postgresql
 """
+import argparse
 import logging
 import os
 import tempfile
@@ -15,7 +16,18 @@ import django
 from django.conf import settings
 from django.core import management
 
-def main():
+def main(cmdline=None):
+    parser = make_parser()
+    args = parser.parse_args(cmdline)
+
+    level = logging.WARN
+    if args.debug:
+        level = logging.DEBUG
+    elif args.verbose:
+        level = logging.INFO
+    logging.basicConfig(level=level)
+        
+        
     # needed for django 1.7
     django.setup()
 
@@ -31,6 +43,14 @@ def main():
     move_app_data('bcmagic')
     move_app_data('inventory')
     move_app_data('labels')
+
+def make_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='turn on info messages level')
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help='turn on debug level messages')
+    return parser
 
 def kinit():
     check_call(['kinit', '-l', '10m', 
@@ -63,5 +83,4 @@ def move_app_data(appname):
     os.rmdir(tempdir)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
     main()
