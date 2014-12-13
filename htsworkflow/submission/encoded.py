@@ -214,8 +214,13 @@ class ENCODED:
         """Return type for a encoded object
         """
         obj_type = obj.get('@type')
-        if obj_type and isinstance(obj_type, collections.Sequence):
-            return obj_type[0]
+        if not obj_type:
+            raise ValueError('None type')
+        if type(obj_type) in types.StringTypes:
+            raise ValueError('@type should be a list, not a string')
+        if not isinstance(obj_type, collections.Sequence):
+            raise ValueError('@type is not a sequence')
+        return obj_type[0]
 
     def get_schema_url(self, obj):
         obj_type = self.get_object_type(obj)
