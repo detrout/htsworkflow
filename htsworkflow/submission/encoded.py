@@ -328,10 +328,90 @@ class ENCODED:
 
         schema = self.schemas.setdefault(obj_type, self.get_json(schema_url))
         hidden = obj.copy()
-        del hidden['@id']
-        del hidden['@type']
+        if '@id' in hidden: del hidden['@id']
+        if '@type' in hidden: del hidden['@type']
         jsonschema.validate(hidden, schema)
 
+
+class Document(object):
+    """Helper class for registering documents
+
+    Usage:
+    lysis_uuid = 'f0cc5a7f-96a5-4970-9f46-317cc8e2d6a4'
+    lysis = Document(url_to_pdf, 'extraction protocol', 'Lysis Protocol')
+    lysis.create_if_needed(server, lysis_uuid)
+    """
+    award = 'U54HG006998'
+    lab = '/labs/barbara-wold'
+
+    def __init__(self, url, document_type, description, aliases=None):
+        self.url = url
+        self.filename = os.path.basename(url)
+        self.document_type = document_type
+        self.description = description
+
+        self.references = []
+        self.aliases = aliases if aliases is not None else []
+        self.content_type = None
+        self.document = None
+        self.md5sum = None
+        self.urls = None
+        self.uuid = None
+
+        self.get_document()
+
+    def get_document(self):
+        if os.path.exists(self.url):
+            with open(self.url, 'r') as instream:
+                assert self.url.endswith('pdf')
+                self.content_type = 'application/pdf'
+                self.document = instream.read()
+                self.md5sum = hashlib.md5(self.document)
+        else:
+            req = requests.get(self.url)
+            if req.status_code == 200:
+                self.content_type = req.headers['content-type']
+                self.document = req.content
+                self.md5sum = hashlib.md5(self.document)
+                self.urls = [self.url]
+
+    def create_payload(self):
+        document_payload = {
+            'attachment': {
+              'download': self.filename,
+              'type': self.content_type,
+              'href': 'data:'+self.content_type+';base64,' + base64.b64encode(self.document),
+              'md5sum': self.md5sum.hexdigest()
+            },
+            'document_type': self.document_type,
+            'description': self.description,
+            'award': self.award,
+            'lab': self.lab,
+        }
+        if self.aliases:
+            document_payload['aliases'] = self.aliases
+        if self.references:
+            document_payload['references'] = self.references
+        if self.urls:
+            document_payload['urls'] = self.urls
+
+        return document_payload
+
+    def post(self, server):
+        document_payload = self.create_payload()
+        return server.post_json('/documents/', document_payload)
+
+    def save(self, filename):
+        payload = self.create_payload()
+        with open(filename, 'w') as outstream:
+            outstream.write(pformat(payload))
+
+    def create_if_needed(self, server, uuid):
+        self.uuid = uuid
+        if uuid is None:
+            return self.post(server)
+        else:
+            return server.get_json(uuid, embed=False)
 
 if __name__ == '__main__':
     # try it
