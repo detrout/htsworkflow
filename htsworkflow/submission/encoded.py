@@ -239,6 +239,7 @@ class ENCODED:
         """Given a dictionary of changes push them as a HTTP patch request
         """
         url = self.prepare_url(obj_id)
+        LOGGER.info('PATCHing to %s', url)
         payload = json.dumps(changes)
         response = requests.patch(url, auth=self.auth, headers=self.json_headers, data=payload)
         if response.status_code != requests.codes.ok:
@@ -249,6 +250,7 @@ class ENCODED:
 
     def put_json(self, obj_id, new_object):
         url = self.prepare_url(obj_id)
+        LOGGER.info('PUTing to %s', url)
         payload = json.dumps(new_object)
         response = requests.put(url, auth=self.auth, headers=self.json_headers, data=payload)
         if response.status_code != requests.codes.created:
@@ -258,6 +260,7 @@ class ENCODED:
 
     def post_json(self, collection_id, new_object):
         url = self.prepare_url(collection_id)
+        LOGGER.info('POSTing to %s', url)
         payload = json.dumps(new_object)
 
         response = requests.post(url, auth=self.auth, headers=self.json_headers, data=payload)
