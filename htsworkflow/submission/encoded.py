@@ -222,10 +222,8 @@ class ENCODED:
             raise ValueError('@type is not a sequence')
         return obj_type[0]
 
-    def get_schema_url(self, obj):
-        obj_type = self.get_object_type(obj)
-        if obj_type:
-            return self.prepare_url(ENCODED_SCHEMA_ROOT + obj_type + '.json') + '#'
+    def get_schema_url(self, object_type):
+        return self.prepare_url(ENCODED_SCHEMA_ROOT + object_type + '.json') + '#'
 
     def _is_encoded_object(self, obj):
         '''Test to see if an object is a JSON-LD object
@@ -320,18 +318,75 @@ class ENCODED:
         self.add_jsonld_context(result, self.prepare_url(result['@id']))
         return result
 
-    def validate(self, obj):
-        obj_type = self.get_object_type(obj)
-        schema_url = self.get_schema_url(obj)
+    def validate(self, obj, object_type=None):
+        object_type = object_type if object_type else self.get_object_type(obj)
+        schema_url = self.get_schema_url(object_type)
         if not schema_url:
             raise ValueError("Unable to construct schema url")
 
-        schema = self.schemas.setdefault(obj_type, self.get_json(schema_url))
+        schema = self.schemas.setdefault(object_type, self.get_json(schema_url))
         hidden = obj.copy()
-        if '@id' in hidden: del hidden['@id']
-        if '@type' in hidden: del hidden['@type']
+        if '@id' in hidden:
+            del hidden['@id']
+        if '@type' in hidden:
+            del hidden['@type']
         jsonschema.validate(hidden, schema)
 
+class TypedColumnParser(object):
+    @staticmethod
+    def parse_sheet_array_type(value):
+        """Helper function to parse :array columns in sheet
+        """
+        return value.split(', ')
+
+    @staticmethod
+    def parse_sheet_integer_type(value):
+        """Helper function to parse :integer columns in sheet
+        """
+        return int(value)
+
+    @staticmethod
+    def parse_sheet_boolean_type(value):
+        """Helper function to parse :boolean columns in sheet
+        """
+        return bool(value)
+
+    @staticmethod
+    def parse_sheet_timestamp_type(value):
+        """Helper function to parse :date columns in sheet
+        """
+        return value.strftime('%Y-%m-%d')
+
+    @staticmethod
+    def parse_sheet_string_type(value):
+        """Helper function to parse :string columns in sheet (the default)
+        """
+        return unicode(value)
+
+    def __getitem__(self, name):
+        parser = {
+            'array': self.parse_sheet_array_type,
+            'boolean': self.parse_sheet_boolean_type,
+            'integer': self.parse_sheet_integer_type,
+            'date': self.parse_sheet_timestamp_type,
+            'string': self.parse_sheet_string_type
+        }.get(name)
+        if parser:
+            return parser
+        else:
+            raise RuntimeError("unrecognized column type")
+
+    def __call__(self, header, value):
+        header = header.split(':')
+        column_type = 'string'
+        if len(header) > 1:
+            if header[1] == 'skip':
+                return None, None
+            else:
+                column_type = header[1]
+        return header[0], self[column_type](value)
+
+typed_column_parser = TypedColumnParser()
 
 class Document(object):
     """Helper class for registering documents

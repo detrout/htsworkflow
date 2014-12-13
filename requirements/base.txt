@@ -1,4 +1,4 @@
-Django==1.6.5
+Django>=1.7
 PyLD==0.5.4
 argparse>=1.1
 httplib2>=0.8
@@ -10,3 +10,4 @@ psycopg2>=2.4
 pytz>=2011
 requests>=2.0
 wsgiref==0.1.2
+factory_boy>=2.4

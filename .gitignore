@@ -13,3 +13,5 @@ htsworkflow.kdev4
 RELEASE-VERSION
 .ropeproject
 .tox
+fctracker.db
+

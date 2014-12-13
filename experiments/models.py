@@ -61,16 +61,6 @@ class ClusterStation(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-    @classmethod
-    def default(cls):
-        d = cls.objects.filter(isdefault=True).all()
-        if len(d) > 0:
-            return d[0]
-        d = cls.objects.order_by('-id').all()
-        if len(d) > 0:
-            return d[0]
-        return None
-
     @staticmethod
     def update_isdefault(sender, instance, **kwargs):
         """Clear default if needed
@@ -80,6 +70,15 @@ class ClusterStation(models.Model):
                 if c.id != instance.id:
                     c.isdefault = False
                     c.save()
+
+def cluster_station_default():
+    d = ClusterStation.objects.filter(isdefault=True).all()
+    if len(d) > 0:
+        return d[0]
+    d = ClusterStation.objects.order_by('-id').all()
+    if len(d) > 0:
+        return d[0]
+    return None
 
 pre_save.connect(ClusterStation.update_isdefault, sender=ClusterStation)
 
@@ -108,16 +107,6 @@ class Sequencer(models.Model):
         return ('experiments.views.sequencer',
                 [self.id])
 
-    @classmethod
-    def default(cls):
-        d = cls.objects.filter(isdefault=True).all()
-        if len(d) > 0:
-            return d[0]
-        d = cls.objects.order_by('active', '-id').all()
-        if len(d) > 0:
-            return d[0]
-        return None
-
     @staticmethod
     def update_isdefault(sender, instance, **kwargs):
         """Clear default if needed
@@ -130,6 +119,14 @@ class Sequencer(models.Model):
 
 pre_save.connect(Sequencer.update_isdefault, sender=Sequencer)
 
+def sequencer_default():
+    d = Sequencer.objects.filter(isdefault=True).all()
+    if len(d) > 0:
+        return d[0]
+    d = Sequencer.objects.order_by('active', '-id').all()
+    if len(d) > 0:
+        return d[0]
+    return None
 
 class FlowCell(models.Model):
     flowcell_id = models.CharField(max_length=20, unique=True, db_index=True)
@@ -149,8 +146,9 @@ class FlowCell(models.Model):
                                        null=True,
                                        blank=True)
 
-    cluster_station = models.ForeignKey(ClusterStation, default=ClusterStation.default)
-    sequencer = models.ForeignKey(Sequencer, default=Sequencer.default)
+    cluster_station = models.ForeignKey(ClusterStation,
+                                        default=cluster_station_default)
+    sequencer = models.ForeignKey(Sequencer, default=sequencer_default)
 
     notes = models.TextField(blank=True)
 

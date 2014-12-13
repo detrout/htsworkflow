@@ -1,0 +1,86 @@
+#!/usr/bin/python
+"""Migrate from sqlite to postgresql
+"""
+import argparse
+import logging
+import os
+import tempfile
+from subprocess import check_call, call
+
+logger = logging.getLogger('pgmigrate')
+
+if not 'DJANGO_SETTINGS_MODULE' in os.environ:
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings.felcat'
+
+import django
+from django.conf import settings
+from django.core import management
+
+def main(cmdline=None):
+    parser = make_parser()
+    args = parser.parse_args(cmdline)
+
+    level = logging.WARN
+    if args.debug:
+        level = logging.DEBUG
+    elif args.verbose:
+        level = logging.INFO
+    logging.basicConfig(level=level)
+        
+        
+    # needed for django 1.7
+    django.setup()
+
+    kinit()
+    recreate_database()
+    move_app_data('contenttypes')
+    move_app_data('auth')
+    move_app_data('admin')
+
+    move_app_data('eland_config')
+    move_app_data('samples')
+    move_app_data('experiments')
+    move_app_data('bcmagic')
+    move_app_data('inventory')
+    move_app_data('labels')
+
+def make_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='turn on info messages level')
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help='turn on debug level messages')
+    return parser
+
+def kinit():
+    check_call(['kinit', '-l', '10m', 
+                '-k', '-t', '/var/htsworkflow/jumpgate.keytab', 
+                'jumpgate@WOLDLAB.CALTECH.EDU'])
+
+def recreate_database():
+    dbserver = settings.DATABASES['default']['HOST']
+    dbname = settings.DATABASES['default']['NAME']
+    dbuser = settings.DATABASES['default']['USER']
+    call(['dropdb', '-U', dbuser, '-h', dbserver, dbname])
+    check_call(['createdb', '-U', dbuser, '-h', dbserver, dbname])
+    management.call_command('migrate', noinput=True)
+    #management.call_command('syncdb', '--noinput', '--no-initial-data')
+
+def move_app_data(appname):
+    cwd = os.getcwd()
+    tempdir = tempfile.mkdtemp(prefix='htsw-migrate-')
+    logger.info('migrate dir: %s', tempdir)
+    os.chdir(tempdir)
+    with tempfile.NamedTemporaryFile(prefix=appname+'-', suffix='.json', dir=tempdir) as f:
+        logger.info('tempfile: %s', f.name)
+        management.call_command('dumpdata', appname, database='fctracker', stdout=f)
+        f.flush()
+        dumpstat = os.stat(f.name)
+        if dumpstat.st_size > 5:
+            management.call_command('loaddata', f.name)
+        f.close()
+    os.chdir(cwd)
+    os.rmdir(tempdir)
+
+if __name__ == "__main__":
+    main()
