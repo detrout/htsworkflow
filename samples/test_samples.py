@@ -52,8 +52,7 @@ class SampleWebTestCase(TestCase):
         lib_dict = library_dict(library.id)
         url = '/samples/library/%s/json' % (library.id,)
         lib_response = self.client.get(url, apidata)
-        lib_json = json.loads(lib_response.content)
-        
+        lib_json = json.loads(lib_response.content)['result']
 
         for d in [lib_dict, lib_json]:
             # amplified_from_sample is a link to the library table,

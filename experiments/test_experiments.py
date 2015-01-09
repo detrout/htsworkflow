@@ -200,7 +200,7 @@ class ExperimentsTestCases(TestCase):
 
             response = self.client.get('/experiments/config/%s/json' % (fc_id,), apidata)
             # strptime isoformat string = '%Y-%m-%dT%H:%M:%S'
-            fc_json = json.loads(response.content)
+            fc_json = json.loads(response.content)['result']
             self.assertEqual(fc_json['flowcell_id'], fc_id)
             self.assertEqual(fc_json['sequencer'], fc_django.sequencer.name)
             self.assertEqual(fc_json['read_length'], fc_django.read_length)
@@ -242,7 +242,7 @@ class ExperimentsTestCases(TestCase):
         """
         response = self.client.get('/experiments/config/FC12150/json', apidata)
         self.assertEqual(response.status_code, 200)
-        flowcell = json.loads(response.content)
+        flowcell = json.loads(response.content)['result']
 
         lane_contents = flowcell['lane_set']['3']
         lane_library = lane_contents[0]
@@ -250,7 +250,7 @@ class ExperimentsTestCases(TestCase):
 
         response = self.client.get('/samples/library/SL039/json', apidata)
         self.assertEqual(response.status_code, 200)
-        library_sl039 = json.loads(response.content)
+        library_sl039 = json.loads(response.content)['result']
 
         self.assertEqual(library_sl039['library_id'], 'SL039')
 
@@ -337,7 +337,7 @@ class ExperimentsTestCases(TestCase):
         self.assertEqual(len(lanes), 5)
 
         response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
-        lanes_json = json.loads(response.content)
+        lanes_json = json.loads(response.content)['result']
         self.assertEqual(len(lanes), len(lanes_json))
         for i in range(len(lanes)):
             self.assertEqual(lanes[i]['comment'], lanes_json[i]['comment'])

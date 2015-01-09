@@ -90,7 +90,7 @@ def flowcell_json(request, fc_id):
     if fc_dict is None:
         raise Http404
 
-    fc_json = json.dumps(fc_dict)
+    fc_json = json.dumps({'result': fc_dict})
     return HttpResponse(fc_json, content_type = 'application/json')
 
 def lanes_for(username=None):
@@ -103,7 +103,6 @@ def lanes_for(username=None):
         query.update({'library__affiliations__users__id': user.id})
 
     lanes = Lane.objects.filter(**query).order_by('-flowcell__run_date')
-
 
     result = []
     for l in lanes:
@@ -132,7 +131,7 @@ def lanes_for_json(request, username):
 
     #convert query set to python structure
 
-    result_json = json.dumps(result)
+    result_json = json.dumps({'result': result})
     return HttpResponse(result_json, content_type='application/json')
 
 

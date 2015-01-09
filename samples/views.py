@@ -534,7 +534,7 @@ def library_json(request, library_id):
     if lib is None:
         raise Http404
 
-    lib_json = json.dumps(lib)
+    lib_json = json.dumps({'result': lib})
     return HttpResponse(lib_json, content_type='application/json')
 
 
