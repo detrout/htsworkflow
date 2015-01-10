@@ -2,13 +2,14 @@
 
 This allows retrieving blocks
 """
-
-
 from __future__ import print_function
+import base64
 import collections
+import hashlib
 import logging
 import json
 import jsonschema
+import os
 import requests
 import types
 from urlparse import urljoin, urlparse, urlunparse
