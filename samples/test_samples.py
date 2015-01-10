@@ -74,7 +74,7 @@ class SampleWebTestCase(TestCase):
             self.failUnlessEqual(d['library_species'], library.library_species.scientific_name)
             self.failUnlessEqual(d['library_species_id'], library.library_species_id)
             self.failUnlessEqual(d['library_type_id'], library.library_type_id)
-            self.failUnlessEqual(d['library_type'], None)
+            self.assertTrue(d['library_type'].startswith('library type'))
             self.failUnlessEqual(d['made_for'], library.made_for)
             self.failUnlessEqual(d['made_by'], library.made_by)
             self.failUnlessEqual(d['notes'], library.notes)
@@ -305,22 +305,23 @@ class TestRDFaLibrary(TestCase):
         parser.parse_string_into_model(model,
                                        lib_response.content,
                                        'http://localhost'+url)
-        with open('/tmp/test.ttl', 'w') as outstream:
-            dump_model(model, outstream)
+        # help debugging rdf errrors
+        #with open('/tmp/test.ttl', 'w') as outstream:
+        #    dump_model(model, outstream)
         # http://jumpgate.caltech.edu/wiki/LibraryOntology#affiliation>
         self.check_literal_object(model, ['Bob'], p=libNS['affiliation'])
-        self.check_literal_object(model, 
-                                  ['experiment type name'], 
+        self.check_literal_object(model,
+                                  ['experiment type name'],
                                   p=libNS['experiment_type'])
         self.check_literal_object(model, ['400'], p=libNS['gel_cut'])
-        self.check_literal_object(model, 
-                                  ['microfluidics bot 7321'], 
+        self.check_literal_object(model,
+                                  ['microfluidics bot 7321'],
                                   p=libNS['made_by'])
-        self.check_literal_object(model, 
-                                  ['C1C1 test'], 
+        self.check_literal_object(model,
+                                  [lib_object.library_name],
                                   p=libNS['name'])
-        self.check_literal_object(model, 
-                                  ['test sapiens'], 
+        self.check_literal_object(model,
+                                  ['test sapiens'],
                                   p=libNS['species_name'])
 
 

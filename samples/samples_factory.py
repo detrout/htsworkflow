@@ -2,13 +2,14 @@ import datetime
 
 import factory
 from factory.django import DjangoModelFactory
+from factory.fuzzy import FuzzyChoice, FuzzyText, FuzzyInteger
 from . import models
 
 class AffiliationFactory(DjangoModelFactory):
     class Meta:
         model = models.Affiliation
 
-    name = 'affiliation'
+    name = FuzzyText(prefix='affiliation ')
     contact = 'contact name'
     email = factory.LazyAttribute(lambda obj: '%s@example.com' % obj.name)
 
@@ -55,16 +56,20 @@ class ConditionFactory(DjangoModelFactory):
 class ExperimentTypeFactory(DjangoModelFactory):
     class Meta:
         model = models.ExperimentType
+        django_get_or_create = ('name',)
 
     name = 'experiment type name'
 
 class HTSUserFactory(DjangoModelFactory):
     class Meta:
         model = models.HTSUser
+        django_get_or_create = ('username',)
 
     username = 'username'
     email = factory.LazyAttribute(lambda obj: '%s@example.org' % obj.username)
-    
+    is_staff = False
+    is_superuser = False
+
 #class Tag
 
 class SpeciesFactory(DjangoModelFactory):
@@ -74,13 +79,28 @@ class SpeciesFactory(DjangoModelFactory):
     scientific_name = 'test sapiens'
     common_name = 'test human'
 
-        
+class LibraryTypeFactory(DjangoModelFactory):
+    class Meta:
+        model = models.LibraryType
+
+    is_paired_end = FuzzyChoice([True, False])
+    can_multiplex = FuzzyChoice([True, False])
+    name = FuzzyText(prefix='library type ')
+
+class MultiplexIndexFactory(DjangoModelFactory):
+    class Meta:
+        model = models.MultiplexIndex
+
+    adapter_type = factory.SubFactory(LibraryTypeFactory)
+    multiplex_id = factory.LazyAttribute(lambda o: 'N{}'.format(o.sequence))
+    sequence = FuzzyText(length=5, chars='AGCT')
+
 class LibraryFactory(DjangoModelFactory):
     class Meta:
         model = models.Library
 
-    id = '10001'
-    library_name = 'C1C1 test'
+    id = factory.Sequence(lambda n: str(10000 + n))
+    library_name = factory.LazyAttribute(lambda o: 'Library %s' % (o.id))
     library_species = factory.SubFactory(SpeciesFactory)
     experiment_type = factory.SubFactory(ExperimentTypeFactory)
     creation_date = datetime.datetime.now()
@@ -90,3 +110,4 @@ class LibraryFactory(DjangoModelFactory):
     stopping_point = '2A'
     undiluted_concentration = '5.01'
     hidden = False
+    library_type = factory.SubFactory(LibraryTypeFactory)
