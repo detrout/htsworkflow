@@ -110,7 +110,8 @@ class TestEncoded(TestCase):
         bio_base = encode.prepare_url(obj['biosample']['@id'])
 
         url = encode.prepare_url('/libraries/ENCLB044ZZZ/?format=json&embed=False')
-        schema_url = encode.get_schema_url(obj)
+        obj_type = encode.get_object_type(obj)
+        schema_url = encode.get_schema_url(obj_type)
         encode.add_jsonld_context(obj, url)
 
         self.assertEqual(obj['biosample']['@context']['@base'], bio_base)

@@ -165,8 +165,9 @@ class ENCODED:
         self.contexts[None] = default context attributes added to any type
         self.contexts[type] = context attributes for this type.
         '''
+        obj_type = self.get_object_type(obj)
         context = {'@base': urljoin(default_base, obj['@id']),
-                   '@vocab': self.get_schema_url(obj)}
+                   '@vocab': self.get_schema_url(obj_type)}
         # add in defaults
         context.update(self.contexts[None])
         for t in obj['@type']:
