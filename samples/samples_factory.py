@@ -20,12 +20,13 @@ class AffiliationFactory(DjangoModelFactory):
         if extracted:
             for user in extracted:
                 self.users.add(user)
-                
+
 class AntibodyFactory(DjangoModelFactory):
     class Meta:
         model = models.Antibody
+        django_get_or_create = ('antigene',)
 
-    antigen = 'antigen'
+    antigene = 'antigene'
     nickname = 'short name'
     catalog = 'catalog #'
     antibodies = 'antibody'
