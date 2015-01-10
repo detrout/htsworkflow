@@ -644,9 +644,7 @@ class TestSequencer(TestCase):
 def suite():
     from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
-    for testcase in [ClusterStationTestCases,
-                     SequencerTestCases,
-                     ExerimentsTestCases,
+    for testcase in [ExerimentsTestCases,
                      TestFileType,
                      TestEmailNotify,
                      TestSequencer]:
