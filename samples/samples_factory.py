@@ -43,7 +43,7 @@ class CelllineFactory(DjangoModelFactory):
     nickname = 'Test'
     notes = 'Notes'
 
-    
+
 class ConditionFactory(DjangoModelFactory):
     class Meta:
         model = models.Condition
@@ -51,7 +51,7 @@ class ConditionFactory(DjangoModelFactory):
     condition_name = 'condition name'
     nicname = 'nickname'
     notes = 'notes'
-    
+
 class ExperimentTypeFactory(DjangoModelFactory):
     class Meta:
         model = models.ExperimentType
