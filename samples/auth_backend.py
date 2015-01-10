@@ -5,8 +5,10 @@ from django.contrib.auth.backends import ModelBackend
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
 
+import logging
 import sys
 
+logger = logging.getLogger(__name__)
 
 class HTSUserModelBackend(ModelBackend):
     def authenticate(self, username=None, password=None):
@@ -16,7 +18,7 @@ class HTSUserModelBackend(ModelBackend):
                 return user
         #except self.user_class.DoesNotExist:
         except Exception, e:
-            print >>sys.stderr, e
+            logger.error(str(e))
             return None
 
     def get_user(self, user_id):
@@ -24,7 +26,7 @@ class HTSUserModelBackend(ModelBackend):
             return self.user_class.objects.get(pk=user_id)
         #except self.user_class.DoesNotExist:
         except Exception, e:
-            print >>sys.stderr, e
+            logger.error(str(e))
             return None
 
     @property
