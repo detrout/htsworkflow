@@ -38,7 +38,7 @@ class LibraryTestCase(TestCase):
         library.affiliations.add(alice, bob)
 
         self.assertEqual(len(library.affiliations.all()), 2)
-        self.assertEqual(library.affiliation(), 
+        self.assertEqual(library.affiliation(),
                          'Alice (contact name), Bob (contact name)')
 
 
@@ -138,7 +138,7 @@ class SampleWebTestCase(TestCase):
 
     def test_library_rdf(self):
         library = LibraryFactory.create()
-        
+
         import RDF
         from htsworkflow.util.rdfhelp import get_model, \
              dump_model, \
@@ -166,13 +166,13 @@ class SampleWebTestCase(TestCase):
         }"""
         query = RDF.SPARQLQuery(body)
         for r in query.execute(model):
-            self.assertEqual(fromTypedNode(r['library_id']), 
+            self.assertEqual(fromTypedNode(r['library_id']),
                              library.id)
             self.assertEqual(fromTypedNode(r['name']),
                              library.name)
-            self.assertEqual(fromTypedNode(r['gel_cut']), 
+            self.assertEqual(fromTypedNode(r['gel_cut']),
                              library.gel_cut)
-            self.assertEqual(fromTypedNode(r['made_by']), 
+            self.assertEqual(fromTypedNode(r['made_by']),
                              library.made_by)
 
         state = validate_xhtml(content)
@@ -284,14 +284,14 @@ class TestRDFaLibrary(TestCase):
 
     def setUp(self):
         self.request = RequestFactory()
-        
+
     def test_parse_rdfa(self):
-        
+
         model = get_rdf_memory_model()
         parser = RDF.Parser(name='rdfa')
 
         bob = AffiliationFactory.create(name='Bob')
-        
+
         lib_object = LibraryFactory()
         lib_object.affiliations.add(bob)
         url = '/library/{}/'.format(lib_object.id)
