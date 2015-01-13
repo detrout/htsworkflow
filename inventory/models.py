@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function
 import logging
 
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_init
 
 from samples.models import Library
 from experiments.models import FlowCell
@@ -71,7 +71,7 @@ class Location(models.Model):
         else:
             return u"%s: %s" % (self.name, self.location_description)
 
-pre_save.connect(_assign_uuid, sender=Location)
+post_init.connect(_assign_uuid, sender=Location)
 
 
 class ItemInfo(models.Model):
@@ -159,7 +159,7 @@ class Item(models.Model):
     def get_absolute_url(self):
         return '/inventory/%s/' % (self.uuid)
 
-pre_save.connect(_assign_uuid, sender=Item)
+post_init.connect(_assign_uuid, sender=Item)
 
 
 class PrinterTemplate(models.Model):

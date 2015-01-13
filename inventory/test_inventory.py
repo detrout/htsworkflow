@@ -9,29 +9,30 @@ from django.db import connection
 from django.conf import settings
 
 from django.contrib.auth.models import User
-from django.core import urlresolvers
+from django.core.urlresolvers import reverse
 
 from .models import Item, Vendor
+from .inventory_factory import ItemFactory, LongTermStorageFactory
+from samples.samples_factory import HTSUserFactory, LibraryFactory
+from experiments.experiments_factory import FlowCellFactory
 from htsworkflow.util.rdfhelp import get_model, load_string_into_model, get_serializer, inventoryOntology, libraryOntology, fromTypedNode
 
 def localhostNode(url):
     return RDF.Node(RDF.Uri('http://localhost%s' % (url,)))
 
 class InventoryTestCase(TestCase):
-    fixtures = ['initial_data', 'test_user', 'test_harddisks']
-
-    def test_fixture(self):
-        # make sure that some of our test data is was loaded
-        # since there was no error message when I typoed the test fixture
-        hd1 = Item.objects.get(pk=1)
-        self.failUnlessEqual(hd1.uuid, '8a90b6ce522311de99b00015172ce556')
-
-        user = User.objects.get(pk=5)
-        self.failUnlessEqual(user.username, 'test')
+    def setUp(self):
+        self.password = 'foo'
+        self.user = HTSUserFactory.create()
+        self.user.set_password(self.password)
+        self.user.save()
 
     def test_item(self):
-        url = '/inventory/8a90b6ce522311de99b00015172ce556/'
-        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
+        item = ItemFactory()
+        self.assertTrue(len(item.uuid), 32)
+        url = '/inventory/{}/'.format(item.uuid)
+        self.assertTrue(self.client.login(username=self.user.username,
+                                          password=self.password))
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 200)
 
@@ -39,69 +40,91 @@ class InventoryTestCase(TestCase):
         load_string_into_model(model, 'rdfa', response.content, url)
 
         itemNode = RDF.Node(RDF.Uri(url))
-        item_type = fromTypedNode(model.get_target(itemNode, inventoryOntology['item_type']))
-        self.failUnlessEqual(item_type, u'Hard Drive')
+        item_type = fromTypedNode(
+            model.get_target(itemNode, inventoryOntology['item_type']))
+        self.failUnlessEqual(item_type, item.item_type.name)
 
     def test_itemindex(self):
-        url = '/inventory/it/Hard Drive/'
+        item = ItemFactory()
+        fc1 = FlowCellFactory()
+        lib1 = LibraryFactory()
+        lts = LongTermStorageFactory(flowcell=fc1,
+                                     libraries=[lib1,],
+                                     storage_devices=[item,],)
+
+        url = reverse('inventory.views.itemtype_index',
+                      kwargs={'name': item.item_type.name})
+        disk_url = reverse('inventory.views.item_summary_by_uuid',
+                           kwargs={'uuid': item.uuid})
         indexNode = localhostNode(url)
-        diskNode = localhostNode('/inventory/8a90b6ce522311de99b00015172ce556/')
-        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
+        diskNode = localhostNode(disk_url)
+        self.assertTrue(self.client.login(username=self.user.username,
+                                          password=self.password))
 
         flowcells = self.get_flowcells_from_content(url, indexNode, diskNode)
-        self.failUnlessEqual(len(flowcells), 2)
-        self.failUnless('http://localhost/flowcell/11ONEAAXX/' in flowcells)
-        self.failUnless('http://localhost/flowcell/22TWOAAXX/' in flowcells)
+        self.failUnlessEqual(len(flowcells), 1)
+        flowcell_url = reverse('experiments.views.flowcell_detail',
+                               kwargs={'flowcell_id': fc1.flowcell_id})
+        self.assertTrue(flowcells[0].endswith(flowcell_url))
+
 
     def test_add_disk(self):
-        url = '/inventory/it/Hard Drive/'
-        #url_disk = '/inventory/8a90b6ce522311de99b00015172ce556/'
-        url_disk = '/inventory/b0792d425aa411de99b00015172ce556/'
+        item = ItemFactory()
+        url = reverse('inventory.views.itemtype_index',
+                      kwargs={'name': item.item_type.name})
+        disk_url = reverse('inventory.views.item_summary_by_uuid',
+                           kwargs={'uuid': item.uuid})
         indexNode = localhostNode(url)
-        diskNode = localhostNode(url_disk)
-        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
+        diskNode = localhostNode(disk_url)
+
+        self.assertTrue(self.client.login(username=self.user.username,
+                                          password=self.password))
 
         flowcells = self.get_flowcells_from_content(url, indexNode, diskNode)
         self.failUnlessEqual(len(flowcells), 0)
 
         # step two link the flowcell
-        flowcell = '22TWOAAXX'
-        serial = 'WCAU49042470'
-        link_url = urlresolvers.reverse(
-                'inventory.views.link_flowcell_and_device',
-                args=(flowcell, serial))
+        flowcell = FlowCellFactory(flowcell_id='22TWOAAXX')
+        link_url = reverse('inventory.views.link_flowcell_and_device',
+                           args=(flowcell.flowcell_id,
+                                 item.barcode_id))
         link_response = self.client.get(link_url)
-        self.failUnlessEqual(link_response.status_code, 200)
+        self.assertEqual(link_response.status_code, 200)
 
         flowcells = self.get_flowcells_from_content(url, indexNode, diskNode)
-        self.failUnlessEqual(len(flowcells), 1)
-        self.failUnlessEqual('http://localhost/flowcell/%s/' % (flowcell),
-                             flowcells[0])
+        flowcell_url = reverse('experiments.views.flowcell_detail',
+                               kwargs={'flowcell_id': flowcell.flowcell_id})
+        self.assertEqual(len(flowcells), 1)
+        self.assertTrue(flowcells[0].endswith(flowcell_url))
 
     def test_add_disk_failed_flowcell(self):
-        url = '/inventory/it/Hard Drive/'
-        #url_disk = '/inventory/8a90b6ce522311de99b00015172ce556/'
-        url_disk = '/inventory/b0792d425aa411de99b00015172ce556/'
+        item = ItemFactory()
+        url = reverse('inventory.views.itemtype_index',
+                      kwargs={'name': item.item_type.name})
+        disk_url = reverse('inventory.views.item_summary_by_uuid',
+                           kwargs={'uuid': item.uuid})
         indexNode = localhostNode(url)
-        diskNode = localhostNode(url_disk)
-        self.client.login(username='test', password='BJOKL5kAj6aFZ6A5')
+        diskNode = localhostNode(disk_url)
+
+        self.assertTrue(self.client.login(username=self.user.username,
+                                          password=self.password))
 
         flowcells = self.get_flowcells_from_content(url, indexNode, diskNode)
         self.failUnlessEqual(len(flowcells), 0)
 
         # step two link the flowcell
-        flowcell = '33THRAAXX'
-        serial = 'WCAU49042470'
-        link_url = urlresolvers.reverse(
-                'inventory.views.link_flowcell_and_device',
-                args=(flowcell, serial))
+        flowcell_id = '33THRAAXX'
+        flowcell = FlowCellFactory(flowcell_id=flowcell_id +' (failed)')
+        link_url = reverse('inventory.views.link_flowcell_and_device',
+                           args=(flowcell.flowcell_id, item.barcode_id))
         link_response = self.client.get(link_url)
         self.failUnlessEqual(link_response.status_code, 200)
 
         flowcells = self.get_flowcells_from_content(url, indexNode, diskNode)
-        self.failUnlessEqual(len(flowcells), 1)
-        self.failUnlessEqual('http://localhost/flowcell/%s/' % (flowcell),
-                             flowcells[0])
+        self.assertEqual(len(flowcells), 1)
+        flowcell_url = reverse('experiments.views.flowcell_detail',
+                               kwargs={'flowcell_id': flowcell_id})
+        self.assertTrue(flowcells[0].endswith(flowcell_url))
 
 
     def get_flowcells_from_content(self, url, rootNode, diskNode):

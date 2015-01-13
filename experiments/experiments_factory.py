@@ -2,6 +2,7 @@ import datetime
 
 import factory
 from factory.django import DjangoModelFactory
+from factory.fuzzy import FuzzyText
 from . import models
 from samples.samples_factory import LibraryFactory
 
@@ -31,7 +32,7 @@ class FlowCellFactory(DjangoModelFactory):
     class Meta:
         model = models.FlowCell
 
-    flowcell_id = '1234AAAAXX'
+    flowcell_id = FuzzyText(length=6, suffix='AAXX')
     run_date = datetime.datetime.now()
     advanced_run = False
     paired_end = True
