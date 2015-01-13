@@ -196,7 +196,12 @@ class ENCODED:
         # do the request
 
         LOGGER.debug('username: %s, password: %s', self.username, self.password)
-        response = requests.get(url, auth=self.auth, headers=self.json_headers, params=kwargs)
+        arguments = {}
+        if self.username and self.password:
+            arguments['auth'] = self.auth
+        response = requests.get(url, headers=self.json_headers,
+                                params=kwargs,
+                                **arguments)
         if not response.status_code == requests.codes.ok:
             LOGGER.error("Error http status: {}".format(response.status_code))
             response.raise_for_status()

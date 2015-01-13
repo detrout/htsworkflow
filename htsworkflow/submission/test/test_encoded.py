@@ -56,7 +56,7 @@ class TestEncoded(TestCase):
                u'submitted_by': u'/users/0e3dde9b-aaf9-42dd-87f7-975a85072ed2/',
                u'treatments': [],
                u'uuid': u'42c46028-708f-4347-a3df-2c82dfb021c4'}
-        encode = ENCODED('submit.encodedcc.org')
+        encode = ENCODED('www.encodeproject.org')
         encode.schemas[u'library'] = schema
         encode.validate(obj)
         self.assertTrue('@id' in obj)
