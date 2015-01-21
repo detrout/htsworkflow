@@ -76,8 +76,8 @@ class SpeciesFactory(DjangoModelFactory):
     class Meta:
         model = models.Species
 
-    scientific_name = 'test sapiens'
-    common_name = 'test human'
+    scientific_name = FuzzyText(prefix='scientific name ')
+    common_name = FuzzyText(prefix='common name ')
 
 class LibraryTypeFactory(DjangoModelFactory):
     class Meta:

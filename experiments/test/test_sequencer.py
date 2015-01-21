@@ -9,7 +9,7 @@ class SequencerTestCases(TestCase):
         # starting with no default
         s = SequencerFactory()
         s.save()
-        self.assertEqual(s.id, 1)
+        self.assertTrue(s.id)
 
         total = Sequencer.objects.filter(isdefault=True).count()
         self.assertEqual(total, 1)

@@ -10,46 +10,68 @@ except ImportError, e:
 
 from django.test import TestCase
 
+from samples.samples_factory import LibraryFactory, LibraryTypeFactory, \
+    MultiplexIndexFactory
+from experiments.experiments_factory import FlowCellFactory, LaneFactory
+
 from htsworkflow.auth import apidata
 from htsworkflow.pipelines.retrieve_config import \
      format_gerald_config, \
      getCombinedOptions, \
-     save_sample_sheet
+     save_sample_sheet, \
+     format_project_name
 
 class RetrieveTestCases(TestCase):
-    fixtures = ['initial_data.json',
-                'test_flowcells.json']
-
     def setUp(self):
         pass
 
     def test_format_gerald(self):
-        flowcell_request = self.client.get('/experiments/config/FC12150/json', apidata)
+        fc = FlowCellFactory.create(flowcell_id='FC12150')
+        library = LibraryFactory.create()
+        lane = LaneFactory(flowcell=fc, library=library, lane_number=3)
+
+        flowcell_request = self.client.get('/experiments/config/FC12150/json',
+                                           apidata)
         self.failUnlessEqual(flowcell_request.status_code, 200)
-        flowcell_info = json.loads(flowcell_request.content)
+        flowcell_info = json.loads(flowcell_request.content)['result']
 
         options = getCombinedOptions(['-f','FC12150','-g',os.getcwd()])
-        genome_map = {u'Homo sapiens': '/tmp/hg18' }
+        genome_map = {library.library_species.scientific_name: '/tmp/build' }
 
         config = format_gerald_config(options, flowcell_info, genome_map)
         config_lines = config.split('\n')
         lane3 = [ line for line in config_lines if re.search('Lane3', line) ]
         self.failUnlessEqual(len(lane3), 1)
-        self.failUnlessEqual(lane3[0], '# Lane3: SL039 | Paired ends 99 GM12892')
-        human = [ line for line in config_lines if re.search('hg18', line) ]
+        expected = '# Lane3: {} | {}'.format(library.id, library.library_name)
+        self.failUnlessEqual(lane3[0], expected)
+        human = [ line for line in config_lines if re.search('build', line) ]
         self.failUnlessEqual(len(human), 1)
-        self.failUnlessEqual(human[0], '345678:ELAND_GENOME /tmp/hg18')
-        # we changed the api to force unknown genomes to be sequencing
-        sequencing = [ line for line in config_lines if re.search('sequence_pair', line) ]
-        self.failUnlessEqual(len(sequencing), 2)
+        self.failUnlessEqual(human[0], '3:ELAND_GENOME /tmp/build')
 
 
     def test_format_sample_sheet(self):
         fcid = '42JU1AAXX'
+        fc = FlowCellFactory.create(flowcell_id=fcid)
+        library_type = LibraryTypeFactory(can_multiplex=True)
+        multiplex_index1 = MultiplexIndexFactory(adapter_type=library_type)
+        multiplex_index2 = MultiplexIndexFactory(adapter_type=library_type)
+
+        library1 = LibraryFactory.create(
+            library_type=library_type,
+            multiplex_id=multiplex_index1.multiplex_id)
+        library2 = LibraryFactory.create(
+            library_type=library_type,
+            multiplex_id=multiplex_index2.multiplex_id)
+
+        lane1l1 = LaneFactory(flowcell=fc, library=library1, lane_number=1)
+        lane1l2 = LaneFactory(flowcell=fc, library=library2, lane_number=1)
+        lane2l1 = LaneFactory(flowcell=fc, library=library1, lane_number=2)
+        lane2l2 = LaneFactory(flowcell=fc, library=library2, lane_number=2)
+
         url = '/experiments/config/%s/json' % (fcid,)
         flowcell_request = self.client.get(url, apidata)
         self.failUnlessEqual(flowcell_request.status_code, 200)
-        flowcell_info = json.loads(flowcell_request.content)
+        flowcell_info = json.loads(flowcell_request.content)['result']
 
         options = getCombinedOptions(['-f',fcid,'-g',os.getcwd(),])
 
@@ -58,26 +80,24 @@ class RetrieveTestCases(TestCase):
 
         output.seek(0)
         sheet = list(csv.DictReader(output))
-        expected = [{'SampleProject': '12044_index1',
-                     'Index': 'ATCACG',
-                     'Lane': '3',
+        name1 = library1.id + '_index' + library1.index_sequences().keys()[0]
+        name2 = library2.id + '_index' + library2.index_sequences().keys()[0]
+        expected = [{'SampleProject': name1,
+                     'Index': library1.index_sequences().values()[0],
+                     'Lane': '1',
                      },
-                    {'SampleProject': '12044_index2',
-                     'Index': 'CGATGT',
-                     'Lane': '3',
+                    {'SampleProject': name2,
+                     'Index': library2.index_sequences().values()[0],
+                     'Lane': '1',
                      },
-                    {'SampleProject': '12044_index3',
-                     'Index': 'TTAGGC',
-                     'Lane': '3',
+                    {'SampleProject': name1,
+                     'Index': library1.index_sequences().values()[0],
+                     'Lane': '2',
                      },
-                    {'SampleProject': '11045_index1',
-                     'Index': 'ATCACG',
-                     'Lane': '3',
+                    {'SampleProject': name2,
+                     'Index': library2.index_sequences().values()[0],
+                     'Lane': '2',
                      },
-                    {'SampleProject': '13044_indexN701-N501',
-                     'Index': 'TAAGGCGA-TAGATCGC',
-                     'Lane': '4',
-                     }
                     ]
         self.failUnlessEqual(len(sheet), len(expected))
         for s, e in zip(sheet, expected):

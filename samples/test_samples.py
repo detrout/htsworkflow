@@ -321,7 +321,7 @@ class TestRDFaLibrary(TestCase):
                                   [lib_object.library_name],
                                   p=libNS['name'])
         self.check_literal_object(model,
-                                  ['test sapiens'],
+                                  [lib_object.library_species.scientific_name],
                                   p=libNS['species_name'])
 
 
