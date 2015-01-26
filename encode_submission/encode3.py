@@ -59,8 +59,6 @@ def main(cmdline=None):
     elif opts.verbose:
         settings.LOGGING['loggers']['level'] = 'INFO'
 
-    apidata = api.make_auth_from_opts(opts, parser)
-
     model = get_model(opts.model, opts.db_path)
 
     submission_names = list(list_submissions(model))
