@@ -303,11 +303,14 @@ class ENCODED:
         url = urlunparse(url.values())
         return url
 
-    def search_jsonld(self, term, **kwargs):
+    def search_jsonld(self, **kwargs):
         '''Send search request to ENCODED
+
+        to do a general search do
+            searchTerm=term
         '''
         url = self.prepare_url('/search/')
-        result = self.get_json(url, searchTerm=term, **kwargs)
+        result = self.get_json(url, **kwargs)
         self.convert_search_to_jsonld(result)
         return result
 
