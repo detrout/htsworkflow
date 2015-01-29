@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function
 
 # Create your views here.
-import StringIO
 import logging
 import os
 import sys

@@ -2,7 +2,7 @@
 """More direct synthetic test cases for the eland output file processing
 """
 import os
-from StringIO import StringIO
+from six.moves import StringIO
 import shutil
 import tempfile
 from unittest import TestCase

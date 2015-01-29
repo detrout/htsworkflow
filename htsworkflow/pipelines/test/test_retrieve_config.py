@@ -1,7 +1,7 @@
 import csv
 import os
 import re
-from StringIO import StringIO
+from six.moves import StringIO
 
 try:
     import json

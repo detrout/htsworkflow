@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os
-from StringIO import StringIO
+from six.moves import StringIO
 from unittest import TestCase
 
 from htsworkflow.pipelines import summary

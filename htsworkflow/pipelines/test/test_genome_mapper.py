@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from StringIO import StringIO
+from six.moves import StringIO
 from htsworkflow.pipelines import genome_mapper
 
 class testGenomeMapper(TestCase):

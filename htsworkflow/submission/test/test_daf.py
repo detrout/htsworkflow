@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 import logging
 import os
-from StringIO import StringIO
+from six.moves import StringIO
 import shutil
 import tempfile
 from unittest import TestCase, TestSuite, defaultTestLoader

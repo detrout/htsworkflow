@@ -5,7 +5,7 @@ import os
 from pprint import pformat
 import re
 import string
-from StringIO import StringIO
+from six.moves import StringIO
 import types
 import urlparse
 

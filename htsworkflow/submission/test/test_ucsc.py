@@ -1,5 +1,5 @@
 from unittest import TestCase, TestSuite, defaultTestLoader
-from StringIO import StringIO
+from six.moves import StringIO
 
 from htsworkflow.submission import ucsc
 

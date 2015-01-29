@@ -1,5 +1,5 @@
 import os
-from StringIO import StringIO
+from six.moves import StringIO
 import sys
 from unittest import TestCase
 

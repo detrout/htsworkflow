@@ -1,6 +1,6 @@
 from unittest import TestCase, skipIf
 
-from StringIO import StringIO
+from six.moves import StringIO
 from htsworkflow.automation.solexa import is_runfolder
 
 try:

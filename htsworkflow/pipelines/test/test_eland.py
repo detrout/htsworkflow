@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """More direct synthetic test cases for the eland output file processing
 """
-from StringIO import StringIO
+from six.moves import StringIO
 from unittest import TestCase
 
 from htsworkflow.pipelines.eland import ELAND, ElandLane, ElandMatches, \

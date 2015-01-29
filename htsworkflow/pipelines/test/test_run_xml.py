@@ -1,6 +1,6 @@
 import os
 from unittest import TestCase
-from StringIO import StringIO
+from six.moves import StringIO
 
 from simulate_runfolder import TESTDATA_DIR
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml

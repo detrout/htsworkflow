@@ -9,7 +9,7 @@ from optparse import OptionParser, OptionGroup
 import os
 from pprint import pprint, pformat
 import shlex
-from StringIO import StringIO
+from six.moves import StringIO
 import stat
 import sys
 import time
