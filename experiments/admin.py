@@ -7,7 +7,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms import ModelForm
 from django.forms.fields import Field, CharField
 from django.forms.widgets import TextInput, Select
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.html import escape, conditional_escape
 from django.utils.translation import ugettext_lazy as _
 
@@ -154,11 +154,11 @@ class SequencerSelect(Select):
 
     def render_options(self, choices, selected_choices):
         # Normalize to strings.
-        selected_choices = set([force_unicode(v) for v in selected_choices])
+        selected_choices = set([force_text(v) for v in selected_choices])
         output = []
         for option_value, option_label in chain(self.choices, choices):
             if isinstance(option_label, (list, tuple)):
-                output.append(u'<optgroup label="%s">' % escape(force_unicode(option_value)))
+                output.append(u'<optgroup label="%s">' % escape(force_text(option_value)))
                 for option in option_label:
                     output.append(self.render_option(selected_choices, *option))
                 output.append(u'</optgroup>')
@@ -171,11 +171,11 @@ class SequencerSelect(Select):
     # nested function in render_options
     def render_options(self, choices, selected_choices):
         # Normalize to strings.
-        selected_choices = set([force_unicode(v) for v in selected_choices])
+        selected_choices = set([force_text(v) for v in selected_choices])
         output = []
         for option_value, option_label in chain(self.choices, choices):
             if isinstance(option_label, (list, tuple)):
-                output.append(u'<optgroup label="%s">' % escape(force_unicode(option_value)))
+                output.append(u'<optgroup label="%s">' % escape(force_text(option_value)))
                 for option in option_label:
                     output.append(self.render_option(selected_choices, *option))
                 output.append(u'</optgroup>')
@@ -191,7 +191,7 @@ class SequencerSelect(Select):
         cssclass = "strikeout" if option_value in disabled_sequencers else ''
         return u'<option class="%s" value="%s"%s>%s</option>' % (
             cssclass, escape(option_value), selected_html,
-            conditional_escape(force_unicode(option_label)))
+            conditional_escape(force_text(option_label)))
 
 class SequencerOptions(admin.ModelAdmin):
     list_display = ('name', 'active', 'isdefault', 'instrument_name', 'model')
