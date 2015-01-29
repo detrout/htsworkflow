@@ -12,7 +12,7 @@ import jsonschema
 import os
 import requests
 import types
-from urlparse import urljoin, urlparse, urlunparse
+from six.moves.urllib.parse import urljoin, urlparse, urlunparse
 
 LOGGER = logging.getLogger(__name__)
 

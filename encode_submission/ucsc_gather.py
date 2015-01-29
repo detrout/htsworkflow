@@ -16,9 +16,6 @@ import stat
 import sys
 import time
 import types
-import urllib
-import urllib2
-import urlparse
 from zipfile import ZipFile
 
 import RDF

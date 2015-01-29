@@ -18,8 +18,7 @@ import re
 # redland rdf lib
 import RDF
 import sys
-import urllib
-import urlparse
+from six.moves import urllib
 
 if not 'DJANGO_SETTINGS_MODULE' in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
@@ -483,7 +482,7 @@ def reload_libraries(model, library_list):
         load_library_detail(model, library_urn)
 
 def user_library_id_to_library_urn(library_id):
-    split_url = urlparse.urlsplit(library_id)
+    split_url = urllib.parse.urlsplit(library_id)
     if len(split_url.scheme) == 0:
         return LIBRARY_NS[library_id]
     else:
@@ -645,7 +644,7 @@ def login(cookie=None):
     response, content = http.request(LOGIN_URL,
                                      'POST',
                                      headers=headers,
-                                     body=urllib.urlencode(credentials))
+                                     body=urllib.parse.urlencode(credentials))
     LOGGER.debug("Login to {0}, status {1}".format(LOGIN_URL,
                                                     response['status']))
 

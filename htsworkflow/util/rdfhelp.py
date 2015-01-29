@@ -5,8 +5,7 @@ from __future__ import print_function
 import collections
 from datetime import datetime
 from glob import glob
-from urlparse import urlparse, urlunparse
-from urllib2 import urlopen
+from six.moves import urllib
 import logging
 import os
 import sys
@@ -205,7 +204,7 @@ def simplify_uri(uri):
     if isinstance(uri, RDF.Uri):
         uri = str(uri)
 
-    parsed = urlparse(uri)
+    parsed = urllib.parse.urlparse(uri)
     if len(parsed.query) > 0:
         return parsed.query
     elif len(parsed.fragment) > 0:
@@ -262,13 +261,13 @@ def load_into_model(model, parser_name, path, ns=None):
         else:
             raise ValueError("url to load can't be a RDF literal")
 
-    url_parts = list(urlparse(path))
+    url_parts = list(urllib.parse.urlparse(path))
     if len(url_parts[0]) == 0 or url_parts[0] == 'file':
         url_parts[0] = 'file'
         url_parts[2] = os.path.abspath(url_parts[2])
     if parser_name is None or parser_name == 'guess':
         parser_name = guess_parser_by_extension(path)
-    url = urlunparse(url_parts)
+    url = urllib.parse.urlunparse(url_parts)
     logger.info("Opening {0} with parser {1}".format(url, parser_name))
 
     rdf_parser = RDF.Parser(name=parser_name)

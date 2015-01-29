@@ -9,7 +9,7 @@ import subprocess
 import sys
 import time
 import traceback
-import urlparse
+from six.moves import urllib
 
 from benderjab import rpc
 
@@ -289,13 +289,13 @@ class CopierBot(rpc.XmlRpcBot):
         return reply
 
     def validate_url(self, url):
-        user_url = urlparse.urlsplit(url)
+        user_url = urllib.parse.urlsplit(url)
         user_scheme = user_url[0]
         user_netloc = user_url[1]
         user_path = user_url[2]
 
         for source in self.sources:
-            source_url = urlparse.urlsplit(source)
+            source_url = urllib.parse.urlsplit(source)
             source_scheme = source_url[0]
             source_netloc = source_url[1]
             source_path = source_url[2]

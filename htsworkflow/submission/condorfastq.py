@@ -5,7 +5,7 @@ import os
 from pprint import pformat,pprint
 import sys
 import types
-from urlparse import urljoin, urlparse
+from six.moves.urllib.parse import urljoin, urlparse
 
 from htsworkflow.pipelines.sequences import scan_for_sequences, \
      update_model_sequence_library

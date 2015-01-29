@@ -7,7 +7,7 @@ import os
 import types
 import re
 import sys
-from urlparse import urljoin, urlparse
+from six.moves.urllib.parse import urljoin, urlparse
 
 import RDF
 from htsworkflow.util.rdfhelp import libraryOntology as libNS

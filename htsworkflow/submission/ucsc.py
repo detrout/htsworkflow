@@ -1,8 +1,7 @@
 """Utilities for extracting information from the ENCODE DCC
 """
 import logging
-import urlparse
-import urllib2
+from six.moves import urllib
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,7 +20,7 @@ def ddf_download_url(submission_id):
     'http://encodesubmit.ucsc.edu/pipeline/download_ddf/1234'
     """
     fragment = 'download_ddf/%s' % (submission_id,)
-    return urlparse.urljoin(UCSCEncodePipeline, fragment)
+    return urllib.parse.urljoin(UCSCEncodePipeline, fragment)
 
 
 def daf_download_url(submission_id):
@@ -31,7 +30,7 @@ def daf_download_url(submission_id):
     'http://encodesubmit.ucsc.edu/pipeline/download_daf/1234'
     """
     fragment = 'download_daf/%s' % (submission_id,)
-    return urlparse.urljoin(UCSCEncodePipeline, fragment)
+    return urllib.parse.urljoin(UCSCEncodePipeline, fragment)
 
 
 def submission_view_url(submission_id):
@@ -41,7 +40,7 @@ def submission_view_url(submission_id):
     'http://encodesubmit.ucsc.edu/pipeline/show/1234'
     """
     fragment = 'show/%s' % (submission_id,)
-    return urlparse.urljoin(UCSCEncodePipeline, fragment)
+    return urllib.parse.urljoin(UCSCEncodePipeline, fragment)
 
 
 def get_encodedcc_file_index(genome, composite):
@@ -58,10 +57,10 @@ def get_encodedcc_file_index(genome, composite):
         request_url = base_url + 'files.txt'
 
         try:
-            request = urllib2.urlopen(request_url)
+            request = urllib.request.urlopen(request_url)
             file_index = parse_ucsc_file_index(request, base_url)
             return file_index
-        except urllib2.HTTPError as e:
+        except urllib.request.HTTPError as e:
             err = e
             pass
 

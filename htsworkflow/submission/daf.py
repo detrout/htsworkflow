@@ -7,7 +7,7 @@ import re
 import string
 from six.moves import StringIO
 import types
-import urlparse
+from six.moves import urllib
 
 import RDF
 from htsworkflow.util.rdfhelp import \
@@ -232,7 +232,7 @@ def submission_uri_to_string(submission_uri):
 
 def get_view_namespace(submission_uri):
     submission_uri = submission_uri_to_string(submission_uri)
-    view_uri = urlparse.urljoin(submission_uri, 'view/')
+    view_uri = urllib.parse.urljoin(submission_uri, 'view/')
     viewNS = RDF.NS(view_uri)
     return viewNS
 

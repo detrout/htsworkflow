@@ -4,8 +4,7 @@ from optparse import OptionParser
 import os
 import re
 import sys
-import urllib2
-import urlparse
+from six.moves import urllib
 
 from django.conf import settings
 
@@ -42,12 +41,12 @@ def update_db(root_url, flowcells, serial, debug=False):
     Creates link between flowcell and storage device over http
     """
     for fc in flowcells:
-        url = urlparse.urljoin(root_url, '%s/%s/' % (fc, serial))
+        url = urllib.parse.urljoin(root_url, '%s/%s/' % (fc, serial))
 
-        req = urllib2.Request(url)
+        req = urllib.request.Request(url)
         try:
             response = urllib2.urlopen(req)
-        except urllib2.URLError, e:
+        except urllib.request.HTTPError, e:
             print 'ERROR - HTTP OUTPUT (Return Code: %s); use -v/--verbose for more details.' % (e.code)
             if debug:
                 print e.read()
