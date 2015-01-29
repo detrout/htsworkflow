@@ -1,6 +1,5 @@
 import types
 import logging
-import urlparse
 from django.db import models
 from django.contrib.auth.models import User, UserManager
 from django.core import urlresolvers

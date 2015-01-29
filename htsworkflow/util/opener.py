@@ -5,7 +5,7 @@ import os
 import gzip
 import bz2
 import types
-import urllib2
+from six.moves import urllib
 
 def isfilelike(file_ref, mode):
     """Does file_ref have the core file operations?
@@ -31,7 +31,7 @@ def isurllike(file_ref, mode):
     (AKA does it start with protocol:// ?)
     """
     #what if mode is 'w'?
-    parsed = urllib2.urlparse.urlparse(file_ref)
+    parsed = urllib.parse.urlparse(file_ref)
     schema, netloc, path, params, query, fragment = parsed
     
     return len(schema) > 0
@@ -47,7 +47,7 @@ def autoopen(file_ref, mode='r'):
     elif isfilelike(file_ref, mode):
         return file_ref
     elif isurllike(file_ref, mode):
-        return urllib2.urlopen(file_ref)
+        return urllib.request.urlopen(file_ref)
     elif os.path.splitext(file_ref)[1] == ".gz":
         return gzip.open(file_ref, mode)
     elif os.path.splitext(file_ref)[1] == '.bz2':

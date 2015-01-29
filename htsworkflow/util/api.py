@@ -13,9 +13,7 @@ except ImportError:
 
 import os
 from optparse import OptionGroup
-import urllib
-import urllib2
-import urlparse
+from six.moves import urllib
 
 LOGGER = logging.getLogger(__name__)
 
@@ -129,9 +127,9 @@ def retrieve_info(url, apidata):
     Return a dictionary from the HTSworkflow API
     """
     try:
-        apipayload = urllib.urlencode(apidata)
-        web = urllib2.urlopen(url, apipayload)
-    except urllib2.URLError as e:
+        apipayload = urllib.parse.urlencode(apidata)
+        web = urllib.request.urlopen(url, apipayload)
+    except urllib.request.URLError as e:
         if hasattr(e, 'code') and e.code == 404:
             LOGGER.info("%s was not found" % (url,))
             return None
