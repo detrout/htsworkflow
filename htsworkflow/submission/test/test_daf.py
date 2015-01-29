@@ -160,11 +160,6 @@ def load_daf_mapper(name, extra_statements=None, ns=None, test_daf=test_daf):
     mapper = daf.UCSCSubmission(name, daf_file = test_daf_stream, model=model)
     return mapper
 
-def dump_model(model):
-    writer = get_serializer()
-    turtle =  writer.serialize_model_to_string(model)
-    print turtle
-
 
 class TestUCSCSubmission(TestCase):
     def setUp(self):
@@ -204,7 +199,6 @@ thisView:FastqRd1 dafTerm:filename_re ".*_r1\\\\.fastq" .
 
         view = daf_mapper.find_view('filename_r1.fastq')
 
-        # dump_model(daf_mapper.model)
         view_root = 'http://jumpgate.caltech.edu/wiki/SubmissionsLog/{0}/view/'
         view_root = view_root.format(name)
         self.failUnlessEqual(str(view.uri),
@@ -257,8 +251,6 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
                 daf_mapper.construct_track_attributes(analysis_dir,
                                                       libNode,
                                                       filename)
-
-        #dump_model(daf_mapper.model)
 
         sub_root = "http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/"
         submission_name = sub_root + analysis_name
