@@ -261,16 +261,3 @@ def fromxml(tree):
     f = IPAR()
     f.set_elements(tree)
     return f
-
-#if __name__ == "__main__":
-  #i = ipar(os.path.expanduser('~/gec/081021_HWI-EAS229_0063_30HKUAAXX/Data/IPAR_1.01'))
-  #x = i.get_elements()
-  #j = fromxml(x)
-  #ElementTree.dump(x)
-  #print j.date
-  #print j.start
-  #print j.stop
-  #print i.tiles.keys()
-  #print j.tiles.keys()
-  #print j.tiles.items()
-  #print j.file_list()
