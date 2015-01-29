@@ -153,7 +153,7 @@ def convert_single_to_two_fastq(instream, target1, target2, mid=None, header='')
         # sequence
         elif state == FASTQ_SEQUENCE:
             if mid is None:
-                mid = len(line)/2
+                mid = len(line) // 2
             write_split_sequence(target1, target2, line, mid)
             state = FASTQ_SEQUENCE_HEADER
         # quality header
@@ -193,19 +193,19 @@ def is_srf(filename):
     """
     Check filename to see if it is likely to be a SRF file
     """
-    f = open(filename, 'r')
+    f = open(filename, 'rb')
     header = f.read(4)
     f.close()
-    return header == "SSRF"
+    return header == b"SSRF"
 
 def is_cnf1(filename):
     """
     Brute force detection if a SRF file is using CNF1/CNF4 records
     """
     max_header = 1024 ** 2
-    PROGRAM_ID = 'PROGRAM_ID\000'
-    cnf4_apps = set(("solexa2srf v1.4",
-                    "illumina2srf v1.11.5.Illumina.1.3"))
+    PROGRAM_ID = b'PROGRAM_ID\000'
+    cnf4_apps = set((b"solexa2srf v1.4",
+                     b"illumina2srf v1.11.5.Illumina.1.3"))
 
     if not is_srf(filename):
         raise ValueError("%s must be a srf file" % (filename,))
@@ -215,7 +215,7 @@ def is_cnf1(filename):
     # alas the max search length requires python 2.6+
     program_id_location = f.find(PROGRAM_ID, 0) #, max_header)
     program_header_start = program_id_location+len(PROGRAM_ID)
-    next_null = f.find('\000', program_header_start) #, max_header)
+    next_null = f.find(b'\000', program_header_start) #, max_header)
     program_id_header = f[program_header_start:next_null]
     f.close()
     os.close(fd)
