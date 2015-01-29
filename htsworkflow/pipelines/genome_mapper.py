@@ -30,7 +30,7 @@ def getAvailableGenomes(genome_base_dir):
   # Need valid directory
   if not os.path.exists(genome_base_dir):
     msg = "Directory does not exist: %s" % (genome_base_dir)
-    raise IOError, msg
+    raise IOError(msg)
 
   # Find all subdirectories
   filepath_list = glob.glob(os.path.join(genome_base_dir, '*'))

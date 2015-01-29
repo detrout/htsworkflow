@@ -12,7 +12,7 @@ import urllib2
 
 try:
     import json
-except ImportError, e:
+except ImportError as e:
     import simplejson as json
 
 from htsworkflow.auth import apidata

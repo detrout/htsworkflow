@@ -4,7 +4,7 @@ import re
 from lxml.html import fromstring
 try:
     import json
-except ImportError, e:
+except ImportError as e:
     import simplejson as json
 import os
 import shutil
