@@ -2,7 +2,7 @@ from django.conf import settings
 
 import ftplib
 import socket
-import StringIO
+from six.moves import StringIO
 
 
 def print_zpl(zpl_text, host=None):
