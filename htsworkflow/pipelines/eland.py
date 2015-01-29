@@ -659,8 +659,7 @@ class ELAND(collections.MutableMapping):
         del self.result[key]
 
     def __iter__(self):
-        keys = self.results.iterkeys()
-        for k in sorted(keys):
+        for k in sorted(self.results):
             yield k
 
     def __len__(self):

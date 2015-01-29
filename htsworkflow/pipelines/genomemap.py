@@ -17,7 +17,7 @@ class GenomeMap(collections.MutableMapping):
         return len(self._contigs)
 
     def __iter__(self):
-        return self._contigs.iterkeys()
+        return iter(self._contigs.keys())
 
     def __getitem__(self, name):
         return self._contigs[name]

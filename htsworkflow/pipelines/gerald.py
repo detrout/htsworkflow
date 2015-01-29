@@ -399,7 +399,7 @@ class LaneSpecificRunParameters(collections.MutableMapping):
     def __iter__(self):
         if self._lanes is None:
             self._initialize_lanes()
-        return self._lanes.iterkeys()
+        return iter(self._lanes.keys())
 
     def __getitem__(self, key):
         if self._lanes is None:
