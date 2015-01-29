@@ -538,7 +538,7 @@ def make_aligned_eland_export(aligned_dir, flowcell_id):
             for read in UNALIGNED_READS:
                 suffix = 'R{0}_{1}_export.txt.gz'.format(read, split)
                 pathname = paths.make_test_filename(suffix)
-                stream = gzip.open(pathname, 'w')
+                stream = gzip.open(pathname, 'wt')
                 stream.write(body)
                 stream.close()
 
@@ -576,7 +576,7 @@ def make_unaligned_fastq_sample_1_12(unaligned_dir,
         for read in reads:
             suffix = 'R{0}_{1}.fastq.gz'.format(read, split)
             pathname = paths.make_test_filename(suffix)
-            stream = gzip.open(pathname, 'w')
+            stream = gzip.open(pathname, 'wt')
             stream.write(sample_seq)
             stream.close()
 
