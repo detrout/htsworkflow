@@ -39,5 +39,5 @@ class HTSWConfig(ConfigParser.SafeConfigParser):
             ini_stream = open(self.filename, 'w')
             self.write(ini_stream)
             ini_stream.close()
-        except IOError, e:
+        except IOError as e:
             LOGGER.info("Error saving setting: %s" % (str(e)))

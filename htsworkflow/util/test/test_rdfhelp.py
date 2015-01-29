@@ -261,7 +261,7 @@ _:a owl:imports "{loc}extra.turtle" .
             self.assertTrue(model.contains_statement(s))
 
 
-except ImportError, e:
+except ImportError as e:
     print "Unable to test rdfhelp"
 
 def suite():

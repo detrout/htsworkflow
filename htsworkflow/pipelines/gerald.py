@@ -283,7 +283,7 @@ class LaneParametersGA(LaneParameters):
         lanes = [x.tag.split('_')[1] for x in container.getchildren()]
         try:
             index = lanes.index(self._lane_id)
-        except ValueError, e:
+        except ValueError as e:
             return None
         element = container[index]
         return element.text

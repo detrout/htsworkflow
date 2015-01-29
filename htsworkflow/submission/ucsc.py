@@ -61,7 +61,7 @@ def get_encodedcc_file_index(genome, composite):
             request = urllib2.urlopen(request_url)
             file_index = parse_ucsc_file_index(request, base_url)
             return file_index
-        except urllib2.HTTPError, e:
+        except urllib2.HTTPError as e:
             err = e
             pass
 

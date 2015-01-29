@@ -5,7 +5,7 @@ from StringIO import StringIO
 
 try:
     import json
-except ImportError, e:
+except ImportError as e:
     import simplejson as json
 
 from django.test import TestCase

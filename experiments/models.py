@@ -25,7 +25,7 @@ LOGGER = logging.getLogger(__name__)
 default_pM = 5
 try:
     default_pM = int(settings.DEFAULT_PM)
-except AttributeError, e:
+except AttributeError as e:
     LOGGER.error("invalid value for default_pm")
 
 # how many days to wait before trying to re-import a runfolder

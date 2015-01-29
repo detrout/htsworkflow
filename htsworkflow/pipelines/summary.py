@@ -311,7 +311,7 @@ class LaneResultSummary(object):
                 variable_name = tags[element.tag]
                 setattr(self, variable_name,
                         parse_summary_element(element))
-            except KeyError, e:
+            except KeyError as e:
                 LOGGER.warn('Unrecognized tag %s' % (element.tag,))
 
 
@@ -414,7 +414,7 @@ def tonumber(v):
     """
     try:
         v = int(v)
-    except ValueError, e:
+    except ValueError as e:
         v = float(v)
     return v
 

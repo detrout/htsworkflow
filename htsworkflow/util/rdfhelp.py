@@ -147,7 +147,7 @@ def fromTypedNode(node):
     elif value_type in ('dateTime'):
         try:
             return datetime.strptime(literal, ISOFORMAT_MS)
-        except ValueError, _:
+        except ValueError:
             return datetime.strptime(literal, ISOFORMAT_SHORT)
     return literal
 
@@ -280,7 +280,7 @@ def load_into_model(model, parser_name, path, ns=None):
             statements = rdf_parser.parse_as_stream(url, ns)
             retries = 0
             succeeded = True
-        except RDF.RedlandError, e:
+        except RDF.RedlandError as e:
             errmsg = "RDF.RedlandError: {0} {1} tries remaining"
             logger.error(errmsg.format(str(e), retries))
 

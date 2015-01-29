@@ -131,7 +131,7 @@ def retrieve_info(url, apidata):
     try:
         apipayload = urllib.urlencode(apidata)
         web = urllib2.urlopen(url, apipayload)
-    except urllib2.URLError, e:
+    except urllib2.URLError as e:
         if hasattr(e, 'code') and e.code == 404:
             LOGGER.info("%s was not found" % (url,))
             return None
@@ -168,7 +168,7 @@ def make_django_secret_key(size=216):
     """return key suitable for use as secret key"""
     try:
         source = random.SystemRandom()
-    except AttributeError, e:
+    except AttributeError as e:
         source = random.random()
     bits = source.getrandbits(size)
     chars = []

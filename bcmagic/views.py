@@ -11,7 +11,7 @@ from . import plugin
 
 try:
     import json
-except ImportError, e:
+except ImportError as e:
     import simplejson as json
 
 import re

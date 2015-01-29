@@ -276,7 +276,7 @@ try:
     libNS = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
 
     from htsworkflow.util.rdfhelp import dump_model
-except ImportError,e:
+except ImportError as e:
     HAVE_RDF = False
 
 

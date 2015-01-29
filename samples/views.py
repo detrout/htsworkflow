@@ -8,7 +8,7 @@ import sys
 
 try:
     import json
-except ImportError, e:
+except ImportError as e:
     import simplejson as json
 
 from django.views.decorators.csrf import csrf_exempt
@@ -338,7 +338,7 @@ def _summary_stats(flowcell_id, lane_id, library_id):
 
             summary_list.append(eland_summary)
 
-        #except Exception, e:
+        #except Exception as e:
         #    summary_list.append("Summary report needs to be updated.")
         #    LOGGER.error("Exception: " + str(e))
 
@@ -471,7 +471,7 @@ def library_dict(library_id):
     """
     try:
         lib = Library.objects.get(id=library_id)
-    except Library.DoesNotExist, e:
+    except Library.DoesNotExist as e:
         return None
 
     #lane_info = lane_information(lib.lane_set)

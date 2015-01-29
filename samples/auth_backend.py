@@ -17,7 +17,7 @@ class HTSUserModelBackend(ModelBackend):
             if user.check_password(password):
                 return user
         #except self.user_class.DoesNotExist:
-        except Exception, e:
+        except Exception as e:
             logger.error(str(e))
             return None
 
@@ -25,7 +25,7 @@ class HTSUserModelBackend(ModelBackend):
         try:
             return self.user_class.objects.get(pk=user_id)
         #except self.user_class.DoesNotExist:
-        except Exception, e:
+        except Exception as e:
             logger.error(str(e))
             return None
 

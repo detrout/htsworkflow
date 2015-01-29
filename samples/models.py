@@ -272,7 +272,7 @@ class Library(models.Model):
               adapter_type = self.library_type.id,
               multiplex_id = multiplex_id)
           return multiplex.sequence
-      except MultiplexIndex.DoesNotExist, e:
+      except MultiplexIndex.DoesNotExist as e:
           return None
 
   def index_sequence_text(self, seperator=' '):

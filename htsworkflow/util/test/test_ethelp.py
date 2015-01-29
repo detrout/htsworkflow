@@ -3,7 +3,7 @@ from unittest import TestCase
 
 try:
   from xml.etree import ElementTree
-except ImportError, e:
+except ImportError as e:
   from elementtree import ElementTree
 
 from htsworkflow.util.ethelp import indent, flatten

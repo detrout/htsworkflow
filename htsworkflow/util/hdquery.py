@@ -23,7 +23,7 @@ try:
         #  the 2nd of which is the serial number
         return data.strip('\x00').split()[1]
     
-except ImportError, e:
+except ImportError as e:
     print >>sys.stderr, "hdquery requires py_sg"
 
     def get_hd_serial_num(device):

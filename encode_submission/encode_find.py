@@ -566,7 +566,7 @@ def load_library_detail(model, libraryUrn):
         try:
             body = get_url_as_text(str(libraryUrn.uri), 'GET')
             rdfaParser.parse_string_into_model(model, body, libraryUrn.uri)
-        except httplib2.HttpLib2ErrorWithResponse, e:
+        except httplib2.HttpLib2ErrorWithResponse as e:
             LOGGER.error(str(e))
     elif len(results) == 1:
         pass  # Assuming that a loaded dataset has one record

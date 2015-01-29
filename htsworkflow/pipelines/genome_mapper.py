@@ -103,7 +103,7 @@ class constructMapperDict(object):
     def get(self, key, default=None):
       try:
         return self[key]
-      except KeyError, e:
+      except KeyError as e:
         return default
 
     def keys(self):

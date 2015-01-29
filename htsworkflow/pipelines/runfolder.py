@@ -336,7 +336,7 @@ def build_gerald_runs(runs, b, image_analysis, bustard_pathname, datadir, pathna
             p.bustard = b
             p.gerald = g
             runs.append(p)
-        except IOError, e:
+        except IOError as e:
             LOGGER.error("Ignoring " + str(e))
     return len(runs) - start
 

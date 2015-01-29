@@ -13,7 +13,7 @@ LOGGER = logging.getLogger(__name__)
 
 try:
     import uuid
-except ImportError, e:
+except ImportError as e:
     # Some systems are using python 2.4, which doesn't have uuid
     # this is a stub
     LOGGER.warning('Real uuid is not available, initializing fake uuid module')

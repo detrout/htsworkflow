@@ -21,7 +21,7 @@ register_search_plugin('Inventory Item', item_search)
 
 try:
     import json
-except ImportError, e:
+except ImportError as e:
     import simplejson as json
 
 INVENTORY_CONTEXT_DEFAULTS = {
@@ -216,7 +216,7 @@ def item_summary_by_barcode(request, barcode_id, msg=''):
     """
     try:
         item = Item.objects.get(barcode_id=barcode_id)
-    except ObjectDoesNotExist, e:
+    except ObjectDoesNotExist as e:
         item = None
 
     return item_summary_by_uuid(request, None, msg, item)
@@ -231,7 +231,7 @@ def item_summary_by_uuid(request, uuid, msg='', item=None):
     if item is None:
         try:
             item = Item.objects.get(uuid=uuid)
-        except ObjectDoesNotExist, e:
+        except ObjectDoesNotExist as e:
             item = None
 
     context_dict = {
@@ -291,7 +291,7 @@ def item_print(request, uuid):
     """
     try:
         item = Item.objects.get(uuid=uuid)
-    except ObjectDoesNotExist, e:
+    except ObjectDoesNotExist as e:
         item = None
         msg = "Item with UUID %s does not exist" % (uuid)
 
@@ -316,7 +316,7 @@ def link_flowcell_and_device(request, flowcell, serial):
     # Retrieve Storage Device
     try:
         sd = Item.objects.get(barcode_id=serial)
-    except ObjectDoesNotExist, e:
+    except ObjectDoesNotExist as e:
         msg = "Item with barcode_id of %s not found." % (serial)
         raise ObjectDoesNotExist(msg)
 
@@ -324,7 +324,7 @@ def link_flowcell_and_device(request, flowcell, serial):
     # Retrieve FlowCell
     try:
         fc = FlowCell.objects.get(flowcell_id__startswith=flowcell)
-    except ObjectDoesNotExist, e:
+    except ObjectDoesNotExist as e:
         msg = "FlowCell with flowcell_id of %s not found." % (flowcell)
         raise ObjectDoesNotExist(msg)
 

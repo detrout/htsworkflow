@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function
 from datetime import datetime, timedelta
 try:
     import json
-except ImportError, e:
+except ImportError as e:
     import simplejson as json
 
 import os
@@ -28,7 +28,7 @@ def flowcell_information(flowcell_id):
     """
     try:
         fc = FlowCell.objects.get(flowcell_id__startswith=flowcell_id)
-    except FlowCell.DoesNotExist, e:
+    except FlowCell.DoesNotExist as e:
         return None
 
     lane_set = {}
@@ -126,7 +126,7 @@ def lanes_for_json(request, username):
 
     try:
         result = lanes_for(username)
-    except ObjectDoesNotExist, e:
+    except ObjectDoesNotExist as e:
         raise Http404
 
     #convert query set to python structure

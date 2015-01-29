@@ -377,16 +377,16 @@ def retrieve_config(conf_info, flowcell, cfg_filepath, genome_dir):
   try:
     saveConfigFile(flowcell, options.url, cfg_filepath)
     conf_info.config_filepath = cfg_filepath
-  except FlowCellNotFound, e:
+  except FlowCellNotFound as e:
     LOGGER.error(e)
     return False
-  except WebError404, e:
+  except WebError404 as e:
     LOGGER.error(e)
     return False
-  except IOError, e:
+  except IOError as e:
     LOGGER.error(e)
     return False
-  except Exception, e:
+  except Exception as e:
     LOGGER.error(e)
     return False
 

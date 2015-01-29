@@ -44,7 +44,7 @@ class Submission(object):
             LOGGER.info("Importing %s from %s" % (lib_id, result_dir))
             try:
                 self.import_analysis_dir(result_dir, lib_id)
-            except MetadataLookupException, e:
+            except MetadataLookupException as e:
                 LOGGER.error("Skipping %s: %s" % (lib_id, str(e)))
 
     def import_analysis_dir(self, analysis_dir, library_id):
@@ -245,7 +245,7 @@ class Submission(object):
             LOGGER.debug("Importing %s" % (lane.uri,))
             try:
                 parser.parse_into_model(self.model, lane.uri)
-            except RDF.RedlandError, e:
+            except RDF.RedlandError as e:
                 LOGGER.error("Error accessing %s" % (lane.uri,))
                 raise e
 
@@ -286,7 +286,7 @@ class Submission(object):
             LOGGER.debug("Found: %s" % (literal_re,))
             try:
                 filename_re = re.compile(literal_re)
-            except re.error, e:
+            except re.error as e:
                 LOGGER.error("Unable to compile: %s" % (literal_re,))
             patterns[literal_re] = view_name
         return patterns
