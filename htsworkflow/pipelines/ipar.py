@@ -89,7 +89,7 @@ class IPAR(object):
         else:
             return runfolder[0].text
     runfolder_name = property(_get_runfolder_name)
-    
+
     def _get_software(self):
         """Return software name"""
         if self.tree is None:
@@ -197,7 +197,7 @@ class IPAR(object):
             if element.tag == IPAR.RUN:
                 self.tree = element
             elif element.tag == IPAR.TIMESTAMP:
-	        self.time = int(element.text)
+                self.time = int(element.text)
             elif element.tag == IPAR.MATRIX:
                 self.matrix = element.text
             else:
