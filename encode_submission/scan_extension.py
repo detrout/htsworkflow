@@ -1,3 +1,5 @@
+from __future__ import print_function, unicode_literals
+
 from optparse import OptionParser
 import os
 import sys
@@ -13,7 +15,7 @@ def main(cmdline=None):
     if opts.rdf:
         print_rdf(common_extensions)
     else:
-        print common_extensions
+        print(common_extensions)
         
 def make_parser():
     parser = OptionParser("%prog: directory [directory...]")
@@ -70,7 +72,7 @@ def print_rdf(common_extensions):
         
     writer = rdfhelp.get_serializer()
     writer.set_namespace('thisSubmissionView', subView._prefix)
-    print writer.serialize_model_to_string(model)
+    print(writer.serialize_model_to_string(model))
 
 if __name__ == "__main__":
     main()

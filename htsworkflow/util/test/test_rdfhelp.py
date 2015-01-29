@@ -1,3 +1,5 @@
+from __future__ import print_function, unicode_literals
+
 import os
 import types
 from unittest import TestCase
@@ -262,7 +264,7 @@ _:a owl:imports "{loc}extra.turtle" .
 
 
 except ImportError as e:
-    print "Unable to test rdfhelp"
+    print("Unable to test rdfhelp")
 
 def suite():
     from unittest import TestSuite, defaultTestLoader

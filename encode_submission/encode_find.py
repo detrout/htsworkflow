@@ -2,6 +2,7 @@
 """
 Gather information about our submissions into a single RDF store
 """
+from __future__ import print_function, unicode_literals
 
 from datetime import datetime
 import hashlib
@@ -130,7 +131,7 @@ def main(cmdline=None):
 
     if opts.print_rdf:
         serializer = get_serializer(name=opts.rdf_parser_name)
-        print serializer.serialize_model_to_string(model)
+        print(serializer.serialize_model_to_string(model))
 
 
 def make_parser():
@@ -261,11 +262,11 @@ def report_submissions_with_no_library(model):
     for row in results:
         subid = row['subid']
         name = row['name']
-        print "# {0}".format(name)
-        print "<{0}>".format(subid.uri)
-        print "  encodeSubmit:library_urn "\
-              "<http://jumpgate.caltech.edu/library/> ."
-        print ""
+        print("# {0}".format(name))
+        print("<{0}>".format(subid.uri))
+        print("  encodeSubmit:library_urn "\
+              "<http://jumpgate.caltech.edu/library/> .")
+        print("")
 
 def find_submissions_with_no_library(model):
     missing_lib_query_text = """

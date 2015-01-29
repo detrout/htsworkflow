@@ -1,5 +1,7 @@
 """Helper features for working with librdf
 """
+from __future__ import print_function, unicode_literals
+
 import collections
 from datetime import datetime
 from glob import glob
@@ -43,8 +45,8 @@ def display_query_results(results):
     """
     for row in results:
         for k, v in row.items()[::-1]:
-            print "{0}: {1}".format(k, v)
-        print
+            print("{0}: {1}".format(k, v))
+        print()
 
 def html_query_results(result_stream):
     from django.conf import settings
@@ -69,7 +71,7 @@ def html_query_results(result_stream):
             new_row[k] = Simplified(v)
         results.append(new_row)
     context = Context({'results': results,})
-    print template.render(context)
+    print(template.render(context))
 
 def blankOrUri(value=None):
     """Return a blank node for None or a resource node for strings.

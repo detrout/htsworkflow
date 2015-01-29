@@ -1,6 +1,8 @@
 """
 Create simulated solexa/illumina runfolders for testing
 """
+from __future__ import print_function, unicode_literals
+
 import gzip
 import os
 import shutil
@@ -653,12 +655,12 @@ class DemultiplexedPaths(object):
         return pathname
 
     def dump(self):
-        print ('index seq: {0}'.format(self.index_seq))
+        print('index seq: {0}'.format(self.index_seq))
 
-        print ('project dir: {0}'.format(self.project_dir))
-        print ('sample dir: {0}'.format(self.sample_dir))
-        print ('rootname: {0}'.format(self.rootname))
-        print ('path: {0}'.format(
+        print('project dir: {0}'.format(self.project_dir))
+        print('sample dir: {0}'.format(self.sample_dir))
+        print('rootname: {0}'.format(self.rootname))
+        print('path: {0}'.format(
             os.path.join(self.project_dir,
                          self.sample_dir,
                          self.rootname+'R1_001.fastq.gz')))
@@ -697,7 +699,7 @@ def print_ls_tree(root):
     """
     for dirpath, dirnames, filenames in os.walk(root):
         for filename in filenames:
-            print os.path.join(dirpath, filename)
+            print(os.path.join(dirpath, filename))
 
 
 class BaseCallInfo(object):

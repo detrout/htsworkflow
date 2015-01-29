@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import print_function, unicode_literals
+
 import logging
 import mmap
 from optparse import OptionParser
@@ -27,7 +29,7 @@ def main(cmdline=None):
         logging.basicConfig(level=logging.WARN)
 
     if opts.version:
-        print version()
+        print(version())
         return 0
 
     if len(args) != 1:
@@ -241,7 +243,7 @@ def foo():
     target2_name = base + '_r2.fastq'
 
     for target_name in [target1_name, target2_name]:
-        print 'target name', target_name
+        print('target name', target_name)
         if os.path.exists(target_name):
             raise RuntimeError("%s exists" % (target_name,))
 

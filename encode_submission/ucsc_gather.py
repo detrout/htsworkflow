@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import print_function, unicode_literals
+
 from ConfigParser import SafeConfigParser
 import fnmatch
 from glob import glob
@@ -119,7 +121,7 @@ def main(cmdline=None):
 
     if opts.print_rdf:
         writer = get_serializer()
-        print writer.serialize_model_to_string(model)
+        print(writer.serialize_model_to_string(model))
 
 
 def make_parser():

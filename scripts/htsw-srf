@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from __future__ import print_function, unicode_literals
 
 import logging
 import optparse
@@ -116,9 +117,9 @@ def main(cmdline=None):
         run_commands(cwd, cmd_list, opts.jobs)
     else:
       for cwd, cmd_list in cmds.items():
-        print cwd
-        print cmd_list
-        print 'jobs: ', opts.jobs
+        print(cwd)
+        print(cmd_list)
+        print('jobs: ', opts.jobs)
 
     return 0
 
