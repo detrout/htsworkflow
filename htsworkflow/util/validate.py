@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-
 from optparse import OptionParser
 import os
 import re
 import sys
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 def main(cmdline=None):
     parser = make_parser()
@@ -19,7 +21,7 @@ def main(cmdline=None):
                                     opts.uniform_lengths,
                                     opts.max_errors)
             if errors > 0:
-                print "%s failed validation" % (filename,)
+                LOGGER.error("%s failed validation", filename)
                 error_happened = True
 
         stream.close()
@@ -110,7 +112,7 @@ def validate_fastq(stream, format='phred33', uniform_length=False, max_errors=No
 
 def validate_re(pattern, line, line_number, errmsg):
     if pattern.match(line) is None:
-        print errmsg, "[%d]: %s" % (line_number, line)
+        LOGGER.error("%s [%d]: %s", errmsg, line_number, line)
         return 1
     else:
         return 0
@@ -123,7 +125,7 @@ def validate_length(line, line_length, line_number, errmsg):
     if line_length is None:
         line_length = len(line)
     elif len(line) != line_length:
-        print errmsg, "%d: %s" %(line_number, line)
+        LOGGER.error("%s %d: %s", errmsg, line_number, line)
         error_count = 1
     return line_length, error_count
     

@@ -1,5 +1,8 @@
 import os
 import sys
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 try:
     import py_sg
@@ -24,7 +27,7 @@ try:
         return data.strip('\x00').split()[1]
     
 except ImportError as e:
-    print >>sys.stderr, "hdquery requires py_sg"
+    LOGGER.error("hdquery requires py_sg")
 
     def get_hd_serial_num(device):
         raise NotImplemented('get_hd_serial_num is not available for anything other than linux')

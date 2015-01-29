@@ -11,6 +11,8 @@ from htsworkflow.pipelines.srf import make_srf_commands, make_qseq_commands, \
                                       run_commands, pathname_to_run_name
 from htsworkflow.pipelines.srf import ILLUMINA2SRF10, ILLUMINA2SRF11, SOLEXA2SRF
 
+LOGGER = logging.getLogger(__name__)
+
 def make_parser():
   usage = '%prog: [options] runfolder -l 1,2,3 [runfolder -l 5,6 ...]'
 
@@ -98,7 +100,7 @@ def main(cmdline=None):
         runs = runfolder.get_runs(runfolder_path)
         # give up if there are anything other than 1 run
         if len(runs) > 1:
-          print 'ERROR: Too many run directories in %s' %(runfolder_path,)
+          LOGGER.error('Too many run directories in %s', runfolder_path)
           return 1
         elif len(runs) == 1:
           bustard_dir = runs[0].bustard.pathname
@@ -109,7 +111,8 @@ def main(cmdline=None):
                                             opts.dest_dir,
                                             opts.runfolder_version)
         else:
-          print "ERROR: Couldn't find a bustard directory in", runfolder_path
+          LOGGER.error("Couldn't find a bustard directory in %s",
+                       runfolder_path)
           return 1
 
     if not opts.dry_run:
