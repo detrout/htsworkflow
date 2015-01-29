@@ -26,7 +26,7 @@ def build_flowcell_db(fcdb_filename, sequences, baseurl, apiid, apikey):
         flowcell_info = None
 
         # get info about flowcell from server or shelf
-        if not fcdb.has_key(flowcell):
+        if flowcell not in fcdb:
             url = api.flowcell_url(baseurl, flowcell)
             flowcell_info = api.retrieve_info(url, apidata)
             if flowcell_info is not None:

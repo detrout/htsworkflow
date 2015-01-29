@@ -72,7 +72,7 @@ class Handler(pyinotify.ProcessEvent):
 
                     # if we've already seen an event in this directory (AKA runfolder)
                     # keep track if its already hit the "completed" flag
-                    if watch_path_events.has_key(target):
+                    if target in watch_path_events:
                        run_already_complete = watch_path_events[target].complete
 
                     watch_path_events[target] = WatcherEvent(target)

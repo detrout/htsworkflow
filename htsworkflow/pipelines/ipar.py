@@ -210,7 +210,7 @@ def load_ipar_param_tree(paramfile):
 
     tree = ElementTree.parse(paramfile).getroot()
     run = tree.find('Run')
-    if run.attrib.has_key('Name') and run.attrib['Name'] in SOFTWARE_NAMES:
+    if run.attrib.get('Name', None) in SOFTWARE_NAMES:
         return run
     else:
         LOGGER.info("No run found")

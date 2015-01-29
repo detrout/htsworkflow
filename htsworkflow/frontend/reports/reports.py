@@ -27,7 +27,7 @@ def getBgColor(reads_cnt,exp_type):
 def report1(request):
   EXP = 'ChIP-seq'
 
-  if request.GET.has_key('aflid'):
+  if 'aflid' in request.GET:
     AFL_Id = request.GET['aflid']
     try:
       AFL = Affiliation.objects.get(id=AFL_Id).name
@@ -170,10 +170,10 @@ def report1(request):
 def report_RM(request): #for RNA-Seq and Methyl-Seq
   EXP = 'RNA-seq'  
 
-  if request.GET.has_key('exp'):
+  if 'exp' in request.GET:
     EXP = request.GET['exp'] # Methyl-seq
 
-  if request.GET.has_key('aflid'):
+  if 'aflid' in request.GET:
     AFL_Id = request.GET['aflid']
     try:
       AFL = Affiliation.objects.get(id=AFL_Id).name

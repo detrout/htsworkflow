@@ -72,7 +72,7 @@ class fctracker:
             lane_library = [ (x[0][5], x[1]) for x in fc.items() 
                                              if library_id_re.match(x[0]) ]
             for lane, library_id in lane_library:
-                if not self.library[library_id].has_key('lanes'):
+                if 'lanes' not in self.library[library_id]:
                     self.library[library_id]['lanes'] = []
                 self.library[library_id]['lanes'].append((fc_id, lane))
 

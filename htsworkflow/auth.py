@@ -8,7 +8,7 @@ apidata = {'apiid': u'0', 'apikey': settings.DEFAULT_API_KEY}
 
 def require_api_key(request):
     # make sure we have the api component
-    if not (request.REQUEST.has_key('apiid') or request.REQUEST.has_key('apikey')):
+    if not ('apiid' in request.REQUEST or 'apikey' in request.REQUEST):
         raise PermissionDenied
 
     # make sure the id and key are right

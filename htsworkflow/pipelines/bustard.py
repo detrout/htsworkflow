@@ -309,7 +309,7 @@ class Bustard(object):
 
         # add phasing parameters
         for lane in LANE_LIST:
-            if self.phasing.has_key(lane):
+            if lane in self.phasing:
                 params.append(self.phasing[lane].get_elements())
 
         # add crosstalk matrix if it exists

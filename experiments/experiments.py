@@ -148,22 +148,22 @@ def updStatus(request):
       user = request.user
 
     #Check access permission
-    if not (user.is_superuser and settings.ALLOWED_IPS.has_key(ClIP)):
+    if not (user.is_superuser and ClIP in settings.ALLOWED_IPS):
         return HttpResponse("%s access denied from %s." % (user, ClIP))
 
     # ~~~~~~Parameters for the job ~~~~
-    if request.REQUEST.has_key('fcid'):
+    if 'fcid' in request.REQUEST:
       fcid = request.REQUEST['fcid']
     else:
       return HttpResponse('missing fcid')
 
-    if request.REQUEST.has_key('runf'):
+    if 'runf' in request.REQUEST:
       runfolder = request.REQUEST['runf']
     else:
       return HttpResponse('missing runf')
 
 
-    if request.REQUEST.has_key('updst'):
+    if 'updst' in request.REQUEST:
       UpdatedStatus = request.REQUEST['updst']
     else:
       return HttpResponse('missing status')
@@ -179,7 +179,7 @@ def updStatus(request):
       #if there's a message update that too
       mytimestamp = timezone.now().__str__()
       mytimestamp = re.sub(pattern=":[^:]*$",repl="",string=mytimestamp)
-      if request.REQUEST.has_key('msg'):
+      if 'msg' in request.REQUEST:
         rec.run_note += ", "+request.REQUEST['msg']+" ("+mytimestamp+")"
       else :
         if UpdatedStatus == '1':
@@ -201,7 +201,7 @@ def updStatus(request):
 def generateConfile(request,fcid):
     #granted = False
     #ClIP = request.META['REMOTE_ADDR']
-    #if (settings.ALLOWED_IPS.has_key(ClIP)):  granted = True
+    #if (ClIP in settings.ALLOWED_IPS):  granted = True
 
     #if not granted: return HttpResponse("access denied.")
 
@@ -228,7 +228,7 @@ def generateConfile(request,fcid):
 def getConfile(req):
     granted = False
     ClIP = req.META['REMOTE_ADDR']
-    if (settings.ALLOWED_IPS.has_key(ClIP)):  granted = True
+    if (ClIP in settings.ALLOWED_IPS):  granted = True
 
     if not granted: return HttpResponse("access denied. IP: "+ClIP)
 
@@ -236,9 +236,9 @@ def getConfile(req):
     cnfgfile = 'Nothing found'
     runfolder = 'unknown'
     request = req.REQUEST
-    if request.has_key('fcid'):
+    if 'fcid' in request:
       fcid = request['fcid']
-      if request.has_key('runf'):
+      if 'runf' in request:
         runfolder = request['runf']
         try:
           rec = DataRun.objects.get(run_folder=runfolder) #,flowcell_id=fcid)
@@ -262,14 +262,14 @@ def getConfile(req):
 def getLaneLibs(req):
     granted = False
     ClIP = req.META['REMOTE_ADDR']
-    if (settings.ALLOWED_IPS.has_key(ClIP)):  granted = True
+    if (ClIP in settings.ALLOWED_IPS):  granted = True
 
     if not granted: return HttpResponse("access denied.")
 
     request = req.REQUEST
     fcid = 'none'
     outputfile = ''
-    if request.has_key('fcid'):
+    if 'fcid' in request:
       fcid = request['fcid']
       try:
         rec = FlowCell.objects.get(flowcell_id=fcid)

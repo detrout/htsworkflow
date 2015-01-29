@@ -14,20 +14,20 @@ def updStatus(request):
     ClIP = request.META['REMOTE_ADDR']
     #Check client access permission                                                                                                                                       
     granted = False
-    if (settings.ALLOWED_ANALYS_IPS.has_key(ClIP)):  granted = True
+    if (ClIP in settings.ALLOWED_ANALYS_IPS):  granted = True
     if not granted: return HttpResponse("access denied.")
 
     output=''
     taskid=-1;
     # Check required param
-    if request.has_key('taskid'): taskid = request['taskid']
+    if 'taskid' in request: taskid = request['taskid']
     else:  return HttpResponse('missing param task id')
 
     try:
       rec = Task.objects.get(id=taskid)
       mytimestamp = datetime.now().__str__()
       mytimestamp = re.sub(pattern=":[^:]*$",repl="",string=mytimestamp)
-      if request.has_key('msg'):
+      if 'msg' in request:
         rec.task_status += ", "+request['msg']+" ("+mytimestamp+")"
       else :
         rec.task_status = "Registered ("+mytimestamp+")"
@@ -43,13 +43,13 @@ def getProjects(request):
     ClIP = request.META['REMOTE_ADDR']
     #Check client access permission 
     granted = False
-    if (settings.ALLOWED_ANALYS_IPS.has_key(ClIP)):  granted = True
+    if (ClIP in settings.ALLOWED_ANALYS_IPS):  granted = True
     if not granted: return HttpResponse("access denied.")
 
     outputfile = ''
     
     All=False
-    if (request.has_key('mode')):
+    if ('mode' in request):
       if request['mode']=='all':
         All=True
 

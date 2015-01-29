@@ -132,7 +132,7 @@ class SummaryGA(Summary):
                             ('Lane Results Summary : Read 1', 0),
                             ('Lane Results Summary : Read 2', 1),]
             for name, end in table_names:
-                if tables.has_key(name):
+                if name in tables:
                     self._extract_lane_results_for_end(tables, name, end)
 
         if len(self.lane_results[0])  == 0:
