@@ -1,7 +1,6 @@
+#!/usr/bin/env python
 """Create a track hub
 """
-
-#!/usr/bin/env python
 from ConfigParser import SafeConfigParser
 import fnmatch
 from glob import glob
