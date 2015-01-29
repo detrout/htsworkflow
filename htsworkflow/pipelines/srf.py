@@ -238,7 +238,6 @@ def main(cmdline=None):
         seq_cmds = make_srf_commands(opts.name, source, opts.lanes, opts.site_name, opts.destination, 0)
     else:
         raise ValueError('Unknown --format=%s' % (opts.format))
-    print seq_cmds
     srf.run_commands(args.source, seq_cmds, num_jobs)
 
 def make_parser():

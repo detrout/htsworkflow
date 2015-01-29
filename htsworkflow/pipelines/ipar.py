@@ -9,6 +9,8 @@ fromxml
     IPAR factory function initalized from an xml dump from
     the IPAR object.
 """
+from __future__ import print_function
+
 __docformat__ = "restructuredtext en"
 
 import datetime
@@ -159,7 +161,7 @@ class IPAR(object):
         """
         suffix_node = self.tree.find('RunParameters/CompressionSuffix')
         if suffix_node is None:
-          print "find compression suffix failed"
+          print("find compression suffix failed")
           return None
         suffix = suffix_node.text
         files = []
@@ -172,8 +174,8 @@ class IPAR(object):
         return files
 
     def dump(self):
-        print "Matrix:", self.matrix
-        print "Tree:", self.tree
+        print("Matrix:", self.matrix)
+        print("Tree:", self.tree)
 
     def get_elements(self):
         attribs = {'version': str(IPAR.XML_VERSION) }

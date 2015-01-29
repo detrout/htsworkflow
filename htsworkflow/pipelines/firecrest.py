@@ -9,6 +9,7 @@ fromxml
   Firecrest factory function initalized from an xml dump from
   the Firecrest object.
 """
+from __future__ import print_function
 
 from datetime import date
 from glob import glob
@@ -66,11 +67,11 @@ class Firecrest(object):
     def dump(self):
         """Report debugginf information
         """
-        print "Starting cycle:", self.start
-        print "Ending cycle:", self.stop
-        print "Firecrest version:", self.version
-        print "Run date:", self.date
-        print "user:", self.user
+        print("Starting cycle:", self.start)
+        print("Ending cycle:", self.stop)
+        print("Firecrest version:", self.version)
+        print("Run date:", self.date)
+        print("user:", self.user)
 
     def get_elements(self):
         """Return XML serialization structure.

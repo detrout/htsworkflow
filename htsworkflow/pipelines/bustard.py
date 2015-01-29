@@ -4,6 +4,8 @@ Extract configuration from Illumina Bustard Directory.
 This includes the version number, run date, bustard executable parameters, and
 phasing estimates.
 """
+from __future__ import print_function
+
 from copy import copy
 from datetime import date
 from glob import glob
@@ -289,7 +291,7 @@ class Bustard(object):
     time = property(_get_time, doc='return run time as seconds since epoch')
 
     def dump(self):
-        #print ElementTree.tostring(self.get_elements())
+        #print(ElementTree.tostring(self.get_elements()))
         ElementTree.dump(self.get_elements())
 
     def get_elements(self):
@@ -456,22 +458,22 @@ def main(cmdline):
     opts, args = parser.parse_args(cmdline)
 
     for bustard_dir in args:
-        print u'analyzing bustard directory: ' + unicode(bustard_dir)
+        print(u'analyzing bustard directory: ' + unicode(bustard_dir))
         bustard_object = bustard(bustard_dir)
         bustard_object.dump()
 
         bustard_object2 = Bustard(xml=bustard_object.get_elements())
-        print ('-------------------------------------')
+        print('-------------------------------------')
         bustard_object2.dump()
-        print ('=====================================')
+        print('=====================================')
         b1_tree = bustard_object.get_elements()
         b1 = ElementTree.tostring(b1_tree).split(os.linesep)
         b2_tree = bustard_object2.get_elements()
         b2 = ElementTree.tostring(b2_tree).split(os.linesep)
         for line1, line2 in zip(b1, b2):
             if b1 != b2:
-                print "b1: ", b1
-                print "b2: ", b2
+                print("b1: ", b1)
+                print("b2: ", b2)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

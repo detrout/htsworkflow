@@ -1,6 +1,8 @@
 """
 Analyze ELAND files
 """
+from __future__ import print_function
+
 import collections
 from glob import glob
 import logging
@@ -895,7 +897,7 @@ def main(cmdline=None):
     for a in args:
         LOGGER.info("Starting scan of %s" % (a,))
         e = eland(a)
-        print ElementTree.tostring(e.get_elements())
+        print(ElementTree.tostring(e.get_elements()))
     return
 
 

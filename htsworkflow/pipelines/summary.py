@@ -1,6 +1,8 @@
 """
 Analyze the Summary.htm file produced by GERALD
 """
+from __future__ import print_function
+
 import os
 import logging
 import re
@@ -67,7 +69,7 @@ class Summary(object):
         Debugging function, report current object
         """
         tree = self.get_elements()
-        print etree.tostring(tree)
+        print(etree.tostring(tree))
 
 class SummaryGA(Summary):
     def __init__(self, filename=None, xml=None):

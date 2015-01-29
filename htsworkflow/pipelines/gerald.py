@@ -1,5 +1,7 @@
 """Provide access to information stored in the GERALD directory.
 """
+from __future__ import print_function
+
 import collections
 from datetime import datetime, date
 import logging
@@ -59,10 +61,10 @@ class Alignment(object):
         """
         Debugging function, report current object
         """
-        print 'Software:'. self.__class__.__name__
-        print 'Alignment version:', self.version
-        print 'Run date:', self.date
-        print 'config.xml:', self.tree
+        print('Software:'. self.__class__.__name__)
+        print('Alignment version:', self.version)
+        print('Run date:', self.date)
+        print('config.xml:', self.tree)
         self.summary.dump()
 
     def get_elements(self, root_tag):
