@@ -2,20 +2,20 @@
 """
 import logging
 import os
-import ConfigParser
+from six.moves import configparser
 
 from htsworkflow.util.api import make_django_secret_key
 
 LOGGER = logging.getLogger(__name__)
 
-class HTSWConfig(ConfigParser.SafeConfigParser):
+class HTSWConfig(configparser.SafeConfigParser):
     '''Customization of SafeConfigParser that can open and save itself.
     '''
     def __init__(self, path=[os.path.expanduser("~/.htsworkflow.ini"),
                              '/etc/htsworkflow.ini',]):
         # ConfigParser isn't a new-style class? lame
-        # super(ConfigParser.SafeConfigParser, self).__init__()
-        ConfigParser.SafeConfigParser.__init__(self)
+        # super(configparser.SafeConfigParser, self).__init__()
+        configparser.SafeConfigParser.__init__(self)
         read_path = self.read(path)
         if len(read_path) > 0:
             self.filename = read_path[0]

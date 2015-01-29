@@ -1,7 +1,7 @@
 """Common functions for accessing the HTS Workflow REST API
 """
 import base64
-from ConfigParser import SafeConfigParser
+from six.moves import configparser
 import random
 import logging
 
@@ -23,7 +23,7 @@ def add_auth_options(parser):
     """Add options OptParser configure authentication options
     """
     # Load defaults from the config files
-    config = SafeConfigParser()
+    config = configparser.SafeConfigParser()
     config.read([os.path.expanduser('~/.htsworkflow.ini'),
                  '/etc/htsworkflow.ini'
                  ])
