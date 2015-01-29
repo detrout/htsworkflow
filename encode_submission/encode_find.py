@@ -2,7 +2,7 @@
 """
 Gather information about our submissions into a single RDF store
 """
-from __future__ import print_function, unicode_literals
+from __future__ import print_function
 
 from datetime import datetime
 import hashlib

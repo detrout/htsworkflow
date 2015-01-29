@@ -1,6 +1,6 @@
 """Helper features for working with librdf
 """
-from __future__ import print_function, unicode_literals
+from __future__ import print_function
 
 import collections
 from datetime import datetime
