@@ -77,7 +77,7 @@ def library_url(root_url, library_id):
 
     """
     url_fragment = '/samples/library/%s/json' % (library_id,)
-    url = urlparse.urljoin(root_url, url_fragment)
+    url = urllib.parse.urljoin(root_url, url_fragment)
 
     return url
 
@@ -97,7 +97,7 @@ def flowcell_url(root_url, flowcell_id):
     http://localhost/experiments/config/1234AAXX/json
     """
     url_fragment = '/experiments/config/%s/json' % (flowcell_id,)
-    url = urlparse.urljoin(root_url, url_fragment)
+    url = urllib.parse.urljoin(root_url, url_fragment)
 
     return url
 
@@ -118,7 +118,7 @@ def lanes_for_user_url(root_url, username):
 
     """
     url_fragment = '/lanes_for/%s/json' % (username,)
-    url = urlparse.urljoin(root_url, url_fragment)
+    url = urllib.parse.urljoin(root_url, url_fragment)
 
     return url
 
