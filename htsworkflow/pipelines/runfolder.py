@@ -22,7 +22,6 @@ from htsworkflow.pipelines import ElementTree, \
                                   VERSION_RE, USER_RE, \
                                   LANES_PER_FLOWCELL, LANE_LIST
 from htsworkflow.pipelines.samplekey import LANE_SAMPLE_KEYS
-from htsworkflow.util.alphanum import alphanum
 from htsworkflow.util.ethelp import indent, flatten
 from htsworkflow.util.queuecommands import QueueCommands
 

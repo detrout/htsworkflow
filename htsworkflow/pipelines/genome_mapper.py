@@ -6,7 +6,7 @@ import re
 
 import logging
 
-from htsworkflow.util.alphanum import alphanum
+from htsworkflow.util.alphanum import natural_sort_key
 
 LOGGER = logging.getLogger(__name__)
 class DuplicateGenome(Exception): pass
@@ -89,7 +89,7 @@ class constructMapperDict(object):
 
           # sort build names the way humans would
           keys = builds.keys()
-          keys.sort(cmp=alphanum)
+          keys.sort(key=natural_sort_key)
 
           # return the path from the 'last' build name
           return builds[keys[-1]]

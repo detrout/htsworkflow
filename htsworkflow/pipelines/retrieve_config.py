@@ -17,7 +17,7 @@ except ImportError as e:
 
 from htsworkflow.auth import apidata
 from htsworkflow.util import api
-from htsworkflow.util import alphanum
+from htsworkflow.util.alphanum import natural_sort_key
 from htsworkflow.util.url import normalize_url
 from htsworkflow.pipelines.genome_mapper import \
      getAvailableGenomes, \
@@ -411,7 +411,7 @@ def format_pooled_libraries(shared, library):
     elif (type(sequences) == types.DictType):
         pooled = []
         multiplex_ids = sequences.keys()
-        multiplex_ids.sort(cmp=alphanum.alphanum)
+        multiplex_ids.sort(key=natural_sort_key)
         for multiplex_id in multiplex_ids:
             sample = {}
             sample.update(shared)
