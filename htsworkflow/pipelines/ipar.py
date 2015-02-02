@@ -230,13 +230,12 @@ def ipar(pathname):
     if not (groups[0] == 'IPAR' or groups[0] == 'Intensities'):
       raise ValueError('ipar can only process IPAR directories')
 
-    bustard_pattern = os.path.join(pathname, 'Bustard*')
     # contents of the matrix file?
     matrix_pathname = os.path.join(pathname, 'Matrix', 's_matrix.txt')
     if os.path.exists(matrix_pathname):
         # this is IPAR_1.01
         i.matrix = open(matrix_pathname, 'r').read()
-    elif glob(bustard_pattern) > 0:
+    else:
         i.matrix = None
         # its still live.
 
