@@ -1,7 +1,10 @@
 """Common functions for accessing the HTS Workflow REST API
 """
+from __future__ import unicode_literals
+
 import base64
 from six.moves import configparser
+from six import int2byte
 import random
 import logging
 
@@ -172,9 +175,9 @@ def make_django_secret_key(size=216):
     chars = []
     while bits > 0:
         byte = bits & 0xff
-        chars.append(chr(byte))
+        chars.append(int2byte(byte))
         bits >>= 8
-    return base64.encodestring("".join(chars)).strip()
+    return base64.encodestring(b"".join(chars)).strip()
 
 if __name__ == "__main__":
     from optparse import OptionParser
