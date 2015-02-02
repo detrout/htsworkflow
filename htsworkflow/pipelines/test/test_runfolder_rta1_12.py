@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
 
 from datetime import datetime, date
 import logging
@@ -15,7 +16,7 @@ from htsworkflow.pipelines import gerald
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines import ElementTree
 
-from htsworkflow.pipelines.test.simulate_runfolder import *
+from .simulate_runfolder import *
 
 
 def make_runfolder(obj=None):

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
 
 from datetime import datetime, date
 import glob
@@ -15,7 +16,7 @@ from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines import srf
 from htsworkflow.pipelines import ElementTree
 
-from htsworkflow.pipelines.test.simulate_runfolder import *
+from .simulate_runfolder import *
 
 FCID = 'AA01AAABXX'
 RUN_NAME = '110420_SN787_0069_%s' %( FCID,)

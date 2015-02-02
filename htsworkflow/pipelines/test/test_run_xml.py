@@ -1,8 +1,10 @@
+from __future__ import absolute_import
+
 import os
 from unittest import TestCase
 from six.moves import StringIO
 
-from simulate_runfolder import TESTDATA_DIR
+from .simulate_runfolder import TESTDATA_DIR
 from htsworkflow.pipelines.runfolder import load_pipeline_run_xml
 
 from htsworkflow.pipelines.eland import SampleKey

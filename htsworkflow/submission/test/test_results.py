@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
 
 from pprint import pprint
 import shutil
@@ -6,7 +7,7 @@ import shutil
 from unittest import TestCase, defaultTestLoader
 
 from htsworkflow.submission.results import ResultMap
-from submission_test_common import *
+from .submission_test_common import *
 
 class TestResultMap(TestCase):
     def setUp(self):

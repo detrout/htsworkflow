@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+
 from unittest import TestCase, TestSuite, defaultTestLoader
 
-import ucsc_gather
+from . import ucsc_gather
 
 class testUCSCGather(TestCase):
     pass

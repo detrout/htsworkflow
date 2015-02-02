@@ -1,10 +1,12 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+
 import os
 from six.moves import StringIO
 from unittest import TestCase
 
 from htsworkflow.pipelines import summary
-from simulate_runfolder import TESTDATA_DIR
+from .simulate_runfolder import TESTDATA_DIR
 
 class SummaryTests(TestCase):
     """Test elements of the summary file parser
