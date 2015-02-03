@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 BCM_PLUGINS = {
     #'cmd_move_sample': bcm_cmds.cmd_move_sample
 }

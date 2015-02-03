@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.test import TestCase
 
@@ -9,8 +9,8 @@ class TestFileType(TestCase):
         file_type_objects = FileType.objects
         name = 'QSEQ tarfile'
         file_type_object = file_type_objects.get(name=name)
-        self.assertEqual(u"QSEQ tarfile",
-                             unicode(file_type_object))
+        self.assertEqual("QSEQ tarfile",
+                         str(file_type_object))
 
     def test_find_file_type(self):
         file_type_objects = FileType.objects

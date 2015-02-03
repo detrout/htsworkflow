@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 # some core functions of the exp tracker module
 from datetime import datetime, timedelta
@@ -43,7 +43,7 @@ def flowcell_information(flowcell_id):
             'library_name': lane.library.library_name,
             'library_id': lane.library.id,
             'library_species': lane.library.library_species.scientific_name,
-            'pM': unicode(lane.pM),
+            'pM': str(lane.pM),
             'read_length': lane.flowcell.read_length,
             'status_code': lane.status,
             'status': LANE_STATUS_MAP[lane.status]

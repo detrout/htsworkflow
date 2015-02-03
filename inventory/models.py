@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 
@@ -48,8 +48,8 @@ class Vendor(models.Model):
     name = models.CharField(max_length=256)
     url = models.URLField(blank=True, null=True)
 
-    def __unicode__(self):
-        return u"%s" % (self.name)
+    def __str__(self):
+        return "%s" % (self.name)
 
 
 class Location(models.Model):
@@ -64,11 +64,11 @@ class Location(models.Model):
 
     notes = models.TextField(blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         if len(self.location_description) > 16:
-            return u"%s: %s" % (self.name, self.location_description[0:16]+u"...")
+            return "%s: %s" % (self.name, self.location_description[0:16]+"...")
         else:
-            return u"%s: %s" % (self.name, self.location_description)
+            return "%s: %s" % (self.name, self.location_description)
 
 post_init.connect(_assign_uuid, sender=Location)
 
@@ -88,16 +88,16 @@ class ItemInfo(models.Model):
 
     notes = models.TextField(blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         name = u''
         if self.model_id:
-            name += u"model:%s " % (self.model_id)
+            name += "model:%s " % (self.model_id)
         if self.part_number:
-            name += u"part:%s " % (self.part_number)
+            name += "part:%s " % (self.part_number)
         if self.lot_number:
-            name += u"lot:%s " % (self.lot_number)
+            name += "lot:%s " % (self.lot_number)
 
-        return u"%s: %s" % (name, self.purchase_date)
+        return "%s: %s" % (name, self.purchase_date)
 
     class Meta:
         verbose_name_plural = "Item Info"
@@ -108,15 +108,15 @@ class ItemType(models.Model):
     name = models.CharField(max_length=64, unique=True)
     description = models.TextField(blank=True, null=True)
 
-    def __unicode__(self):
-        return u"%s" % (self.name)
+    def __str__(self):
+        return "%s" % (self.name)
 
 
 class ItemStatus(models.Model):
     name = models.CharField(max_length=64, unique=True)
     notes = models.TextField(blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -149,11 +149,11 @@ class Item(models.Model):
 
     notes = models.TextField(blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.barcode_id is None or len(self.barcode_id) == 0:
-            return u"invu|%s" % (self.uuid)
+            return "invu|%s" % (self.uuid)
         else:
-            return u"invb|%s" % (self.barcode_id)
+            return "invb|%s" % (self.barcode_id)
 
     def get_absolute_url(self):
         return '/inventory/%s/' % (self.uuid)
@@ -172,7 +172,7 @@ class PrinterTemplate(models.Model):
 
     template = models.TextField()
 
-    def __unicode__(self):
+    def __str__(self):
         if self.default:
             return u'%s %s' % (self.item_type.name, self.printer.name)
         else:
@@ -190,8 +190,8 @@ class LongTermStorage(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
-        return u"%s: %s" % (str(self.flowcell), ', '.join([str(s) for s in self.storage_devices.iterator()]))
+    def __str__(self):
+        return "%s: %s" % (str(self.flowcell), ', '.join([str(s) for s in self.storage_devices.iterator()]))
 
     class Meta:
         verbose_name_plural = "Long Term Storage"
@@ -213,8 +213,8 @@ class ReagentFlowcell(ReagentBase):
     """
     flowcell = models.ForeignKey(FlowCell)
 
-    def __unicode__(self):
-        return u"%s: %s" % (str(self.flowcell), ', '.join([str(s) for s in self.reagent.iterator()]))
+    def __str__(self):
+        return "%s: %s" % (str(self.flowcell), ', '.join([str(s) for s in self.reagent.iterator()]))
 
 
 class ReagentLibrary(ReagentBase):
@@ -223,5 +223,5 @@ class ReagentLibrary(ReagentBase):
     """
     library = models.ForeignKey(Library)
 
-    def __unicode__(self):
-        return u"%s: %s" % (str(self.library), ', '.join([str(s) for s in self.reagent.iterator()]))
+    def __str__(self):
+        return "%s: %s" % (str(self.library), ', '.join([str(s) for s in self.reagent.iterator()]))

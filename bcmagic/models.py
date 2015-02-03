@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.db import models
 
 #FIXME: Should be made more generic and probably pre-populated supported list
@@ -27,5 +29,5 @@ class Printer(models.Model):
     label_height = models.FloatField(help_text='height in inches')
     notes = models.TextField()
 
-    def __unicode__(self):
-        return u'%s, %s, %s, %s, %sx%s' % (self.name, self.model, self.ip_address, self.label_shape, self.label_width, self.label_width)
+    def __str__(self):
+        return '%s, %s, %s, %s, %sx%s' % (self.name, self.model, self.ip_address, self.label_shape, self.label_width, self.label_width)

@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 from itertools import chain
 
@@ -185,8 +185,8 @@ class SequencerSelect(Select):
 
 
     def render_option(self, selected_choices, option_value, option_label):
-        disabled_sequencers = [ unicode(s.id) for s in self.queryset.filter(active=False) ]
-        option_value = unicode(option_value)
+        disabled_sequencers = [ str(s.id) for s in self.queryset.filter(active=False) ]
+        option_value = str(option_value)
         selected_html = (option_value in selected_choices) and u' selected="selected"' or ''
         cssclass = "strikeout" if option_value in disabled_sequencers else ''
         return u'<option class="%s" value="%s"%s>%s</option>' % (

@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.test import TestCase
 from ..models import ClusterStation, cluster_station_default

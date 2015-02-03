@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
 import glob
@@ -58,8 +58,8 @@ class ClusterStation(models.Model):
     class Meta:
         ordering = ["-isdefault", "name"]
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return str(self.name)
 
     @staticmethod
     def update_isdefault(sender, instance, **kwargs):
@@ -96,10 +96,10 @@ class Sequencer(models.Model):
     class Meta:
         ordering = ["-isdefault", "-active", "name"]
 
-    def __unicode__(self):
-        name = [unicode(self.name)]
+    def __str__(self):
+        name = [str(self.name)]
         if self.instrument_name is not None:
-            name.append("(%s)" % (unicode(self.instrument_name),))
+            name.append("(%s)" % (str(self.instrument_name),))
         return " ".join(name)
 
     @models.permalink
@@ -152,8 +152,8 @@ class FlowCell(models.Model):
 
     notes = models.TextField(blank=True)
 
-    def __unicode__(self):
-        return unicode(self.flowcell_id)
+    def __str__(self):
+        return str(self.flowcell_id)
 
     def Lanes(self):
         html = ['<table>']
@@ -187,9 +187,9 @@ class FlowCell(models.Model):
         """Convert our boolean 'is paired' flag to a name
         """
         if self.paired_end:
-            return u"Paired"
+            return "Paired"
         else:
-            return u"Single"
+            return "Single"
 
     @models.permalink
     def get_absolute_url(self):
@@ -309,8 +309,8 @@ class Lane(models.Model):
         return ('experiments.views.flowcell_lane_detail',
                 [str(self.id)])
 
-    def __unicode__(self):
-        return self.flowcell.flowcell_id + ':' + unicode(self.lane_number)
+    def __str__(self):
+        return self.flowcell.flowcell_id + ':' + str(self.lane_number)
 
 
 class DataRun(models.Model):
@@ -423,8 +423,8 @@ class FileType(models.Model):
         return self.name.replace(' ', '_').lower()
     normalized_name = property(_get_normalized_name)
 
-    def __unicode__(self):
-        #return u"<FileType: %s>" % (self.name,)
+    def __str__(self):
+        #return "<FileType: %s>" % (self.name,)
         return self.name
 
 

@@ -4,7 +4,7 @@ Extract configuration from Illumina Bustard Directory.
 This includes the version number, run date, bustard executable parameters, and
 phasing estimates.
 """
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 from copy import copy
 from datetime import date
@@ -113,7 +113,7 @@ class CrosstalkMatrix(object):
         for b in base_order:
             for value in self.base[b]:
                 crosstalk_value = ElementTree.SubElement(root, CrosstalkMatrix.ELEMENT)
-                crosstalk_value.text = unicode(value)
+                crosstalk_value.text = str(value)
                 crosstalk_value.tail = os.linesep
 
         return root
@@ -458,7 +458,7 @@ def main(cmdline):
     opts, args = parser.parse_args(cmdline)
 
     for bustard_dir in args:
-        print(u'analyzing bustard directory: ' + unicode(bustard_dir))
+        print(u'analyzing bustard directory: ' + str(bustard_dir))
         bustard_object = bustard(bustard_dir)
         bustard_object.dump()
 

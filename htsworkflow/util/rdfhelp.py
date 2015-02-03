@@ -295,7 +295,7 @@ def load_string_into_model(model, parser_name, data, ns=None):
     ns = fixup_namespace(ns)
     logger.debug("load_string_into_model parser={0}, len={1}".format(
         parser_name, len(data)))
-    rdf_parser = RDF.Parser(name=parser_name)
+    rdf_parser = RDF.Parser(name=str(parser_name))
 
     for s in rdf_parser.parse_string_as_stream(data, ns):
         conditionally_add_statement(model, s, ns)

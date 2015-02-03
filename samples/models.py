@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import types
 import logging
 from django.db import models
@@ -24,8 +26,8 @@ class Antibody(models.Model):
     source = models.CharField(max_length=500, blank=True, null=True, db_index=True)
     biology = models.TextField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
-    def __unicode__(self):
-        return u'%s - %s' % (self.antigene, self.antibodies)
+    def __str__(self):
+        return '%s - %s' % (self.antigene, self.antibodies)
     class Meta:
         verbose_name_plural = "antibodies"
         ordering = ["antigene"]
@@ -38,8 +40,8 @@ class Cellline(models.Model):
         db_index=True)
 
     notes = models.TextField(blank=True)
-    def __unicode__(self):
-        return unicode(self.cellline_name)
+    def __str__(self):
+        return str(self.cellline_name)
 
     class Meta:
         ordering = ["cellline_name"]
@@ -54,8 +56,8 @@ class Condition(models.Model):
         verbose_name = 'Short Name')
     notes = models.TextField(blank=True)
 
-    def __unicode__(self):
-        return unicode(self.condition_name)
+    def __str__(self):
+        return str(self.condition_name)
 
     class Meta:
         ordering = ["condition_name"]
@@ -64,8 +66,8 @@ class Condition(models.Model):
 class ExperimentType(models.Model):
   name = models.CharField(max_length=50, unique=True)
 
-  def __unicode__(self):
-    return unicode(self.name)
+  def __str__(self):
+    return str(self.name)
 
 class Tag(models.Model):
   tag_name = models.CharField(max_length=100, db_index=True,blank=False,null=False)
@@ -79,8 +81,8 @@ class Tag(models.Model):
   context = models.CharField(max_length=50,
       choices=TAG_CONTEXT, default='Library')
 
-  def __unicode__(self):
-    return u'%s' % (self.tag_name)
+  def __str__(self):
+    return '%s' % (self.tag_name)
 
   class Meta:
     ordering = ["context","tag_name"]
@@ -93,8 +95,8 @@ class Species(models.Model):
   common_name = models.CharField(max_length=256, blank=True)
   #use_genome_build = models.CharField(max_length=100, blank=False, null=False)
 
-  def __unicode__(self):
-    return u'%s (%s)' % (self.scientific_name, self.common_name)
+  def __str__(self):
+    return '%s (%s)' % (self.scientific_name, self.common_name)
 
   class Meta:
     verbose_name_plural = "species"
@@ -111,15 +113,15 @@ class Affiliation(models.Model):
   users = models.ManyToManyField('HTSUser', null=True, blank=True)
   users.admin_order_field = "username"
 
-  def __unicode__(self):
-    str = unicode(self.name)
+  def __str__(self):
+    name = str(self.name)
     if self.contact is not None and len(self.contact) > 0:
-      str += u' ('+self.contact+u')'
-    return str
+      name += ' ('+self.contact+')'
+    return name
 
   def Users(self):
       users = self.users.all().order_by('username')
-      return ", ".join([unicode(a) for a in users ])
+      return ", ".join([str(a) for a in users ])
 
   class Meta:
     ordering = ["name","contact"]
@@ -133,8 +135,8 @@ class LibraryType(models.Model):
   can_multiplex = models.BooleanField(default=True,
                     help_text="Does this adapter provide multiplexing?")
 
-  def __unicode__(self):
-      return unicode(self.name)
+  def __str__(self):
+      return str(self.name)
 
   class Meta:
       ordering = ["-id"]
@@ -201,7 +203,7 @@ class Library(models.Model):
 
   undiluted_concentration = models.DecimalField("Concentration",
       max_digits=5, decimal_places=2, blank=True, null=True,
-      help_text=u"Undiluted concentration (ng/\u00b5l)")
+      help_text = "Undiluted concentration (ng/\u00b5l)")
       # note \u00b5 is the micro symbol in unicode
   successful_pM = models.DecimalField(max_digits=9,
                                       decimal_places=1, blank=True, null=True)
@@ -213,11 +215,11 @@ class Library(models.Model):
   bioanalyzer_summary = models.TextField(blank=True,default="")
   bioanalyzer_concentration = models.DecimalField(max_digits=5,
                                 decimal_places=2, blank=True, null=True,
-                                help_text=u"(ng/\u00b5l)")
+                                help_text="(ng/\u00b5l)")
   bioanalyzer_image_url = models.URLField(blank=True,default="")
 
-  def __unicode__(self):
-    return u'#%s: %s' % (self.id, self.library_name)
+  def __str__(self):
+    return '#%s: %s' % (self.id, self.library_name)
 
   class Meta:
       verbose_name_plural = "libraries"
@@ -292,7 +294,7 @@ class Library(models.Model):
     tstr = ''
     ar = []
     for t in affs:
-        ar.append(t.__unicode__())
+        ar.append(t.__str__())
     return '%s' % (", ".join(ar))
 
   def is_archived(self):
@@ -317,8 +319,8 @@ class Library(models.Model):
     affs = self.tags.all().order_by('tag_name')
     ar = []
     for t in affs:
-      ar.append(t.__unicode__())
-    return u'%s' % ( ", ".join(ar))
+      ar.append(t.__str__())
+    return '%s' % ( ", ".join(ar))
 
   def DataRun(self):
     str ='<a target=_self href="/admin/experiments/datarun/?q='+self.id+'" title="Check All Data Runs for This Specific Library ..." ">Data Run</a>'
@@ -333,7 +335,7 @@ class Library(models.Model):
 
     # Check data sanity
     if res[2] != "OK":
-      return u'<div style="border:solid red 2px">'+res[2]+'</div>'
+      return '<div style="border:solid red 2px">'+res[2]+'</div>'
 
     rc = "%1.2f" % (res[1]/1000000.0)
     # Color Scheme: green is more than 10M, blue is more than 5M, orange is more than 3M and red is less. For RNAseq, all those thresholds should be doubled
@@ -352,7 +354,7 @@ class Library(models.Model):
            if res[1] > rc_thr[2]:
              bgcolor ='#ffcc33'  # Orange
       tstr = '<div style="background-color:'+bgcolor+';color:black">'
-      tstr += res[0].__unicode__()+' Lanes, '+rc+' M Reads'
+      tstr += res[0].__str__()+' Lanes, '+rc+' M Reads'
       tstr += '</div>'
     else: tstr = 'not processed yet'
     return tstr
@@ -384,9 +386,9 @@ class HTSUser(User):
     def admin_url(self):
         return '/admin/%s/%s/%d' % (self._meta.app_label, self._meta.module_name, self.id)
 
-    def __unicode__(self):
-        #return unicode(self.username) + u" (" + unicode(self.get_full_name()) + u")"
-        return unicode(self.get_full_name()) + u' (' + unicode(self.username) + ')'
+    def __str__(self):
+        #return str(self.username) + " (" + str(self.get_full_name()) + u")"
+        return str(self.get_full_name()) + ' (' + str(self.username) + ')'
 
 def HTSUserInsertID(sender, instance, **kwargs):
     """

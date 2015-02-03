@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 # Create your views here.
 import logging
@@ -30,7 +30,7 @@ from bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines import runfolder
 from htsworkflow.pipelines.eland import ResultLane
 from htsworkflow.pipelines.samplekey import SampleKey
-from htsworkflow.util.conversion import unicode_or_none, parse_flowcell_id
+from htsworkflow.util.conversion import str_or_none, parse_flowcell_id
 from htsworkflow.util import makebed
 from htsworkflow.util import opener
 
@@ -93,7 +93,7 @@ def create_library_context(cl):
         summary['lanes_run'] = lanes_run
         summary['is_archived'] = lib.is_archived()
         records.append(summary)
-    cl.result_count = unicode(cl.paginator._count)
+    cl.result_count = str(cl.paginator._count)
     return {'library_list': records}
 
 
@@ -492,7 +492,7 @@ def library_dict(library_id):
         #'antibody_name': lib.antibody_name(), # we have no antibodies.
         'antibody_id': lib.antibody_id,
         'cell_line_id': lib.cell_line_id,
-        'cell_line': unicode_or_none(lib.cell_line),
+        'cell_line': str_or_none(lib.cell_line),
         'experiment_type': lib.experiment_type.name,
         'experiment_type_id': lib.experiment_type_id,
         'gel_cut_size': lib.gel_cut_size,
@@ -511,8 +511,8 @@ def library_dict(library_id):
         'notes': lib.notes,
         'replicate': lib.replicate,
         'stopping_point': lib.stopping_point,
-        'successful_pM': unicode_or_none(lib.successful_pM),
-        'undiluted_concentration': unicode_or_none(lib.undiluted_concentration)
+        'successful_pM': str_or_none(lib.successful_pM),
+        'undiluted_concentration': str_or_none(lib.undiluted_concentration)
         }
     if lib.library_type_id is None:
         info['library_type'] = None

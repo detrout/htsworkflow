@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.db import models
 
 class LabelPrinter(models.Model):
@@ -10,8 +12,8 @@ class LabelPrinter(models.Model):
     labels = models.CharField(max_length=200)
     notes = models.TextField(null=True, blank=True)
 
-    def __unicode__(self):
-        return u'%s: %s' % (self.name, self.labels)
+    def __str__(self):
+        return '%s: %s' % (self.name, self.labels)
 
 class LabelTemplate(models.Model):
     """
@@ -23,7 +25,7 @@ class LabelTemplate(models.Model):
     
     ZPL_code = models.TextField('template')
     
-    def __unicode__(self):
+    def __str__(self):
             return '%s %s' % (self.name, self.printer.name)
 
 class LabelContent(models.Model):

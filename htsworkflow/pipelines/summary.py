@@ -1,7 +1,7 @@
 """
 Analyze the Summary.htm file produced by GERALD
 """
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 import os
 import logging
@@ -42,7 +42,7 @@ class Summary(object):
 
     def get_elements(self):
         summary = etree.Element(Summary.SUMMARY,
-                                      {'version': unicode(Summary.XML_VERSION)})
+                                      {'version': str(Summary.XML_VERSION)})
         for end in self.lane_results:
             for lane in end.values():
                 summary.append(lane.get_elements())
@@ -282,7 +282,7 @@ class LaneResultSummary(object):
     def get_elements(self):
         lane_result = etree.Element(
                         LaneResultSummary.LANE_RESULT_SUMMARY,
-                        {'lane': unicode(self.lane), 'end': unicode(self.end)})
+                        {'lane': str(self.lane), 'end': str(self.end)})
         for tag, variable_name in LaneResultSummary.TAGS.items():
             value = getattr(self, variable_name)
             if value is None:
@@ -296,7 +296,7 @@ class LaneResultSummary(object):
                 )
             else:
                 element = etree.SubElement(lane_result, tag)
-                element.text = unicode(value)
+                element.text = str(value)
         return lane_result
 
     def set_elements(self, tree):

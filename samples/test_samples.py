@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
 import unittest
@@ -12,7 +12,7 @@ from .views import library_dict, library_json, library
 from .samples_factory import *
 
 from htsworkflow.auth import apidata
-from htsworkflow.util.conversion import unicode_or_none
+from htsworkflow.util.conversion import str_or_none
 from htsworkflow.util.ethelp import validate_xhtml
 
 class LibraryTestCase(TestCase):
@@ -52,7 +52,7 @@ class SampleWebTestCase(TestCase):
         lib_dict = library_dict(library.id)
         url = '/samples/library/%s/json' % (library.id,)
         lib_response = self.client.get(url, apidata)
-        lib_json = json.loads(lib_response.content)['result']
+        lib_json = json.loads(str(lib_response.content))['result']
 
         for d in [lib_dict, lib_json]:
             # amplified_from_sample is a link to the library table,
@@ -63,7 +63,7 @@ class SampleWebTestCase(TestCase):
             #self.failUnlessEqual(d['amplified_from_sample'], lib.amplified_from_sample)
             self.failUnlessEqual(d['antibody_id'], library.antibody_id)
             self.failUnlessEqual(d['cell_line_id'], library.cell_line_id)
-            self.failUnlessEqual(d['cell_line'], unicode_or_none(library.cell_line))
+            self.failUnlessEqual(d['cell_line'], str_or_none(library.cell_line))
             self.failUnlessEqual(d['experiment_type'], library.experiment_type.name)
             self.failUnlessEqual(d['experiment_type_id'], library.experiment_type_id)
             self.failUnlessEqual(d['gel_cut_size'], library.gel_cut_size)
@@ -82,7 +82,7 @@ class SampleWebTestCase(TestCase):
             self.failUnlessEqual(d['stopping_point'], library.stopping_point)
             self.failUnlessEqual(d['successful_pM'], library.successful_pM)
             self.failUnlessEqual(d['undiluted_concentration'],
-                                 unicode(library.undiluted_concentration))
+                                 str(library.undiluted_concentration))
 
 
         def junk(self):
@@ -271,9 +271,9 @@ try:
     import RDF
     HAVE_RDF = True
 
-    rdfNS = RDF.NS("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-    xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
-    libNS = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
+    rdfNS = RDF.NS(b"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    xsdNS = RDF.NS(b"http://www.w3.org/2001/XMLSchema#")
+    libNS = RDF.NS(b"http://jumpgate.caltech.edu/wiki/LibraryOntology#")
 
     from htsworkflow.util.rdfhelp import dump_model
 except ImportError as e:
@@ -288,7 +288,7 @@ class TestRDFaLibrary(TestCase):
     def test_parse_rdfa(self):
 
         model = get_rdf_memory_model()
-        parser = RDF.Parser(name='rdfa')
+        parser = RDF.Parser(name=b'rdfa')
 
         bob = AffiliationFactory.create(name='Bob')
 
@@ -309,20 +309,20 @@ class TestRDFaLibrary(TestCase):
         #with open('/tmp/test.ttl', 'w') as outstream:
         #    dump_model(model, outstream)
         # http://jumpgate.caltech.edu/wiki/LibraryOntology#affiliation>
-        self.check_literal_object(model, ['Bob'], p=libNS['affiliation'])
+        self.check_literal_object(model, ['Bob'], p=libNS[b'affiliation'])
         self.check_literal_object(model,
                                   ['experiment type name'],
-                                  p=libNS['experiment_type'])
-        self.check_literal_object(model, ['400'], p=libNS['gel_cut'])
+                                  p=libNS[b'experiment_type'])
+        self.check_literal_object(model, ['400'], p=libNS[b'gel_cut'])
         self.check_literal_object(model,
                                   ['microfluidics bot 7321'],
-                                  p=libNS['made_by'])
+                                  p=libNS[b'made_by'])
         self.check_literal_object(model,
                                   [lib_object.library_name],
-                                  p=libNS['name'])
+                                  p=libNS[b'name'])
         self.check_literal_object(model,
                                   [lib_object.library_species.scientific_name],
-                                  p=libNS['species_name'])
+                                  p=libNS[b'species_name'])
 
 
     def check_literal_object(self, model, values, s=None, p=None, o=None):
@@ -340,7 +340,7 @@ class TestRDFaLibrary(TestCase):
         self.failUnlessEqual(len(statements), len(values),
                         "Couln't find %s %s %s" % (s,p,o))
         for s in statements:
-            self.failUnless(unicode(s.object.uri) in values)
+            self.failUnless(str(s.object.uri) in values)
 
 
 

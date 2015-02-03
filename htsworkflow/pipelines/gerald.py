@@ -1,6 +1,6 @@
 """Provide access to information stored in the GERALD directory.
 """
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 import collections
 from datetime import datetime, date
@@ -72,7 +72,7 @@ class Alignment(object):
             return None
 
         gerald = ElementTree.Element(root_tag,
-                                     {'version': unicode(Gerald.XML_VERSION)})
+                                     {'version': str(Gerald.XML_VERSION)})
         gerald.append(self.tree)
         gerald.append(self.summary.get_elements())
         if self.eland_results:

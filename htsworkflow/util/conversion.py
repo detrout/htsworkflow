@@ -1,15 +1,16 @@
 """
 Miscellaneous, more refined type casting functions
 """
+from __future__ import unicode_literals
 
-def unicode_or_none(value):
+def str_or_none(value):
     """
-    Convert value to unicode if its not none.
+    Convert value to unicode string if its not none.
     """
     if value is None:
         return None
     else:
-        return unicode(value)
+        return str(value)
 
 def parse_flowcell_id(flowcell_id):
     """
