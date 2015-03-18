@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+
 from datetime import datetime
 import os
 from unittest import TestCase
@@ -21,7 +23,7 @@ class MockKeyring(keyring.backend.KeyringBackend):
 import keyring
 keyring.set_keyring(MockKeyring())
 
-import encode_find
+from . import encode_find
 from htsworkflow.submission.ucsc import submission_view_url
 from htsworkflow.util.rdfhelp import add_default_schemas, \
      dump_model, get_model, fromTypedNode
