@@ -10,7 +10,7 @@ import os
 import shutil
 import sys
 import tempfile
-from urlparse import urljoin
+from six.moves.urllib.parse import urljoin
 
 from django.conf import settings
 from django.core import mail
