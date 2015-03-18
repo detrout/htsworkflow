@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import print_function, unicode_literals
 
-from ConfigParser import SafeConfigParser
+from six.moves.configparser import SafeConfigParser
 import fnmatch
 from glob import glob
 import json

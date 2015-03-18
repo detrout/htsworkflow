@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import csv
-from ConfigParser import RawConfigParser
+from six.moves.configparser import RawConfigParser
 import logging
 from optparse import OptionParser, IndentedHelpFormatter
 import os
