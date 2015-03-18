@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail, mail_admins
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.conf import settings
 from django.utils import timezone
 
@@ -85,8 +85,7 @@ def flowcell_json(request, fc_id):
     if fc_dict is None:
         raise Http404
 
-    fc_json = json.dumps({'result': fc_dict})
-    return HttpResponse(fc_json, content_type = 'application/json')
+    return JsonResponse({'result': fc_dict})
 
 def lanes_for(username=None):
     """
@@ -126,8 +125,7 @@ def lanes_for_json(request, username):
 
     #convert query set to python structure
 
-    result_json = json.dumps({'result': result})
-    return HttpResponse(result_json, content_type='application/json')
+    return JsonResponse({'result': result})
 
 
 def updStatus(request):
