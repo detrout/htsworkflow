@@ -2,11 +2,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 # some core functions of the exp tracker module
 from datetime import datetime, timedelta
-try:
-    import json
-except ImportError as e:
-    import simplejson as json
-
 import os
 import re
 
