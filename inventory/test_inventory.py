@@ -10,6 +10,7 @@ from django.conf import settings
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.utils.encoding import smart_text
 
 from .models import Item, Vendor
 from .inventory_factory import ItemFactory, LongTermStorageFactory
@@ -37,7 +38,7 @@ class InventoryTestCase(TestCase):
         self.failUnlessEqual(response.status_code, 200)
 
         model = get_model()
-        load_string_into_model(model, 'rdfa', response.content, url)
+        load_string_into_model(model, 'rdfa', smart_text(response.content), url)
 
         itemNode = RDF.Node(RDF.Uri(url))
         item_type = fromTypedNode(

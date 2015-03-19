@@ -19,6 +19,7 @@ from django.test import TestCase
 from django.test.utils import setup_test_environment, teardown_test_environment
 from django.db import connection
 from django.conf import settings
+from django.utils.encoding import smart_text
 
 from .models import ClusterStation, cluster_station_default, \
     DataRun, Sequencer, FlowCell, FileType
@@ -133,7 +134,7 @@ class ExperimentsTestCases(TestCase):
 
             response = self.client.get('/experiments/config/%s/json' % (fc_id,), apidata)
             # strptime isoformat string = '%Y-%m-%dT%H:%M:%S'
-            fc_json = json.loads(response.content)['result']
+            fc_json = json.loads(smart_text(response.content))['result']
             self.assertEqual(fc_json['flowcell_id'], fc_id)
             self.assertEqual(fc_json['sequencer'], fc_django.sequencer.name)
             self.assertEqual(fc_json['read_length'], fc_django.read_length)
@@ -175,7 +176,7 @@ class ExperimentsTestCases(TestCase):
         """
         response = self.client.get('/experiments/config/FC12150/json', apidata)
         self.assertEqual(response.status_code, 200)
-        flowcell = json.loads(response.content)['result']
+        flowcell = json.loads(smart_text(response.content))['result']
 
         # library id is 12150 + lane number (1-8), so 12153
         lane_contents = flowcell['lane_set']['3']
@@ -184,7 +185,7 @@ class ExperimentsTestCases(TestCase):
 
         response = self.client.get('/samples/library/12153/json', apidata)
         self.assertEqual(response.status_code, 200)
-        library_12153 = json.loads(response.content)['result']
+        library_12153 = json.loads(smart_text(response.content))['result']
 
         self.assertEqual(library_12153['library_id'], '12153')
 
@@ -266,7 +267,7 @@ class ExperimentsTestCases(TestCase):
         self.assertEqual(len(lanes), 8)
 
         response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
-        lanes_json = json.loads(response.content)['result']
+        lanes_json = json.loads(smart_text(response.content))['result']
         self.assertEqual(len(lanes), len(lanes_json))
         for i in range(len(lanes)):
             self.assertEqual(lanes[i]['comment'], lanes_json[i]['comment'])
@@ -392,7 +393,7 @@ class ExperimentsTestCases(TestCase):
         if status is not None: self.assertTrue(status)
 
         ns = urljoin('http://localhost', url)
-        load_string_into_model(model, 'rdfa', response.content, ns=ns)
+        load_string_into_model(model, 'rdfa', smart_text(response.content), ns=ns)
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
@@ -460,8 +461,8 @@ class TestEmailNotify(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
-        self.assertTrue(self.affiliation.email in response.content)
-        self.assertTrue(self.library.library_name in response.content)
+        self.assertTrue(self.affiliation.email in smart_text(response.content))
+        self.assertTrue(self.library.library_name in smart_text(response.content))
 
         response = self.client.get(self.url, {'send':'1','bcc':'on'})
         self.assertEqual(response.status_code, 200)
@@ -481,9 +482,10 @@ class TestEmailNotify(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         #print("email navigation content:", response.content)
-        self.assertTrue(re.search(self.fc.flowcell_id, response.content))
+        self.assertTrue(re.search(self.fc.flowcell_id, smart_text(response.content)))
         # require that navigation back to the admin page exists
-        self.assertTrue(re.search('<a href="{}">[^<]+</a>'.format(admin_url), response.content))
+        self.assertTrue(re.search('<a href="{}">[^<]+</a>'.format(admin_url),
+                                  smart_text(response.content)))
 
 def multi_lane_to_dict(lane):
     """Convert a list of lane entries into a dictionary indexed by library ID
@@ -554,7 +556,7 @@ class TestSequencer(TestCase):
         status = validate_xhtml(response.content)
         if status is not None: self.assertTrue(status)
 
-        load_string_into_model(model, 'rdfa', response.content)
+        load_string_into_model(model, 'rdfa', smart_text(response.content))
 
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
@@ -572,11 +574,12 @@ class TestSequencer(TestCase):
 
         url = '/lane/{}'.format(self.lane.id)
         response = self.client.get(url)
+        rdfbody = smart_text(response.content)
         self.assertEqual(response.status_code, 200)
-        status = validate_xhtml(response.content)
+        status = validate_xhtml(rdfbody)
         if status is not None: self.assertTrue(status)
 
-        load_string_into_model(model, 'rdfa', response.content)
+        load_string_into_model(model, 'rdfa', rdfbody)
 
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)

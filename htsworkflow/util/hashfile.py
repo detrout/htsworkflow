@@ -4,6 +4,8 @@ import logging
 import os
 from subprocess import Popen, PIPE
 
+from django.utils.encoding import smart_text
+
 logger = logging.getLogger(__name__)
 
 def make_md5sum(filename):

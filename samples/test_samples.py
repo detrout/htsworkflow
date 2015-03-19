@@ -6,6 +6,7 @@ import json
 
 from django.test import TestCase, RequestFactory
 from django.conf import settings
+from django.utils.encoding import smart_text, smart_str
 
 from .models import Affiliation, ExperimentType, Species, Library
 from .views import library_dict, library_json, library
@@ -52,7 +53,7 @@ class SampleWebTestCase(TestCase):
         lib_dict = library_dict(library.id)
         url = '/samples/library/%s/json' % (library.id,)
         lib_response = self.client.get(url, apidata)
-        lib_json = json.loads(str(lib_response.content))['result']
+        lib_json = json.loads(smart_text(lib_response.content))['result']
 
         for d in [lib_dict, lib_json]:
             # amplified_from_sample is a link to the library table,
@@ -150,7 +151,7 @@ class SampleWebTestCase(TestCase):
 
         response = self.client.get(library.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-        content = response.content
+        content = smart_text(response.content)
         load_string_into_model(model, 'rdfa', content)
 
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -199,7 +200,7 @@ class SampleWebTestCase(TestCase):
 
         response = self.client.get('/library/')
         self.assertEqual(response.status_code, 200)
-        load_string_into_model(model, 'rdfa', response.content)
+        load_string_into_model(model, 'rdfa', smart_text(response.content))
 
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
@@ -298,12 +299,13 @@ class TestRDFaLibrary(TestCase):
         ## request = self.request.get(url)
         ## lib_response = library(request)
         lib_response = self.client.get(url)
-        with open('/tmp/body.html', 'w') as outstream:
-            outstream.write(lib_response.content)
-        self.failIfEqual(len(lib_response.content), 0)
+        lib_body = smart_str(lib_response.content)
+        self.failIfEqual(len(lib_body), 0)
+        with open('/tmp/body.html', 'wt') as outstream:
+            outstream.write(lib_body)
 
         parser.parse_string_into_model(model,
-                                       lib_response.content,
+                                       lib_body,
                                        'http://localhost'+url)
         # help debugging rdf errrors
         #with open('/tmp/test.ttl', 'w') as outstream:

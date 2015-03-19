@@ -22,6 +22,7 @@ from htsworkflow.util.conversion import parse_flowcell_id
 
 from django.conf import settings
 from django.template import Context, loader
+from django.utils.encoding import smart_str
 
 import RDF
 
@@ -257,7 +258,7 @@ WHERE {
         """Add link between target pathname and the 'lane' that produced it
         (note lane objects are now post demultiplexing.)
         """
-        target_uri = 'file://' + target.encode('utf-8')
+        target_uri = 'file://' + smart_str(target)
         target_node = RDF.Node(RDF.Uri(target_uri))
         source_stmt = RDF.Statement(target_node, dcNS['source'], seq.filenode)
         self.model.add_statement(source_stmt)
