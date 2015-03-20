@@ -132,13 +132,13 @@ class constructMapperDict(object):
 if __name__ == '__main__':
 
   if len(sys.argv) != 2:
-    print 'useage: %s <base_genome_dir>' % (sys.argv[0])
+    print('useage: %s <base_genome_dir>' % (sys.argv[0]))
     sys.exit(1)
 
   d = getAvailableGenomes(sys.argv[1])
   d2 = constructMapperDict(d)
 
   for k,v in d2.items():
-    print '%s: %s' % (k,v)
+    print('%s: %s' % (k,v))
 
 

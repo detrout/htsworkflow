@@ -19,7 +19,7 @@ def main(cmdline=None):
     opts, args = parser.parse_args(cmdline)
 
     if opts.version:
-        print version()
+        print(version())
         return 0
 
     if opts.infile is not None:
