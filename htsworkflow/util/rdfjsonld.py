@@ -1,5 +1,6 @@
 import RDF
 from pyld import jsonld
+import six
 
 def load_into_model(model, json_data):
     '''Given a PyLD dictionary, load its statements into our Redland model
@@ -29,5 +30,9 @@ def to_node(item):
     elif nodetype == 'IRI':
         return RDF.Node(uri_string=str(value))
     else:
-        return RDF.Node(literal=unicode(value).encode('utf-8'),
+        if six.PY2:
+            literal = unicode(value).encode('utf-8')
+        else:
+            literal = value
+        return RDF.Node(literal=literal,
                         datatype=RDF.Uri(datatype))

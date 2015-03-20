@@ -110,12 +110,15 @@ def toTypedNode(value, language="en"):
             value = value.strftime(ISOFORMAT_MS)
     else:
         value_type = None
-        value = unicode(value)
+        if six.PY3:
+            value = str(value)
+        else:
+            value = unicode(value).encode('utf-8')
 
     if value_type is not None:
         node = RDF.Node(literal=value, datatype=value_type)
     else:
-        node = RDF.Node(literal=unicode(value).encode('utf-8'), language=language)
+        node = RDF.Node(literal=value, language=language)
     return node
 
 
@@ -335,6 +338,9 @@ def add_default_schemas(model, schema_path=None):
     schemas = resource_listdir(__name__, 'schemas')
     for s in schemas:
         schema = resource_string(__name__,  'schemas/' + s)
+        if six.PY3:
+            # files must be encoded utf-8
+            schema = schema.decode('utf-8')
         namespace = 'file://localhost/htsworkflow/schemas/'+s
         add_schema(model, schema, namespace)
 
@@ -381,7 +387,10 @@ def sanitize_literal(node):
         element = lxml.html.fromstring(s)
         cleaner = lxml.html.clean.Cleaner(page_structure=False)
         element = cleaner.clean_html(element)
-        text = lxml.html.tostring(element)
+        if six.PY3:
+            text = lxml.html.tostring(element, encoding=str)
+        else:
+            text = lxml.html.tostring(element)
         p_len = 3
         slash_p_len = 4
 
