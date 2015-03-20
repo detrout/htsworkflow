@@ -90,7 +90,7 @@ def getPrinterTemplateByType(item_type):
             printer_template = PrinterTemplate.objects.get(default=True)
         except ObjectDoesNotExist:
             msg = "No template for item type (%s) and no default template found" % (item_type.name)
-            raise ValueError, msg
+            raise ValueError(msg)
 
         return printer_template
 
@@ -334,7 +334,7 @@ def link_flowcell_and_device(request, flowcell, serial):
     lts = None
     if count > 1:
         msg = "There really should only be one longtermstorage object per flowcell"
-        raise ValueError, msg
+        raise ValueError(msg)
     elif count == 1:
         # lts already attached to flowcell
         lts = fc.longtermstorage_set.all()[0]

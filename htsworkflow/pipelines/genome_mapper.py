@@ -60,7 +60,7 @@ def getAvailableGenomes(genome_base_dir):
     build_dict = d.setdefault(species, {})
     if build in build_dict:
       msg = "Duplicate genome for %s|%s" % (species, build)
-      raise DuplicateGenome, msg
+      raise DuplicateGenome(msg)
 
     build_dict[build] = genome_dir
 
