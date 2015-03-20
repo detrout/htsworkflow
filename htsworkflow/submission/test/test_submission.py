@@ -19,7 +19,7 @@ from htsworkflow.util.rdfhelp import \
      get_serializer
 from htsworkflow.submission.submission import list_submissions, Submission
 from htsworkflow.submission.results import ResultMap
-from submission_test_common import *
+from .submission_test_common import *
 
 import RDF
 #import logging
