@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Convert a collection of qseq or a tar file of qseq files to a fastq file
 """
+from __future__ import print_function, unicode_literals
 from glob import glob
 import os
 from optparse import OptionParser
