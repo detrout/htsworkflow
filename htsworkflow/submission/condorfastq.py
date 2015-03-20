@@ -5,6 +5,7 @@ import os
 from pprint import pformat,pprint
 import sys
 import types
+import six
 from six.moves.urllib.parse import urljoin, urlparse
 
 from htsworkflow.pipelines.sequences import scan_for_sequences, \
@@ -335,7 +336,7 @@ class SequenceResult(object):
         self.cycle = fromTypedNode(result['cycle'])
         self.lane_number = fromTypedNode(result['lane_number'])
         self.read = fromTypedNode(result['read'])
-        if type(self.read) in types.StringTypes:
+        if isinstance(self.read, six.string_types):
             self.read = 1
         self.library = result['library']
         self.library_id = fromTypedNode(result['library_id'])

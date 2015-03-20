@@ -6,7 +6,6 @@ from __future__ import print_function, unicode_literals
 import os
 import logging
 import re
-import types
 from pprint import pprint
 
 from lxml import html
@@ -287,8 +286,7 @@ class LaneResultSummary(object):
             value = getattr(self, variable_name)
             if value is None:
                 continue
-            # it looks like a sequence
-            elif type(value) in (types.TupleType, types.ListType):
+            elif isinstance(value, (tuple, list)):
                 element = make_mean_range_element(
                   lane_result,
                   tag,

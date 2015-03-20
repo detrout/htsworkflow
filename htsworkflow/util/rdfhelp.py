@@ -5,6 +5,7 @@ from __future__ import print_function
 import collections
 from datetime import datetime
 from glob import glob
+import six
 from six.moves import urllib
 import logging
 import os
@@ -78,7 +79,7 @@ def blankOrUri(value=None):
     node = None
     if value is None:
         node = RDF.Node()
-    elif type(value) in types.StringTypes:
+    elif isinstance(value, six.string_types):
         node = RDF.Node(uri_string=value)
     elif isinstance(value, RDF.Node):
         node = value
@@ -89,16 +90,16 @@ def blankOrUri(value=None):
 def toTypedNode(value, language="en"):
     """Convert a python variable to a RDF Node with its closest xsd type
     """
-    if type(value) == types.BooleanType:
+    if isinstance(value, bool):
         value_type = xsdNS['boolean'].uri
         if value:
             value = u'1'
         else:
             value = u'0'
-    elif type(value) in (types.IntType, types.LongType):
+    elif isinstance(value, int):
         value_type = xsdNS['decimal'].uri
         value = unicode(value)
-    elif type(value) == types.FloatType:
+    elif isinstance(value, float):
         value_type = xsdNS['float'].uri
         value = unicode(value)
     elif isinstance(value, datetime):
@@ -252,7 +253,7 @@ def get_model(model_name=None, directory=None, use_contexts=True):
 
 
 def load_into_model(model, parser_name, path, ns=None):
-    if type(ns) in types.StringTypes:
+    if isinstance(ns, six.string_types):
         ns = RDF.Uri(ns)
 
     if isinstance(path, RDF.Node):
@@ -304,7 +305,7 @@ def load_string_into_model(model, parser_name, data, ns=None):
 def fixup_namespace(ns):
     if ns is None:
         ns = RDF.Uri("http://localhost/")
-    elif type(ns) in types.StringTypes:
+    elif isinstance(ns, six.string_types):
         ns = RDF.Uri(ns)
     elif not(isinstance(ns, RDF.Uri)):
         errmsg = "Namespace should be string or uri not {0}"

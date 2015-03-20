@@ -3,8 +3,8 @@ from __future__ import print_function
 import os
 import types
 from unittest import TestCase
-
 from datetime import datetime
+import six
 
 from htsworkflow.util.rdfhelp import \
      add_default_schemas, \
@@ -69,7 +69,7 @@ try:
             s = "Argh matey"
             node = toTypedNode(s)
             self.assertEqual(fromTypedNode(node), s)
-            self.assertEqual(type(fromTypedNode(node)), types.UnicodeType)
+            self.assertTrue(isinstance(fromTypedNode(node), six.text_type))
 
         def test_blank_or_uri_blank(self):
             node = blankOrUri()
@@ -90,8 +90,7 @@ try:
         def test_unicode_node_roundtrip(self):
             literal = u'\u5927'
             roundtrip = fromTypedNode(toTypedNode(literal))
-            self.assertEqual(roundtrip, literal)
-            self.assertEqual(type(roundtrip), types.UnicodeType)
+            self.assertTrue(isinstance(roundtrip, six.text_type))
 
         def test_datetime_no_microsecond(self):
             dateTimeType = xsdNS['dateTime'].uri

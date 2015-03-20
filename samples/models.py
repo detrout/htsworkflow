@@ -7,6 +7,7 @@ from django.contrib.auth.models import User, UserManager
 from django.core import urlresolvers
 from django.db.models.signals import pre_save, post_save
 from django.db import connection
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -281,7 +282,7 @@ class Library(models.Model):
       sequences = self.index_sequences()
       if sequences is None:
           return ""
-      if type(sequences) in types.StringTypes:
+      if isinstance(sequences, six.string_types):
           return sequences
       multiplex_ids = sequences.keys()
       multiplex_ids.sort()

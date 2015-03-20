@@ -7,6 +7,7 @@ import os
 import types
 import re
 import sys
+import six
 from six.moves.urllib.parse import urljoin, urlparse
 
 import RDF
@@ -376,7 +377,7 @@ def scan_for_sequences(dirs):
     Scan through a list of directories for sequence like files
     """
     sequences = []
-    if type(dirs) in types.StringTypes:
+    if isinstance(dirs, six.string_types):
         raise ValueError("You probably want a list or set, not a string")
 
     for d in dirs:

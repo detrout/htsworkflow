@@ -7,8 +7,7 @@ from optparse import OptionParser, IndentedHelpFormatter
 import os
 import sys
 import types
-import urllib
-import urllib2
+import six
 
 try:
     import json
@@ -403,12 +402,11 @@ def format_pooled_libraries(shared, library):
     sequences = library.get('index_sequence', None)
     if sequences is None:
         return []
-    elif (type(sequences) in types.StringTypes and
-          sequences.lower().startswith('err')):
+    elif isinstance(sequences, six.string_types):
         shared['Index'] = ''
         shared['SampleProject'] = library['library_id']
         return [shared]
-    elif (type(sequences) == types.DictType):
+    elif isinstance(sequences, dict):
         pooled = []
         multiplex_ids = sequences.keys()
         multiplex_ids.sort(key=natural_sort_key)

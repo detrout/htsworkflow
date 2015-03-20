@@ -11,7 +11,7 @@ import json
 import jsonschema
 import os
 import requests
-import types
+import six
 from six.moves.urllib.parse import urljoin, urlparse, urlunparse
 
 LOGGER = logging.getLogger(__name__)
@@ -132,7 +132,7 @@ class ENCODED:
         and I needed a way to properly compute a the correct base URL.
         '''
         # pretend strings aren't iterable
-        if type(obj) in types.StringTypes:
+        if isinstance(obj, six.string_types):
             return
 
         # recurse on container types
@@ -223,7 +223,7 @@ class ENCODED:
         obj_type = obj.get('@type')
         if not obj_type:
             raise ValueError('None type')
-        if type(obj_type) in types.StringTypes:
+        if isinstance(obj_type, six.string_types):
             raise ValueError('@type should be a list, not a string')
         if not isinstance(obj_type, collections.Sequence):
             raise ValueError('@type is not a sequence')
