@@ -210,7 +210,7 @@ class PipelineRun(object):
         """
         if self._name is None:
           components = [self.image_analysis, self.bustard, self.gerald]
-          tmax = max([ c.time for c in components if c ])
+          tmax = max([ c.time for c in components if c and c.time ])
           timestamp = time.strftime('%Y-%m-%d', time.localtime(tmax))
           self._name = 'run_' + self.flowcell_id + "_" + timestamp + '.xml'
         return self._name
