@@ -17,11 +17,11 @@ class testETHelper(TestCase):
 
     def test_indent(self):
         flat_foo = ElementTree.tostring(self.foo_tree)
-        self.failUnlessEqual(len(flat_foo.split('\n')), 1)
+        self.failUnlessEqual(len(flat_foo.splitlines()), 1)
 
         indent(self.foo_tree)
         pretty_foo = ElementTree.tostring(self.foo_tree)
-        self.failUnlessEqual(len(pretty_foo.split('\n')), 5)
+        self.failUnlessEqual(len(pretty_foo.splitlines()), 4)
 
     def test_flatten(self):
         self.failUnless(flatten(self.foo_tree), 'asdf')
