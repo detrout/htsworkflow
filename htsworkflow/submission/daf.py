@@ -140,9 +140,9 @@ def _consume_whitespace(line, start=0):
 
     returns length of string if it can't find anything
     """
-    for i in xrange(start, len(line)):
-        if line[i] not in string.whitespace:
-            return i
+    for i, c in enumerate(line[start:]):
+        if c not in string.whitespace:
+            return i+start
 
     return len(line)
 
@@ -152,9 +152,9 @@ def _extract_name_index(line, start=0):
 
     returns length of string if nothing matches
     """
-    for i in xrange(start, len(line)):
-        if line[i] in string.whitespace:
-            return i
+    for i, c in enumerate(line[start:]):
+        if c in string.whitespace:
+            return i+start
 
     return len(line)
 
