@@ -344,7 +344,7 @@ def add_default_schemas(model, schema_path=None):
         for path in schema_path:
             for pathname in glob(os.path.join(path, '*.turtle')):
                 url = 'file://' + os.path.splitext(pathname)[0]
-                stream = open(pathname, 'r')
+                stream = open(pathname, 'rt')
                 add_schema(model, stream, url)
                 stream.close()
 

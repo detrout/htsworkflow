@@ -270,7 +270,7 @@ class UCSCSubmission(object):
             self.daf = daf_file.read()
         else:
             # file
-            stream = open(daf_file, 'r')
+            stream = open(daf_file, 'rt')
             self.daf = stream.read()
             stream.close()
 

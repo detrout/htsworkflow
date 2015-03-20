@@ -14,7 +14,7 @@ def make_md5sum(filename):
     md5_cache = os.path.join(filename+".md5")
     if os.path.exists(md5_cache):
         logger.debug("Found md5sum in {0}".format(md5_cache))
-        stream = open(md5_cache,'r')
+        stream = open(md5_cache,'rt')
         lines = stream.readlines()
         md5sum = parse_md5sum_line(lines, filename)
     else:
@@ -35,13 +35,13 @@ def make_md5sum_unix(filename, md5_cache):
     md5sum = parse_md5sum_line(lines, filename)
     if md5sum is not None:
         logger.debug("Caching sum in {0}".format(md5_cache))
-        stream = open(md5_cache, "w")
-        stream.write(stdin)
+        stream = open(md5_cache, "wt")
+        stream.write(smart_text(stdin))
         stream.close()
     return md5sum
 
 def parse_md5sum_line(lines, filename):
-    md5sum, md5sum_filename = lines[0].split()
+    md5sum, md5sum_filename = smart_text(lines[0]).split()
     md5sum_filename = os.path.basename(md5sum_filename)
     filename = os.path.basename(filename)
     if md5sum_filename != filename:

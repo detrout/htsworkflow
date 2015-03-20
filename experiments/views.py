@@ -176,7 +176,7 @@ def read_result_file(self, key):
         content_type = data_file.file_type.mimetype
 
     if os.path.exists(data_file.pathname):
-        return HttpResponse(open(data_file.pathname,'r'),
+        return HttpResponse(open(data_file.pathname,'rb'),
                             content_type=content_type)
 
     raise Http404

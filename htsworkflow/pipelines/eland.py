@@ -150,7 +150,7 @@ class ElandLane(ResultLane):
         self._reads = 0
 
         for pathname in self.pathnames:
-            stream = autoopen(pathname, 'r')
+            stream = autoopen(pathname, 'rt')
             if self.eland_type == ELAND_SINGLE:
                 result = self._update_eland_result(stream)
             elif self.eland_type == ELAND_MULTI or \
@@ -548,7 +548,7 @@ class SequenceLane(ResultLane):
         """
         Determine if we have a scarf or fastq sequence file
         """
-        f = open(pathname,'r')
+        f = open(pathname,'rt')
         l = f.readline()
         f.close()
 
@@ -575,8 +575,8 @@ class SequenceLane(ResultLane):
 
         LOGGER.info("summarizing results for %s" % (pathname))
         lines = 0
-        f = open(pathname)
-        for l in f.xreadlines():
+        f = open(pathname, 'rt')
+        for l in f:
             lines += 1
         f.close()
 
