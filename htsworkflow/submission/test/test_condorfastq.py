@@ -2,6 +2,7 @@
 
 import copy
 import os
+import re
 from pprint import pprint
 import shutil
 import tempfile
@@ -598,30 +599,30 @@ class TestCondorFastq(TestCase):
         split_test = dict((( x['target'], x) for x in
             [{'sources': [u'11154_NoIndex_L003_R1_001.fastq.gz',
                          u'11154_NoIndex_L003_R1_002.fastq.gz'],
-             'pyscript': 'desplit_fastq.pyc',
+             'pyscript': 'desplit_fastq.pyc?$',
              'target': u'11154_C02F9ACXX_c202_l3_r1.fastq'},
             {'sources': [u'11154_NoIndex_L003_R2_001.fastq.gz',
                          u'11154_NoIndex_L003_R2_002.fastq.gz'],
-             'pyscript': 'desplit_fastq.pyc',
+             'pyscript': 'desplit_fastq.pyc?$',
              'target': u'11154_C02F9ACXX_c202_l3_r2.fastq'},
             {'sources': [u'12345_CGATGT_L003_R1_001.fastq.gz',
                          u'12345_CGATGT_L003_R1_002.fastq.gz',
                          u'12345_CGATGT_L003_R1_003.fastq.gz',
                          ],
-             'pyscript': 'desplit_fastq.pyc',
+             'pyscript': 'desplit_fastq.pyc?$',
              'target': u'12345_C02F9ACXX_c202_l3_r1.fastq'},
             {'sources': [u'12345_CGATGT_L003_R2_001.fastq.gz',
                          u'12345_CGATGT_L003_R2_002.fastq.gz',
                          u'12345_CGATGT_L003_R2_003.fastq.gz',
                          ],
-             'pyscript': 'desplit_fastq.pyc',
+             'pyscript': 'desplit_fastq.pyc?$',
              'target': u'12345_C02F9ACXX_c202_l3_r2.fastq'}
              ]
          ))
         for arg in split:
             _, target = os.path.split(arg['target'])
             pyscript = split_test[target]['pyscript']
-            self.assertTrue(arg['pyscript'].endswith(pyscript))
+            self.assertTrue(re.search(pyscript, arg['pyscript']))
             filename = split_test[target]['target']
             self.assertTrue(arg['target'].endswith(filename))
             for s_index in range(len(arg['sources'])):
