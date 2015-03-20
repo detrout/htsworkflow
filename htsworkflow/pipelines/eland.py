@@ -620,7 +620,7 @@ class SequenceLane(ResultLane):
             elif tag == END.lower():
                 self.end = int(element.text)
             elif tag == READS.lower():
-                self._reads = int(element.text)
+                self._reads = int(float(element.text))
             elif tag == SequenceLane.SEQUENCE_TYPE.lower():
                 self.sequence_type = lookup_sequence_type.get(element.text, None)
             else:
