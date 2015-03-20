@@ -88,11 +88,10 @@ class constructMapperDict(object):
           builds = self.genome_dict[elements[0]]
 
           # sort build names the way humans would
-          keys = builds.keys()
-          keys.sort(key=natural_sort_key)
+          last_key = max(builds, key=natural_sort_key)
 
           # return the path from the 'last' build name
-          return builds[keys[-1]]
+          return builds[last_key]
 
         elif len(elements) == 2:
           # we have species, and build name
