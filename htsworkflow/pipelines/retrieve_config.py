@@ -408,8 +408,7 @@ def format_pooled_libraries(shared, library):
         return [shared]
     elif isinstance(sequences, dict):
         pooled = []
-        multiplex_ids = sequences.keys()
-        multiplex_ids.sort(key=natural_sort_key)
+        multiplex_ids = sorted(sequences.keys(), key=natural_sort_key)
         for multiplex_id in multiplex_ids:
             sample = {}
             sample.update(shared)
