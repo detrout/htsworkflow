@@ -145,7 +145,7 @@ def firecrest(pathname):
     if os.path.exists(matrix_pathname):
         # this is for firecrest < 1.3.2
         f.matrix = open(matrix_pathname, 'r').read()
-    elif glob(bustard_pattern) > 0:
+    elif len(glob(bustard_pattern)) > 0:
         f.matrix = None
         # there are runs here. Bustard should save the matrix.
     else:
