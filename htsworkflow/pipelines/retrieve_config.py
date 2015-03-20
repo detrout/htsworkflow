@@ -8,6 +8,7 @@ import os
 import sys
 import types
 import six
+from six.moves import urllib
 
 try:
     import json
@@ -46,9 +47,9 @@ def retrieve_flowcell_info(base_host_url, flowcell):
     url = api.flowcell_url(base_host_url, flowcell)
 
     try:
-        apipayload = urllib.urlencode(apidata)
-        web = urllib2.urlopen(url, apipayload)
-    except urllib2.URLError as e:
+        apipayload = urllib.parse.urlencode(apidata)
+        web = urllib.request.urlopen(url, apipayload)
+    except urllib.request.HTTPError as e:
         errmsg = 'URLError: %d %s' % (e.code, e.msg)
         LOGGER.error(errmsg)
         LOGGER.error('opened %s' % (url,))
