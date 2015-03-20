@@ -378,7 +378,7 @@ class ElandLane(ResultLane):
     def get_elements(self):
         lane = ElementTree.Element(ElandLane.LANE,
                                    {'version':
-                                    unicode(ElandLane.XML_VERSION)})
+                                    str(ElandLane.XML_VERSION)})
         sample_tag = ElementTree.SubElement(lane, SAMPLE_NAME)
         sample_tag.text = self.sample_name
         lane_tag = ElementTree.SubElement(lane, LANE_ID)
@@ -390,19 +390,19 @@ class ElandLane(ResultLane):
         for k, v in self.genome_map.items():
             item = ElementTree.SubElement(
                 genome_map, GENOME_ITEM,
-                {'name':k, 'value':unicode(v)})
+                {'name':k, 'value':str(v)})
         mapped_reads = ElementTree.SubElement(lane, MAPPED_READS)
         for k, v in self.mapped_reads.items():
             item = ElementTree.SubElement(
                 mapped_reads, MAPPED_ITEM,
-                {'name':k, 'value':unicode(v)})
+                {'name':k, 'value':str(v)})
         match_codes = ElementTree.SubElement(lane, MATCH_CODES)
         for k, v in self.match_codes.items():
             item = ElementTree.SubElement(
                 match_codes, MATCH_ITEM,
-                {'name':k, 'value':unicode(v)})
+                {'name':k, 'value':str(v)})
         reads = ElementTree.SubElement(lane, READS)
-        reads.text = unicode(self.reads)
+        reads.text = str(self.reads)
 
         return lane
 
@@ -591,7 +591,7 @@ class SequenceLane(ResultLane):
     def get_elements(self):
         lane = ElementTree.Element(SequenceLane.LANE,
                                    {'version':
-                                    unicode(SequenceLane.XML_VERSION)})
+                                    str(SequenceLane.XML_VERSION)})
         sample_tag = ElementTree.SubElement(lane, SAMPLE_NAME)
         sample_tag.text = self.sample_name
         lane_tag = ElementTree.SubElement(lane, LANE_ID)
@@ -600,9 +600,9 @@ class SequenceLane(ResultLane):
             end_tag = ElementTree.SubElement(lane, END)
             end_tag.text = str(self.end)
         reads = ElementTree.SubElement(lane, READS)
-        reads.text = unicode(self.reads)
+        reads.text = str(self.reads)
         sequence_type = ElementTree.SubElement(lane, SequenceLane.SEQUENCE_TYPE)
-        sequence_type.text = unicode(SequenceLane.SEQUENCE_DESCRIPTION[self.sequence_type])
+        sequence_type.text = str(SequenceLane.SEQUENCE_DESCRIPTION[self.sequence_type])
 
         return lane
 
@@ -676,13 +676,13 @@ class ELAND(collections.MutableMapping):
 
     def get_elements(self):
         root = ElementTree.Element(ELAND.ELAND,
-                                   {'version': unicode(ELAND.XML_VERSION)})
+                                   {'version': str(ELAND.XML_VERSION)})
 
         for key in self:
             eland_lane = self[key].get_elements()
-            eland_lane.attrib[ELAND.END] = unicode(self[key].end-1)
-            eland_lane.attrib[ELAND.LANE_ID] = unicode(self[key].lane_id)
-            eland_lane.attrib[ELAND.SAMPLE] = unicode(self[key].sample_name)
+            eland_lane.attrib[ELAND.END] = str(self[key].end-1)
+            eland_lane.attrib[ELAND.LANE_ID] = str(self[key].lane_id)
+            eland_lane.attrib[ELAND.SAMPLE] = str(self[key].sample_name)
             root.append(eland_lane)
         return root
         return root

@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, print_function
 
 import RDF
 
@@ -42,7 +42,7 @@ class InventoryTestCase(TestCase):
 
         itemNode = RDF.Node(RDF.Uri(url))
         item_type = fromTypedNode(
-            model.get_target(itemNode, inventoryOntology[b'item_type']))
+            model.get_target(itemNode, inventoryOntology['item_type']))
         self.failUnlessEqual(item_type, item.item_type.name)
 
     def test_itemindex(self):

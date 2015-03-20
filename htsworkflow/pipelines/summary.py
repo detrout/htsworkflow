@@ -444,8 +444,8 @@ def make_mean_range_element(parent, name, mean, deviation):
     Make an etree subelement <Name mean='mean', deviation='deviation'/>
     """
     element = etree.SubElement(parent, name,
-                                     { 'mean': unicode(mean),
-                                       'deviation': unicode(deviation)})
+                                     { 'mean': str(mean),
+                                       'deviation': str(deviation)})
     return element
 
 def parse_mean_range_element(element):

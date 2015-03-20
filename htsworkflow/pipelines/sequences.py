@@ -83,8 +83,8 @@ class SequenceFile(object):
     def key(self):
         return (self.flowcell, self.lane, self.read, self.project, self.split)
 
-    def __unicode__(self):
-        return unicode(self.path)
+    def __str__(self):
+        return str(self.path)
 
     def __eq__(self, other):
         """
@@ -162,7 +162,7 @@ class SequenceFile(object):
         def add(model, s, p, o):
             model.add_statement(RDF.Statement(s,p,o))
         # a bit unreliable... assumes filesystem is encoded in utf-8
-        path = os.path.abspath(self.path.encode('utf-8'))
+        path = os.path.abspath(self.path)
         fileNode = RDF.Node(RDF.Uri('file://' + path))
         add(model, fileNode, rdfNS['type'], libNS['IlluminaResult'])
         add_lit(model, fileNode, libNS['flowcell_id'], self.flowcell)

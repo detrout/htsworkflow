@@ -45,7 +45,7 @@ def validate_xhtml(html, base_url='http://localhost'):
     and False if it fails.
     """
     try:
-        XHTML_RDF_DTD = lxml.etree.DTD(external_id='-//W3C//DTD XHTML+RDFa 1.0//EN')
+        XHTML_RDF_DTD = lxml.etree.DTD(external_id=b'-//W3C//DTD XHTML+RDFa 1.0//EN')
     except lxml.etree.DTDParseError as e:
         LOGGER.warn("Unable to load XHTML DTD %s" % (str(e),))
         return

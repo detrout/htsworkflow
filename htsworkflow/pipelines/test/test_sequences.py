@@ -71,7 +71,7 @@ class SequenceFileTests(TestCase):
 
         self.assertEqual(f0.filetype, 'srf')
         self.assertEqual(f0.path, pathname)
-        self.assertEqual(unicode(f0), unicode(pathname))
+        self.assertEqual(str(f0), str(pathname))
         self.assertEqual(repr(f0), "<srf 42BW9AAXX 4 %s>" % (pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
         self.assertEqual(f0.lane, '4')
@@ -96,7 +96,7 @@ class SequenceFileTests(TestCase):
 
         self.assertEqual(f0.filetype, 'qseq')
         self.assertEqual(f0.path, pathname)
-        self.assertEqual(unicode(f0), unicode(pathname))
+        self.assertEqual(str(f0), str(pathname))
         self.assertEqual(repr(f0), "<qseq 42BW9AAXX 4 %s>" %(pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
         self.assertEqual(f0.lane, '4')
@@ -119,7 +119,7 @@ class SequenceFileTests(TestCase):
 
         self.assertEqual(f0.filetype, 'qseq')
         self.assertEqual(f0.path, pathname)
-        self.assertEqual(unicode(f0), unicode(pathname))
+        self.assertEqual(str(f0), str(pathname))
         self.assertEqual(repr(f0), "<qseq ilmn200901 1 %s>" %(pathname,))
         self.assertEqual(f0.lane, '1')
         self.assertEqual(f0.read, 1)
@@ -142,7 +142,7 @@ class SequenceFileTests(TestCase):
 
         self.assertEqual(f0.filetype, 'fastq')
         self.assertEqual(f0.path, pathname)
-        self.assertEqual(unicode(f0), unicode(pathname))
+        self.assertEqual(str(f0), str(pathname))
         self.assertEqual(repr(f0), "<fastq 42BW9AAXX 4 %s>" % (pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
         self.assertEqual(f0.lane, '4')
@@ -164,7 +164,7 @@ class SequenceFileTests(TestCase):
 
         self.assertEqual(f0.filetype, 'fastq')
         self.assertEqual(f0.path, pathname)
-        self.assertEqual(unicode(f0), unicode(pathname))
+        self.assertEqual(str(f0), str(pathname))
         self.assertEqual(repr(f0), "<fastq 42BW9AAXX 4 %s>" %(pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
         self.assertEqual(f0.lane, '4')
@@ -188,7 +188,7 @@ class SequenceFileTests(TestCase):
 
         self.assertEqual(f0.filetype, 'split_fastq')
         self.assertEqual(f0.path, pathname)
-        self.assertEqual(unicode(f0), unicode(pathname))
+        self.assertEqual(str(f0), str(pathname))
         self.assertEqual(repr(f0), "<split_fastq 42BW9AAXX 1 %s>" %(pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
         self.assertEqual(f0.lane, '1')
@@ -212,7 +212,7 @@ class SequenceFileTests(TestCase):
 
         self.assertEqual(f0.filetype, 'split_fastq')
         self.assertEqual(f0.path, pathname)
-        self.assertEqual(unicode(f0), unicode(pathname))
+        self.assertEqual(str(f0), str(pathname))
         self.assertEqual(repr(f0), "<split_fastq 42BW9AAXX 1 %s>" % (pathname,))
         self.assertEqual(f0.flowcell, '42BW9AAXX')
         self.assertEqual(f0.lane, '1')

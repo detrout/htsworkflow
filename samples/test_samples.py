@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, print_function
 
 import datetime
 import unittest
@@ -272,9 +272,9 @@ try:
     import RDF
     HAVE_RDF = True
 
-    rdfNS = RDF.NS(b"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-    xsdNS = RDF.NS(b"http://www.w3.org/2001/XMLSchema#")
-    libNS = RDF.NS(b"http://jumpgate.caltech.edu/wiki/LibraryOntology#")
+    rdfNS = RDF.NS("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
+    libNS = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
 
     from htsworkflow.util.rdfhelp import dump_model
 except ImportError as e:
@@ -289,7 +289,7 @@ class TestRDFaLibrary(TestCase):
     def test_parse_rdfa(self):
 
         model = get_rdf_memory_model()
-        parser = RDF.Parser(name=b'rdfa')
+        parser = RDF.Parser(name='rdfa')
 
         bob = AffiliationFactory.create(name='Bob')
 
@@ -311,20 +311,20 @@ class TestRDFaLibrary(TestCase):
         #with open('/tmp/test.ttl', 'w') as outstream:
         #    dump_model(model, outstream)
         # http://jumpgate.caltech.edu/wiki/LibraryOntology#affiliation>
-        self.check_literal_object(model, ['Bob'], p=libNS[b'affiliation'])
+        self.check_literal_object(model, ['Bob'], p=libNS['affiliation'])
         self.check_literal_object(model,
                                   ['experiment type name'],
-                                  p=libNS[b'experiment_type'])
-        self.check_literal_object(model, ['400'], p=libNS[b'gel_cut'])
+                                  p=libNS['experiment_type'])
+        self.check_literal_object(model, ['400'], p=libNS['gel_cut'])
         self.check_literal_object(model,
                                   ['microfluidics bot 7321'],
-                                  p=libNS[b'made_by'])
+                                  p=libNS['made_by'])
         self.check_literal_object(model,
                                   [lib_object.library_name],
-                                  p=libNS[b'name'])
+                                  p=libNS['name'])
         self.check_literal_object(model,
                                   [lib_object.library_species.scientific_name],
-                                  p=libNS[b'species_name'])
+                                  p=libNS['species_name'])
 
 
     def check_literal_object(self, model, values, s=None, p=None, o=None):

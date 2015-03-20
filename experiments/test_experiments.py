@@ -109,7 +109,7 @@ class ExperimentsTestCases(TestCase):
         fc42jtn = self.fc42jtn
         fc42ju1 = FlowCellFactory(flowcell_id='42JU1AAXX')
 
-        for fc_id in [u'FC12150', u"42JTNAAXX", "42JU1AAXX"]:
+        for fc_id in ['FC12150', '42JTNAAXX', '42JU1AAXX']:
             fc_dict = flowcell_information(fc_id)
             fc_django = FlowCell.objects.get(flowcell_id=fc_id)
             self.assertEqual(fc_dict['flowcell_id'], fc_id)
@@ -143,7 +143,7 @@ class ExperimentsTestCases(TestCase):
 
 
             for lane in fc_django.lane_set.all():
-                lane_contents = fc_json['lane_set'][unicode(lane.lane_number)]
+                lane_contents = fc_json['lane_set'][str(lane.lane_number)]
                 lane_dict = multi_lane_to_dict(lane_contents)[lane.library_id]
 
                 self.assertEqual(lane_dict['cluster_estimate'], lane.cluster_estimate)
@@ -167,7 +167,7 @@ class ExperimentsTestCases(TestCase):
         """
         Require logging in to retrieve meta data
         """
-        response = self.client.get(u'/experiments/config/FC12150/json')
+        response = self.client.get('/experiments/config/FC12150/json')
         self.assertEqual(response.status_code, 403)
 
     def test_library_id(self):
@@ -201,7 +201,7 @@ class ExperimentsTestCases(TestCase):
         This tests to make sure that the value entered in the raw library id field matches
         the library id looked up.
         """
-        expected_ids = [ u'1215{}'.format(i) for i in range(1,9) ]
+        expected_ids = [ '1215{}'.format(i) for i in range(1,9) ]
         self.assertTrue(self.client.login(username=self.admin.username, password=self.password))
         response = self.client.get('/admin/experiments/flowcell/{}/'.format(self.fc12150.id))
 
@@ -410,7 +410,7 @@ class ExperimentsTestCases(TestCase):
         count = 0
         for r in query.execute(model):
             count += 1
-            self.assertEqual(fromTypedNode(r['flowcell_id']), u'FC12150')
+            self.assertEqual(fromTypedNode(r['flowcell_id']), 'FC12150')
             lane_id = fromTypedNode(r['lane_id'])
             library_id = fromTypedNode(r['library_id'])
             self.assertTrue(library_id in expected[lane_id])
@@ -504,7 +504,7 @@ class TestSequencer(TestCase):
         seq.instrument_name = "HWI-SEQ1"
         seq.model = "Imaginary 5000"
 
-        self.assertEqual(unicode(seq), "Seq1 (HWI-SEQ1)")
+        self.assertEqual(str(seq), "Seq1 (HWI-SEQ1)")
 
     def test_lookup(self):
         fc = self.fc12150
