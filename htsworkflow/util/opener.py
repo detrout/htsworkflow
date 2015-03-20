@@ -4,8 +4,15 @@ Helpful utilities for turning random names/objects into streams.
 import os
 import gzip
 import bz2
-import types
+import six
 from six.moves import urllib
+
+if six.PY2:
+    import types
+    FILE_CLASS = types.FileType
+else:
+    import io
+    FILE_CLASS = io.IOBase
 
 def isfilelike(file_ref, mode):
     """Does file_ref have the core file operations?
@@ -41,7 +48,7 @@ def autoopen(file_ref, mode='r'):
     Attempt to intelligently turn file_ref into a readable stream
     """
     # catch being passed a file
-    if type(file_ref) is types.FileType:
+    if isinstance(file_ref, FILE_CLASS):
         return file_ref
     # does it look like a file?
     elif isfilelike(file_ref, mode):
