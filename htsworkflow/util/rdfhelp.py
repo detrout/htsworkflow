@@ -98,10 +98,10 @@ def toTypedNode(value, language="en"):
             value = u'0'
     elif isinstance(value, int):
         value_type = xsdNS['decimal'].uri
-        value = unicode(value)
+        value = str(value)
     elif isinstance(value, float):
         value_type = xsdNS['float'].uri
-        value = unicode(value)
+        value = str(value)
     elif isinstance(value, datetime):
         value_type = xsdNS['dateTime'].uri
         if value.microsecond == 0:
