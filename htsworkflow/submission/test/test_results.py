@@ -24,7 +24,7 @@ class TestResultMap(TestCase):
         results['2000'] = 'dir2000'
         results['1500'] = 'dir1500'
 
-        self.failUnlessEqual(results.keys(), ['1000', '2000', '1500'])
+        self.failUnlessEqual(list(results.keys()), ['1000', '2000', '1500'])
         self.failUnlessEqual(list(results.values()),
                              ['dir1000', 'dir2000', 'dir1500'])
         self.failUnlessEqual(list(results.items()),

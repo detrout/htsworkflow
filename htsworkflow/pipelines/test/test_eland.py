@@ -20,8 +20,8 @@ class MatchCodeTests(TestCase):
                        'R0':0, 'R1':0, 'R2':0,
                       }
         self.assertEqual(mc.keys(), match_codes.keys())
-        self.assertEqual(mc.items(), match_codes.items())
-        self.assertEqual(mc.values(), match_codes.values())
+        self.assertEqual(list(mc.items()), list(match_codes.items()))
+        self.assertEqual(list(mc.values()), list(match_codes.values()))
         self.assertRaises(KeyError, mc.__getitem__, 'foo')
 
     def test_addition(self):
@@ -53,7 +53,7 @@ class TestMappedReads(TestCase):
         mr1['chr9'] = 7
         self.assertEqual(list(mr1.keys()), ['chr9'])
         self.assertEqual(mr1['chr9'], 7)
-        self.assertEqual(mr1.items(), [('chr9', 7)])
+        self.assertEqual(list(mr1.items()), [('chr9', 7)])
         del mr1['chr9']
         self.assertEqual(len(mr1), 0)
 
@@ -238,7 +238,7 @@ class ElandTests(TestCase):
         e.results[sl3] = 'Lane3'
         e.results[sl1] = 'Lane1'
 
-        e_list = e.values()
+        e_list = list(e.values())
         self.assertEqual(e_list[0], 'Lane1')
         self.assertEqual(e_list[1], 'Lane3')
         self.assertEqual(e_list[2], 'Lane5')
@@ -251,15 +251,15 @@ class TestElandMatches(TestCase):
         em.add('s_1_sequence.txt')
         self.assertEqual(len(em), 1)
         self.assertEqual(len(em[key]), 1)
-        filename = iter(em[key]).next().filename
+        filename = next(iter(em[key])).filename
         self.assertEqual(filename, 's_1_sequence.txt')
-        self.assertEqual(em.keys(), [key])
+        self.assertEqual(list(em.keys()), [key])
         em.add('s_1_eland_result.txt')
         self.assertEqual(len(em), 1)
         self.assertEqual(len(em[key]), 1)
-        filename = iter(em[key]).next().filename
+        filename = next(iter(em[key])).filename
         self.assertEqual(filename, 's_1_eland_result.txt')
-        self.assertEqual(em.keys(), [key])
+        self.assertEqual(list(em.keys()), [key])
 
     def test_parts(self):
         key11111 = SampleKey(1, 1, '11111')

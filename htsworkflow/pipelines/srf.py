@@ -112,7 +112,7 @@ def create_qseq_patterns(bustard_dir):
       qseq_patterns = []
       # grab a lane from the dictionary
       # I don't think it matters which one.
-      k = lanes.keys()[0]
+      k = next(iter(lanes.keys()))
       # build the list of patterns
       for read in lanes[k]:
         read = int(read)

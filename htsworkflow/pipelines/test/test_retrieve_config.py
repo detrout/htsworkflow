@@ -81,22 +81,22 @@ class RetrieveTestCases(TestCase):
 
         output.seek(0)
         sheet = list(csv.DictReader(output))
-        name1 = library1.id + '_index' + library1.index_sequences().keys()[0]
-        name2 = library2.id + '_index' + library2.index_sequences().keys()[0]
+        name1 = library1.id + '_index' + next(iter(library1.index_sequences()))
+        name2 = library2.id + '_index' + next(iter(library2.index_sequences()))
         expected = [{'SampleProject': name1,
-                     'Index': library1.index_sequences().values()[0],
+                     'Index': next(iter(library1.index_sequences().values())),
                      'Lane': '1',
                      },
                     {'SampleProject': name2,
-                     'Index': library2.index_sequences().values()[0],
+                     'Index': next(iter(library2.index_sequences().values())),
                      'Lane': '1',
                      },
                     {'SampleProject': name1,
-                     'Index': library1.index_sequences().values()[0],
+                     'Index': next(iter(library1.index_sequences().values())),
                      'Lane': '2',
                      },
                     {'SampleProject': name2,
-                     'Index': library2.index_sequences().values()[0],
+                     'Index': next(iter(library2.index_sequences().values())),
                      'Lane': '2',
                      },
                     ]
