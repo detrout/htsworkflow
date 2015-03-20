@@ -22,5 +22,12 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'WARNING',
         }
+    },
+}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'USER': 'diane',
+        'NAME': 'htsworkflow',
     }
 }
