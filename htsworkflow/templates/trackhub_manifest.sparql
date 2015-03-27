@@ -26,7 +26,6 @@ WHERE {
   OPTIONAL { ?fileClass ucscDaf:paired_end ?paired_end . }
   OPTIONAL { ?fileClass ucscDaf:technical_replicate ?technical_replicate . }
 
-  
   ?library htswlib:replicate ?replicate ;
            ucscDaf:enriched_in ?enriched_in;
            ucscDaf:genome_build ?ucsc_db .
