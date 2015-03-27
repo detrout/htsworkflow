@@ -245,6 +245,7 @@ class Submission(object):
             self.model.append(s)
 
         self._add_lane_details(libNode)
+        self._add_flowcell_details()
 
     def _add_lane_details(self, libNode):
         """Import lane details
@@ -261,6 +262,20 @@ class Submission(object):
                 parser.parse_into_model(self.model, lane.uri)
             except RDF.RedlandError, e:
                 LOGGER.error("Error accessing %s" % (lane.uri,))
+                raise e
+
+
+    def _add_flowcell_details(self):
+        template = loader.get_template('aws_flowcell.sparql')
+        results = self.execute_query(template, Context())
+
+        parser = RDF.Parser(name='rdfa')
+        for r in self.execute_query(template, Context()):
+            flowcell = r['flowcell']
+            try:
+                parser.parse_into_model(self.model, flowcell.uri)
+            except RDF.RedlandError as e:
+                LOGGER.error("Error accessing %s" % (str(flowcell)))
                 raise e
 
 
