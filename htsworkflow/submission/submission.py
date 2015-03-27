@@ -123,6 +123,7 @@ class Submission(object):
         # add file specific information
         fileNode = self.make_file_node(pathname, an_analysis)
         self.add_md5s(filename, fileNode, analysis_dir)
+        self.add_file_size(filename, fileNode, analysis_dir)
         self.add_fastq_metadata(filename, fileNode)
         self.add_label(file_type, fileNode, libNode)
         self.model.add_statement(
@@ -167,6 +168,13 @@ class Submission(object):
         else:
             self.model.add_statement(
                 RDF.Statement(fileNode, dafTermOntology['md5sum'], md5))
+
+    def add_file_size(self, filename, fileNode, analysis_dir):
+        LOGGER.debug("Updating file size")
+        submission_pathname = os.path.join(analysis_dir, filename)
+        file_size = os.stat(submission_pathname).st_size
+        self.model.add_statement(
+            RDF.Statement(fileNode, dafTermOntology['file_size'], toTypedNode(file_size)))
 
     def add_fastq_metadata(self, filename, fileNode):
         # How should I detect if this is actually a fastq file?
