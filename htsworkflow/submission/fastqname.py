@@ -83,7 +83,7 @@ class FastqName(collections.Mapping):
         return iter(self._attributes)
 
     def __getitem__(self, key):
-        return getattr(self, key, None)
+        return getattr(self, key)
 
     def __setitem__(self, key, value):
         if key in self._attributes:
