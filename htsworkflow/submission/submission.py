@@ -34,6 +34,7 @@ class Submission(object):
         self.submissionSet = get_submission_uri(self.name)
         self.submissionSetNS = RDF.NS(str(self.submissionSet) + '#')
         self.libraryNS = RDF.NS('{0}/library/'.format(host))
+        self.flowcellNS = RDF.NS('{0}/flowcell/'.format(host))
 
         self.__view_map = None
 
@@ -194,6 +195,11 @@ class Submission(object):
             if value is not None:
                 s = RDF.Statement(fileNode, model_term, toTypedNode(value))
                 self.model.append(s)
+
+        if 'flowcell' in fqname:
+            value = self.flowcellNS[fqname['flowcell'] + '/']
+            s = RDF.Statement(fileNode, libraryOntology['flowcell'], value)
+            self.model.append(s)
 
     def add_label(self, file_type, file_node, lib_node):
         """Add rdfs:label to a file node
