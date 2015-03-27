@@ -34,6 +34,7 @@ class Submission(object):
         self.submissionSet = get_submission_uri(self.name)
         self.submissionSetNS = RDF.NS(str(self.submissionSet) + '#')
         self.libraryNS = RDF.NS('{0}/library/'.format(host))
+        self.flowcellNS = RDF.NS('{0}/flowcell/'.format(host))
 
         self.__view_map = None
 
@@ -123,6 +124,7 @@ class Submission(object):
         # add file specific information
         fileNode = self.make_file_node(pathname, an_analysis)
         self.add_md5s(filename, fileNode, analysis_dir)
+        self.add_file_size(filename, fileNode, analysis_dir)
         self.add_fastq_metadata(filename, fileNode)
         self.add_label(file_type, fileNode, libNode)
         self.model.add_statement(
@@ -168,6 +170,13 @@ class Submission(object):
             self.model.add_statement(
                 RDF.Statement(fileNode, dafTermOntology['md5sum'], md5))
 
+    def add_file_size(self, filename, fileNode, analysis_dir):
+        LOGGER.debug("Updating file size")
+        submission_pathname = os.path.join(analysis_dir, filename)
+        file_size = os.stat(submission_pathname).st_size
+        self.model.add_statement(
+            RDF.Statement(fileNode, dafTermOntology['file_size'], toTypedNode(file_size)))
+
     def add_fastq_metadata(self, filename, fileNode):
         # How should I detect if this is actually a fastq file?
         try:
@@ -186,6 +195,11 @@ class Submission(object):
             if value is not None:
                 s = RDF.Statement(fileNode, model_term, toTypedNode(value))
                 self.model.append(s)
+
+        if 'flowcell' in fqname:
+            value = self.flowcellNS[fqname['flowcell'] + '/']
+            s = RDF.Statement(fileNode, libraryOntology['flowcell'], value)
+            self.model.append(s)
 
     def add_label(self, file_type, file_node, lib_node):
         """Add rdfs:label to a file node
@@ -231,6 +245,7 @@ class Submission(object):
             self.model.append(s)
 
         self._add_lane_details(libNode)
+        self._add_flowcell_details()
 
     def _add_lane_details(self, libNode):
         """Import lane details
@@ -247,6 +262,20 @@ class Submission(object):
                 parser.parse_into_model(self.model, lane.uri)
             except RDF.RedlandError as e:
                 LOGGER.error("Error accessing %s" % (lane.uri,))
+                raise e
+
+
+    def _add_flowcell_details(self):
+        template = loader.get_template('aws_flowcell.sparql')
+        results = self.execute_query(template, Context())
+
+        parser = RDF.Parser(name='rdfa')
+        for r in self.execute_query(template, Context()):
+            flowcell = r['flowcell']
+            try:
+                parser.parse_into_model(self.model, flowcell.uri)
+            except RDF.RedlandError as e:
+                LOGGER.error("Error accessing %s" % (str(flowcell)))
                 raise e
 
 

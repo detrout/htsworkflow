@@ -1,0 +1,7 @@
+PREFIX htswlib: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+
+select distinct ?flowcell
+WHERE {
+  ?lane htswlib:flowcell ?flowcell ;
+        a htswlib:IlluminaLane .
+}

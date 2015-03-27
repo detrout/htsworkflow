@@ -34,9 +34,8 @@ from htsworkflow.util.rdfhelp import \
 from htsworkflow.submission.daf import get_submission_uri
 from htsworkflow.submission.submission import list_submissions
 from htsworkflow.submission.results import ResultMap
-from htsworkflow.submission.trackhub_submission import TrackHubSubmission
 from htsworkflow.submission.condorfastq import CondorFastqExtract
-
+from htsworkflow.submission.aws_submission import AWSSubmission
 logger = logging.getLogger(__name__)
 
 INDENTED = "  " + os.linesep
@@ -53,12 +52,13 @@ def main(cmdline=None):
     from django.conf import settings
 
     if opts.debug:
-        settings.LOGGING['loggers']['level'] = 'DEBUG'
+        settings.LOGGING['loggers']['htsworkflow']['level'] = 'DEBUG'
     elif opts.verbose:
-        settings.LOGGING['loggers']['level'] = 'INFO'
+        settings.LOGGING['loggers']['htsworkflow']['level'] = 'INFO'
+
+    django.setup()
 
     model = get_model(opts.model, opts.db_path)
-
     submission_names = list(list_submissions(model))
     name = opts.name
     if len(submission_names) == 0 and opts.name is None:
@@ -77,17 +77,9 @@ def main(cmdline=None):
 
     if name:
         submission_uri = get_submission_uri(name)
-        logger.info('Submission URI: %s', name)
-    else:
-        logger.debug('No name, unable to create submission ur')
+        logger.info('Submission URI: %s', submission_uri)
 
-    mapper = None
-    if opts.make_track_hub:
-        mapper = TrackHubSubmission(name,
-                                    model,
-                                    baseurl=opts.make_track_hub,
-                                    baseupload=opts.track_hub_upload,
-                                    host=opts.host)
+    mapper = AWSSubmission(name, model, encode_host=opts.encoded, lims_host=opts.host)
 
     if opts.load_rdf is not None:
         if submission_uri is None:
@@ -119,15 +111,10 @@ def main(cmdline=None):
     if opts.scan_submission:
         if name is None:
             parser.error("Please define a submission name")
-        if mapper is None:
-            parser.error("Scan submission needs --make-track-hub=public-url")
         mapper.scan_submission_dirs(results)
 
-    if opts.make_track_hub:
-        trackdb = mapper.make_hub(results)
-
-    if opts.make_manifest:
-        make_manifest(mapper, results, opts.make_manifest)
+    if opts.upload:
+        mapper.upload(results, opts.dry_run)
 
     if opts.sparql:
         sparql_query(model, opts.sparql)
@@ -135,16 +122,6 @@ def main(cmdline=None):
     if opts.print_rdf:
         writer = get_serializer()
         print(writer.serialize_model_to_string(model))
-
-
-def make_manifest(mapper, results, filename=None):
-    manifest = mapper.make_manifest(results)
-
-    if filename is None or filename == '-':
-        sys.stdout.write(manifest)
-    else:
-        with open(filename, 'w') as mainifeststream:
-            mainifeststream.write(manifest)
 
 
 def make_parser():
@@ -173,14 +150,9 @@ def make_parser():
     commands.add_option('--fastq', default=False, action="store_true",
                         help="generate scripts for making fastq files")
     commands.add_option('--scan-submission', default=False, action="store_true",
-                        help="Import metadata for submission into our model")
-    commands.add_option('--make-track-hub', default=None,
-                        help='web root that will host the trackhub.')
-    commands.add_option('--track-hub-upload', default=None,
-                        help='where to upload track hub <host>:<path>')
-    commands.add_option('--make-manifest',
-                        help='name the manifest file name or - for stdout to create it',
-                        default=None)
+                        help="cache md5 sums")
+    commands.add_option('--upload', default=False, action="store_true",
+                        help="Upload files")
 
     parser.add_option_group(commands)
 
@@ -189,9 +161,12 @@ def make_parser():
     parser.add_option('--compression', default=None, type='choice',
                       choices=['gzip'],
                       help='select compression type for fastq files')
-    parser.add_option('--daf', default=None, help='specify daf name')
     parser.add_option('--library-url', default=None,
                       help="specify an alternate source for library information")
+    parser.add_option('--encoded', default='www.encodeproject.org',
+                      help='base url for talking to encode server')
+    parser.add_option('--dry-run', default=False, action='store_true',
+                      help='avoid making changes to encoded')
     # debugging
     parser.add_option('--verbose', default=False, action="store_true",
                       help='verbose logging')
@@ -203,6 +178,4 @@ def make_parser():
     return parser
 
 if __name__ == "__main__":
-    django.setup()
-
     main()
