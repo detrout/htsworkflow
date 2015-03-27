@@ -1,0 +1,33 @@
+PREFIX htswlib: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+PREFIX submissionOntology: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#>
+PREFIX ucscDaf: <http://jumpgate.caltech.edu/wiki/UcscDaf#>
+PREFIX encode3: <http://jumpgate.caltech.edu/wiki/Encode3#>
+PREFIX ncbiTaxon: <http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=>
+PREFIX geoSoft: <http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#>
+PREFIX cells: <http://encodewiki.ucsc.edu/EncodeDCC/index.php/Cell_lines#>
+
+select distinct ?dataset ?replicate ?award ?lab ?lane ?barcode ?submitted_file_name ?file_format ?file_size ?output_type ?md5sum ?flowcell ?machine ?platform
+WHERE {
+  <{{submission}}> a submissionOntology:submission ;
+                   encode3:dataset ?dataset ;
+                   encode3:replicate ?replicate ;
+                   encode3:award ?award ;
+                   encode3:lab ?lab ;
+                   ucscDaf:has_file ?file .
+
+  ?file ucscDaf:relative_path ?submitted_file_name ;
+        ucscDaf:md5sum ?md5sum ;
+        encode3:file_format ?file_format ;
+        ucscDaf:file_size ?file_size ;
+        encode3:output_type ?output_type ;
+        htswlib:library ?library ;
+        htswlib:flowcell ?flowcell_url ;
+        htswlib:lane_number ?lane ;
+        a ?fileClass .
+
+  ?flowcell_url htswlib:sequenced_by ?machine ;
+            htswlib:flowcell_id ?flowcell .
+  ?library htswlib:multiplex_index ?barcode .
+
+  ?machine htswlib:sequencer_model ?platform .
+}
