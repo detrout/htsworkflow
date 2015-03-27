@@ -55,12 +55,13 @@ def main(cmdline=None):
     from django.conf import settings
 
     if opts.debug:
-        settings.LOGGING['loggers']['level'] = 'DEBUG'
+        settings.LOGGING['loggers']['htsworkflow']['level'] = 'DEBUG'
     elif opts.verbose:
-        settings.LOGGING['loggers']['level'] = 'INFO'
+        settings.LOGGING['loggers']['htsworkflow']['level'] = 'INFO'
+
+    django.setup()
 
     model = get_model(opts.model, opts.db_path)
-
     submission_names = list(list_submissions(model))
     name = opts.name
     if len(submission_names) == 0 and opts.name is None:
@@ -205,6 +206,4 @@ def make_parser():
     return parser
 
 if __name__ == "__main__":
-    django.setup()
-
     main()
