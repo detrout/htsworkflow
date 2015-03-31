@@ -372,6 +372,15 @@ class ENCODED:
         return result
 
     def validate(self, obj, object_type=None):
+        """Validate an object against the ENCODED schema
+
+        Args:
+            obj (dictionary): object attributes to be submitted to encoded
+            object_type (string): ENCODED object name.
+
+        Raises:
+            ValidationError: if the object does not conform to the schema.
+        """
         object_type = object_type if object_type else self.get_object_type(obj)
         schema_url = self.get_schema_url(object_type)
         if not schema_url:
