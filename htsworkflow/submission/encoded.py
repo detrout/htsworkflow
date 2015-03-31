@@ -230,6 +230,32 @@ class ENCODED:
         return obj_type[0]
 
     def get_schema_url(self, object_type):
+        """Create the ENCODED jsonschema url.
+
+        Return the ENCODED object schema url be either
+        object type name or the collection name one posts to.
+
+        For example
+           server.get_schema_url('experiment') and
+           server.get_schema_url('/experiments/') both resolve to
+           SERVER/profiles/experiment.json
+
+        Arguments:
+           object_type (str): either ENCODED object name or collection
+
+        Returns:
+           Schema URL
+        """
+        collection_to_type = {
+            '/biosamples/': 'biosample',
+            '/datasets/': 'dataset',
+            '/documents/': 'document',
+            '/experiments/': 'experiment',
+            '/libraries/': 'library',
+            '/replicates/': 'replicate',
+        }
+        object_type = collection_to_type.get(object_type, object_type)
+
         return self.prepare_url(ENCODED_SCHEMA_ROOT + object_type + '.json') + '#'
 
     def _is_encoded_object(self, obj):
