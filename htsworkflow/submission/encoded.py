@@ -3,6 +3,7 @@
 This allows retrieving blocks
 """
 from __future__ import print_function
+import pandas
 import base64
 import collections
 import hashlib
@@ -318,9 +319,83 @@ class ENCODED:
 
         response = requests.post(url, auth=self.auth, headers=self.json_headers, data=payload)
         if response.status_code != requests.codes.created:
-            LOGGER.error("Error http status: {}".format(response.status_code))
+            LOGGER.error("http status: {}".format(response.status_code))
+            LOGGER.error("message: {}".format(response.content))
             response.raise_for_status()
         return response.json()
+
+    def post_sheet(self, collection, sheet, dry_run=True, verbose=False):
+        """Create new ENCODED objects using metadata encoded in pandas DataFrame
+
+        The DataFrame column names need to encode the attribute names,
+        and in some cases also include some additional type information.
+        (see TypedColumnParser)
+
+        Arguments:
+           collection (str): name of collection to create new objects in
+           sheet (pandas.DataFrame): DataFrame with objects to create,
+               assuming the appropriate accession number is empty.
+               additional the accession number and uuid is updated if the object
+               is created.
+           dry_run (bool): whether or not to skip the code to post the objects
+           verbose (bool): print the http responses.
+
+        Returns:
+           list of created objects.
+
+        Raises:
+           jsonschema.ValidationError if the object doesn't validate against
+              the encoded jsonschema.
+        """
+        accession_name = self.get_accession_name(collection)
+
+        created = []
+        columns = sheet.columns
+        tosubmit = sheet[pandas.isnull(sheet[accession_name])]
+
+        for i in tosubmit.index:
+            row = tosubmit.ix[i]
+            new_object = {}
+            for k in columns:
+                if pandas.notnull(row[k]):
+                    name, value = typed_column_parser(k, row[k])
+                    if name is None:
+                        continue
+                    new_object[name] = value
+
+            try:
+                self.validate(new_object, collection)
+            except jsonschema.ValidationError as e:
+                LOGGER.error("Validation error row %s", i)
+                raise e
+
+            accession = row[accession_name]
+            description = row.get('description', None)
+
+            if not dry_run:
+                response = self.post_json(collection, new_object)
+                if verbose:
+                    print("Reponse {}".format(response))
+
+                obj = response['@graph'][0]
+                created.append(obj)
+                accession = obj.get('accession')
+                uuid = obj.get('uuid')
+
+                if accession:
+                    sheet[accession_name][i] = accession
+                else:
+                    accession = uuid
+
+                if 'uuid' in columns and pandas.isnull(sheet['uuid'][i]):
+                    sheet['uuid'][i] = uuid
+
+                print("row {} created: {}".format(i, accession))
+            else:
+                created.append(new_object)
+            LOGGER.info('row {} ({}) -> {}'.format(i, description, accession))
+
+        return created
 
     def prepare_url(self, request_url):
         '''This attempts to provide some convienence for accessing a URL
