@@ -521,6 +521,7 @@ class Document(object):
 
     def post(self, server):
         document_payload = self.create_payload()
+        server.validate(document_payload, 'document')
         return server.post_json('/documents/', document_payload)
 
     def save(self, filename):
