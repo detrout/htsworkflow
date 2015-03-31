@@ -468,7 +468,12 @@ class Document(object):
         self.description = description
 
         self.references = []
-        self.aliases = aliases if aliases is not None else []
+        self.aliases = None
+        if aliases:
+            if isinstance(aliases, list):
+                self.aliases = aliases
+            else:
+                raise ValueError("Aliases needs to be a list")
         self.content_type = None
         self.document = None
         self.md5sum = None
