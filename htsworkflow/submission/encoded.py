@@ -258,6 +258,23 @@ class ENCODED:
 
         return self.prepare_url(ENCODED_SCHEMA_ROOT + object_type + '.json') + '#'
 
+    def get_accession_name(self, collection):
+        """Lookup common object accession name given a collection name.
+        """
+        collection_to_accession_name = {
+            '/experiments/': 'experiment_accession',
+            '/biosamples/': 'biosample_accession',
+            '/libraries/': 'library_accession',
+            '/replicates/': 'uuid',
+        }
+
+        accession_name = collection_to_accession_name.get(collection, None)
+        if accession_name is None:
+            raise RuntimeError("Update list of collection to accession names for %s",
+                               collection)
+
+        return accession_name
+
     def _is_encoded_object(self, obj):
         '''Test to see if an object is a JSON-LD object
 
