@@ -1,4 +1,6 @@
 #!/usr/bin/python
+from __future__ import print_function
+
 __docformat__ = "restructuredtext en"
 
 import subprocess
@@ -243,7 +245,7 @@ def config_stdout_handler(line, conf_info):
 
     #Standard output handling
     else:
-      print 'Sequence line:', line
+      print('Sequence line:', line)
       mo = s_seq_folder.search(line)
       conf_info.bustard_path = line[mo.end():]
       conf_info.run_path, temp = os.path.split(conf_info.bustard_path)
@@ -458,7 +460,7 @@ def configure(conf_info):
                            stdout=fout,
                            stderr=ferr)
 
-  print "Configuring pipeline: %s" % (time.ctime())
+  print("Configuring pipeline: %s" % (time.ctime()))
   error_code = pipe.wait()
 
   # Clean up
@@ -509,8 +511,8 @@ def configure(conf_info):
   # 1) The stdout completed without error
   # 2) The program exited with status 0
   # 3) No errors found in stdout
-  print '#Expect: True, False, True, True'
-  print complete, bool(error_code), abort != RUN_ABORT, stderr_success is True
+  print('#Expect: True, False, True, True')
+  print(complete, bool(error_code), abort != RUN_ABORT, stderr_success is True)
   status = complete is True and \
            bool(error_code) is False and \
            abort != RUN_ABORT and \
@@ -592,9 +594,9 @@ def run_pipeline(conf_info):
   ferr.close()
 
   # Finished file check!
-  print 'RUN SUCCESS CHECK:'
+  print('RUN SUCCESS CHECK:')
   for key, value in event.run_status_dict.items():
-    print '  %s: %s' % (key, value)
+    print('  %s: %s' % (key, value))
 
   dstatus = event.run_status_dict
 

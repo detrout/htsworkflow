@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 __docformat__ = "restructuredtext en"
 
 import glob
@@ -104,7 +106,7 @@ class GARunStatus(object):
     during a run and provides methods for retrieving
     (completed, total) for each step or entire run.
     """
-    #print 'self._conf_filepath = %s' % (conf_filepath)
+    #print('self._conf_filepath = %s' % (conf_filepath))
     self._conf_filepath = conf_filepath
     self._base_dir, junk = os.path.split(conf_filepath)
     self._image_dir = os.path.join(self._base_dir, 'Images')
@@ -178,9 +180,9 @@ class GARunStatus(object):
     """
     Figures out the number of cycles that are available
     """
-    #print 'self._image_dir = %s' % (self._image_dir)
+    #print('self._image_dir = %s' % (self._image_dir))
     cycle_dirs = glob.glob(os.path.join(self._image_dir, 'L001', 'C*.1'))
-    #print 'cycle_dirs = %s' % (cycle_dirs)
+    #print('cycle_dirs = %s' % (cycle_dirs))
     cycle_list = []
     for cycle_dir in cycle_dirs:
       junk, c = os.path.split(cycle_dir)
@@ -410,13 +412,13 @@ def _cmdLineStatusMonitorFunc(conf_info):
 
   while 1:
     if conf_info.status is None:
-      print "No status object yet."
+      print("No status object yet.")
       time.sleep(SLEEP_AMOUNT)
       continue
 
     report = conf_info.status.statusReport()
-    print os.linesep.join(report)
-    print
+    print( os.linesep.join(report))
+    print()
 
     time.sleep(SLEEP_AMOUNT)
 
@@ -446,9 +448,8 @@ def main(cmdline=None):
     parser.error("need name of configuration file")
     
   status = GARunStatus(args[0])
-  print os.linesep.join(status.statusReport())
+  print(os.linesep.join(status.statusReport()))
   return 0
 
 if __name__ == "__main__":
   sys.exit(main(sys.argv[1:]))
-                   

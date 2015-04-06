@@ -1,5 +1,7 @@
 '''summarize fastq file
 '''
+from __future__ import print_function
+
 import os
 import numpy
 
@@ -42,4 +44,4 @@ if __name__ == '__main__':
     import sys
     from autoopen import autoopen
     with autoopen(sys.argv[1], 'r') as instream:
-        print summarize_hiseq_fastq(instream)
+        print(summarize_hiseq_fastq(instream))

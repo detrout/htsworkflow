@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-
 """
 Build a fake directory tree for testing rsync management code.
 """
+from __future__ import print_function
 
 import os
 import random
@@ -77,5 +77,5 @@ def compare_tree(root, paths, verbose=False):
   difference = experimental_set - theoretical_set
   issame = (len(difference) == 0)
   if verbose and not issame:
-    print difference
+    print(difference)
   return issame

@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import logging
 import os
 
@@ -52,7 +54,7 @@ class GEOSubmission(Submission):
             'platform_id': platform_id,
             'series_id': series_id,
         })
-        print str(soft_template.render(context))
+        print(str(soft_template.render(context)))
 
     def check_for_name(self, analysis_node):
         name = fromTypedNode(

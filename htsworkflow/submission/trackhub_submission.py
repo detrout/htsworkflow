@@ -1,3 +1,4 @@
+from __future__ import print_function
 import logging
 import os
 from pprint import pformat
@@ -41,7 +42,7 @@ class TrackHubSubmission(Submission):
         self.baseurl = os.path.join(baseurl, self.name)
         if baseupload:
             sshurl = parse_ssh_url(baseupload)
-            print sshurl
+            print(sshurl)
             self.user = sshurl.user
             self.host = sshurl.host
             self.uploadpath =  sshurl.path

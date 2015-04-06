@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 from glob import glob
 import logging
 import os
@@ -196,7 +197,7 @@ class Runner(rpc.XmlRpcBot):
                 #startCmdLineStatusMonitor(ci)
 
                 # running step
-                print 'Running pipeline now!'
+                print('Running pipeline now!')
                 run_status = run_pipeline(conf_info)
                 if run_status is True:
                     LOGGER.info('Runner: Pipeline: success')
@@ -223,4 +224,3 @@ def main(args=None):
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
-
