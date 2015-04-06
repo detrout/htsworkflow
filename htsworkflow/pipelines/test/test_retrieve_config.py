@@ -3,10 +3,7 @@ import os
 import re
 from six.moves import StringIO
 
-try:
-    import json
-except ImportError as e:
-    import simplejson as json
+import json
 
 from django.test import TestCase
 from django.utils.encoding import smart_text

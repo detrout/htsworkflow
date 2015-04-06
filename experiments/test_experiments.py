@@ -2,10 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import re
 from lxml.html import fromstring
-try:
-    import json
-except ImportError as e:
-    import simplejson as json
+import json
 import os
 import shutil
 import sys

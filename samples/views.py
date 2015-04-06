@@ -5,10 +5,7 @@ import logging
 import os
 import sys
 
-try:
-    import json
-except ImportError as e:
-    import simplejson as json
+import json
 
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist

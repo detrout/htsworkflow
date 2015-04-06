@@ -19,10 +19,7 @@ from bcmagic.utils import print_zpl_socket
 
 register_search_plugin('Inventory Item', item_search)
 
-try:
-    import json
-except ImportError as e:
-    import simplejson as json
+import json
 
 INVENTORY_CONTEXT_DEFAULTS = {
     'app_name': 'Inventory Tracker',

@@ -8,11 +8,7 @@ from six import int2byte
 import random
 import logging
 
-# try to deal with python <2.6
-try:
-  import json
-except ImportError:
-  import simplejson as json
+import json
 
 import os
 from optparse import OptionGroup

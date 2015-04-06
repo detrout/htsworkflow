@@ -10,10 +10,7 @@ import types
 import six
 from six.moves import urllib
 
-try:
-    import json
-except ImportError as e:
-    import simplejson as json
+import json
 
 from htsworkflow.auth import apidata
 from htsworkflow.util import api
