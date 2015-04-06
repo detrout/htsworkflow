@@ -80,7 +80,7 @@ def _p2f(pattern, lane, tile=None, cycle=None):
   # lane, and cycle provided (INVALID)
   if tile is None and cycle is not None:
     msg = "Handling of cycle without tile is not currently implemented."
-    raise ValueError, msg
+    raise ValueError(msg)
 
   # lane, tile, cycle provided
   elif cycle:
