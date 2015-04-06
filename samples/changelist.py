@@ -28,7 +28,7 @@ class HTSChangeList(ChangeList):
             'model_admin': model_admin #model_admin
         }
         if django.VERSION[0] >= 1 and django.VERSION[1] >= 4:
-            args['list_max_show_all'] = 20000, #list_max_show_all
+            args['list_max_show_all'] = 20000 #list_max_show_all
         super(HTSChangeList, self).__init__(**args)
 
         self.is_popup = False
