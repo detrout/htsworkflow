@@ -123,7 +123,7 @@ class RunfolderTests(TestCase):
         self.failUnlessEqual(b.user,    'diane')
         self.failUnlessEqual(len(b.phasing), 8)
         self.failUnlessAlmostEqual(b.phasing[8].phasing, 0.0099)
-        self.failUnlessEqual(b.crosstalk.base.keys(), ['A','C','T','G'])
+        self.assertEqual(set(b.crosstalk.base), set(['A','C','T','G']))
         check_crosstalk(b.crosstalk)
 
         xml = b.get_elements()
