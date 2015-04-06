@@ -49,7 +49,7 @@ try:
             except ValueError as e:
                 pass
 
-        def test_typed_node_string(self):
+        def test_typed_node_string_node_attributes(self):
             node = toTypedNode('hello')
             self.assertEqual(node.literal_value['string'], u'hello')
             self.assertTrue(node.literal_value['datatype'] is None)
