@@ -36,9 +36,10 @@ class InventoryTestCase(TestCase):
                                           password=self.password))
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 200)
+        content = smart_text(response.content)
 
         model = get_model()
-        load_string_into_model(model, 'rdfa', smart_text(response.content), url)
+        load_string_into_model(model, 'rdfa', content, url)
 
         itemNode = RDF.Node(RDF.Uri(url))
         item_type = fromTypedNode(
@@ -134,7 +135,8 @@ class InventoryTestCase(TestCase):
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 200)
 
-        load_string_into_model(model, 'rdfa', response.content, rootNode.uri)
+        content = smart_text(response.content)
+        load_string_into_model(model, 'rdfa', content, rootNode.uri)
         targets = model.get_targets(diskNode, libraryOntology['flowcell_id'])
         flowcells = [ str(x.uri) for x in targets]
         return flowcells
