@@ -61,7 +61,7 @@ class FastqName(collections.Mapping):
             elif k == 'compression_extension':
                 if self[k] not in (None, '', '.gz', '.bz2'):
                     return False
-            elif self[k] is None:
+            elif getattr(self, k, None) is None:
                 return False
         return True
     is_valid = property(_is_valid)
