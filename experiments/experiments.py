@@ -183,7 +183,6 @@ def updStatus(request):
     except ObjectDoesNotExist:
       output = "entry not found: "+fcid+", "+runfolder
 
-
     #Notify researcher by email
     # Doesn't work
     #send_mail('Exp Tracker', 'Data Run Status '+output, 'rrauch@stanford.edu', ['rrrami@gmail.com'], fail_silently=False)

@@ -83,10 +83,10 @@ def create_library_context(cl):
             summary['amplified_from'] = ''
         lanes_run = count_lanes(lib.lane_set)
         # suppress zeros
-        for row in xrange(len(lanes_run)):
-            for col in xrange(len(lanes_run[row])):
-                if lanes_run[row][col] == 0:
-                    lanes_run[row][col] = ''
+        for row_index, row in enumerate(lanes_run):
+            for col_index, cell in enumerate(row):
+                if lanes_run[row_index][col_index] == 0:
+                    lanes_run[row_index][col_index] = ''
         summary['lanes_run'] = lanes_run
         summary['is_archived'] = lib.is_archived()
         records.append(summary)
