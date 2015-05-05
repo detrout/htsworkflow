@@ -30,9 +30,9 @@ from htsworkflow.util.ethelp import validate_xhtml
 
 from htsworkflow.pipelines.test.simulate_runfolder import TESTDATA_DIR
 
-LANE_SET = range(1,9)
+LANE_SET = range(1, 9)
 
-NSMAP = {'libns':'http://jumpgate.caltech.edu/wiki/LibraryOntology#'}
+NSMAP = {'libns': 'http://jumpgate.caltech.edu/wiki/LibraryOntology#'}
 
 from django.db import connection
 
@@ -63,7 +63,7 @@ class ExperimentsTestCases(TestCase):
         runxml = 'run_FC12150_2007-09-27.xml'
         shutil.copy(os.path.join(TESTDATA_DIR, runxml),
                     os.path.join(self.fc1_dir, runxml))
-        for i in range(1,9):
+        for i in range(1, 9):
             affiliation = self.affiliation_odd if i % 2 == 1 else self.affiliation_even
             library = LibraryFactory(id="1215" + str(i))
             library.affiliations.add(affiliation)
@@ -78,7 +78,7 @@ class ExperimentsTestCases(TestCase):
 
         self.fc42jtn = FlowCellFactory(flowcell_id='42JTNAAXX')
         self.fc42jtn_lanes = []
-        for i in range(1,9):
+        for i in range(1, 9):
             affiliation = self.affiliation_odd if i % 2 == 1 else self.affiliation_even
             library_type = LibraryTypeFactory(can_multiplex=True)
             multiplex_index = MultiplexIndexFactory(adapter_type=library_type)
@@ -187,16 +187,17 @@ class ExperimentsTestCases(TestCase):
         self.assertEqual(library_12153['library_id'], '12153')
 
     def test_raw_id_field(self):
-        """
-        Test ticket:147
+        """Test ticket:147
 
         Library's have IDs, libraries also have primary keys,
-        we eventually had enough libraries that the drop down combo box was too
-        hard to filter through, unfortnately we want a field that uses our library
-        id and not the internal primary key, and raw_id_field uses primary keys.
+        we eventually had enough libraries that the drop down combo
+        box was too hard to filter through, unfortnately we want a
+        field that uses our library id and not the internal
+        primary key, and raw_id_field uses primary keys.
 
-        This tests to make sure that the value entered in the raw library id field matches
-        the library id looked up.
+        This tests to make sure that the value entered in the raw
+        library id field matches the library id looked up.
+
         """
         expected_ids = [ '1215{}'.format(i) for i in range(1,9) ]
         self.assertTrue(self.client.login(username=self.admin.username, password=self.password))
@@ -332,7 +333,6 @@ class ExperimentsTestCases(TestCase):
 
         fc.flowcell_id = flowcell_id + " (failed)"
         self.assertEqual(fc.get_raw_data_directory(), raw_dir)
-
 
     def test_data_run_import(self):
         srf_file_type = FileType.objects.get(name='SRF')
