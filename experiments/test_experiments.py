@@ -255,7 +255,36 @@ class ExperimentsTestCases(TestCase):
         self.assertTrue(self.fc42jtn_lanes[2].library.multiplex_id in \
                         lane_dict['13003']['index_sequence'])
 
-    def test_lanes_for(self):
+
+    def test_lanes_for_view_user_odd(self):
+        """Make sure lanes_for HTML UI works.
+        """
+        user = self.user_odd.username
+        lanes = lanes_for(user)
+        self.assertEqual(len(lanes), 8)
+
+        response = self.client.get(
+            reverse('experiments.views.lanes_for',
+                    args=[user]))
+        self.assertEqual(response.status_code, 200)
+        tree = fromstring(response.content)
+        lane_trs = tree.xpath('//div[@id="changelist"]/table/tbody/tr')
+        self.assertEqual(len(lane_trs), len(lanes))
+        # lanes is in db order
+        # lane_trs is in newest to oldest order
+        for lane_tr, lane_db in zip(lane_trs, reversed(lanes)):
+            library_id = lane_tr.xpath('td[6]/a')[0].text
+            self.assertEqual(library_id, lane_db['library'])
+
+    def test_lanes_for_view_invalid_user(self):
+        """Make sure we don't find anything with an invalid user
+        """
+        response = self.client.get(
+            reverse('experiments.views.lanes_for',
+                    args=["doesntexist"]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_lanes_for_json(self):
         """
         Check the code that packs the django objects into simple types.
         """
