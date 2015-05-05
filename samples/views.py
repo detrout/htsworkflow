@@ -35,75 +35,23 @@ SAMPLES_CONTEXT_DEFAULTS = {
 LOGGER = logging.getLogger(__name__)
 
 
-def count_lanes(lane_set):
-    single = 0
-    paired = 1
-    short_read = 0
-    medium_read = 1
-    long_read = 2
-    counts = [[0, 0, 0], [0, 0, 0]]
-
-    for lane in lane_set.all():
-        if lane.flowcell.paired_end:
-            lane_type = paired
-        else:
-            lane_type = single
-        if lane.flowcell.read_length < 40:
-            read_type = short_read
-        elif lane.flowcell.read_length < 100:
-            read_type = medium_read
-        else:
-            read_type = long_read
-        counts[lane_type][read_type] += 1
-
-    return counts
-
-
-def create_library_context(cl):
-    """
-     Create a list of libraries that includes how many lanes were run
-    """
-    records = []
-    #for lib in library_items.object_list:
-    for lib in cl.result_list:
-        summary = {}
-        summary['library'] = lib
-        summary['library_id'] = lib.id
-        summary['library_name'] = lib.library_name
-        summary['species_name'] = lib.library_species.scientific_name
-        if lib.amplified_from_sample is not None:
-            summary['amplified_from'] = lib.amplified_from_sample.id
-        else:
-            summary['amplified_from'] = ''
-        lanes_run = count_lanes(lib.lane_set)
-        # suppress zeros
-        for row_index, row in enumerate(lanes_run):
-            for col_index, cell in enumerate(row):
-                if lanes_run[row_index][col_index] == 0:
-                    lanes_run[row_index][col_index] = ''
-        summary['lanes_run'] = lanes_run
-        summary['is_archived'] = lib.is_archived()
-        records.append(summary)
-    cl.result_count = str(cl.paginator._count)
-    return {'library_list': records}
-
-
 def library(request, todo_only=False):
-    queryset = Library.objects.filter(hidden__exact=0)
-    filters = {'hidden__exact': 0}
+    #filters = {'hidden__exact': 0}
     if todo_only:
         filters['lane'] = None
-    # build changelist
+
     fcl = HTSChangeList(request, Library,
                         list_filter=['affiliations', 'library_species'],
                         search_fields=['id', 'library_name', 'amplified_from_sample__id'],
                         list_per_page=200,
                         model_admin=LibraryOptions(Library, None),
-                        extra_filters=filters
                         )
 
-    context = {'cl': fcl, 'title': 'Library Index', 'todo_only': todo_only}
-    context.update(create_library_context(fcl))
+    context = {'cl': fcl,
+               'library_list': fcl.result_list,
+               'title': 'Library Index',
+               'todo_only': todo_only}
+
     t = get_template('samples/library_index.html')
     c = RequestContext(request, context)
     return HttpResponse(t.render(c))

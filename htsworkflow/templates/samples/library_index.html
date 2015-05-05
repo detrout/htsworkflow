@@ -71,26 +71,34 @@
     </thead>
     <tbody >
       {% for lib in library_list %}
-      <tr typeof="libns:Library" about="{{lib.library.get_absolute_url}}">
-        <td ><a href="{{lib.library.get_absolute_url}}">{{ lib.amplified_from }}</a></td>
-        <td ><a href="{{lib.library.get_absolute_url}}"><span property="libns:library_id">{{ lib.library_id }}</span></a></td>
-        <td rel="libns:species">
-          <a typeof="libns:Species"
-             href="{{lib.library.library_species.get_absolute_url}}">
-            <span property="libns:species_name">{{ lib.species_name }}</span>
+      <tr typeof="libns:Library" about="{{lib.get_absolute_url}}">
+        <td >
+          <a href="{{lib.amplified_from_sample.get_absolute_url }}">
+            {{ lib.amplified_from_sample.id }}
           </a>
         </td>
         <td >
-          <a href="{{ lib.library.get_absolute_url }}">
+          <a href="{{lib.get_absolute_url}}">
+            <span property="libns:library_id">{{ lib.id }}</span>
+          </a>
+        </td>
+        <td rel="libns:species">
+          <a typeof="libns:Species"
+             href="{{ lib.library_species.get_absolute_url }}">
+            <span property="libns:species_name">{{ lib.library_species.scientific_name }}</span>
+          </a>
+        </td>
+        <td >
+          <a href="{{ lib.get_absolute_url }}">
             <span property="libns:name">{{ lib.library_name }}</span>
           </a>
         </td>
-        <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.0 }}</td>
-        <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.1 }}</td>
-        <td  bgcolor="#00BFFF">{{ lib.lanes_run.0.2 }}</td>
-        <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.0 }}</td>
-        <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.1 }}</td>
-        <td  bgcolor="#66CDAA">{{ lib.lanes_run.1.2 }}</td>
+        {% for ended in lib.lanes_sequenced %}
+          {% cycle '#00BFFF' '#66CDAA' as bincolor silent %}
+          {% for bin in ended %}
+          <td bgcolor="{{ bincolor }}">{% if bin %}{{ bin }}{% endif %}</td>
+          {% endfor %}
+        {% endfor %}
         {% if lib.is_archived %}
           <td ><img src="{% static "img/hdd_unmount.png" %}" alt="Archived" /></td>
         {% else %}
