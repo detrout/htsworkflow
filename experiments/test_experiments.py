@@ -162,8 +162,7 @@ class ExperimentsTestCases(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_library_id(self):
-        """
-        Library IDs should be flexible, so make sure we can retrive a non-numeric ID
+        """make sure we can retrive a non-numeric library ID
         """
         response = self.client.get('/experiments/config/FC12150/json', apidata)
         self.assertEqual(response.status_code, 200)
