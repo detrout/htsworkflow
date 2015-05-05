@@ -160,31 +160,6 @@ def library_to_flowcells(request, lib_id):
         context_instance=RequestContext(request))
 
 
-def lanes_for(request, username=None):
-    """
-    Generate a report of recent activity for a user
-    """
-    query = {}
-    if username is not None:
-        user = HTSUser.objects.get(username=username)
-        query.update({'library__affiliations__users__id': user.id})
-    fcl = HTSChangeList(request, Lane,
-                        list_filter=[],
-                        search_fields=['flowcell__flowcell_id', 'library__id', 'library__library_name'],
-                        list_per_page=200,
-                        model_admin=LaneOptions,
-                        queryset=Lane.objects.filter(**query)
-                        )
-
-    context = {'lanes': fcl, 'title': 'Lane Index'}
-
-    return render_to_response(
-        'samples/lanes_for.html',
-        context,
-        context_instance=RequestContext(request)
-    )
-
-
 def summaryhtm_fc_cnm(request, flowcell_id, cnm):
     """
     returns a Summary.htm file if it exists.

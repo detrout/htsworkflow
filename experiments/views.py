@@ -19,6 +19,9 @@ from .models import DataRun, DataFile, FlowCell, Lane, Sequencer
 from .experiments import estimateFlowcellDuration, estimateFlowcellTimeRemaining, roundToDays, \
      getUsersForFlowcell, \
      makeEmailLaneMap
+from samples.changelist import HTSChangeList
+from samples.models import HTSUser
+
 
 def index(request):
     all_runs = DataRun.objects.order_by('-run_start_time')
@@ -187,3 +190,33 @@ def sequencer(request, sequencer_id):
     context = RequestContext(request,
                              {'sequencer': sequencer})
     return render_to_response('experiments/sequencer.html', context)
+
+
+def lanes_for(request, username=None):
+    """
+    Generate a report of recent activity for a user
+    """
+    query = {}
+    if username is not None:
+        try:
+            user = HTSUser.objects.get(username=username)
+            query.update({'library__affiliations__users__id': user.id})
+        except HTSUser.DoesNotExist as e:
+            raise Http404('User not found')
+
+    fcl = HTSChangeList(request, Lane,
+                        list_filter=['library__affiliations',
+                                     'library__library_species'],
+                        search_fields=['flowcell__flowcell_id', 'library__id', 'library__library_name'],
+                        list_per_page=200,
+                        model_admin=LaneOptions(Lane, None),
+                        extra_filters=query
+                        )
+
+    context = {'lanes': fcl, 'title': 'Lane Index'}
+
+    return render_to_response(
+        'samples/lanes_for.html',
+        context,
+        context_instance=RequestContext(request)
+    )
