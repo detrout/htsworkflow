@@ -25,20 +25,27 @@ setup(
         "scripts/htsw-validate",
     ],
     # I should be using one or the other package import
-    package_data = {
+    package_data={
         '': ['*.turtle']
         },
     include_package_data=True,
-    install_requires=['distribute',
-                      'django >=1.6, <1.7',
-                      'lxml >= 2.2.4',
-                      'numpy >= 1.3',
-                      #'benderjab >= 0.2',
-                      'httplib2',
-                      'keyring',
-                      'PyLD',
-                      'requests',
-                      # This dependency is redland librdf, which doesn't have a public egg
-                      #'librdf >= 1.0.14',
+    install_requires=[
+        'distribute',
+        'django >=1.7, <1.8',
+        'lxml >= 2.2.4',
+        'numpy >= 1.6',
+        'pandas',
+        # 'benderjab >= 0.2',
+        'httplib2',
+        'keyring',
+        'jsonschema',
+        'PyLD',
+        'requests',
+        'six',
+        'psycopg2',
+        'pytz',
+        # This dependency is redland librdf, which doesn't have a public egg
+        # 'librdf >= 1.0.14',
+        'factory_boy',
     ],
 )
