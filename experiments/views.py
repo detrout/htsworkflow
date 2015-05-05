@@ -10,12 +10,13 @@ from django.contrib.auth.decorators import user_passes_test
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage, mail_managers
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
 
 from .models import DataRun, DataFile, FlowCell, Lane, Sequencer
+from .admin import LaneOptions
 from .experiments import estimateFlowcellDuration, estimateFlowcellTimeRemaining, roundToDays, \
      getUsersForFlowcell, \
      makeEmailLaneMap
