@@ -3,29 +3,23 @@ from __future__ import absolute_import, print_function, unicode_literals
 # Create your views here.
 import logging
 import os
-import sys
-
 import json
 
 from django.views.decorators.csrf import csrf_exempt
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
 
 from htsworkflow.auth import require_api_key
-from experiments.models import FlowCell, Lane, LANE_STATUS_MAP
-from experiments.admin import LaneOptions
+from experiments.models import FlowCell, LANE_STATUS_MAP
 from .changelist import HTSChangeList
-from .models import Antibody, Library, Species, HTSUser
+from .models import Antibody, Library, Species
 from .admin import LibraryOptions
 from .results import get_flowcell_result_dict
 from bcmagic.forms import BarcodeMagicForm
 from htsworkflow.pipelines import runfolder
-from htsworkflow.pipelines.eland import ResultLane
 from htsworkflow.pipelines.samplekey import SampleKey
 from htsworkflow.util.conversion import str_or_none, parse_flowcell_id
 from htsworkflow.util import makebed

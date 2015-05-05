@@ -5,7 +5,6 @@ from lxml.html import fromstring
 import json
 import os
 import shutil
-import sys
 import tempfile
 from six.moves.urllib.parse import urljoin
 
@@ -13,16 +12,12 @@ from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
-from django.test.utils import setup_test_environment, teardown_test_environment
-from django.db import connection
-from django.conf import settings
 from django.utils.encoding import smart_text
 
-from .models import ClusterStation, cluster_station_default, \
-    DataRun, Sequencer, FlowCell, FileType
+from .models import DataRun, Sequencer, FlowCell, FileType
 from samples.models import HTSUser
 from .experiments import flowcell_information, lanes_for
-from .experiments_factory import ClusterStationFactory, FlowCellFactory, LaneFactory
+from .experiments_factory import FlowCellFactory, LaneFactory
 from samples.samples_factory import AffiliationFactory, HTSUserFactory, \
     LibraryFactory, LibraryTypeFactory, MultiplexIndexFactory
 from htsworkflow.auth import apidata
@@ -33,8 +28,6 @@ from htsworkflow.pipelines.test.simulate_runfolder import TESTDATA_DIR
 LANE_SET = range(1, 9)
 
 NSMAP = {'libns': 'http://jumpgate.caltech.edu/wiki/LibraryOntology#'}
-
-from django.db import connection
 
 
 class ExperimentsTestCases(TestCase):

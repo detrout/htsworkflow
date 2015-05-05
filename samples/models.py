@@ -1,11 +1,10 @@
 from __future__ import unicode_literals
 
-import types
 import logging
 from django.db import models
-from django.contrib.auth.models import User, UserManager
+from django.contrib.auth.models import User
 from django.core import urlresolvers
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import post_save
 from django.db import connection
 import six
 
