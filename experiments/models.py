@@ -277,7 +277,8 @@ class FlowCell(models.Model):
 
 LANE_STATUS_CODES = [(0, 'Failed'),
                      (1, 'Marginal'),
-                     (2, 'Good'), ]
+                     (2, 'Good'),
+                     (100, 'Not run')]
 LANE_STATUS_MAP = dict((int(k), v) for k, v in LANE_STATUS_CODES)
 LANE_STATUS_MAP[None] = "Unknown"
 
