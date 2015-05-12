@@ -128,6 +128,7 @@ def sequencer_default():
         return d[0]
     return None
 
+
 class FlowCell(models.Model):
     flowcell_id = models.CharField(max_length=20, unique=True, db_index=True)
     run_date = models.DateTimeField()
