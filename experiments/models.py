@@ -275,7 +275,6 @@ class FlowCell(models.Model):
 #    instance.update_data_runs()
 #post_init.connect(update_flowcell_dataruns, sender=FlowCell)
 
-
 LANE_STATUS_CODES = [(0, 'Failed'),
                      (1, 'Marginal'),
                      (2, 'Good'), ]

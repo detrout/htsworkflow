@@ -25,7 +25,6 @@ from htsworkflow.util.conversion import str_or_none, parse_flowcell_id
 from htsworkflow.util import makebed
 from htsworkflow.util import opener
 
-
 LANE_LIST = [1, 2, 3, 4, 5, 6, 7, 8]
 SAMPLES_CONTEXT_DEFAULTS = {
     'app_name': 'Flowcell/Library Tracker',
@@ -482,8 +481,8 @@ def user_profile(request):
     context = {
         'page_name': 'User Profile',
         'media': '',
-        #'bcmagic': BarcodeMagicForm(),
-        #'select': 'settings',
+        # 'bcmagic': BarcodeMagicForm(),
+        # 'select': 'settings',
     }
     context.update(SAMPLES_CONTEXT_DEFAULTS)
     return render_to_response('registration/profile.html', context,

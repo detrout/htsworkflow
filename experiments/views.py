@@ -136,7 +136,6 @@ def flowcell_detail(request, flowcell_id, lane_number=None):
     fc = get_object_or_404(FlowCell, flowcell_id__startswith=flowcell_id)
     fc.update_data_runs()
 
-
     if lane_number is not None:
         lanes = fc.lane_set.filter(lane_number=lane_number)
     else:
