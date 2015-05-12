@@ -82,13 +82,13 @@ class ExperimentType(models.Model):
 
 class Tag(models.Model):
     tag_name = models.CharField(max_length=100,
-                                db_index=True,blank=False,null=False)
+                                db_index=True, blank=False, null=False)
     TAG_CONTEXT = (
-        #('Antibody','Antibody'),
-        #('Cellline', 'Cellline'),
-        #('Condition', 'Condition'),
+        # ('Antibody','Antibody'),
+        # ('Cellline', 'Cellline'),
+        # ('Condition', 'Condition'),
         ('Library', 'Library'),
-        ('ANY','ANY'),
+        ('ANY', 'ANY'),
     )
     context = models.CharField(
         max_length=50,
@@ -182,14 +182,14 @@ class Library(models.Model):
     cell_line = models.ForeignKey(Cellline, blank=True, null=True,
                                   verbose_name="Background")
     condition = models.ForeignKey(Condition, blank=True, null=True)
-    antibody = models.ForeignKey(Antibody,blank=True,null=True)
+    antibody = models.ForeignKey(Antibody, blank=True, null=True)
     affiliations = models.ManyToManyField(
-        Affiliation,related_name='library_affiliations',null=True)
-    tags = models.ManyToManyField(Tag,related_name='library_tags',
-                                  blank=True,null=True)
-    REPLICATE_NUM = [(x,x) for x in range(1,7)]
-    replicate =  models.PositiveSmallIntegerField(choices=REPLICATE_NUM,
-                                                  blank=True,null=True)
+        Affiliation, related_name='library_affiliations', null=True)
+    tags = models.ManyToManyField(Tag, related_name='library_tags',
+                                  blank=True, null=True)
+    REPLICATE_NUM = [(x, x) for x in range(1, 7)]
+    replicate = models.PositiveSmallIntegerField(choices=REPLICATE_NUM,
+                                                 blank=True, null=True)
     experiment_type = models.ForeignKey(ExperimentType)
     library_type = models.ForeignKey(LibraryType, blank=True, null=True,
                                      verbose_name="Adapter Type")
@@ -227,7 +227,7 @@ class Library(models.Model):
         "Concentration",
         max_digits=5, decimal_places=2, blank=True, null=True,
         help_text="Undiluted concentration (ng/\u00b5l)")
-        # note \u00b5 is the micro symbol in unicode
+    # note \u00b5 is the micro symbol in unicode
     successful_pM = models.DecimalField(
         max_digits=9, decimal_places=1, blank=True, null=True)
     ten_nM_dilution = models.BooleanField(default=False)
@@ -250,7 +250,10 @@ class Library(models.Model):
         ordering = ["-id"]
 
     def antibody_name(self):
-        str ='<a target=_self href="/admin/samples/antibody/'+self.antibody.id.__str__()+'/" title="'+self.antibody.__str__()+'">'+self.antibody.label+'</a>'
+        str = '<a target=_self href="/admin/samples/antibody/' + \
+              self.antibody.id.__str__() + \
+              '/" title="' + self.antibody.__str__() + '">' + \
+              self.antibody.label+'</a>'
         return str
     antibody_name.allow_tags = True
 
@@ -306,7 +309,8 @@ class Library(models.Model):
         if isinstance(sequences, six.string_types):
             return sequences
         multiplex_ids = sorted(sequences)
-        return seperator.join(("%s:%s" % (i,sequences[i]) for i in multiplex_ids))
+        return seperator.join(
+            ("%s:%s" % (i, sequences[i]) for i in multiplex_ids))
     index_sequence_text.short_description = "Index"
 
     def affiliation(self):
@@ -356,7 +360,8 @@ class Library(models.Model):
         name = end_points.get(self.stopping_point, None)
         if name is None:
             name = "Lookup Error"
-            logger.error("protocol stopping point in database didn't match names in library model")
+            logger.error("protocol stopping point in database"
+                         "didn't match names in library model")
         return name
 
     def libtags(self):
@@ -367,7 +372,10 @@ class Library(models.Model):
         return '%s' % (", ".join(ar))
 
     def DataRun(self):
-        str ='<a target=_self href="/admin/experiments/datarun/?q='+self.id+'" title="Check All Data Runs for This Specific Library ..." ">Data Run</a>'
+        str = '<a target=_self href="/admin/experiments/datarun/?q=' + \
+              self.id + \
+              '" title="Check All Data Runs for This Specific Library ..."' \
+              '">Data Run</a>'
         return str
     DataRun.allow_tags = True
 
@@ -423,17 +431,19 @@ class HTSUser(User):
     """
     Provide some site-specific customization for the django user class
     """
-    #objects = UserManager()
+    # objects = UserManager()
 
     class Meta:
         ordering = ['first_name', 'last_name', 'username']
 
     def admin_url(self):
-        return '/admin/%s/%s/%d' % (self._meta.app_label, self._meta.module_name, self.id)
+        return '/admin/%s/%s/%d' % (self._meta.app_label,
+                                    self._meta.module_name, self.id)
 
     def __str__(self):
         # return str(self.username) + " (" + str(self.get_full_name()) + u")"
         return str(self.get_full_name()) + ' (' + str(self.username) + ')'
+
 
 def HTSUserInsertID(sender, instance, **kwargs):
     """
@@ -442,7 +452,9 @@ def HTSUserInsertID(sender, instance, **kwargs):
     u = HTSUser.objects.filter(pk=instance.id)
     if len(u) == 0:
         cursor = connection.cursor()
-        cursor.execute('INSERT INTO samples_htsuser (user_ptr_id) VALUES (%s);' % (instance.id,))
+        cursor.execute(
+            'INSERT INTO samples_htsuser (user_ptr_id) VALUES (%s);' %
+            (instance.id,))
         cursor.close()
 
 post_save.connect(HTSUserInsertID, sender=User)
