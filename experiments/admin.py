@@ -3,13 +3,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 
 from django.contrib import admin
-from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms import ModelForm
-from django.forms.fields import Field, CharField
+from django.forms.fields import CharField
 from django.forms.widgets import TextInput, Select
 from django.utils.encoding import force_text
 from django.utils.html import escape, conditional_escape
-from django.utils.translation import ugettext_lazy as _
 
 from .models import (
     FlowCell,
