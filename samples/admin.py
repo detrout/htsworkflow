@@ -2,13 +2,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from django.contrib import admin
 from django.contrib.admin import widgets
-from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.template import Context, Template
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from django.forms import TextInput, Textarea
 
 from .models import (
     Antibody,
