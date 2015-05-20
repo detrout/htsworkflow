@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import datetime
 
-import factory
+from factory import LazyAttribute, Sequence, SubFactory, post_generation
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice, FuzzyText, FuzzyInteger
 from . import models
@@ -13,9 +13,9 @@ class AffiliationFactory(DjangoModelFactory):
 
     name = FuzzyText(prefix='affiliation ')
     contact = 'contact name'
-    email = factory.LazyAttribute(lambda obj: '%s@example.com' % obj.name)
+    email = LazyAttribute(lambda obj: '%s@example.com' % obj.name)
 
-    @factory.post_generation
+    @post_generation
     def users(self, create, extracted, **kwargs):
         if not create:
             return
@@ -68,7 +68,7 @@ class HTSUserFactory(DjangoModelFactory):
         django_get_or_create = ('username',)
 
     username = 'username'
-    email = factory.LazyAttribute(lambda obj: '%s@example.org' % obj.username)
+    email = LazyAttribute(lambda obj: '%s@example.org' % obj.username)
     is_staff = False
     is_superuser = False
 
@@ -93,18 +93,18 @@ class MultiplexIndexFactory(DjangoModelFactory):
     class Meta:
         model = models.MultiplexIndex
 
-    adapter_type = factory.SubFactory(LibraryTypeFactory)
-    multiplex_id = factory.LazyAttribute(lambda o: 'N{}'.format(o.sequence))
+    adapter_type = SubFactory(LibraryTypeFactory)
+    multiplex_id = LazyAttribute(lambda o: 'N{}'.format(o.sequence))
     sequence = FuzzyText(length=5, chars='AGCT')
 
 class LibraryFactory(DjangoModelFactory):
     class Meta:
         model = models.Library
 
-    id = factory.Sequence(lambda n: str(10000 + n))
-    library_name = factory.LazyAttribute(lambda o: 'Library %s' % (o.id))
-    library_species = factory.SubFactory(SpeciesFactory)
-    experiment_type = factory.SubFactory(ExperimentTypeFactory)
+    id = Sequence(lambda n: str(10000 + n))
+    library_name = LazyAttribute(lambda o: 'Library %s' % (o.id))
+    library_species = SubFactory(SpeciesFactory)
+    experiment_type = SubFactory(ExperimentTypeFactory)
     creation_date = datetime.datetime.now()
     gel_cut_size = 400
     made_for = 'scientist unit 2007'
@@ -112,4 +112,4 @@ class LibraryFactory(DjangoModelFactory):
     stopping_point = '2A'
     undiluted_concentration = '5.01'
     hidden = False
-    library_type = factory.SubFactory(LibraryTypeFactory)
+    library_type = SubFactory(LibraryTypeFactory)
