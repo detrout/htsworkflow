@@ -1,11 +1,9 @@
 from __future__ import absolute_import, print_function
 
 import datetime
-import unittest
 import json
 
 from django.test import TestCase, RequestFactory
-from django.conf import settings
 from django.utils.encoding import smart_text, smart_str
 
 from .models import Affiliation, ExperimentType, Species, Library
