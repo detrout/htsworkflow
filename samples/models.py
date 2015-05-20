@@ -108,7 +108,6 @@ class Species(models.Model):
         db_index=True
     )
     common_name = models.CharField(max_length=256, blank=True)
-    #use_genome_build = models.CharField(max_length=100, blank=False, null=False)
 
     def __str__(self):
         return '%s (%s)' % (self.scientific_name, self.common_name)
