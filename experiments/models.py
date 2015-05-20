@@ -425,7 +425,6 @@ class FileType(models.Model):
     normalized_name = property(_get_normalized_name)
 
     def __str__(self):
-        #return "<FileType: %s>" % (self.name,)
         return self.name
 
 
