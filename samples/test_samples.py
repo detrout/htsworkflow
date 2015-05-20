@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function
 
 import datetime
 import json
+from unittest import skipUnless
 
 from django.test import TestCase, RequestFactory
 from django.utils.encoding import smart_text, smart_str
@@ -13,6 +14,23 @@ from .samples_factory import *
 from htsworkflow.auth import apidata
 from htsworkflow.util.conversion import str_or_none
 from htsworkflow.util.ethelp import validate_xhtml
+
+try:
+    import RDF
+    HAVE_RDF = True
+
+    rdfNS = RDF.NS("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
+    libNS = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
+
+    from htsworkflow.util.rdfhelp import get_model, \
+        add_default_schemas, \
+        fromTypedNode, \
+        load_string_into_model
+    from htsworkflow.util.rdfinfer import Infer
+except ImportError as e:
+    HAVE_RDF = False
+
 
 class LibraryTestCase(TestCase):
     def testOrganism(self):
@@ -135,16 +153,10 @@ class SampleWebTestCase(TestCase):
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 403)
 
+    @skipUnless(HAVE_RDF, "No RDF Support")
     def test_library_rdf(self):
         library = LibraryFactory.create()
 
-        import RDF
-        from htsworkflow.util.rdfhelp import get_model, \
-             dump_model, \
-             fromTypedNode, \
-             load_string_into_model, \
-             rdfNS, \
-             libraryOntology
         model = get_model()
 
         response = self.client.get(library.get_absolute_url())
@@ -179,19 +191,13 @@ class SampleWebTestCase(TestCase):
             self.assertTrue(state)
 
         # validate a library page.
-        from htsworkflow.util.rdfhelp import add_default_schemas
-        from htsworkflow.util.rdfinfer import Infer
         add_default_schemas(model)
         inference = Infer(model)
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
 
+    @skipUnless(HAVE_RDF, "No RDF Support")
     def test_library_index_rdfa(self):
-        from htsworkflow.util.rdfhelp import \
-             add_default_schemas, get_model, load_string_into_model, \
-             dump_model
-        from htsworkflow.util.rdfinfer import Infer
-
         model = get_model()
         add_default_schemas(model)
         inference = Infer(model)
@@ -266,19 +272,7 @@ def create_db(obj):
     )
     obj.library_10002.save()
 
-try:
-    import RDF
-    HAVE_RDF = True
-
-    rdfNS = RDF.NS("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-    xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
-    libNS = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
-
-    from htsworkflow.util.rdfhelp import dump_model
-except ImportError as e:
-    HAVE_RDF = False
-
-
+@skipUnless(HAVE_RDF, "No RDF Support")
 class TestRDFaLibrary(TestCase):
 
     def setUp(self):
