@@ -6,9 +6,57 @@ from django.contrib.auth.models import User
 from django.core import urlresolvers
 from django.db.models.signals import post_save
 from django.db import connection
+from django.core.validators import RegexValidator
 import six
 
 logger = logging.getLogger(__name__)
+
+
+class AccessionAgency(models.Model):
+    """An organization one submits data to
+    """
+    name = models.CharField(max_length=255)
+    homepage = models.URLField(blank=True)
+    library_template = models.URLField(blank=True)
+
+    class Meta:
+        verbose_name_plural = 'Accession Agencies'
+
+    def __str__(self):
+        return self.name
+
+
+class Accession(models.Model):
+    """Track accession IDs assigned to our objects.
+    """
+    accession = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[RegexValidator(
+            "^[-A-Za-z0-9:.]*$",
+            message="Please only use letters, digits, and :.-")]
+    )
+    url = models.URLField(blank=True, null=True)
+    agency = models.ForeignKey(AccessionAgency)
+    created = models.DateTimeField()
+
+    class Meta:
+        abstract = True
+
+    def update_url(self, template):
+        if template and not self.url:
+            self.url = template.format(self.accession)
+
+    def __str__(self):
+        return str(self.agency) + ":" + self.accession
+
+
+class LibraryAccession(Accession):
+    library = models.ForeignKey('Library')
+
+    def save(self, *args, **kwargs):
+        self.update_url(self.agency.library_template)
+        super(LibraryAccession, self).save(*args, **kwargs)
 
 
 class Antibody(models.Model):

@@ -7,6 +7,8 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.template import Context, Template
 
 from .models import (
+    AccessionAgency,
+    LibraryAccession,
     Antibody,
     Cellline,
     Condition,
@@ -24,6 +26,26 @@ from bcmagic.utils import print_zpl_socket
 
 # Let's disable those pesky delete everything by accident features.
 admin.site.disable_action('delete_selected')
+
+
+class AccessionAgencyOptions(admin.ModelAdmin):
+    model = AccessionAgency
+
+
+class LibraryAccessionOptions(admin.ModelAdmin):
+    model = LibraryAccession
+    search_fields = ('accession', 'library')
+    list_filter = ('agency', 'created',)
+    list_display = ('accession', 'library', 'created')
+
+
+class LibraryAccessionInline(admin.TabularInline):
+    model = LibraryAccession
+    fieldsets = (
+        (None, {
+            'fields': ('agency', 'accession', 'accession_url')
+        }),
+    )
 
 
 class AffiliationOptions(admin.ModelAdmin):
@@ -146,6 +168,7 @@ class LibraryOptions(admin.ModelAdmin):
         'cell_line__cellline_name',
         'library_species__scientific_name',
         'library_species__common_name',
+        'libraryaccession__accession',
     )
     list_display = (
         'id',
@@ -198,6 +221,7 @@ class LibraryOptions(admin.ModelAdmin):
     )
     inlines = [
         LaneLibraryInline,
+        LibraryAccessionInline,
     ]
     actions = ['action_print_library_labels']
 
@@ -274,6 +298,8 @@ class TagOptions(admin.ModelAdmin):
         }),
     )
 
+admin.site.register(AccessionAgency, AccessionAgencyOptions)
+admin.site.register(LibraryAccession, LibraryAccessionOptions)
 admin.site.register(Library, LibraryOptions)
 admin.site.register(Affiliation, AffiliationOptions)
 admin.site.register(Antibody, AntibodyOptions)

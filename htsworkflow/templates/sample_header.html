@@ -19,7 +19,17 @@
         </li>
       {% endfor %}
     </ul>
-  </div>
+    {% if lib.libraryaccession_set %}
+    <b>Accessions</b>:
+    <ul rel="libns:accession">
+      <li>
+        {% for accession in lib.libraryaccession_set.all %}
+        <a href="{{ accession.url }}">{{ accession }}</a>
+      {% endfor %}
+      </li>
+    </ul>
+    {% endif %}
+    </div>
   <div class="library_sample_detail">
     <h2>Sample Details</h2>
     <b>Species</b>:

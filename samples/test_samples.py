@@ -4,13 +4,18 @@ import datetime
 import json
 from unittest import skipUnless
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase, RequestFactory
 from django.utils.encoding import smart_text, smart_str
 
 from .models import Affiliation, ExperimentType, Species, Library
-from .views import library_dict, library_json, library
-from .samples_factory import *
-
+from .views import library_dict
+from .samples_factory import (
+    AffiliationFactory,
+    LibraryAccessionFactory,
+    LibraryFactory,
+    SpeciesFactory,
+)
 from htsworkflow.auth import apidata
 from htsworkflow.util.conversion import str_or_none
 from htsworkflow.util.ethelp import validate_xhtml
@@ -30,6 +35,51 @@ try:
     from htsworkflow.util.rdfinfer import Infer
 except ImportError as e:
     HAVE_RDF = False
+
+
+class LibraryAccessionTestCase(TestCase):
+    def test_validator(self):
+        library = LibraryFactory()
+        acc = LibraryAccessionFactory(library_id=library.id)
+        acc.clean_fields()
+        accession = acc.accession
+        # test a variety of escape characters one at a time
+        for c in "<>'\"&;":
+            acc.accession = accession + c
+            self.assertRaises(ValidationError, acc.clean_fields)
+
+    def test_library_save_hook(self):
+        library = LibraryFactory()
+        acc = LibraryAccessionFactory(library_id=library.id)
+
+        self.assertEquals(acc.url[:len(acc.agency.homepage)],
+                          acc.agency.homepage)
+        self.assertEquals(acc.url[len(acc.agency.homepage):],
+                          '/library/'+acc.accession)
+
+    @skipUnless(HAVE_RDF, "No RDF Support")
+    def test_have_accession(self):
+        library = LibraryFactory()
+        acc = LibraryAccessionFactory(library_id=library.id)
+        lib_response = self.client.get(library.get_absolute_url())
+        lib_content = smart_text(lib_response.content)
+
+        model = get_model()
+        load_string_into_model(model, 'rdfa', lib_content)
+
+        body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+
+        select ?library ?accession
+        where {
+           ?library libns:accession ?accession
+        }"""
+        query = RDF.SPARQLQuery(body)
+        accessions = []
+        for row in query.execute(model):
+            accessions.append(str(row['accession']))
+        self.assertEqual(len(accessions), 1)
+        self.assertEqual(accessions[0], acc.url)
 
 
 class LibraryTestCase(TestCase):
@@ -346,6 +396,7 @@ def get_rdf_memory_model():
 def suite():
     from unittest import TestSuite, defaultTestLoader
     suite = TestSuite()
+    suite.addTests(defaultTestLoader.loadTestsFromTestCase(LibraryAccessionTestCase))
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(LibraryTestCase))
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(SampleWebTestCase))
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestRDFaLibrary))

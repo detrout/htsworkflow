@@ -113,3 +113,20 @@ class LibraryFactory(DjangoModelFactory):
     undiluted_concentration = '5.01'
     hidden = False
     library_type = SubFactory(LibraryTypeFactory)
+
+
+class AccessionAgencyFactory(DjangoModelFactory):
+    class Meta:
+        model = models.AccessionAgency
+
+    name = FuzzyText(prefix="agency ")
+    homepage = FuzzyText(prefix="http://", suffix=".example.com")
+    library_template = LazyAttribute(lambda o: "%s/library/{}" % (o.homepage,))
+
+
+class LibraryAccessionFactory(DjangoModelFactory):
+    class Meta:
+        model = models.LibraryAccession
+
+    accession = FuzzyText(prefix="ACC")
+    agency = SubFactory(AccessionAgencyFactory)
