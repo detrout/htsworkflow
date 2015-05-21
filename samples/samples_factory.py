@@ -4,8 +4,9 @@ import datetime
 
 from factory import LazyAttribute, Sequence, SubFactory, post_generation
 from factory.django import DjangoModelFactory
-from factory.fuzzy import FuzzyChoice, FuzzyText, FuzzyInteger
+from factory.fuzzy import FuzzyChoice, FuzzyText
 from . import models
+
 
 class AffiliationFactory(DjangoModelFactory):
     class Meta:
