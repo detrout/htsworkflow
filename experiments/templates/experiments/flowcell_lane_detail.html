@@ -36,7 +36,7 @@
   {% include "sample_header.html" %}
   <hr/>
   <div class="htsw_flowcell_ivc">
-  {% for run in flowcell.datarun_set.all %}
+  {% for run in flowcell.sequencingrun_set.all %}
      <h2>Run {{ run.runfolder_name }}</h2>
      <table>
        <thead>
@@ -50,7 +50,7 @@
          </tr>
        </thead>
        <tbody>
-          {% for run, lane_number, lane_file_set in filtered_dataruns %}
+          {% for run, lane_number, lane_file_set in filtered_sequencingruns %}
           {% if lane_file_set.ivc_all %}
           <tr>
             <td>{{lane_number}}</td>

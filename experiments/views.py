@@ -15,7 +15,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
 
-from .models import DataRun, DataFile, FlowCell, Lane, Sequencer
+from .models import SequencingRun, DataFile, FlowCell, Lane, Sequencer
 from .admin import LaneOptions
 from .experiments import estimateFlowcellDuration, estimateFlowcellTimeRemaining, roundToDays, \
      getUsersForFlowcell, \
@@ -25,13 +25,13 @@ from samples.models import HTSUser
 
 
 def index(request):
-    all_runs = DataRun.objects.order_by('-run_start_time')
+    all_runs = SequencingRun.objects.order_by('-run_start_time')
     return render_to_response('experiments/index.html',{'data_run_list': all_runs})
 
 def detail(request, run_folder):
     html_str = '<h2>Exp Track Details Page</h2>'
     html_str += 'Run Folder: '+run_folder
-    r = get_object_or_404(DataRun,run_folder=run_folder)
+    r = get_object_or_404(SequencingRun,run_folder=run_folder)
     return render_to_response('experiments/detail.html',{'run_f': r})
 
 def makeFCSheet(request,fcid):
@@ -134,7 +134,7 @@ def finishedEmail(request, pk):
 
 def flowcell_detail(request, flowcell_id, lane_number=None):
     fc = get_object_or_404(FlowCell, flowcell_id__startswith=flowcell_id)
-    fc.update_data_runs()
+    fc.update_sequencing_runs()
 
     if lane_number is not None:
         lanes = fc.lane_set.filter(lane_number=lane_number)
@@ -150,13 +150,13 @@ def flowcell_detail(request, flowcell_id, lane_number=None):
 
 def flowcell_lane_detail(request, lane_pk):
     lane = get_object_or_404(Lane, id=lane_pk)
-    lane.flowcell.update_data_runs()
+    lane.flowcell.update_sequencing_runs()
 
-    dataruns = []
-    lane.flowcell.update_data_runs()
-    for run in lane.flowcell.datarun_set.all():
+    sequencingruns = []
+    lane.flowcell.update_sequencing_runs()
+    for run in lane.flowcell.sequencingrun_set.all():
         files = run.lane_files().get(lane.lane_number, None)
-        dataruns.append((run,
+        sequencingruns.append((run,
                          lane.lane_number,
                          files))
 
@@ -164,7 +164,7 @@ def flowcell_lane_detail(request, lane_pk):
                              {'lib': lane.library,
                               'lane': lane,
                               'flowcell': lane.flowcell,
-                              'filtered_dataruns': dataruns})
+                              'filtered_sequencingruns': sequencingruns})
 
     return render_to_response('experiments/flowcell_lane_detail.html',
                               context)

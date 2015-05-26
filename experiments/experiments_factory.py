@@ -58,9 +58,9 @@ class LaneFactory(DjangoModelFactory):
     comment = 'lane comment'
 
 
-class DataRunFactory(DjangoModelFactory):
+class SequencingRunFactory(DjangoModelFactory):
     class Meta:
-        model = models.DataRun
+        model = models.SequencingRun
 
     flowcell = factory.SubFactory(FlowCellFactory)
     runfolder_name = '102030_UAW-EAS22_1234AAAAXX'

@@ -15,7 +15,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils.encoding import smart_text
 
-from .models import DataRun, Sequencer, FlowCell, FileType
+from .models import SequencingRun, Sequencer, FlowCell, FileType
 from samples.models import HTSUser
 from .experiments import flowcell_information, lanes_for
 from .experiments_factory import FlowCellFactory, LaneFactory
@@ -327,24 +327,24 @@ class ExperimentsTestCases(TestCase):
         fc.flowcell_id = flowcell_id + " (failed)"
         self.assertEqual(fc.get_raw_data_directory(), raw_dir)
 
-    def test_data_run_import(self):
+    def test_sequencing_run_import(self):
         srf_file_type = FileType.objects.get(name='SRF')
         runxml_file_type = FileType.objects.get(name='run_xml')
         flowcell_id = self.fc1_id
         flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
-        flowcell.update_data_runs()
-        self.assertEqual(len(flowcell.datarun_set.all()), 1)
+        flowcell.update_sequencing_runs()
+        self.assertEqual(len(flowcell.sequencingrun_set.all()), 1)
 
-        run = flowcell.datarun_set.all()[0]
+        run = flowcell.sequencingrun_set.all()[0]
         result_files = run.datafile_set.all()
         result_dict = dict(((rf.relative_pathname, rf) for rf in result_files))
 
         srf4 = result_dict['FC12150/C1-37/woldlab_070829_SERIAL_FC12150_4.srf']
         self.assertEqual(srf4.file_type, srf_file_type)
         self.assertEqual(srf4.library_id, '12154')
-        self.assertEqual(srf4.data_run.flowcell.flowcell_id, 'FC12150')
+        self.assertEqual(srf4.sequencing_run.flowcell.flowcell_id, 'FC12150')
         self.assertEqual(
-            srf4.data_run.flowcell.lane_set.get(lane_number=4).library_id,
+            srf4.sequencing_run.flowcell.lane_set.get(lane_number=4).library_id,
             '12154')
         self.assertEqual(
             srf4.pathname,
@@ -357,12 +357,12 @@ class ExperimentsTestCases(TestCase):
         self.assertEqual(runxml.file_type, runxml_file_type)
         self.assertEqual(runxml.library_id, None)
 
-        import1 = len(DataRun.objects.filter(result_dir='FC12150/C1-37'))
+        import1 = len(SequencingRun.objects.filter(result_dir='FC12150/C1-37'))
         # what happens if we import twice?
-        flowcell.import_data_run('FC12150/C1-37',
-                                 'run_FC12150_2007-09-27.xml')
+        flowcell.import_sequencing_run('FC12150/C1-37',
+                                       'run_FC12150_2007-09-27.xml')
         self.assertEqual(
-            len(DataRun.objects.filter(result_dir='FC12150/C1-37')),
+            len(SequencingRun.objects.filter(result_dir='FC12150/C1-37')),
             import1)
 
     def test_read_result_file(self):
@@ -370,11 +370,11 @@ class ExperimentsTestCases(TestCase):
         """
         flowcell_id = self.fc1_id
         flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
-        flowcell.update_data_runs()
+        flowcell.update_sequencing_runs()
 
         #self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5')
 
-        result_files = flowcell.datarun_set.all()[0].datafile_set.all()
+        result_files = flowcell.sequencingrun_set.all()[0].datafile_set.all()
         for f in result_files:
             url = '/experiments/file/%s' % ( f.random_key,)
             response = self.client.get(url)

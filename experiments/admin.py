@@ -11,7 +11,7 @@ from django.utils.html import escape, conditional_escape
 
 from .models import (
     FlowCell,
-    DataRun,
+    SequencingRun,
     DataFile,
     FileType,
     ClusterStation,
@@ -23,7 +23,7 @@ from .models import (
 class DataFileForm(ModelForm):
     class Meta:
         model = DataFile
-        fields = ('random_key', 'data_run', 'library',
+        fields = ('random_key', 'sequencing_run', 'library',
                   'file_type', 'relative_pathname')
 
 
@@ -34,7 +34,7 @@ class DataFileInline(admin.TabularInline):
     extra = 0
 
 
-class DataRunOptions(admin.ModelAdmin):
+class SequencingRunOptions(admin.ModelAdmin):
     search_fields = [
         'flowcell_id',
         'run_folder',
@@ -60,7 +60,7 @@ class DataRunOptions(admin.ModelAdmin):
     )
     inlines = [DataFileInline]
     # list_filter = ('run_status', 'run_start_time')
-admin.site.register(DataRun, DataRunOptions)
+admin.site.register(SequencingRun, SequencingRunOptions)
 
 
 class FileTypeAdmin(admin.ModelAdmin):

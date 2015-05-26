@@ -204,7 +204,7 @@ class FlowCell(models.Model):
 
         return os.path.join(settings.RESULT_HOME_DIR, flowcell_id)
 
-    def update_data_runs(self):
+    def update_sequencing_runs(self):
         result_root = self.get_raw_data_directory()
         LOGGER.debug("Update data runs flowcell root: %s" % (result_root,))
         if result_root is None:
@@ -219,17 +219,17 @@ class FlowCell(models.Model):
                 if run_xml_re.match(filename):
                     # we have a run directory
                     relative_pathname = get_relative_pathname(dirpath)
-                    self.import_data_run(relative_pathname, filename)
+                    self.import_sequencing_run(relative_pathname, filename)
 
-    def import_data_run(self, relative_pathname, run_xml_name, force=False):
+    def import_sequencing_run(self, relative_pathname, run_xml_name, force=False):
         """Given a result directory import files"""
         now = timezone.now()
         run_dir = get_absolute_pathname(relative_pathname)
         run_xml_path = os.path.join(run_dir, run_xml_name)
 
-        runs = DataRun.objects.filter(result_dir = relative_pathname)
+        runs = SequencingRun.objects.filter(result_dir = relative_pathname)
         if len(runs) == 0:
-            run = DataRun()
+            run = SequencingRun()
             created = True
         elif len(runs) > 1:
             raise RuntimeError("Too many data runs for %s" % (
@@ -264,16 +264,16 @@ class FlowCell(models.Model):
             run.update_result_files()
 
 
-# FIXME: should we automatically update dataruns?
-#        Or should we expect someone to call update_data_runs?
-#def update_flowcell_dataruns(sender, instance, *args, **kwargs):
-#    """Update our dataruns
+# FIXME: should we automatically update sequencing run?
+#        Or should we expect someone to call update_sequencing_runs?
+#def update_flowcell_sequencingruns(sender, instance, *args, **kwargs):
+#    """Update our sequencing rungs
 #    """
 #    if not os.path.exists(settings.RESULT_HOME_DIR):
 #       return
 #
-#    instance.update_data_runs()
-#post_init.connect(update_flowcell_dataruns, sender=FlowCell)
+#    instance.update_sequencing_runs()
+#post_init.connect(update_flowcell_sequencingruns, sender=FlowCell)
 
 LANE_STATUS_CODES = [(0, 'Failed'),
                      (1, 'Marginal'),
@@ -314,7 +314,7 @@ class Lane(models.Model):
         return self.flowcell.flowcell_id + ':' + str(self.lane_number)
 
 
-class DataRun(models.Model):
+class SequencingRun(models.Model):
     flowcell = models.ForeignKey(FlowCell, verbose_name="Flowcell Id")
     runfolder_name = models.CharField(max_length=50)
     result_dir = models.CharField(max_length=255)
@@ -340,7 +340,7 @@ class DataRun(models.Model):
                 pathname = os.path.join(dirname, filename)
                 relative_pathname = get_relative_pathname(pathname)
                 datafiles = self.datafile_set.filter(
-                    data_run=self,
+                    sequencing_run=self,
                     relative_pathname=relative_pathname)
                 if len(datafiles) > 0:
                     continue
@@ -349,7 +349,7 @@ class DataRun(models.Model):
                 if metadata is not None:
                     metadata['filename'] = filename
                     newfile = DataFile()
-                    newfile.data_run = self
+                    newfile.sequencing_run = self
                     newfile.file_type = metadata['file_type']
                     newfile.relative_pathname = relative_pathname
 
@@ -438,7 +438,7 @@ class DataFile(models.Model):
     random_key = models.CharField(max_length=64,
                                   db_index=True,
                                   default=str_uuid)
-    data_run = models.ForeignKey(DataRun, db_index=True)
+    sequencing_run = models.ForeignKey(SequencingRun, db_index=True, null=True)
     library = models.ForeignKey(Library, db_index=True, null=True, blank=True)
     file_type = models.ForeignKey(FileType)
     relative_pathname = models.CharField(max_length=255, db_index=True)

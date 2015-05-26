@@ -18,16 +18,16 @@
     <br/>
   </div>
   </div>
-  {% for datarun in flowcell.datarun_set.all %}
+  {% for sequencingrun in flowcell.sequencingrun_set.all %}
   <b>Image Analysis</b>:
-    <span property="libns:image_software">{{datarun.image_software}}</span>
-    <span property="libns:image_version">{{datarun.image_version}}</span><br/>
+    <span property="libns:image_software">{{sequencingrun.image_software}}</span>
+    <span property="libns:image_version">{{sequencingrun.image_version}}</span><br/>
   <b>Base Caller</b>:
-    <span property="libns:basecall_software">{{datarun.basecall_software}}</span>
-    <span property="libns:basecall_version">{{datarun.basecall_version}}</span><br/>
+    <span property="libns:basecall_software">{{sequencingrun.basecall_software}}</span>
+    <span property="libns:basecall_version">{{sequencingrun.basecall_version}}</span><br/>
   <b>Alignment</b>:
-    <span property="libns:alignment_software">{{datarun.alignment_software}}</span>
-    <span property="libns:alignment_version">{{datarun.alignment_version}}</span><br/>
+    <span property="libns:alignment_software">{{sequencingrun.alignment_software}}</span>
+    <span property="libns:alignment_version">{{sequencingrun.alignment_version}}</span><br/>
   {% endfor %}
   <b>Run Date</b>:
     <span property="libns:date" content="{{flowcell.run_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ flowcell.run_date }}</span><br/>

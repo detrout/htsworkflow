@@ -14,7 +14,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from htsworkflow.auth import require_api_key
-from .models import FlowCell, DataRun, Lane, LANE_STATUS_MAP
+from .models import FlowCell, SequencingRun, Lane, LANE_STATUS_MAP
 from samples.models import Library, MultiplexIndex, HTSUser
 
 def flowcell_information(flowcell_id):
@@ -166,7 +166,7 @@ def updStatus(request):
     # Update Data Run status in DB
     # Try get rec. If not found return 'entry not found + <fcid><runfolder>', if found try update and return updated
     try:
-      rec = DataRun.objects.get(run_folder=runfolder)
+      rec = SequencingRun.objects.get(run_folder=runfolder)
       rec.run_status = UpdatedStatus
 
       #if there's a message update that too
@@ -179,7 +179,7 @@ def updStatus(request):
           rec.run_note = "Started ("+mytimestamp+")"
 
       rec.save()
-      output = "Hello "+settings.ALLOWED_IPS[ClIP]+". Updated to:'"+DataRun.RUN_STATUS_CHOICES[int(UpdatedStatus)][1].__str__()+"'"
+      output = "Hello "+settings.ALLOWED_IPS[ClIP]+". Updated to:'"+SequencingRun.RUN_STATUS_CHOICES[int(UpdatedStatus)][1].__str__()+"'"
     except ObjectDoesNotExist:
       output = "entry not found: "+fcid+", "+runfolder
 
@@ -233,14 +233,14 @@ def getConfile(req):
       if 'runf' in request:
         runfolder = request['runf']
         try:
-          rec = DataRun.objects.get(run_folder=runfolder) #,flowcell_id=fcid)
+          rec = SequencingRun.objects.get(run_folder=runfolder) #,flowcell_id=fcid)
           cnfgfile = rec.config_params
           #match_str = re.compile(r"READ_LENGTH.+$")
           match_str = re.compile('^READ_LENGTH.+')
           if not match_str.search(cnfgfile):
             cnfgfile = generateConfile(request,fcid)
             if match_str.search(cnfgfile):
-              rec = DataRun.objects.get(run_folder=runfolder) #,flowcell_id=fcid)
+              rec = SequencingRun.objects.get(run_folder=runfolder) #,flowcell_id=fcid)
               rec.config_params = cnfgfile
               rec.save()
             else:
