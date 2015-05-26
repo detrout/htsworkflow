@@ -131,3 +131,4 @@ class LibraryAccessionFactory(DjangoModelFactory):
 
     accession = FuzzyText(prefix="ACC")
     agency = SubFactory(AccessionAgencyFactory)
+    created = datetime.datetime.now()
