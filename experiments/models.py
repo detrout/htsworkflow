@@ -5,17 +5,15 @@ import glob
 import logging
 import os
 import re
-import types
 import uuid
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.core import urlresolvers
 from django.utils import timezone
 from django.db import models
-from django.db.models.signals import post_init, pre_save
+from django.db.models.signals import pre_save
 
-from samples.models import Library
+from samples.models import Library, HTSUser
 from htsworkflow.util.conversion import parse_flowcell_id
 from htsworkflow.pipelines import runfolder
 
