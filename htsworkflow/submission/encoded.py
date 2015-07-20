@@ -498,7 +498,7 @@ class TypedColumnParser(object):
     def parse_sheet_string_type(value):
         """Helper function to parse :string columns in sheet (the default)
         """
-        return unicode(value)
+        return str(value)
 
     def __getitem__(self, name):
         parser = {
@@ -559,7 +559,7 @@ class Document(object):
 
     def get_document(self):
         if os.path.exists(self.url):
-            with open(self.url, 'r') as instream:
+            with open(self.url, 'rb') as instream:
                 assert self.url.endswith('pdf')
                 self.content_type = 'application/pdf'
                 self.document = instream.read()
@@ -577,7 +577,7 @@ class Document(object):
             'attachment': {
               'download': self.filename,
               'type': self.content_type,
-              'href': 'data:'+self.content_type+';base64,' + base64.b64encode(self.document),
+              'href': 'data:'+self.content_type+';base64,' + base64.b64encode(self.document).decode('ascii'),
               'md5sum': self.md5sum.hexdigest()
             },
             'document_type': self.document_type,
