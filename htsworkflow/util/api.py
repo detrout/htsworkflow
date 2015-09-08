@@ -31,21 +31,21 @@ def add_auth_options(parser):
     apihost = None
     SECTION = 'sequence_archive'
     if config.has_section(SECTION):
-        sequence_archive = config.get(SECTION, 'sequence_archive',sequence_archive)
+        sequence_archive = config.get(SECTION, 'sequence_archive',
+                                      fallback=sequence_archive)
         sequence_archive = os.path.expanduser(sequence_archive)
-        apiid = config.get(SECTION, 'apiid', apiid)
-        apikey = config.get(SECTION, 'apikey', apikey)
-        apihost = config.get(SECTION, 'host', apihost)
+        apiid = config.get(SECTION, 'apiid', fallback=apiid)
+        apikey = config.get(SECTION, 'apikey', fallback=apikey)
+        apihost = config.get(SECTION, 'host', fallback=apihost)
 
     # configuration options
-    group = OptionGroup(parser, "htsw api authentication")
-    group.add_option('--apiid', default=apiid, help="Specify API ID")
-    group.add_option('--apikey', default=apikey, help="Specify API KEY")
-    group.add_option('--host',  default=apihost,
+    group = parser.add_argument_group("htsw api authentication")
+    group.add_argument('--apiid', default=apiid, help="Specify API ID")
+    group.add_argument('--apikey', default=apikey, help="Specify API KEY")
+    group.add_argument('--host',  default=apihost,
                      help="specify HTSWorkflow host",)
-    group.add_option('--sequence', default=sequence_archive,
+    group.add_argument('--sequence', default=sequence_archive,
                      help="sequence repository")
-    parser.add_option_group(group)
     return parser
 
 def make_auth_from_opts(opts, parser=None):
