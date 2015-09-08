@@ -71,7 +71,7 @@ def file_generator(pattern_list):
     """
     for pattern in pattern_list:
         for filename in glob(pattern):
-            yield autoopen(filename, 'r')
+            yield autoopen(filename, 'rt')
 
 
 class DesplitFastq(object):
