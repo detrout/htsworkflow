@@ -11,6 +11,7 @@ import logging
 import json
 import jsonschema
 import os
+import re
 import requests
 import six
 from six.moves.urllib.parse import urljoin, urlparse, urlunparse
@@ -474,7 +475,7 @@ class TypedColumnParser(object):
     def parse_sheet_array_type(value):
         """Helper function to parse :array columns in sheet
         """
-        return value.split(', ')
+        return re.split(',\s*', value)
 
     @staticmethod
     def parse_sheet_integer_type(value):
