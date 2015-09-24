@@ -6,7 +6,7 @@ PREFIX ncbiTaxon: <http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=>
 PREFIX geoSoft: <http://www.ncbi.nlm.nih.gov/geo/info/soft2.html#>
 PREFIX cells: <http://encodewiki.ucsc.edu/EncodeDCC/index.php/Cell_lines#>
 
-select distinct ?dataset ?replicate ?award ?lab ?lane ?barcode ?submitted_file_name ?file_format ?file_size ?output_type ?md5sum ?flowcell ?machine ?platform
+select distinct ?dataset ?replicate ?award ?lab ?lane ?read_length ?barcode ?submitted_file_name ?file_format ?file_size ?output_type ?md5sum ?flowcell ?machine ?platform
 WHERE {
   <{{submission}}> a submissionOntology:submission ;
                    encode3:dataset ?dataset ;
@@ -23,6 +23,7 @@ WHERE {
         htswlib:library ?library ;
         htswlib:flowcell ?flowcell_url ;
         htswlib:lane_number ?lane ;
+        htswlib:read_length ?read_length ;
         a ?fileClass .
 
   ?flowcell_url htswlib:sequenced_by ?machine ;
