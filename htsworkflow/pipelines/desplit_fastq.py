@@ -31,9 +31,9 @@ def main(cmdline=None):
 
     if opts.output is not None:
         if opts.bzip:
-            output = bz2.BZ2File(opts.output, 'wt')
+            output = bz2.open(opts.output, 'wt')
         elif opts.gzip:
-            output = gzip.GzipFile(opts.output, 'wt')
+            output = gzip.open(opts.output, 'wt')
         else:
             output = open(opts.output, 'w')
     else:
