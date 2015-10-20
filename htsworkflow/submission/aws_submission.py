@@ -61,30 +61,10 @@ class AWSSubmission(Submission):
 
                     item = response['@graph'][0]
                     creds = item['upload_credentials']
-                    self.run_aws_cp(metadata['submitted_file_name'], creds)
+                    run_aws_cp(metadata['submitted_file_name'], creds)
                 else:
                     LOGGER.info('%s already uploaded',
                                 metadata['submitted_file_name'])
-
-
-    def run_aws_cp(self, pathname, creds):
-        env = os.environ.copy()
-        env.update({
-            'AWS_ACCESS_KEY_ID': creds['access_key'],
-            'AWS_SECRET_ACCESS_KEY': creds['secret_key'],
-            'AWS_SECURITY_TOKEN': creds['session_token'],
-        })
-        start = time.time()
-        try:
-            subprocess.check_call(['aws', 's3', 'cp', pathname, creds['upload_url']], env=env)
-        except subprocess.CalledProcessError as e:
-            LOGGER.error('Upload of %s failed with exit code %d', pathname, e.returncode)
-            return
-        else:
-            end = time.time()
-            LOGGER.info('Upload of %s finished in %.2f seconds',
-                        pathname,
-                        end-start)
 
 
     def get_metadata(self, analysis_node):
@@ -116,3 +96,22 @@ class AWSSubmission(Submission):
                 row['flowcell_details'] = [flowcell_details]
 
         return results
+
+def run_aws_cp(pathname, creds):
+    env = os.environ.copy()
+    env.update({
+        'AWS_ACCESS_KEY_ID': creds['access_key'],
+        'AWS_SECRET_ACCESS_KEY': creds['secret_key'],
+        'AWS_SECURITY_TOKEN': creds['session_token'],
+    })
+    start = time.time()
+    try:
+        subprocess.check_call(['aws', 's3', 'cp', pathname, creds['upload_url']], env=env)
+    except subprocess.CalledProcessError as e:
+        LOGGER.error('Upload of %s failed with exit code %d', pathname, e.returncode)
+        return
+    else:
+        end = time.time()
+        LOGGER.info('Upload of %s finished in %.2f seconds',
+                    pathname,
+                    end-start)
