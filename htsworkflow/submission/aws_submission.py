@@ -86,6 +86,8 @@ class AWSSubmission(Submission):
         for row in results:
             if 'platform' in row:
                 row['platform'] = platform_alias[row['platform']]
+            if 'read_length' in row:
+                row['read_length'] = int(row['read_length'])
             flowcell_details = {}
             for term in ['machine', 'flowcell', 'lane', 'barcode']:
                 if term in row:
