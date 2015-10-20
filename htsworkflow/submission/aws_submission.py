@@ -127,7 +127,7 @@ class AWSSubmission(Submission):
                 upload = self.make_upload_filename(metadata)
                 if not os.path.exists(upload):
                     with open(upload, 'w') as outstream:
-                        outstream.write(json.dumps(metadata, indent=4, sort_keys=True))
+                        json.dump(metadata, outstream, indent=4, sort_keys=True)
                     LOGGER.debug(json.dumps(metadata, indent=4, sort_keys=True))
 
                     response = self.encode.post_json('/file', metadata)
