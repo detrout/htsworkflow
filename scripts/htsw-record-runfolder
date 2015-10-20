@@ -46,7 +46,7 @@ def update_db(root_url, flowcells, serial, debug=False):
         req = urllib.request.Request(url)
         try:
             response = urllib2.urlopen(req)
-        except urllib.request.HTTPError, e:
+        except urllib.error.HTTPError, e:
             print 'ERROR - HTTP OUTPUT (Return Code: %s); use -v/--verbose for more details.' % (e.code)
             if debug:
                 print e.read()
