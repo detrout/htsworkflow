@@ -260,6 +260,7 @@ class ENCODED:
             '/experiments/': 'experiment',
             '/libraries/': 'library',
             '/replicates/': 'replicate',
+            '/file/': 'file',
         }
         object_type = collection_to_type.get(object_type, object_type)
 
