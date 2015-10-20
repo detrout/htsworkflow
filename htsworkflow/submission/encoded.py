@@ -41,10 +41,10 @@ ENCODED_CONTEXT = {
     # e.g. in the tree there was a sub-dictionary named 'biosample'
     # That dictionary had a term 'biosample_term_id, which is the
     # term that should be used as the @id.
-    'biosample': {
+    'Biosample': {
         'biosample_term_id': {'@type': '@id'},
     },
-    'experiment': {
+    'Experiment': {
         "assay_term_id": {"@type": "@id"},
         "files": {"@type": "@id"},
         "original_files": {"@type": "@id"},
@@ -59,7 +59,7 @@ ENCODED_CONTEXT = {
     #    "state": "vcard:region",
     #    "country": "vcard:country"
     #},
-    'library': {
+    'Library': {
         'nucleic_acid_term_id': {'@type': '@id'}
     }
 }
@@ -152,6 +152,11 @@ class ENCODED:
         if self._is_encoded_object(obj):
             context = self.create_jsonld_context(obj, default_base)
             if len(context) > 0:
+                # this is a total hack for relese 33 of
+                # encoded. They changed their model and
+                # i'm not sure what to do about it.
+                if obj.get('@context') == '/terms/':
+                    del obj['@context']
                 obj.setdefault('@context', {}).update(context)
 
     def add_jsonld_namespaces(self, context):
