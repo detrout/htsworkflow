@@ -12,6 +12,7 @@ import re
 
 import jsonschema
 import RDF
+from requests.exceptions import HTTPError
 
 from htsworkflow.submission.submission import Submission
 from .encoded import ENCODED
@@ -39,6 +40,79 @@ class AWSSubmission(Submission):
         self.encode = ENCODED(encode_host)
         self.encode.load_netrc()
 
+        self._replicates = {}
+        self._files = {}
+
+
+    def check_upload(self, results_map):
+        tocheck = []
+        # phase one download data
+        for an_analysis in self.analysis_nodes(results_map):
+            for metadata in self.get_metadata(an_analysis):
+                filename = self.make_upload_filename(metadata)
+                if os.path.exists(filename):
+                    with open(filename, 'rt') as instream:
+                        uploaded = json.load(instream)
+                    tocheck.append({
+                        'submitted_file_name': uploaded['submitted_file_name'],
+                        'md5sum': uploaded['md5sum']
+                    })
+                    self.update_replicates(uploaded)
+
+        # phase 2 make sure submitted file is there
+        md5sums = set((self._files[f]['md5sum'] for f in self._files))
+        submitted_file_names = set(
+            (self._files[f]['submitted_file_name'] for f in self._files)
+        )
+        errors_detected = 0
+        for row in tocheck:
+            error = []
+            if row['submitted_file_name'] not in submitted_file_names:
+                error.append('!file_name')
+            if row['md5sum'] not in md5sums:
+                error.append('!md5sum')
+            if error:
+                print("{} failed {} checks".format(
+                    row['submitted_file_name'],
+                    ', '.join(error)
+                ))
+                errors_detected += 1
+
+        if not errors_detected:
+            print('No errors detected')
+
+    def update_replicates(self, metadata):
+        replicate_id = metadata['replicate']
+        if replicate_id not in self._replicates:
+            LOGGER.debug("Downloading %s", replicate_id)
+            try:
+                rep = self.encode.get_json(replicate_id)
+
+                self._replicates[replicate_id] = rep
+                for file_id in rep['experiment']['files']:
+                    self.update_files(file_id)
+            except HTTPError as err:
+                print(err.response, dir(err.response))
+                if err.response.status_code == 404:
+                    print('Unable to find {} {}'.format(
+                        replicate_id,
+                        metadata['submitted_file_name'])
+                    )
+                else:
+                    raise err
+
+    def update_files(self, file_id):
+        if file_id not in self._files:
+            LOGGER.debug("Downloading %s", file_id)
+            try:
+                file_object = self.encode.get_json(file_id)
+                self._files[file_id] = file_object
+            except HTTPError as err:
+                if err.response.status_code == 404:
+                    print('unable to find {}'.format(file_id))
+                else:
+                    raise err
+
     def upload(self, results_map, dry_run=False):
         for an_analysis in self.analysis_nodes(results_map):
             for metadata in self.get_metadata(an_analysis):
@@ -50,7 +124,7 @@ class AWSSubmission(Submission):
                     LOGGER.info(json.dumps(metadata, indent=4, sort_keys=True))
                     continue
 
-                upload = metadata['submitted_file_name'] + '.upload'
+                upload = self.make_upload_filename(metadata)
                 if not os.path.exists(upload):
                     with open(upload, 'w') as outstream:
                         outstream.write(json.dumps(metadata, indent=4, sort_keys=True))
@@ -98,6 +172,9 @@ class AWSSubmission(Submission):
                 row['flowcell_details'] = [flowcell_details]
 
         return results
+
+    def make_upload_filename(self, metadata):
+        return metadata['submitted_file_name'] + '.upload'
 
 def run_aws_cp(pathname, creds):
     env = os.environ.copy()

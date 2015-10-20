@@ -115,6 +115,9 @@ def main(cmdline=None):
     if args.upload:
         mapper.upload(results, args.dry_run)
 
+    if args.check_upload:
+        mapper.check_upload(results)
+
     if args.sparql:
         sparql_query(model, args.sparql)
 
@@ -152,6 +155,8 @@ def make_parser():
                         help="cache md5 sums")
     commands.add_argument('--upload', default=False, action="store_true",
                         help="Upload files")
+    commands.add_argument('--check-upload', default=False, action='store_true',
+                          help='check to see files are actually uploaded')
 
     parser.add_argument('--force', default=False, action="store_true",
                       help="Force regenerating fastqs")
