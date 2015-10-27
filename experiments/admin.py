@@ -34,6 +34,7 @@ class DataFileInline(admin.TabularInline):
     extra = 0
 
 
+@admin.register(SequencingRun)
 class SequencingRunOptions(admin.ModelAdmin):
     search_fields = [
         'flowcell_id',
@@ -60,12 +61,11 @@ class SequencingRunOptions(admin.ModelAdmin):
     )
     inlines = [DataFileInline]
     # list_filter = ('run_status', 'run_start_time')
-admin.site.register(SequencingRun, SequencingRunOptions)
 
 
+@admin.register(FileType)
 class FileTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'mimetype', 'regex')
-admin.site.register(FileType, FileTypeAdmin)
 
 
 # lane form setup needs to come before Flowcell form config
@@ -99,6 +99,7 @@ class LaneInline(admin.StackedInline):
     )
 
 
+@admin.register(Lane)
 class LaneOptions(admin.ModelAdmin):
     """Controls display of Lane browser
     """
@@ -118,9 +119,9 @@ class LaneOptions(admin.ModelAdmin):
             'fields': ('comment', )
         }),
     )
-admin.site.register(Lane, LaneOptions)
 
 
+@admin.register(FlowCell)
 class FlowCellOptions(admin.ModelAdmin):
     class Media:
         css = {'all': ('css/admin_flowcell.css',)}
@@ -162,13 +163,12 @@ class FlowCellOptions(admin.ModelAdmin):
         elif db_field.name == "notes":
             field.widget.attrs["rows"] = "3"
         return field
-admin.site.register(FlowCell, FlowCellOptions)
 
 
+@admin.register(ClusterStation)
 class ClusterStationOptions(admin.ModelAdmin):
     list_display = ('name', 'isdefault',)
     fieldsets = ((None, {'fields': ('name', 'isdefault')}),)
-admin.site.register(ClusterStation, ClusterStationOptions)
 
 
 class SequencerSelect(Select):
@@ -208,6 +208,7 @@ class SequencerSelect(Select):
             conditional_escape(force_text(option_label)))
 
 
+@admin.register(Sequencer)
 class SequencerOptions(admin.ModelAdmin):
     list_display = ('name', 'active', 'isdefault', 'instrument_name', 'model')
     fieldsets = ((None,
@@ -217,5 +218,3 @@ class SequencerOptions(admin.ModelAdmin):
                       'instrument_name',
                       'serial_number',
                       'model', 'comment')}), )
-
-admin.site.register(Sequencer, SequencerOptions)
