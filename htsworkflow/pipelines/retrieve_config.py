@@ -46,7 +46,7 @@ def retrieve_flowcell_info(base_host_url, flowcell):
     try:
         apipayload = urllib.parse.urlencode(apidata)
         web = urllib.request.urlopen(url, apipayload)
-    except urllib.request.HTTPError as e:
+    except urllib.error.HTTPError as e:
         errmsg = 'URLError: %d %s' % (e.code, e.msg)
         LOGGER.error(errmsg)
         LOGGER.error('opened %s' % (url,))
