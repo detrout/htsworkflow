@@ -12,14 +12,14 @@ from htsworkflow.submission.encoded import (ENCODED,
 
 class TestEncoded(TestCase):
     def test_prepare_url(self):
-        encode = ENCODED('test.encodedcc.edu')
+        encode = ENCODED('www.encodeproject.org')
 
         tests = [
-            ('/experiments', 'https://test.encodedcc.edu/experiments'),
+            ('/experiments', 'https://www.encodeproject.org/experiments'),
             ('/experiments/ENCLB045ZZZ',
-             'https://test.encodedcc.edu/experiments/ENCLB045ZZZ'),
-            ('https://www.encodedcc.edu/experiments/ENCLB045ZZZ',
-             'https://www.encodedcc.edu/experiments/ENCLB045ZZZ'),
+             'https://www.encodeproject.org/experiments/ENCLB045ZZZ'),
+            ('https://www.encodeproject.org/experiments/ENCLB045ZZZ',
+             'https://www.encodeproject.org/experiments/ENCLB045ZZZ'),
         ]
         for url, result in tests:
             self.assertEqual(encode.prepare_url(url), result)
@@ -64,7 +64,7 @@ class TestEncoded(TestCase):
         linked_id = {'@type': '@id'}
         library = { '@id': '/libraries/1234', '@type': ['Library', 'Item'] }
 
-        encode = ENCODED('test.encodedcc.org')
+        encode = ENCODED('www.encodeproject.org')
         url = encode.prepare_url(library['@id'])
         context = encode.create_jsonld_context(library, url)
         self.assertEqual(context['@vocab'], 'https://www.encodeproject.org/profiles/Library.json#')
@@ -107,7 +107,7 @@ class TestEncoded(TestCase):
             },
         }
 
-        encode = ENCODED('test.encodedcc.org')
+        encode = ENCODED('www.encodeproject.org')
         bio_base = encode.prepare_url(obj['biosample']['@id'])
 
         url = encode.prepare_url('/libraries/ENCLB044ZZZ/?format=json&embed=False')
@@ -164,7 +164,7 @@ class TestEncoded(TestCase):
                     u'treatments.length': []},
                     ]}
 
-        encode = ENCODED('test.encodedcc.org')
+        encode = ENCODED('www.encodeproject.org')
         result = encode.convert_search_to_jsonld(example)
         for obj in result['@graph']:
             self.assertNotIn('award.rfa', obj)
