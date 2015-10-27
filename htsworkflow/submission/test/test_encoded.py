@@ -31,7 +31,7 @@ class TestEncoded(TestCase):
         schema = json.loads(open(schema_file, 'r').read())
 
         obj = {u'@id': u'/libraries/ENCLB045ZZZ/',
-               u'@type': [u'library', u'item'],
+               u'@type': [u'Library', u'Item'],
                u'accession': u'ENCLB045ZZZ',
                u'aliases': [],
                u'alternate_accessions': [],
@@ -42,16 +42,15 @@ class TestEncoded(TestCase):
                u'depleted_in_term_name': [],
                u'documents': [],
                u'extraction_method': u'Ambion mirVana',
-               u'fragmentation_method': u'Illumina/Nextera tagmentation',
+               u'fragmentation_method': u'chemical (Nextera tagmentation)',
                u'lab': u'/labs/barbara-wold/',
                u'library_size_selection_method': u'SPRI beads',
                u'lysis_method': u'Ambion mirVana',
                u'nucleic_acid_term_id': u'SO:0000871',
                u'nucleic_acid_term_name': u'polyadenylated mRNA',
-               u'paired_ended': False,
                u'schema_version': u'2',
                u'size_range': u'>200',
-               u'status': u'CURRENT',
+               u'status': u'released',
                u'strand_specificity': False,
                u'submitted_by': u'/users/0e3dde9b-aaf9-42dd-87f7-975a85072ed2/',
                u'treatments': [],
@@ -63,14 +62,14 @@ class TestEncoded(TestCase):
 
     def test_create_context(self):
         linked_id = {'@type': '@id'}
-        library = { '@id': '/libraries/1234', '@type': ['library', 'item'] }
+        library = { '@id': '/libraries/1234', '@type': ['Library', 'Item'] }
 
         encode = ENCODED('test.encodedcc.org')
         url = encode.prepare_url(library['@id'])
         context = encode.create_jsonld_context(library, url)
-        self.assertEqual(context['@vocab'], 'https://test.encodedcc.org/profiles/library.json#')
+        self.assertEqual(context['@vocab'], 'https://www.encodeproject.org/profiles/Library.json#')
         self.assertEqual(context['award'], linked_id )
-        self._verify_context(context, 'library')
+        self._verify_context(context, 'Library')
         # namespaces not added yet.
         self.assertRaises(AssertionError, self._verify_namespaces, context)
         encode.add_jsonld_namespaces(context)
@@ -85,8 +84,8 @@ class TestEncoded(TestCase):
             "@id": "/libraries/ENCLB044ZZZ/",
             "schema_version": "1",
             "@type": [
-                "library",
-                "item"
+                "Library",
+                "Item"
             ],
             "lysis_method": "Ambion mirVana",
             "nucleic_acid_term_id": "SO:0000356",
@@ -102,8 +101,8 @@ class TestEncoded(TestCase):
                 ],
                 "organism": "/organisms/human/",
                 "@type": [
-                "biosample",
-                "item"
+                "Biosample",
+                "Item"
                 ]
             },
         }
@@ -118,9 +117,9 @@ class TestEncoded(TestCase):
 
         self.assertEqual(obj['biosample']['@context']['@base'], bio_base)
         self.assertEqual(obj['@context']['@vocab'], schema_url)
-        self._verify_context(obj['@context'], 'library')
+        self._verify_context(obj['@context'], 'Library')
         self._verify_namespaces(obj['@context'])
-        self._verify_context(obj['biosample']['@context'], 'biosample')
+        self._verify_context(obj['biosample']['@context'], 'Biosample')
         self.assertEqual(obj['@context']['rdf'], 'http://www.w3.org/1999/02/22-rdf-syntax-ns#')
         self.assertEqual(obj['@context']['OBO'], 'http://purl.obolibrary.org/obo/')
 
@@ -136,7 +135,7 @@ class TestEncoded(TestCase):
                    'facets': [],
                     '@graph': [{
                     u'@id': u'/biosamples/ENCBS125ENC/',
-                    u'@type': [u'biosample', u'item'],
+                    u'@type': [u'Biosample', u'Item'],
                     u'accession': u'ENCBS125ENC',
                     u'award.rfa': u'ENCODE2-Mouse',
                     u'biosample_term_name': u'myocyte',
@@ -150,7 +149,7 @@ class TestEncoded(TestCase):
                     u'status': u'CURRENT',
                     u'treatments.length': []},
                     {u'@id': u'/biosamples/ENCBS126ENC/',
-                    u'@type': [u'biosample', u'item'],
+                    u'@type': [u'Biosample', u'Item'],
                     u'accession': u'ENCBS126ENC',
                     u'award.rfa': u'ENCODE2-Mouse',
                     u'biosample_term_name': u'myocyte',
