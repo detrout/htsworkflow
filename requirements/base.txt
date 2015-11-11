@@ -1,6 +1,5 @@
 Django>=1.7
 PyLD==0.5.4
-argparse>=1.1
 httplib2>=0.8
 jsonschema==2.3.0
 keyring==3.8
