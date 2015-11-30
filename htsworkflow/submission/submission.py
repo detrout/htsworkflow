@@ -173,11 +173,11 @@ class Submission(object):
                 RDF.Statement(fileNode, dafTermOntology['md5sum'], md5))
 
     def add_file_size(self, filename, fileNode, analysis_dir):
-        LOGGER.debug("Updating file size")
         submission_pathname = os.path.join(analysis_dir, filename)
         file_size = os.stat(submission_pathname).st_size
         self.model.add_statement(
             RDF.Statement(fileNode, dafTermOntology['file_size'], toTypedNode(file_size)))
+        LOGGER.debug("Updating file size: %d", file_size)
 
     def add_read_length(self, filename, fileNode, analysis_dir):
         submission_pathname = os.path.join(analysis_dir, filename)
