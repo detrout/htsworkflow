@@ -20,6 +20,7 @@ from htsworkflow.submission.daf import \
      MetadataLookupException, \
      ModelException, \
      get_submission_uri
+from htsworkflow.util import opener
 
 from django.conf import settings
 from django.template import Context, Template, loader
@@ -125,6 +126,7 @@ class Submission(object):
         fileNode = self.make_file_node(pathname, an_analysis)
         self.add_md5s(filename, fileNode, analysis_dir)
         self.add_file_size(filename, fileNode, analysis_dir)
+        self.add_read_length(filename, fileNode, analysis_dir)
         self.add_fastq_metadata(filename, fileNode)
         self.add_label(file_type, fileNode, libNode)
         self.model.add_statement(
@@ -177,6 +179,19 @@ class Submission(object):
         self.model.add_statement(
             RDF.Statement(fileNode, dafTermOntology['file_size'], toTypedNode(file_size)))
 
+    def add_read_length(self, filename, fileNode, analysis_dir):
+        submission_pathname = os.path.join(analysis_dir, filename)
+        stream = opener.autoopen(submission_pathname, 'rt')
+        header = stream.readline().strip()
+        sequence = stream.readline().strip()
+        read_length = len(sequence)
+        self.model.add_statement(
+            RDF.Statement(fileNode,
+                          libraryOntology['read_length'],
+                          toTypedNode(read_length))
+        )
+        LOGGER.debug("Updating read length: %d", read_length)
+
     def add_fastq_metadata(self, filename, fileNode):
         # How should I detect if this is actually a fastq file?
         try:
@@ -189,7 +204,7 @@ class Submission(object):
                  ('lib_id', libraryOntology['library_id']),
                  ('lane', libraryOntology['lane_number']),
                  ('read', libraryOntology['read']),
-                 ('cycle', libraryOntology['read_length'])]
+        ]
         for file_term, model_term in terms:
             value = fqname.get(file_term)
             if value is not None:
