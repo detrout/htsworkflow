@@ -10,6 +10,7 @@ import hashlib
 import logging
 import json
 import jsonschema
+import numpy
 import os
 import re
 import requests
@@ -356,53 +357,91 @@ class ENCODED:
         """
         accession_name = self.get_accession_name(collection)
 
-        created = []
-        columns = sheet.columns
-        tosubmit = sheet[pandas.isnull(sheet[accession_name])]
+        to_create = self.prepare_objects_from_sheet(collection, sheet)
 
-        for i in tosubmit.index:
-            row = tosubmit.ix[i]
+        created = []
+        accessions = []
+        uuids = []
+        for i, new_object in to_create:
+            if new_object:
+                accession = new_object.get('accession')
+                uuid = new_object.get('uuid')
+                description = new_object.get('description')
+
+                posted_object = self.post_object_from_row(
+                    collection, i, new_object, dry_run, verbose
+                )
+                created.append(posted_object)
+
+                if posted_object:
+                    accession = posted_object.get('accession')
+                    uuid = posted_object.get('uuid')
+                    description = posted_object.get('description')
+
+                accessions.append(accession)
+                uuids.append(uuid)
+
+                LOGGER.info('row {} ({}) -> {}'.format(
+                    (i+2), description, accession))
+                # +2 comes from python row index + 1 to convert to
+                # one based indexing + 1 to account for
+                # row removed by header parsing
+            else:
+                accessions.append(numpy.nan)
+                uuids.append(numpy.nan)
+
+        if accession_name in sheet.columns:
+            sheet[accession_name] = accessions
+        if 'uuid' in sheet.columns:
+            sheet['uuid'] = uuids
+
+        return created
+
+    def prepare_objects_from_sheet(self, collection, sheet):
+        accession_name = self.get_accession_name(collection)
+        to_create = []
+        for i, row in sheet.iterrows():
             new_object = {}
-            for k in columns:
-                if pandas.notnull(row[k]):
-                    name, value = typed_column_parser(k, row[k])
+            for name, value in row.items():
+                if pandas.notnull(value):
+                    name, value = typed_column_parser(name, value)
                     if name is None:
                         continue
                     new_object[name] = value
 
-            try:
-                self.validate(new_object, collection)
-            except jsonschema.ValidationError as e:
-                LOGGER.error("Validation error row %s", i)
-                raise e
+            if new_object and new_object.get(accession_name) is None:
+                try:
+                    self.validate(new_object, collection)
+                except jsonschema.ValidationError as e:
+                    LOGGER.error("Validation error row %s", i)
+                    raise e
+                to_create.append((i, new_object))
 
-            accession = row[accession_name]
-            description = row.get('description', None)
-
-            if not dry_run:
-                response = self.post_json(collection, new_object)
-                if verbose:
-                    print("Reponse {}".format(response))
-
-                obj = response['@graph'][0]
-                created.append(obj)
-                accession = obj.get('accession')
-                uuid = obj.get('uuid')
-
-                if accession:
-                    sheet[accession_name][i] = accession
-                else:
-                    accession = uuid
-
-                if 'uuid' in columns and pandas.isnull(sheet['uuid'][i]):
-                    sheet['uuid'][i] = uuid
-
-                print("row {} created: {}".format(i, accession))
             else:
-                created.append(new_object)
-            LOGGER.info('row {} ({}) -> {}'.format(i, description, accession))
+                to_create.append((i, None))
 
-        return created
+        return to_create
+
+    def post_object_from_row(self, collection, i, new_object,
+                             dry_run=True, verbose=True):
+        accession_name = self.get_accession_name(collection)
+
+        if not dry_run:
+            response = self.post_json(collection, new_object)
+            if verbose:
+                print("Reponse {}".format(response))
+
+            obj = response['@graph'][0]
+
+            accession = obj.get(accession_name)
+            if not accession:
+                accession = obj.get('uuid')
+
+            print("row {} created: {}".format(i, accession))
+            return obj
+        else:
+            new_object[accession_name] = 'would create'
+            return new_object
 
     def prepare_url(self, request_url):
         '''This attempts to provide some convienence for accessing a URL
