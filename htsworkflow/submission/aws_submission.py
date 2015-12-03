@@ -5,24 +5,14 @@ import logging
 import json
 import os
 from pprint import pformat, pprint
-import string
 import subprocess
 import time
-import re
 
-import jsonschema
-import RDF
 from requests.exceptions import HTTPError
 
 from htsworkflow.submission.submission import Submission
 from .encoded import ENCODED
-from htsworkflow.util.rdfhelp import \
-     fromTypedNode, \
-     geoSoftNS, \
-     submissionOntology
-from htsworkflow.util.ucsc import bigWigInfo
 
-from django.conf import settings
 from django.template import Context, loader
 
 LOGGER = logging.getLogger(__name__)

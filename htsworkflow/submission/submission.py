@@ -22,7 +22,6 @@ from htsworkflow.submission.daf import \
      get_submission_uri
 from htsworkflow.util import opener
 
-from django.conf import settings
 from django.template import Context, Template, loader
 
 LOGGER = logging.getLogger(__name__)
@@ -88,7 +87,6 @@ class Submission(object):
 
         an_analysis_name = self.make_submission_name(analysis_dir)
         an_analysis = self.get_submission_node(analysis_dir)
-        an_analysis_uri = str(an_analysis.uri)
         file_classification = self.model.get_target(file_type,
                                                     rdfNS['type'])
         if file_classification is None:
