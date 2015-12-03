@@ -27,7 +27,8 @@ WHERE {
         a ?fileClass .
 
   ?flowcell_url htswlib:sequenced_by ?machine ;
-            htswlib:flowcell_id ?flowcell .
+            htswlib:flowcell_id ?flowcell ;
+            htswlib:flowcell_type ?run_type .
   ?library htswlib:multiplex_index ?barcode .
 
   ?machine htswlib:sequencer_model ?platform .

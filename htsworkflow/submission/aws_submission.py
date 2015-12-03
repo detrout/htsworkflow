@@ -136,6 +136,10 @@ class AWSSubmission(Submission):
         platform_alias = {
             'Illumina HiSeq 2500': 'ENCODE:HiSeq2500'
         }
+        run_type_alias = {
+            'Single': 'single-ended',
+            'Paired': 'paired-ended',
+        }
         query_template = loader.get_template('aws_metadata.sparql')
 
         context = Context({
@@ -152,6 +156,8 @@ class AWSSubmission(Submission):
                 row['platform'] = platform_alias[row['platform']]
             if 'read_length' in row:
                 row['read_length'] = int(row['read_length'])
+            if 'run_type' in row:
+                row['run_type'] = run_type_alias[str(row['run_type'])]
             flowcell_details = {}
             for term in ['machine', 'flowcell', 'lane', 'barcode']:
                 if term in row:
