@@ -240,7 +240,7 @@ class Library(models.Model):
     experiment_type = models.ForeignKey(ExperimentType)
     library_type = models.ForeignKey(LibraryType, blank=True, null=True,
                                      verbose_name="Adapter Type")
-    multiplex_id = models.CharField(max_length=128,
+    multiplex_id = models.CharField(max_length=255,
                                     blank=True, null=True,
                                     verbose_name="Index ID")
     creation_date = models.DateField(blank=True, null=True)
