@@ -4,32 +4,15 @@
 from __future__ import print_function, unicode_literals
 
 import argparse
-import fnmatch
-from glob import glob
-import json
 import logging
-import netrc
 import os
-from pprint import pprint, pformat
-import shlex
-from six.moves import StringIO
-import stat
-import sys
-import time
-import types
-from zipfile import ZipFile
-
-import RDF
 
 from htsworkflow.util import api
 from htsworkflow.util.rdfhelp import \
-    dafTermOntology, \
-    fromTypedNode, \
     get_model, \
     get_serializer, \
     load_into_model, \
-    sparql_query, \
-    submissionOntology
+    sparql_query
 from htsworkflow.submission.daf import get_submission_uri
 from htsworkflow.submission.submission import list_submissions
 from htsworkflow.submission.results import ResultMap
