@@ -18,6 +18,7 @@ from htsworkflow.submission.submission import list_submissions
 from htsworkflow.submission.results import ResultMap
 from htsworkflow.submission.condorfastq import CondorFastqExtract
 from htsworkflow.submission.aws_submission import AWSSubmission
+
 logger = logging.getLogger(__name__)
 
 INDENTED = "  " + os.linesep
