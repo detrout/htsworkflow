@@ -1,12 +1,10 @@
 from __future__ import unicode_literals
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns('',
-    ## Example:
+from .views import config
 
-    url(r'^(?P<flowcell>\w+)/$', 'eland_config.views.config'),
-    url(r'^$', 'eland_config.views.config'),
-    #url(r'^$', 'htsworkflow.frontend.eland_config.views.index')
-
-)
+urlpatterns = [
+    url(r'^(?P<flowcell>\w+)/$', config),
+    url(r'^$', config),
+]

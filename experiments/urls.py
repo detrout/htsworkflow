@@ -1,14 +1,21 @@
 from __future__ import unicode_literals
 
-from django.conf.urls import patterns
+from django.conf.urls import url
 
-urlpatterns = patterns('',
-    (r'^$', 'experiments.views.index'),
-    #(r'^liblist$', 'htsworkflow.frontend.experiments.views.test_Libs'),
-    #(r'^(?P<run_folder>.+)/$', 'gaworkflow.frontend.experiments.views.detail'),
-    (r'^config/(?P<fc_id>.+)/json$', 'experiments.experiments.flowcell_json'),
-    (r'^lanes_for/(?P<username>.+)/json$', 'experiments.experiments.lanes_for_json'),
-    (r'^file/(?P<key>.+)/?$', 'experiments.views.read_result_file'),
-    (r'^started/(?P<pk>.+)/$', 'experiments.views.startedEmail'),
-    (r'^finished/(?P<pk>.+)/$', 'experiments.views.finishedEmail'),
-)
+from .experiments import flowcell_json
+from .experiments import lanes_for_json
+from .views import index
+from .views import read_result_file
+from .views import startedEmail
+from .views import finishedEmail
+
+urlpatterns = [
+    url(r'^$', index),
+    #url(r'^liblist$', 'htsworkflow.frontend.experiments.views.test_Libs'),
+    #url(r'^(?P<run_folder>.+)/$', 'gaworkflow.frontend.experiments.views.detail'),
+    url(r'^config/(?P<fc_id>.+)/json$', flowcell_json),
+    url(r'^lanes_for/(?P<username>.+)/json$', lanes_for_json),
+    url(r'^file/(?P<key>.+)/?$', read_result_file),
+    url(r'^started/(?P<pk>.+)/$', startedEmail),
+    url(r'^finished/(?P<pk>.+)/$', finishedEmail),
+]
