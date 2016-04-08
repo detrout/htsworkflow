@@ -106,30 +106,7 @@ class AWSSubmission(Submission):
     def upload(self, results_map, dry_run=False):
         for an_analysis in self.analysis_nodes(results_map):
             for metadata in self.get_metadata(an_analysis):
-                metadata['@type'] = ['file']
-                self.encode.validate(metadata)
-                del metadata['@type']
-
-                if dry_run:
-                    LOGGER.info(json.dumps(metadata, indent=4, sort_keys=True))
-                    continue
-
-                upload = self.make_upload_filename(metadata)
-                if not os.path.exists(upload):
-                    with open(upload, 'w') as outstream:
-                        json.dump(metadata, outstream, indent=4, sort_keys=True)
-                    LOGGER.debug(json.dumps(metadata, indent=4, sort_keys=True))
-
-                    response = self.encode.post_json('/file', metadata)
-                    LOGGER.info(json.dumps(response, indent=4, sort_keys=True))
-
-                    item = response['@graph'][0]
-                    creds = item['upload_credentials']
-                    run_aws_cp(metadata['submitted_file_name'], creds)
-                else:
-                    LOGGER.info('%s already uploaded',
-                                metadata['submitted_file_name'])
-
+                upload_file_metadata(self.encode, metadata, dry_run)
 
     def get_metadata(self, analysis_node):
         # convert our model names to encode project aliases
@@ -169,9 +146,6 @@ class AWSSubmission(Submission):
 
         return results
 
-    def make_upload_filename(self, metadata):
-        return metadata['submitted_file_name'] + '.upload'
-
 def run_aws_cp(pathname, creds):
     env = os.environ.copy()
     env.update({
@@ -190,3 +164,33 @@ def run_aws_cp(pathname, creds):
         LOGGER.info('Upload of %s finished in %.2f seconds',
                     pathname,
                     end-start)
+
+
+def upload_file(encode, metadata, dry_run=True):
+    """Upload a file to the DCC
+    """
+    encode.validate(metadata, 'file')
+
+    if dry_run:
+        LOGGER.info(json.dumps(metadata, indent=4, sort_keys=True))
+        return
+
+    upload = make_upload_filename(metadata)
+    if not os.path.exists(upload):
+        with open(upload, 'w') as outstream:
+            json.dump(metadata, outstream, indent=4, sort_keys=True)
+        LOGGER.debug(json.dumps(metadata, indent=4, sort_keys=True))
+
+        response = encode.post_json('/file', metadata)
+        LOGGER.info(json.dumps(response, indent=4, sort_keys=True))
+
+        item = response['@graph'][0]
+        creds = item['upload_credentials']
+        run_aws_cp(metadata['submitted_file_name'], creds)
+    else:
+        LOGGER.info('%s already uploaded',
+                    metadata['submitted_file_name'])
+
+
+def make_upload_filename(metadata):
+    return metadata['submitted_file_name'] + '.upload'
