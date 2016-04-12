@@ -8,7 +8,7 @@ class LabelPrinter(models.Model):
     """
     name = models.CharField(max_length=256)
     model = models.CharField(max_length=64, default='ZM400')
-    ip_address = models.IPAddressField()
+    ip_address = models.GenericIPAddressField()
     labels = models.CharField(max_length=200)
     notes = models.TextField(null=True, blank=True)
 

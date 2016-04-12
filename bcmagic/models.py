@@ -23,7 +23,7 @@ class Printer(models.Model):
     """
     name = models.CharField(max_length=256)
     model = models.CharField(max_length=64, choices=PRINTER_MODELS)
-    ip_address = models.IPAddressField()
+    ip_address = models.GenericIPAddressField()
     label_shape = models.CharField(max_length=32, choices=LABEL_SHAPES)
     label_width = models.FloatField(help_text='width or diameter in inches')
     label_height = models.FloatField(help_text='height in inches')
