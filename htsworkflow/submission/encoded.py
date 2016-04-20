@@ -198,22 +198,10 @@ class ENCODED:
         if len(kwargs) == 0:
             kwargs['limit'] = 'all'
 
-        url = self.prepare_url(obj_id)
-        LOGGER.info('requesting url: {}'.format(url))
-
-        # do the request
-
-        LOGGER.debug('username: %s, password: %s', self.username, self.password)
-        arguments = {}
-        if self.username and self.password:
-            arguments['auth'] = self.auth
-        response = requests.get(url, headers=self.json_headers,
-                                params=kwargs,
-                                **arguments)
-        if not response.status_code == requests.codes.ok:
-            LOGGER.error("Error http status: {}".format(response.status_code))
-            response.raise_for_status()
-        return response.json()
+        response = self.get_response(obj_id, **kwargs)
+        data = response.json()
+        response.close()
+        return data
 
     def get_jsonld(self, obj_id, **kwargs):
         '''Get ENCODE object as JSONLD annotated with classses contexts
@@ -236,6 +224,40 @@ class ENCODED:
         if not isinstance(obj_type, collections.Sequence):
             raise ValueError('@type is not a sequence')
         return obj_type[0]
+
+    def get_response(self, fragment, **kwargs):
+        '''GET an ENCODED url and return the requests request
+
+        Uses prepare_url to allow url short-cuts
+        if no keyword arguments are specified it will default to adding limit=all
+        Alternative keyword arguments can be passed in and will be sent to the host.
+
+        Known keywords are:
+          limit - (integer or 'all') how many records to return, all for all of them
+          embed - (bool) if true expands linking ids into their associated object.
+          format - text/html or application/json
+        '''
+        url = self.prepare_url(fragment)
+        LOGGER.info('requesting url: {}'.format(url))
+
+        # do the request
+        LOGGER.debug('username: %s, password: %s', self.username, self.password)
+        arguments = {}
+        if self.username and self.password:
+            arguments['auth'] = self.auth
+
+        if 'stream' in kwargs:
+            arguments['stream'] = kwargs['stream']
+            del kwargs['stream']
+
+        response = requests.get(url, headers=self.json_headers,
+                                params=kwargs,
+                                **arguments)
+        if not response.status_code == requests.codes.ok:
+            LOGGER.error("Error http status: {}".format(response.status_code))
+            response.raise_for_status()
+
+        return response
 
     def get_schema_url(self, object_type):
         """Create the ENCODED jsonschema url.
