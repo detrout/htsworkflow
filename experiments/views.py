@@ -53,13 +53,13 @@ def startedEmail(request, pk):
     """
     fc = get_object_or_404(FlowCell, id=pk)
 
-    send = request.REQUEST.get('send',False)
+    send = request.GET.get('send',False)
     if send in ('1', 'on', 'True', 'true', True):
         send = True
     else:
         send = False
 
-    bcc_managers = request.REQUEST.get('bcc', False)
+    bcc_managers = request.GET.get('bcc', False)
     if bcc_managers in ('on', '1', 'True', 'true'):
         bcc_managers = True
     else:
