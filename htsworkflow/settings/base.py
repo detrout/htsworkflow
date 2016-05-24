@@ -27,12 +27,29 @@ DEFAULT_API_KEY = INI_OPTIONS.setdefaultsecret('frontend', 'api')
 # Override in settings_local
 DEBUG = False
 
-TEMPLATE_DEBUG = False
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [join(DJANGO_ROOT, 'templates'),],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 # Application definition
-AUTHENTICATION_BACKENDS = (
-  'samples.auth_backend.HTSUserModelBackend', )
-CUSTOM_USER_MODEL = 'samples.HTSUser'
+#AUTHENTICATION_BACKENDS = (
+#  'samples.auth_backend.HTSUserModelBackend', )
+#CUSTOM_USER_MODEL = 'samples.HTSUser'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -58,10 +75,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-
-TEMPLATE_DIRS = [
-    join(DJANGO_ROOT, 'templates'),
 ]
 
 ROOT_URLCONF = 'htsworkflow.urls'
