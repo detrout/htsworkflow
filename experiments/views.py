@@ -26,13 +26,13 @@ from samples.models import HTSUser
 
 def index(request):
     all_runs = SequencingRun.objects.order_by('-run_start_time')
-    return render_to_response('experiments/index.html',{'data_run_list': all_runs})
+    return render(request, 'experiments/index.html',{'data_run_list': all_runs})
 
 def detail(request, run_folder):
     html_str = '<h2>Exp Track Details Page</h2>'
     html_str += 'Run Folder: '+run_folder
     r = get_object_or_404(SequencingRun,run_folder=run_folder)
-    return render_to_response('experiments/detail.html',{'run_f': r})
+    return render(request, 'experiments/detail.html',{'run_f': r})
 
 def makeFCSheet(request,fcid):
   # get Flowcell by input fcid
@@ -43,7 +43,7 @@ def makeFCSheet(request,fcid):
   except ObjectDoesNotExist:
     pass
   lanes = ['1','2','3','4','5','6','7','8']
-  return render_to_response('experiments/flowcellSheet.html',{'fc': rec})
+  return render(request, 'experiments/flowcellSheet.html',{'fc': rec})
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -145,8 +145,7 @@ def flowcell_detail(request, flowcell_id, lane_number=None):
                              {'flowcell': fc,
                               'lanes': lanes})
 
-    return render_to_response('experiments/flowcell_detail.html',
-                              context)
+    return render(request, 'experiments/flowcell_detail.html', context)
 
 def flowcell_lane_detail(request, lane_pk):
     lane = get_object_or_404(Lane, id=lane_pk)
@@ -166,8 +165,7 @@ def flowcell_lane_detail(request, lane_pk):
                               'flowcell': lane.flowcell,
                               'filtered_sequencingruns': sequencingruns})
 
-    return render_to_response('experiments/flowcell_lane_detail.html',
-                              context)
+    return render(request, 'experiments/flowcell_lane_detail.html', context)
 
 def read_result_file(self, key):
     """Return the contents of filename if everything is approved
@@ -189,7 +187,7 @@ def sequencer(request, sequencer_id):
     sequencer = get_object_or_404(Sequencer, id=sequencer_id)
     context = RequestContext(request,
                              {'sequencer': sequencer})
-    return render_to_response('experiments/sequencer.html', context)
+    return render(request, 'experiments/sequencer.html', context)
 
 
 def lanes_for(request, username=None):
@@ -215,8 +213,5 @@ def lanes_for(request, username=None):
 
     context = {'lanes': fcl, 'title': 'Lane Index'}
 
-    return render_to_response(
-        'samples/lanes_for.html',
-        context,
-        context_instance=RequestContext(request)
-    )
+    return render(request, 'samples/lanes_for.html', context)
+

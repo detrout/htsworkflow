@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import RequestContext, Template
 from django.template.loader import get_template
 
@@ -151,9 +151,9 @@ def all_index(request):
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
 
-    return render_to_response('inventory/inventory_all_index.html',
-                              context_dict,
-                              context_instance=RequestContext(request))
+    return render(request,
+                  'inventory/inventory_all_index.html',
+                  context_dict)
 
 @login_required
 def index(request):
@@ -173,9 +173,9 @@ def index(request):
         'page_name': 'Inventory Index'
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
-    return render_to_response('inventory/inventory_index.html',
-                              context_dict,
-                              context_instance=RequestContext(request))
+    return render(request,
+                  'inventory/inventory_index.html',
+                  context_dict)
 
 @login_required
 def itemtype_index(request, name):
@@ -201,9 +201,9 @@ def itemtype_index(request, name):
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
 
-    return render_to_response('inventory/inventory_itemtype_index.html',
-                              context_dict,
-                              context_instance=RequestContext(request))
+    return render(request,
+                  'inventory/inventory_itemtype_index.html',
+                  context_dict)
 
 
 @login_required
@@ -239,13 +239,9 @@ def item_summary_by_uuid(request, uuid, msg='', item=None):
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
 
-    return render_to_response('inventory/inventory_summary.html',
-                              context_dict,
-                              context_instance=RequestContext(request))
-
-
-
-
+    return render(request,
+                  'inventory/inventory_summary.html',
+                  context_dict)
 
 
 def __expand_context(context, item):
