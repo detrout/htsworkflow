@@ -34,7 +34,7 @@ def detail(request, run_folder):
     r = get_object_or_404(SequencingRun,run_folder=run_folder)
     return render(request, 'experiments/detail.html',{'run_f': r})
 
-def makeFCSheet(request,fcid):
+def makeFCSheet(request, fcid):
   # get Flowcell by input fcid
   # ...
   rec = None
