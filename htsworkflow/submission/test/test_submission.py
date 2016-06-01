@@ -1,22 +1,13 @@
 
 import os
-from six.moves import StringIO
 import shutil
-import tempfile
 from unittest import TestCase, TestSuite, defaultTestLoader
 
-from htsworkflow.submission import daf, results
 from htsworkflow.util.rdfhelp import \
      dafTermOntology, \
-     dump_model, \
-     fromTypedNode, \
      get_turtle_header, \
      load_string_into_model, \
-     rdfNS, \
-     submissionLog, \
-     submissionOntology, \
-     get_model, \
-     get_serializer
+     get_model
 from htsworkflow.submission.submission import list_submissions, Submission
 from htsworkflow.submission.results import ResultMap
 from .submission_test_common import  (

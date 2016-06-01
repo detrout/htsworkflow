@@ -7,10 +7,8 @@ import re
 import RDF
 
 from htsworkflow.util.rdfhelp import \
-     blankOrUri, \
      dump_model, \
      fromTypedNode, \
-     get_model, \
      strip_namespace, \
      toTypedNode
 from htsworkflow.util.rdfns import (
