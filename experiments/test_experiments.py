@@ -258,8 +258,7 @@ class ExperimentsTestCases(TestCase):
         self.assertEqual(len(lanes), 8)
 
         response = self.client.get(
-            reverse('experiments.views.lanes_for',
-                    args=[user]))
+            reverse('lanes_for', kwargs={'username': user}))
         self.assertEqual(response.status_code, 200)
         tree = fromstring(response.content)
         lane_trs = tree.xpath('//div[@id="changelist"]/table/tbody/tr')
@@ -274,8 +273,7 @@ class ExperimentsTestCases(TestCase):
         """Make sure we don't find anything with an invalid user
         """
         response = self.client.get(
-            reverse('experiments.views.lanes_for',
-                    args=["doesntexist"]))
+            reverse('lanes_for', kwargs={'username': 'doesntexist'}))
         self.assertEqual(response.status_code, 404)
 
     def test_lanes_for_json(self):
