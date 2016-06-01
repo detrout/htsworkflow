@@ -13,7 +13,14 @@ from htsworkflow.util.rdfhelp import \
      get_model, \
      strip_namespace, \
      toTypedNode
-from htsworkflow.util.rdfns import *
+from htsworkflow.util.rdfns import (
+    dafTermOntology,
+    libraryOntology,
+    rdfNS,
+    rdfsNS,
+    submissionLog,
+    submissionOntology,
+)
 from htsworkflow.util.hashfile import make_md5sum
 from htsworkflow.submission.fastqname import FastqName
 from htsworkflow.submission.daf import \
