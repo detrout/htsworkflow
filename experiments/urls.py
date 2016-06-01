@@ -2,12 +2,12 @@ from __future__ import unicode_literals
 
 from django.conf.urls import url
 
-from .experiments import flowcell_json
-from .experiments import lanes_for_json
-from .views import index
-from .views import read_result_file
-from .views import startedEmail
-from .views import finishedEmail
+from .experiments import flowcell_json, lanes_for_json
+from .views import (index,
+                    read_result_file,
+                    startedEmail,
+                    finishedEmail,
+                    )
 
 urlpatterns = [
     url(r'^$', index),
