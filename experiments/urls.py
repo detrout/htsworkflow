@@ -15,7 +15,7 @@ urlpatterns = [
     #url(r'^(?P<run_folder>.+)/$', 'gaworkflow.frontend.experiments.views.detail'),
     url(r'^config/(?P<fc_id>.+)/json$', flowcell_json),
     url(r'^lanes_for/(?P<username>.+)/json$', lanes_for_json),
-    url(r'^file/(?P<key>.+)/?$', read_result_file),
+    url(r'^file/(?P<key>.+)/?$', read_result_file, name="read_result_file"),
     url(r'^started/(?P<pk>.+)/$', startedEmail),
     url(r'^finished/(?P<pk>.+)/$', finishedEmail),
 ]
