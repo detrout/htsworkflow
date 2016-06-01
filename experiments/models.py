@@ -100,10 +100,9 @@ class Sequencer(models.Model):
             name.append("(%s)" % (str(self.instrument_name),))
         return " ".join(name)
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('experiments.views.sequencer',
-                [self.id])
+        return urlresolvers.reverse('sequencer',
+                                    kwargs={'sequencer_id': self.id})
 
     @staticmethod
     def update_isdefault(sender, instance, **kwargs):
@@ -190,11 +189,9 @@ class FlowCell(models.Model):
         else:
             return "Single"
 
-    @models.permalink
     def get_absolute_url(self):
         flowcell_id, status = parse_flowcell_id(self.flowcell_id)
-        return ('experiments.views.flowcell_detail',
-                [str(flowcell_id)])
+        return urlresolvers.reverse('flowcell_detail', args=[str(flowcell_id)])
 
     def get_raw_data_directory(self):
         """Return location of where the raw data is stored"""
@@ -303,10 +300,9 @@ class Lane(models.Model):
                                  blank=True)
     comment = models.TextField(null=True, blank=True)
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('experiments.views.flowcell_lane_detail',
-                [str(self.id)])
+        return urlresolvers.reverse('flowcell_lane_detail',
+                                    kwargs={'lane_pk': str(self.id)})
 
     def __str__(self):
         return self.flowcell.flowcell_id + ':' + str(self.lane_number)
@@ -449,10 +445,8 @@ class DataFile(models.Model):
         return get_absolute_pathname(self.relative_pathname)
     pathname = property(_get_pathname)
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('experiments.views.read_result_file',
-                (), {'key': self.random_key})
+        return urlresolvers.reverse('read_result_file', (), {'key': self.random_key})
 
 
 def find_file_type_metadata_from_filename(pathname):

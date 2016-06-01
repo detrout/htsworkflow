@@ -164,9 +164,8 @@ class Species(models.Model):
         verbose_name_plural = "species"
         ordering = ["scientific_name"]
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('samples.views.species', [str(self.id)])
+        return urlresolvers.reverse('species', kwargs={'species_id': str(self.id)})
 
 
 class Affiliation(models.Model):
@@ -465,9 +464,9 @@ class Library(models.Model):
         return '<a href="%s">S</a>' % (summary_url,)
     public.allow_tags = True
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('samples.views.library_to_flowcells', [str(self.id)])
+        return urlresolvers.reverse('library_to_flowcells',
+                                    kwargs={'lib_id': str(self.id)})
 
     def get_admin_url(self):
         return urlresolvers.reverse('admin:samples_library_change',
