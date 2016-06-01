@@ -5,6 +5,7 @@ import logging
 import os
 import json
 
+from django.contrib.admin.sites import site as admin_site
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
@@ -43,7 +44,7 @@ def library(request, todo_only=False):
                         list_filter=['affiliations', 'library_species'],
                         search_fields=['id', 'library_name', 'amplified_from_sample__id'],
                         list_per_page=200,
-                        model_admin=LibraryOptions(Library, None),
+                        model_admin=LibraryOptions(Library, admin_site),
                         )
 
     context = {'cl': fcl,

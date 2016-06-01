@@ -6,6 +6,7 @@ import os
 
 #from django.template import Context, loader
 #shortcut to the above modules
+from django.contrib.admin.sites import site as default_admin_site
 from django.contrib.auth.decorators import user_passes_test
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -207,7 +208,7 @@ def lanes_for(request, username=None):
                                      'library__library_species'],
                         search_fields=['flowcell__flowcell_id', 'library__id', 'library__library_name'],
                         list_per_page=200,
-                        model_admin=LaneOptions(Lane, None),
+                        model_admin=LaneOptions(Lane, default_admin_site),
                         extra_filters=query
                         )
 
