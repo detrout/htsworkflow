@@ -433,10 +433,12 @@ def list_submissions(model):
       select distinct ?submission
       where { ?submission subns:has_submission ?library_dir }
     """
-    query = RDF.SPARQLQuery(query_body)
-    rdfstream = query.execute(model)
-    for row in rdfstream:
-        s = strip_namespace(submissionLog, row['submission'])
+    q = RDF.Statement(None, submissionOntology['has_submission'], None)
+    submissions = set()
+    for statement in model.find_statements(q):
+        s = strip_namespace(submissionLog, statement.subject)
         if s[-1] in ['#', '/', '?']:
             s = s[:-1]
-        yield s
+        submissions.add(s)
+
+    return list(submissions)
