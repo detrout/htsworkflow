@@ -62,7 +62,7 @@ INSTALLED_APPS = [
 
     'eland_config',
     'samples',
-    'experiments',
+    'experiments.apps.Experiments',
     'bcmagic',
     'inventory',
     'labels',
