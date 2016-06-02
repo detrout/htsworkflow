@@ -480,6 +480,7 @@ class HTSUser(User):
     # objects = UserManager()
 
     class Meta:
+        proxy = True
         ordering = ['first_name', 'last_name', 'username']
 
     def admin_url(self):
