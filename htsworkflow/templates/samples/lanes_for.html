@@ -37,7 +37,7 @@
   </tr>
   </thead>
   <tbody >
-    {% for lane in lanes.query_set %}
+    {% for lane in lanes.queryset %}
     <tr >
       <td >
         {{ lane.flowcell.run_date|date:"Y-M-d" }}
