@@ -36,7 +36,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def library(request, todo_only=False):
-    #filters = {'hidden__exact': 0}
+    filters = {'hidden__exact': 0}
     if todo_only:
         filters['lane'] = None
 
