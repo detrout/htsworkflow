@@ -111,7 +111,7 @@ class Migration(migrations.Migration):
                 ('bioanalyzer_summary', models.TextField(default='', blank=True)),
                 ('bioanalyzer_concentration', models.DecimalField(help_text='(ng/\xb5l)', null=True, max_digits=5, decimal_places=2, blank=True)),
                 ('bioanalyzer_image_url', models.URLField(default='', blank=True)),
-                ('affiliations', models.ManyToManyField(related_name='library_affiliations', null=True, to='samples.Affiliation')),
+                ('affiliations', models.ManyToManyField(related_name='library_affiliations', to='samples.Affiliation')),
                 ('amplified_from_sample', models.ForeignKey(related_name='amplified_into_sample', blank=True, to='samples.Library', null=True)),
                 ('antibody', models.ForeignKey(blank=True, to='samples.Antibody', null=True)),
                 ('cell_line', models.ForeignKey(verbose_name='Background', blank=True, to='samples.Cellline', null=True)),
@@ -194,13 +194,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='library',
             name='tags',
-            field=models.ManyToManyField(related_name='library_tags', null=True, to='samples.Tag', blank=True),
+            field=models.ManyToManyField(related_name='library_tags', to='samples.Tag', blank=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='affiliation',
             name='users',
-            field=models.ManyToManyField(to='samples.HTSUser', null=True, blank=True),
+            field=models.ManyToManyField(to='samples.HTSUser', blank=True),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(

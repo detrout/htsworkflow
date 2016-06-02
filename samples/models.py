@@ -173,7 +173,7 @@ class Affiliation(models.Model):
     contact = models.CharField(max_length=256,
                                null=True, blank=True, verbose_name='Lab Name')
     email = models.EmailField(null=True, blank=True)
-    users = models.ManyToManyField('HTSUser', null=True, blank=True)
+    users = models.ManyToManyField('HTSUser', blank=True)
     users.admin_order_field = "username"
 
     def __str__(self):
@@ -230,9 +230,9 @@ class Library(models.Model):
     condition = models.ForeignKey(Condition, blank=True, null=True)
     antibody = models.ForeignKey(Antibody, blank=True, null=True)
     affiliations = models.ManyToManyField(
-        Affiliation, related_name='library_affiliations', null=True)
+        Affiliation, related_name='library_affiliations')
     tags = models.ManyToManyField(Tag, related_name='library_tags',
-                                  blank=True, null=True)
+                                  blank=True)
     REPLICATE_NUM = [(x, x) for x in range(1, 7)]
     replicate = models.PositiveSmallIntegerField(choices=REPLICATE_NUM,
                                                  blank=True, null=True)
