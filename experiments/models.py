@@ -205,10 +205,8 @@ class FlowCell(models.Model):
         if result_root is None:
             return
 
-        result_home_dir = os.path.join(settings.RESULT_HOME_DIR, '')
         run_xml_re = re.compile(glob.fnmatch.translate('run*.xml'))
 
-        result_dirs = []
         for dirpath, dirnames, filenames in os.walk(result_root):
             for filename in filenames:
                 if run_xml_re.match(filename):

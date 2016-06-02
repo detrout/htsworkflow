@@ -285,7 +285,6 @@ class Submission(object):
 
     def _add_flowcell_details(self):
         template = loader.get_template('aws_flowcell.sparql')
-        results = self.execute_query(template, Context())
 
         parser = RDF.Parser(name='rdfa')
         for r in self.execute_query(template, Context()):

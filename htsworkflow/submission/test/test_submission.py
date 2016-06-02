@@ -72,7 +72,6 @@ class TestSubmission(TestCase):
         shutil.rmtree(self.tempdir)
 
     def test_create_submission(self):
-        model = get_model()
         s = Submission('foo', self.model, 'http://localhost')
         self.assertEqual(str(s.submissionSet),
                          "http://jumpgate.caltech.edu/wiki/SubmissionsLog/foo")
