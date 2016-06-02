@@ -97,7 +97,7 @@ class Migration(migrations.Migration):
                 ('hidden', models.BooleanField(default=False)),
                 ('account_number', models.CharField(max_length=100, null=True, blank=True)),
                 ('replicate', models.PositiveSmallIntegerField(blank=True, null=True, choices=[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])),
-                ('multiplex_id', models.CharField(max_length=128, null=True, verbose_name='Index ID', blank=True)),
+                ('multiplex_id', models.CharField(max_length=255, null=True, verbose_name='Index ID', blank=True)),
                 ('creation_date', models.DateField(null=True, blank=True)),
                 ('made_for', models.CharField(max_length=50, verbose_name='ChIP/DNA/RNA Made By', blank=True)),
                 ('made_by', models.CharField(default='Lorian', max_length=50, blank=True)),
