@@ -268,7 +268,7 @@ class ExperimentsTestCases(TestCase):
         self.assertEqual(len(lane_trs), len(lanes))
         # lanes is in db order
         # lane_trs is in newest to oldest order
-        for lane_tr, lane_db in zip(lane_trs, reversed(lanes)):
+        for lane_tr, lane_db in zip(lane_trs, lanes):
             library_id = lane_tr.xpath('td[6]/a')[0].text
             self.assertEqual(library_id, lane_db['library'])
 
