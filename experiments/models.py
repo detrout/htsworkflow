@@ -351,6 +351,7 @@ class SequencingRun(models.Model):
                             lane_number=lane_number)
                         newfile.library = lane.library
 
+                    newfile.save()
                     self.datafile_set.add(newfile)
 
         self.last_update_time = timezone.now()
