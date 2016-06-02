@@ -194,7 +194,10 @@ class ExperimentsTestCases(TestCase):
         """
         expected_ids = [ '1215{}'.format(i) for i in range(1,9) ]
         self.assertTrue(self.client.login(username=self.admin.username, password=self.password))
-        response = self.client.get('/admin/experiments/flowcell/{}/'.format(self.fc12150.id))
+        response = self.client.get(
+            '/admin/experiments/flowcell/{}/change/'.format(self.fc12150.id),
+            follow=True)
+        self.assertEquals(response.status_code, 200)
 
         tree = fromstring(response.content)
         for i in range(0,8):
@@ -493,15 +496,14 @@ class TestEmailNotify(TestCase):
         """
         Can we navigate between the flowcell and email forms properly?
         """
-        admin_url = '/admin/experiments/flowcell/{}/'.format(self.fc.id)
+        admin_url = '/admin/experiments/flowcell/{}/change/'.format(self.fc.id)
         self.client.login(username=self.admin.username, password=self.password)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        #print("email navigation content:", response.content)
         self.assertTrue(re.search(self.fc.flowcell_id, smart_text(response.content)))
         # require that navigation back to the admin page exists
-        self.assertTrue(re.search('<a href="{}">[^<]+</a>'.format(admin_url),
-                                  smart_text(response.content)))
+        admin_a_tag = '<a href="{}">[^<]+</a>'.format(admin_url)
+        self.assertTrue(re.search(admin_a_tag, smart_text(response.content)))
 
 def multi_lane_to_dict(lane):
     """Convert a list of lane entries into a dictionary indexed by library ID
