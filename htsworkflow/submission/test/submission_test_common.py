@@ -34,7 +34,7 @@ S1_TURTLE = TURTLE_PREFIX + """
 <http://localhost/library/1000/>
   htswlib:cell_line "Cell1000" ;
   htswlib:library_id "1000" ;
-  htswlib:library_type "Single" ;
+  htswlib:library_type "Single End (non-multiplexed)" ;
   htswlib:replicate "1" ;
   htswlib:has_lane <http://localhost/lane/1> ;
   a htswlib:IlluminaLibrary .

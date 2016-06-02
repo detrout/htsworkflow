@@ -83,15 +83,15 @@ class TestSubmission(TestCase):
     def test_scan_submission_dirs(self):
         turtle = get_turtle_header() + """
 @prefix thisView: <http://jumpgate.caltech.edu/wiki/SubmissionsLog/test/view/> .
-thisView:Fastq ucscDaf:filename_re ".*[^12]\\.fastq\\.bz2$" ;
+thisView:Fastq ucscDaf:filename_re ".*[^12]\\.fastq$" ;
                a geoSoft:raw ;
                geoSoft:fileTypeLabel "fastq" ;
                ucscDaf:output_type "read" .
-thisView:FastqRead1 ucscDaf:filename_re ".*r1\\.fastq\\.bz2$" ;
+thisView:FastqRead1 ucscDaf:filename_re ".*r1\\.fastq$" ;
                a geoSoft:raw ;
                geoSoft:fileTypeLabel "fastq" ;
                ucscDaf:output_type "read1" .
-thisView:FastqRead2 ucscDaf:filename_re ".*r2\\.fastq\\.bz2$" ;
+thisView:FastqRead2 ucscDaf:filename_re ".*r2\\.fastq$" ;
                a geoSoft:raw ;
                geoSoft:fileTypeLabel "fastq" ;
                ucscDaf:output_type "read2" .
