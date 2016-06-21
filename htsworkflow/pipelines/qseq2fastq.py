@@ -11,6 +11,7 @@ import tarfile
 
 from htsworkflow.util.version import version
 from htsworkflow.util.conversion import parse_slice
+from htsworkflow.pipelines.desplit_fastq import open_output
 
 
 def main(cmdline=None):
@@ -31,12 +32,12 @@ def main(cmdline=None):
         qseq_generator = [sys.stdin]
 
     if opts.output is not None:
-        output = open(opts.output, 'w')
+        output = open_output(opts.output, opts)
     else:
         output = sys.stdout
 
     if opts.nopass_output is not None:
-        nopass_output = open(opts.nopass_output, 'w')
+        nopass_output = open_output(opts.nopass_output, opts)
     else:
         nopass_output = None
 
@@ -70,6 +71,10 @@ def make_parser():
                       default=None)
     parser.add_option("--pf", help="report pass filter flag", default=False,
                       action="store_true")
+    parser.add_option('--gzip', default=False, action='store_true',
+                      help='gzip output')
+    parser.add_option('--bzip', default=False, action='store_true',
+                      help='bzip output')
     parser.add_option("--version", default=False, action="store_true",
                       help="report software version")
 

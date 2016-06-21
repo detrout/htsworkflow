@@ -30,12 +30,7 @@ def main(cmdline=None):
         return 0
 
     if opts.output is not None:
-        if opts.bzip:
-            output = bz2.open(opts.output, 'wt')
-        elif opts.gzip:
-            output = gzip.open(opts.output, 'wt')
-        else:
-            output = open(opts.output, 'w')
+        output = open_output(opts.output, opts)
     else:
         output = sys.stdout
 
@@ -64,6 +59,17 @@ def make_parser():
     parser.add_option("--version", default=False, action="store_true",
                       help="report software version")
     return parser
+
+
+def open_output(output, opts):
+    """Open output file with right compression library
+    """
+    if opts.bzip:
+        return bz2.open(output, 'wt')
+    elif opts.gzip:
+        return gzip.open(output, 'wt')
+    else:
+        return open(output, 'w')
 
 
 def file_generator(pattern_list):

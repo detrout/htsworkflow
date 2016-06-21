@@ -287,10 +287,13 @@ WHERE {
         for source in sources:
             paths.append(source.path)
         paths.sort()
+        compression_argument = self.format_compression_flag()
+
         return {
             'pyscript': qseq2fastq.__file__,
             'flowcell': sources[0].flowcell_id,
             'target': target_pathname,
+            'compression': compression_argument,
             'sources': paths,
             'ispaired': sources[0].ispaired,
             'istar': len(sources) == 1,
@@ -301,9 +304,7 @@ WHERE {
         for source in sources:
             paths.append(source.path)
         paths.sort()
-        compression_argument = ''
-        if self.compression:
-            compression_argument = '--'+self.compression
+        compression_argument = self.format_compression_flag()
 
         return {
             'pyscript': desplit_fastq.__file__,
@@ -312,6 +313,9 @@ WHERE {
             'sources': paths,
             'ispaired': sources[0].ispaired,
         }
+
+    def format_compression_flag(self):
+        return '--'+self.compression if self.compression else ''
 
 
 def make_lane_dict(lib_db, lib_id):
