@@ -85,7 +85,8 @@ def file_generator(pattern_list):
     """Given a list of glob patterns yield open streams for matching files"""
     for pattern in pattern_list:
         for filename in glob(pattern):
-            yield open(filename, "r")
+            # this needs to return bytes, because tarfile generate does
+            yield open(filename, "rb")
 
 
 def tarfile_generator(tarfilename):
@@ -136,7 +137,7 @@ class Qseq2Fastq(object):
         for qstream in self.sources:
             for line in qstream:
                 # parse line
-                record = line.rstrip().split('\t')
+                record = line.decode('ascii').rstrip().split('\t')
                 machine_name = record[0]
                 run_number = record[1]
                 lane_number = record[2]
@@ -178,7 +179,7 @@ class Qseq2Fastq(object):
                 if self.fastq:
                     destination.write('+')
                     destination.write(os.linesep)
-                    destination.write(quality[self.trim].tostring())
+                    destination.write(quality[self.trim].tobytes().decode('ascii'))
                     destination.write(os.linesep)
 
 def convert_illumina_quality(illumina_quality):
