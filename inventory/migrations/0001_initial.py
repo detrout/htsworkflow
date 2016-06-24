@@ -11,8 +11,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('experiments', '0005_add_samstatsrun'),
-        ('samples', '0004_auto_20160407_1420'),
+        ('experiments', '0004_rename_datarun_to_sequencingrun'),
+        ('samples', '0003_create_accession_agencies'),
         ('bcmagic', '0001_initial'),
     ]
 
