@@ -537,6 +537,20 @@ class ENCODED:
             del hidden['@type']
         jsonschema.validate(hidden, schema)
 
+        # Additional validation rules passed down from the DCC for our grant
+        assay_term_name = hidden.get('assay_term_name')
+        if assay_term_name is not None:
+            if assay_term_name.lower() == 'rna-seq':
+                if assay_term_name != 'RNA-seq':
+                    raise jsonschema.ValidationError('Incorrect capitialization of RNA-seq')
+
+        species = hidden.get('species')
+        if species == '/organisms/human/':
+            model_age_terms = ['model_organism_age', 'model_organism_age_units']
+            for term in model_age_terms:
+                if term in obj:
+                    raise jsonschema.ValidationError('model age terms not needed in human')
+
 class TypedColumnParser(object):
     @staticmethod
     def parse_sheet_array_type(value):
