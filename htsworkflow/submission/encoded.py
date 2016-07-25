@@ -560,6 +560,8 @@ class TypedColumnParser(object):
     def parse_sheet_timestamp_type(value):
         """Helper function to parse :date columns in sheet
         """
+        if isinstance(value, str):
+            return value
         return value.strftime('%Y-%m-%d')
 
     @staticmethod
