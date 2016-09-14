@@ -195,7 +195,7 @@ class ExperimentsTestCases(TestCase):
         library id field matches the library id looked up.
 
         """
-        expected_ids = [ '1215{}'.format(i) for i in range(1,9) ]
+        expected_ids = ['1215{}'.format(i) for i in range(1, 9)]
         self.assertTrue(self.client.login(username=self.admin.username, password=self.password))
         response = self.client.get(
             '/admin/experiments/flowcell/{}/change/'.format(self.fc12150.id),
@@ -203,7 +203,7 @@ class ExperimentsTestCases(TestCase):
         self.assertEquals(response.status_code, 200)
 
         tree = fromstring(response.content)
-        for i in range(0,8):
+        for i in range(0, 8):
             xpath_expression = '//input[@id="id_lane_set-%d-library"]'
             input_field = tree.xpath(xpath_expression % (i,))[0]
             library_field = input_field.find('../strong')
@@ -222,7 +222,8 @@ class ExperimentsTestCases(TestCase):
         response = self.client.get('/library/12151/')
         self.assertEqual(response.status_code, 200)
         status = validate_xhtml(response.content)
-        if status is not None: self.assertTrue(status)
+        if status is not None:
+            self.assertTrue(status)
 
         tree = fromstring(response.content)
         flowcell_spans = tree.xpath('//span[@property="libns:flowcell_id"]',
@@ -494,7 +495,7 @@ class TestEmailNotify(TestCase):
         self.assertTrue(self.affiliation.email in smart_text(response.content))
         self.assertTrue(self.library.library_name in smart_text(response.content))
 
-        response = self.client.get(self.url, {'send':'1','bcc':'on'})
+        response = self.client.get(self.url, {'send': '1', 'bcc': 'on'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(mail.outbox), 2)
         bcc = set(settings.NOTIFICATION_BCC).copy()
@@ -583,7 +584,8 @@ class TestSequencer(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         status = validate_xhtml(response.content)
-        if status is not None: self.assertTrue(status)
+        if status is not None:
+            self.assertTrue(status)
 
         load_string_into_model(model, 'rdfa', smart_text(response.content))
 
@@ -606,7 +608,8 @@ class TestSequencer(TestCase):
         rdfbody = smart_text(response.content)
         self.assertEqual(response.status_code, 200)
         status = validate_xhtml(rdfbody)
-        if status is not None: self.assertTrue(status)
+        if status is not None:
+            self.assertTrue(status)
 
         load_string_into_model(model, 'rdfa', rdfbody)
 

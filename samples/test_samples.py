@@ -282,7 +282,8 @@ class SampleWebTestCase(TestCase):
         self.assertEqual(count, len(Library.objects.filter(hidden=False)))
 
         state = validate_xhtml(response.content)
-        if state is not None: self.assertTrue(state)
+        if state is not None:
+            self.assertTrue(state)
 
 
 # The django test runner flushes the database between test suites not cases,
