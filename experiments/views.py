@@ -142,9 +142,7 @@ def flowcell_detail(request, flowcell_id, lane_number=None):
     else:
         lanes = fc.lane_set.all()
 
-    context = RequestContext(request,
-                             {'flowcell': fc,
-                              'lanes': lanes})
+    context =  {'flowcell': fc, 'lanes': lanes}
 
     return render(request, 'experiments/flowcell_detail.html', context)
 
@@ -160,11 +158,10 @@ def flowcell_lane_detail(request, lane_pk):
                          lane.lane_number,
                          files))
 
-    context = RequestContext(request,
-                             {'lib': lane.library,
-                              'lane': lane,
-                              'flowcell': lane.flowcell,
-                              'filtered_sequencingruns': sequencingruns})
+    context = {'lib': lane.library,
+               'lane': lane,
+               'flowcell': lane.flowcell,
+               'filtered_sequencingruns': sequencingruns}
 
     return render(request, 'experiments/flowcell_lane_detail.html', context)
 
@@ -186,8 +183,7 @@ def read_result_file(self, key):
 
 def sequencer(request, sequencer_id):
     sequencer = get_object_or_404(Sequencer, id=sequencer_id)
-    context = RequestContext(request,
-                             {'sequencer': sequencer})
+    context =  {'sequencer': sequencer}
     return render(request, 'experiments/sequencer.html', context)
 
 

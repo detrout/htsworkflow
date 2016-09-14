@@ -8,7 +8,7 @@ import json
 from django.contrib.admin.sites import site as admin_site
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
@@ -96,10 +96,7 @@ def library_to_flowcells(request, lib_id):
     }
     context.update(SAMPLES_CONTEXT_DEFAULTS)
 
-    return render_to_response(
-        'samples/library_detail.html',
-        context,
-        context_instance=RequestContext(request))
+    return render(request, 'samples/library_detail.html', context)
 
 
 def summaryhtm_fc_cnm(request, flowcell_id, cnm):
@@ -462,16 +459,14 @@ def species_json(request, species_id):
 def species(request, species_id):
     species = get_object_or_404(Species, id=species_id)
 
-    context = RequestContext(request,
-                             {'species': species})
+    context = {'species': species}
 
-    return render_to_response("samples/species_detail.html", context)
+    return render(request, "samples/species_detail.html", context)
 
 
 def antibodies(request):
-    context = RequestContext(request,
-                             {'antibodies': Antibody.objects.order_by('antigene')})
-    return render_to_response("samples/antibody_index.html", context)
+    context = {'antibodies': Antibody.objects.order_by('antigene')}
+    return render(request, "samples/antibody_index.html", context)
 
 
 @login_required
@@ -486,5 +481,4 @@ def user_profile(request):
         # 'select': 'settings',
     }
     context.update(SAMPLES_CONTEXT_DEFAULTS)
-    return render_to_response('registration/profile.html', context,
-                              context_instance=RequestContext(request))
+    return render(requst, 'registration/profile.html', context)
