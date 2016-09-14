@@ -91,6 +91,9 @@ class ExperimentsTestCases(TestCase):
 
     def tearDown(self):
         shutil.rmtree(self.tempdir)
+        self.user_odd.delete()
+        self.user_even.delete()
+        self.admin.delete()
 
     def test_flowcell_information(self):
         """
@@ -444,9 +447,9 @@ class TestEmailNotify(TestCase):
         self.admin = HTSUserFactory.create(username='admintest', is_staff=True)
         self.admin.set_password(self.password)
         self.admin.save()
-        self.super = HTSUserFactory.create(username='supertest', is_staff=True, is_superuser=True)
-        self.super.set_password(self.password)
-        self.super.save()
+        self.superuser = HTSUserFactory.create(username='supertest', is_staff=True, is_superuser=True)
+        self.superuser.set_password(self.password)
+        self.superuser.save()
 
         self.library = LibraryFactory.create()
         self.affiliation = AffiliationFactory()
@@ -456,6 +459,14 @@ class TestEmailNotify(TestCase):
         self.lane = LaneFactory(flowcell=self.fc, lane_number=1, library=self.library)
 
         self.url = '/experiments/started/{}/'.format(self.fc.id)
+
+    def tearDown(self):
+        # with django 1.10 running against postgresql I had to delete these
+        # test objects or else I get a constraint error
+        self.affiliation.delete()
+        self.user.delete()
+        self.admin.delete()
+        self.superuser.delete()
 
     def test_started_email_not_logged_in(self):
         response = self.client.get(self.url)
