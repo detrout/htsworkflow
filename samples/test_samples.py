@@ -6,7 +6,7 @@ from unittest import skipUnless
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase, RequestFactory
-from django.utils.encoding import smart_text, smart_str
+from django.utils.encoding import smart_text, smart_str, smart_bytes
 
 from .models import Affiliation, ExperimentType, Species, Library
 from .views import library_dict
@@ -211,8 +211,7 @@ class SampleWebTestCase(TestCase):
 
         response = self.client.get(library.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-        content = smart_text(response.content)
-        load_string_into_model(model, 'rdfa', content)
+        load_string_into_model(model, 'rdfa', smart_text(response.content))
 
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
@@ -236,7 +235,7 @@ class SampleWebTestCase(TestCase):
             self.assertEqual(fromTypedNode(r['made_by']),
                              library.made_by)
 
-        state = validate_xhtml(content)
+        state = validate_xhtml(smart_bytes(response.content))
         if state is not None:
             self.assertTrue(state)
 

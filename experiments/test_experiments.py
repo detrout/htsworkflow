@@ -13,7 +13,7 @@ from django.core import mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_text, smart_bytes
 
 from .models import SequencingRun, Sequencer, FlowCell, FileType
 from samples.models import HTSUser
@@ -605,13 +605,12 @@ class TestSequencer(TestCase):
 
         url = '/lane/{}'.format(self.lane.id)
         response = self.client.get(url)
-        rdfbody = smart_text(response.content)
         self.assertEqual(response.status_code, 200)
-        status = validate_xhtml(rdfbody)
+        status = validate_xhtml(smart_bytes(response.content))
         if status is not None:
             self.assertTrue(status)
 
-        load_string_into_model(model, 'rdfa', rdfbody)
+        load_string_into_model(model, 'rdfa', smart_text(response.content))
 
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
