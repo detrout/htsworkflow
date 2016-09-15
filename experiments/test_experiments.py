@@ -206,7 +206,7 @@ class ExperimentsTestCases(TestCase):
         for i in range(0, 8):
             xpath_expression = '//input[@id="id_lane_set-%d-library"]'
             input_field = tree.xpath(xpath_expression % (i,))[0]
-            library_field = input_field.find('../strong')
+            library_field = input_field.find('../strong/a')
             library_id, library_name = library_field.text.split(':')
             # strip leading '#' sign from name
             library_id = library_id[1:]
