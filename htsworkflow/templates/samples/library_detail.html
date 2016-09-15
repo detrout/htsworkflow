@@ -131,7 +131,6 @@
     	<td>Comment</td>
       </tr>
     </thead>
-    {% if lib.lane_set.all %}
     <tbody>
       {% for lane in lib.lane_set.all %}
       <tr rel="libns:has_lane" 
@@ -156,9 +155,10 @@
             </a></td>
         <td>{{ lane.comment }}</td>
       </tr>
-	  {% endfor %}
+      {% empty %}
+      <tr><td colspan="0">No data</td></tr>
+      {% endfor %}
     </tbody>
-    {% endif %}
   </table>
   <br/>
   <hr/>

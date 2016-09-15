@@ -105,6 +105,8 @@
           <td ></td>
         {% endif %}
       </tr>
+      {% empty %}
+      <tr><td colspan="0">No results found</td></tr>
       {% endfor %}
     </tbody>
   </table>

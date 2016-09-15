@@ -17,6 +17,8 @@
         <li property="libns:affiliation" content="{{individual.name}}">
           {{ individual.name }} ( {{ individual.contact }} )
         </li>
+        {% empty %}
+        <li>None</li>
       {% endfor %}
     </ul>
     {% if lib.libraryaccession_set %}
