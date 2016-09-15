@@ -594,7 +594,6 @@ class TestSequencer(TestCase):
 
     def test_lane_with_rdf_validation(self):
         from htsworkflow.util.rdfhelp import add_default_schemas, \
-             dump_model, \
              get_model, \
              load_string_into_model
         from htsworkflow.util.rdfinfer import Infer
