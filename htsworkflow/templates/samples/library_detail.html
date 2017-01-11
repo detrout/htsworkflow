@@ -1,5 +1,5 @@
 {% extends "base_site.html" %}
-{% load staticfiles %}
+{% load static %}
 {% load humanize i18n %}
 {% block extrahead %}
     <!-- App Stuff -->
@@ -34,7 +34,7 @@
     <tr about="{{result.flowcell.get_absolute_url}}">
       <td property="libns:date" content="{{result.run_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{ result.run_date|date}}</td>
       <td>{{ result.cycle }}</td>
-      <td><a href="{{result.flowcell.get_absolute_url}}"><span property="libns:flowcell_id">{{ result.flowcell_id }}</span></a>{% if user.is_staff %}<a href="{{result.flowcell.get_admin_url}}"><img class="icon_button" src="{% static "admin/img/icon_changelink.gif" %}" alt="Edit"/></a>{% endif%}</td>
+      <td><a href="{{result.flowcell.get_absolute_url}}"><span property="libns:flowcell_id">{{ result.flowcell_id }}</span></a>{% if user.is_staff %}<a href="{{result.flowcell.get_admin_url}}"><img class="icon_button" src="{% static "admin/img/icon-changelink.svg" %}" alt="Edit"/></a>{% endif%}</td>
       <td>{{ result.lane.lane_number }}</td>
       <td><a href="{{ result.summary_url }}">Summary</a></td>
       <td><a href="{{ result.result_url }}">{{ result.result_label }}</a></td>
@@ -143,7 +143,7 @@
           {% if user.is_staff %}
             <a href="{{lane.flowcell.get_admin_url}}">
                <img class="icon_button"
-                    src="{% static "admin/img/icon_changelink.gif" %}" alt="Edit"/>
+                    src="{% static "admin/img/icon-changelink.svg" %}" alt="Edit"/>
             </a>
           {% endif%}
         </td>

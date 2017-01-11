@@ -1,5 +1,5 @@
 {% extends "base_site.html" %}
-{% load staticfiles %}
+{% load static %}
 {% load humanize i18n %}
 {% block extrahead %}
     <!-- App Stuff -->
@@ -42,7 +42,7 @@
               {% if user.is_staff %}
               <a href="{{lane.library.get_admin_url}}">
                   <img class="icon_button"
-                       src="{% static "admin/img/icon_changelink.gif" %}"/>
+                       src="{% static "admin/img/icon-changelink.svg" %}"/>
               </a>{% endif %}
           </td>
           <td>
