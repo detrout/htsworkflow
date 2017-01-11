@@ -176,26 +176,6 @@ class SequencerSelect(Select):
         super(SequencerSelect, self).__init__(*args, **kwargs)
         self.queryset = queryset
 
-    def render_options(self, choices, selected_choices):
-        # Normalize to strings.
-        selected_choices = set([force_text(v) for v in selected_choices])
-        output = []
-        for option_value, option_label in chain(self.choices, choices):
-            if isinstance(option_label, (list, tuple)):
-                output.append(u'<optgroup label="%s">' %
-                              escape(force_text(option_value)))
-                for option in option_label:
-                    output.append(
-                        self.render_option(selected_choices,
-                                           *option))
-                output.append(u'</optgroup>')
-            else:
-                output.append(
-                    self.render_option(selected_choices,
-                                       option_value,
-                                       option_label))
-        return u'\n'.join(output)
-
     def render_option(self, selected_choices, option_value, option_label):
         disabled_sequencers = [str(s.id) for s in
                                self.queryset.filter(active=False)]
