@@ -38,8 +38,6 @@ class TestEncoded(TestCase):
                u'award': u'/awards/U54HG006998/',
                u'biosample': u'/biosamples/ENCBS089RNA/',
                u'date_created': u'2014-01-14T19:44:51.061770+00:00',
-               u'depleted_in_term_id': [],
-               u'depleted_in_term_name': [],
                u'documents': [],
                u'extraction_method': u'Ambion mirVana',
                u'fragmentation_method': u'chemical (Nextera tagmentation)',
