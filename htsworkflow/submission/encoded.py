@@ -277,13 +277,14 @@ class ENCODED:
            Schema URL
         """
         collection_to_type = {
+            '/annotations/': 'annotation',
             '/biosamples/': 'biosample',
             '/datasets/': 'dataset',
             '/documents/': 'document',
             '/experiments/': 'experiment',
             '/libraries/': 'library',
             '/replicates/': 'replicate',
-            '/file/': 'file',
+            '/files/': 'file',
         }
         object_type = collection_to_type.get(object_type, object_type)
 
@@ -293,8 +294,10 @@ class ENCODED:
         """Lookup common object accession name given a collection name.
         """
         collection_to_accession_name = {
-            '/experiments/': 'experiment_accession',
+            '/annotations/': 'annotation_accession',
             '/biosamples/': 'biosample_accession',
+            '/experiments/': 'experiment_accession',
+            '/files/': 'file_accession',
             '/libraries/': 'library_accession',
             '/replicates/': 'uuid',
         }
