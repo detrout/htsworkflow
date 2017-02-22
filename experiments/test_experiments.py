@@ -195,7 +195,7 @@ class ExperimentsTestCases(TestCase):
         library id field matches the library id looked up.
 
         """
-        expected_ids = ['1215{}'.format(i) for i in range(1, 9)]
+        expected_ids = ['1215{}'.format(i) for i in range(8, 0, -1)]
         self.assertTrue(self.client.login(username=self.admin.username, password=self.password))
         response = self.client.get(
             '/admin/experiments/flowcell/{}/change/'.format(self.fc12150.id),
