@@ -96,7 +96,7 @@ def lanes_for(username=None):
         user = HTSUser.objects.get(username=username)
         query.update({'library__affiliations__users__id': user.id})
 
-    lanes = Lane.objects.filter(**query).order_by('-flowcell__run_date')
+    lanes = Lane.objects.filter(**query)
 
     result = []
     for l in lanes:

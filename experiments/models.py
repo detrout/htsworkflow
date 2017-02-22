@@ -284,6 +284,9 @@ def is_valid_lane(value):
 
 
 class Lane(models.Model):
+    class Meta:
+        ordering = ['-flowcell__run_date', '-library__id']
+
     flowcell = models.ForeignKey(FlowCell)
     lane_number = models.IntegerField()
     library = models.ForeignKey(Library)
