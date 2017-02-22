@@ -202,7 +202,9 @@ def lanes_for(request, username=None):
     fcl = HTSChangeList(request, Lane,
                         list_filter=['library__affiliations',
                                      'library__library_species'],
-                        search_fields=['flowcell__flowcell_id', 'library__id', 'library__library_name'],
+                        search_fields=['flowcell__flowcell_id',
+                                       'library__id',
+                                       'library__library_name'],
                         list_per_page=200,
                         model_admin=LaneOptions(Lane, default_admin_site),
                         extra_filters=query
