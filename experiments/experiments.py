@@ -27,7 +27,7 @@ def flowcell_information(flowcell_id):
         return None
 
     lane_set = {}
-    for lane in fc.lane_set.all():
+    for lane in fc.lane_set.order_by('lane_number', 'library__id'):
         lane_item = {
             'cluster_estimate': lane.cluster_estimate,
             'comment': lane.comment,
