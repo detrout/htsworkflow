@@ -308,7 +308,7 @@ class ExperimentsTestCases(TestCase):
         lanes = lanes_for(user.username)
         self.assertEqual(len(lanes), 0)
 
-        response = self.client.get('/experiments/lanes_for/%s/json' % (user,), apidata)
+        response = self.client.get('/experiments/lanes_for/%s/json' % (user.username,), apidata)
         self.assertEqual(response.status_code, 200)
         result = response.json()
         self.assertEqual(result['result'], [])
