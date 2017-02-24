@@ -44,8 +44,7 @@ setup(
         'six',
         'psycopg2',
         'pytz',
-        # This dependency is redland librdf, which doesn't have a public egg
-        # 'librdf >= 1.0.14',
+        'rdflib',
         'factory_boy',
     ],
 )
