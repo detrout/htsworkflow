@@ -1,13 +1,14 @@
 from unittest import TestCase
 
-import RDF
+from rdflib import ConjunctiveGraph, BNode, Literal, Namespace, URIRef
+from rdflib.plugins.sparql import prepareQuery
 
-from htsworkflow.util.rdfhelp import get_model, \
-     add_default_schemas, add_schema, load_string_into_model, dump_model
+from htsworkflow.util.rdfhelp import \
+     add_default_schemas, load_string_into_model, dump_model
 from htsworkflow.util.rdfns import *
 from htsworkflow.util.rdfinfer import Infer
 
-foafNS = RDF.NS('http://xmlns.com/foaf/0.1/')
+from rdflib.namespace import FOAF
 
 MINI_FOAF_ONTOLOGY = """
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -90,86 +91,79 @@ _:me
 
 class TestInfer(TestCase):
     def setUp(self):
-        self.model = get_model()
+        self.model = ConjunctiveGraph()
         add_default_schemas(self.model)
-        load_string_into_model(self.model, 'turtle', MINI_FOAF_ONTOLOGY)
+        self.model.parse(data=MINI_FOAF_ONTOLOGY, format='turtle')
 
     def test_class(self):
-        fooNS = RDF.NS('http://example.org/')
-        load_string_into_model(self.model, 'turtle', FOAF_DATA)
+        fooNS = Namespace('http://example.org/')
+        self.model.parse(data=FOAF_DATA, format='turtle')
         inference = Infer(self.model)
 
-        s = RDF.Statement(fooNS['me.jpg'], rdfNS['type'], rdfsNS['Class'])
-        found = list(self.model.find_statements(s))
+        s = [fooNS['me.jpg'], RDF['type'], RDFS['Class']]
+        found = list(self.model.triples(s))
         self.assertEqual(len(found), 0)
         inference._rule_class()
-        s = RDF.Statement(fooNS['me.jpg'], rdfNS['type'], rdfsNS['Class'])
-        found = list(self.model.find_statements(s))
+        s = [fooNS['me.jpg'], RDF['type'], RDFS['Class']]
+        found = list(self.model.triples(s))
         self.assertEqual(len(found), 1)
 
     def test_inverse_of(self):
-        fooNS = RDF.NS('http://example.org/')
-        load_string_into_model(self.model, 'turtle', FOAF_DATA)
+        fooNS = Namespace('http://example.org/')
+        self.model.parse(data=FOAF_DATA, format='turtle')
         inference = Infer(self.model)
-        depiction = RDF.Statement(None,
-                                  foafNS['depiction'],
-                                  fooNS['me.jpg'])
-        size = self.model.size()
-        found_statements = list(self.model.find_statements(depiction))
+        depiction = (None, FOAF['depiction'], fooNS['me.jpg'])
+        size = len(self.model)
+        found_statements = list(self.model.triples(depiction))
         self.assertEqual(len(found_statements), 0)
         inference._rule_inverse_of()
-        found_statements = list(self.model.find_statements(depiction))
+        found_statements = list(self.model.triples(depiction))
         self.assertEqual(len(found_statements), 1)
 
         # we should've added one statement.
-        self.assertEqual(self.model.size(), size + 1)
+        self.assertEqual(len(self.model), size + 1)
 
-        size = self.model.size()
+        size = len(self.model)
         inference._rule_inverse_of()
         # we should already have both versions in our model
-        self.assertEqual(self.model.size(), size)
+        self.assertEqual(len(self.model), size)
 
     def test_validate_types(self):
-        fooNS = RDF.NS('http://example.org/')
-        load_string_into_model(self.model, 'turtle', FOAF_DATA)
+        fooNS = Namespace('http://example.org/')
+        self.model.parse(data=FOAF_DATA, format='turtle')
         inference = Infer(self.model)
 
         errors = list(inference._validate_types())
         self.assertEqual(len(errors), 0)
 
-        s = RDF.Statement(fooNS['document'],
-                          dcNS['title'],
-                          RDF.Node("bleem"))
-        self.model.append(s)
+        s = (fooNS['document'], DC['title'], Literal("bleem"))
+        self.model.add(s)
         errors = list(inference._validate_types())
         self.assertEqual(len(errors), 1)
 
-    def test_validate_undefined_properties(self):
-        fooNS = RDF.NS('http://example.org/')
+    def test_validate_undefined_properties_in_schemas(self):
+        fooNS = Namespace('http://example.org/')
         inference = Infer(self.model)
 
         errors = list(inference._validate_undefined_properties())
         self.assertEqual(len(errors), 0)
 
-        load_string_into_model(self.model, 'turtle', FOAF_DATA)
+    def test_validate_undefined_properties_in_inference(self):
+        fooNS = Namespace('http://example.org/')
+        foafNS = Namespace('http://xmlns.com/foaf/0.1/')
 
+        self.model.parse(data=FOAF_DATA, format='turtle')
+
+        inference = Infer(self.model)
         errors = list(inference._validate_undefined_properties())
         self.assertEqual(len(errors), 2)
 
-
-    def test_validate_undefined_properties(self):
-        fooNS = RDF.NS('http://example.org/')
-        foafNS = RDF.NS('http://xmlns.com/foaf/0.1/')
-        load_string_into_model(self.model, 'turtle', FOAF_DATA)
         inference = Infer(self.model)
-
         errors = list(inference._validate_property_types())
         self.assertEqual(len(errors), 0)
 
-        s = RDF.Statement(fooNS['me.jpg'],
-                          foafNS['firstName'],
-                          RDF.Node("name"))
-        self.model.append(s)
+        s = (fooNS['me.jpg'], FOAF['firstName'], Literal("name"))
+        self.model.add(s)
         errors = list(inference._validate_property_types())
         self.assertEqual(len(errors), 1)
         startswith = 'Domain of '
@@ -177,16 +171,14 @@ class TestInfer(TestCase):
         self.assertTrue('http://example.org/me.jpg' in errors[0])
         endswith = 'http://xmlns.com/foaf/0.1/Person'
         self.assertEqual(errors[0][-len(endswith):], endswith)
-        del self.model[s]
+        self.model.remove(s)
 
         errors = list(inference._validate_property_types())
         self.assertEqual(len(errors), 0)
-        s = RDF.Statement(fooNS['foo.txt'], rdfNS['type'], foafNS['Document'])
-        self.model.append(s)
-        s = RDF.Statement(fooNS['me.jpg'],
-                          foafNS['depicts'],
-                          foafNS['foo.txt'])
-        self.model.append(s)
+        s = (fooNS['foo.txt'], RDF['type'], FOAF['Document'])
+        self.model.add(s)
+        s = (fooNS['me.jpg'], FOAF['depicts'], FOAF['foo.txt'])
+        self.model.add(s)
 
         errors = list(inference._validate_property_types())
         self.assertEqual(len(errors), 1)
@@ -195,7 +187,7 @@ class TestInfer(TestCase):
         self.assertTrue('http://example.org/me.jpg' in errors[0])
         endswith = 'http://www.w3.org/2002/07/owl#Thing'
         self.assertEqual(errors[0][-len(endswith):], endswith)
-        del self.model[s]
+        self.model.remove(s)
 
     def test_property_multiple_domain_types(self):
         """Can we process a property with multiple domain types?
@@ -221,7 +213,7 @@ class TestInfer(TestCase):
         bar:subject a bar:ABarClass ;
            foo:aprop foo:object .
         """
-        load_string_into_model(self.model, 'turtle', turtle)
+        self.model.parse(data=turtle, format='turtle')
         inference = Infer(self.model)
 
         errmsg = list(inference._validate_property_types())
