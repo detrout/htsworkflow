@@ -4,11 +4,11 @@ import shutil
 import tempfile
 from unittest import TestCase
 
-import RDF
+from rdflib import Graph, Namespace, URIRef
+from rdflib.namespace import RDF
 
 from htsworkflow.pipelines import sequences
-from htsworkflow.util.rdfhelp import get_model, load_string_into_model, \
-     rdfNS, libraryOntology, dump_model, fromTypedNode
+from htsworkflow.util.rdfns import libraryOntology
 
 class SequenceFileTests(TestCase):
     """
@@ -337,69 +337,59 @@ class SequenceFileTests(TestCase):
 
     def test_basic_rdf_scan(self):
         """Make sure we can save to RDF model"""
-        import RDF
-        model = get_model()
+        model = Graph()
 
         for seq in self._generate_sequences():
             seq.save_to_model(model)
 
-        files = list(model.find_statements(
-            RDF.Statement(None,
-                          rdfNS['type'],
-                          libraryOntology['IlluminaResult'])))
+        files = list(model.triples((None,
+                                    RDF['type'],
+                                    libraryOntology['IlluminaResult'])))
         self.assertEqual(len(files), 5)
-        files = list(model.find_statements(
-            RDF.Statement(None,
-                          libraryOntology['file_type'],
-                          libraryOntology['qseq'])))
+        files = list(model.triples((None,
+                                    libraryOntology['file_type'],
+                                    libraryOntology['qseq'])))
         self.assertEqual(len(files), 4)
-        files = list(model.find_statements(
-            RDF.Statement(None,
-                          libraryOntology['file_type'],
-                          libraryOntology['split_fastq'])))
+        files = list(model.triples((None,
+                                    libraryOntology['file_type'],
+                                    libraryOntology['split_fastq'])))
         self.assertEqual(len(files), 1)
 
-        files = list(model.find_statements(
-            RDF.Statement(None, libraryOntology['library_id'], None)))
+        files = list(model.triples((None, libraryOntology['library_id'], None)))
         self.assertEqual(len(files), 1)
 
-        files = list(model.find_statements(
-            RDF.Statement(None, libraryOntology['flowcell_id'], None)))
+        files = list(model.triples((None, libraryOntology['flowcell_id'], None)))
         self.assertEqual(len(files), 5)
 
-        files = list(model.find_statements(
-            RDF.Statement(None, libraryOntology['flowcell'], None)))
+        files = list(model.triples((None, libraryOntology['flowcell'], None)))
         self.assertEqual(len(files), 0)
 
-        files = list(model.find_statements(
-            RDF.Statement(None, libraryOntology['library'], None)))
+        files = list(model.triples((None, libraryOntology['library'], None)))
         self.assertEqual(len(files), 0)
 
     def test_rdf_scan_with_url(self):
         """Make sure we can save to RDF model"""
-        import RDF
-        model = get_model()
+        model = Graph()
         base_url = 'http://localhost'
         for seq in self._generate_sequences():
             seq.save_to_model(model, base_url=base_url)
-        localFC = RDF.NS(base_url + '/flowcell/')
-        localLibrary = RDF.NS(base_url + '/library/')
+        localFC = Namespace(base_url + '/flowcell/')
+        localLibrary = Namespace(base_url + '/library/')
 
-        files = list(model.find_statements(
-            RDF.Statement(None, libraryOntology['flowcell'], None)))
+        files = list(model.triples((None, libraryOntology['flowcell'], None)))
         self.assertEqual(len(files), 5)
         for f in files:
-            self.assertEqual(f.object, localFC['42BW9AAXX/'])
+            # object is index 2 in the tuple
+            self.assertEqual(f[2], localFC['42BW9AAXX/'])
 
-        files = list(model.find_statements(
-            RDF.Statement(None, libraryOntology['library'], None)))
+        files = list(model.triples((None, libraryOntology['library'], None)))
         self.assertEqual(len(files), 1)
-        self.assertEqual(files[0].object, localLibrary['12345'])
+        self.assertEqual(files[0][2], localLibrary['12345'])
 
     def test_rdf_fixup_library(self):
         """Make sure we can save to RDF model"""
         base_url = 'http://localhost'
-        localLibrary = RDF.NS(base_url + '/library/')
+        localLibrary = Namespace(base_url + '/library/')
 
         flowcellInfo = """@prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#> .
 
@@ -419,8 +409,8 @@ class SequenceFileTests(TestCase):
 <{base}/lane/1172>
     libns:lane_number "3" ; libns:library <{base}/library/10930/> .
 """.format(base=base_url)
-        model = get_model()
-        load_string_into_model(model, 'turtle', flowcellInfo)
+        model = Graph()
+        model.parse(data=flowcellInfo, format='turtle')
         for seq in self._generate_sequences():
             seq.save_to_model(model)
         f = sequences.update_model_sequence_library(model, base_url=base_url)
@@ -429,42 +419,41 @@ class SequenceFileTests(TestCase):
         libIdTerm = libraryOntology['library_id']
 
         url = 'file:///root/42BW9AAXX/C1-152/woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l1_r2.tar.bz2'
-        nodes = list(model.get_targets(RDF.Uri(url), libTerm))
+        nodes = list(model.objects(URIRef(url), libTerm))
         self.assertEqual(len(nodes), 1)
         self.assertEqual(nodes[0], localLibrary['10923/'])
-        nodes = list(model.get_targets(RDF.Uri(url), libIdTerm))
+        nodes = list(model.objects(URIRef(url), libIdTerm))
         self.assertEqual(len(nodes), 1)
-        self.assertEqual(fromTypedNode(nodes[0]), '10923')
+        self.assertEqual(nodes[0].toPython(), '10923')
 
         url = 'file:///root/42BW9AAXX/C1-152/woldlab_090622_HWI-EAS229_0120_42BW9AAXX_l2_r1.tar.bz2'
-        nodes = list(model.get_targets(RDF.Uri(url), libTerm))
+        nodes = list(model.objects(URIRef(url), libTerm))
         self.assertEqual(len(nodes), 1)
         self.assertEqual(nodes[0], localLibrary['10924/'])
-        nodes = list(model.get_targets(RDF.Uri(url), libIdTerm))
+        nodes = list(model.objects(URIRef(url), libIdTerm))
         self.assertEqual(len(nodes), 1)
-        self.assertEqual(fromTypedNode(nodes[0]), '10924')
+        self.assertEqual(nodes[0].toPython(), '10924')
 
         url = 'file:///root/42BW9AAXX/C1-38/Project_12345/12345_AAATTT_L003_R1_001.fastq.gz'
-        nodes = list(model.get_targets(RDF.Uri(url), libTerm))
+        nodes = list(model.objects(URIRef(url), libTerm))
         self.assertEqual(len(nodes), 1)
         self.assertEqual(nodes[0], localLibrary['12345/'])
-        nodes = list(model.get_targets(RDF.Uri(url), libIdTerm))
+        nodes = list(model.objects(URIRef(url), libIdTerm))
         self.assertEqual(len(nodes), 1)
-        self.assertEqual(fromTypedNode(nodes[0]), '12345')
+        self.assertEqual(nodes[0].toPython(), '12345')
 
     def test_load_from_model(self):
         """Can we round trip through a RDF model"""
-        model = get_model()
+        model = Graph()
         path = '/root/42BW9AAXX/C1-38/Project_12345/'
         filename = '12345_AAATTT_L003_R1_001.fastq.gz'
         seq = sequences.parse_fastq(path, filename)
         seq.save_to_model(model)
 
         seq_id = 'file://'+path+filename
-        seqNode = RDF.Node(RDF.Uri(seq_id))
-        libNode = RDF.Node(RDF.Uri('http://localhost/library/12345'))
-        model.add_statement(
-            RDF.Statement(seqNode, libraryOntology['library'], libNode))
+        seqNode = URIRef(seq_id)
+        libNode = URIRef('http://localhost/library/12345')
+        model.add((seqNode, libraryOntology['library'], libNode))
         seq2 = sequences.SequenceFile.load_from_model(model, seq_id)
 
         self.assertEqual(seq.flowcell, seq2.flowcell)
