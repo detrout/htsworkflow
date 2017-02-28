@@ -15,6 +15,9 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils.encoding import smart_text, smart_bytes
 
+from rdflib import ConjunctiveGraph, Graph
+from rdflib.namespace import RDF
+
 from .models import SequencingRun, Sequencer, FlowCell, FileType
 from samples.models import HTSUser
 from .experiments import flowcell_information, lanes_for
@@ -23,6 +26,8 @@ from samples.samples_factory import AffiliationFactory, HTSUserFactory, \
     LibraryFactory, LibraryTypeFactory, MultiplexIndexFactory
 from htsworkflow.auth import apidata
 from htsworkflow.util.ethelp import validate_xhtml
+from htsworkflow.util.rdfhelp import add_default_schemas
+from htsworkflow.util.rdfinfer import Infer
 
 from htsworkflow.pipelines.test.simulate_runfolder import TESTDATA_DIR
 
@@ -393,15 +398,7 @@ class ExperimentsTestCases(TestCase):
             self.assertEqual(mimetype, response['content-type'])
 
     def test_flowcell_rdf(self):
-        import RDF
-        from htsworkflow.util.rdfhelp import get_model, \
-             fromTypedNode, \
-             load_string_into_model, \
-             rdfNS, \
-             libraryOntology, \
-             dump_model
-
-        model = get_model()
+        model = Graph()
 
         expected = {'1': ['12151'],
                     '2': ['12152'],
@@ -418,7 +415,7 @@ class ExperimentsTestCases(TestCase):
         if status is not None: self.assertTrue(status)
 
         ns = urljoin('http://localhost', url)
-        load_string_into_model(model, 'rdfa', smart_text(response.content), ns=ns)
+        model.parse(data=smart_text(response.content), format='rdfa', publicID=ns)
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
@@ -431,13 +428,12 @@ class ExperimentsTestCases(TestCase):
                 libns:library ?library .
           ?library libns:library_id ?library_id .
         }"""
-        query = RDF.SPARQLQuery(body)
         count = 0
-        for r in query.execute(model):
+        for r in model.query(body):
             count += 1
-            self.assertEqual(fromTypedNode(r['flowcell_id']), 'FC12150')
-            lane_id = fromTypedNode(r['lane_id'])
-            library_id = fromTypedNode(r['library_id'])
+            self.assertEqual(r['flowcell_id'].toPython(), 'FC12150')
+            lane_id = r['lane_id'].toPython()
+            library_id = r['library_id'].toPython()
             self.assertTrue(library_id in expected[lane_id])
         self.assertEqual(count, 8)
 
@@ -572,13 +568,8 @@ class TestSequencer(TestCase):
         self.assertEqual(model[0].text, 'HiSeq 1')
 
     def test_flowcell_with_rdf_validation(self):
-        from htsworkflow.util.rdfhelp import add_default_schemas, \
-             dump_model, \
-             get_model, \
-             load_string_into_model
-        from htsworkflow.util.rdfinfer import Infer
 
-        model = get_model()
+        model = ConjunctiveGraph()
         add_default_schemas(model)
         inference = Infer(model)
 
@@ -589,18 +580,13 @@ class TestSequencer(TestCase):
         if status is not None:
             self.assertTrue(status)
 
-        load_string_into_model(model, 'rdfa', smart_text(response.content))
+        model.parse(data=smart_text(response.content), format='rdfa')
 
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
 
     def test_lane_with_rdf_validation(self):
-        from htsworkflow.util.rdfhelp import add_default_schemas, \
-             get_model, \
-             load_string_into_model
-        from htsworkflow.util.rdfinfer import Infer
-
-        model = get_model()
+        model = ConjunctiveGraph()
         add_default_schemas(model)
         inference = Infer(model)
 
@@ -611,8 +597,7 @@ class TestSequencer(TestCase):
         if status is not None:
             self.assertTrue(status)
 
-        load_string_into_model(model, 'rdfa', smart_text(response.content))
-
+        model.parse(data=smart_text(response.content), format='rdfa')
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
 
