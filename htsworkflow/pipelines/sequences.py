@@ -10,10 +10,15 @@ import sys
 import six
 from six.moves.urllib.parse import urljoin, urlparse
 
-import RDF
-from htsworkflow.util.rdfhelp import libraryOntology as libNS
-from htsworkflow.util.rdfhelp import toTypedNode, fromTypedNode, rdfNS, \
-     strip_namespace, dump_model, simplify_uri
+from rdflib import BNode, Literal, Namespace, URIRef
+from htsworkflow.util.rdfhelp import (
+    dump_model,
+    libraryOntology as libNS,
+    RDF,
+    simplify_uri,
+    strip_namespace,
+)
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -159,13 +164,13 @@ class SequenceFile(object):
     def save_to_model(self, model, base_url=None):
         def add_lit(model, s, p, o):
             if o is not None:
-                model.add_statement(RDF.Statement(s, p, toTypedNode(o)))
+                model.add((s, p, Literal(o)))
         def add(model, s, p, o):
-            model.add_statement(RDF.Statement(s,p,o))
+            model.add((s, p, o))
         # a bit unreliable... assumes filesystem is encoded in utf-8
         path = os.path.abspath(self.path)
-        fileNode = RDF.Node(RDF.Uri('file://' + path))
-        add(model, fileNode, rdfNS['type'], libNS['IlluminaResult'])
+        fileNode = URIRef('file://' + path)
+        add(model, fileNode, RDF['type'], libNS['IlluminaResult'])
         add_lit(model, fileNode, libNS['flowcell_id'], self.flowcell)
         add_lit(model, fileNode, libNS['lane_number'], self.lane)
         if self.read is not None:
@@ -181,14 +186,14 @@ class SequenceFile(object):
         add(model, fileNode, libNS['file_type'], libNS[self.filetype])
 
         if base_url is not None:
-            flowcell = RDF.Node(RDF.Uri("{base}/flowcell/{flowcell}/".format(
+            flowcell = URIRef("{base}/flowcell/{flowcell}/".format(
                 base=base_url,
-                flowcell=self.flowcell)))
+                flowcell=self.flowcell))
             add(model, fileNode, libNS['flowcell'], flowcell)
             if self.project is not None:
-                library = RDF.Node(RDF.Uri("{base}/library/{library}".format(
+                library = URIRef("{base}/library/{library}".format(
                     base=base_url,
-                    library=self.project)))
+                    library=self.project))
                 add(model, fileNode, libNS['library'], library)
 
 
@@ -196,11 +201,11 @@ class SequenceFile(object):
     def load_from_model(cls, model, seq_id):
         def get(s, p):
             values = []
-            stmts = model.find_statements(RDF.Statement(s, p, None))
+            stmts = model.triples((s, p, None))
             for s in stmts:
-                obj = s.object
-                if not obj.is_resource():
-                    values.append(fromTypedNode(obj))
+                obj = s[2]
+                if not isinstance(obj, URIRef):
+                    values.append(obj.toPython())
                 else:
                     values.append(obj)
             return values
@@ -214,18 +219,16 @@ class SequenceFile(object):
             else:
                 return None
 
-        if not isinstance(seq_id, RDF.Node):
-            seq_id = RDF.Node(RDF.Uri(seq_id))
-        result_statement = RDF.Statement(seq_id,
-                                         rdfNS['type'],
-                                         libNS['IlluminaResult'])
-        if not model.contains_statement(result_statement):
+        if not isinstance(seq_id, URIRef):
+            seq_id = URIRef(seq_id)
+        result_statement = (seq_id, RDF['type'], libNS['IlluminaResult'])
+        if not result_statement in model:
             raise KeyError(u"%s not found" % (unicode(seq_id),))
 
-        seq_type_node = model.get_target(seq_id, libNS['file_type'])
+        seq_type_node = list(model.objects(seq_id, libNS['file_type']))[0]
         seq_type = strip_namespace(libNS, seq_type_node)
 
-        path = urlparse(str(seq_id.uri)).path
+        path = urlparse(str(seq_id)).path
         flowcellNode = get_one(seq_id, libNS['flowcell'])
         flowcell = get_one(seq_id, libNS['flowcell_id'])
         lane = get_one(seq_id, libNS['lane_number'])
@@ -428,22 +431,20 @@ def update_model_sequence_library(model, base_url):
     }
     """
     LOGGER.debug("update_model_sequence_library query %s", file_body)
-    file_query = RDF.SPARQLQuery(file_body)
-    files = file_query.execute(model)
+    files = model.query(file_body)
 
-    libraryNS = RDF.NS(urljoin(base_url, 'library/'))
-    flowcellNS = RDF.NS(urljoin(base_url, 'flowcell/'))
+    libraryNS = Namespace(urljoin(base_url, 'library/'))
+    flowcellNS = Namespace(urljoin(base_url, 'flowcell/'))
     for f in files:
         filenode = f['filenode']
         LOGGER.debug("Updating file node %s", str(filenode))
-        lane_id = fromTypedNode(f['lane_id'])
+        lane_id = f['lane_id'].toPython()
         if f['flowcell'] is None:
             flowcell = flowcellNS[str(f['flowcell_id'])+'/']
             LOGGER.debug("Adding file (%s) to flowcell (%s) link",
                          str(filenode),
                          str(flowcell))
-            model.add_statement(
-                RDF.Statement(filenode, libNS['flowcell'], flowcell))
+            model.add((filenode, libNS['flowcell'], flowcell))
         else:
             flowcell = f['flowcell']
 
@@ -458,22 +459,20 @@ def update_model_sequence_library(model, base_url):
                     LOGGER.error("Unable to decypher: %s %s",
                                  str(flowcell), str(lane_id))
                     continue
-                library_id = toTypedNode(simplify_uri(library))
+                library_id = Literal(simplify_uri(library))
                 LOGGER.debug("Adding file (%s) to library (%s) link",
                              str(filenode),
                              str(library))
-                model.add_statement(
-                    RDF.Statement(filenode, libNS['library_id'], library_id))
+                model.add((filenode, libNS['library_id'], library_id))
             if library is not None:
-                model.add_statement(
-                    RDF.Statement(filenode, libNS['library'], library))
+                model.add((filenode, libNS['library'], library))
 
 
 def guess_library_from_model(model, base_url, flowcell, lane_id):
     """Attempt to find library URI
     """
-    flowcellNode = RDF.Node(flowcell)
-    flowcell = str(flowcell.uri)
+    flowcellNode = URIRef(flowcell)
+    flowcell = str(flowcell)
     lane_body = """
     prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -494,8 +493,7 @@ def guess_library_from_model(model, base_url, flowcell, lane_id):
     tries = 3
     while len(lanes) == 0 and tries > 0:
         tries -= 1
-        lane_query = RDF.SPARQLQuery(lane_body)
-        lanes = [ l for l in lane_query.execute(model)]
+        lanes = [ l for l in model.query(lane_body)]
         if len(lanes) > 1:
             # CONFUSED!
             errmsg = "Too many libraries for flowcell {flowcell} "\
@@ -509,4 +507,4 @@ def guess_library_from_model(model, base_url, flowcell, lane_id):
             return lanes[0]['library']
         else:
             # try grabbing data
-            model.load(flowcellNode.uri, name="rdfa")
+            model.parse(source=flowcellNode, format='rdfa')
