@@ -8,6 +8,8 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase, RequestFactory
 from django.utils.encoding import smart_text, smart_str, smart_bytes
 
+from rdflib import ConjunctiveGraph, Graph
+
 from .models import Affiliation, ExperimentType, Species, Library
 from .views import library_dict
 from .samples_factory import (
@@ -20,22 +22,9 @@ from htsworkflow.auth import apidata
 from htsworkflow.util.conversion import str_or_none
 from htsworkflow.util.ethelp import validate_xhtml
 
-try:
-    import RDF
-    HAVE_RDF = True
-
-    rdfNS = RDF.NS("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-    xsdNS = RDF.NS("http://www.w3.org/2001/XMLSchema#")
-    libNS = RDF.NS("http://jumpgate.caltech.edu/wiki/LibraryOntology#")
-
-    from htsworkflow.util.rdfhelp import get_model, \
-        add_default_schemas, \
-        fromTypedNode, \
-        load_string_into_model
-    from htsworkflow.util.rdfinfer import Infer
-except ImportError as e:
-    HAVE_RDF = False
-
+from htsworkflow.util.rdfhelp import add_default_schemas
+from htsworkflow.util.rdfinfer import Infer
+from htsworkflow.util.rdfns import libraryOntology
 
 class LibraryAccessionTestCase(TestCase):
     def test_validator(self):
@@ -57,15 +46,14 @@ class LibraryAccessionTestCase(TestCase):
         self.assertEquals(acc.url[len(acc.agency.homepage):],
                           '/library/'+acc.accession)
 
-    @skipUnless(HAVE_RDF, "No RDF Support")
     def test_have_accession(self):
         library = LibraryFactory()
         acc = LibraryAccessionFactory(library_id=library.id)
         lib_response = self.client.get(library.get_absolute_url())
         lib_content = smart_text(lib_response.content)
 
-        model = get_model()
-        load_string_into_model(model, 'rdfa', lib_content)
+        model = Graph()
+        model.parse(data=lib_content, format='rdfa')
 
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
@@ -74,9 +62,8 @@ class LibraryAccessionTestCase(TestCase):
         where {
            ?library libns:accession ?accession
         }"""
-        query = RDF.SPARQLQuery(body)
         accessions = []
-        for row in query.execute(model):
+        for row in model.query(body):
             accessions.append(str(row['accession']))
         self.assertEqual(len(accessions), 1)
         self.assertEqual(accessions[0], acc.url)
@@ -203,15 +190,14 @@ class SampleWebTestCase(TestCase):
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 403)
 
-    @skipUnless(HAVE_RDF, "No RDF Support")
     def test_library_rdf(self):
         library = LibraryFactory.create()
 
-        model = get_model()
+        model = ConjunctiveGraph()
 
         response = self.client.get(library.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-        load_string_into_model(model, 'rdfa', smart_text(response.content))
+        model.parse(data=smart_text(response.content), format='rdfa')
 
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
@@ -224,8 +210,7 @@ class SampleWebTestCase(TestCase):
                     libns:gel_cut ?gel_cut ;
                     libns:made_by ?made_by
         }"""
-        query = RDF.SPARQLQuery(body)
-        for r in query.execute(model):
+        for r in model.query(body):
             self.assertEqual(fromTypedNode(r['library_id']),
                              library.id)
             self.assertEqual(fromTypedNode(r['name']),
@@ -245,15 +230,14 @@ class SampleWebTestCase(TestCase):
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
 
-    @skipUnless(HAVE_RDF, "No RDF Support")
     def test_library_index_rdfa(self):
-        model = get_model()
+        model = ConjunctiveGraph()
         add_default_schemas(model)
         inference = Infer(model)
 
         response = self.client.get('/library/')
         self.assertEqual(response.status_code, 200)
-        load_string_into_model(model, 'rdfa', smart_text(response.content))
+        model.parse(data=smart_text(response.content), format='rdfa')
 
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
@@ -270,9 +254,8 @@ class SampleWebTestCase(TestCase):
            OPTIONAL { ?library libns:name ?name . }
         }"""
         bindings = set(['library', 'library_id', 'name', 'species', 'species_name'])
-        query = RDF.SPARQLQuery(body)
         count = 0
-        for r in query.execute(model):
+        for r in model.query(body):
             count += 1
             for name, value in r.items():
                 self.assertTrue(name in bindings)
@@ -322,16 +305,12 @@ def create_db(obj):
     )
     obj.library_10002.save()
 
-@skipUnless(HAVE_RDF, "No RDF Support")
 class TestRDFaLibrary(TestCase):
-
     def setUp(self):
         self.request = RequestFactory()
 
     def test_parse_rdfa(self):
-
-        model = get_rdf_memory_model()
-        parser = RDF.Parser(name='rdfa')
+        model = Graph()
 
         bob = AffiliationFactory.create(name='Bob')
 
@@ -346,52 +325,43 @@ class TestRDFaLibrary(TestCase):
         with open('/tmp/body.html', 'wt') as outstream:
             outstream.write(lib_body)
 
-        parser.parse_string_into_model(model,
-                                       lib_body,
-                                       'http://localhost'+url)
+        model.parse(data=lib_body, format='rdfa', publicID='http://localhost'+url)
+
         # help debugging rdf errrors
         #with open('/tmp/test.ttl', 'w') as outstream:
         #    dump_model(model, outstream)
         # http://jumpgate.caltech.edu/wiki/LibraryOntology#affiliation>
-        self.check_literal_object(model, ['Bob'], p=libNS['affiliation'])
+        self.check_literal_object(model, ['Bob'], p=libraryOntology['affiliation'])
         self.check_literal_object(model,
                                   ['experiment type name'],
-                                  p=libNS['experiment_type'])
-        self.check_literal_object(model, ['400'], p=libNS['gel_cut'])
+                                  p=libraryOntology['experiment_type'])
+        self.check_literal_object(model, [400], p=libraryOntology['gel_cut'])
         self.check_literal_object(model,
                                   ['microfluidics bot 7321'],
-                                  p=libNS['made_by'])
+                                  p=libraryOntology['made_by'])
         self.check_literal_object(model,
                                   [lib_object.library_name],
-                                  p=libNS['name'])
+                                  p=libraryOntology['name'])
         self.check_literal_object(model,
                                   [lib_object.library_species.scientific_name],
-                                  p=libNS['species_name'])
+                                  p=libraryOntology['species_name'])
 
 
     def check_literal_object(self, model, values, s=None, p=None, o=None):
-        statements = list(model.find_statements(
-            RDF.Statement(s,p,o)))
+        statements = list(model.triples((s,p,o)))
         self.failUnlessEqual(len(statements), len(values),
                         "Couln't find %s %s %s" % (s,p,o))
-        for s in statements:
-            self.failUnless(s.object.literal_value['string'] in values)
-
+        for stmt in statements:
+            obj = stmt[2]
+            self.assertIn(obj.value, values)
 
     def check_uri_object(self, model, values, s=None, p=None, o=None):
-        statements = list(model.find_statements(
-            RDF.Statement(s,p,o)))
+        statements = list(model.triples((s,p,o)))
         self.failUnlessEqual(len(statements), len(values),
                         "Couln't find %s %s %s" % (s,p,o))
-        for s in statements:
-            self.failUnless(str(s.object.uri) in values)
-
-
-
-def get_rdf_memory_model():
-    storage = RDF.MemoryStorage()
-    model = RDF.Model(storage)
-    return model
+        for stmt in statements:
+            subject = stmt[0]
+            self.assertIn(str(subject.value), values)
 
 def suite():
     from unittest import TestSuite, defaultTestLoader
