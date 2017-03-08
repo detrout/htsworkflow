@@ -316,9 +316,9 @@ def add_default_namespaces(model):
 def get_turtle_header():
     """Return a turtle header with our typical namespaces
     """
-    empty = get_model()
-    add_default_namespaces(model)
-    return model.serialize(format='turtle')
+    empty = ConjunctiveGraph()
+    add_default_namespaces(empty)
+    return empty.serialize(format='turtle').decode()
 
 def dump_model(model, destination=None):
     if destination is None:
