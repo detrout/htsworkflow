@@ -1,6 +1,6 @@
 """Helper features for working with librdf
 """
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import collections
 from datetime import datetime
@@ -18,6 +18,8 @@ from rdflib.namespace import ClosedNamespace
 
 import lxml.html
 import lxml.html.clean
+
+from .rdfns import XMLNS
 
 logger = logging.getLogger(__name__)
 
@@ -298,7 +300,7 @@ def add_default_namespaces(model):
     model.bind('rdfs', RDFS)
     model.bind('owl', OWL)
     model.bind('dc', DC)
-    model.bind('xml', XML)
+    model.bind('xml', XMLNS)
     model.bind('xsd', XSD)
     model.bind('vs', VS)
     model.bind('wot', WOT)
