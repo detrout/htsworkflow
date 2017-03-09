@@ -82,7 +82,6 @@ required         no
 
 class TestDAF(TestCase):
     def test_parse(self):
-
         parsed = daf.fromstring(test_daf)
 
         self.failUnlessEqual(parsed['assembly'], 'mm9')
@@ -95,7 +94,6 @@ class TestDAF(TestCase):
         self.failUnlessEqual(signal['required'], False)
         self.failUnlessEqual(signal['longLabelPrefix'],
                              'Caltech Histone Signal')
-
 
     def test_rdf(self):
 
@@ -143,13 +141,13 @@ def load_daf_mapper(name, extra_statements=None, ns=None, test_daf=test_daf):
     """
     model = Graph()
     if ns is None:
-        ns="http://extra"
+        ns = "http://extra"
 
     if extra_statements is not None:
         model.parse(data=extra_statements, format='turtle', publicID=ns)
 
     test_daf_stream = StringIO(test_daf)
-    mapper = daf.UCSCSubmission(name, daf_file = test_daf_stream, model=model)
+    mapper = daf.UCSCSubmission(name, daf_file=test_daf_stream, model=model)
     return mapper
 
 
@@ -187,14 +185,14 @@ class TestUCSCSubmission(TestCase):
 thisView:Signal dafTerm:filename_re ".*\\\\.bam" .
 thisView:FastqRd1 dafTerm:filename_re ".*_r1\\\\.fastq" .
 '''.format(name)
-        daf_mapper = load_daf_mapper(name, extra_statements = extra)
+        daf_mapper = load_daf_mapper(name, extra_statements=extra)
 
         view = daf_mapper.find_view('filename_r1.fastq')
 
         view_root = 'http://jumpgate.caltech.edu/wiki/SubmissionsLog/{0}/view/'
         view_root = view_root.format(name)
         self.failUnlessEqual(str(view),
-                             '{0}{1}'.format(view_root,'FastqRd1'))
+                             '{0}{1}'.format(view_root, 'FastqRd1'))
 
     def test_find_overlapping_view(self):
         name = 'testfind'
@@ -204,7 +202,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*_r1\\\\.fastq" .
 thisView:fastq dafTerm:filename_re ".*\\\\.fastq" .
 thisView:FastqRd1 dafTerm:filename_re ".*_r1\\\\.fastq" .
 '''.format(name)
-        daf_mapper = load_daf_mapper(name, extra_statements = extra)
+        daf_mapper = load_daf_mapper(name, extra_statements=extra)
 
         self.failUnlessRaises(daf.ModelException,
                               daf_mapper.find_view,
@@ -256,14 +254,13 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         self.assertEqual(len(views), 1)
         self.failUnlessEqual(str(views[0]), view_name)
 
-
     def test_library_url(self):
         daf_mapper = load_daf_mapper('urltest')
 
         self.failUnlessEqual(daf_mapper.library_url,
                              'http://jumpgate.caltech.edu/library/')
         daf_mapper.library_url = 'http://google.com'
-        self.failUnlessEqual(daf_mapper.library_url, 'http://google.com' )
+        self.failUnlessEqual(daf_mapper.library_url, 'http://google.com')
 
     def test_daf_with_replicate(self):
         daf_mapper = load_daf_mapper('test_rep')
@@ -271,18 +268,17 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         self.failUnless('replicate' in daf_mapper.get_daf_variables())
 
     def test_daf_without_replicate(self):
-        daf_mapper = load_daf_mapper('test_rep',test_daf=test_daf_no_rep)
+        daf_mapper = load_daf_mapper('test_rep', test_daf=test_daf_no_rep)
         self.failUnlessEqual(daf_mapper.need_replicate(), False)
         self.failUnless('replicate' not in daf_mapper.get_daf_variables())
 
     def test_daf_with_extra(self):
-        daf_mapper = load_daf_mapper('test_rep',test_daf=test_daf_extra)
+        daf_mapper = load_daf_mapper('test_rep', test_daf=test_daf_extra)
         variables = daf_mapper.get_daf_variables()
 
         self.assertEqual(len(variables), 11)
         self.failUnless('treatment' in variables)
         self.failUnless('controlId' in variables)
-
 
     def test_link_daf(self):
         name = 'testsub'
@@ -297,7 +293,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         # make sure daf gets linked
         created_daf = os.path.join(result_dir, name+'.daf')
         self.failUnless(os.path.exists(created_daf))
-        stream = open(created_daf,'r')
+        stream = open(created_daf, 'r')
         daf_body = stream.read()
         stream.close()
 
