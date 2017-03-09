@@ -16,7 +16,7 @@ from django.conf import settings
 from htsworkflow.submission.condorfastq import CondorFastqExtract
 from htsworkflow.submission.results import ResultMap
 from htsworkflow.util.rdfhelp import \
-     add_default_schemas, load_string_into_model, dump_model
+     add_default_schemas, dump_model
 from htsworkflow.util.rdfinfer import Infer
 
 FCDIRS = [
@@ -446,7 +446,7 @@ class TestCondorFastq(TestCase):
         self.extract = CondorFastqExtract(HOST,
                                           self.flowcelldir,
                                           self.logdir)
-        load_string_into_model(self.extract.model, 'turtle', lib_turtle)
+        self.extract.model.parse(data=lib_turtle, format='turtle')
         add_default_schemas(self.extract.model)
         inference = Infer(self.extract.model)
         errmsgs = list(inference.run_validation())
@@ -470,21 +470,21 @@ class TestCondorFastq(TestCase):
         seqs = self.extract.find_archive_sequence_files(self.result_map)
 
         expected = set([
-            (u'11154', u'42JUYAAXX', '5', 1, 76, True, 'qseq'),
-            (u'11154', u'42JUYAAXX', '5', 2, 76, True, 'qseq'),
-            (u'11154', u'61MJTAAXX', '6', 1, 76, False, 'qseq'),
-            (u'11154', u'C02F9ACXX', '3', 2, 202, True, 'split_fastq'),
-            (u'11154', u'C02F9ACXX', '3', 1, 202, True, 'split_fastq'),
-            (u'11154', u'C02F9ACXX', '3', 1, 202, True, 'split_fastq'),
-            (u'11154', u'C02F9ACXX', '3', 2, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', '3', 1, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', '3', 2, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', '3', 2, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', '3', 1, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', '3', 1, 202, True, 'split_fastq'),
-            (u'12345', u'C02F9ACXX', '3', 2, 202, True, 'split_fastq'),
-            (u'11154', u'30221AAXX', '4', 1, 33, False, 'srf'),
-            (u'11154', u'30DY0AAXX', '8', 1, 151, True, 'srf')
+            (u'11154', u'42JUYAAXX', u'5', 1, 76, True, 'qseq'),
+            (u'11154', u'42JUYAAXX', u'5', 2, 76, True, 'qseq'),
+            (u'11154', u'61MJTAAXX', u'6', 1, 76, False, 'qseq'),
+            (u'11154', u'C02F9ACXX', u'3', 2, 202, True, 'split_fastq'),
+            (u'11154', u'C02F9ACXX', u'3', 1, 202, True, 'split_fastq'),
+            (u'11154', u'C02F9ACXX', u'3', 1, 202, True, 'split_fastq'),
+            (u'11154', u'C02F9ACXX', u'3', 2, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', u'3', 1, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', u'3', 2, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', u'3', 2, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', u'3', 1, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', u'3', 1, 202, True, 'split_fastq'),
+            (u'12345', u'C02F9ACXX', u'3', 2, 202, True, 'split_fastq'),
+            (u'11154', u'30221AAXX', u'4', 1, 33, False, 'srf'),
+            (u'11154', u'30DY0AAXX', u'8', 1, 151, True, 'srf')
         ])
         found = set([(l.library_id, l.flowcell_id, l.lane_number, l.read, l.cycle, l.ispaired, l.filetype) for l in seqs])
         self.assertEqual(expected, found)
