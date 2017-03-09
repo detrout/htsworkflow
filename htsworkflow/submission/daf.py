@@ -10,19 +10,16 @@ from six.moves import StringIO
 import types
 from six.moves import urllib
 
-import RDF
-from htsworkflow.util.rdfhelp import \
-     blankOrUri, \
-     dafTermOntology, \
-     dump_model, \
-     get_model, \
-     libraryOntology, \
-     owlNS, \
-     rdfNS, \
-     submissionLog, \
-     submissionOntology, \
-     toTypedNode, \
-     fromTypedNode
+from rdflib import Graph, Literal, Namespace, URIRef
+from rdflib.namespace import OWL, RDF
+
+from htsworkflow.util.rdfns import (
+    libraryOntology,
+    submissionLog,
+    submissionOntology
+)
+from htsworkflow.util.rdfhelp import dump_model
+from htsworkflow.util.rdfns import dafTermOntology
 from htsworkflow.util.hashfile import make_md5sum
 
 LOGGER = logging.getLogger(__name__)
@@ -181,12 +178,12 @@ def convert_to_rdf_statements(attributes, subject):
                                                    attributes[daf_key]))
         elif daf_key in DAF_VARIABLE_NAMES:
             for var in attributes.get(daf_key, []):
-                obj = toTypedNode(var)
-                statements.append(RDF.Statement(subject, variables_term, obj))
+                obj = Literal(var)
+                statements.append((subject, variables_term, obj))
         else:
             value = attributes[daf_key]
-            obj = toTypedNode(value)
-            statements.append(RDF.Statement(subject, predicate, obj))
+            obj = Literal(value)
+            statements.append((subject, predicate, obj))
 
     return statements
 
@@ -200,13 +197,12 @@ def _views_to_statements(subject, dafNS, views):
     for view_name in views:
         view_attributes = views[view_name]
         viewSubject = viewNS[view_name]
-        statements.append(RDF.Statement(subject, dafNS['views'], viewSubject))
-        statements.append(
-            RDF.Statement(viewSubject, dafNS['name'], toTypedNode(view_name)))
+        statements.append((subject, dafNS['views'], viewSubject))
+        statements.append((viewSubject, dafNS['name'], Literal(view_name)))
         for view_attribute_name in view_attributes:
             predicate = dafNS[view_attribute_name]
-            obj = toTypedNode(view_attributes[view_attribute_name])
-            statements.append(RDF.Statement(viewSubject, predicate, obj))
+            obj = Literal(view_attributes[view_attribute_name])
+            statements.append((viewSubject, predicate, obj))
 
         #statements.extend(convert_to_rdf_statements(view, viewNode))
     return statements
@@ -214,17 +210,15 @@ def _views_to_statements(subject, dafNS, views):
 
 def add_to_model(model, attributes, subject):
     for statement in convert_to_rdf_statements(attributes, subject):
-        model.add_statement(statement)
+        model.add(statement)
 
 
 def get_submission_uri(name):
-    return submissionLog[name].uri
+    return submissionLog[name]
 
 
 def submission_uri_to_string(submission_uri):
-    if isinstance(submission_uri, RDF.Node):
-        submission_uri = str(submission_uri.uri)
-    elif isinstance(submission_uri, RDF.Uri):
+    if isinstance(submission_uri, (Literal, URIRef)):
         submission_uri = str(submission_uri)
     if submission_uri[-1] != '/':
         submission_uri += '/'
@@ -234,7 +228,7 @@ def submission_uri_to_string(submission_uri):
 def get_view_namespace(submission_uri):
     submission_uri = submission_uri_to_string(submission_uri)
     view_uri = urllib.parse.urljoin(submission_uri, 'view/')
-    viewNS = RDF.NS(view_uri)
+    viewNS = Namespace(view_uri)
     return viewNS
 
 
@@ -277,8 +271,8 @@ class UCSCSubmission(object):
 
         fromstring_into_model(self.model, self.submissionSet, self.daf)
 
-        self.libraryNS = RDF.NS('http://jumpgate.caltech.edu/library/')
-        self.submissionSetNS = RDF.NS(str(self.submissionSet) + '/')
+        self.libraryNS = Namespace('http://jumpgate.caltech.edu/library/')
+        self.submissionSetNS = Namespace(str(self.submissionSet) + '/')
         self.__view_map = None
 
     def _get_daf_name(self):
@@ -288,11 +282,11 @@ class UCSCSubmission(object):
     def add_pattern(self, view_name, filename_pattern):
         """Map a filename regular expression to a view name
         """
-        obj = toTypedNode(filename_pattern)
-        self.model.add_statement(
-            RDF.Statement(self.viewNS[view_name],
-                          dafTermOntology['filename_re'],
-                          obj))
+        obj = Literal(filename_pattern)
+        self.model.add(
+            (self.viewNS[view_name],
+             dafTermOntology['filename_re'],
+             obj))
 
     def scan_submission_dirs(self, result_map):
         """Examine files in our result directory
@@ -335,48 +329,42 @@ class UCSCSubmission(object):
 
         submission_name = self.make_submission_name(submission_dir)
         submissionNode = self.get_submission_node(submission_dir)
-        submission_uri = str(submissionNode.uri)
-        view_name = fromTypedNode(self.model.get_target(view,
-                                       dafTermOntology['name']))
-        if view_name is None:
+        submission_uri = str(submissionNode)
+        view_name = list(self.model.objects(view, dafTermOntology['name']))
+        if len(view_name) == 0:
             errmsg = 'Could not find view name for {0}'
             LOGGER.warning(errmsg.format(str(view)))
             return
 
-        view_name = str(view_name)
-        submissionView = RDF.Node(RDF.Uri(submission_uri + '/' + view_name))
+        view_name = str(view_name[0])
+        submissionView = URIRef(submission_uri + '/' + view_name)
 
-        self.model.add_statement(
-            RDF.Statement(self.submissionSet,
-                          dafTermOntology['has_submission'],
-                          submissionNode))
+        self.model.add((self.submissionSet,
+                        dafTermOntology['has_submission'],
+                        submissionNode))
         LOGGER.debug("Adding statements to {0}".format(str(submissionNode)))
-        self.model.add_statement(RDF.Statement(submissionNode,
-                                               submissionOntology['has_view'],
-                                               submissionView))
-        self.model.add_statement(RDF.Statement(submissionNode,
-                                               submissionOntology['name'],
-                                               toTypedNode(submission_name)))
-        self.model.add_statement(
-            RDF.Statement(submissionNode,
-                          rdfNS['type'],
-                          submissionOntology['submission']))
-        self.model.add_statement(RDF.Statement(submissionNode,
-                                               libraryOntology['library'],
-                                               libNode))
+        self.model.add((submissionNode,
+                        submissionOntology['has_view'],
+                        submissionView))
+        self.model.add((submissionNode,
+                        submissionOntology['name'],
+                        Literal(submission_name)))
+        self.model.add((submissionNode,
+                        RDF['type'],
+                        submissionOntology['submission']))
+        self.model.add((submissionNode,
+                        libraryOntology['library'],
+                        libNode))
 
         LOGGER.debug("Adding statements to {0}".format(str(submissionView)))
         # add track specific information
-        self.model.add_statement(
-            RDF.Statement(submissionView, dafTermOntology['view'], view))
-        self.model.add_statement(
-            RDF.Statement(submissionView,
-                          dafTermOntology['paired'],
-                          toTypedNode(self._is_paired(libNode))))
-        self.model.add_statement(
-            RDF.Statement(submissionView,
-                          dafTermOntology['submission'],
-                          submissionNode))
+        self.model.add((submissionView, dafTermOntology['view'], view))
+        self.model.add((submissionView,
+                        dafTermOntology['paired'],
+                        Literal(self._is_paired(libNode))))
+        self.model.add((submissionView,
+                        dafTermOntology['submission'],
+                        submissionNode))
 
         # add file specific information
         self.create_file_attributes(filename, submissionView, submission_uri, submission_dir)
@@ -387,32 +375,29 @@ class UCSCSubmission(object):
         # add file specific information
         LOGGER.debug("Updating file md5sum")
         submission_pathname = os.path.join(submission_dir, filename)
-        fileNode = RDF.Node(RDF.Uri("file://" + submission_pathname))
-        self.model.add_statement(
-            RDF.Statement(submissionView,
-                          dafTermOntology['has_file'],
-                          fileNode))
-        self.model.add_statement(
-            RDF.Statement(fileNode,
-                          dafTermOntology['filename'],
-                          filename))
+        fileNode = URIRef("file://" + submission_pathname)
+        self.model.add((submissionView,
+                        dafTermOntology['has_file'],
+                        fileNode))
+        self.model.add((fileNode,
+                        dafTermOntology['filename'],
+                        Literal(filename)))
 
         md5 = make_md5sum(submission_pathname)
         if md5 is None:
             errmsg = "Unable to produce md5sum for {0}"
             LOGGER.warning(errmsg.format(submission_pathname))
         else:
-            self.model.add_statement(
-                RDF.Statement(fileNode, dafTermOntology['md5sum'], md5))
+            self.model.add((fileNode, dafTermOntology['md5sum'], Literal(md5)))
 
     def _add_library_details_to_model(self, libNode):
-        parser = RDF.Parser(name='rdfa')
-        new_statements = parser.parse_as_stream(libNode.uri)
-        for s in new_statements:
+        tmpmodel = Graph()
+        tmpmodel.parse(source=libNode, format='rdfa')
+        for s in tmpmodel:
             # don't override things we already have in the model
-            targets = list(self.model.get_targets(s.subject, s.predicate))
+            targets = list(self.model.objects(s[0], s[1]))
             if len(targets) == 0:
-                self.model.append(s)
+                self.model.add(s)
 
     def get_daf_variables(self):
         """Returns simple variables names that to include in the ddf
@@ -424,8 +409,8 @@ class UCSCSubmission(object):
         if self.need_replicate() and 'replicate' not in results:
             results.append('replicate')
 
-        for obj in self.model.get_targets(self.submissionSet, variables_term):
-            value = str(fromTypedNode(obj))
+        for obj in self.model.objects(self.submissionSet, variables_term):
+            value = obj.toPython()
             if value not in results:
                 results.append(value)
         results.extend([v for v in DAF_POST_VARIABLES if v not in results])
@@ -446,10 +431,10 @@ class UCSCSubmission(object):
         return self.submissionSetNS[submission_name]
 
     def _get_library_attribute(self, libNode, attribute):
-        if not isinstance(attribute, RDF.Node):
+        if not isinstance(attribute, (Literal, URIRef)):
             attribute = libraryOntology[attribute]
 
-        targets = list(self.model.get_targets(libNode, attribute))
+        targets = list(self.model.objects(libNode, attribute))
         if len(targets) > 0:
             return self._format_library_attribute(targets)
         else:
@@ -462,7 +447,7 @@ class UCSCSubmission(object):
         # we don't know anything about this attribute
         self._add_library_details_to_model(libNode)
 
-        targets = list(self.model.get_targets(libNode, attribute))
+        targets = list(self.model.objects(libNode, attribute))
         if len(targets) > 0:
             return self._format_library_attribute(targets)
 
@@ -472,15 +457,15 @@ class UCSCSubmission(object):
         if len(targets) == 0:
             return None
         elif len(targets) == 1:
-            return fromTypedNode(targets[0])
+            return targets[0].toPython()
         elif len(targets) > 1:
-            return [fromTypedNode(t) for t in targets]
+            return [t.toPython() for t in targets]
 
     def _search_same_as(self, subject, predicate):
         # look for alternate names
-        other_predicates = self.model.get_targets(predicate, owlNS['sameAs'])
+        other_predicates = self.model.objects(predicate, OWL['sameAs'])
         for other in other_predicates:
-            targets = list(self.model.get_targets(subject, other))
+            targets = list(self.model.objects(subject, other))
             if len(targets) > 0:
                 return targets
         return None
@@ -508,9 +493,9 @@ class UCSCSubmission(object):
 
     def get_view_name(self, view):
         view_term = submissionOntology['view_name']
-        names = list(self.model.get_targets(view, view_term))
+        names = list(self.model.objects(view, view_term))
         if len(names) == 1:
-            return fromTypedNode(names[0])
+            return names[0].toPython()
         else:
             msg = "Found wrong number of view names for {0} len = {1}"
             msg = msg.format(str(view), len(names))
@@ -522,13 +507,12 @@ class UCSCSubmission(object):
 
         return a dictionary of compiled regular expressions to view names
         """
-        filename_query = RDF.Statement(
-            None, dafTermOntology['filename_re'], None)
+        filename_query = (None, dafTermOntology['filename_re'], None)
 
         patterns = {}
-        for s in self.model.find_statements(filename_query):
-            view_name = s.subject
-            literal_re = s.object.literal_value['string']
+        for s in self.model.triples(filename_query):
+            view_name = s[0]
+            literal_re = s[2].value
             LOGGER.debug("Found: %s" % (literal_re,))
             try:
                 filename_re = re.compile(literal_re)
@@ -538,10 +522,10 @@ class UCSCSubmission(object):
         return patterns
 
     def _get_library_url(self):
-        return str(self.libraryNS[''].uri)
+        return str(self.libraryNS[''])
 
     def _set_library_url(self, value):
-        self.libraryNS = RDF.NS(str(value))
+        self.libraryNS = Namespace(str(value))
 
     library_url = property(_get_library_url, _set_library_url)
 
@@ -572,11 +556,10 @@ class UCSCSubmission(object):
         viewTerm = dafTermOntology['views']
         replicateTerm = dafTermOntology['hasReplicates']
 
-        views = self.model.get_targets(self.submissionSet, viewTerm)
-
+        views = self.model.objects(self.submissionSet, viewTerm)
         for view in views:
-            replicate = self.model.get_target(view, replicateTerm)
-            if fromTypedNode(replicate):
+            replicate = list(self.model.objects(view, replicateTerm))
+            if len(replicate) > 0 and replicate[0].toPython():
                 return True
 
         return False
