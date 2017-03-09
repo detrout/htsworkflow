@@ -18,19 +18,12 @@ import time
 import types
 from zipfile import ZipFile
 
-import RDF
-
 if not 'DJANGO_SETTINGS_MODULE' in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
 
 from htsworkflow.util import api
-from htsworkflow.util.rdfhelp import \
+from htsworkflow.util.rdfns import \
      dafTermOntology, \
-     fromTypedNode, \
-     get_model, \
-     get_serializer, \
-     load_into_model, \
-     sparql_query, \
      submissionOntology
 from htsworkflow.submission.daf import \
      UCSCSubmission, \
@@ -229,12 +222,12 @@ WHERE {
 ORDER BY  ?submitView"""
     dag_fragments = []
 
-    name = fromTypedNode(view_map.model.get_target(submissionNode, submissionOntology['name']))
-    if name is None:
+    names = list(view_map.model.objects(submissionNode, submissionOntology['name']))
+    if len(names) == 0:
         logger.error("Need name for %s" % (str(submissionNode)))
         return []
 
-    ddf_name = make_ddf_name(name)
+    ddf_name = make_ddf_name(names[0].toPython())
     if outdir is not None:
         outfile = os.path.join(outdir, ddf_name)
         output = open(outfile,'w')
@@ -244,8 +237,7 @@ ORDER BY  ?submitView"""
 
     formatted_query = query_template % {'submission': str(submissionNode.uri)}
 
-    query = RDF.SPARQLQuery(formatted_query)
-    results = query.execute(view_map.model)
+    results = view_map.model.query(formatted_query)
 
     # filename goes first
     variables = view_map.get_daf_variables()
@@ -302,12 +294,12 @@ def zip_ddfs(view_map, library_result_map, daf_name):
     rootdir = os.getcwd()
     for lib_id, result_dir in library_result_map:
         submissionNode = view_map.get_submission_node(result_dir)
-        nameNode = view_map.model.get_target(submissionNode,
-                                             submissionOntology['name'])
-        name = fromTypedNode(nameNode)
-        if name is None:
+        nameNodes = list(view_map.model.objects(submissionNode,
+                                                submissionOntology['name']))
+        if len(nameNodes) == 0:
             logger.error("Need name for %s" % (str(submissionNode)))
             continue
+        name = nameNodes[0].toPython()
 
         zip_name = '../{0}.zip'.format(lib_id)
         os.chdir(os.path.join(rootdir, result_dir))
