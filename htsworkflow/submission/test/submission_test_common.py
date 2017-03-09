@@ -1,11 +1,10 @@
 """Code shared between test cases.
 """
-import RDF
 import logging
 import os
 import tempfile
-import htsworkflow.util.rdfhelp
 
+from htsworkflow.util.rdfhelp import get_turtle_header
 S1_NAME = '1000-sample'
 S2_NAME = '2000-sample'
 SCOMBINED_NAME = 'directory'
@@ -28,7 +27,7 @@ SCOMBINED_FILES = [
     os.path.join(SCOMBINED_NAME, 's2_l4.read2.fastq'),
 ]
 
-TURTLE_PREFIX = htsworkflow.util.rdfhelp.get_turtle_header()
+TURTLE_PREFIX = get_turtle_header()
 
 S1_TURTLE = TURTLE_PREFIX + """
 <http://localhost/library/1000/>
@@ -67,13 +66,12 @@ class MockAddDetails(object):
             self.add_turtle(turtle)
 
     def add_turtle(self, turtle):
-        parser = RDF.Parser('turtle')
-        parser.parse_string_into_model(self.model, turtle, "http://localhost")
+        self.model.parse(data=turtle, format='turtle', publicID="http://localhost")
 
     def __call__(self, libNode):
-        q = RDF.Statement(libNode, None, None)
+        q = (libNode, None, None)
         found = False
-        for s in self.model.find_statements(q):
+        for s in self.model.triples(q):
             found = True
             break
         assert found
