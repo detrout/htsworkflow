@@ -3,11 +3,11 @@ import os
 import shutil
 from unittest import TestCase, TestSuite, defaultTestLoader
 
+from rdflib import Graph, Namespace
+
 from htsworkflow.util.rdfhelp import \
      dafTermOntology, \
-     get_turtle_header, \
-     load_string_into_model, \
-     get_model
+     get_turtle_header
 from htsworkflow.submission.submission import list_submissions, Submission
 from htsworkflow.submission.results import ResultMap
 from .submission_test_common import  (
@@ -19,34 +19,31 @@ from .submission_test_common import  (
     MockAddDetails,
 )
 
-import RDF
 #import logging
 #logging.basicConfig(level=logging.DEBUG)
 
 class TestSubmissionModule(TestCase):
     def test_empty_list_submission(self):
-        model = get_model()
+        model = Graph()
         self.assertEqual(len(list(list_submissions(model))), 0)
 
     def test_one_submission(self):
-        model = get_model()
-        load_string_into_model(model, "turtle",
-            """
+        model = Graph()
+        model.parse(data="""
             @prefix subns: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#> .
             @prefix test: <http://jumpgate.caltech.edu/wiki/SubmissionsLog/test#> .
 
             <http://jumpgate.caltech.edu/wiki/SubmissionsLog/test#>
                subns:has_submission test:lib1 ;
                subns:has_submission test:lib2.
-            """)
+            """, format='turtle')
         submissions = list(list_submissions(model))
         self.assertEqual(len(submissions), 1)
         self.assertEqual(submissions[0], "test")
 
     def test_two_submission(self):
-        model = get_model()
-        load_string_into_model(model, "turtle",
-            """
+        model = Graph()
+        model.parse(data="""
             @prefix subns: <http://jumpgate.caltech.edu/wiki/UcscSubmissionOntology#> .
             @prefix test: <http://jumpgate.caltech.edu/wiki/SubmissionsLog/test#> .
 
@@ -54,7 +51,7 @@ class TestSubmissionModule(TestCase):
                subns:has_submission test:lib1 .
             <http://jumpgate.caltech.edu/wiki/SubmissionsLog/test2#>
                subns:has_submission test:lib2 .
-            """)
+            """, format="turtle")
         submissions = list(list_submissions(model))
         self.assertEqual(len(submissions), 2)
         truth = set(["test1", "test2"])
@@ -66,7 +63,7 @@ class TestSubmissionModule(TestCase):
 class TestSubmission(TestCase):
     def setUp(self):
         generate_sample_results_tree(self, 'submission_test')
-        self.model = get_model()
+        self.model = Graph()
 
     def tearDown(self):
         shutil.rmtree(self.tempdir)
@@ -76,12 +73,12 @@ class TestSubmission(TestCase):
         self.assertEqual(str(s.submissionSet),
                          "http://jumpgate.caltech.edu/wiki/SubmissionsLog/foo")
         self.assertEqual(str(s.submissionSetNS['']),
-                         str(RDF.NS(str(s.submissionSet) + '#')['']))
+                         str(Namespace(str(s.submissionSet) + '#')['']))
         self.assertEqual(str(s.libraryNS['']),
-                         str(RDF.NS('http://localhost/library/')['']))
+                         str(Namespace('http://localhost/library/')['']))
 
     def test_scan_submission_dirs(self):
-        turtle = get_turtle_header() + """
+        turtle = get_turtle_header() + r"""
 @prefix thisView: <http://jumpgate.caltech.edu/wiki/SubmissionsLog/test/view/> .
 thisView:Fastq ucscDaf:filename_re ".*[^12]\\.fastq$" ;
                a geoSoft:raw ;
@@ -101,18 +98,18 @@ thisView:alignments ucscDaf:filename_re ".*\\.bam$" ;
                ucscDaf:output_type "alignments" .
 
         """
-        map = ResultMap()
-        map['1000'] = os.path.join(self.sourcedir, S1_NAME)
-        map['2000'] = os.path.join(self.sourcedir, S2_NAME)
+        resultmap = ResultMap()
+        resultmap['1000'] = os.path.join(self.sourcedir, S1_NAME)
+        resultmap['2000'] = os.path.join(self.sourcedir, S2_NAME)
 
         s = Submission('foo', self.model, 'http://localhost')
         mock = MockAddDetails(self.model, turtle)
         mock.add_turtle(S1_TURTLE)
         mock.add_turtle(S2_TURTLE)
-        s._add_library_details_to_model =  mock
-        s.scan_submission_dirs(map)
+        #s._add_library_details_to_model(mock)
+        s.scan_submission_dirs(resultmap)
 
-        nodes = list(s.analysis_nodes(map))
+        nodes = list(s.analysis_nodes(resultmap))
         self.assertEqual(len(nodes), 2)
         expected = set((
             'http://jumpgate.caltech.edu/wiki/SubmissionsLog/foo#1000-sample',
@@ -122,7 +119,7 @@ thisView:alignments ucscDaf:filename_re ".*\\.bam$" ;
         self.assertEqual(expected, got)
 
     def test_find_best_match(self):
-        turtle = get_turtle_header() + """
+        turtle = get_turtle_header() + r"""
 @prefix thisView: <http://jumpgate.caltech.edu/wiki/SubmissionsLog/test/view/> .
 thisView:Fastq ucscDaf:filename_re ".*[^12]\\.fastq\\.bz2$" ;
                a geoSoft:raw ;
@@ -142,9 +139,9 @@ thisView:alignments ucscDaf:filename_re ".*\\.bam$" ;
                ucscDaf:output_type "alignments" .
 
         """
-        load_string_into_model(self.model, 'turtle', turtle)
+        self.model.parse(data=turtle, format='turtle')
         s = Submission('foo', self.model, 'http://localhost')
-        q = RDF.Statement(None, dafTermOntology['filename_re'], None)
+        q = (None, dafTermOntology['filename_re'], None)
         view_map = s._get_filename_view_map()
         self.assertEqual(len(view_map), 4)
 
