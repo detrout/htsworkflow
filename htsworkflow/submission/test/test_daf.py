@@ -6,18 +6,17 @@ import shutil
 import tempfile
 from unittest import TestCase, TestSuite, defaultTestLoader
 
+from rdflib import Graph, Namespace, URIRef
+from rdflib.namespace import RDF
+
 from htsworkflow.submission import daf, results
-from htsworkflow.util.rdfhelp import \
-     dafTermOntology, \
-     fromTypedNode, \
-     rdfNS, \
-     submissionLog, \
-     submissionOntology, \
-     get_model, \
-     get_serializer
+from htsworkflow.util.rdfns import (
+     dafTermOntology,
+     submissionLog,
+     submissionOntology
+)
 
 from htsworkflow.submission.test import test_results
-import RDF
 
 test_daf = """# Lab and general info
 grant             Hardison
@@ -101,45 +100,40 @@ class TestDAF(TestCase):
     def test_rdf(self):
 
         parsed = daf.fromstring(test_daf)
-        #mem = RDF.Storage(storage_name='hashes',
-        #                  options_string='hash-type="memory"'),
-        mem = RDF.MemoryStorage()
-        model = RDF.Model(mem)
+        model = Graph()
 
         name = 'cursub'
-        subNS = RDF.NS(str(submissionLog[name].uri))
-        daf.add_to_model(model, parsed, submissionLog[name].uri)
+        subNS = Namespace(str(submissionLog[name]))
+        daf.add_to_model(model, parsed, submissionLog[name])
 
-        signal_view_node = RDF.Node(subNS['/view/Signal'].uri)
+        signal_view_node = subNS['/view/Signal']
 
-        writer = get_serializer()
-        turtle =  writer.serialize_model_to_string(model)
+        turtle = str(model.serialize(format='turtle'))
 
-        self.failUnless(str(signal_view_node.uri) in turtle)
+        self.failUnless(str(signal_view_node) in turtle)
 
-        statements = list(model.find_statements(
-            RDF.Statement(
-                signal_view_node, None, None)))
+        statements = list(model.triples((signal_view_node, None, None)))
         self.failUnlessEqual(len(statements), 6)
-        name = model.get_target(signal_view_node, dafTermOntology['name'])
-        self.failUnlessEqual(fromTypedNode(name), u'Signal')
+        names = list(model.objects(signal_view_node, dafTermOntology['name']))
+        self.assertEqual(len(names), 1)
+        self.failUnlessEqual(names[0].toPython(), u'Signal')
 
     def test_get_view_namespace_from_string(self):
         url = "http://jumpgate.caltech.edu/wiki/SubmissionLog/cursub/"
-        target = RDF.NS(url + 'view/')
+        target = Namespace(url + 'view/')
         view_namespace = daf.get_view_namespace(url)
         self.assertEqual(view_namespace[''], target[''])
 
     def test_get_view_namespace_from_string_no_trailing_slash(self):
         url = "http://jumpgate.caltech.edu/wiki/SubmissionLog/cursub"
-        target = RDF.NS(url + '/view/')
+        target = Namespace(url + '/view/')
         view_namespace = daf.get_view_namespace(url)
         self.assertEqual(view_namespace[''], target[''])
 
     def test_get_view_namespace_from_uri_node(self):
         url = "http://jumpgate.caltech.edu/wiki/SubmissionLog/cursub/"
-        node = RDF.Node(RDF.Uri(url))
-        target = RDF.NS(url + 'view/')
+        node = URIRef(url)
+        target = Namespace(url + 'view/')
         view_namespace = daf.get_view_namespace(node)
         self.assertEqual(view_namespace[''], target[''])
 
@@ -147,14 +141,12 @@ class TestDAF(TestCase):
 def load_daf_mapper(name, extra_statements=None, ns=None, test_daf=test_daf):
     """Load test model in
     """
-    model = get_model()
+    model = Graph()
     if ns is None:
         ns="http://extra"
 
     if extra_statements is not None:
-        parser = RDF.Parser(name='turtle')
-        parser.parse_string_into_model(model, extra_statements,
-                                       ns)
+        model.parse(data=extra_statements, format='turtle', publicID=ns)
 
     test_daf_stream = StringIO(test_daf)
     mapper = daf.UCSCSubmission(name, daf_file = test_daf_stream, model=model)
@@ -175,14 +167,14 @@ class TestUCSCSubmission(TestCase):
         pattern = '.bam\Z(?ms)'
         mapper.add_pattern('Signal', pattern)
 
-        s = RDF.Statement(mapper.viewNS['Signal'],
-                          dafTermOntology['filename_re'],
-                          None)
-        search = list(mapper.model.find_statements(s))
+        s = (mapper.viewNS['Signal'],
+             dafTermOntology['filename_re'],
+             None)
+        search = list(mapper.model.triples(s))
         self.failUnlessEqual(len(search), 1)
-        self.failUnlessEqual(str(search[0].subject),
+        self.failUnlessEqual(str(search[0][0]),
                              str(submissionLog['testsub/view/Signal']))
-        self.failUnlessEqual(str(search[0].predicate),
+        self.failUnlessEqual(str(search[0][1]),
                              str(dafTermOntology['filename_re']))
         #self.failUnlessEqual(search[0].object.literal_value['string'], pattern)
 
@@ -201,7 +193,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*_r1\\\\.fastq" .
 
         view_root = 'http://jumpgate.caltech.edu/wiki/SubmissionsLog/{0}/view/'
         view_root = view_root.format(name)
-        self.failUnlessEqual(str(view.uri),
+        self.failUnlessEqual(str(view),
                              '{0}{1}'.format(view_root,'FastqRd1'))
 
     def test_find_overlapping_view(self):
@@ -235,7 +227,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
        'libUrl': lib_url}
 
         daf_mapper = load_daf_mapper('testfind', extra)
-        libNode = RDF.Node(RDF.Uri(lib_url))
+        libNode = URIRef(lib_url)
         daf_mapper._add_library_details_to_model(libNode)
         gel_cut = daf_mapper._get_library_attribute(libNode, 'gel_cut')
         # make sure we can override attributes, the value in our
@@ -254,12 +246,15 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
 
         sub_root = "http://jumpgate.caltech.edu/wiki/SubmissionsLog/testfind/"
         submission_name = sub_root + analysis_name
-        source = daf_mapper.model.get_source(rdfNS['type'], submissionOntology['submission'])
-        self.failUnlessEqual(str(source.uri), submission_name)
+        sources = list(daf_mapper.model.subjects(RDF['type'], submissionOntology['submission']))
+        self.assertEqual(len(sources), 1)
+        source = sources[0]
+        self.failUnlessEqual(str(source), submission_name)
 
         view_name = submission_name + '/Signal'
-        view = daf_mapper.model.get_target(source, submissionOntology['has_view'])
-        self.failUnlessEqual(str(view.uri), view_name)
+        views = list(daf_mapper.model.objects(source, submissionOntology['has_view']))
+        self.assertEqual(len(views), 1)
+        self.failUnlessEqual(str(views[0]), view_name)
 
 
     def test_library_url(self):
@@ -283,6 +278,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
     def test_daf_with_extra(self):
         daf_mapper = load_daf_mapper('test_rep',test_daf=test_daf_extra)
         variables = daf_mapper.get_daf_variables()
+
         self.assertEqual(len(variables), 11)
         self.failUnless('treatment' in variables)
         self.failUnless('controlId' in variables)
