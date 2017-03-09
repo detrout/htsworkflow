@@ -16,29 +16,27 @@ from optparse import OptionParser, OptionGroup
 import os
 import re
 # redland rdf lib
-import RDF
+
 import sys
 from six.moves import urllib
 
+from rdflib import BNode, Graph, Literal, Namespace, URIRef
+from rdflib.namespace import RDF, RDFS, XSD
 if not 'DJANGO_SETTINGS_MODULE' in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
 
 from htsworkflow.submission import daf, ucsc
 
 from htsworkflow.util import api
-from htsworkflow.util.rdfns import *
-from htsworkflow.util.rdfhelp import \
-     get_model, \
-     get_serializer, \
-     sparql_query, \
-     submissionOntology, \
-     libraryOntology, \
-     load_into_model
-TYPE_N = rdfNS['type']
+from htsworkflow.util.rdfns import (
+     submissionOntology,
+     libraryOntology,
+)
+TYPE_N = RDF['type']
 CREATION_DATE = libraryOntology['date']
 
 # URL mappings
-LIBRARY_NS = RDF.NS("http://jumpgate.caltech.edu/library/")
+LIBRARY_NS = Namespace("http://jumpgate.caltech.edu/library/")
 
 from htsworkflow.submission.ucsc import \
      daf_download_url, \
@@ -47,7 +45,7 @@ from htsworkflow.submission.ucsc import \
      submission_view_url, \
      UCSCEncodePipeline
 
-DCC_NS = RDF.NS(UCSCEncodePipeline + 'download_ddf#')
+DCC_NS = Namespace(UCSCEncodePipeline + 'download_ddf#')
 
 DBDIR = os.path.expanduser("~diane/proj/submission")
 
@@ -202,7 +200,7 @@ def load_my_submissions(model, limit=None, cookie=None):
         if cell is not None and len(cell) > 1:
             submission_id = str(cell[0].text_content())
             if limit is None or submission_id in limit:
-                subUrn = RDF.Uri(submission_view_url(submission_id))
+                subUrn = URIRef(submission_view_url(submission_id))
 
                 add_stmt(model,
                          subUrn,
@@ -211,7 +209,7 @@ def load_my_submissions(model, limit=None, cookie=None):
                 add_stmt(model,
                          subUrn,
                          DCC_NS['subId'],
-                         RDF.Node(submission_id))
+                         Literal(submission_id))
 
                 name = str(cell[4].text_content())
                 add_stmt(model, subUrn, name_n, name)
@@ -247,11 +245,11 @@ def add_submission_to_library_urn(model, submissionUrn, predicate, library_id):
     """Add a link from a UCSC submission to woldlab library if needed
     """
     libraryUrn = LIBRARY_NS[library_id + '/']
-    query = RDF.Statement(submissionUrn, predicate, libraryUrn)
-    if not model.contains_statement(query):
-        link = RDF.Statement(submissionUrn, predicate, libraryUrn)
+    query = (submissionUrn, predicate, libraryUrn)
+    if not query in model:
+        link = (submissionUrn, predicate, libraryUrn)
         LOGGER.info("Adding Sub -> Lib link: {0}".format(link))
-        model.add_statement(link)
+        model.add(link)
     else:
         LOGGER.debug("Found: {0}".format(str(query)))
 
@@ -278,9 +276,8 @@ WHERE {{
   OPTIONAL {{ ?subid submissionOntology:library_urn ?libid }}
   FILTER  (!bound(?libid))
 }}""".format(submissionOntology=submissionOntology[''].uri)
-    missing_lib_query = RDF.SPARQLQuery(missing_lib_query_text)
 
-    return missing_lib_query.execute(model)
+    return model.query(missing_lib_query_text)
 
 
 def find_unscanned_submitted_libraries(model):
@@ -296,8 +293,7 @@ WHERE {{
   OPTIONAL {{ ?library_urn rdf:type ?library_type  }}
   FILTER(!BOUND(?library_type))
 }}""".format(submissionOntology=submissionOntology[''].uri)
-    query = RDF.SPARQLQuery(unscanned_libraries)
-    return query.execute(model)
+    return model.query(unscanned_libraries)
 
 def find_all_libraries(model):
     """Scan model for every library marked as
@@ -311,8 +307,7 @@ WHERE {{
   ?library_urn rdf:type ?library_type .
   FILTER(regex(?libray
 }}""".format(libraryOntology=libraryOntology[''].uri)
-    query = RDF.SPARQLQuery(libraries)
-    return query.execute(model)
+    return model.query(query)
 
 
 def add_submission_creation_date(model, subUrn, cookie):
@@ -327,20 +322,19 @@ def add_submission_creation_date(model, subUrn, cookie):
 
 
 def get_creation_dates(model, subUrn):
-    query = RDF.Statement(subUrn, CREATION_DATE, None)
-    creation_dates = list(model.find_statements(query))
+    query = (subUrn, CREATION_DATE, None)
+    creation_dates = list(model.triples(query))
     return creation_dates
 
 
 def parse_submission_page(model, submissionTree, subUrn):
     cells = submissionTree.findall('.//td')
-    dateTimeType = xsdNS['dateTime']
     created_label = [x for x in cells
                      if x.text_content().startswith('Created')]
     if len(created_label) == 1:
         created_date = get_date_contents(created_label[0].getnext())
-        created_date_node = RDF.Node(literal=created_date.isoformat(),
-                                     datatype=dateTimeType.uri)
+        created_date_node = Literal(created_date.isoformat(),
+                                    datatype=XSD.dateTime)
         add_stmt(model, subUrn, CREATION_DATE, created_date_node)
     else:
         msg = 'Unable to find creation date for {0}'.format(str(subUrn))
@@ -353,15 +347,15 @@ def update_submission_detail(model, subUrn, status, recent_update, cookie):
     StatusN = submissionOntology['status']
     LastModifyN = submissionOntology['last_modify_date']
 
-    status_nodes_query = RDF.Statement(subUrn, HasStatusN, None)
-    status_nodes = list(model.find_statements(status_nodes_query))
+    status_nodes_query = (subUrn, HasStatusN, None)
+    status_nodes = list(model.triples(status_nodes_query))
 
     if len(status_nodes) == 0:
         # has no status node, add one
         LOGGER.info("Adding status node to {0}".format(subUrn))
         status_node = create_status_node(subUrn, recent_update)
         add_stmt(model, subUrn, HasStatusN, status_node)
-        add_stmt(model, status_node, rdfNS['type'], StatusN)
+        add_stmt(model, status_node, RDF['type'], StatusN)
         add_stmt(model, status_node, StatusN, status)
         add_stmt(model, status_node, LastModifyN, recent_update)
         update_ddf(model, subUrn, status_node, cookie=cookie)
@@ -369,13 +363,11 @@ def update_submission_detail(model, subUrn, status, recent_update, cookie):
     else:
         LOGGER.info("Found {0} status blanks".format(len(status_nodes)))
         for status_statement in status_nodes:
-            status_node = status_statement.object
-            last_modified_query = RDF.Statement(status_node,
-                                                LastModifyN,
-                                                None)
+            status_node = status_statement[2]
+            last_modified_query = (status_node, LastModifyN, None)
             last_mod_nodes = model.find_statements(last_modified_query)
             for last_mod_statement in last_mod_nodes:
-                last_mod_date = str(last_mod_statement.object)
+                last_mod_date = str(last_mod_statement[2])
                 if recent_update == str(last_mod_date):
                     update_ddf(model, subUrn, status_node, cookie=cookie)
                     update_daf(model, subUrn, status_node, cookie=cookie)
@@ -384,27 +376,25 @@ def update_submission_detail(model, subUrn, status, recent_update, cookie):
 
 def update_daf(model, submission_url, status_node, cookie):
     download_daf_uri = str(submission_url).replace('show', 'download_daf')
-    daf_uri = RDF.Uri(download_daf_uri)
+    daf_uri = URIRef(download_daf_uri)
 
-    status_is_daf = RDF.Statement(status_node, TYPE_N, dafTermOntology[''])
-    if not model.contains_statement(status_is_daf):
+    status_is_daf = (status_node, TYPE_N, dafTermOntology[''])
+    if status_is_daf not in model:
         LOGGER.info('Adding daf to {0}, {1}'.format(submission_url,
                                                      status_node))
         daf_text = get_url_as_text(download_daf_uri, 'GET', cookie)
         daf_hash = hashlib.md5(daf_text).hexdigest()
-        daf_hash_stmt = RDF.Statement(status_node,
-                                      dafTermOntology['md5sum'],
-                                      daf_hash)
-        model.add_statement(daf_hash_stmt)
+        daf_hash_stmt = (status_node, dafTermOntology['md5sum'], daf_hash)
+        model.add(daf_hash_stmt)
         daf.fromstring_into_model(model, status_node, daf_text)
 
 
 def update_ddf(model, subUrn, statusNode, cookie):
     download_ddf_url = str(subUrn).replace('show', 'download_ddf')
-    ddfUrn = RDF.Uri(download_ddf_url)
+    ddfUrn = URIRef(download_ddf_url)
 
-    status_is_ddf = RDF.Statement(statusNode, TYPE_N, DCC_NS[''])
-    if not model.contains_statement(status_is_ddf):
+    status_is_ddf = (statusNode, TYPE_N, DCC_NS[''])
+    if status_is_ddf in model:
         LOGGER.info('Adding ddf to {0}, {1}'.format(subUrn, statusNode))
         ddf_text = get_url_as_text(download_ddf_url, 'GET', cookie)
         add_ddf_statements(model, statusNode, ddf_text)
@@ -431,12 +421,12 @@ def add_ddf_statements(model, statusNode, ddf_string):
         file_attributes = ddf_record[1:]
 
         for f in files:
-            fileNode = RDF.Node()
+            fileNode = BNode()
             add_stmt(model,
                      statusNode,
                      submissionOntology['has_file'],
                      fileNode)
-            add_stmt(model, fileNode, rdfNS['type'], DCC_NS['file'])
+            add_stmt(model, fileNode, RDF['type'], DCC_NS['file'])
             add_stmt(model, fileNode, DCC_NS['filename'], f)
 
             for predicate, object in zip(attributes[1:], file_attributes):
@@ -451,14 +441,13 @@ def load_encode_assigned_libraries(model, htswapi):
                     ]
 
     encodeUrls = [os.path.join(htswapi.root_url + u) for u in encodeFilters]
-    rdfaParser = RDF.Parser(name='rdfa')
     for encodeUrl in encodeUrls:
         LOGGER.info("Scanning library url {0}".format(encodeUrl))
-        rdfaParser.parse_into_model(model, encodeUrl)
-        query = RDF.Statement(None, libraryOntology['library_id'], None)
-        libraries = model.find_statements(query)
+        model.parse(source=encodeUrl, format='rdfa')
+        query = (None, libraryOntology['library_id'], None)
+        libraries = model.triples(query)
         for statement in libraries:
-            libraryUrn = statement.subject
+            libraryUrn = statement[0]
             load_library_detail(model, libraryUrn)
 
 
@@ -489,44 +478,42 @@ def user_library_id_to_library_urn(library_id):
         return library_id
 
 def delete_library(model, library_urn):
-    if not isinstance(library_urn, RDF.Node):
-        raise ValueError("library urn must be a RDF.Node")
+    if not isinstance(library_urn, (Literal, URIRef)):
+        raise ValueError("library urn must be a Literal")
 
-    LOGGER.info("Deleting {0}".format(str(library_urn.uri)))
-    lane_query = RDF.Statement(library_urn, libraryOntology['has_lane'],None)
-    for lane in model.find_statements(lane_query):
-        delete_lane(model, lane.object)
-    library_attrib_query = RDF.Statement(library_urn, None, None)
-    for library_attrib in model.find_statements(library_attrib_query):
+    LOGGER.info("Deleting {0}".format(str(library_urn)))
+    lane_query = (library_urn, libraryOntology['has_lane'],None)
+    for lane in model.triples(lane_query):
+        delete_lane(model, lane[2])
+    library_attrib_query = (library_urn, None, None)
+    for library_attrib in model.triples(library_attrib_query):
         LOGGER.debug("Deleting {0}".format(str(library_attrib)))
-        del model[library_attrib]
+        model.remove(library_attrib)
 
 
 def delete_lane(model, lane_urn):
-    if not isinstance(lane_urn, RDF.Node):
-        raise ValueError("lane urn must be a RDF.Node")
+    if not isinstance(lane_urn, (Literal, URIRef)):
+        raise ValueError("lane urn must be a Literal or URIRef")
 
     delete_lane_mapping(model, lane_urn)
-    lane_attrib_query = RDF.Statement(lane_urn,None,None)
-    for lane_attrib in model.find_statements(lane_attrib_query):
+    lane_attrib_query = (lane_urn,None,None)
+    for lane_attrib in model.triples(lane_attrib_query):
         LOGGER.debug("Deleting {0}".format(str(lane_attrib)))
-        del model[lane_attrib]
+        model.remove(lane_attrib)
 
 
 def delete_lane_mapping(model, lane_urn):
-    if not isinstance(lane_urn, RDF.Node):
-        raise ValueError("lane urn must be a RDF.Node")
+    if not isinstance(lane_urn, (Literal, URIRef)):
+        raise ValueError("lane urn must be a Literal or URIRef")
 
-    lane_mapping_query = RDF.Statement(lane_urn,
-                                       libraryOntology['has_mappings'],
-                                       None)
-    for lane_mapping in model.find_statements(lane_mapping_query):
-        mapping_attrib_query = RDF.Statement(lane_mapping.object,
-                                             None,
-                                             None)
-        for mapping_attrib in model.find_statements(mapping_attrib_query):
+    lane_mapping_query = (lane_urn,
+                          libraryOntology['has_mappings'],
+                          None)
+    for lane_mapping in model.triples(lane_mapping_query):
+        mapping_attrib_query = (lane_mapping[2], None, None)
+        for mapping_attrib in model.triples(mapping_attrib_query):
             LOGGER.debug("Deleting {0}".format(str(mapping_attrib)))
-            del model[mapping_attrib]
+            model.remove(mapping_attrib)
 
 
 def load_encodedcc_files(model, genome, composite):
@@ -537,35 +524,32 @@ def load_encodedcc_files(model, genome, composite):
     lib_term = submissionOntology['library_urn']
     sub_term = submissionOntology['submission_urn']
     for filename, attributes in file_index.items():
-        s = RDF.Node(RDF.Uri(filename))
-        model.add_statement(
-            RDF.Statement(s, TYPE_N, submissionOntology['ucsc_track']))
+        s = URIRef(filename)
+        model.add((s, TYPE_N, submissionOntology['ucsc_track']))
         for name, value in attributes.items():
-            p = RDF.Node(DCC_NS[name])
-            o = RDF.Node(value)
-            model.add_statement(RDF.Statement(s,p,o))
+            p = DCC_NS[name]
+            o = Literal(value)
+            model.add((s,p,o))
             if name.lower() == 'labexpid':
-                model.add_statement(
-                    RDF.Statement(s, lib_term, LIBRARY_NS[value+'/']))
+                model.add((s, lib_term, LIBRARY_NS[value+'/']))
             elif name.lower() == 'subid':
-                sub_url = RDF.Uri(submission_view_url(value))
-                model.add_statement(
-                    RDF.Statement(s, sub_term, sub_url))
+                sub_url = URIRef(submission_view_url(value))
+                model.add((s, sub_term, sub_url))
 
 
 def load_library_detail(model, libraryUrn):
     """Grab detail information from library page
     """
     rdfaParser = RDF.Parser(name='rdfa')
-    query = RDF.Statement(libraryUrn, libraryOntology['date'], None)
+    query = (libraryUrn, libraryOntology['date'], None)
     results = list(model.find_statements(query))
     log_message = "Found {0} statements for {1}"
     LOGGER.debug(log_message.format(len(results), libraryUrn))
     if len(results) == 0:
         LOGGER.info("Loading {0}".format(str(libraryUrn)))
         try:
-            body = get_url_as_text(str(libraryUrn.uri), 'GET')
-            rdfaParser.parse_string_into_model(model, body, libraryUrn.uri)
+            body = get_url_as_text(str(libraryUrn), 'GET')
+            rdfaParser.parse_string_into_model(model, body, libraryUrn)
         except httplib2.HttpLib2ErrorWithResponse as e:
             LOGGER.error(str(e))
     elif len(results) == 1:
@@ -611,7 +595,7 @@ def create_status_node(submission_uri, timestamp):
     if submission_uri[-1] != '/':
         sumbission_uri += '/'
     status_uri = submission_uri + timestamp
-    return RDF.Node(RDF.Uri(status_uri))
+    return URIRef(status_uri)
 
 
 def get_date_contents(element):
@@ -625,8 +609,7 @@ def get_date_contents(element):
 def add_stmt(model, subject, predicate, rdf_object):
     """Convienence create RDF Statement and add to a model
     """
-    return model.add_statement(
-        RDF.Statement(subject, predicate, rdf_object))
+    return model.add((subject, predicate, rdf_object))
 
 
 def login(cookie=None):
@@ -737,7 +720,7 @@ def library_to_freeze(selected_libraries):
     report.append('<tbody>')
     for lib_id in lib_ids:
         report.append('<tr>')
-        lib_url = LIBRARY_NS[lib_id].uri
+        lib_url = LIBRARY_NS[lib_id]
         report.append('<td><a href="{0}">{1}</a></td>'.format(lib_url, lib_id))
         submissions = selected_libraries[lib_id]
         report.append('<td>{0}</td>'.format(submissions[0].name))
