@@ -1,7 +1,5 @@
 from __future__ import absolute_import, print_function
 
-import RDF
-
 from django.test import TestCase
 from django.test.utils import setup_test_environment, \
      teardown_test_environment
@@ -12,14 +10,16 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.utils.encoding import smart_text
 
+from rdflib import Graph, Literal, URIRef
+
 from .models import Item, Vendor
 from .inventory_factory import ItemFactory, LongTermStorageFactory
 from samples.samples_factory import HTSUserFactory, LibraryFactory
 from experiments.experiments_factory import FlowCellFactory
-from htsworkflow.util.rdfhelp import get_model, load_string_into_model, get_serializer, inventoryOntology, libraryOntology, fromTypedNode
+from htsworkflow.util.rdfns import inventoryOntology, libraryOntology
 
 def localhostNode(url):
-    return RDF.Node(RDF.Uri('http://localhost%s' % (url,)))
+    return URIRef('http://localhost%s' % (url,))
 
 class InventoryTestCase(TestCase):
     def setUp(self):
@@ -38,12 +38,13 @@ class InventoryTestCase(TestCase):
         self.failUnlessEqual(response.status_code, 200)
         content = smart_text(response.content)
 
-        model = get_model()
-        load_string_into_model(model, 'rdfa', content, url)
+        model = Graph()
+        model.parse(data=content, format='rdfa', publicID=url)
 
-        itemNode = RDF.Node(RDF.Uri(url))
-        item_type = fromTypedNode(
-            model.get_target(itemNode, inventoryOntology['item_type']))
+        itemNode = URIRef(url)
+        items = list(model.objects(itemNode, inventoryOntology['item_type']))
+        item_type = items[0].toPython()
+
         self.failUnlessEqual(item_type, item.item_type.name)
 
     def test_itemindex(self):
@@ -128,15 +129,15 @@ class InventoryTestCase(TestCase):
 
 
     def get_flowcells_from_content(self, url, rootNode, diskNode):
-        model = get_model()
+        model = Graph()
 
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 200)
 
         content = smart_text(response.content)
-        load_string_into_model(model, 'rdfa', content, rootNode.uri)
-        targets = model.get_targets(diskNode, libraryOntology['flowcell_id'])
-        flowcells = [ str(x.uri) for x in targets]
+        model.parse(data=content, format='rdfa', publicID=rootNode)
+        targets = model.objects(diskNode, libraryOntology['flowcell_id'])
+        flowcells = [ str(x) for x in targets]
         return flowcells
 
 def suite():
