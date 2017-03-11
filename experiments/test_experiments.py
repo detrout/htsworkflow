@@ -209,10 +209,16 @@ class ExperimentsTestCases(TestCase):
 
         tree = fromstring(response.content)
         for i in range(0, 8):
+            # this code to get to the block with the library id is a bit ugly
+            # we find the input and then look a couple of tree elements after to find it.
+            # I wonder if there's a way to get a class id or something on the
+            # enclosing tag.
             xpath_expression = '//input[@id="id_lane_set-%d-library"]'
             input_field = tree.xpath(xpath_expression % (i,))[0]
-            library_field = input_field.find('../strong/a')
-            library_id, library_name = library_field.text.split(':')
+            a_lookup = input_field.getnext()
+            library_element = a_lookup.getnext()
+            library_field = str(library_element.xpath('string(.)')).strip()
+            library_id, library_name = library_field.split(':')
             # strip leading '#' sign from name
             library_id = library_id[1:]
             self.assertEqual(library_id, expected_ids[i])
