@@ -202,9 +202,9 @@ class ExperimentsTestCases(TestCase):
         """
         expected_ids = ['1215{}'.format(i) for i in range(8, 0, -1)]
         self.assertTrue(self.client.login(username=self.admin.username, password=self.password))
-        response = self.client.get(
-            '/admin/experiments/flowcell/{}/change/'.format(self.fc12150.id),
-            follow=True)
+        admin_url = reverse("admin:experiments_flowcell_change",
+                            args=(self.fc12150.id,))
+        response = self.client.get(admin_url, follow=True)
         self.assertEquals(response.status_code, 200)
 
         tree = fromstring(response.content)
@@ -512,7 +512,8 @@ class TestEmailNotify(TestCase):
         """
         Can we navigate between the flowcell and email forms properly?
         """
-        admin_url = '/admin/experiments/flowcell/{}/change/'.format(self.fc.id)
+        admin_url = reverse("admin:experiments_flowcell_change",
+                            args=(self.fc.id,))
         self.client.login(username=self.admin.username, password=self.password)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
