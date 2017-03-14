@@ -77,7 +77,6 @@ def startedEmail(request, pk):
     warnings = []
     emails = []
 
-    emailless_users = []
     for user in flowcell_users:
         # provide warning
         if user.email is None or len(user.email) == 0:
