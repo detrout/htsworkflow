@@ -54,7 +54,7 @@ def startedEmail(request, pk):
     """
     fc = get_object_or_404(FlowCell, id=pk)
 
-    send = request.GET.get('send',False)
+    send = request.GET.get('send', False)
     if send in ('1', 'on', 'True', 'true', True):
         send = True
     else:
@@ -82,7 +82,7 @@ def startedEmail(request, pk):
         # provide warning
         if user.email is None or len(user.email) == 0:
             warnings.append((user.admin_url(), user.username))
-    user=None
+    user = None
 
     for user_email in email_lane.keys():
         sending = ""
@@ -97,7 +97,7 @@ def startedEmail(request, pk):
                                   })
 
         # build view
-        subject = "Flowcell %s" % ( fc.flowcell_id )
+        subject = "Flowcell %s" % (fc.flowcell_id,)
         body = email_template.render(context)
 
         if send:
@@ -117,15 +117,16 @@ def startedEmail(request, pk):
 
     verify_context = RequestContext(
         request,
-        { 'emails': emails,
-          'flowcell': fc,
-          'from': sender,
-          'send': send,
-          'site_managers': settings.MANAGERS,
-          'title': fc.flowcell_id,
-          'warnings': warnings,
+        {'emails': emails,
+         'flowcell': fc,
+         'from': sender,
+         'send': send,
+         'site_managers': settings.MANAGERS,
+         'title': fc.flowcell_id,
+         'warnings': warnings,
         })
     return HttpResponse(email_verify.render(verify_context))
+
 
 def finishedEmail(request, pk):
     """
@@ -142,9 +143,10 @@ def flowcell_detail(request, flowcell_id, lane_number=None):
     else:
         lanes = fc.lane_set.all()
 
-    context =  {'flowcell': fc, 'lanes': lanes}
+    context = {'flowcell': fc, 'lanes': lanes}
 
     return render(request, 'experiments/flowcell_detail.html', context)
+
 
 def flowcell_lane_detail(request, lane_pk):
     lane = get_object_or_404(Lane, id=lane_pk)
@@ -155,8 +157,8 @@ def flowcell_lane_detail(request, lane_pk):
     for run in lane.flowcell.sequencingrun_set.all():
         files = run.lane_files().get(lane.lane_number, None)
         sequencingruns.append((run,
-                         lane.lane_number,
-                         files))
+                               lane.lane_number,
+                               files))
 
     context = {'lib': lane.library,
                'lane': lane,
@@ -165,17 +167,18 @@ def flowcell_lane_detail(request, lane_pk):
 
     return render(request, 'experiments/flowcell_lane_detail.html', context)
 
+
 def read_result_file(self, key):
     """Return the contents of filename if everything is approved
     """
-    data_file = get_object_or_404(DataFile, random_key = key)
+    data_file = get_object_or_404(DataFile, random_key=key)
 
     content_type = 'application/octet-stream'
     if data_file.file_type.mimetype is not None:
         content_type = data_file.file_type.mimetype
 
     if os.path.exists(data_file.pathname):
-        return HttpResponse(open(data_file.pathname,'rb'),
+        return HttpResponse(open(data_file.pathname, 'rb'),
                             content_type=content_type)
 
     raise Http404
@@ -183,7 +186,7 @@ def read_result_file(self, key):
 
 def sequencer(request, sequencer_id):
     sequencer = get_object_or_404(Sequencer, id=sequencer_id)
-    context =  {'sequencer': sequencer}
+    context = {'sequencer': sequencer}
     return render(request, 'experiments/sequencer.html', context)
 
 
