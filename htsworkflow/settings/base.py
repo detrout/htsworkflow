@@ -119,3 +119,5 @@ NOTIFICATION_BCC=[]
 
 # Update this in settings_local to point to your flowcell result directory
 RESULT_HOME_DIR = join(PROJECT_ROOT, 'test', 'result', 'flowcells')
+
+LOGIN_REDIRECT_URL = '/library/'
