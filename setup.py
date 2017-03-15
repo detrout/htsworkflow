@@ -31,7 +31,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'distribute',
-        'django >=1.7, <1.8',
+        'django >=1.8',
         'lxml >= 2.2.4',
         'numpy >= 1.6',
         'pandas',
