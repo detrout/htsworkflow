@@ -4,7 +4,7 @@ import logging
 import os
 import re
 
-from six.moves.urllib.error import HTTPError
+from six.moves.urllib.error import HTTPError, URLError
 
 from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.namespace import RDF, RDFS
@@ -232,7 +232,7 @@ class Submission(object):
         tmpmodel = Graph()
         try:
             tmpmodel.parse(source=libNode, format='rdfa')
-        except HTTPError as e:
+        except (HTTPError, URLError) as e:
             LOGGER.error(e)
             return
 
