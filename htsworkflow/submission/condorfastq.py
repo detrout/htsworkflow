@@ -77,13 +77,12 @@ class CondorFastqExtract(object):
         condor_entries = self.build_condor_arguments(result_map)
         for script_type in template_map.keys():
             template = loader.get_template(template_map[script_type])
-            variables = {'python': sys.executable,
-                         'logdir': self.log_path,
-                         'env': env,
-                         'args': condor_entries[script_type],
-                         'root_url': self.host,
-                         }
-            context = Context(variables)
+            context = {'python': sys.executable,
+                       'logdir': self.log_path,
+                       'env': env,
+                       'args': condor_entries[script_type],
+                       'root_url': self.host,
+            }
 
             with open(script_type + '.condor','w+') as outstream:
                 outstream.write(template.render(context))

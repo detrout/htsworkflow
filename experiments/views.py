@@ -86,14 +86,13 @@ def startedEmail(request, pk):
     for user_email in email_lane.keys():
         sending = ""
         # build body
-        context = RequestContext(request,
-                                 {u'flowcell': fc,
-                                  u'lanes': email_lane[user_email],
-                                  u'runfolder': 'blank',
-                                  u'finish_low': estimate_low,
-                                  u'finish_high': estimate_high,
-                                  u'now': datetime.now(),
-                                  })
+        context = {u'flowcell': fc,
+                   u'lanes': email_lane[user_email],
+                   u'runfolder': 'blank',
+                   u'finish_low': estimate_low,
+                   u'finish_high': estimate_high,
+                   u'now': datetime.now(),
+        }
 
         # build view
         subject = "Flowcell %s" % (fc.flowcell_id,)
@@ -114,16 +113,14 @@ def startedEmail(request, pk):
 
         emails.append((user_email, subject, body, sending))
 
-    verify_context = RequestContext(
-        request,
-        {'emails': emails,
+    verify_context = {'emails': emails,
          'flowcell': fc,
          'from': sender,
          'send': send,
          'site_managers': settings.MANAGERS,
          'title': fc.flowcell_id,
          'warnings': warnings,
-        })
+        }
     return HttpResponse(email_verify.render(verify_context))
 
 

@@ -53,8 +53,7 @@ def library(request, todo_only=False):
                'todo_only': todo_only}
 
     t = get_template('samples/library_index.html')
-    c = RequestContext(request, context)
-    return HttpResponse(t.render(c))
+    return HttpResponse(t.render(context))
 
 
 def library_not_run(request):
