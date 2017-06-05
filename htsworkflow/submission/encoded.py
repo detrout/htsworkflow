@@ -403,6 +403,9 @@ class ENCODED:
                     uuid = posted_object.get('uuid')
                     description = posted_object.get('description')
 
+                if description is None:
+                    description = new_object.get('aliases')
+
                 accessions.append(accession)
                 uuids.append(uuid)
 
