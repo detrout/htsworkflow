@@ -185,13 +185,17 @@ def upload_file(encode, metadata, dry_run=True):
         with open(upload, 'w') as outstream:
             json.dump(metadata, outstream, indent=4, sort_keys=True)
         LOGGER.debug(json.dumps(metadata, indent=4, sort_keys=True))
+        if not dry_run:
+            response = encode.post_json('/file', metadata)
+            LOGGER.info(json.dumps(response, indent=4, sort_keys=True))
+            with open(upload, 'w') as outstream:
+                json.dump(response, outstream, indent=4, sort_keys=True)
 
-        response = encode.post_json('/file', metadata)
-        LOGGER.info(json.dumps(response, indent=4, sort_keys=True))
-
-        item = response['@graph'][0]
-        creds = item['upload_credentials']
-        run_aws_cp(metadata['submitted_file_name'], creds)
+            item = response['@graph'][0]
+            creds = item['upload_credentials']
+            run_aws_cp(metadata['submitted_file_name'], creds)
+        else:
+            LOGGER.info("Would upload %s", metadata['submitted_file_name'])
     else:
         LOGGER.info('%s already uploaded',
                     metadata['submitted_file_name'])
