@@ -535,7 +535,9 @@ class ENCODED:
         if not schema_url:
             raise ValueError("Unable to construct schema url")
 
-        schema = self.schemas.setdefault(object_type, self.get_json(schema_url))
+        if object_type not in self.schemas:
+            self.schemas[object_type] = self.get_json(schema_url)
+        schema = self.schemas[object_type]
         hidden = obj.copy()
         if '@id' in hidden:
             del hidden['@id']
