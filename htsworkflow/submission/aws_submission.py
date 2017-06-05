@@ -43,11 +43,16 @@ class AWSSubmission(Submission):
                 if os.path.exists(filename):
                     with open(filename, 'rt') as instream:
                         uploaded = json.load(instream)
-                    tocheck.append({
-                        'submitted_file_name': uploaded['submitted_file_name'],
-                        'md5sum': uploaded['md5sum']
-                    })
-                    self.update_replicates(uploaded)
+
+                    if 'submitted_file_name' not in uploaded:
+                        LOGGER.warn('No submitted_file_name: %s',
+                                    pformat(uploaded))
+                    else:
+                        tocheck.append({
+                            'submitted_file_name': uploaded['submitted_file_name'],
+                            'md5sum': uploaded['md5sum']
+                        })
+                        self.update_replicates(uploaded)
 
         # phase 2 make sure submitted file is there
         md5sums = set((self._files[f]['md5sum'] for f in self._files))
