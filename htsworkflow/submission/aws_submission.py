@@ -39,7 +39,7 @@ class AWSSubmission(Submission):
         # phase one download data
         for an_analysis in self.analysis_nodes(results_map):
             for metadata in self.get_metadata(an_analysis):
-                filename = self.make_upload_filename(metadata)
+                filename = make_upload_filename(metadata)
                 if os.path.exists(filename):
                     with open(filename, 'rt') as instream:
                         uploaded = json.load(instream)
