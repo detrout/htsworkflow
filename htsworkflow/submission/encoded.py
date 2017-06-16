@@ -114,6 +114,7 @@ class ENCODED:
         self.scheme = 'https'
         self.username = None
         self.password = None
+        self._user = None
         self.contexts = contexts if contexts else ENCODED_CONTEXT
         self.namespaces = namespaces if namespaces else ENCODED_NAMESPACES
         self.json_headers = {'content-type': 'application/json', 'accept': 'application/json'}
@@ -566,6 +567,26 @@ class ENCODED:
             for term in model_age_terms:
                 if term in obj:
                     raise jsonschema.ValidationError('model age terms not needed in human')
+
+    @property
+    def user(self):
+        """Return my user object
+
+        The programatic API uses an access code, which is different
+        from the user ID
+        """
+        if self.username is None:
+            return None
+
+        if self._user is None:
+            access_key = self.get_json('/access_key/' + self.username)
+            if access_key is None:
+                return None
+
+            self._user = self.get_json(access_key['user'])
+
+        return self._user
+
 
 class TypedColumnParser(object):
     @staticmethod
