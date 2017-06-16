@@ -119,9 +119,9 @@ class ENCODED:
         self.json_headers = {'content-type': 'application/json', 'accept': 'application/json'}
         self.schemas = {}
 
-    def get_auth(self):
+    @property
+    def auth(self):
         return (self.username, self.password)
-    auth = property(get_auth)
 
     def load_netrc(self):
         import netrc
