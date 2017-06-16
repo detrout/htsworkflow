@@ -297,6 +297,9 @@ class ENCODED:
 
     def get_accession_name(self, collection):
         """Lookup common object accession name given a collection name.
+
+        This is used by the sheet parsing code to know what column the
+        objects accession is in.
         """
         collection_to_accession_name = {
             '/annotations/': 'annotation_accession',
