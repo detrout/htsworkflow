@@ -90,6 +90,21 @@ ENCODED_NAMESPACES = {
 
 ENCODED_SCHEMA_ROOT = '/profiles/'
 
+COLLECTION_TO_TYPE = {
+    '/annotations/': 'Annotation',
+    '/award/': 'Award',
+    '/biosamples/': 'Biosample',
+    '/datasets/': 'Dataset',
+    '/documents/': 'Document',
+    '/experiments/': 'Experiment',
+    '/libraries/': 'Library',
+    '/organisms/': 'Organism',
+    '/replicates/': 'Replicate',
+    '/files/': 'File',
+}
+
+TYPE_TO_COLLECTION = {COLLECTION_TO_TYPE[k]: k for k in COLLECTION_TO_TYPE}
+
 
 class ENCODED:
     '''Programatic access encoded, the software powering ENCODE3's submit site.
@@ -276,17 +291,7 @@ class ENCODED:
         Returns:
            Schema URL
         """
-        collection_to_type = {
-            '/annotations/': 'annotation',
-            '/biosamples/': 'biosample',
-            '/datasets/': 'dataset',
-            '/documents/': 'document',
-            '/experiments/': 'experiment',
-            '/libraries/': 'library',
-            '/replicates/': 'replicate',
-            '/files/': 'file',
-        }
-        object_type = collection_to_type.get(object_type, object_type)
+        object_type = COLLECTION_TO_TYPE.get(object_type, object_type).lower()
 
         return self.prepare_url(ENCODED_SCHEMA_ROOT + object_type + '.json') + '#'
 

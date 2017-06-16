@@ -65,7 +65,7 @@ class TestEncoded(TestCase):
         encode = ENCODED('www.encodeproject.org')
         url = encode.prepare_url(library['@id'])
         context = encode.create_jsonld_context(library, url)
-        self.assertEqual(context['@vocab'], 'https://www.encodeproject.org/profiles/Library.json#')
+        self.assertEqual(context['@vocab'], 'https://www.encodeproject.org/profiles/library.json#')
         self.assertEqual(context['award'], linked_id )
         self._verify_context(context, 'Library')
         # namespaces not added yet.
