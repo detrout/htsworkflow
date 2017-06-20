@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function
 import json
 import jsonschema
 import os
-from unittest import TestCase, TestSuite, defaultTestLoader, skip
+from unittest import TestCase, TestSuite, defaultTestLoader
 
 from htsworkflow.submission.encoded import (
     ENCODED,
