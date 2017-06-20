@@ -573,13 +573,6 @@ class ENCODED:
                 if assay_term_name != 'RNA-seq':
                     raise jsonschema.ValidationError('Incorrect capitialization of RNA-seq')
 
-        species = hidden.get('species')
-        if species == '/organisms/human/':
-            model_age_terms = ['model_organism_age', 'model_organism_age_units']
-            for term in model_age_terms:
-                if term in obj:
-                    raise jsonschema.ValidationError('model age terms not needed in human')
-
     @property
     def user(self):
         """Return my user object
