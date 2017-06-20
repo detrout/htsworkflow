@@ -19,7 +19,7 @@ from uuid import UUID
 
 from cachecontrol import CacheControl
 import six
-from six.moves.urllib.parse import urljoin, urlparse, urlunparse
+from six.moves.urllib.parse import urljoin, urlparse, urlunparse, quote
 
 LOGGER = logging.getLogger(__name__)
 
