@@ -98,6 +98,7 @@ COLLECTION_TO_TYPE = {
     '/datasets/': 'Dataset',
     '/documents/': 'Document',
     '/experiments/': 'Experiment',
+    '/labs/': 'Lab',
     '/libraries/': 'Library',
     '/organisms/': 'Organism',
     '/replicates/': 'Replicate',
