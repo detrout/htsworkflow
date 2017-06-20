@@ -14,6 +14,7 @@ import numpy
 import os
 import re
 import requests
+from cachecontrol import CacheControl
 import six
 from six.moves.urllib.parse import urljoin, urlparse, urlunparse
 
@@ -112,6 +113,8 @@ class ENCODED:
     def __init__(self, server, contexts=None, namespaces=None):
         self.server = server
         self.scheme = 'https'
+        self._session = requests.session()
+        self._cached_session = CacheControl(self._session)
         self.username = None
         self.password = None
         self._user = None
@@ -266,9 +269,8 @@ class ENCODED:
             arguments['stream'] = kwargs['stream']
             del kwargs['stream']
 
-        response = requests.get(url, headers=self.json_headers,
-                                params=kwargs,
-                                **arguments)
+        response = self._cached_session.get(
+            url, headers=self.json_headers, params=kwargs, **arguments)
         if not response.status_code == requests.codes.ok:
             LOGGER.error("Error http status: {}".format(response.status_code))
             response.raise_for_status()
@@ -686,7 +688,7 @@ class Document(object):
                 self.document = instream.read()
                 self.md5sum = hashlib.md5(self.document)
         else:
-            req = requests.get(self.url)
+            req = self._cached_session.get(self.url)
             if req.status_code == 200:
                 self.content_type = req.headers['content-type']
                 self.document = req.content
