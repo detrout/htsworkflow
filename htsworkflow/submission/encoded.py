@@ -15,6 +15,8 @@ import os
 from pprint import pformat
 import re
 import requests
+from uuid import UUID
+
 from cachecontrol import CacheControl
 import six
 from six.moves.urllib.parse import urljoin, urlparse, urlunparse
@@ -124,6 +126,7 @@ class ENCODED:
         self.namespaces = namespaces if namespaces else ENCODED_NAMESPACES
         self.json_headers = {'content-type': 'application/json', 'accept': 'application/json'}
         self.schemas = {}
+        self._dcc_validators = {}
 
     @property
     def auth(self):
@@ -550,13 +553,18 @@ class ENCODED:
 
         if object_type not in self.schemas:
             self.schemas[object_type] = self.get_json(schema_url)
+
         schema = self.schemas[object_type]
+        if object_type not in self._dcc_validators:
+            self._dcc_validators[object_type] = self.create_dcc_validator(schema)
+
         hidden = obj.copy()
         if '@id' in hidden:
             del hidden['@id']
         if '@type' in hidden:
             del hidden['@type']
-        jsonschema.validate(hidden, schema)
+
+        self._dcc_validators[object_type].validate(hidden)
 
         # Additional validation rules passed down from the DCC for our grant
         assay_term_name = hidden.get('assay_term_name')
@@ -591,6 +599,78 @@ class ENCODED:
 
         return self._user
 
+    def create_dcc_validator(self, schema):
+        """Return jsonschema validator customized for ENCODE DCC schemas
+        """
+        validator = jsonschema.validators.extend(jsonschema.Draft4Validator, validators={
+            'calculatedProperty': self.calculatedPropertyValidator,
+            'linkTo': self.linkToValidator,
+            'linkFrom': self.unimplementedValidator,
+            'permission': self.permissionValidator,
+            'requestMethod': self.requestMethodValidator,
+            #'validators': self.unimplementedValidator,
+        })
+        return validator(schema)
+
+    def unimplementedValidator(self, *args):
+        raise NotImplementedError("Unimplementated validator: %s" % (str(args)))
+
+    def calculatedPropertyValidator(self, validator, tag, instance, schema):
+        yield jsonschema.ValidationError(
+            'submission of calculatedProperty "%s" is disallowed' % (tag,))
+
+    def linkToValidator(self, validator, linkTo, instance, schema):
+        if not validator.is_type(instance, "string"):
+            return
+
+        try:
+            try:
+                UUID(instance)
+                object_id = instance
+            except ValueError:
+                collection = TYPE_TO_COLLECTION.get(linkTo)
+                object_id = urljoin(collection, instance)
+            item = self.get_json(object_id)
+        except requests.HTTPError as e:
+            yield jsonschema.ValidationError("%s doesn't exist: %s" % (object_id, str(e)))
+
+        linkEnum = schema.get('linkEnum')
+        if linkEnum is not None:
+            if not validator.is_type(linkEnum, "array"):
+                raise Exception("Bad schema")
+            if not any(enum_uuid == item['uuid'] for enum_uuid in linkEnum):
+                reprs = ', '.join(repr(it) for it in linkTo)
+                error = "%r is not one of %s" % (instance, reprs)
+                yield jsonschema.ValidationError(error)
+                return
+
+        if schema.get('linkSubmitsFor'):
+            if self.user is not None:
+                submits_for = [self.get_json(s) for s in self.user.get('submits_for')]
+                if (submits_for is not None and
+                        not any(lab['uuid'] == item['uuid'] for lab in submits_for)):
+                    error = "%r is not in user submits_for" % instance
+                    yield jsonschema.ValidationError(error)
+                    return
+
+    def permissionValidator(self, validator, permission, instance, schema):
+        if not validator.is_type(permission, 'string'):
+            raise Exception('Bad Schema')
+
+        admin_permissions = [
+            'add_unvalidated', 'edit_unvalidate', 'impersonate', 'import_items',
+            'submit_for_any', 'view_raw',
+            # system permissions
+            'expand', 'index',
+        ]
+
+        if instance in admin_permissions:
+            yield jsonschema.ValidationError(
+                'Submitting property that requires admin permissions on %s' % (schema['title']))
+
+    def requestMethodValidator(self, validator, method, instance, schema):
+        yield jsonschema.ValidationError(
+            'Users cannot touch properties with requestMethod properties %s' % (schema['title']))
 
 class TypedColumnParser(object):
     @staticmethod

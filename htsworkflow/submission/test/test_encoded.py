@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function
 
 import json
+import jsonschema
 import os
 from unittest import TestCase, TestSuite, defaultTestLoader, skip
 
@@ -9,10 +10,42 @@ from htsworkflow.submission.encoded import (ENCODED,
      ENCODED_NAMESPACES
 )
 
-class TestEncoded(TestCase):
-    def test_prepare_url(self):
-        encode = ENCODED('www.encodeproject.org')
 
+class TestEncoded(TestCase):
+    def setUp(self):
+        self.encode = ENCODED('www.encodeproject.org')
+        self.encode._user = {
+            '@context': '/terms/',
+            '@id': '/users/bc5b62f7-ce28-4a1e-b6b3-81c9c5a86d7a/',
+            '@type': ['User', 'Item'],
+            'first_name': 'Diane',
+            'groups': [],
+            'job_title': 'Submitter',
+            'lab': {
+                '@id': '/labs/barbara-wold/',
+                '@type': ['Lab', 'Item'],
+                'country': 'USA',
+                'institute_label': 'Caltech',
+                'institute_name': 'California Institute of Technology',
+                'pi': '/users/0598c868-0b4a-4c5b-9112-8f85c5de5374/',
+                'schema_version': '4',
+                'title': 'Barbara Wold, Caltech',
+                'uuid': '72d5666a-a361-4f7b-ab66-a88e11280937'
+            },
+            'last_name': 'Trout',
+            'schema_version': '5',
+            'submits_for': ['/labs/barbara-wold/',
+                            '/labs/richard-myers/',
+                            '/labs/ali-mortazavi/'],
+            'uuid': 'bc5b62f7-ce28-4a1e-b6b3-81c9c5a86d7a',
+            }
+
+        for schema, filename in [('library', 'library.json'),
+                                 ('biosample', 'biosample.json')]:
+            schema_file = os.path.join(os.path.dirname(__file__), filename)
+            self.encode.schemas[schema] = json.loads(open(schema_file, 'r').read())
+
+    def test_prepare_url(self):
         tests = [
             ('/experiments', 'https://www.encodeproject.org/experiments'),
             ('/experiments/ENCLB045ZZZ',
@@ -21,55 +54,93 @@ class TestEncoded(TestCase):
              'https://www.encodeproject.org/experiments/ENCLB045ZZZ'),
         ]
         for url, result in tests:
-            self.assertEqual(encode.prepare_url(url), result)
+            self.assertEqual(self.encode.prepare_url(url), result)
 
-    def test_validate(self):
-        """Test validation
+    def test_validate_library(self):
+        """Test validation of a Library object
         """
-        schema_file = os.path.join(os.path.dirname(__file__), 'library.json')
-        schema = json.loads(open(schema_file, 'r').read())
+        obj = {
+            u'@id': u'/libraries/ENCLB045ZZZ/',
+            u'@type': [u'Library', u'Item'],
+            u'aliases': [],
+            u'alternate_accessions': [],
+            u'award': u'/awards/U54HG006998/',
+            u'biosample': u'/biosamples/ENCBS089RNA/',
+            u'date_created': u'2014-01-14T19:44:51.061770+00:00',
+            u'documents': [],
+            u'extraction_method': u'Ambion mirVana',
+            u'fragmentation_method': u'chemical (Nextera tagmentation)',
+            u'lab': u'/labs/barbara-wold/',
+            u'library_size_selection_method': u'SPRI beads',
+            u'lysis_method': u'Ambion mirVana',
+            u'nucleic_acid_term_name': u'polyadenylated mRNA',
+            u'size_range': u'>200',
+            u'status': u'released',
+            u'strand_specificity': False,
+            u'treatments': [],
+        }
+        self.encode.validate(obj, 'library')
 
-        obj = {u'@id': u'/libraries/ENCLB045ZZZ/',
-               u'@type': [u'Library', u'Item'],
-               u'accession': u'ENCLB045ZZZ',
-               u'aliases': [],
-               u'alternate_accessions': [],
-               u'award': u'/awards/U54HG006998/',
-               u'biosample': u'/biosamples/ENCBS089RNA/',
-               u'date_created': u'2014-01-14T19:44:51.061770+00:00',
-               u'documents': [],
-               u'extraction_method': u'Ambion mirVana',
-               u'fragmentation_method': u'chemical (Nextera tagmentation)',
-               u'lab': u'/labs/barbara-wold/',
-               u'library_size_selection_method': u'SPRI beads',
-               u'lysis_method': u'Ambion mirVana',
-               u'nucleic_acid_term_id': u'SO:0000871',
-               u'nucleic_acid_term_name': u'polyadenylated mRNA',
-               u'schema_version': u'2',
-               u'size_range': u'>200',
-               u'status': u'released',
-               u'strand_specificity': False,
-               u'submitted_by': u'/users/0e3dde9b-aaf9-42dd-87f7-975a85072ed2/',
-               u'treatments': [],
-               u'uuid': u'42c46028-708f-4347-a3df-2c82dfb021c4'}
-        encode = ENCODED('www.encodeproject.org')
-        encode.schemas[u'library'] = schema
-        encode.validate(obj)
-        self.assertTrue('@id' in obj)
+        # test requestMethod
+        obj['schema_version'] = u'2'
+        self.assertRaises(jsonschema.ValidationError, self.encode.validate, obj, 'library')
+        del obj['schema_version']
+
+        # test calculatedProperty
+        obj['nucleic_acid_term_name'] = u'SO:0000871'
+        self.assertRaises(jsonschema.ValidationError, self.encode.validate, obj, 'library')
+        del obj['nucleic_acid_term_name']
+
+        # test permssionValidator
+        obj['uuid'] = u'42c46028-708f-4347-a3df-2c82dfb021c4'
+        self.assertRaises(jsonschema.ValidationError, self.encode.validate, obj, 'library')
+        del obj['uuid']
+
+    def test_validate_biosample(self):
+        bio = {
+            'aliases': ['barbara-wold:c1_e12.5_mouse_limb_donor'],
+            'award': 'U54HG006998',
+            'biosample_term_id': 'UBERON:0002101',
+            'biosample_term_name': 'limb',
+            'biosample_type': 'tissue',
+            'date_obtained': '2017-02-01',
+            'description': 'C57Bl6 wild-type embryonic mouse',
+            'donor': '/mouse-donors/ENCDO956IXV/',
+            'lab': '/labs/barbara-wold',
+            'model_organism_age': '12.5',
+            'model_organism_age_units': 'day',
+            'mouse_life_stage': 'embryonic',
+            'organism': '3413218c-3d86-498b-a0a2-9a406638e786',
+            'source': '/sources/gems-caltech/',
+            'starting_amount': 1,
+            'starting_amount_units': 'items',
+        }
+
+        # tests linkTo
+        self.encode.validate(bio, 'biosample')
+        bio['organism'] = '/organisms/mouse/'
+
+        bio['lab'] = '/labs/alkes-price/'
+        self.assertRaises(jsonschema.ValidationError, self.encode.validate, bio, 'biosample')
+        bio['lab'] = '/labs/barbara-wold'
+
+        bio['organism'] = "7745b647-ff15-4ff3-9ced-b897d4e2983c"
+        self.assertRaises(jsonschema.ValidationError, self.encode.validate, bio, 'biosample')
+        bio['organism'] = "/organisms/human"
+        self.assertRaises(jsonschema.ValidationError, self.encode.validate, bio, 'biosample')
 
     def test_create_context(self):
         linked_id = {'@type': '@id'}
-        library = { '@id': '/libraries/1234', '@type': ['Library', 'Item'] }
+        library = {'@id': '/libraries/1234', '@type': ['Library', 'Item']}
 
-        encode = ENCODED('www.encodeproject.org')
-        url = encode.prepare_url(library['@id'])
-        context = encode.create_jsonld_context(library, url)
+        url = self.encode.prepare_url(library['@id'])
+        context = self.encode.create_jsonld_context(library, url)
         self.assertEqual(context['@vocab'], 'https://www.encodeproject.org/profiles/library.json#')
         self.assertEqual(context['award'], linked_id )
         self._verify_context(context, 'Library')
         # namespaces not added yet.
         self.assertRaises(AssertionError, self._verify_namespaces, context)
-        encode.add_jsonld_namespaces(context)
+        self.encode.add_jsonld_namespaces(context)
         self._verify_namespaces(context)
 
     def test_add_context(self):
@@ -104,13 +175,12 @@ class TestEncoded(TestCase):
             },
         }
 
-        encode = ENCODED('www.encodeproject.org')
-        bio_base = encode.prepare_url(obj['biosample']['@id'])
+        bio_base = self.encode.prepare_url(obj['biosample']['@id'])
 
-        url = encode.prepare_url('/libraries/ENCLB044ZZZ/?format=json&embed=False')
-        obj_type = encode.get_object_type(obj)
-        schema_url = encode.get_schema_url(obj_type)
-        encode.add_jsonld_context(obj, url)
+        url = self.encode.prepare_url('/libraries/ENCLB044ZZZ/?format=json&embed=False')
+        obj_type = self.encode.get_object_type(obj)
+        schema_url = self.encode.get_schema_url(obj_type)
+        self.encode.add_jsonld_context(obj, url)
 
         self.assertEqual(obj['biosample']['@context']['@base'], bio_base)
         self.assertEqual(obj['@context']['@vocab'], schema_url)
@@ -161,8 +231,7 @@ class TestEncoded(TestCase):
                                u'treatments.length': []},
                    ]}
 
-        encode = ENCODED('www.encodeproject.org')
-        result = encode.convert_search_to_jsonld(example)
+        result = self.encode.convert_search_to_jsonld(example)
         for obj in result['@graph']:
             self.assertNotIn('award.rfa', obj)
 
@@ -177,11 +246,13 @@ class TestEncoded(TestCase):
             self.assertIn(k, context)
             self.assertEqual(ENCODED_NAMESPACES[k], context[k])
 
+
 def suite():
     suite = TestSuite()
     suite.addTests(
         defaultTestLoader.loadTestsFromTestCase(TestEncoded))
     return suite
+
 
 if __name__ == "__main__":
     from unittest import main
