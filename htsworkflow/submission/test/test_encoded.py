@@ -121,6 +121,16 @@ class TestEncoded(TestCase):
             'starting_amount_units': 'items',
         }
 
+        # test aliases
+        bio['aliases'] = ['barbara-wold:c1-donor']
+        self.validator.validate(bio, 'biosample')
+        del bio['aliases']
+
+        # test part_of
+        bio['part_of'] = 'barbara-wold:c1-donor'
+        self.validator.validate(bio, 'biosample')
+        del bio['part_of']
+
         # tests linkTo
         self.validator.validate(bio, 'biosample')
         bio['organism'] = '/organisms/mouse/'
@@ -134,6 +144,40 @@ class TestEncoded(TestCase):
         bio['organism'] = "/organisms/human"
         self.assertRaises(jsonschema.ValidationError, self.validator.validate, bio, 'biosample')
         bio['organism'] = '/organisms/mouse/'
+
+
+    def test_aliases(self):
+        """Test that objects being validated can access previous ones by alias
+
+        Some properties can require that an object exist, since we validate
+        before submitting, we need to be able cache object by its alias and use
+        that to retrieve it.
+        """
+        donor = {
+            'aliases': ['barbara-wold:c1_e12.5_mouse_limb_donor'],
+            'award': 'U54HG006998',
+            'biosample_term_id': 'UBERON:0002101',
+            'biosample_term_name': 'limb',
+            'biosample_type': 'tissue',
+            'date_obtained': '2017-02-01',
+            'description': 'C57Bl6 wild-type embryonic mouse',
+            'donor': '/mouse-donors/ENCDO956IXV/',
+            'lab': '/labs/barbara-wold',
+            'model_organism_age': '12.5',
+            'model_organism_age_units': 'day',
+            'mouse_life_stage': 'embryonic',
+            'organism': '3413218c-3d86-498b-a0a2-9a406638e786',
+            'source': '/sources/gems-caltech/',
+            'starting_amount': 1,
+            'starting_amount_units': 'items',
+        }
+        part = donor.copy()
+        part['aliases'] = ['barbara-wold:A7']
+        part['part_of'] = 'barbara-wold:c1_e12.5_mouse_limb_donor'
+        self.assertRaises(jsonschema.ValidationError, self.validator.validate, part, 'biosample')
+
+        self.validator.validate(donor, 'biosample')
+        self.validator.validate(part, 'biosample')
 
     def test_create_context(self):
         linked_id = {'@type': '@id'}
