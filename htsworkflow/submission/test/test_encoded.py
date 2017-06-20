@@ -2,7 +2,6 @@ from __future__ import absolute_import, print_function
 
 import json
 import os
-from pprint import pprint
 from unittest import TestCase, TestSuite, defaultTestLoader, skip
 
 from htsworkflow.submission.encoded import (ENCODED,
