@@ -503,6 +503,10 @@ class ENCODED:
         url = urlparse(request_url)._asdict()
         if not url['scheme']:
             url['scheme'] = self.scheme
+        elif url['scheme'] not in ('http', 'https'):
+            # this is an alias
+            url['scheme'] = self.scheme
+            url['path'] = request_url
         if not url['netloc']:
             url['netloc'] = self.server
         url = urlunparse(url.values())

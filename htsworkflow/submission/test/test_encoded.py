@@ -55,6 +55,8 @@ class TestEncoded(TestCase):
              'https://www.encodeproject.org/experiments/ENCLB045ZZZ'),
             ('https://www.encodeproject.org/experiments/ENCLB045ZZZ',
              'https://www.encodeproject.org/experiments/ENCLB045ZZZ'),
+            ('barbara-wold:11111',
+             'https://www.encodeproject.org/barbara-wold:11111')
         ]
         for url, result in tests:
             self.assertEqual(self.encode.prepare_url(url), result)
