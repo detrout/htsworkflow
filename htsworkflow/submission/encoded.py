@@ -732,16 +732,14 @@ class Document(object):
         else:
             return server.get_json(uuid, embed=False)
 
+
 if __name__ == '__main__':
     # try it
-    from htsworkflow.util.rdfhelp import get_model, dump_model
-    from htsworkflow.util.rdfjsonld import load_into_model
-    from pprint import pprint
-    model = get_model()
+    from rdflib import Graph
+    model = Graph()
     logging.basicConfig(level=logging.DEBUG)
     encoded = ENCODED('test.encodedcc.org')
     encoded.load_netrc()
     body = encoded.get_jsonld('/experiments/ENCSR000AEC/')
-    pprint(body)
-    load_into_model(model, body)
-    #dump_model(model)
+    model.parse(body)
+    print(model.serialize(format='turtle'))
