@@ -125,8 +125,6 @@ class ENCODED:
         self.contexts = contexts if contexts else ENCODED_CONTEXT
         self.namespaces = namespaces if namespaces else ENCODED_NAMESPACES
         self.json_headers = {'content-type': 'application/json', 'accept': 'application/json'}
-        self.schemas = {}
-        self._dcc_validators = {}
 
     @property
     def auth(self):
@@ -444,6 +442,7 @@ class ENCODED:
     def prepare_objects_from_sheet(self, collection, sheet):
         accession_name = self.get_accession_name(collection)
         to_create = []
+        validator = DCCValidator(self)
         for i, row in sheet.iterrows():
             new_object = {}
             for name, value in row.items():
@@ -455,7 +454,7 @@ class ENCODED:
 
             if new_object and new_object.get(accession_name) is None:
                 try:
-                    self.validate(new_object, collection)
+                    validator.validate(new_object, collection)
                 except jsonschema.ValidationError as e:
                     LOGGER.error("Validation error row %s", i)
                     raise e
@@ -546,32 +545,7 @@ class ENCODED:
         Raises:
             ValidationError: if the object does not conform to the schema.
         """
-        object_type = object_type if object_type else self.get_object_type(obj)
-        schema_url = self.get_schema_url(object_type)
-        if not schema_url:
-            raise ValueError("Unable to construct schema url")
-
-        if object_type not in self.schemas:
-            self.schemas[object_type] = self.get_json(schema_url)
-
-        schema = self.schemas[object_type]
-        if object_type not in self._dcc_validators:
-            self._dcc_validators[object_type] = self.create_dcc_validator(schema)
-
-        hidden = obj.copy()
-        if '@id' in hidden:
-            del hidden['@id']
-        if '@type' in hidden:
-            del hidden['@type']
-
-        self._dcc_validators[object_type].validate(hidden)
-
-        # Additional validation rules passed down from the DCC for our grant
-        assay_term_name = hidden.get('assay_term_name')
-        if assay_term_name is not None:
-            if assay_term_name.lower() == 'rna-seq':
-                if assay_term_name != 'RNA-seq':
-                    raise jsonschema.ValidationError('Incorrect capitialization of RNA-seq')
+        raise DeprecationWarning('there is now a standalone validator class DCCValidator')
 
     @property
     def user(self):
@@ -592,8 +566,104 @@ class ENCODED:
 
         return self._user
 
+
+class DCCValidator:
+    def __init__(self, server):
+        self._server = server
+        self._aliases = {}
+        self._http_cache = {}
+        self._schemas = {}
+        self._dcc_validators = {}
+
+    def __getitem__(self, object_type):
+        """Return customized validator for the object type
+
+        :param str object_type: One of the DCC object types like biosample or library
+        :returns: Either a cached jsonschema validator or creates a new one if needed
+        """
+        if object_type not in self._schemas:
+            schema_url = self._server.get_schema_url(object_type)
+            if not schema_url:
+                raise ValueError("Unable to construct schema url")
+
+            self._schemas[object_type] = self._server.get_json(schema_url)
+
+        if object_type not in self._dcc_validators:
+            schema = self._schemas[object_type]
+            self._dcc_validators[object_type] = self.create_dcc_validator(schema)
+
+        return self._dcc_validators[object_type]
+
+    def get_json(self, object_id):
+        """Caching get_json to speed up validation
+
+        :param str object_id: DCC object id, can be a framgment
+           a full url, or an alias
+        """
+        if object_id in self._aliases:
+            item = self._aliases[object_id]
+        elif object_id in self._http_cache:
+            item = self._http_cache[object_id]
+        else:
+            item = self._server.get_json(object_id)
+            self._http_cache[object_id] = item
+        return item
+
+    def validate(self, obj, object_type):
+        """Validate an object against the ENCODED schema
+
+        Args:
+            obj (dictionary): object attributes to be submitted to encoded
+            object_type (string): ENCODED object name.
+
+        Raises:
+            ValidationError: if the object does not conform to the schema.
+        """
+        object_type = object_type if object_type else self.server.get_object_type(obj)
+
+        hidden = self.strip_jsonld_attributes(obj)
+        self[object_type].validate(hidden)
+
+        # Additional validation rules passed down from the DCC for our grant
+        assay_term_name = hidden.get('assay_term_name')
+        if assay_term_name is not None:
+            if assay_term_name.lower() == 'rna-seq':
+                if assay_term_name != 'RNA-seq':
+                    raise jsonschema.ValidationError('Incorrect capitialization of RNA-seq')
+
+        self.update_aliases(obj)
+
+    def strip_jsonld_attributes(self, obj):
+        """Make copy of object with JSON-LD attributes
+
+        :param dict obj: dictionary to POST to the DCC as an json document
+        :returns: dict with jsonld attributes @id, and @type removed.
+        """
+        hidden = obj.copy()
+        if '@id' in hidden:
+            del hidden['@id']
+        if '@type' in hidden:
+            del hidden['@type']
+        return hidden
+
+    def update_aliases(self, obj):
+        """Save object under any listed aliases.
+
+        This allows us to find it again for validation, even if it hasn't
+        been submitted yet.
+
+        :param dict obj: dictionary to POST to the DCC as an json document
+        :returns: None
+        """
+        # store aliases
+        for a in obj.get('aliases', []):
+            self._aliases[a] = obj
+
     def create_dcc_validator(self, schema):
         """Return jsonschema validator customized for ENCODE DCC schemas
+
+        :param jsonschema schema: dictionary containing a loaded jsonschema document
+        :returns: customized jsonschema validator for the provided schema
         """
         validator = jsonschema.validators.extend(jsonschema.Draft4Validator, validators={
             'calculatedProperty': self.calculatedPropertyValidator,
@@ -609,6 +679,8 @@ class ENCODED:
         raise NotImplementedError("Unimplementated validator: %s" % (str(args)))
 
     def calculatedPropertyValidator(self, validator, tag, instance, schema):
+        """Forbid submitting objects with a calculated property
+        """
         yield jsonschema.ValidationError(
             'submission of calculatedProperty "%s" is disallowed' % (tag,))
 
@@ -638,8 +710,8 @@ class ENCODED:
                 return
 
         if schema.get('linkSubmitsFor'):
-            if self.user is not None:
-                submits_for = [self.get_json(s) for s in self.user.get('submits_for')]
+            if self._server.user is not None:
+                submits_for = [self.get_json(s) for s in self._server.user.get('submits_for')]
                 if (submits_for is not None and
                         not any(lab['uuid'] == item['uuid'] for lab in submits_for)):
                     error = "%r is not in user submits_for" % instance
@@ -664,6 +736,7 @@ class ENCODED:
     def requestMethodValidator(self, validator, method, instance, schema):
         yield jsonschema.ValidationError(
             'Users cannot touch properties with requestMethod properties %s' % (schema['title']))
+
 
 class TypedColumnParser(object):
     @staticmethod

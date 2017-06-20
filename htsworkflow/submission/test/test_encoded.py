@@ -5,9 +5,11 @@ import jsonschema
 import os
 from unittest import TestCase, TestSuite, defaultTestLoader, skip
 
-from htsworkflow.submission.encoded import (ENCODED,
-     ENCODED_CONTEXT,
-     ENCODED_NAMESPACES
+from htsworkflow.submission.encoded import (
+    ENCODED,
+    ENCODED_CONTEXT,
+    ENCODED_NAMESPACES,
+    DCCValidator,
 )
 
 
@@ -40,10 +42,11 @@ class TestEncoded(TestCase):
             'uuid': 'bc5b62f7-ce28-4a1e-b6b3-81c9c5a86d7a',
             }
 
+        self.validator = DCCValidator(self.encode)
         for schema, filename in [('library', 'library.json'),
                                  ('biosample', 'biosample.json')]:
             schema_file = os.path.join(os.path.dirname(__file__), filename)
-            self.encode.schemas[schema] = json.loads(open(schema_file, 'r').read())
+            self.validator._schemas[schema] = json.loads(open(schema_file, 'r').read())
 
     def test_prepare_url(self):
         tests = [
@@ -79,21 +82,21 @@ class TestEncoded(TestCase):
             u'strand_specificity': False,
             u'treatments': [],
         }
-        self.encode.validate(obj, 'library')
+        self.validator.validate(obj, 'library')
 
         # test requestMethod
         obj['schema_version'] = u'2'
-        self.assertRaises(jsonschema.ValidationError, self.encode.validate, obj, 'library')
+        self.assertRaises(jsonschema.ValidationError, self.validator.validate, obj, 'library')
         del obj['schema_version']
 
         # test calculatedProperty
         obj['nucleic_acid_term_name'] = u'SO:0000871'
-        self.assertRaises(jsonschema.ValidationError, self.encode.validate, obj, 'library')
+        self.assertRaises(jsonschema.ValidationError, self.validator.validate, obj, 'library')
         del obj['nucleic_acid_term_name']
 
         # test permssionValidator
         obj['uuid'] = u'42c46028-708f-4347-a3df-2c82dfb021c4'
-        self.assertRaises(jsonschema.ValidationError, self.encode.validate, obj, 'library')
+        self.assertRaises(jsonschema.ValidationError, self.validator.validate, obj, 'library')
         del obj['uuid']
 
     def test_validate_biosample(self):
@@ -117,17 +120,18 @@ class TestEncoded(TestCase):
         }
 
         # tests linkTo
-        self.encode.validate(bio, 'biosample')
+        self.validator.validate(bio, 'biosample')
         bio['organism'] = '/organisms/mouse/'
 
         bio['lab'] = '/labs/alkes-price/'
-        self.assertRaises(jsonschema.ValidationError, self.encode.validate, bio, 'biosample')
+        self.assertRaises(jsonschema.ValidationError, self.validator.validate, bio, 'biosample')
         bio['lab'] = '/labs/barbara-wold'
 
         bio['organism'] = "7745b647-ff15-4ff3-9ced-b897d4e2983c"
-        self.assertRaises(jsonschema.ValidationError, self.encode.validate, bio, 'biosample')
+        self.assertRaises(jsonschema.ValidationError, self.validator.validate, bio, 'biosample')
         bio['organism'] = "/organisms/human"
-        self.assertRaises(jsonschema.ValidationError, self.encode.validate, bio, 'biosample')
+        self.assertRaises(jsonschema.ValidationError, self.validator.validate, bio, 'biosample')
+        bio['organism'] = '/organisms/mouse/'
 
     def test_create_context(self):
         linked_id = {'@type': '@id'}
