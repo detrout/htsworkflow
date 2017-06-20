@@ -38,7 +38,6 @@ setup(
         'keyring',
         'jsonschema',
         'requests',
-        'cachecontrol >= 0.11',
         'six',
         'psycopg2',
         'pytz',
