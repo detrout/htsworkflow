@@ -12,6 +12,7 @@ import json
 import jsonschema
 import numpy
 import os
+from pprint import pformat
 import re
 import requests
 from cachecontrol import CacheControl
