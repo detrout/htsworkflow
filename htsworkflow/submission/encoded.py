@@ -369,7 +369,7 @@ class ENCODED:
             response.raise_for_status()
         return response.json()
 
-    def post_sheet(self, collection, sheet, dry_run=True, verbose=False):
+    def post_sheet(self, collection, sheet, dry_run=True, verbose=False, validator=None):
         """Create new ENCODED objects using metadata encoded in pandas DataFrame
 
         The DataFrame column names need to encode the attribute names,
@@ -394,7 +394,7 @@ class ENCODED:
         """
         accession_name = self.get_accession_name(collection)
 
-        to_create = self.prepare_objects_from_sheet(collection, sheet)
+        to_create = self.prepare_objects_from_sheet(collection, sheet, validator=validator)
 
         created = []
         accessions = []
@@ -437,10 +437,12 @@ class ENCODED:
 
         return created
 
-    def prepare_objects_from_sheet(self, collection, sheet):
+    def prepare_objects_from_sheet(self, collection, sheet, validator=None):
         accession_name = self.get_accession_name(collection)
         to_create = []
-        validator = DCCValidator(self)
+        if validator is None:
+            validator = DCCValidator(self)
+
         for i, row in sheet.iterrows():
             new_object = {}
             for name, value in row.items():
