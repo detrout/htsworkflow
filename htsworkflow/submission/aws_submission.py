@@ -125,8 +125,8 @@ class AWSSubmission(Submission):
         query_template = loader.get_template('aws_metadata.sparql')
 
         context = Context({
-            'submission': str(analysis_node.uri),
-            'submissionSet': str(self.submissionSetNS[''].uri),
+            'submission': str(analysis_node),
+            'submissionSet': str(self.submissionSetNS['']),
             })
         results = self.execute_query(query_template, context)
         LOGGER.info("scanned %s for results found %s",

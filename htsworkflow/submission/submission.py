@@ -245,7 +245,7 @@ class Submission(object):
                 toadd.append(stmt)
                 continue
             # don't override things we already have in the model
-            targets = list(self.model.get_targets(s, p))
+            targets = list(self.model.objects(s, p))
             if len(targets) == 0:
                 toadd.append(stmt)
 
@@ -398,7 +398,7 @@ class Submission(object):
         results = []
         for record in rdfstream:
             d = {}
-            for key, value in record.items():
+            for key, value in record.asdict().items():
                 d[key] = value.toPython()
             results.append(d)
         return results

@@ -7,10 +7,11 @@ import argparse
 import logging
 import os
 
+from rdflib import Graph
+from rdflib.serializer import Serializer
+
 from htsworkflow.util import api
 from htsworkflow.util.rdfhelp import \
-    get_model, \
-    get_serializer, \
     load_into_model, \
     sparql_query
 from htsworkflow.submission.daf import get_submission_uri
@@ -41,7 +42,8 @@ def main(cmdline=None):
 
     django.setup()
 
-    model = get_model(args.model, args.db_path)
+    model = Graph()
+    # FIXME: redland version saved db
     submission_names = list(list_submissions(model))
     name = args.name
     if len(submission_names) == 0 and args.name is None:
@@ -106,8 +108,7 @@ def main(cmdline=None):
         sparql_query(model, args.sparql)
 
     if args.print_rdf:
-        writer = get_serializer()
-        print(writer.serialize_model_to_string(model))
+        print(model.serialize(format='turtle').decode('utf-8'))
 
 
 def make_parser():
