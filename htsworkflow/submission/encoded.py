@@ -692,6 +692,16 @@ class DCCValidator:
         if not validator.is_type(instance, "string"):
             return
 
+        # hack for ['Dataset']
+        if isinstance(linkTo, list):
+            # In release 57 one linkTo property had a single item as a list
+            # the dcc is trying to get rid of it and convert it to a
+            # string, but on the off chance they change and start using
+            # lists again, lets flag this implementation because it'd be
+            # inadequate.
+            assert len(linkTo) == 1
+            linkTo = linkTo[0]
+
         try:
             try:
                 UUID(instance)
