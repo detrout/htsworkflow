@@ -11,7 +11,7 @@ import time
 from requests.exceptions import HTTPError
 
 from htsworkflow.submission.submission import Submission
-from .encoded import ENCODED
+from .encoded import ENCODED, DCCValidator
 
 from django.template import Context, loader
 
@@ -171,10 +171,13 @@ def run_aws_cp(pathname, creds):
                     end-start)
 
 
-def upload_file(encode, metadata, dry_run=True):
+def upload_file(encode, validator, metadata, dry_run=True):
     """Upload a file to the DCC
     """
-    encode.validate(metadata, 'file')
+    if not isinstance(validator, DCCValidator):
+        raise RuntimeError('arguments to upload_file changed')
+
+    validator.validate(metadata, 'file')
 
     if dry_run:
         LOGGER.info(json.dumps(metadata, indent=4, sort_keys=True))
