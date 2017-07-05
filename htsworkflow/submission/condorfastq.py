@@ -35,6 +35,7 @@ COMPRESSION_EXTENSIONS = {
 class CondorFastqExtract(object):
     def __init__(self, host, sequences_path,
                  log_path='log',
+                 model=None,
                  compression=None,
                  force=False):
         """Extract fastqs from results archive
@@ -48,7 +49,10 @@ class CondorFastqExtract(object):
           force (bool): do we force overwriting current files?
         """
         self.host = host
-        self.model = ConjunctiveGraph()
+        if model is None:
+            self.model = ConjunctiveGraph()
+        else:
+            self.model = model
         self.sequences_path = sequences_path
         self.log_path = log_path
         self.compression=compression
