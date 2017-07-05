@@ -183,7 +183,7 @@ def upload_file(encode, validator, metadata, dry_run=True):
         LOGGER.info(json.dumps(metadata, indent=4, sort_keys=True))
         return
 
-    upload = make_upload_filename(metadata)
+    upload = make_upload_filename(metadata, encode)
     if not os.path.exists(upload):
         with open(upload, 'w') as outstream:
             json.dump(metadata, outstream, indent=4, sort_keys=True)
@@ -204,5 +204,10 @@ def upload_file(encode, validator, metadata, dry_run=True):
                     metadata['submitted_file_name'])
 
 
-def make_upload_filename(metadata):
-    return metadata['submitted_file_name'] + '.upload'
+def make_upload_filename(metadata, server=None):
+    if server is not None:
+        extension = '.{}.upload'.format(server.server)
+    else:
+        extension = '.upload'
+    filename = metadata['submitted_file_name']
+    return filename + extension
