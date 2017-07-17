@@ -31,13 +31,13 @@ class testRunner(TestCase):
         other = os.path.join(watchdir, 'other')
 
         event = Event( path=runfolder )
-        self.failUnlessEqual(extract_runfolder_path(watchdir, event), runfolder)
+        self.assertEqual(extract_runfolder_path(watchdir, event), runfolder)
         
         event = Event( path=ipar )
-        self.failUnlessEqual(extract_runfolder_path(watchdir, event), runfolder)
+        self.assertEqual(extract_runfolder_path(watchdir, event), runfolder)
 
         event = Event( path=other)
-        self.failUnlessEqual(extract_runfolder_path(watchdir, event), None )
+        self.assertEqual(extract_runfolder_path(watchdir, event), None )
 
 
 def suite():

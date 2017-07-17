@@ -24,17 +24,17 @@ class TestResultMap(TestCase):
         results['2000'] = 'dir2000'
         results['1500'] = 'dir1500'
 
-        self.failUnlessEqual(list(results.keys()), ['1000', '2000', '1500'])
-        self.failUnlessEqual(list(results.values()),
+        self.assertEqual(list(results.keys()), ['1000', '2000', '1500'])
+        self.assertEqual(list(results.values()),
                              ['dir1000', 'dir2000', 'dir1500'])
-        self.failUnlessEqual(list(results.items()),
+        self.assertEqual(list(results.items()),
                              [('1000', 'dir1000'),
                               ('2000', 'dir2000'),
                               ('1500', 'dir1500')])
 
-        self.failUnlessEqual(results['1000'], 'dir1000')
-        self.failUnlessEqual(results['1500'], 'dir1500')
-        self.failUnlessEqual(results['2000'], 'dir2000')
+        self.assertEqual(results['1000'], 'dir1000')
+        self.assertEqual(results['1500'], 'dir1500')
+        self.assertEqual(results['2000'], 'dir2000')
 
         self.assertTrue(u'2000' in results)
         self.assertTrue('2000' in results)

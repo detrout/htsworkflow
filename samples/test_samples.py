@@ -114,28 +114,28 @@ class SampleWebTestCase(TestCase):
             # the embedded primary key.
             # It gets slightly confusing on how to implement sending the right id
             # since amplified_from_sample can be null
-            #self.failUnlessEqual(d['amplified_from_sample'], lib.amplified_from_sample)
-            self.failUnlessEqual(d['antibody_id'], library.antibody_id)
-            self.failUnlessEqual(d['cell_line_id'], library.cell_line_id)
-            self.failUnlessEqual(d['cell_line'], str_or_none(library.cell_line))
-            self.failUnlessEqual(d['experiment_type'], library.experiment_type.name)
-            self.failUnlessEqual(d['experiment_type_id'], library.experiment_type_id)
-            self.failUnlessEqual(d['gel_cut_size'], library.gel_cut_size)
-            self.failUnlessEqual(d['hidden'], library.hidden)
-            self.failUnlessEqual(d['id'], library.id)
-            self.failUnlessEqual(d['insert_size'], library.insert_size)
-            self.failUnlessEqual(d['library_name'], library.library_name)
-            self.failUnlessEqual(d['library_species'], library.library_species.scientific_name)
-            self.failUnlessEqual(d['library_species_id'], library.library_species_id)
-            self.failUnlessEqual(d['library_type_id'], library.library_type_id)
+            #self.assertEqual(d['amplified_from_sample'], lib.amplified_from_sample)
+            self.assertEqual(d['antibody_id'], library.antibody_id)
+            self.assertEqual(d['cell_line_id'], library.cell_line_id)
+            self.assertEqual(d['cell_line'], str_or_none(library.cell_line))
+            self.assertEqual(d['experiment_type'], library.experiment_type.name)
+            self.assertEqual(d['experiment_type_id'], library.experiment_type_id)
+            self.assertEqual(d['gel_cut_size'], library.gel_cut_size)
+            self.assertEqual(d['hidden'], library.hidden)
+            self.assertEqual(d['id'], library.id)
+            self.assertEqual(d['insert_size'], library.insert_size)
+            self.assertEqual(d['library_name'], library.library_name)
+            self.assertEqual(d['library_species'], library.library_species.scientific_name)
+            self.assertEqual(d['library_species_id'], library.library_species_id)
+            self.assertEqual(d['library_type_id'], library.library_type_id)
             self.assertTrue(d['library_type'].startswith('library type'))
-            self.failUnlessEqual(d['made_for'], library.made_for)
-            self.failUnlessEqual(d['made_by'], library.made_by)
-            self.failUnlessEqual(d['notes'], library.notes)
-            self.failUnlessEqual(d['replicate'], library.replicate)
-            self.failUnlessEqual(d['stopping_point'], library.stopping_point)
-            self.failUnlessEqual(d['successful_pM'], library.successful_pM)
-            self.failUnlessEqual(d['undiluted_concentration'],
+            self.assertEqual(d['made_for'], library.made_for)
+            self.assertEqual(d['made_by'], library.made_by)
+            self.assertEqual(d['notes'], library.notes)
+            self.assertEqual(d['replicate'], library.replicate)
+            self.assertEqual(d['stopping_point'], library.stopping_point)
+            self.assertEqual(d['successful_pM'], library.successful_pM)
+            self.assertEqual(d['undiluted_concentration'],
                                  str(library.undiluted_concentration))
 
 
@@ -150,8 +150,8 @@ class SampleWebTestCase(TestCase):
                                 u'lane_id': 1193,
                                 u'flowcell': u'303TUAAXX',
                                 u'status_code': None}
-                    self.failUnlessEqual(len(d['lane_set']), 1)
-                    self.failUnlessEqual(d['lane_set'][0], lane_set)
+                    self.assertEqual(len(d['lane_set']), 1)
+                    self.assertEqual(d['lane_set'][0], lane_set)
                 elif library.id == '11016':
                     # test a case where there is a status
                     lane_set = {u'status': 'Good',
@@ -161,8 +161,8 @@ class SampleWebTestCase(TestCase):
                                 u'lane_id': 1197,
                                 u'flowcell': u'303TUAAXX',
                                 u'status_code': 2}
-                    self.failUnlessEqual(len(d['lane_set']), 1)
-                    self.failUnlessEqual(d['lane_set'][0], lane_set)
+                    self.assertEqual(len(d['lane_set']), 1)
+                    self.assertEqual(d['lane_set'][0], lane_set)
 
 
     def test_invalid_library_json(self):
@@ -170,12 +170,12 @@ class SampleWebTestCase(TestCase):
         Make sure we get a 404 if we request an invalid library id
         """
         response = self.client.get('/samples/library/nottheone/json', apidata)
-        self.failUnlessEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
 
     def test_invalid_library(self):
         response = self.client.get('/library/nottheone/')
-        self.failUnlessEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
 
     def test_library_no_key(self):
@@ -186,9 +186,9 @@ class SampleWebTestCase(TestCase):
 
         url = '/samples/library/{}/json'.format(library.id)
         response = self.client.get(url, apidata)
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         response = self.client.get(url)
-        self.failUnlessEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_library_rdf(self):
         library = LibraryFactory.create()
@@ -349,7 +349,7 @@ class TestRDFaLibrary(TestCase):
 
     def check_literal_object(self, model, values, s=None, p=None, o=None):
         statements = list(model.triples((s,p,o)))
-        self.failUnlessEqual(len(statements), len(values),
+        self.assertEqual(len(statements), len(values),
                         "Couln't find %s %s %s" % (s,p,o))
         for stmt in statements:
             obj = stmt[2]
@@ -357,7 +357,7 @@ class TestRDFaLibrary(TestCase):
 
     def check_uri_object(self, model, values, s=None, p=None, o=None):
         statements = list(model.triples((s,p,o)))
-        self.failUnlessEqual(len(statements), len(values),
+        self.assertEqual(len(statements), len(values),
                         "Couln't find %s %s %s" % (s,p,o))
         for stmt in statements:
             subject = stmt[0]

@@ -33,31 +33,31 @@ notify_users: user3@example.fake
         c = copier.CopierBot("copier", configfile=cfg)
         c.read_config()
         c._init_rsync()
-        self.failUnlessEqual(c.jid, 'copier@example.fake')
-        self.failUnlessEqual(c.cfg['password'], 'badpassword')
-        self.failUnlessEqual(len(c.authorized_users), 2)
-        self.failUnlessEqual(c.authorized_users[0], 'user1@example.fake')
-        self.failUnlessEqual(c.authorized_users[1], 'user2@example.fake')
-        self.failUnlessEqual(c.rsync.source_base_list[0],
+        self.assertEqual(c.jid, 'copier@example.fake')
+        self.assertEqual(c.cfg['password'], 'badpassword')
+        self.assertEqual(len(c.authorized_users), 2)
+        self.assertEqual(c.authorized_users[0], 'user1@example.fake')
+        self.assertEqual(c.authorized_users[1], 'user2@example.fake')
+        self.assertEqual(c.rsync.source_base_list[0],
                              'rsync://localhost/tmp/sequencer_source/')
-        self.failUnlessEqual(c.rsync.dest_base, '/tmp/sequencer_destination')
-        self.failUnlessEqual(len(c.notify_users), 1)
-        self.failUnlessEqual(c.notify_users[0], 'user3@example.fake')
-        self.failUnlessEqual(c.validate_url('rsync://other/tmp'), None)
-        self.failUnlessEqual(c.validate_url('http://localhost/tmp'), None)
+        self.assertEqual(c.rsync.dest_base, '/tmp/sequencer_destination')
+        self.assertEqual(len(c.notify_users), 1)
+        self.assertEqual(c.notify_users[0], 'user3@example.fake')
+        self.assertEqual(c.validate_url('rsync://other/tmp'), None)
+        self.assertEqual(c.validate_url('http://localhost/tmp'), None)
         # In the rsync process the URL gets a trailing '/' added to it
         # But in the bot config its still slash-less.
         # It is debatable when to add the trailing slash.
-        self.failUnlessEqual(
+        self.assertEqual(
           c.validate_url('rsync://localhost/tmp/sequencer_source'),
           'rsync://localhost/tmp/sequencer_source')
-        self.failUnlessEqual(
+        self.assertEqual(
           c.validate_url('rsync://localhost/tmp/sequencer_source/'),
           'rsync://localhost/tmp/sequencer_source/')
-        self.failUnlessEqual(
+        self.assertEqual(
           c.validate_url('rsync://localhost/tmp/sequencer_source/bleem'),
           'rsync://localhost/tmp/sequencer_source/bleem')
-        self.failUnlessEqual(
+        self.assertEqual(
           c.validate_url('rsync://user@server:1234/other_sequencer'),
           'rsync://user@server:1234/other_sequencer')
 
@@ -77,8 +77,8 @@ notify_users: user3@example.fake
        ]
 
        result = r.list_filter(listing)
-       self.failUnlessEqual(len(result), 1)
-       self.failUnlessEqual(result[0][-1], '4')
+       self.assertEqual(len(result), 1)
+       self.assertEqual(result[0][-1], '4')
 
 
 def suite():

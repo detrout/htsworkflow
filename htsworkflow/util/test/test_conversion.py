@@ -7,12 +7,12 @@ from htsworkflow.util import conversion
 class TestConversion(TestCase):
     def test_parse_slice(self):
         s = conversion.parse_slice("1:")
-        self.failUnlessEqual(s.start, 1)
-        self.failUnlessEqual(s.stop, None)
+        self.assertEqual(s.start, 1)
+        self.assertEqual(s.stop, None)
 
         s = conversion.parse_slice("0:2")
-        self.failUnlessEqual(s.start, 0)
-        self.failUnlessEqual(s.stop, 2)
+        self.assertEqual(s.start, 0)
+        self.assertEqual(s.stop, 2)
 
 def suite():
     from unittest import TestSuite, defaultTestLoader

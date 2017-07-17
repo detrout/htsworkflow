@@ -35,7 +35,7 @@ class InventoryTestCase(TestCase):
         self.assertTrue(self.client.login(username=self.user.username,
                                           password=self.password))
         response = self.client.get(url)
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         content = smart_text(response.content)
 
         model = Graph()
@@ -45,7 +45,7 @@ class InventoryTestCase(TestCase):
         items = list(model.objects(itemNode, inventoryOntology['item_type']))
         item_type = items[0].toPython()
 
-        self.failUnlessEqual(item_type, item.item_type.name)
+        self.assertEqual(item_type, item.item_type.name)
 
     def test_itemindex(self):
         item = ItemFactory()
@@ -65,7 +65,7 @@ class InventoryTestCase(TestCase):
                                           password=self.password))
 
         flowcells = self.get_flowcells_from_content(url, indexNode, diskNode)
-        self.failUnlessEqual(len(flowcells), 1)
+        self.assertEqual(len(flowcells), 1)
         flowcell_url = reverse('flowcell_detail',
                                kwargs={'flowcell_id': fc1.flowcell_id})
         self.assertTrue(flowcells[0].endswith(flowcell_url))
@@ -84,7 +84,7 @@ class InventoryTestCase(TestCase):
                                           password=self.password))
 
         flowcells = self.get_flowcells_from_content(url, indexNode, diskNode)
-        self.failUnlessEqual(len(flowcells), 0)
+        self.assertEqual(len(flowcells), 0)
 
         # step two link the flowcell
         flowcell = FlowCellFactory(flowcell_id='22TWOAAXX')
@@ -111,7 +111,7 @@ class InventoryTestCase(TestCase):
                                           password=self.password))
 
         flowcells = self.get_flowcells_from_content(url, indexNode, diskNode)
-        self.failUnlessEqual(len(flowcells), 0)
+        self.assertEqual(len(flowcells), 0)
 
         # step two link the flowcell
         flowcell_id = '33THRAAXX'
@@ -119,7 +119,7 @@ class InventoryTestCase(TestCase):
         link_url = reverse('link_flowcell_and_device',
                            args=(flowcell.flowcell_id, item.barcode_id))
         link_response = self.client.get(link_url)
-        self.failUnlessEqual(link_response.status_code, 200)
+        self.assertEqual(link_response.status_code, 200)
 
         flowcells = self.get_flowcells_from_content(url, indexNode, diskNode)
         self.assertEqual(len(flowcells), 1)
@@ -132,7 +132,7 @@ class InventoryTestCase(TestCase):
         model = Graph()
 
         response = self.client.get(url)
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         content = smart_text(response.content)
         model.parse(data=content, format='rdfa', publicID=rootNode)

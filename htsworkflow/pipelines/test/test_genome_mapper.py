@@ -15,15 +15,15 @@ class testGenomeMapper(TestCase):
         }
         genome_map = genome_mapper.constructMapperDict(genomes)
         
-        self.failUnlessEqual("%(Mus musculus|mm8)s" % (genome_map), "/mm8")
-        self.failUnlessEqual("%(Phage|174)s" % (genome_map), "/phi")
-        self.failUnlessEqual("%(Mus musculus)s" % (genome_map), "/mm10")
-        self.failUnlessEqual("%(Mus musculus|mm8)s" % (genome_map), "/mm8")
-        self.failUnlessEqual("%(Mus musculus|mm10)s" % (genome_map), "/mm10")
+        self.assertEqual("%(Mus musculus|mm8)s" % (genome_map), "/mm8")
+        self.assertEqual("%(Phage|174)s" % (genome_map), "/phi")
+        self.assertEqual("%(Mus musculus)s" % (genome_map), "/mm10")
+        self.assertEqual("%(Mus musculus|mm8)s" % (genome_map), "/mm8")
+        self.assertEqual("%(Mus musculus|mm10)s" % (genome_map), "/mm10")
         
-        self.failUnlessEqual(len(genome_map.keys()), 6)
-        self.failUnlessEqual(len(genome_map.values()), 6)
-        self.failUnlessEqual(len(genome_map.items()), 6)
+        self.assertEqual(len(genome_map.keys()), 6)
+        self.assertEqual(len(genome_map.values()), 6)
+        self.assertEqual(len(genome_map.items()), 6)
         
         
 def suite():

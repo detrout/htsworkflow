@@ -30,7 +30,7 @@ class RetrieveTestCases(TestCase):
 
         flowcell_request = self.client.get('/experiments/config/FC12150/json',
                                            apidata)
-        self.failUnlessEqual(flowcell_request.status_code, 200)
+        self.assertEqual(flowcell_request.status_code, 200)
         flowcell_info = json.loads(smart_text(flowcell_request.content))['result']
 
         options = getCombinedOptions(['-f','FC12150','-g',os.getcwd()])
@@ -39,12 +39,12 @@ class RetrieveTestCases(TestCase):
         config = format_gerald_config(options, flowcell_info, genome_map)
         config_lines = config.split('\n')
         lane3 = [ line for line in config_lines if re.search('Lane3', line) ]
-        self.failUnlessEqual(len(lane3), 1)
+        self.assertEqual(len(lane3), 1)
         expected = '# Lane3: {} | {}'.format(library.id, library.library_name)
-        self.failUnlessEqual(lane3[0], expected)
+        self.assertEqual(lane3[0], expected)
         human = [ line for line in config_lines if re.search('build', line) ]
-        self.failUnlessEqual(len(human), 1)
-        self.failUnlessEqual(human[0], '3:ELAND_GENOME /tmp/build')
+        self.assertEqual(len(human), 1)
+        self.assertEqual(human[0], '3:ELAND_GENOME /tmp/build')
 
 
     def test_format_sample_sheet(self):
@@ -68,7 +68,7 @@ class RetrieveTestCases(TestCase):
 
         url = '/experiments/config/%s/json' % (fcid,)
         flowcell_request = self.client.get(url, apidata)
-        self.failUnlessEqual(flowcell_request.status_code, 200)
+        self.assertEqual(flowcell_request.status_code, 200)
         flowcell_info = json.loads(smart_text(flowcell_request.content))['result']
 
         options = getCombinedOptions(['-f',fcid,'-g',os.getcwd(),])
@@ -97,8 +97,8 @@ class RetrieveTestCases(TestCase):
                      'Lane': '2',
                      },
                     ]
-        self.failUnlessEqual(len(sheet), len(expected))
+        self.assertEqual(len(sheet), len(expected))
         for s, e in zip(sheet, expected):
             for key in e.keys():
-                self.failUnlessEqual(s[key], e[key],
+                self.assertEqual(s[key], e[key],
                   "%s != %s for key %s" % (s[key],e[key], key))

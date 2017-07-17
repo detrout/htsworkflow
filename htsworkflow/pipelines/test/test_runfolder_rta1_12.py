@@ -80,27 +80,27 @@ class RunfolderTests(TestCase):
     def test_bustard(self):
         """Construct a bustard object"""
         b = bustard.bustard(self.bustard_dir)
-        self.failUnlessEqual(b.software, 'RTA')
-        self.failUnlessEqual(b.version, '1.12.4.2')
-        self.failUnlessEqual(b.date,    None)
-        self.failUnlessEqual(b.user,    None)
-        self.failUnlessEqual(len(b.phasing), 0)
+        self.assertEqual(b.software, 'RTA')
+        self.assertEqual(b.version, '1.12.4.2')
+        self.assertEqual(b.date,    None)
+        self.assertEqual(b.user,    None)
+        self.assertEqual(len(b.phasing), 0)
 
         xml = b.get_elements()
         b2 = bustard.Bustard(xml=xml)
-        self.failUnlessEqual(b.software, b2.software)
-        self.failUnlessEqual(b.version,  b2.version)
-        self.failUnlessEqual(b.date,     b2.date )
-        self.failUnlessEqual(b.user,     b2.user)
+        self.assertEqual(b.software, b2.software)
+        self.assertEqual(b.version,  b2.version)
+        self.assertEqual(b.date,     b2.date )
+        self.assertEqual(b.user,     b2.user)
 
     def test_gerald(self):
         # need to update gerald and make tests for it
         g = gerald.gerald(self.gerald_dir)
 
-        self.failUnlessEqual(g.software, 'CASAVA')
-        self.failUnlessEqual(g.version, '1.8.1')
-        self.failUnlessEqual(len(g.lanes), len(g.lanes.keys()))
-        self.failUnlessEqual(len(g.lanes), len(g.lanes.items()))
+        self.assertEqual(g.software, 'CASAVA')
+        self.assertEqual(g.version, '1.8.1')
+        self.assertEqual(len(g.lanes), len(g.lanes.keys()))
+        self.assertEqual(len(g.lanes), len(g.lanes.items()))
 
         # list of genomes, matches what was defined up in
         # make_gerald_config.
@@ -109,15 +109,15 @@ class RunfolderTests(TestCase):
         # test lane specific parameters from gerald config file
 
         undetermined = g.lanes[SampleKey(sample='Undetermined_indices')]
-        self.failUnlessEqual(undetermined.analysis, 'none')
-        self.failUnlessEqual(undetermined.read_length, None)
-        self.failUnlessEqual(undetermined.use_bases, None)
+        self.assertEqual(undetermined.analysis, 'none')
+        self.assertEqual(undetermined.read_length, None)
+        self.assertEqual(undetermined.use_bases, None)
 
         project = g.lanes[SampleKey(sample='11115')]
-        self.failUnlessEqual(project.analysis, 'eland_extended')
-        self.failUnlessEqual(project.eland_genome, '/g/hg18/chromosomes/')
-        self.failUnlessEqual(project.read_length, '49')
-        self.failUnlessEqual(project.use_bases, 'y'*49+'n')
+        self.assertEqual(project.analysis, 'eland_extended')
+        self.assertEqual(project.eland_genome, '/g/hg18/chromosomes/')
+        self.assertEqual(project.read_length, '49')
+        self.assertEqual(project.use_bases, 'y'*49+'n')
 
         # test data extracted from summary file
         clusters = [None,
@@ -127,11 +127,11 @@ class RunfolderTests(TestCase):
                     (1854131,  429053.2), (4777517,  592904.0),
                    ]
 
-        self.failUnlessEqual(len(g.summary), self.reads)
+        self.assertEqual(len(g.summary), self.reads)
         for i in range(1,9):
             summary_lane = g.summary[0][i]
-            self.failUnlessEqual(summary_lane.cluster, clusters[i])
-            self.failUnlessEqual(summary_lane.lane, i)
+            self.assertEqual(summary_lane.cluster, clusters[i])
+            self.assertEqual(summary_lane.lane, i)
 
         xml = g.get_elements()
         # just make sure that element tree can serialize the tree
@@ -139,47 +139,47 @@ class RunfolderTests(TestCase):
         g2 = gerald.CASAVA(xml=xml)
 
         # do it all again after extracting from the xml file
-        self.failUnlessEqual(g.software, g2.software)
-        self.failUnlessEqual(g.version, g2.version)
-        self.failUnlessEqual(g.date, g2.date)
-        self.failUnlessEqual(len(g.lanes.keys()), len(g2.lanes.keys()))
-        self.failUnlessEqual(len(g.lanes.items()), len(g2.lanes.items()))
+        self.assertEqual(g.software, g2.software)
+        self.assertEqual(g.version, g2.version)
+        self.assertEqual(g.date, g2.date)
+        self.assertEqual(len(g.lanes.keys()), len(g2.lanes.keys()))
+        self.assertEqual(len(g.lanes.items()), len(g2.lanes.items()))
 
         # test lane specific parameters from gerald config file
         for i in g.lanes.keys():
             g_lane = g.lanes[i]
             g2_lane = g2.lanes[i]
-            self.failUnlessEqual(g_lane.analysis, g2_lane.analysis)
-            self.failUnlessEqual(g_lane.eland_genome, g2_lane.eland_genome)
-            self.failUnlessEqual(g_lane.read_length, g2_lane.read_length)
-            self.failUnlessEqual(g_lane.use_bases, g2_lane.use_bases)
+            self.assertEqual(g_lane.analysis, g2_lane.analysis)
+            self.assertEqual(g_lane.eland_genome, g2_lane.eland_genome)
+            self.assertEqual(g_lane.read_length, g2_lane.read_length)
+            self.assertEqual(g_lane.use_bases, g2_lane.use_bases)
 
         # test (some) summary elements
-        self.failUnlessEqual(len(g.summary), self.reads)
+        self.assertEqual(len(g.summary), self.reads)
         for i in range(1,9):
             g_summary = g.summary[0][i]
             g2_summary = g2.summary[0][i]
-            self.failUnlessEqual(g_summary.cluster, g2_summary.cluster)
-            self.failUnlessEqual(g_summary.lane, g2_summary.lane)
+            self.assertEqual(g_summary.cluster, g2_summary.cluster)
+            self.assertEqual(g_summary.lane, g2_summary.lane)
 
             g_eland = g.eland_results
             g2_eland = g2.eland_results
             for key in g_eland:
                 g_results = g_eland[key]
                 g2_results = g2_eland[key]
-                self.failUnlessEqual(g_results.reads,
+                self.assertEqual(g_results.reads,
                                      g2_results.reads)
                 if isinstance(g_results, eland.ElandLane):
-                  self.failUnlessEqual(len(g_results.mapped_reads),
+                  self.assertEqual(len(g_results.mapped_reads),
                                        len(g2_results.mapped_reads))
                   for k in g_results.mapped_reads.keys():
-                      self.failUnlessEqual(g_results.mapped_reads[k],
+                      self.assertEqual(g_results.mapped_reads[k],
                                            g2_results.mapped_reads[k])
 
-                  self.failUnlessEqual(len(g_results.match_codes),
+                  self.assertEqual(len(g_results.match_codes),
                                        len(g2_results.match_codes))
                   for k in g_results.match_codes.keys():
-                      self.failUnlessEqual(g_results.match_codes[k],
+                      self.assertEqual(g_results.match_codes[k],
                                            g2_results.match_codes[k])
 
 
@@ -232,45 +232,45 @@ class RunfolderTests(TestCase):
         for key in eland_container.results:
             l1 = eland_container.results[key]
             l2 = e2.results[key]
-            self.failUnlessEqual(l1.reads, l2.reads)
-            self.failUnlessEqual(l1.sample_name, l2.sample_name)
-            self.failUnlessEqual(l1.lane_id, l2.lane_id)
+            self.assertEqual(l1.reads, l2.reads)
+            self.assertEqual(l1.sample_name, l2.sample_name)
+            self.assertEqual(l1.lane_id, l2.lane_id)
             if isinstance(l1, eland.ElandLane):
-              self.failUnlessEqual(len(l1.mapped_reads), len(l2.mapped_reads))
-              self.failUnlessEqual(len(l1.mapped_reads), 1)
+              self.assertEqual(len(l1.mapped_reads), len(l2.mapped_reads))
+              self.assertEqual(len(l1.mapped_reads), 1)
               for k in l1.mapped_reads.keys():
-                  self.failUnlessEqual(l1.mapped_reads[k],
+                  self.assertEqual(l1.mapped_reads[k],
                                        l2.mapped_reads[k])
 
-              self.failUnlessEqual(len(l1.match_codes), 9)
-              self.failUnlessEqual(len(l1.match_codes), len(l2.match_codes))
+              self.assertEqual(len(l1.match_codes), 9)
+              self.assertEqual(len(l1.match_codes), len(l2.match_codes))
               for k in l1.match_codes.keys():
-                  self.failUnlessEqual(l1.match_codes[k],
+                  self.assertEqual(l1.match_codes[k],
                                        l2.match_codes[k])
             elif isinstance(l1, eland.SequenceLane):
-                self.failUnlessEqual(l1.sequence_type, l2.sequence_type)
+                self.assertEqual(l1.sequence_type, l2.sequence_type)
 
     def test_runfolder(self):
         runs = runfolder.get_runs(self.runfolder_dir)
 
         # do we get the flowcell id from the filename?
-        self.failUnlessEqual(len(runs), 1)
+        self.assertEqual(len(runs), 1)
         self.assertEqual(runs[0].flowcell_id, self.flowcell_id)
         name = 'run_%s_%s.xml' % ( self.flowcell_id,
                                    date.today().strftime('%Y-%m-%d'),)
-        self.failUnlessEqual(runs[0].serialization_filename, name)
+        self.assertEqual(runs[0].serialization_filename, name)
 
         bustard_dir = os.path.join(self.runfolder_dir, 'Unaligned')
         r1 = runs[0]
-        self.failUnlessEqual(r1.bustard.sequence_format, 'fastq')
-        self.failUnlessEqual(r1.bustard.pathname, bustard_dir)
-        self.failUnlessEqual(r1.gerald.runfolder_name, 'Unaligned')
+        self.assertEqual(r1.bustard.sequence_format, 'fastq')
+        self.assertEqual(r1.bustard.pathname, bustard_dir)
+        self.assertEqual(r1.gerald.runfolder_name, 'Unaligned')
 
         xml = r1.get_elements()
         xml_str = ElementTree.tostring(xml)
 
         r2 = runfolder.PipelineRun(xml=xml)
-        self.failUnlessEqual(r1.serialization_filename, r2.serialization_filename)
+        self.assertEqual(r1.serialization_filename, r2.serialization_filename)
         self.failIfEqual(r2.image_analysis, None)
         self.failIfEqual(r2.bustard, None)
         self.failIfEqual(r2.gerald, None)

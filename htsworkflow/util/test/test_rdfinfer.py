@@ -217,7 +217,7 @@ class TestInfer(TestCase):
         inference = Infer(self.model)
 
         errmsg = list(inference._validate_property_types())
-        self.failUnlessEqual(len(errmsg), 0)
+        self.assertEqual(len(errmsg), 0)
 
 
 def suite():

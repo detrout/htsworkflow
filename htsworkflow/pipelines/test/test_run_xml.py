@@ -15,22 +15,22 @@ class testLoadRunXML(TestCase):
         run_xml_path = os.path.join(TESTDATA_DIR, run_xml_name)
         run = load_pipeline_run_xml(run_xml_path)
 
-        self.failUnlessEqual(run.image_analysis.start, results['cycle_start'])
-        self.failUnlessEqual(run.image_analysis.stop, results['cycle_stop'])
+        self.assertEqual(run.image_analysis.start, results['cycle_start'])
+        self.assertEqual(run.image_analysis.stop, results['cycle_stop'])
 
         query = SampleKey(read=1)
         eland_summary_by_lane = run.gerald.eland_results.find_keys(query)
-        self.failUnlessEqual(len(list(eland_summary_by_lane)), eland_results)
+        self.assertEqual(len(list(eland_summary_by_lane)), eland_results)
 
         runfolder_name = results['runfolder_name']
-        self.failUnlessEqual(run.runfolder_name, runfolder_name)
-        self.failUnlessEqual(run.gerald.runfolder_name, runfolder_name)
+        self.assertEqual(run.runfolder_name, runfolder_name)
+        self.assertEqual(run.gerald.runfolder_name, runfolder_name)
 
         for (end, lane), lane_results in results['lane_results'].items():
             for name, test_value in lane_results.items():
                 xml_value = getattr(run.gerald.summary[end][lane], name)
 
-                self.failUnlessEqual(xml_value, test_value,
+                self.assertEqual(xml_value, test_value,
                     "%s[%s][%s]: %s %s != %s" % (run_xml_name, end, lane, name, xml_value, test_value))
 
     def testVersion0(self):

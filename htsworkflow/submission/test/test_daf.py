@@ -84,15 +84,15 @@ class TestDAF(TestCase):
     def test_parse(self):
         parsed = daf.fromstring(test_daf)
 
-        self.failUnlessEqual(parsed['assembly'], 'mm9')
-        self.failUnlessEqual(parsed['grant'], 'Hardison')
-        self.failUnlessEqual(len(parsed['variables']), 6)
-        self.failUnlessEqual(len(parsed['views']), 2)
-        self.failUnlessEqual(len(parsed['views']['FastqRd1']), 5)
-        self.failUnlessEqual(len(parsed['views']['Signal']), 5)
+        self.assertEqual(parsed['assembly'], 'mm9')
+        self.assertEqual(parsed['grant'], 'Hardison')
+        self.assertEqual(len(parsed['variables']), 6)
+        self.assertEqual(len(parsed['views']), 2)
+        self.assertEqual(len(parsed['views']['FastqRd1']), 5)
+        self.assertEqual(len(parsed['views']['Signal']), 5)
         signal = parsed['views']['Signal']
-        self.failUnlessEqual(signal['required'], False)
-        self.failUnlessEqual(signal['longLabelPrefix'],
+        self.assertEqual(signal['required'], False)
+        self.assertEqual(signal['longLabelPrefix'],
                              'Caltech Histone Signal')
 
     def test_rdf(self):
@@ -111,10 +111,10 @@ class TestDAF(TestCase):
         self.failUnless(str(signal_view_node) in turtle)
 
         statements = list(model.triples((signal_view_node, None, None)))
-        self.failUnlessEqual(len(statements), 6)
+        self.assertEqual(len(statements), 6)
         names = list(model.objects(signal_view_node, dafTermOntology['name']))
         self.assertEqual(len(names), 1)
-        self.failUnlessEqual(names[0].toPython(), u'Signal')
+        self.assertEqual(names[0].toPython(), u'Signal')
 
     def test_get_view_namespace_from_string(self):
         url = "http://jumpgate.caltech.edu/wiki/SubmissionLog/cursub/"
@@ -169,12 +169,12 @@ class TestUCSCSubmission(TestCase):
              dafTermOntology['filename_re'],
              None)
         search = list(mapper.model.triples(s))
-        self.failUnlessEqual(len(search), 1)
-        self.failUnlessEqual(str(search[0][0]),
+        self.assertEqual(len(search), 1)
+        self.assertEqual(str(search[0][0]),
                              str(submissionLog['testsub/view/Signal']))
-        self.failUnlessEqual(str(search[0][1]),
+        self.assertEqual(str(search[0][1]),
                              str(dafTermOntology['filename_re']))
-        #self.failUnlessEqual(search[0].object.literal_value['string'], pattern)
+        #self.assertEqual(search[0].object.literal_value['string'], pattern)
 
 
     def test_find_one_view(self):
@@ -191,7 +191,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*_r1\\\\.fastq" .
 
         view_root = 'http://jumpgate.caltech.edu/wiki/SubmissionsLog/{0}/view/'
         view_root = view_root.format(name)
-        self.failUnlessEqual(str(view),
+        self.assertEqual(str(view),
                              '{0}{1}'.format(view_root, 'FastqRd1'))
 
     def test_find_overlapping_view(self):
@@ -230,10 +230,10 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         gel_cut = daf_mapper._get_library_attribute(libNode, 'gel_cut')
         # make sure we can override attributes, the value in our
         # server is 500 for this library
-        self.failUnlessEqual(gel_cut, 100)
+        self.assertEqual(gel_cut, 100)
 
         species = daf_mapper._get_library_attribute(libNode, 'species_name')
-        self.failUnlessEqual(species, "Homo sapiens")
+        self.assertEqual(species, "Homo sapiens")
 
         with mktempdir('analysis') as analysis_dir:
             path, analysis_name = os.path.split(analysis_dir)
@@ -247,29 +247,29 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         sources = list(daf_mapper.model.subjects(RDF['type'], submissionOntology['submission']))
         self.assertEqual(len(sources), 1)
         source = sources[0]
-        self.failUnlessEqual(str(source), submission_name)
+        self.assertEqual(str(source), submission_name)
 
         view_name = submission_name + '/Signal'
         views = list(daf_mapper.model.objects(source, submissionOntology['has_view']))
         self.assertEqual(len(views), 1)
-        self.failUnlessEqual(str(views[0]), view_name)
+        self.assertEqual(str(views[0]), view_name)
 
     def test_library_url(self):
         daf_mapper = load_daf_mapper('urltest')
 
-        self.failUnlessEqual(daf_mapper.library_url,
+        self.assertEqual(daf_mapper.library_url,
                              'http://jumpgate.caltech.edu/library/')
         daf_mapper.library_url = 'http://google.com'
-        self.failUnlessEqual(daf_mapper.library_url, 'http://google.com')
+        self.assertEqual(daf_mapper.library_url, 'http://google.com')
 
     def test_daf_with_replicate(self):
         daf_mapper = load_daf_mapper('test_rep')
-        self.failUnlessEqual(daf_mapper.need_replicate(), True)
+        self.assertEqual(daf_mapper.need_replicate(), True)
         self.failUnless('replicate' in daf_mapper.get_daf_variables())
 
     def test_daf_without_replicate(self):
         daf_mapper = load_daf_mapper('test_rep', test_daf=test_daf_no_rep)
-        self.failUnlessEqual(daf_mapper.need_replicate(), False)
+        self.assertEqual(daf_mapper.need_replicate(), False)
         self.failUnless('replicate' not in daf_mapper.get_daf_variables())
 
     def test_daf_with_extra(self):
@@ -297,7 +297,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
         daf_body = stream.read()
         stream.close()
 
-        self.failUnlessEqual(test_daf, daf_body)
+        self.assertEqual(test_daf, daf_body)
 
 
 @contextmanager

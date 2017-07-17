@@ -74,10 +74,10 @@ class RunfolderExtractTests(TestCase):
 
     def test_extract_results(self):
         runs = runfolder.get_runs(self.runfolder_dir)
-        self.failUnlessEqual(len(runs), 1)
+        self.assertEqual(len(runs), 1)
         runfolder.extract_results(runs, self.temp_dir, site='asite')
         archive = os.listdir(os.path.join(self.temp_dir, '4286GAAXX', 'C1-38'))
-        self.failUnlessEqual(len(archive), 34)
+        self.assertEqual(len(archive), 34)
         self.failUnless('asite_090608_HWI-EAS229_0117_4286GAAXX_l6_r1.tar.bz2' in archive)
 
 

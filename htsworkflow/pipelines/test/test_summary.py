@@ -15,22 +15,22 @@ class SummaryTests(TestCase):
         xmlfile = StringIO('<?xml version="1.0"?>\n<tag>\n')
         htmlfile = StringIO('<html>\n<head></head>\n<body><p></p></body>\n</html>')
 
-        self.failUnlessEqual(summary.isxml_stream(xmlfile), True)
-        self.failUnlessEqual(xmlfile.tell(), 0)
+        self.assertEqual(summary.isxml_stream(xmlfile), True)
+        self.assertEqual(xmlfile.tell(), 0)
 
-        self.failUnlessEqual(summary.isxml_stream(htmlfile), False)
+        self.assertEqual(summary.isxml_stream(htmlfile), False)
 
     def test_xml_summary_file(self):
         pathname = os.path.join(TESTDATA_DIR, 'Summary-casava1.7.xml')
         s = summary.SummaryGA(pathname)
-        self.failUnlessEqual(len(s.lane_results[0]), 8)
-        self.failUnlessEqual(s.lane_results[0][1].cluster, (1073893, 146344))
+        self.assertEqual(len(s.lane_results[0]), 8)
+        self.assertEqual(s.lane_results[0][1].cluster, (1073893, 146344))
 
     def test_html_summary_file(self):
         pathname = os.path.join(TESTDATA_DIR, 'Summary-ipar130.htm')
         s = summary.SummaryGA(pathname)
-        self.failUnlessEqual(len(s.lane_results[0]), 8)
-        self.failUnlessEqual(s.lane_results[0][1].cluster, (126910, 4300))
+        self.assertEqual(len(s.lane_results[0]), 8)
+        self.assertEqual(s.lane_results[0][1].cluster, (126910, 4300))
 
     def test_hiseq_sample_summary_file(self):
         pathname = os.path.join(TESTDATA_DIR, 'sample_summary_1_12.htm')
