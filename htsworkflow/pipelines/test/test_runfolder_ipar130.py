@@ -96,25 +96,25 @@ class RunfolderTests(TestCase):
         construct a bustard object
         """
         def check_crosstalk(crosstalk):
-            self.failUnlessAlmostEqual(crosstalk.base['A'][0],  1.27)
-            self.failUnlessAlmostEqual(crosstalk.base['A'][1],  0.20999999999999)
-            self.failUnlessAlmostEqual(crosstalk.base['A'][2], -0.02)
-            self.failUnlessAlmostEqual(crosstalk.base['A'][3], -0.03)
+            self.assertAlmostEqual(crosstalk.base['A'][0],  1.27)
+            self.assertAlmostEqual(crosstalk.base['A'][1],  0.20999999999999)
+            self.assertAlmostEqual(crosstalk.base['A'][2], -0.02)
+            self.assertAlmostEqual(crosstalk.base['A'][3], -0.03)
 
-            self.failUnlessAlmostEqual(crosstalk.base['C'][0],  0.57)
-            self.failUnlessAlmostEqual(crosstalk.base['C'][1],  0.58)
-            self.failUnlessAlmostEqual(crosstalk.base['C'][2], -0.01)
-            self.failUnlessAlmostEqual(crosstalk.base['C'][3], -0.01)
+            self.assertAlmostEqual(crosstalk.base['C'][0],  0.57)
+            self.assertAlmostEqual(crosstalk.base['C'][1],  0.58)
+            self.assertAlmostEqual(crosstalk.base['C'][2], -0.01)
+            self.assertAlmostEqual(crosstalk.base['C'][3], -0.01)
 
-            self.failUnlessAlmostEqual(crosstalk.base['T'][0], -0.02)
-            self.failUnlessAlmostEqual(crosstalk.base['T'][1], -0.02)
-            self.failUnlessAlmostEqual(crosstalk.base['T'][2],  0.80)
-            self.failUnlessAlmostEqual(crosstalk.base['T'][3],  1.07)
+            self.assertAlmostEqual(crosstalk.base['T'][0], -0.02)
+            self.assertAlmostEqual(crosstalk.base['T'][1], -0.02)
+            self.assertAlmostEqual(crosstalk.base['T'][2],  0.80)
+            self.assertAlmostEqual(crosstalk.base['T'][3],  1.07)
 
-            self.failUnlessAlmostEqual(crosstalk.base['G'][0], -0.03)
-            self.failUnlessAlmostEqual(crosstalk.base['G'][1], -0.04)
-            self.failUnlessAlmostEqual(crosstalk.base['G'][2],  1.51)
-            self.failUnlessAlmostEqual(crosstalk.base['G'][3], -0.02)
+            self.assertAlmostEqual(crosstalk.base['G'][0], -0.03)
+            self.assertAlmostEqual(crosstalk.base['G'][1], -0.04)
+            self.assertAlmostEqual(crosstalk.base['G'][2],  1.51)
+            self.assertAlmostEqual(crosstalk.base['G'][3], -0.02)
 
         b = bustard.bustard(self.bustard_dir)
         self.assertEqual(b.software, 'Bustard')
@@ -122,7 +122,7 @@ class RunfolderTests(TestCase):
         self.assertEqual(b.date,    date(2008,3,15))
         self.assertEqual(b.user,    'diane')
         self.assertEqual(len(b.phasing), 8)
-        self.failUnlessAlmostEqual(b.phasing[8].phasing, 0.0099)
+        self.assertAlmostEqual(b.phasing[8].phasing, 0.0099)
         self.assertEqual(set(b.crosstalk.base), set(['A','C','T','G']))
         check_crosstalk(b.crosstalk)
 

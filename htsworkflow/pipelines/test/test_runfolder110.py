@@ -104,7 +104,7 @@ class RunfolderTests(TestCase):
         self.assertEqual(b.date,    date(2008,10,20))
         self.assertEqual(b.user,    'diane')
         self.assertEqual(len(b.phasing), 8)
-        self.failUnlessAlmostEqual(b.phasing[8].phasing, 0.0099)
+        self.assertAlmostEqual(b.phasing[8].phasing, 0.0099)
 
         xml = b.get_elements()
         b2 = bustard.Bustard(xml=xml)
