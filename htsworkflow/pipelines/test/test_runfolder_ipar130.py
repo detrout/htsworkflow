@@ -332,9 +332,9 @@ class RunfolderTests(TestCase):
 
         r2 = runfolder.PipelineRun(xml=xml)
         self.assertEqual(r1.serialization_filename, r2.serialization_filename)
-        self.failIfEqual(r2.image_analysis, None)
-        self.failIfEqual(r2.bustard, None)
-        self.failIfEqual(r2.gerald, None)
+        self.assertNotEqual(r2.image_analysis, None)
+        self.assertNotEqual(r2.bustard, None)
+        self.assertNotEqual(r2.gerald, None)
 
 
 def suite():

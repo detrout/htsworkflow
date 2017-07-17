@@ -12,7 +12,7 @@ class testAlphanum(TestCase):
       scratch.sort(key=natural_sort_key)
 
       for i, s in enumerate(scratch):
-        self.failIfEqual(s, unsorted[i])
+        self.assertNotEqual(s, unsorted[i])
       for i, s in enumerate(scratch):
         self.assertEqual(s, sorted[i])
 
@@ -23,7 +23,7 @@ class testAlphanum(TestCase):
       scratch.sort(key=natural_sort_key)
 
       for i, s in enumerate(scratch):
-        self.failIfEqual(s, unsorted[i])
+        self.assertNotEqual(s, unsorted[i])
       for i, s in enumerate(scratch):
         self.assertEqual(s, sorted[i])
 

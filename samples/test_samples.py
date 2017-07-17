@@ -321,7 +321,7 @@ class TestRDFaLibrary(TestCase):
         ## lib_response = library(request)
         lib_response = self.client.get(url)
         lib_body = smart_str(lib_response.content)
-        self.failIfEqual(len(lib_body), 0)
+        self.assertNotEqual(len(lib_body), 0)
         with open('/tmp/body.html', 'wt') as outstream:
             outstream.write(lib_body)
 
