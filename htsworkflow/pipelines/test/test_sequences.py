@@ -484,13 +484,13 @@ class SequenceFileTests(TestCase):
         with SimulateSimpleTree() as tree:
             seqs = sequences.scan_for_sequences([tree.root, '/a/b/c/98345'])
             for s in seqs:
-                self.assertEquals(s.flowcell, '42BW9AAXX')
-                self.assertEquals(s.cycle, 33)
-                self.assertEquals(s.project, None)
+                self.assertEqual(s.flowcell, '42BW9AAXX')
+                self.assertEqual(s.cycle, 33)
+                self.assertEqual(s.project, None)
                 lanes.add(s.lane)
                 file_types_seen.add(s.filetype)
 
-            self.assertEquals(len(seqs), 8)
+            self.assertEqual(len(seqs), 8)
 
         self.assertEqual(lanes, lanes_to_see)
         self.assertEqual(file_types_to_see, file_types_seen)
@@ -507,13 +507,13 @@ class SequenceFileTests(TestCase):
         with SimulateHiSeqTree() as tree:
             seqs = sequences.scan_for_sequences([tree.root, '/a/b/c/98345'])
             for s in seqs:
-                self.assertEquals(s.flowcell, 'C02AAACXX')
-                self.assertEquals(s.cycle, 101)
+                self.assertEqual(s.flowcell, 'C02AAACXX')
+                self.assertEqual(s.cycle, 101)
                 lanes.add(s.lane)
                 file_types_seen.add(s.filetype)
                 projects_seen.add(s.project)
 
-            self.assertEquals(len(seqs), 12)
+            self.assertEqual(len(seqs), 12)
 
         self.assertEqual(lanes, lanes_to_see)
         self.assertEqual(file_types_to_see, file_types_seen)

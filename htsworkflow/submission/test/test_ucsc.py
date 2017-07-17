@@ -13,12 +13,12 @@ class TestUCSCInfo(TestCase):
     def test_parse_encodedcc_file(self):
         stream = StringIO(ENCODE_FILES)
         file_index = ucsc.parse_ucsc_file_index(stream, 'http://example.com/files')
-        self.assertEquals(len(file_index), 2)
+        self.assertEqual(len(file_index), 2)
 
         for attributes in file_index.values():
             self.failUnless('subId' in attributes)
             self.failUnless('project' in attributes)
-            self.assertEquals(attributes['project'], 'wgEncode')
+            self.assertEqual(attributes['project'], 'wgEncode')
 
 def suite():
     suite = TestSuite()

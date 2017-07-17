@@ -205,7 +205,7 @@ class ExperimentsTestCases(TestCase):
         admin_url = reverse("admin:experiments_flowcell_change",
                             args=(self.fc12150.id,))
         response = self.client.get(admin_url, follow=True)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         tree = fromstring(response.content)
         for i in range(0, 8):

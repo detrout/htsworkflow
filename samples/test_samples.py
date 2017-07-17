@@ -41,9 +41,9 @@ class LibraryAccessionTestCase(TestCase):
         library = LibraryFactory()
         acc = LibraryAccessionFactory(library_id=library.id)
 
-        self.assertEquals(acc.url[:len(acc.agency.homepage)],
+        self.assertEqual(acc.url[:len(acc.agency.homepage)],
                           acc.agency.homepage)
-        self.assertEquals(acc.url[len(acc.agency.homepage):],
+        self.assertEqual(acc.url[len(acc.agency.homepage):],
                           '/library/'+acc.accession)
 
     def test_have_accession(self):
@@ -72,9 +72,9 @@ class LibraryAccessionTestCase(TestCase):
 class LibraryTestCase(TestCase):
     def testOrganism(self):
         human = SpeciesFactory(common_name='human')
-        self.assertEquals(human.common_name, 'human')
+        self.assertEqual(human.common_name, 'human')
         library = LibraryFactory(library_species=human)
-        self.assertEquals(library.organism(), 'human')
+        self.assertEqual(library.organism(), 'human')
 
     def testAddingOneAffiliation(self):
         affiliation = AffiliationFactory.create(name='Alice')
