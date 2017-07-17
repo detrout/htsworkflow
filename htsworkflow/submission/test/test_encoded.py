@@ -46,7 +46,8 @@ class TestEncoded(TestCase):
         for schema, filename in [('library', 'library.json'),
                                  ('biosample', 'biosample.json')]:
             schema_file = os.path.join(os.path.dirname(__file__), filename)
-            self.validator._schemas[schema] = json.loads(open(schema_file, 'r').read())
+            with open(schema_file, 'rt') as instream:
+                self.validator._schemas[schema] = json.load(instream)
 
     def test_prepare_url(self):
         tests = [

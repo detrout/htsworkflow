@@ -87,7 +87,8 @@ class CrosstalkMatrix(object):
             self.set_elements(xml)
 
     def _initialize_from_file(self, pathname):
-        data = open(pathname).readlines()
+        with open(pathname, 'rt') as instream:
+            data = instream.readlines()
         auto_header = '# Auto-generated frequency response matrix'
         if data[0].strip() == auto_header and len(data) == 9:
             # skip over lines 1,2,3,4 which contain the 4 bases

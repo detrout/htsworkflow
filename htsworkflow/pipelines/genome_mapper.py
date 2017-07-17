@@ -47,7 +47,8 @@ def getAvailableGenomes(genome_base_dir):
   d = {}
 
   for genome_dir in genome_dir_list:
-    line = open(os.path.join(genome_dir, '_metainfo_'), 'r').readline().strip()
+    with open(os.path.join(genome_dir, '_metainfo_'), 'r') as instream:
+      line = instream.readline().strip()
 
     # Get species, build... log and skip on failure
     try:

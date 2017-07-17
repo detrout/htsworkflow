@@ -234,7 +234,8 @@ def ipar(pathname):
     matrix_pathname = os.path.join(pathname, 'Matrix', 's_matrix.txt')
     if os.path.exists(matrix_pathname):
         # this is IPAR_1.01
-        i.matrix = open(matrix_pathname, 'r').read()
+        with open(matrix_pathname, 'rt') as instream:
+            i.matrix = instream.read()
     else:
         i.matrix = None
         # its still live.
