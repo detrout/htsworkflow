@@ -24,7 +24,7 @@ class testETHelper(TestCase):
         self.assertEqual(len(pretty_foo.splitlines()), 4)
 
     def test_flatten(self):
-        self.failUnless(flatten(self.foo_tree), 'asdf')
+        self.assertTrue(flatten(self.foo_tree), 'asdf')
 
 def suite():
     from unittest import TestSuite, defaultTestLoader

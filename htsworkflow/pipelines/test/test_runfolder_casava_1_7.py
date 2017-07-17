@@ -130,7 +130,7 @@ class RunfolderTests(TestCase):
 
         # I want to be able to use a simple iterator
         for l in g.lanes.values():
-          self.failUnless(l.analysis in ('sequence_pair', 'eland_pair'))
+          self.assertTrue(l.analysis in ('sequence_pair', 'eland_pair'))
           self.assertEqual(l.read_length, '100')
           self.assertEqual(l.use_bases, 'Y'*100+'y'*100)
 

@@ -9,9 +9,9 @@ class testApi(TestCase):
         k1 = api.make_django_secret_key()
         k2 = api.make_django_secret_key()
 
-        self.failUnless(len(k1), 85)
-        self.failUnless(len(k2), 85)
-        self.failUnless(k1 != k2)
+        self.assertTrue(len(k1), 85)
+        self.assertTrue(len(k2), 85)
+        self.assertTrue(k1 != k2)
 
 def suite():
     from unittest import TestSuite, defaultTestLoader

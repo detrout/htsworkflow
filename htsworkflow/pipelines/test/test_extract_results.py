@@ -78,7 +78,7 @@ class RunfolderExtractTests(TestCase):
         runfolder.extract_results(runs, self.temp_dir, site='asite')
         archive = os.listdir(os.path.join(self.temp_dir, '4286GAAXX', 'C1-38'))
         self.assertEqual(len(archive), 34)
-        self.failUnless('asite_090608_HWI-EAS229_0117_4286GAAXX_l6_r1.tar.bz2' in archive)
+        self.assertTrue('asite_090608_HWI-EAS229_0117_4286GAAXX_l6_r1.tar.bz2' in archive)
 
 
 def suite():

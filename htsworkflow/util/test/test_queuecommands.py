@@ -23,7 +23,7 @@ class testQueueCommands(TestCase):
         q.run()
         end = time.time()-start
         # we should only take the length of the longest sleep
-        self.failUnless( end > 1.8 and end < 2.2,
+        self.assertTrue( end > 1.8 and end < 2.2,
                          "took %s seconds, exected ~2" % (end,))
 
     def test_limited_run_slow(self):
@@ -39,7 +39,7 @@ class testQueueCommands(TestCase):
         start = time.time()
         q.run()
         end = time.time()-start
-        self.failUnless( end > 3.7 and end < 4.3,
+        self.assertTrue( end > 3.7 and end < 4.3,
                          "took %s seconds, expected ~4" % (end,))
 
 

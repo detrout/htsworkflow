@@ -51,11 +51,11 @@ class TestResultMap(TestCase):
         results['2000'] =  sample2_dir
 
         results.make_tree_from(self.sourcedir, self.resultdir)
-        self.failUnless(os.path.isdir(sample1_dir))
-        self.failUnless(os.path.isdir(sample2_dir))
+        self.assertTrue(os.path.isdir(sample1_dir))
+        self.assertTrue(os.path.isdir(sample2_dir))
 
         for f in S1_FILES + S2_FILES:
-            self.failUnless(
+            self.assertTrue(
                 os.path.islink(
                     os.path.join(self.resultdir, f)))
 
@@ -69,11 +69,11 @@ class TestResultMap(TestCase):
         results.make_tree_from(self.sourcedir, self.resultdir)
         sample1_dir = os.path.join(self.resultdir, S1_NAME)
         sample2_dir = os.path.join(self.resultdir, S2_NAME)
-        self.failUnless(os.path.isdir(sample1_dir))
-        self.failUnless(os.path.isdir(sample2_dir))
+        self.assertTrue(os.path.isdir(sample1_dir))
+        self.assertTrue(os.path.isdir(sample2_dir))
 
         for f in S1_FILES + S2_FILES:
-            self.failUnless(
+            self.assertTrue(
                 os.path.islink(
                     os.path.join(self.resultdir, f)))
 

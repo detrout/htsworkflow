@@ -108,7 +108,7 @@ class TestDAF(TestCase):
 
         turtle = str(model.serialize(format='turtle'))
 
-        self.failUnless(str(signal_view_node) in turtle)
+        self.assertTrue(str(signal_view_node) in turtle)
 
         statements = list(model.triples((signal_view_node, None, None)))
         self.assertEqual(len(statements), 6)
@@ -265,20 +265,20 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
     def test_daf_with_replicate(self):
         daf_mapper = load_daf_mapper('test_rep')
         self.assertEqual(daf_mapper.need_replicate(), True)
-        self.failUnless('replicate' in daf_mapper.get_daf_variables())
+        self.assertTrue('replicate' in daf_mapper.get_daf_variables())
 
     def test_daf_without_replicate(self):
         daf_mapper = load_daf_mapper('test_rep', test_daf=test_daf_no_rep)
         self.assertEqual(daf_mapper.need_replicate(), False)
-        self.failUnless('replicate' not in daf_mapper.get_daf_variables())
+        self.assertTrue('replicate' not in daf_mapper.get_daf_variables())
 
     def test_daf_with_extra(self):
         daf_mapper = load_daf_mapper('test_rep', test_daf=test_daf_extra)
         variables = daf_mapper.get_daf_variables()
 
         self.assertEqual(len(variables), 11)
-        self.failUnless('treatment' in variables)
-        self.failUnless('controlId' in variables)
+        self.assertTrue('treatment' in variables)
+        self.assertTrue('controlId' in variables)
 
     def test_link_daf(self):
         name = 'testsub'
@@ -292,7 +292,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*\\\\.fastq" ;
 
         # make sure daf gets linked
         created_daf = os.path.join(result_dir, name+'.daf')
-        self.failUnless(os.path.exists(created_daf))
+        self.assertTrue(os.path.exists(created_daf))
         stream = open(created_daf, 'r')
         daf_body = stream.read()
         stream.close()
