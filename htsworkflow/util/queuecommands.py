@@ -88,6 +88,7 @@ class QueueCommands(object):
                 if pending.poll() is not None:
                     LOGGER.info("Process %d finished [%d]",
                                 pending.pid, pending.returncode)
+                    pending_fd.close()
                     del self.running[pending_fd]
                 else:
                     # It's still running, but there's some output
