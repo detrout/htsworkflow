@@ -38,7 +38,7 @@ class testAlphanum(TestCase):
     def test_bad_input(self):
         unsorted = [object(), (1,3j)]
         s = unsorted[:]
-        self.failUnlessRaises(ValueError, s.sort, key=natural_sort_key)
+        self.assertRaises(ValueError, s.sort, key=natural_sort_key)
 
 
 def suite():

@@ -16,7 +16,7 @@ class testCopier(TestCase):
 something: unrelated
 """)
         bot = copier.CopierBot('fake', configfile=cfg)
-        self.failUnlessRaises(RuntimeError, bot.read_config)
+        self.assertRaises(RuntimeError, bot.read_config)
 
     def test_full_config(self):
         cfg = StringIO("""[copier]

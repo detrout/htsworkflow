@@ -204,7 +204,7 @@ thisView:FastqRd1 dafTerm:filename_re ".*_r1\\\\.fastq" .
 '''.format(name)
         daf_mapper = load_daf_mapper(name, extra_statements=extra)
 
-        self.failUnlessRaises(daf.ModelException,
+        self.assertRaises(daf.ModelException,
                               daf_mapper.find_view,
                               'filename_r1.fastq')
 

@@ -131,7 +131,7 @@ IIIIB+++
         cnf1_path = os.path.join(TESTDATA_DIR, cnf1_srf)
         
         is_cnf1 = srf2fastq.is_cnf1
-        self.failUnlessRaises(ValueError, is_cnf1, __file__)
+        self.assertRaises(ValueError, is_cnf1, __file__)
         self.assertEqual(is_cnf1(cnf4_path), False)
         self.assertEqual(is_cnf1(cnf1_path), True)
 
