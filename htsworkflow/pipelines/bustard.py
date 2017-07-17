@@ -327,7 +327,7 @@ class Bustard(object):
             raise ValueError('Expected "Bustard" SubElements')
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > Bustard.XML_VERSION:
-            LOGGER.warn('Bustard XML tree is a higher version than this class')
+            LOGGER.warning('Bustard XML tree is a higher version than this class')
         for element in list(tree):
             if element.tag == Bustard.SOFTWARE_VERSION:
                 self._path_version = element.text

@@ -47,13 +47,13 @@ def validate_xhtml(html, base_url='http://localhost'):
     try:
         XHTML_RDF_DTD = lxml.etree.DTD(external_id=b'-//W3C//DTD XHTML+RDFa 1.0//EN')
     except lxml.etree.DTDParseError as e:
-        LOGGER.warn("Unable to load XHTML DTD %s" % (str(e),))
+        LOGGER.warning("Unable to load XHTML DTD %s" % (str(e),))
         return
 
     try:
         root = lxml.etree.fromstring(html, base_url=base_url)
     except lxml.etree.ParseError as e:
-        LOGGER.warn("Unable to parse document: %s" % (str(e),))
+        LOGGER.warning("Unable to parse document: %s" % (str(e),))
         return False
 
     if XHTML_RDF_DTD.validate(root):

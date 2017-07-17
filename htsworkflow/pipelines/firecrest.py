@@ -98,7 +98,7 @@ class Firecrest(object):
             raise ValueError('Expected "Firecrest" SubElements')
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > Firecrest.XML_VERSION:
-            LOGGER.warn('Firecrest XML tree is a higher version than this class')
+            LOGGER.warning('Firecrest XML tree is a higher version than this class')
         for element in list(tree):
             if element.tag == Firecrest.SOFTWARE_VERSION:
                 self.version = element.text

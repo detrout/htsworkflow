@@ -45,8 +45,8 @@ class AWSSubmission(Submission):
                         uploaded = json.load(instream)
 
                     if 'submitted_file_name' not in uploaded:
-                        LOGGER.warn('No submitted_file_name: %s',
-                                    pformat(uploaded))
+                        LOGGER.warning('No submitted_file_name: %s',
+                                       pformat(uploaded))
                     else:
                         tocheck.append({
                             'submitted_file_name': uploaded['submitted_file_name'],

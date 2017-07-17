@@ -178,7 +178,7 @@ def make_all_ddfs(view_map, library_result_map, daf_name, make_condor=True, forc
     if make_condor and len(dag_fragment) > 0:
         dag_filename = 'submission.dagman'
         if not force and os.path.exists(dag_filename):
-            logger.warn("%s exists, please delete" % (dag_filename,))
+            logger.warning("%s exists, please delete" % (dag_filename,))
         else:
             f = open(dag_filename,'w')
             f.write( os.linesep.join(dag_fragment))
@@ -253,7 +253,7 @@ ORDER BY  ?submitView"""
         for variable_name in variables:
             value = str(fromTypedNode(row[variable_name]))
             if value is None or value == 'None':
-                logger.warn("{0}: {1} was None".format(outfile, variable_name))
+                logger.warning("{0}: {1} was None".format(outfile, variable_name))
             if variable_name in ('files', 'md5sum'):
                 current.setdefault(variable_name,[]).append(value)
             else:

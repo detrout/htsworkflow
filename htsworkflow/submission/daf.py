@@ -322,7 +322,7 @@ class UCSCSubmission(object):
         LOGGER.debug("Searching for view")
         view = self.find_view(filename)
         if view is None:
-            LOGGER.warn("Unrecognized file: {0}".format(pathname))
+            LOGGER.warning("Unrecognized file: {0}".format(pathname))
             return None
         if str(view) == str(libraryOntology['ignore']):
             return None

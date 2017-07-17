@@ -192,7 +192,7 @@ class IPAR(object):
             raise ValueError('Expected "IPAR" SubElements')
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > IPAR.XML_VERSION:
-            LOGGER.warn('IPAR XML tree is a higher version than this class')
+            LOGGER.warning('IPAR XML tree is a higher version than this class')
         for element in list(tree):
             if element.tag == IPAR.RUN:
                 self.tree = element

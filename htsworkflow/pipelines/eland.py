@@ -440,7 +440,7 @@ class ElandLane(ResultLane):
             elif tag == READS.lower():
                 self._reads = int(element.text)
             else:
-                LOGGER.warn("ElandLane unrecognized tag %s" % (element.tag,))
+                LOGGER.warning("ElandLane unrecognized tag %s" % (element.tag,))
 
 
 class MatchCodes(collections.MutableMapping):
@@ -624,7 +624,7 @@ class SequenceLane(ResultLane):
             elif tag == SequenceLane.SEQUENCE_TYPE.lower():
                 self.sequence_type = lookup_sequence_type.get(element.text, None)
             else:
-                LOGGER.warn("SequenceLane unrecognized tag %s" % (element.tag,))
+                LOGGER.warning("SequenceLane unrecognized tag %s" % (element.tag,))
 
 class ELAND(collections.MutableMapping):
     """

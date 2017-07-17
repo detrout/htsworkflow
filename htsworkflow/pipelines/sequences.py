@@ -283,8 +283,8 @@ def parse_srf(path, filename):
     fullpath = os.path.join(path, filename)
 
     if flowcell_dir != flowcell:
-        LOGGER.warn("flowcell %s found in wrong directory %s" % \
-                         (flowcell, path))
+        LOGGER.warning("flowcell %s found in wrong directory %s" % \
+                       (flowcell, path))
 
     return SequenceFile('srf', fullpath, flowcell, lane, cycle=stop)
 
@@ -298,8 +298,8 @@ def parse_qseq(path, filename):
     read = int(records[6][1])
 
     if flowcell_dir != flowcell:
-        LOGGER.warn("flowcell %s found in wrong directory %s" % \
-                         (flowcell, path))
+        LOGGER.warning("flowcell %s found in wrong directory %s" % \
+                       (flowcell, path))
 
     return SequenceFile('qseq', fullpath, flowcell, lane, read, cycle=stop)
 
@@ -331,8 +331,8 @@ def parse_fastq(path, filename):
         sequence_type = 'fastq'
 
     if flowcell_dir != flowcell:
-        LOGGER.warn("flowcell %s found in wrong directory %s" % \
-                         (flowcell, path))
+        LOGGER.warning("flowcell %s found in wrong directory %s" % \
+                       (flowcell, path))
 
     return SequenceFile(sequence_type, fullpath, flowcell, lane, read,
                         pf=pf,
@@ -386,7 +386,7 @@ def scan_for_sequences(dirs):
     for d in dirs:
         LOGGER.info("Scanning %s for sequences" % (d,))
         if not os.path.exists(d):
-            LOGGER.warn("Flowcell directory %s does not exist" % (d,))
+            LOGGER.warning("Flowcell directory %s does not exist" % (d,))
             continue
 
         for path, dirname, filenames in os.walk(d):

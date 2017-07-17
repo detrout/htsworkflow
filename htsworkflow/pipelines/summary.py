@@ -52,7 +52,7 @@ class Summary(object):
             return ValueError("Expected %s" % (Summary.SUMMARY,))
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > Summary.XML_VERSION:
-            LOGGER.warn('Summary XML tree is a higher version than this class')
+            LOGGER.warning('Summary XML tree is a higher version than this class')
         for element in list(tree):
             lrs = LaneResultSummaryGA()
             lrs.set_elements(element)
@@ -220,7 +220,7 @@ class SummaryHiSeq(Summary):
         if os.path.exists(read1):
             self._extract_lane_results_for_end(read1, 0)
         else:
-            LOGGER.warn("No read1.xml at %s." % (read1,))
+            LOGGER.warning("No read1.xml at %s." % (read1,))
         if os.path.exists(read2):
             self.lane_results.append({})
             self._extract_lane_results_for_end(read2, 1)
@@ -312,7 +312,7 @@ class LaneResultSummary(object):
                 setattr(self, variable_name,
                         parse_summary_element(element))
             except KeyError as e:
-                LOGGER.warn('Unrecognized tag %s' % (element.tag,))
+                LOGGER.warning('Unrecognized tag %s' % (element.tag,))
 
 
 class LaneResultSummaryGA(LaneResultSummary):

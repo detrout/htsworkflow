@@ -197,7 +197,7 @@ class PipelineRun(object):
           elif tag == gerald.CASAVA.GERALD.lower():
             self.gerald = gerald.CASAVA(xml=element)
           else:
-            LOGGER.warn('PipelineRun unrecognized tag %s' % (tag,))
+            LOGGER.warning('PipelineRun unrecognized tag %s' % (tag,))
 
     def _get_serialization_filename(self):
         """Compute the filename for the run xml file
@@ -277,7 +277,7 @@ def get_runs(runfolder, flowcell_id=None):
         LOGGER.info('Found firecrest in ' + datadir)
         image_analysis = firecrest.firecrest(firecrest_pathname)
         if image_analysis is None:
-            LOGGER.warn(
+            LOGGER.warning(
                 "%s is an empty or invalid firecrest directory" % (firecrest_pathname,)
             )
         else:
@@ -292,7 +292,7 @@ def get_runs(runfolder, flowcell_id=None):
         LOGGER.info('Found ipar directories in ' + datadir)
         image_analysis = ipar.ipar(ipar_pathname)
         if image_analysis is None:
-            LOGGER.warn(
+            LOGGER.warning(
                 "%s is an empty or invalid IPAR directory" % (ipar_pathname,)
             )
         else:
@@ -353,7 +353,7 @@ def build_hiseq_runs(image_analysis, runs, datadir, runfolder, flowcell_id):
 
     for aligned, unaligned, suffix in matched_paths:
         if unaligned is None:
-            LOGGER.warn("Aligned directory %s without matching unalinged, skipping", aligned)
+            LOGGER.warning("Aligned directory %s without matching unalinged, skipping", aligned)
             continue
 
         try:
@@ -786,7 +786,7 @@ def rm_list(files, dry_run=True):
                 else:
                     os.unlink(f)
         else:
-            LOGGER.warn("%s doesn't exist." % (f,))
+            LOGGER.warning("%s doesn't exist." % (f,))
 
 def clean_runs(runs, dry_run=True):
     """

@@ -84,7 +84,7 @@ class Alignment(object):
             raise ValueError('expected %s' % (self.__class__.GERALD,))
         xml_version = int(tree.attrib.get('version', 0))
         if xml_version > Gerald.XML_VERSION:
-            LOGGER.warn('XML tree is a higher version than this class')
+            LOGGER.warning('XML tree is a higher version than this class')
         self.eland_results = ELAND()
         for element in list(tree):
             tag = element.tag.lower()
@@ -95,7 +95,7 @@ class Alignment(object):
             elif tag == ELAND.ELAND.lower():
                 self.eland_results = ELAND(xml=element)
             else:
-                LOGGER.warn("Unrecognized tag %s" % (element.tag,))
+                LOGGER.warning("Unrecognized tag %s" % (element.tag,))
 
 class Gerald(Alignment):
     GERALD='Gerald'
@@ -416,7 +416,7 @@ class LaneSpecificRunParameters(collections.MutableMapping):
 
     def __setitem__(self, key, value):
         if len(self._lanes) > 100:
-            LOGGER.warn("many projects loaded, consider improving dictionary")
+            LOGGER.warning("many projects loaded, consider improving dictionary")
         real_key = self._find_key(key)
         if real_key is not None:
             key = real_key

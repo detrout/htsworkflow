@@ -76,7 +76,7 @@ def main(cmdline=None):
         if os.path.exists(a):
             results.add_results_from_file(a)
         else:
-            logger.warn("File %s doesn't exist.", a)
+            logger.warning("File %s doesn't exist.", a)
 
     if args.make_link_tree_from is not None:
         results.make_tree_from(args.make_link_tree_from, link=True)

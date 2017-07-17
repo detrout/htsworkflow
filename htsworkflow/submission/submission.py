@@ -85,7 +85,7 @@ class Submission(object):
         LOGGER.debug("Searching for view")
         file_type = self.find_best_match(filename)
         if file_type is None:
-            LOGGER.warn("Unrecognized file: {0}".format(pathname))
+            LOGGER.warning("Unrecognized file: {0}".format(pathname))
             return None
         if str(file_type) == str(libraryOntology['ignore']):
             return None

@@ -119,7 +119,7 @@ class CondorFastqExtract(object):
                     condor_entries.setdefault(condor_type, []).append(
                         conversion(sources, target_pathname))
             else:
-                LOGGER.warn(" need file %s", target_pathname)
+                LOGGER.warning(" need file %s", target_pathname)
 
         return condor_entries
 
