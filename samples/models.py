@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import logging
 from django.db import models
 from django.contrib.auth.models import User
-from django.core import urlresolvers
+from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
 from django.db import connection
 from django.core.validators import RegexValidator
@@ -165,7 +165,7 @@ class Species(models.Model):
         ordering = ["scientific_name"]
 
     def get_absolute_url(self):
-        return urlresolvers.reverse('species', kwargs={'species_id': str(self.id)})
+        return reverse('species', kwargs={'species_id': str(self.id)})
 
 
 class Affiliation(models.Model):
@@ -469,12 +469,10 @@ class Library(models.Model):
     public.allow_tags = True
 
     def get_absolute_url(self):
-        return urlresolvers.reverse('library_to_flowcells',
-                                    kwargs={'lib_id': str(self.id)})
+        return reverse('library_to_flowcells', kwargs={'lib_id': str(self.id)})
 
     def get_admin_url(self):
-        return urlresolvers.reverse('admin:samples_library_change',
-                                    args=(self.id,))
+        return reverse('admin:samples_library_change', args=(self.id,))
 
 
 class HTSUser(User):

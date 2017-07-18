@@ -8,7 +8,7 @@ import re
 import uuid
 
 from django.conf import settings
-from django.core import urlresolvers
+from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.db import models
 from django.db.models.signals import pre_save
@@ -101,8 +101,7 @@ class Sequencer(models.Model):
         return " ".join(name)
 
     def get_absolute_url(self):
-        return urlresolvers.reverse('sequencer',
-                                    kwargs={'sequencer_id': self.id})
+        return reverse('sequencer', kwargs={'sequencer_id': self.id})
 
     @staticmethod
     def update_isdefault(sender, instance, **kwargs):
@@ -182,8 +181,8 @@ class FlowCell(models.Model):
 
     def get_admin_url(self):
         # that's the django way... except it didn't work
-        return urlresolvers.reverse('admin:experiments_flowcell_change',
-                                    args=(self.id,))
+        return reverse('admin:experiments_flowcell_change',
+                       args=(self.id,))
 
     def flowcell_type(self):
         """Convert our boolean 'is paired' flag to a name
@@ -195,7 +194,7 @@ class FlowCell(models.Model):
 
     def get_absolute_url(self):
         flowcell_id, status = parse_flowcell_id(self.flowcell_id)
-        return urlresolvers.reverse('flowcell_detail', args=[str(flowcell_id)])
+        return reverse('flowcell_detail', args=[str(flowcell_id)])
 
     def get_raw_data_directory(self):
         """Return location of where the raw data is stored"""
@@ -306,8 +305,7 @@ class Lane(models.Model):
     comment = models.TextField(null=True, blank=True)
 
     def get_absolute_url(self):
-        return urlresolvers.reverse('flowcell_lane_detail',
-                                    kwargs={'lane_pk': str(self.id)})
+        return reverse('flowcell_lane_detail', kwargs={'lane_pk': str(self.id)})
 
     def __str__(self):
         return self.flowcell.flowcell_id + ':' + str(self.lane_number)
@@ -458,7 +456,7 @@ class DataFile(models.Model):
     pathname = property(_get_pathname)
 
     def get_absolute_url(self):
-        return urlresolvers.reverse('read_result_file', (), {'key': self.random_key})
+        return reverse('read_result_file', (), {'key': self.random_key})
 
 
 def find_file_type_metadata_from_filename(pathname):
