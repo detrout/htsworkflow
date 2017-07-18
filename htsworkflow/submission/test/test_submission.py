@@ -19,9 +19,6 @@ from .submission_test_common import  (
     MockAddDetails,
 )
 
-#import logging
-#logging.basicConfig(level=logging.DEBUG)
-
 class TestSubmissionModule(TestCase):
     def test_empty_list_submission(self):
         model = Graph()
