@@ -273,7 +273,7 @@ class ENCODED:
         response = self._session.get(
             url, headers=self.json_headers, params=kwargs, **arguments)
         if not response.status_code == requests.codes.ok:
-            LOGGER.error("Error http status: {} for {}".format(response.status_code, url))
+            LOGGER.warning("Error http status: {} for {}".format(response.status_code, url))
             response.raise_for_status()
 
         return response
