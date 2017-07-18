@@ -176,6 +176,7 @@ class Submission(object):
         stream = opener.autoopen(submission_pathname, 'rt')
         header = stream.readline().strip()
         sequence = stream.readline().strip()
+        stream.close()
         read_length = len(sequence)
         self.model.add((fileNode,
                         libraryOntology['read_length'],
