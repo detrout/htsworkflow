@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-import datetime
+from django.utils import timezone
 
 import factory
 from factory.django import DjangoModelFactory
@@ -38,7 +38,7 @@ class ItemInfoFactory(DjangoModelFactory):
     qty_purchased = FuzzyInteger(1, 50)
 
     vendor = factory.SubFactory(VendorFactory)
-    purchase_date = datetime.datetime.now()
+    purchase_date = timezone.now()
     warranty_months = 30
 
 
@@ -68,7 +68,7 @@ class ItemFactory(DjangoModelFactory):
     item_info = factory.SubFactory(ItemInfoFactory)
     location = factory.SubFactory(LocationFactory)
     status = factory.SubFactory(ItemStatusFactory)
-    creation_date = datetime.datetime.now()
+    creation_date = timezone.now()
     modified_date = creation_date
     notes = FuzzyText(prefix='Item notes ')
 
@@ -90,7 +90,7 @@ class LongTermStorageFactory(DjangoModelFactory):
     flowcell = factory.SubFactory(FlowCellFactory)
     # libraries = many to many Library
     # storage_devices = many to many Item
-    creation_date = datetime.datetime.now()
+    creation_date = timezone.now()
     modified_date = creation_date
 
     @factory.post_generation
@@ -110,7 +110,7 @@ class ReagentBaseFactory(DjangoModelFactory):
         model = models.ReagentBase
 
     #reagent = many to many Item
-    creation_date = datetime.datetime.now()
+    creation_date = timezone.now()
     modification_date = creation_date
 
 

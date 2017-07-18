@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-import datetime
+from django.utils import timezone
 
 from factory import LazyAttribute, Sequence, SubFactory, post_generation
 from factory.django import DjangoModelFactory
@@ -106,7 +106,7 @@ class LibraryFactory(DjangoModelFactory):
     library_name = LazyAttribute(lambda o: 'Library %s' % (o.id))
     library_species = SubFactory(SpeciesFactory)
     experiment_type = SubFactory(ExperimentTypeFactory)
-    creation_date = datetime.datetime.now()
+    creation_date = timezone.now()
     gel_cut_size = 400
     made_for = 'scientist unit 2007'
     made_by = 'microfluidics bot 7321'
@@ -131,4 +131,4 @@ class LibraryAccessionFactory(DjangoModelFactory):
 
     accession = FuzzyText(prefix="ACC")
     agency = SubFactory(AccessionAgencyFactory)
-    created = datetime.datetime.now()
+    created = timezone.now()

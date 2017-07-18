@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
-import datetime
-
+from django.utils import timezone
 import factory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyText
@@ -35,7 +34,7 @@ class FlowCellFactory(DjangoModelFactory):
         model = models.FlowCell
 
     flowcell_id = FuzzyText(length=6, suffix='AAXX')
-    run_date = datetime.datetime.now()
+    run_date = timezone.now()
     advanced_run = False
     paired_end = True
     read_length = 100
@@ -65,7 +64,7 @@ class SequencingRunFactory(DjangoModelFactory):
     flowcell = factory.SubFactory(FlowCellFactory)
     runfolder_name = '102030_UAW-EAS22_1234AAAAXX'
     result_dir = runfolder_name + '/Unaligned'
-    run_start_time = datetime.datetime.now()
+    run_start_time = timezone.now()
     cycle_start = 1
     cycle_stop = 101
     run_status = 2
