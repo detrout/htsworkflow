@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function
 
 import datetime
 import json
+import logging
 from unittest import skipUnless
 
 from django.core.exceptions import ValidationError
@@ -101,6 +102,12 @@ class SampleWebTestCase(TestCase):
     Test returning data from our database in rest like ways.
     (like returning json objects)
     """
+    def setUp(self):
+        logging.disable(logging.WARNING)
+
+    def tearDown(self):
+        logging.disable(logging.NOTSET)
+
     def test_library_dict(self):
         library = LibraryFactory.create()
         lib_dict = library_dict(library.id)

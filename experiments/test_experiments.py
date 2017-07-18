@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+import logging
 import re
 from lxml.html import fromstring
 import json
@@ -93,12 +94,14 @@ class ExperimentsTestCases(TestCase):
         os.mkdir(os.path.join(self.fc2_dir, 'C1-25'))
         os.mkdir(os.path.join(self.fc2_dir, 'C1-37'))
         os.mkdir(os.path.join(self.fc2_dir, 'C1-37', 'Plots'))
+        logging.disable(logging.WARNING)
 
     def tearDown(self):
         shutil.rmtree(self.tempdir)
         self.user_odd.delete()
         self.user_even.delete()
         self.admin.delete()
+        logging.disable(logging.NOTSET)
 
     def test_flowcell_information(self):
         """

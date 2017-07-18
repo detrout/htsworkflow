@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
 
+import logging
 import os
 from six.moves import StringIO
 from unittest import TestCase
@@ -11,6 +12,12 @@ from .simulate_runfolder import TESTDATA_DIR
 class SummaryTests(TestCase):
     """Test elements of the summary file parser
     """
+    def setUp(self):
+        logging.disable(logging.WARNING)
+
+    def tearDown(self):
+        logging.disable(logging.NOTSET)
+
     def test_is_xml(self):
         xmlfile = StringIO('<?xml version="1.0"?>\n<tag>\n')
         htmlfile = StringIO('<html>\n<head></head>\n<body><p></p></body>\n</html>')

@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function
 
 import json
 import jsonschema
+import logging
 import os
 from unittest import TestCase, TestSuite, defaultTestLoader
 
@@ -42,12 +43,16 @@ class TestEncoded(TestCase):
             'uuid': 'bc5b62f7-ce28-4a1e-b6b3-81c9c5a86d7a',
             }
 
+        logging.disable(logging.WARNING)
         self.validator = DCCValidator(self.encode)
         for schema, filename in [('library', 'library.json'),
                                  ('biosample', 'biosample.json')]:
             schema_file = os.path.join(os.path.dirname(__file__), filename)
             with open(schema_file, 'rt') as instream:
                 self.validator._schemas[schema] = json.load(instream)
+
+    def tearDown(self):
+        logging.disable(logging.NOTSET)
 
     def test_prepare_url(self):
         tests = [

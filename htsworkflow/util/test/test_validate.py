@@ -1,3 +1,4 @@
+import logging
 import os
 from six.moves import StringIO
 from unittest import TestCase
@@ -5,6 +6,12 @@ from unittest import TestCase
 from htsworkflow.util import validate
 
 class TestValidate(TestCase):
+    def setUp(self):
+        logging.disable(logging.ERROR)
+
+    def tearDown(self):
+        logging.disable(logging.NOTSET)
+
     def test_phred33_works(self):
         q = StringIO(u"@ abc\nAGCT\n+\nBBBB\n")
         errors = validate.validate_fastq(q)

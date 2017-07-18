@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import logging
 import os
 import shutil
 import tempfile
@@ -14,6 +15,12 @@ class SequenceFileTests(TestCase):
     """
     Make sure the sequence archive class works
     """
+    def setUp(self):
+        logging.disable(logging.WARNING)
+
+    def tearDown(self):
+        logging.disable(logging.NOTSET)
+
     def test_get_flowcell_cycle(self):
         tests = [
             ('/root/42BW9AAXX/C1-152',

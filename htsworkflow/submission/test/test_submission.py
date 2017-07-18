@@ -1,4 +1,4 @@
-
+import logging
 import os
 import shutil
 from unittest import TestCase, TestSuite, defaultTestLoader
@@ -64,8 +64,10 @@ class TestSubmission(TestCase):
     def setUp(self):
         generate_sample_results_tree(self, 'submission_test')
         self.model = Graph()
+        logging.disable(logging.ERROR)
 
     def tearDown(self):
+        logging.disable(logging.NOTSET)
         shutil.rmtree(self.tempdir)
 
     def test_create_submission(self):

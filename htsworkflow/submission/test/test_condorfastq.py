@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import copy
+import logging
 import os
 import re
 from pprint import pprint
@@ -419,6 +420,7 @@ HOST = "http://localhost"
 
 class TestCondorFastq(TestCase):
     def setUp(self):
+        logging.disable(logging.WARNING)
         self.cwd = os.getcwd()
 
         self.tempdir = tempfile.mkdtemp(prefix='condorfastq_test')
@@ -456,6 +458,7 @@ class TestCondorFastq(TestCase):
     def tearDown(self):
         shutil.rmtree(self.tempdir)
         os.chdir(self.cwd)
+        logging.disable(logging.NOTSET)
 
     def test_find_relevant_flowcell_ids(self):
         expected = set(('30221AAXX',

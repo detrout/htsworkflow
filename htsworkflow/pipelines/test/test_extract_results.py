@@ -67,9 +67,11 @@ class RunfolderExtractTests(TestCase):
     """
     def setUp(self):
         # attaches all the directories to the object passed in
+        logging.disable(logging.WARNING)
         make_runfolder(self)
 
     def tearDown(self):
+        logging.disable(logging.NOTSET)
         shutil.rmtree(self.temp_dir)
 
     def test_extract_results(self):
