@@ -145,8 +145,12 @@ class FlowCell(models.Model):
                                        blank=True)
 
     cluster_station = models.ForeignKey(ClusterStation,
-                                        default=cluster_station_default)
-    sequencer = models.ForeignKey(Sequencer, default=sequencer_default)
+                                        default=cluster_station_default,
+                                        on_delete=models.CASCADE,
+    )
+    sequencer = models.ForeignKey(Sequencer, default=sequencer_default,
+                                  on_delete=models.CASCADE,
+    )
 
     notes = models.TextField(blank=True)
 
@@ -287,9 +291,9 @@ class Lane(models.Model):
     class Meta:
         ordering = ['-flowcell__run_date', '-library__id']
 
-    flowcell = models.ForeignKey(FlowCell)
+    flowcell = models.ForeignKey(FlowCell, on_delete=models.CASCADE)
     lane_number = models.IntegerField()
-    library = models.ForeignKey(Library)
+    library = models.ForeignKey(Library, on_delete=models.CASCADE)
     pM = models.DecimalField(max_digits=5,
                              decimal_places=2,
                              blank=False,
@@ -310,7 +314,9 @@ class Lane(models.Model):
 
 
 class SequencingRun(models.Model):
-    flowcell = models.ForeignKey(FlowCell, verbose_name="Flowcell Id")
+    flowcell = models.ForeignKey(FlowCell, verbose_name="Flowcell Id",
+                                 on_delete=models.CASCADE,
+    )
     runfolder_name = models.CharField(max_length=50)
     result_dir = models.CharField(max_length=255)
     last_update_time = models.DateTimeField()
@@ -434,9 +440,13 @@ class DataFile(models.Model):
     random_key = models.CharField(max_length=64,
                                   db_index=True,
                                   default=str_uuid)
-    sequencing_run = models.ForeignKey(SequencingRun, db_index=True, null=True)
-    library = models.ForeignKey(Library, db_index=True, null=True, blank=True)
-    file_type = models.ForeignKey(FileType)
+    sequencing_run = models.ForeignKey(SequencingRun, db_index=True, null=True,
+                                       on_delete=models.CASCADE,
+    )
+    library = models.ForeignKey(Library, db_index=True, null=True, blank=True,
+                                on_delete=models.CASCADE,
+    )
+    file_type = models.ForeignKey(FileType, on_delete=models.CASCADE)
     relative_pathname = models.CharField(max_length=255, db_index=True)
 
     def _get_attributes(self):

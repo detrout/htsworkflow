@@ -37,7 +37,7 @@ class Accession(models.Model):
             message="Please only use letters, digits, and :.-")]
     )
     url = models.URLField(blank=True, null=True)
-    agency = models.ForeignKey(AccessionAgency)
+    agency = models.ForeignKey(AccessionAgency, on_delete=models.CASCADE)
     created = models.DateTimeField()
 
     class Meta:
@@ -52,7 +52,7 @@ class Accession(models.Model):
 
 
 class LibraryAccession(Accession):
-    library = models.ForeignKey('Library')
+    library = models.ForeignKey('Library', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         self.update_url(self.agency.library_template)
@@ -210,7 +210,7 @@ class LibraryType(models.Model):
 
 class MultiplexIndex(models.Model):
     """Map adapter types to the multiplex sequence"""
-    adapter_type = models.ForeignKey(LibraryType)
+    adapter_type = models.ForeignKey(LibraryType, on_delete=models.CASCADE)
     multiplex_id = models.CharField(max_length=6, null=False)
     sequence = models.CharField(max_length=12, blank=True, null=True)
 
@@ -222,13 +222,14 @@ class MultiplexIndex(models.Model):
 class Library(models.Model):
     id = models.CharField(max_length=10, primary_key=True)
     library_name = models.CharField(max_length=100, unique=True)
-    library_species = models.ForeignKey(Species)
+    library_species = models.ForeignKey(Species, on_delete=models.CASCADE)
     hidden = models.BooleanField(default=False)
     account_number = models.CharField(max_length=100, null=True, blank=True)
     cell_line = models.ForeignKey(Cellline, blank=True, null=True,
-                                  verbose_name="Background")
-    condition = models.ForeignKey(Condition, blank=True, null=True)
-    antibody = models.ForeignKey(Antibody, blank=True, null=True)
+                                  verbose_name="Background",
+                                  on_delete=models.CASCADE)
+    condition = models.ForeignKey(Condition, blank=True, null=True, on_delete=models.CASCADE)
+    antibody = models.ForeignKey(Antibody, blank=True, null=True, on_delete=models.CASCADE)
     affiliations = models.ManyToManyField(
         Affiliation, related_name='library_affiliations')
     tags = models.ManyToManyField(Tag, related_name='library_tags',
@@ -236,9 +237,10 @@ class Library(models.Model):
     REPLICATE_NUM = [(x, x) for x in range(1, 7)]
     replicate = models.PositiveSmallIntegerField(choices=REPLICATE_NUM,
                                                  blank=True, null=True)
-    experiment_type = models.ForeignKey(ExperimentType)
+    experiment_type = models.ForeignKey(ExperimentType, on_delete=models.CASCADE)
     library_type = models.ForeignKey(LibraryType, blank=True, null=True,
-                                     verbose_name="Adapter Type")
+                                     verbose_name="Adapter Type",
+                                     on_delete=models.CASCADE)
     multiplex_id = models.CharField(max_length=255,
                                     blank=True, null=True,
                                     verbose_name="Index ID")
@@ -267,7 +269,9 @@ class Library(models.Model):
     amplified_from_sample = models.ForeignKey(
         'self',
         related_name='amplified_into_sample',
-        blank=True, null=True)
+        blank=True, null=True,
+        on_delete=models.CASCADE
+    )
 
     undiluted_concentration = models.DecimalField(
         "Concentration",

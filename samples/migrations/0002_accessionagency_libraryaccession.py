@@ -32,8 +32,8 @@ class Migration(migrations.Migration):
                 ('accession', models.CharField(db_index=True, validators=[django.core.validators.RegexValidator('^[-A-Za-z0-9:.]*$', message='Please only use letters, digits, and :.-')], max_length=255)),
                 ('url', models.URLField(blank=True, null=True)),
                 ('created', models.DateTimeField()),
-                ('agency', models.ForeignKey(to='samples.AccessionAgency')),
-                ('library', models.ForeignKey(to='samples.Library')),
+                ('agency', models.ForeignKey(to='samples.AccessionAgency', on_delete=models.CASCADE)),
+                ('library', models.ForeignKey(to='samples.Library', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,

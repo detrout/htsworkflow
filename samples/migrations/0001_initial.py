@@ -82,7 +82,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HTSUser',
             fields=[
-                ('user_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
+                ('user_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['first_name', 'last_name', 'username'],
@@ -112,11 +112,11 @@ class Migration(migrations.Migration):
                 ('bioanalyzer_concentration', models.DecimalField(help_text='(ng/\xb5l)', null=True, max_digits=5, decimal_places=2, blank=True)),
                 ('bioanalyzer_image_url', models.URLField(default='', blank=True)),
                 ('affiliations', models.ManyToManyField(related_name='library_affiliations', to='samples.Affiliation')),
-                ('amplified_from_sample', models.ForeignKey(related_name='amplified_into_sample', blank=True, to='samples.Library', null=True)),
-                ('antibody', models.ForeignKey(blank=True, to='samples.Antibody', null=True)),
-                ('cell_line', models.ForeignKey(verbose_name='Background', blank=True, to='samples.Cellline', null=True)),
-                ('condition', models.ForeignKey(blank=True, to='samples.Condition', null=True)),
-                ('experiment_type', models.ForeignKey(to='samples.ExperimentType')),
+                ('amplified_from_sample', models.ForeignKey(related_name='amplified_into_sample', blank=True, to='samples.Library', null=True, on_delete=models.CASCADE)),
+                ('antibody', models.ForeignKey(blank=True, to='samples.Antibody', null=True, on_delete=models.CASCADE)),
+                ('cell_line', models.ForeignKey(verbose_name='Background', blank=True, to='samples.Cellline', null=True, on_delete=models.CASCADE)),
+                ('condition', models.ForeignKey(blank=True, to='samples.Condition', null=True, on_delete=models.CASCADE)),
+                ('experiment_type', models.ForeignKey(to='samples.ExperimentType', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['-id'],
@@ -143,7 +143,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('multiplex_id', models.CharField(max_length=6)),
                 ('sequence', models.CharField(max_length=12, null=True, blank=True)),
-                ('adapter_type', models.ForeignKey(to='samples.LibraryType')),
+                ('adapter_type', models.ForeignKey(to='samples.LibraryType', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'multiplex indicies',
@@ -182,13 +182,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='library',
             name='library_species',
-            field=models.ForeignKey(to='samples.Species'),
+            field=models.ForeignKey(to='samples.Species', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='library',
             name='library_type',
-            field=models.ForeignKey(verbose_name='Adapter Type', blank=True, to='samples.LibraryType', null=True),
+            field=models.ForeignKey(verbose_name='Adapter Type', blank=True, to='samples.LibraryType', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(

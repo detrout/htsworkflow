@@ -21,7 +21,7 @@ class LabelTemplate(models.Model):
     """
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
-    printer = models.ForeignKey(LabelPrinter)
+    printer = models.ForeignKey(LabelPrinter, on_delete=models.CASCADE)
     
     ZPL_code = models.TextField('template')
     
@@ -33,5 +33,5 @@ class LabelContent(models.Model):
     subtitle = models.CharField(max_length=200, null=True, blank=True)
     text = models.CharField(max_length=200, null=True, blank=True)
     barcode = models.CharField(max_length=200, null=True, blank=True)
-    template = models.ForeignKey(LabelTemplate)
+    template = models.ForeignKey(LabelTemplate, on_delete=models.CASCADE)
     creator = models.CharField(max_length=200)

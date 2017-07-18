@@ -81,7 +81,7 @@ class Migration(migrations.Migration):
                 ('read_length', models.IntegerField(default=32)),
                 ('control_lane', models.IntegerField(blank=True, null=True, choices=[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (0, 'All Lanes')])),
                 ('notes', models.TextField(blank=True)),
-                ('cluster_station', models.ForeignKey(default=experiments.models.cluster_station_default, to='experiments.ClusterStation')),
+                ('cluster_station', models.ForeignKey(default=experiments.models.cluster_station_default, to='experiments.ClusterStation', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['-run_date'],
@@ -97,8 +97,8 @@ class Migration(migrations.Migration):
                 ('cluster_estimate', models.IntegerField(null=True, blank=True)),
                 ('status', models.IntegerField(blank=True, null=True, choices=[(0, 'Failed'), (1, 'Marginal'), (2, 'Good'), (100, 'Not run')])),
                 ('comment', models.TextField(null=True, blank=True)),
-                ('flowcell', models.ForeignKey(to='experiments.FlowCell')),
-                ('library', models.ForeignKey(to='samples.Library')),
+                ('flowcell', models.ForeignKey(to='experiments.FlowCell', on_delete=models.CASCADE)),
+                ('library', models.ForeignKey(to='samples.Library', on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -124,31 +124,31 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='flowcell',
             name='sequencer',
-            field=models.ForeignKey(default=experiments.models.sequencer_default, to='experiments.Sequencer'),
+            field=models.ForeignKey(default=experiments.models.sequencer_default, to='experiments.Sequencer', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='datarun',
             name='flowcell',
-            field=models.ForeignKey(verbose_name='Flowcell Id', to='experiments.FlowCell'),
+            field=models.ForeignKey(verbose_name='Flowcell Id', to='experiments.FlowCell', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='datafile',
             name='data_run',
-            field=models.ForeignKey(to='experiments.DataRun'),
+            field=models.ForeignKey(to='experiments.DataRun', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='datafile',
             name='file_type',
-            field=models.ForeignKey(to='experiments.FileType'),
+            field=models.ForeignKey(to='experiments.FileType', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='datafile',
             name='library',
-            field=models.ForeignKey(blank=True, to='samples.Library', null=True),
+            field=models.ForeignKey(blank=True, to='samples.Library', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

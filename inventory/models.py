@@ -82,7 +82,7 @@ class ItemInfo(models.Model):
 
     qty_purchased = models.IntegerField(default=1)
 
-    vendor = models.ForeignKey(Vendor)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     purchase_date = models.DateField(blank=True, null=True)
     warranty_months = models.IntegerField(blank=True, null=True)
 
@@ -124,7 +124,7 @@ class ItemStatus(models.Model):
 
 
 class Item(models.Model):
-    item_type = models.ForeignKey(ItemType)
+    item_type = models.ForeignKey(ItemType, on_delete=models.CASCADE)
 
     #Automatically assigned uuid; used for barcode if one is not provided in
     # barcode_id
@@ -138,11 +138,11 @@ class Item(models.Model):
     barcode_id = models.CharField(max_length=256, blank=True, null=True)
     force_use_uuid = models.BooleanField(default=False)
 
-    item_info = models.ForeignKey(ItemInfo)
+    item_info = models.ForeignKey(ItemInfo, on_delete=models.CASCADE)
 
-    location = models.ForeignKey(Location)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
 
-    status = models.ForeignKey(ItemStatus, blank=True, null=True)
+    status = models.ForeignKey(ItemStatus, blank=True, null=True, on_delete=models.CASCADE)
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
@@ -165,8 +165,8 @@ class PrinterTemplate(models.Model):
     """
     Maps templates to printer to use
     """
-    item_type = models.ForeignKey(ItemType)
-    printer = models.ForeignKey(Printer)
+    item_type = models.ForeignKey(ItemType, on_delete=models.CASCADE)
+    printer = models.ForeignKey(Printer, on_delete=models.CASCADE)
 
     default = models.BooleanField(default=False)
 
@@ -182,7 +182,7 @@ pre_save.connect(_switch_default, sender=PrinterTemplate)
 
 
 class LongTermStorage(models.Model):
-    flowcell = models.ForeignKey(FlowCell)
+    flowcell = models.ForeignKey(FlowCell, on_delete=models.CASCADE)
     libraries = models.ManyToManyField(Library)
 
     storage_devices = models.ManyToManyField(Item)
@@ -211,7 +211,7 @@ class ReagentFlowcell(ReagentBase):
     """
     Links reagents and flowcells
     """
-    flowcell = models.ForeignKey(FlowCell)
+    flowcell = models.ForeignKey(FlowCell, on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s: %s" % (str(self.flowcell), ', '.join([str(s) for s in self.reagent.iterator()]))
@@ -221,7 +221,7 @@ class ReagentLibrary(ReagentBase):
     """
     Links libraries and flowcells
     """
-    library = models.ForeignKey(Library)
+    library = models.ForeignKey(Library, on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s: %s" % (str(self.library), ', '.join([str(s) for s in self.reagent.iterator()]))
