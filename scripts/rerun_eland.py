@@ -19,7 +19,7 @@ def make_query_filename(eland_obj, output_dir):
     query_pathname = os.path.join(output_dir, query_name)
 
     if os.path.exists(query_pathname):
-        LOGGER.warn("overwriting %s" % (query_pathname,))
+        LOGGER.warning("overwriting %s" % (query_pathname,))
 
     return query_pathname
 
@@ -30,7 +30,7 @@ def make_result_filename(eland_obj, output_dir):
     result_pathname = os.path.join(output_dir, result_name)
 
     if os.path.exists(result_pathname):
-        LOGGER.warn("overwriting %s" % (result_pathname,))
+        LOGGER.warning("overwriting %s" % (result_pathname,))
 
     return result_pathname
 

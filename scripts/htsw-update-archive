@@ -214,10 +214,10 @@ def main(cmdline=None):
     fcdb, libdb = build_flowcell_db(opts.cache, seqs, opts.host, opts.apiid, opts.apikey)
     updates = make_library_links(opts.library_tree, libdb, dry_run=opts.dry_run)
 
-    LOGGER.warn("%s flowcells in database" % (len(fcdb),))
-    LOGGER.warn("found %s sequence files" % (len(seqs),))
-    LOGGER.warn("%s libraries being checked" % (len(libdb),))
-    LOGGER.warn("%s sequence files were linked" % (updates,))
+    LOGGER.warning("%s flowcells in database" % (len(fcdb),))
+    LOGGER.warning("found %s sequence files" % (len(seqs),))
+    LOGGER.warning("%s libraries being checked" % (len(libdb),))
+    LOGGER.warning("%s sequence files were linked" % (updates,))
 
     return 0
 
