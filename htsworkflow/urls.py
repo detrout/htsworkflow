@@ -31,5 +31,5 @@ urlpatterns = [
     url(r'^samples/', include('samples.urls')),
     url(r'^sequencer/(?P<sequencer_id>\w+)', sequencer, name="sequencer"),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 ]
