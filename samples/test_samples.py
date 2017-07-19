@@ -6,15 +6,19 @@ import logging
 from unittest import skipUnless
 
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory
 from django.utils.encoding import smart_text, smart_str, smart_bytes
 
 from rdflib import ConjunctiveGraph, Graph
 
+from lxml import html
+
 from .models import Affiliation, ExperimentType, Species, Library
 from .views import library_dict
 from .samples_factory import (
     AffiliationFactory,
+    HTSUserFactory,
     LibraryAccessionFactory,
     LibraryFactory,
     SpeciesFactory,
@@ -273,6 +277,25 @@ class SampleWebTestCase(TestCase):
         state = validate_xhtml(response.content)
         if state is not None:
             self.assertTrue(state)
+
+    def test_login(self):
+        '''Test login header on library page changes when the user logins'''
+        user = HTSUserFactory(username='user')
+
+        # not logged in
+        response = self.client.get('/library/')
+        tree = html.fromstring(response.content)
+        login_url = tree.xpath('//div[@id="user-tools"]/a')[0].attrib['href']
+        self.assertTrue(login_url.startswith(reverse('login')), 'url={}'.format(login_url))
+
+        # login
+        self.client.force_login(user)
+
+        # does the banner change?
+        response = self.client.get('/library/')
+        tree = html.fromstring(response.content)
+        logout_url = tree.xpath('//div[@id="user-tools"]/a')[-1].attrib['href']
+        self.assertTrue(logout_url.startswith(reverse('logout')))
 
 
 # The django test runner flushes the database between test suites not cases,
