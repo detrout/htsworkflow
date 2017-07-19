@@ -63,10 +63,7 @@ def library_to_flowcells(request, lib_id):
     """
     Display information about all the flowcells a library has been run on.
     """
-    try:
-        lib = Library.objects.get(id=lib_id)
-    except:
-        raise Http404('Library %s does not exist' % (lib_id,))
+    lib = get_object_or_404(Library, id=lib_id)
 
     flowcell_list = []
     flowcell_run_results = {}  # aka flowcells we're looking at
@@ -368,7 +365,7 @@ def _files(flowcell_id, lane):
 
 
 def library_id_to_admin_url(request, lib_id):
-    lib = Library.objects.get(id=lib_id)
+    lib = get_object_or_404(Library, id=lib_id)
     return HttpResponseRedirect('/admin/samples/library/%s' % (lib.id,))
 
 
