@@ -3,7 +3,6 @@ from __future__ import absolute_import, print_function
 import datetime
 import json
 import logging
-from unittest import skipUnless
 
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
