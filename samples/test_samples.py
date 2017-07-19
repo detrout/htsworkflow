@@ -31,6 +31,7 @@ from htsworkflow.util.rdfhelp import add_default_schemas
 from htsworkflow.util.rdfinfer import Infer
 from htsworkflow.util.rdfns import libraryOntology
 
+
 class LibraryAccessionTestCase(TestCase):
     def test_validator(self):
         library = LibraryFactory()
@@ -147,8 +148,7 @@ class SampleWebTestCase(TestCase):
             self.assertEqual(d['stopping_point'], library.stopping_point)
             self.assertEqual(d['successful_pM'], library.successful_pM)
             self.assertEqual(d['undiluted_concentration'],
-                                 str(library.undiluted_concentration))
-
+                             str(library.undiluted_concentration))
 
         def junk(self):
                 # some specific tests
