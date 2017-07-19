@@ -7,7 +7,7 @@ import json
 
 from django.contrib.admin.sites import site as admin_site
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
@@ -439,8 +439,7 @@ def library_json(request, library_id):
     if lib is None:
         raise Http404
 
-    lib_json = json.dumps({'result': lib})
-    return HttpResponse(lib_json, content_type='application/json')
+    return JsonResponse({'result': lib})
 
 
 @csrf_exempt
