@@ -26,8 +26,11 @@
 {% endblock %}
 
 </head>
-<body>
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}>"
+      data-admin-utc-offset="{% now "Z" %}">
+
 <!-- Container -->
+<div id="container">
     {% if not is_popup %}
     <!-- Header -->
     <div id="header">
@@ -80,5 +83,6 @@
 
     {% block footer %}<div id="footer"></div>{% endblock %}
 <!-- END Container -->
+</div>
 </body>
 </html>
