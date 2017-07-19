@@ -29,27 +29,35 @@
 <body>
 <!-- Container -->
     {% if not is_popup %}
-
+    <!-- Header -->
     <div id="header">
         <div id="branding">
         {% block branding %}{% endblock %}
         </div>
+        {% block usertools %}
         <div id="user-tools">
         {% if user.is_authenticated %}
-        {% trans 'Welcome,' %}
-        <strong>{% firstof user.first_name user.username %}</strong>.
-        {% block userlinks %}
-            {% url "django.admindocs.docroot" as docsroot %}
-            {% if docsroot %}
-                <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
-            {% endif %}
-            <a href="{{root_path}}/accounts/password_change/">{% trans 'Change password' %}</a> /
-            <a href="{{root_path}}/accounts/logout/">{% trans 'Log out' %}</a>
-        {% endblock %}
+            {% block welcome-msg %}
+                {% trans 'Welcome,' %}
+                <strong>{% firstof user.get_short_name user.username %}</strong>.
+            {% endblock %}
+            {% block userlinks %}
+                {% if user.is_active and user.is_staff %}
+                    {% url "django.admindocs.docroot" as docsroot %}
+                    {% if docsroot %}
+                        <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                    {% endif %}
+                {% endif %}
+                {% if user.has_usable_password %}
+                <a href="{% url 'password_change' %}">{% trans 'Change password' %}</a> /
+                {% endif %}
+                <a href="{% url 'logout' %}">{% trans 'Log out' %}</a>
+            {% endblock %}
         {% else %}
-            <a href="{{root_path}}/accounts/login/?next={{thispage}}">{% trans 'Log in' %}</a>
+            <a href="{% url 'login' %}">{% trans 'Log in' %}</a>
         {% endif %}
         </div>
+        {% endblock usertools %}
         {% block nav-global %}{% endblock %}
     </div>
     {% endif %}
