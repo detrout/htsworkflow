@@ -19,7 +19,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'HOST': 'felcat.caltech.edu',
         'USER': 'diane',
-        'NAME': 'htsworkflow-django1.7',
+        'NAME': 'htsworkflow-django1.11',
     }
 
 }
