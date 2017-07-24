@@ -43,7 +43,7 @@ class LibraryAccessionInline(admin.TabularInline):
     model = LibraryAccession
     fieldsets = (
         (None, {
-            'fields': ('agency', 'accession', 'accession_url')
+            'fields': ('agency', 'accession', 'url')
         }),
     )
 
