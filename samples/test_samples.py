@@ -149,32 +149,6 @@ class SampleWebTestCase(TestCase):
             self.assertEqual(d['undiluted_concentration'],
                              str(library.undiluted_concentration))
 
-        def junk(self):
-                # some specific tests
-                if library.id == '10981':
-                    # test a case where there is no known status
-                    lane_set = {u'status': u'Unknown',
-                                u'paired_end': True,
-                                u'read_length': 75,
-                                u'lane_number': 1,
-                                u'lane_id': 1193,
-                                u'flowcell': u'303TUAAXX',
-                                u'status_code': None}
-                    self.assertEqual(len(d['lane_set']), 1)
-                    self.assertEqual(d['lane_set'][0], lane_set)
-                elif library.id == '11016':
-                    # test a case where there is a status
-                    lane_set = {u'status': 'Good',
-                                u'paired_end': True,
-                                u'read_length': 75,
-                                u'lane_number': 5,
-                                u'lane_id': 1197,
-                                u'flowcell': u'303TUAAXX',
-                                u'status_code': 2}
-                    self.assertEqual(len(d['lane_set']), 1)
-                    self.assertEqual(d['lane_set'][0], lane_set)
-
-
     def test_invalid_library_json(self):
         """
         Make sure we get a 404 if we request an invalid library id
