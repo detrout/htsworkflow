@@ -35,13 +35,17 @@ def create_item(row):
     return Item(uri=uri, uuid=uuid, object_type=object_type, payload=payload)
 
 
-def create_session(engine):
-    session = sessionmaker(bind=engine)
+def create_session():
+    logger.info("Creating schema")
+    engine = create_engine('postgresql://felcat.caltech.edu/htsworkflow')
+    Base.metadata.create_all(engine)
+    sessionfactory = sessionmaker(bind=engine)
+    session = sessionfactory()
     return session
-    
-def load_data(session, graph):
+
+
+def load_data(session, graph, duplicates):
     seen_pkeys = set()
-    duplicates = {}
 
     for i, row in enumerate(graph):
         obj_id = row['uuid']
@@ -57,33 +61,53 @@ def load_data(session, graph):
 
     return duplicates
 
-def load_dump(filename):
-    logger.info("Creating schema")
-    engine = create_engine('postgresql://felcat.caltech.edu/encoded')
-    Base.metadata.create_all(engine)
-    sessionfactory = sessionmaker(bind=engine)
-    session = sessionfactory()
-    
+def load_dump_file(session, filename, collisions):
     logger.info("Parsing %s", filename)
     with open(filename, 'r') as instream:
         data = json.load(instream)
 
     graph = data['@graph']
     logging.info("Loading")
-    collisions = load_data(session, graph)
+    load_data(session, graph, collisions)
 
-    with open('bad.txt', 'a') as outstream:
-        outstream.write(pprint.pformat(collisions))
+from htsworkflow.submission import encoded
+def stream_load(session, collisions):
+    server = encoded.ENCODED('www.encodeproject.org')
+    server.load_netrc()
+
+    kwargs = {
+        'type': 'Item',
+        'frame': 'object',
+        'limit': 'all',
+    }
+    response = server.get_response('/search/', **kwargs)
+    data = response.json()
+    load_data(session, data['@graph'], collisions)
+    response.close()
 
 def main(cmdline=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('filename', nargs=1, help='json dump file to load')
+    parser.add_argument('--encoded', default=False, action='store_true',
+                        help='download directly from encoded')
+    parser.add_argument('filename', nargs='*', help='json dump file to load')
 
     args = parser.parse_args(cmdline)
 
     logging.basicConfig(level=logging.DEBUG)
+    collisions = {}
+    session = create_session()
+    session.execute('TRUNCATE item RESTART IDENTITY;')
+
     for filename in args.filename:
-        load_dump(filename)
+        load_dump_file(session, filename, collisions)
+
+    if args.encoded:
+        stream_load(session, collisions)
+
+    if len(collisions) > 0:
+        with open('bad.txt', 'a') as outstream:
+            outstream.write(pprint.pformat(collisions))
+
 
 if __name__ == '__main__':
     main()
