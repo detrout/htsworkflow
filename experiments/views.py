@@ -27,24 +27,25 @@ from samples.models import HTSUser
 
 def index(request):
     all_runs = SequencingRun.objects.order_by('-run_start_time')
-    return render(request, 'experiments/index.html',{'data_run_list': all_runs})
+    return render(request, 'experiments/index.html', {'data_run_list': all_runs})
+
 
 def detail(request, run_folder):
     html_str = '<h2>Exp Track Details Page</h2>'
     html_str += 'Run Folder: '+run_folder
-    r = get_object_or_404(SequencingRun,run_folder=run_folder)
-    return render(request, 'experiments/detail.html',{'run_f': r})
+    r = get_object_or_404(SequencingRun, run_folder=run_folder)
+    return render(request, 'experiments/detail.html', {'run_f': r})
+
 
 def makeFCSheet(request, fcid):
-  # get Flowcell by input fcid
-  # ...
-  rec = None
-  try:
-    rec = FlowCell.objects.get(flowcell_id=fcid)
-  except ObjectDoesNotExist:
-    pass
-  lanes = ['1','2','3','4','5','6','7','8']
-  return render(request, 'experiments/flowcellSheet.html',{'fc': rec})
+    # get Flowcell by input fcid
+    # ...
+    rec = None
+    try:
+        rec = FlowCell.objects.get(flowcell_id=fcid)
+    except ObjectDoesNotExist:
+        pass
+    return render(request, 'experiments/flowcellSheet.html', {'fc': rec})
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -113,14 +114,15 @@ def startedEmail(request, pk):
 
         emails.append((user_email, subject, body, sending))
 
-    verify_context = {'emails': emails,
-         'flowcell': fc,
-         'from': sender,
-         'send': send,
-         'site_managers': settings.MANAGERS,
-         'title': fc.flowcell_id,
-         'warnings': warnings,
-        }
+    verify_context = {
+        'emails': emails,
+        'flowcell': fc,
+        'from': sender,
+        'send': send,
+        'site_managers': settings.MANAGERS,
+        'title': fc.flowcell_id,
+        'warnings': warnings,
+    }
     return HttpResponse(email_verify.render(verify_context))
 
 
@@ -212,4 +214,3 @@ def lanes_for(request, username=None):
     context = {'lanes': fcl, 'title': 'Lane Index'}
 
     return render(request, 'samples/lanes_for.html', context)
-
