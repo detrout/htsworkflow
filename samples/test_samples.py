@@ -156,11 +156,9 @@ class SampleWebTestCase(TestCase):
         response = self.client.get('/samples/library/nottheone/json', apidata)
         self.assertEqual(response.status_code, 404)
 
-
     def test_invalid_library(self):
         response = self.client.get('/library/nottheone/')
         self.assertEqual(response.status_code, 404)
-
 
     def test_library_no_key(self):
         """
