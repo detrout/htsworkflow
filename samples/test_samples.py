@@ -186,7 +186,7 @@ class SampleWebTestCase(TestCase):
 
         select ?library ?name ?library_id ?gel_cut ?made_by
         where {
-           ?library a libns:library ;
+           ?library a libns:Library ;
                     libns:name ?name ;
                     libns:library_id ?library_id ;
                     libns:gel_cut ?gel_cut ;
