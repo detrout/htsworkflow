@@ -194,13 +194,13 @@ class SampleWebTestCase(TestCase):
         }"""
         count = 0
         for r in model.query(body):
-            self.assertEqual(fromTypedNode(r['library_id']),
+            self.assertEqual(r['library_id'].toPython(),
                              library.id)
-            self.assertEqual(fromTypedNode(r['name']),
-                             library.name)
-            self.assertEqual(fromTypedNode(r['gel_cut']),
-                             library.gel_cut)
-            self.assertEqual(fromTypedNode(r['made_by']),
+            self.assertEqual(r['name'].toPython(),
+                             library.library_name)
+            self.assertEqual(r['gel_cut'].toPython(),
+                             library.gel_cut_size)
+            self.assertEqual(r['made_by'].toPython(),
                              library.made_by)
             count += 1
 
