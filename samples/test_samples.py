@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function
 import datetime
 import json
 import logging
+from unittest import skipUnless
 
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -302,6 +303,7 @@ class SampleWebTestCase(TestCase):
         if state is not None:
             self.assertTrue(state)
 
+    @skipUnless(hasattr(TestCase.client_class, 'force_login'), 'Django missing client.force_login')
     def test_login(self):
         '''Test login header on library page changes when the user logins'''
         user = HTSUserFactory(username='user')
