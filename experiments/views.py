@@ -4,8 +4,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from datetime import datetime
 import os
 
-#from django.template import Context, loader
-#shortcut to the above modules
 from django.contrib.admin.sites import site as default_admin_site
 from django.contrib.auth.decorators import user_passes_test
 from django.conf import settings
