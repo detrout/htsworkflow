@@ -22,6 +22,8 @@ from .samples_factory import (
     LibraryFactory,
     SpeciesFactory,
 )
+from experiments.experiments_factory import LaneFactory
+
 from htsworkflow.auth import apidata
 from htsworkflow.util.conversion import str_or_none
 from htsworkflow.util.ethelp import validate_xhtml
@@ -171,6 +173,52 @@ class SampleWebTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
+
+    def test_1_not_run(self):
+        """Create library that was not run, make sure it shows up in non_run filter
+        """
+        library = LibraryFactory.create()
+        response = self.client.get('/library/not_run/')
+        self.assertTrue(library.id in smart_str(response.content))
+
+        model = ConjunctiveGraph()
+        model.parse(data=smart_text(response.content), format='rdfa')
+        body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+
+        select ?library ?library_id
+        where {
+           ?library a libns:Library ;
+                    libns:library_id ?library_id .
+        }"""
+        results = []
+        for r in model.query(body):
+            results.append(r['library_id'])
+
+        self.assertEqual(len(results), 1)
+
+    def test_0_not_run(self):
+        """Create a library that was run, so it won't show up with not_run filter
+        """
+        lane = LaneFactory()
+        library = lane.library
+        response = self.client.get('/library/not_run/')
+
+        model = ConjunctiveGraph()
+        model.parse(data=smart_text(response.content), format='rdfa')
+        body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+
+        select ?library ?library_id
+        where {
+           ?library a libns:Library ;
+                    libns:library_id ?library_id .
+        }"""
+        results = []
+        for r in model.query(body):
+            results.append(r['library_id'])
+
+        self.assertEqual(len(results), 0)
 
     def test_library_rdf(self):
         library = LibraryFactory.create()

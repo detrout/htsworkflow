@@ -45,6 +45,7 @@ def library(request, todo_only=False):
                         search_fields=['id', 'library_name', 'amplified_from_sample__id'],
                         list_per_page=200,
                         model_admin=LibraryOptions(Library, admin_site),
+                        extra_filters=filters,
                         )
 
     context = {'cl': fcl,
