@@ -192,6 +192,7 @@ class SampleWebTestCase(TestCase):
                     libns:gel_cut ?gel_cut ;
                     libns:made_by ?made_by
         }"""
+        count = 0
         for r in model.query(body):
             self.assertEqual(fromTypedNode(r['library_id']),
                              library.id)
@@ -201,6 +202,10 @@ class SampleWebTestCase(TestCase):
                              library.gel_cut)
             self.assertEqual(fromTypedNode(r['made_by']),
                              library.made_by)
+            count += 1
+
+        # make sure there was actually data
+        self.assertGreater(count, 0)
 
         state = validate_xhtml(smart_bytes(response.content))
         if state is not None:
