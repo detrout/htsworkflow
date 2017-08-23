@@ -13,7 +13,7 @@ from requests.exceptions import HTTPError
 from htsworkflow.submission.submission import Submission
 from .encoded import ENCODED, DCCValidator
 
-from django.template import Context, loader
+from django.template import loader
 
 LOGGER = logging.getLogger(__name__)
 
@@ -124,10 +124,10 @@ class AWSSubmission(Submission):
         }
         query_template = loader.get_template('aws_metadata.sparql')
 
-        context = Context({
+        context = {
             'submission': str(analysis_node),
             'submissionSet': str(self.submissionSetNS['']),
-            })
+            }
         results = self.execute_query(query_template, context)
         LOGGER.info("scanned %s for results found %s",
                     str(analysis_node), len(results))
