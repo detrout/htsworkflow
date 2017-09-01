@@ -3,11 +3,11 @@
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
-  <a href="/admin">{% trans 'Home' %}</a> &rsaquo;
-  <a href="/admin/experiments">Experiments</a> &rsaquo;
-  <a href="/admin/experiments/flowcell">flowcell</a> &rsaquo;
-  <a href="{{ flowcell.get_admin_url }}">{{ flowcell.flowcell_id }}</a>
-</div>  
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label='experiments' %}">sequencing runs</a>
+&rsaquo; <a href="{% url 'admin:experiments_flowcell_changelist' %}">Flow Cells</a>
+&rsaquo; <a href="{% url 'admin:experiments_flowcell_change' flowcell.pk %}">{{title}}</a>
+</div>
 {% endblock %}
 
 {% block content %}

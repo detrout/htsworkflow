@@ -16,12 +16,12 @@
 <table>
 <caption>Frequently Used</caption>
 <tr>
-<th scope="row"><a href="/admin/samples/library/">Libraries</a></th>
-<td><a href="/admin/samples/library/add/" class="addlink">{% trans 'Add' %}</a></td>
+<th scope="row"><a href="{% url 'admin:samples_library_changelist' %}">Libraries</a></th>
+<td><a href="{% url 'admin:samples_library_add' %}" class="addlink">{% trans 'Add' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="/admin/experiments/flowcell/">Flowcells</a></th>
-<td><a href="/admin/experiments/flowcell/add/" class="addlink">{% trans 'Add' %}</a></td>
+<th scope="row"><a href="{% url 'admin:experiments_flowcell_changelist' %}">Flowcells</a></th>
+<td><a href="{% url 'admin:experiments_flowcell_add' %}" class="addlink">{% trans 'Add' %}</a></td>
 </tr>
 </table></div>
 
@@ -29,12 +29,12 @@
 <table>
 <caption>Label Printing</caption>
 <tr>
-<th scope="row"><a href="/admin/labels/labelcontent/">Label Contents</a></th>
-<td><a href="/admin/labels/labelcontent/add/" class="addlink">{% trans 'Add' %}</a></td>
+<th scope="row"><a href="{% url 'admin:labels_labelcontent_changelist' %}">Label Contents</a></th>
+<td><a href="{% url 'admin:labels_labelcontent_add' %}" class="addlink">{% trans 'Add' %}</a></td>
 </tr>
 <tr>
-<th scope="row"><a href="/admin/labels/labeltemplate/">Label Templates</a></th>
-<td><a href="/admin/labels/labeltemplate/add/" class="addlink">{% trans 'Add' %}</a></td>
+<th scope="row"><a href="{% url 'admin:labels_labeltemplate_changelist' %}">Label Templates</a></th>
+<td><a href="{% url 'admin:labels_labeltemplate_add' %}" class="addlink">{% trans 'Add' %}</a></td>
 </tr>
 </table></div><BR>
 
