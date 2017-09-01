@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 import base64
+import six
 from six.moves import configparser
-from six import int2byte
 import random
 import logging
 
@@ -171,9 +171,14 @@ def make_django_secret_key(size=216):
     chars = []
     while bits > 0:
         byte = bits & 0xff
-        chars.append(int2byte(byte))
+        chars.append(six.int2byte(byte))
         bits >>= 8
-    return base64.encodestring(b"".join(chars)).strip()
+
+    raw_bytes = base64.encodestring(b"".join(chars)).strip()
+    if six.PY3:
+        return raw_bytes.decode('ascii')
+    else:
+        return raw_bytes
 
 if __name__ == "__main__":
     from optparse import OptionParser
