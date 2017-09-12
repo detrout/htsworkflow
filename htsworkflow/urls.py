@@ -4,6 +4,7 @@ admin.autodiscover()
 
 
 from experiments.views import (
+    FlowCellListView,
     flowcell_lane_detail,
     flowcell_detail,
     lanes_for,
@@ -21,6 +22,7 @@ urlpatterns = [
         flowcell_lane_detail, name="flowcell_lane_detail"),
     url(r'^flowcell/(?P<flowcell_id>\w+)/((?P<lane_number>\w+)/)?$',
         flowcell_detail, name="flowcell_detail"),
+    url(r'^flowcell/$', FlowCellListView.as_view(), name='flowcell_index'),
     url(r'^inventory/', include('inventory.urls')),
     url(r'^library/', include('samples.urls')),
     url(r'^lanes_for/(?P<username>[-_ \w]+)?',

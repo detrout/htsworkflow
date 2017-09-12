@@ -13,9 +13,10 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import get_template
+from django.views.generic import ListView
 
 from .models import SequencingRun, DataFile, FlowCell, Lane, Sequencer
-from .admin import LaneOptions
+from .admin import FlowCellOptions, LaneOptions
 from .experiments import estimateFlowcellTimeRemaining, roundToDays, \
      getUsersForFlowcell, \
      makeEmailLaneMap
@@ -128,6 +129,15 @@ def finishedEmail(request, pk):
     """
     """
     return HttpResponse("I've got nothing.")
+
+
+class FlowCellListView(ListView):
+    model = FlowCell
+    template_name = 'experiments/flowcell_index.html'
+    context_object_name = 'flowcell_list'
+    paginate_by = 40
+    paginate_orphans = 4
+    queryset = FlowCell.objects.all()
 
 
 def flowcell_detail(request, flowcell_id, lane_number=None):

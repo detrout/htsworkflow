@@ -1,0 +1,30 @@
+{% extends "base_site.html" %}
+{% load htsworkflow %}
+{% load staticfiles %}
+{% block title %}Flowcell Index{% endblock %}
+{% block extrahead %}
+    <!-- App Stuff -->
+    <link type="text/css" rel="stylesheet" href="{% static "css/app.css" %}"/>
+{% endblock %}
+
+{% block content %}
+    {% pagination page_obj %}
+    <table class="{% if flowcell_list.has_filters %} filtered {% endif %}">
+      <thead>
+        <tr>
+          <td>Flowcell ID</td>
+          <td>run_date</td>
+          <td>notes</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for flowcell in flowcell_list %}
+        <tr typeof="libns:IlluminaFlowcell" about="{{flowcell.get_absolute_url}}">
+          <td><a href="{{flowcell.get_absolute_url}}">{{flowcell.flowcell_id}}</a></td>
+          <td property="libns:date" content="{{flowcell.run_date|date:'Y-m-d\TH:i:s'}}" datatype="xsd:dateTime">{{flowcell.run_date}}</td>
+          <td><span property="libns:flowcell_notes">{{flowcell.notes}}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}    

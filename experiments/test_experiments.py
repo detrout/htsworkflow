@@ -103,6 +103,37 @@ class ExperimentsTestCases(TestCase):
         self.admin.delete()
         logging.disable(logging.NOTSET)
 
+    def test_flowcells_index_rdfa(self):
+        model = ConjunctiveGraph()
+        add_default_schemas(model)
+        inference = Infer(model)
+
+        response = self.client.get(reverse('flowcell_index'))
+        self.assertEqual(response.status_code, 200)
+        model.parse(data=smart_text(response.content), format='rdfa')
+
+        errmsgs = list(inference.run_validation())
+        self.assertEqual(len(errmsgs), 0, errmsgs)
+
+        body =  """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+
+        select ?flowcell
+        where {
+           ?flowcell a libns:IlluminaFlowcell .
+        }"""
+        bindings = set(['flowcell'])
+        count = 0
+        for r in model.query(body):
+            count += 1
+
+        self.assertEqual(count, len(FlowCell.objects.all()))
+
+        # the << >> xml entity characters aren't available
+        # state = validate_xhtml(response.content)
+        # if state is not None:
+        #    self.assertTrue(state)
+
     def test_flowcell_information(self):
         """
         Check the code that packs the django objects into simple types.
