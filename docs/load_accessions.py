@@ -7,6 +7,12 @@ from datetime import datetime
 import os
 import socket
 
+os.environ.setdefault(
+    "DJANGO_SETTINGS_MODULE",
+    "htsworkflow.settings.{}".format(socket.gethostname()))
+import django
+django.setup()
+
 from samples.models import (
     AccessionAgency,
     Library,
@@ -377,10 +383,4 @@ def main():
     load_encode3_accessions()
 
 if __name__ == '__main__':
-    import socket
-    os.environ.setdefault(
-        "DJANGO_SETTINGS_MODULE",
-        "htsworkflow.settings.{}".format(socket.gethostname()))
-    import django
-    django.setup()
     main()
