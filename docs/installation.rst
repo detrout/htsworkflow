@@ -123,4 +123,20 @@ Obviously you'll need to replace
  * <htsworkflow install directory> with the path to where you have htsworkflow installed.
  * <python install directory> to the path where django is installed.
    which is likely either your virtualenv, or /usr/lib/python${version}/dist-packages
-  
+
+Configure htsworkflow.ini
+=========================
+
+There's a couple of settings that shouldn't be checked into version control.
+
+They're set in /etc/htsworkflow.ini (or maybe ~/.htsworkflow.ini )
+
+[frontend]
+secret_key = <random string>
+api = <random string>
+
+If you need to you can run::
+
+  python3 -c 'from htsworkflow.util.api import make_django_secret_key; print(make_django_secret_key())'
+
+To appropriately random strings
