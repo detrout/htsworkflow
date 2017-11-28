@@ -17,6 +17,7 @@ from django.template import loader
 
 LOGGER = logging.getLogger(__name__)
 
+
 class AWSSubmission(Submission):
     def __init__(self, name, model, encode_host, lims_host):
         """Create a AWS based submission
@@ -32,7 +33,6 @@ class AWSSubmission(Submission):
 
         self._replicates = {}
         self._files = {}
-
 
     def check_upload(self, results_map):
         tocheck = []
@@ -150,6 +150,7 @@ class AWSSubmission(Submission):
                 row['flowcell_details'] = [flowcell_details]
 
         return results
+
 
 def run_aws_cp(pathname, creds):
     env = os.environ.copy()
