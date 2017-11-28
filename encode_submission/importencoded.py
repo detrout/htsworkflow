@@ -59,6 +59,7 @@ def load_data(session, graph, duplicates):
             session.commit()
             print("{} of {}".format(i+1, len(graph)))
 
+    session.commit()
     return duplicates
 
 def load_dump_file(session, filename, collisions):
