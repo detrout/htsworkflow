@@ -845,8 +845,10 @@ class Document(object):
     def get_document(self):
         if os.path.exists(self.url):
             with open(self.url, 'rb') as instream:
-                assert self.url.endswith('pdf')
-                self.content_type = 'application/pdf'
+                if self.url.endswith('pdf'):
+                    self.content_type = 'application/pdf'
+                else:
+                    LOGGER.warn('Submitting non-pdfs is execptional')
                 self.document = instream.read()
                 self.md5sum = hashlib.md5(self.document)
         else:
