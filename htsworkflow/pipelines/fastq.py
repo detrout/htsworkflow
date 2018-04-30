@@ -44,6 +44,11 @@ def summarize_hiseq_fastq(stream):
 
 if __name__ == '__main__':
     import sys
-        print(summarize_hiseq_fastq(instream))
     from htsworkflow.util.opener import autoopen
     with autoopen(sys.argv[1], 'rt') as instream:
+        reads, pass_qc, mean_score, read_length = summarize_hiseq_fastq(instream)
+        print(sys.argv[1])
+        print('Reads: {}'.format(reads))
+        print('PassFilter: {}'.format(pass_qc))
+        print('Mean score: {}'.format(mean_score))
+        print('Read lengths: {}'.format(read_length))
