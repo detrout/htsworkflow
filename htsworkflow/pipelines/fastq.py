@@ -44,6 +44,6 @@ def summarize_hiseq_fastq(stream):
 
 if __name__ == '__main__':
     import sys
-    from autoopen import autoopen
     with autoopen(sys.argv[1], 'r') as instream:
         print(summarize_hiseq_fastq(instream))
+    from htsworkflow.util.opener import autoopen
