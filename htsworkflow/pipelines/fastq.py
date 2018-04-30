@@ -10,6 +10,7 @@ def summarize_hiseq_fastq(stream):
     pass_qc = 0
     bad_read = False
     mean = None
+    read_length = set()
     eol_length = len(os.linesep)
 
     for i, line in enumerate(stream):
@@ -37,8 +38,9 @@ def summarize_hiseq_fastq(stream):
 
                 delta = score - mean
                 mean = mean + delta / pass_qc
+                read_length.add(len(line))
 
-    return (reads, pass_qc, mean)
+    return (reads, pass_qc, mean, read_length)
 
 if __name__ == '__main__':
     import sys
