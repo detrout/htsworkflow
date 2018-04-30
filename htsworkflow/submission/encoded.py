@@ -785,12 +785,20 @@ class TypedColumnParser(object):
         """
         return str(value)
 
+    @staticmethod
+    def parse_sheet_json_type(value):
+        """Helper function to parse :json columns in sheet
+        """
+        return json.loads(value)
+
+
     def __getitem__(self, name):
         parser = {
             'array': self.parse_sheet_array_type,
             'boolean': self.parse_sheet_boolean_type,
             'integer': self.parse_sheet_integer_type,
             'date': self.parse_sheet_timestamp_type,
+            'json': self.parse_sheet_json_type,
             'string': self.parse_sheet_string_type
         }.get(name)
         if parser:
