@@ -6,6 +6,7 @@ import gzip
 import bz2
 import six
 from six.moves import urllib
+import requests
 
 if six.PY2:
     import types
@@ -13,6 +14,8 @@ if six.PY2:
 else:
     import io
     FILE_CLASS = io.IOBase
+
+GZIP_MIME_TYPES = ['application/gzip', 'application/x-gzip']
 
 def isfilelike(file_ref, mode):
     """Does file_ref have the core file operations?
@@ -53,12 +56,19 @@ def autoopen(file_ref, mode='r'):
     # does it look like a file?
     elif isfilelike(file_ref, mode):
         return file_ref
-    elif isurllike(file_ref, mode):
-        return urllib.request.urlopen(file_ref)
+
+    if isurllike(file_ref, mode):
+        response = requests.get(file_ref, stream=True)
+        content_type = response.headers['content-type'].split(';', 1)[0]
+
+        if 't' in mode and content_type in GZIP_MIME_TYPES:
+            if six.PY2:
+                raise RuntimeError('Gunzipping on the fly requires Python 3')
+            return gzip.open(response.raw, mode)
+        return response.raw
     elif os.path.splitext(file_ref)[1] == ".gz":
         return gzip.open(file_ref, mode)
     elif os.path.splitext(file_ref)[1] == '.bz2':
         return bz2.BZ2File(file_ref, mode)
     else:
         return open(file_ref,mode)
-
