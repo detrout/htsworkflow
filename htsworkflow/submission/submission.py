@@ -27,7 +27,7 @@ from htsworkflow.submission.daf import \
      get_submission_uri
 from htsworkflow.util import opener
 
-from django.template import Context, Template, loader
+from django.template import Template, loader
 
 LOGGER = logging.getLogger(__name__)
 
@@ -216,12 +216,11 @@ class Submission(object):
         if len(label_templates) > 0:
             label_template = label_templates[0]
             template = loader.get_template('submission_view_rdfs_label_metadata.sparql')
-            context = Context({
+            context = {
                 'library': str(lib_node.uri),
-                })
-            for r in self.execute_query(template, context):
-                context = Context(r)
-                label = Template(label_template).render(context)
+                }
+            for row in self.execute_query(template, context):
+                label = Template(label_template).render(row)
                 s = (file_node, rdfsNS['label'], unicode(label))
                 self.model.add(s)
 
@@ -272,7 +271,7 @@ class Submission(object):
     def _add_flowcell_details(self):
         template = loader.get_template('aws_flowcell.sparql')
 
-        for r in self.execute_query(template, Context()):
+        for r in self.execute_query(template, {}):
             flowcell = r['flowcell']
             self.model.parse(source=flowcell, format='rdfa')
 
