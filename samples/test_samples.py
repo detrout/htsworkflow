@@ -118,7 +118,7 @@ class SampleWebTestCase(TestCase):
     def test_library_dict(self):
         library = LibraryFactory.create()
         lib_dict = library_dict(library.id)
-        url = '/samples/library/%s/json' % (library.id,)
+        url = reverse("library_json", args=(library.id,))
         lib_response = self.client.get(url, apidata)
         lib_json = json.loads(smart_text(lib_response.content))['result']
 
@@ -156,7 +156,8 @@ class SampleWebTestCase(TestCase):
         """
         Make sure we get a 404 if we request an invalid library id
         """
-        response = self.client.get('/samples/library/nottheone/json', apidata)
+        url = reverse("library_json", args=("nottheone",))
+        response = self.client.get(url, apidata)
         self.assertEqual(response.status_code, 404)
 
     def test_invalid_library(self):
@@ -169,7 +170,7 @@ class SampleWebTestCase(TestCase):
         """
         library = LibraryFactory.create()
 
-        url = '/samples/library/{}/json'.format(library.id)
+        url = reverse('library_json', args=(library.id,))
         response = self.client.get(url, apidata)
         self.assertEqual(response.status_code, 200)
         response = self.client.get(url)

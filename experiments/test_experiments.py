@@ -215,7 +215,7 @@ class ExperimentsTestCases(TestCase):
         lane_library = lane_contents[0]
         self.assertEqual(lane_library['library_id'], '12153')
 
-        response = self.client.get('/samples/library/12153/json', apidata)
+        response = self.client.get(reverse("library_json", args=("12153",)), apidata)
         self.assertEqual(response.status_code, 200)
         library_12153 = json.loads(smart_text(response.content))['result']
 
