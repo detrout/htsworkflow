@@ -804,7 +804,7 @@ class TypedColumnParser(object):
         if parser:
             return parser
         else:
-            raise RuntimeError("unrecognized column type")
+            raise RuntimeError("unrecognized column type: {}".format(name))
 
     def __call__(self, header, value):
         header = header.split(':')
