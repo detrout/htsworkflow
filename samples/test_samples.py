@@ -161,7 +161,8 @@ class SampleWebTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_invalid_library(self):
-        response = self.client.get('/library/nottheone/')
+        url = reverse("library_detail", args=("nottheone",))
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_library_no_key(self):
@@ -180,7 +181,9 @@ class SampleWebTestCase(TestCase):
         """Create library that was not run, make sure it shows up in non_run filter
         """
         library = LibraryFactory.create()
-        response = self.client.get('/library/not_run/')
+        url = reverse('library_not_run')
+        self.assertEqual(url, '/library/not_run/')
+        response = self.client.get(url)
         self.assertTrue(library.id in smart_str(response.content))
 
         model = ConjunctiveGraph()
@@ -204,7 +207,8 @@ class SampleWebTestCase(TestCase):
         """
         lane = LaneFactory()
         library = lane.library
-        response = self.client.get('/library/not_run/')
+        url = reverse('library_not_run')
+        response = self.client.get(url)
 
         model = ConjunctiveGraph()
         model.parse(data=smart_text(response.content), format='rdfa')
@@ -272,7 +276,7 @@ class SampleWebTestCase(TestCase):
         add_default_schemas(model)
         inference = Infer(model)
 
-        response = self.client.get('/library/')
+        response = self.client.get(reverse('library_index'))
         self.assertEqual(response.status_code, 200)
         model.parse(data=smart_text(response.content), format='rdfa')
 
@@ -310,7 +314,7 @@ class SampleWebTestCase(TestCase):
         user = HTSUserFactory(username='user')
 
         # not logged in
-        response = self.client.get('/library/')
+        response = self.client.get(reverse('library_index'))
         tree = html.fromstring(response.content)
         login_url = tree.xpath('//div[@id="user-tools"]/a')[0].attrib['href']
         self.assertTrue(login_url.startswith(reverse('login')), 'url={}'.format(login_url))
@@ -319,7 +323,7 @@ class SampleWebTestCase(TestCase):
         self.client.force_login(user)
 
         # does the banner change?
-        response = self.client.get('/library/')
+        response = self.client.get(reverse('library_index'))
         tree = html.fromstring(response.content)
         logout_url = tree.xpath('//div[@id="user-tools"]/a')[-1].attrib['href']
         self.assertTrue(logout_url.startswith(reverse('logout')))
@@ -373,7 +377,7 @@ class TestRDFaLibrary(TestCase):
 
         lib_object = LibraryFactory()
         lib_object.affiliations.add(bob)
-        url = '/library/{}/'.format(lib_object.id)
+        url = reverse('library_detail', args=(lib_object.id,))
         ## request = self.request.get(url)
         ## lib_response = library(request)
         lib_response = self.client.get(url)

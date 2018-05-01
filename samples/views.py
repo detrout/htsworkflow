@@ -60,7 +60,7 @@ def library_not_run(request):
     return library(request, todo_only=True)
 
 
-def library_to_flowcells(request, lib_id):
+def library_detail(request, lib_id):
     """
     Display information about all the flowcells a library has been run on.
     """

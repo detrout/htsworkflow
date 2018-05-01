@@ -469,7 +469,7 @@ class Library(models.Model):
     public.allow_tags = True
 
     def get_absolute_url(self):
-        return reverse('library_to_flowcells', kwargs={'lib_id': str(self.id)})
+        return reverse('library_detail', kwargs={'lib_id': str(self.id)})
 
     def get_admin_url(self):
         return reverse('admin:samples_library_change', args=(self.id,))
