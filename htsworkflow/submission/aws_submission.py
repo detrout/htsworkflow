@@ -29,6 +29,7 @@ class AWSSubmission(Submission):
         """
         super(AWSSubmission, self).__init__(name, model, lims_host)
         self.encode = ENCODED(encode_host)
+        self.validator = DCCValidator(self.encode)
         self.encode.load_netrc()
 
         self._replicates = {}
@@ -108,10 +109,10 @@ class AWSSubmission(Submission):
                 else:
                     raise err
 
-    def upload(self, results_map, dry_run=False):
+    def upload(self, results_map, dry_run=False, retry=False):
         for an_analysis in self.analysis_nodes(results_map):
             for metadata in self.get_metadata(an_analysis):
-                upload_file_metadata(self.encode, metadata, dry_run)
+                upload_file(self.encode, self.validator, metadata, dry_run, retry)
 
     def get_metadata(self, analysis_node):
         # convert our model names to encode project aliases
@@ -172,8 +173,14 @@ def run_aws_cp(pathname, creds):
                     end-start)
 
 
-def upload_file(encode, validator, metadata, dry_run=True):
+def upload_file(encode, validator, metadata, dry_run=True, retry=False):
     """Upload a file to the DCC
+
+    :Parameters:
+      - encode: ENCODED instance pointing to server to upload to
+      - validator: DCCValidator instance
+      - dry_run: bool indicating if this is for real
+      - retry: try uploading again.
     """
     if not isinstance(validator, DCCValidator):
         raise RuntimeError('arguments to upload_file changed')
@@ -195,17 +202,10 @@ def upload_file(encode, validator, metadata, dry_run=True):
         return
 
     upload = make_upload_filename(metadata, encode)
-    if not os.path.exists(upload):
-        with open(upload, 'w') as outstream:
-            json.dump(metadata, outstream, indent=4, sort_keys=True)
+    if retry or not os.path.exists(upload):
         LOGGER.debug(json.dumps(metadata, indent=4, sort_keys=True))
         if not dry_run:
-            response = encode.post_json('/file', metadata)
-            LOGGER.info(json.dumps(response, indent=4, sort_keys=True))
-            with open(upload, 'w') as outstream:
-                json.dump(response, outstream, indent=4, sort_keys=True)
-
-            item = response['@graph'][0]
+            item = post_file_metadata(encode, metadata, upload, retry)
             creds = item['upload_credentials']
             run_aws_cp(metadata[file_name_field], creds)
         else:
@@ -214,6 +214,28 @@ def upload_file(encode, validator, metadata, dry_run=True):
         LOGGER.info('%s already uploaded',
                     metadata[file_name_field])
 
+
+def post_file_metadata(encode, metadata, upload, retry=False):
+    """Post file metadata to ENCODE server
+
+    :Paramters:
+      - encode: ENCODED instance pointing to server to upload to
+      - upload: name to store upload metadata cache
+      - retry: bool if try, return saved metadata object,
+               instead of posting a new object.
+    """
+    if not retry:
+        response = encode.post_json('/file', metadata)
+        LOGGER.info(json.dumps(response, indent=4, sort_keys=True))
+        with open(upload, 'w') as outstream:
+            json.dump(response, outstream, indent=4, sort_keys=True)
+
+        item = response['@graph'][0]
+    else:
+        # Retry
+        with open(upload, 'r') as instream:
+            item = json.load(instream)['@graph'][0]
+    return item
 
 def make_upload_filename(metadata, server=None):
     if server is not None:
