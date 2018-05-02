@@ -9,7 +9,7 @@ from optparse import OptionParser
 import sys
 
 from htsworkflow.util.version import version
-from htsworkflow.util.opener import autoopen
+from htsworkflow.util.opener import autoopen, isurllike
 from htsworkflow.util.conversion import parse_slice
 
 SEQ_HEADER = 0
@@ -76,8 +76,11 @@ def file_generator(pattern_list):
     """Given a list of glob patterns return decompressed streams
     """
     for pattern in pattern_list:
-        for filename in glob(pattern):
-            yield autoopen(filename, 'rt')
+        if isurllike(pattern, 'rt'):
+            yield autoopen(pattern, 'rt')
+        else:
+            for filename in glob(pattern):
+                yield autoopen(filename, 'rt')
 
 
 class DesplitFastq(object):
