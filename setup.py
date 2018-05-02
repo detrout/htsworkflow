@@ -38,6 +38,7 @@ setup(
         'keyring',
         'jsonschema',
         'requests',
+        'requests_mock', # test require
         'six',
         'psycopg2',
         'pytz',
