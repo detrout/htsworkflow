@@ -186,6 +186,7 @@ def upload_file(encode, validator, metadata, dry_run=True, retry=False):
         raise RuntimeError('arguments to upload_file changed')
 
     validator.validate(metadata, 'file')
+
     file_name_fields = ['submitted_file_name', 'pathname:skip', 'pathname']
     file_name_field = None
     for field in file_name_fields:
