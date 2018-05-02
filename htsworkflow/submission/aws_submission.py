@@ -179,6 +179,16 @@ def upload_file(encode, validator, metadata, dry_run=True):
         raise RuntimeError('arguments to upload_file changed')
 
     validator.validate(metadata, 'file')
+    file_name_fields = ['submitted_file_name', 'pathname:skip', 'pathname']
+    file_name_field = None
+    for field in file_name_fields:
+        if field in metadata and os.path.exists(metadata[field]):
+            file_name_field = field
+
+    if file_name_field is None:
+        LOGGER.error("Couldn't find file name to upload in metadata")
+        LOGGER.error(json.dumps(metadata, indent=4, sort_keys=True))
+        return
 
     if dry_run:
         LOGGER.info(json.dumps(metadata, indent=4, sort_keys=True))
@@ -197,12 +207,12 @@ def upload_file(encode, validator, metadata, dry_run=True):
 
             item = response['@graph'][0]
             creds = item['upload_credentials']
-            run_aws_cp(metadata['submitted_file_name'], creds)
+            run_aws_cp(metadata[file_name_field], creds)
         else:
-            LOGGER.info("Would upload %s", metadata['submitted_file_name'])
+            LOGGER.info("Would upload %s", metadata[file_name_field])
     else:
         LOGGER.info('%s already uploaded',
-                    metadata['submitted_file_name'])
+                    metadata[file_name_field])
 
 
 def make_upload_filename(metadata, server=None):
