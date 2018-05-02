@@ -1,4 +1,6 @@
 from io import BytesIO
+import bz2
+import gzip
 import tempfile
 from unittest import TestCase
 
