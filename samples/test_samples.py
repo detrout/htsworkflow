@@ -385,14 +385,9 @@ class TestRDFaLibrary(TestCase):
         lib_response = self.client.get(url)
         lib_body = smart_str(lib_response.content)
         self.assertNotEqual(len(lib_body), 0)
-        with open('/tmp/body.html', 'wt') as outstream:
-            outstream.write(lib_body)
 
         model.parse(data=lib_body, format='rdfa', publicID='http://localhost'+url)
 
-        # help debugging rdf errrors
-        #with open('/tmp/test.ttl', 'w') as outstream:
-        #    dump_model(model, outstream)
         # http://jumpgate.caltech.edu/wiki/LibraryOntology#affiliation>
         self.check_literal_object(model, ['Bob'], p=libraryOntology['affiliation'])
         self.check_literal_object(model,
