@@ -105,13 +105,13 @@ class ExperimentsTestCases(TestCase):
 
     def test_flowcells_index_rdfa(self):
         model = ConjunctiveGraph()
-        add_default_schemas(model)
-        inference = Infer(model)
 
         response = self.client.get(reverse('flowcell_index'))
         self.assertEqual(response.status_code, 200)
         model.parse(data=smart_text(response.content), format='rdfa')
 
+        add_default_schemas(model)
+        inference = Infer(model)
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0, errmsgs)
 
