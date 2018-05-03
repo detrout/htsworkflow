@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory
 from django.utils.encoding import smart_text, smart_str, smart_bytes
 
-from rdflib import ConjunctiveGraph, Graph
+from rdflib import ConjunctiveGraph, Graph, URIRef
 
 from lxml import html
 
@@ -23,7 +23,7 @@ from .samples_factory import (
     LibraryFactory,
     SpeciesFactory,
 )
-from experiments.experiments_factory import LaneFactory
+from experiments.experiments_factory import LaneFactory, FlowCellFactory
 
 from htsworkflow.auth import apidata
 from htsworkflow.util.conversion import str_or_none
@@ -379,6 +379,15 @@ class TestRDFaLibrary(TestCase):
 
         lib_object = LibraryFactory()
         lib_object.affiliations.add(bob)
+        fc = FlowCellFactory()
+        lanes = []
+        for i in range(1,3):
+            # mark even lanes as failed.
+            lanes.append(LaneFactory(flowcell=fc,
+                                     lane_number=i,
+                                     library=lib_object,
+                                     status = 0 if i % 2 == 0 else None
+            ))
         url = reverse('library_detail', args=(lib_object.id,))
         ## request = self.request.get(url)
         ## lib_response = library(request)
@@ -404,6 +413,24 @@ class TestRDFaLibrary(TestCase):
                                   [lib_object.library_species.scientific_name],
                                   p=libraryOntology['species_name'])
 
+        library_url = 'http://localhost/library/{}/'.format(lib_object.id)
+        lane_url = 'http://localhost/lane/{}'
+        for uri, term, expected in [
+                (library_url, libraryOntology['has_lane'], lane_url.format(lanes[0].id)),
+                (library_url, libraryOntology['has_failed_lane'], lane_url.format(lanes[1].id))]:
+            triples = list(model.triples((URIRef(uri), term, None)))
+            self.assertEqual(len(triples), 1)
+            self.assertEqual(triples[0][2], URIRef(expected))
+
+        for uri, expected in [(lane_url.format(lanes[0].id), ''),
+                              (lane_url.format(lanes[1].id), 'Failed')]:
+            triples = list(
+                model.triples((
+                    URIRef(uri),
+                    libraryOntology['status'],
+                    None)))
+            self.assertEqual(len(triples), 1)
+            self.assertEqual(triples[0][2].toPython(), expected)
 
     def check_literal_object(self, model, values, s=None, p=None, o=None):
         statements = list(model.triples((s,p,o)))
