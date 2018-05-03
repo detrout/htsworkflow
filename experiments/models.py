@@ -276,7 +276,7 @@ LANE_STATUS_CODES = [(0, 'Failed'),
                      (2, 'Good'),
                      (100, 'Not run')]
 LANE_STATUS_MAP = dict((int(k), v) for k, v in LANE_STATUS_CODES)
-LANE_STATUS_MAP[None] = "Unknown"
+LANE_STATUS_MAP[None] = ""
 
 
 def is_valid_lane(value):
@@ -309,6 +309,20 @@ class Lane(models.Model):
 
     def __str__(self):
         return self.flowcell.flowcell_id + ':' + str(self.lane_number)
+
+    def is_usable(self):
+        return self.status != 0
+
+    def status_name(self):
+        return LANE_STATUS_MAP[self.status]
+
+    def has_lane_term(self):
+        """Return has_lane or has_failed_lane if a lane is marked as failed
+        """
+        if self.is_usable():
+            return "has_lane"
+        else:
+            return "has_failed_lane"
 
 
 class SequencingRun(models.Model):

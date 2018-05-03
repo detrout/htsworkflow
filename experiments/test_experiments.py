@@ -448,7 +448,10 @@ class ExperimentsTestCases(TestCase):
                     '6': ['12156'],
                     '7': ['12157'],
                     '8': ['12158']}
-        url = '/flowcell/{}/'.format(self.fc12150.flowcell_id)
+        lane_1 = self.fc12150.lane_set.get(lane_number='1')
+        lane_1.status = 0
+        lane_1.save()
+        url = reverse('flowcell_detail', args=(self.fc12150.flowcell_id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         status = validate_xhtml(response.content)
@@ -456,6 +459,8 @@ class ExperimentsTestCases(TestCase):
 
         ns = urljoin('http://localhost', url)
         model.parse(data=smart_text(response.content), format='rdfa', publicID=ns)
+
+        # find good lanes
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
@@ -475,7 +480,30 @@ class ExperimentsTestCases(TestCase):
             lane_id = r['lane_id'].toPython()
             library_id = r['library_id'].toPython()
             self.assertTrue(library_id in expected[lane_id])
-        self.assertEqual(count, 8)
+        self.assertEqual(count, 7)
+
+        # find bad lanes
+        body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
+
+        select ?flowcell ?flowcell_id ?lane_id ?library_id
+        where {
+          ?flowcell a libns:IlluminaFlowcell ;
+                    libns:flowcell_id ?flowcell_id ;
+                    libns:has_failed_lane ?lane .
+          ?lane libns:lane_number ?lane_id ;
+                libns:library ?library .
+          ?library libns:library_id ?library_id .
+        }"""
+        count = 0
+        for r in model.query(body):
+            count += 1
+            self.assertEqual(r['flowcell_id'].toPython(), 'FC12150')
+            lane_id = r['lane_id'].toPython()
+            library_id = r['library_id'].toPython()
+            self.assertTrue(library_id in expected[lane_id])
+        self.assertEqual(count, 1)
+
 
 class TestEmailNotify(TestCase):
     def setUp(self):

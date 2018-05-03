@@ -23,18 +23,18 @@
          <td>Library Name</td>
          <td>Species</td>
          <td>Comment</td>
+         <td>Lane Status</td>
        </tr>
       </thead>
       <tbody>
       {% for lane in lanes %}
-        <tr>
-          <td rel="libns:has_lane">
+        <tr about="{{lane.get_absolute_url}}">
+          <td about="{{flowcell.get_absolute_url}}" rel="libns:{{ lane.has_lane_term }}">
             <a href="{{lane.get_absolute_url}}" typeof="libns:IlluminaLane">
               <span property="libns:lane_number">{{lane.lane_number}}</span>
             </a>
           </td>
           <td rel="libns:library"
-              about="{{lane.get_absolute_url}}"
               resource="{{lane.library.get_absolute_url}}">
             <a typeof="libns:Library" href="{{lane.library.get_absolute_url}}">
               <span property="libns:library_id"
@@ -57,9 +57,10 @@
                typeof="libns:Species">
               <span property="libns:species_name">{{ lane.library.library_species.scientific_name }}</span></a>
           </td>
-          <td about="{{lane.get_absolute_url}}">
+          <td>
             <span property="libns:comment">{{lane.comment}}</span>
           </td>
+          <td property="libns:status">{{ lane.status_name }}</td>
         </tr>
       {% endfor %}
       </tbody>
