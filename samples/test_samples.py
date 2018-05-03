@@ -246,6 +246,7 @@ class SampleWebTestCase(TestCase):
                     libns:gel_cut ?gel_cut ;
                     libns:made_by ?made_by
         }"""
+
         count = 0
         for r in model.query(body):
             self.assertEqual(r['library_id'].toPython(),
@@ -365,6 +366,7 @@ def create_db(obj):
         hidden = False,
     )
     obj.library_10002.save()
+
 
 class TestRDFaLibrary(TestCase):
     def setUp(self):
