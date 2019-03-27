@@ -17,14 +17,15 @@ else:
 
 GZIP_MIME_TYPES = ['application/gzip', 'application/x-gzip']
 
+
 def isfilelike(file_ref, mode):
     """Does file_ref have the core file operations?
     """
     # if mode is w/a check to make sure we writeable ops
     # but always check to see if we can read
     read_operations = ['read', 'readline', 'readlines']
-    write_operations = [ 'write', 'writelines' ]
-    #random_operations = [ 'seek', 'tell' ]
+    write_operations = ['write', 'writelines']
+
     if mode[0] in ('w', 'a'):
         for o in write_operations:
             if not hasattr(file_ref, o):
@@ -32,19 +33,21 @@ def isfilelike(file_ref, mode):
     for o in read_operations:
         if not hasattr(file_ref, o):
             return False
-          
+
     return True
+
 
 def isurllike(file_ref, mode):
     """
     does file_ref look like a url?
     (AKA does it start with protocol:// ?)
     """
-    #what if mode is 'w'?
+    # what if mode is 'w'?
     parsed = urllib.parse.urlparse(file_ref)
     schema, netloc, path, params, query, fragment = parsed
-    
+
     return len(schema) > 0
+
 
 def autoopen(file_ref, mode='r'):
     """
@@ -71,4 +74,4 @@ def autoopen(file_ref, mode='r'):
     elif os.path.splitext(file_ref)[1] == '.bz2':
         return bz2.BZ2File(file_ref, mode)
     else:
-        return open(file_ref,mode)
+        return open(file_ref, mode)

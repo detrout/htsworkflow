@@ -8,19 +8,21 @@ from django.utils.encoding import smart_text
 
 logger = logging.getLogger(__name__)
 
+
 def make_md5sum(filename):
     """Quickly find the md5sum of a file
     """
     md5_cache = os.path.join(filename+".md5")
     if os.path.exists(md5_cache):
         logger.debug("Found md5sum in {0}".format(md5_cache))
-        stream = open(md5_cache,'rt')
+        stream = open(md5_cache, 'rt')
         lines = stream.readlines()
         md5sum = parse_md5sum_line(lines, filename)
     else:
         md5sum = make_md5sum_unix(filename, md5_cache)
     return md5sum
-    
+
+
 def make_md5sum_unix(filename, md5_cache):
     cmd = ["md5sum", filename]
     logger.debug("Running {0}".format(" ".join(cmd)))
@@ -40,6 +42,7 @@ def make_md5sum_unix(filename, md5_cache):
         stream.close()
     return md5sum
 
+
 def parse_md5sum_line(lines, filename):
     md5sum, md5sum_filename = smart_text(lines[0]).split()
     md5sum_filename = os.path.basename(md5sum_filename)
@@ -49,4 +52,3 @@ def parse_md5sum_line(lines, filename):
         logger.error(errmsg.format(filename, md5sum_filename))
         return None
     return md5sum
-
