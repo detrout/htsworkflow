@@ -102,6 +102,7 @@ COLLECTION_TO_TYPE = {
     '/experiments/': 'Experiment',
     '/labs/': 'Lab',
     '/libraries/': 'Library',
+    '/mouse-donors/': 'MouseDonor',
     '/organisms/': 'Organism',
     '/replicates/': 'Replicate',
     '/files/': 'File',
@@ -311,6 +312,7 @@ class ENCODED:
             '/experiments/': 'experiment_accession',
             '/files/': 'file_accession',
             '/libraries/': 'library_accession',
+            '/mouse-donors/': 'mouse_donor_accession',
             '/replicates/': 'uuid',
         }
 
