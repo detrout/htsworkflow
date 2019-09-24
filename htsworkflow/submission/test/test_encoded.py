@@ -303,13 +303,6 @@ class TestEncoded(TestCase):
             self.assertEqual(ENCODED_NAMESPACES[k], context[k])
 
 
-def suite():
-    suite = TestSuite()
-    suite.addTests(
-        defaultTestLoader.loadTestsFromTestCase(TestEncoded))
-    return suite
-
-
 if __name__ == "__main__":
     from unittest import main
-    main(defaultTest='suite')
+    main()
