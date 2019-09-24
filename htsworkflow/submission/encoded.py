@@ -761,7 +761,7 @@ class TypedColumnParser(object):
     def parse_sheet_array_type(value):
         """Helper function to parse :array columns in sheet
         """
-        return re.split(',\s*', value)
+        return re.split(r',\s*', value)
 
     @staticmethod
     def parse_sheet_integer_type(value):
