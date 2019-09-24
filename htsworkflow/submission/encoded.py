@@ -56,19 +56,19 @@ ENCODED_CONTEXT = {
     # I tried to use the JSON-LD mapping capabilities to convert the lab
     # contact information into a vcard record, but the encoded model
     # didn't lend itself well to the vcard schema
-    #'lab': {
+    # 'lab': {
     #    "address1": "vcard:street-address",
     #    "address2": "vcard:street-address",
     #    "city": "vcard:locality",
     #    "state": "vcard:region",
     #    "country": "vcard:country"
-    #},
+    # },
     'Library': {
         'nucleic_acid_term_id': {'@type': '@id'}
     }
 }
 
-#FIXME: this needs to be initialized from rdfns
+# FIXME: this needs to be initialized from rdfns
 ENCODED_NAMESPACES = {
     # JSON-LD lets you define namespaces so you can used the shorted url syntax.
     # (instead of http://www.w3.org/2000/01/rdf-schema#label you can do
@@ -810,7 +810,6 @@ class TypedColumnParser(object):
         """
         return json.loads(value)
 
-
     def __getitem__(self, name):
         parser = {
             'array': self.parse_sheet_array_type,
@@ -836,7 +835,9 @@ class TypedColumnParser(object):
                 column_type = header[1]
         return header[0], self[column_type](value)
 
+
 typed_column_parser = TypedColumnParser()
+
 
 class Document(object):
     """Helper class for registering documents
