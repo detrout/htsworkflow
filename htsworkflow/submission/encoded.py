@@ -909,9 +909,9 @@ class Document(object):
 
         return document_payload
 
-    def post(self, server):
+    def post(self, server, validator):
         document_payload = self.create_payload()
-        server.validate(document_payload, 'document')
+        validator.validate(document_payload, 'document')
         return server.post_json('/documents/', document_payload)
 
     def save(self, filename):
@@ -919,10 +919,10 @@ class Document(object):
         with open(filename, 'w') as outstream:
             outstream.write(pformat(payload))
 
-    def create_if_needed(self, server, uuid):
+    def create_if_needed(self, server, uuid, validator):
         self.uuid = uuid
         if uuid is None:
-            return self.post(server)
+            return self.post(server, validator)
         else:
             return server.get_json(uuid, embed=False)
 
