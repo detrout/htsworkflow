@@ -92,6 +92,9 @@ ENCODED_NAMESPACES = {
 }
 
 ENCODED_SCHEMA_ROOT = '/profiles/'
+SCHEMA_TYPE_OVERRIDES = {
+    'mousedonor': 'mouse_donor',
+}
 
 COLLECTION_TO_TYPE = {
     '/annotations/': 'Annotation',
@@ -297,8 +300,9 @@ class ENCODED:
            Schema URL
         """
         object_type = COLLECTION_TO_TYPE.get(object_type, object_type).lower()
+        schema_name = SCHEMA_TYPE_OVERRIDES.get(object_type, object_type)
 
-        return self.prepare_url(ENCODED_SCHEMA_ROOT + object_type + '.json') + '#'
+        return self.prepare_url(ENCODED_SCHEMA_ROOT + schema_name + '.json') + '#'
 
     def get_accession_name(self, collection):
         """Lookup common object accession name given a collection name.
