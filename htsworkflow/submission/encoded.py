@@ -772,6 +772,19 @@ class TypedColumnParser(object):
         return int(value)
 
     @staticmethod
+    def parse_sheet_number_type(value):
+        """Helper function to parse :number columns in sheet
+        """
+        # JSON Schema seems to say number can be either
+        # Integers or Floats, so lets try keeping the
+        # type straight.
+        try:
+            value = int(value)
+        except ValueError:
+            value = float(value)
+        return value
+
+    @staticmethod
     def parse_sheet_boolean_type(value):
         """Helper function to parse :boolean columns in sheet
         """
@@ -803,6 +816,7 @@ class TypedColumnParser(object):
             'array': self.parse_sheet_array_type,
             'boolean': self.parse_sheet_boolean_type,
             'integer': self.parse_sheet_integer_type,
+            'number': self.parse_sheet_number_type,
             'date': self.parse_sheet_timestamp_type,
             'json': self.parse_sheet_json_type,
             'string': self.parse_sheet_string_type
