@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function
 
+import datetime
 import json
 import jsonschema
 import logging
@@ -11,6 +12,7 @@ from htsworkflow.submission.encoded import (
     ENCODED_CONTEXT,
     ENCODED_NAMESPACES,
     DCCValidator,
+    typed_column_parser,
 )
 
 
@@ -301,6 +303,81 @@ class TestEncoded(TestCase):
         for k in ENCODED_NAMESPACES:
             self.assertIn(k, context)
             self.assertEqual(ENCODED_NAMESPACES[k], context[k])
+
+
+class TestTypedColumnParser(TestCase):
+    def test_skip(self):
+        self.assertEqual(
+            typed_column_parser('foo:skip', 'value'),
+            (None, None)
+        )
+
+    def test_default(self):
+        name, value = typed_column_parser('foo', '3')
+        self.assertEqual(name, 'foo')
+        self.assertEqual(value, '3')
+        self.assertIsInstance(value, str)
+
+    def test_array(self):
+        name, value = typed_column_parser('foo:array', 'a, b, c')
+        self.assertEqual(name, 'foo')
+        self.assertEqual(len(value), 3)
+        self.assertEqual(value, ['a', 'b', 'c'])
+
+        name, value = typed_column_parser('foo:array', 'a,b,c')
+        self.assertEqual(name, 'foo')
+        self.assertEqual(len(value), 3)
+        self.assertEqual(value, ['a', 'b', 'c'])
+
+        name, value = typed_column_parser('foo:array', 'a, b,\nc')
+        self.assertEqual(name, 'foo')
+        self.assertEqual(len(value), 3)
+        self.assertEqual(value, ['a', 'b', 'c'])
+
+    def test_boolean(self):
+        for b in ['True', 'False', '1', '0']:
+            name, value = typed_column_parser('foo:boolean', b)
+            self.assertEqual(name, 'foo')
+            self.assertEqual(value, bool(b))
+
+    def test_integer(self):
+        name, value = typed_column_parser('foo:integer', '3')
+        self.assertEqual(name, 'foo')
+        self.assertEqual(value, 3)
+
+        self.assertRaises(ValueError, typed_column_parser, 'foo:integer', 'a')
+        self.assertRaises(ValueError, typed_column_parser, 'foo:integer', '3.14')
+
+    def test_number(self):
+        name, value = typed_column_parser('foo:number', '3')
+        self.assertEqual(name, 'foo')
+        self.assertEqual(value, 3)
+        self.assertIsInstance(value, int)
+
+        name, value = typed_column_parser('foo:number', '3.14')
+        self.assertEqual(name, 'foo')
+        self.assertEqual(value, 3.14)
+        self.assertIsInstance(value, float)
+
+        self.assertRaises(ValueError, typed_column_parser, 'foo:number', 'a')
+
+    def test_timestamp(self):
+        name, value = typed_column_parser('foo:date', '1999-1-1')
+        self.assertEqual(name, 'foo')
+        self.assertEqual(value, '1999-1-1')
+
+        name, value = typed_column_parser(
+            'foo:date',
+            datetime.date(1999, 1, 1))
+        self.assertEqual(name, 'foo')
+        self.assertEqual(value, '1999-01-01')
+
+    def test_json(self):
+        name, value = typed_column_parser('foo:json', '{"a": 3}')
+        self.assertEqual(value, {'a': 3})
+
+        name, value = typed_column_parser('foo:json', '[{"a": 3}]')
+        self.assertEqual(value, [{'a': 3}])
 
 
 if __name__ == "__main__":
