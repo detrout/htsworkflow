@@ -704,7 +704,6 @@ class DCCValidator:
             # string, but on the off chance they change and start using
             # lists again, lets flag this implementation because it'd be
             # inadequate.
-            assert len(linkTo) == 1
             linkTo = linkTo[0]
 
         try:
