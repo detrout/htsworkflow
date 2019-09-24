@@ -18,7 +18,7 @@ import requests
 from uuid import UUID
 
 import six
-from six.moves.urllib.parse import urljoin, urlparse, urlunparse, quote
+from six.moves.urllib.parse import urljoin, urlparse, urlunparse
 
 LOGGER = logging.getLogger(__name__)
 
