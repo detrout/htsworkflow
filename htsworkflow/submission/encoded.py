@@ -681,7 +681,6 @@ class DCCValidator:
             'linkFrom': self.unimplementedValidator,
             'permission': self.permissionValidator,
             'requestMethod': self.requestMethodValidator,
-            #'validators': self.unimplementedValidator,
         })
         return validator(schema)
 
