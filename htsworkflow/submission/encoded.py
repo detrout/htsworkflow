@@ -403,8 +403,6 @@ class ENCODED:
         to_create = self.prepare_objects_from_sheet(collection, sheet, validator=validator)
 
         created = []
-        accessions = []
-        uuids = []
         for i, new_object in to_create:
             if new_object:
                 accession = new_object.get(accession_name)
@@ -419,27 +417,21 @@ class ENCODED:
                 if posted_object:
                     accession = posted_object.get('accession')
                     uuid = posted_object.get('uuid')
+                    if 'accession' in sheet.columns:
+                        sheet.loc[i, 'accession'] = accession
+                    if 'uuid' in sheet.columns:
+                        sheet.loc[i, 'uuid'] = uuid
+
                     description = posted_object.get('description')
 
                 if description is None:
                     description = new_object.get('aliases')
-
-                accessions.append(accession)
-                uuids.append(uuid)
 
                 LOGGER.info('row {} ({}) -> {}'.format(
                     (i+2), description, accession))
                 # +2 comes from python row index + 1 to convert to
                 # one based indexing + 1 to account for
                 # row removed by header parsing
-            else:
-                accessions.append(numpy.nan)
-                uuids.append(numpy.nan)
-
-        if accession_name in sheet.columns:
-            sheet[accession_name] = accessions
-        if 'uuid' in sheet.columns:
-            sheet['uuid'] = uuids
 
         return created
 
