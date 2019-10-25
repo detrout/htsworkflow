@@ -14,6 +14,7 @@ import os
 from pprint import pformat
 import re
 import requests
+from requests import HTTPError
 from uuid import UUID
 
 import six
@@ -713,7 +714,7 @@ class DCCValidator:
                 collection = TYPE_TO_COLLECTION.get(linkTo)
                 object_id = urljoin(collection, instance)
             item = self.get_json(object_id)
-        except requests.HTTPError as e:
+        except HTTPError as e:
             yield jsonschema.ValidationError("%s doesn't exist: %s" % (object_id, str(e)))
 
         linkEnum = schema.get('linkEnum')
