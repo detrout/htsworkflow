@@ -632,6 +632,7 @@ class DCCValidator:
         object_type = object_type if object_type else self.server.get_object_type(obj)
 
         hidden = self.strip_jsonld_attributes(obj)
+        hidden = self.strip_uuid(obj)
         self[object_type].validate(hidden)
 
         # Additional validation rules passed down from the DCC for our grant
@@ -654,6 +655,17 @@ class DCCValidator:
             del hidden['@id']
         if '@type' in hidden:
             del hidden['@type']
+        return hidden
+
+    def strip_uuid(self, obj):
+        """Make copy of object with uuid removed
+
+        :param dict obj: dictionary to POST to the DCC as an json document
+        :returns: dict with jsonld attributes uuid removed.
+        """
+        hidden = obj.copy()
+        if 'uuid' in hidden:
+            del hidden['uuid']
         return hidden
 
     def update_aliases(self, obj):
