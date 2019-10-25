@@ -10,7 +10,6 @@ import hashlib
 import logging
 import json
 import jsonschema
-import numpy
 import os
 from pprint import pformat
 import re
