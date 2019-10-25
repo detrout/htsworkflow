@@ -311,12 +311,12 @@ class ENCODED:
         objects accession is in.
         """
         collection_to_accession_name = {
-            '/annotations/': 'annotation_accession',
-            '/biosamples/': 'biosample_accession',
-            '/experiments/': 'experiment_accession',
-            '/files/': 'file_accession',
-            '/libraries/': 'library_accession',
-            '/mouse-donors/': 'mouse_donor_accession',
+            '/annotations/': 'accession',
+            '/biosamples/': 'accession',
+            '/experiments/': 'accession',
+            '/files/': 'accession',
+            '/libraries/': 'accession',
+            '/mouse-donors/': 'accession',
             '/replicates/': 'uuid',
         }
 
@@ -407,7 +407,7 @@ class ENCODED:
         uuids = []
         for i, new_object in to_create:
             if new_object:
-                accession = new_object.get('accession')
+                accession = new_object.get(accession_name)
                 uuid = new_object.get('uuid')
                 description = new_object.get('description')
 
