@@ -238,6 +238,7 @@ def post_file_metadata(encode, metadata, upload, retry=False):
             item = json.load(instream)['@graph'][0]
     return item
 
+
 def make_upload_filename(metadata, server=None):
     if server is not None:
         extension = '.{}.upload'.format(server.server)

@@ -65,7 +65,7 @@ ENCODED_CONTEXT = {
     # },
     'Library': {
         'nucleic_acid_term_id': {'@type': '@id'}
-    }
+    },
 }
 
 # FIXME: this needs to be initialized from rdfns

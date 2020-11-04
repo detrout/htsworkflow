@@ -16,6 +16,7 @@ from six.moves import urllib
 
 LOGGER = logging.getLogger(__name__)
 
+
 def add_auth_options(parser):
     """Add options OptParser configure authentication options
     """
@@ -189,7 +190,7 @@ if __name__ == "__main__":
     parser.add_option('--library', default=None)
 
     opts, args = parser.parse_args()
-    apidata =  make_auth_from_opts(opts)
+    apidata = make_auth_from_opts(opts)
 
     api = HtswApi(opts.host, apidata)
 
