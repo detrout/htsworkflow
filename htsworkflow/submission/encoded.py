@@ -732,8 +732,12 @@ class DCCValidator:
                 UUID(instance)
                 object_id = instance
             except ValueError:
-                collection = TYPE_TO_COLLECTION.get(linkTo)
-                object_id = urljoin(collection, instance)
+                # a hack to detect if we have an alias?
+                if ':' in instance:
+                    object_id = instance
+                else:
+                    collection = TYPE_TO_COLLECTION.get(linkTo)
+                    object_id = urljoin(collection, instance)
             item = self.get_json(object_id)
         except HTTPError as e:
             yield jsonschema.ValidationError("%s doesn't exist: %s" % (object_id, str(e)))
