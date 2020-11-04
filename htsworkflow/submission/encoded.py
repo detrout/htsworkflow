@@ -93,10 +93,16 @@ ENCODED_NAMESPACES = {
 
 ENCODED_SCHEMA_ROOT = '/profiles/'
 SCHEMA_TYPE_OVERRIDES = {
+    'aggregateseries': 'aggregate_series',
+    'analysissteprun': 'analysis_step_run',
     'mousedonor': 'mouse_donor',
+    'publicationdata': 'publication_data',
+    'samtoolsflagstatsqualitymetric': 'samtools_flagstats_quality_metric',
 }
 
 COLLECTION_TO_TYPE = {
+    '/aggregate-series/': 'AggregateSeries',
+    '/analysis-step-runs/': 'AnalysisStepRun',
     '/annotations/': 'Annotation',
     '/award/': 'Award',
     '/biosamples/': 'Biosample',
@@ -682,7 +688,7 @@ class DCCValidator:
         validator = jsonschema.validators.extend(jsonschema.Draft4Validator, validators={
             'calculatedProperty': self.calculatedPropertyValidator,
             'linkTo': self.linkToValidator,
-            'linkFrom': self.unimplementedValidator,
+            'linkFrom': self.linkFromValidator,
             'permission': self.permissionValidator,
             'requestMethod': self.requestMethodValidator,
         })
@@ -696,6 +702,17 @@ class DCCValidator:
         """
         yield jsonschema.ValidationError(
             'submission of calculatedProperty "%s" is disallowed' % (tag,))
+
+    def linkFromValidator(self, validator, linkFrom, instance, schema):
+        if schema['linkFrom'] == 'QualityMetric.quality_metric_of':
+            if 'quality_metric_of' not in instance:
+                yield jsonschema.ValidationError(
+                    'required tag quality_metric_of missing')
+            object_id = instance['quality_metric_of']
+            obj = self.get_json(object_id)
+            if obj is None:
+                yield jsonschema.ValidationError(
+                    'quality_metric_of {} was not found'.format(object_id))
 
     def linkToValidator(self, validator, linkTo, instance, schema):
         if not validator.is_type(instance, "string"):
