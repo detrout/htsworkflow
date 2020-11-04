@@ -129,7 +129,7 @@ def retrieve_info(url, apidata):
     try:
         apipayload = urllib.parse.urlencode(apidata)
         web = urllib.request.urlopen(url, apipayload)
-    except urllib.request.URLError as e:
+    except urllib.error.URLError as e:
         if hasattr(e, 'code') and e.code == 404:
             LOGGER.info("%s was not found" % (url,))
             return None
