@@ -626,6 +626,7 @@ class DCCValidator:
 
         hidden = self.strip_jsonld_attributes(obj)
         hidden = self.strip_uuid(obj)
+        self.update_aliases(obj)
         self[object_type].validate(hidden)
 
         # Additional validation rules passed down from the DCC for our grant
@@ -634,8 +635,6 @@ class DCCValidator:
             if assay_term_name.lower() == 'rna-seq':
                 if assay_term_name != 'RNA-seq':
                     raise jsonschema.ValidationError('Incorrect capitialization of RNA-seq')
-
-        self.update_aliases(obj)
 
     def strip_jsonld_attributes(self, obj):
         """Make copy of object with JSON-LD attributes
