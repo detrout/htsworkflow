@@ -4,7 +4,7 @@
 import logging
 import json
 import os
-from pprint import pformat, pprint
+from pprint import pformat
 import subprocess
 import time
 
