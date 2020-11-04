@@ -732,8 +732,7 @@ class DCCValidator:
                 UUID(instance)
                 object_id = instance
             except ValueError:
-                # a hack to detect if we have an alias?
-                if ':' in instance:
+                if instance in self._aliases:
                     object_id = instance
                 else:
                     collection = TYPE_TO_COLLECTION.get(linkTo)
