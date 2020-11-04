@@ -198,10 +198,6 @@ def upload_file(encode, validator, metadata, dry_run=True, retry=False):
         LOGGER.error(json.dumps(metadata, indent=4, sort_keys=True))
         return
 
-    if dry_run:
-        LOGGER.info(json.dumps(metadata, indent=4, sort_keys=True))
-        return
-
     upload = make_upload_filename(metadata, encode)
     if retry or not os.path.exists(upload):
         LOGGER.debug(json.dumps(metadata, indent=4, sort_keys=True))
