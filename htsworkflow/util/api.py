@@ -13,6 +13,7 @@ import json
 import os
 from optparse import OptionGroup
 from six.moves import urllib
+from six import ensure_binary
 
 LOGGER = logging.getLogger(__name__)
 
@@ -127,7 +128,7 @@ def retrieve_info(url, apidata):
     Return a dictionary from the HTSworkflow API
     """
     try:
-        apipayload = urllib.parse.urlencode(apidata)
+        apipayload = ensure_binary(urllib.parse.urlencode(apidata))
         web = urllib.request.urlopen(url, apipayload)
     except urllib.error.URLError as e:
         if hasattr(e, 'code') and e.code == 404:
