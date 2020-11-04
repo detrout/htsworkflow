@@ -205,8 +205,11 @@ def upload_file(encode, validator, metadata, dry_run=True, retry=False):
             item = post_file_metadata(encode, metadata, upload, retry)
             creds = item['upload_credentials']
             run_aws_cp(metadata[file_name_field], creds)
+            return item
         else:
             LOGGER.info("Would upload %s", metadata[file_name_field])
+            metadata['accession'] = 'would create'
+            return metadata
     else:
         LOGGER.info('%s already uploaded',
                     metadata[file_name_field])
