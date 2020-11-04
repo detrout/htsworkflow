@@ -114,6 +114,7 @@ COLLECTION_TO_TYPE = {
     '/mouse-donors/': 'MouseDonor',
     '/organisms/': 'Organism',
     '/replicates/': 'Replicate',
+    '/references/': 'Reference',
     '/files/': 'File',
 }
 
@@ -324,6 +325,7 @@ class ENCODED:
             '/libraries/': 'accession',
             '/mouse-donors/': 'accession',
             '/replicates/': 'uuid',
+            '/references/': 'accession',
         }
 
         accession_name = collection_to_accession_name.get(collection, None)
