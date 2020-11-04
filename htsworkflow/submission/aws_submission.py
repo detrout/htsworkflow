@@ -240,9 +240,9 @@ def post_file_metadata(encode, metadata, upload, retry=False):
 
 
 def make_upload_filename(metadata, server=None):
+    filename = metadata['submitted_file_name'].replace(os.path.sep, '_')
     if server is not None:
         extension = '.{}.upload'.format(server.server)
     else:
         extension = '.upload'
-    filename = metadata['submitted_file_name']
     return filename + extension
