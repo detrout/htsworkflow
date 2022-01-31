@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 from argparse import ArgumentParser
 import datetime
-from htsworkflow.submission.encoded import ENCODED
+from encoded_client import ENCODED
 import numpy
 import pandas
 
@@ -11,7 +11,6 @@ def main(cmdline=None):
     # args = parser.parse_args(cmdline)
 
     server = ENCODED('www.encodeproject.org')
-    server.load_netrc()
 
     experiments = find_experiments(server)
     experiments.sort_values(['release_time'], inplace=True)
@@ -33,7 +32,7 @@ def find_experiments(server):
         experiments.append({
             '@id': 'https://www.encodeproject.org' + row['@id'],
             'accession': row['accession'],
-            'biosample_summary': row['biosample_summary'],
+            'biosample_term_name': row['biosample_ontology']["term_name"],
             'description': row['description'],
             'lab': row['lab']['title'],
             'status': row['status'],
@@ -53,7 +52,7 @@ def release_time(release):
 
 def count_audits(row):
     count = 0
-    for level in row['audit']:
+    for level in row.get('audit', []):
         if level != 'INTERNAL_ACTION':
             count += len(row['audit'][level])
     return count
