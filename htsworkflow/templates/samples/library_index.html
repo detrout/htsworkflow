@@ -6,20 +6,7 @@
     <link type="text/css" rel="stylesheet" href="{% static "css/app.css" %}"/>
 
     {% block additional_javascript %}
-    <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/htsw.js" %}"></script>
-    <script type="text/javascript">
-      $(document).ready(function() {
-        $(window).resize(function() {
-           var window_height = $(window).height();
-           var position = $("#changelist table").position();
-           height = window_height - position.top;
-           $("#changelist table.filtered").height(height);
-           $("#changelist-filter").height(height);
-        });
-        $(window).resize();
-      });
-    </script>
     {% endblock %}
 {% endblock %}
 {% block bodyclass %}change-list{% endblock %}
