@@ -176,7 +176,7 @@ def make_django_secret_key(size=216):
         chars.append(six.int2byte(byte))
         bits >>= 8
 
-    raw_bytes = base64.encodestring(b"".join(chars)).strip()
+    raw_bytes = base64.encodebytes(b"".join(chars)).strip()
     if six.PY3:
         return raw_bytes.decode('ascii')
     else:
