@@ -40,7 +40,7 @@ def print_zpl_socket(zpl_text, host=None, port=None):
     # PORT 9100 is default for Zebra tabletop/desktop printers
     # PORT 6101 is default for Zebra mobile printers
     s.connect((host, port))
-    s.sendall(zpl_text)
+    s.sendall(zpl_text.encode("ascii"))
     s.close()
 
 
