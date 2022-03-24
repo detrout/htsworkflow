@@ -8,12 +8,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from os.path import abspath, basename, dirname, join, normpath
 import sys
 import logging
 
 from htsworkflow.util import config_helper
+
 
 DJANGO_ROOT = dirname(dirname(abspath(__file__)))
 PROJECT_ROOT = dirname(DJANGO_ROOT)
