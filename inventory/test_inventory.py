@@ -7,7 +7,7 @@ from django.db import connection
 from django.conf import settings
 
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.encoding import smart_text
 
 from rdflib import Graph, Literal, URIRef

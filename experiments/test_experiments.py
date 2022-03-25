@@ -12,7 +12,7 @@ from six.moves.urllib.parse import urljoin
 from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase
 from django.utils.encoding import smart_text, smart_bytes
 

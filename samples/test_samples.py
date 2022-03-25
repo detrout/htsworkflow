@@ -6,7 +6,7 @@ import logging
 from unittest import skipUnless
 
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase, RequestFactory
 from django.utils.encoding import smart_text, smart_str, smart_bytes
 
