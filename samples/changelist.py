@@ -25,10 +25,9 @@ class HTSChangeList(ChangeList):
             'list_select_related': None, # list_select_related,
             'list_per_page': list_per_page, #list_per_page
             'list_editable': None, # list_editable
-            'model_admin': model_admin #model_admin
+            'model_admin': model_admin,  # model_admin
+            'list_max_show_all': 20000,  # list_max_show_all
         }
-        if django.VERSION[0] >= 1 and django.VERSION[1] >= 4:
-            args['list_max_show_all'] = 20000 #list_max_show_all
         super(HTSChangeList, self).__init__(**args)
 
         self.is_popup = False
@@ -38,9 +37,7 @@ class HTSChangeList(ChangeList):
         self.can_show_all = False
 
     def get_queryset(self, request=None):
-        args = {}
-        if django.VERSION[0] >= 1 and django.VERSION[1] >= 4:
-            args['request'] = request #list_max_show_all
+        args = {"request": request}
 
         qs = super(HTSChangeList, self).get_queryset(**args)
         if self.extra_filters:
