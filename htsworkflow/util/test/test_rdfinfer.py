@@ -175,7 +175,7 @@ class TestInfer(TestCase):
         self.assertEqual(len(errors), 0)
         s = (fooNS['foo.txt'], RDF['type'], FOAF['Document'])
         self.model.add(s)
-        s = (fooNS['me.jpg'], FOAF['depicts'], FOAF['foo.txt'])
+        s = (fooNS['me.jpg'], FOAF['depicts'], FOAF['Document'])
         self.model.add(s)
 
         errors = list(inference._validate_property_types())
