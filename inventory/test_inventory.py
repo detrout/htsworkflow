@@ -39,7 +39,7 @@ class InventoryTestCase(TestCase):
         content = smart_text(response.content)
 
         model = Graph()
-        model.parse(data=content, format='rdfa', publicID=url)
+        model.parse(data=content, format="rdfa", media_type="text/html", publicID=url)
 
         itemNode = URIRef(url)
         items = list(model.objects(itemNode, inventoryOntology['item_type']))
@@ -135,7 +135,7 @@ class InventoryTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
         content = smart_text(response.content)
-        model.parse(data=content, format='rdfa', publicID=rootNode)
+        model.parse(data=content, format="rdfa", media_type="text/html", publicID=rootNode)
         targets = model.objects(diskNode, libraryOntology['flowcell_id'])
         flowcells = [ str(x) for x in targets]
         return flowcells

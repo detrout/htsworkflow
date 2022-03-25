@@ -61,7 +61,7 @@ class LibraryAccessionTestCase(TestCase):
         lib_content = smart_text(lib_response.content)
 
         model = Graph()
-        model.parse(data=lib_content, format='rdfa')
+        model.parse(data=lib_content, format="rdfa", media_type="text/html")
 
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
@@ -187,7 +187,7 @@ class SampleWebTestCase(TestCase):
         self.assertTrue(library.id in smart_str(response.content))
 
         model = ConjunctiveGraph()
-        model.parse(data=smart_text(response.content), format='rdfa')
+        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html")
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
@@ -211,7 +211,7 @@ class SampleWebTestCase(TestCase):
         response = self.client.get(url)
 
         model = ConjunctiveGraph()
-        model.parse(data=smart_text(response.content), format='rdfa')
+        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html")
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
@@ -233,7 +233,7 @@ class SampleWebTestCase(TestCase):
 
         response = self.client.get(library.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-        model.parse(data=smart_text(response.content), format='rdfa')
+        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html")
 
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
@@ -279,7 +279,7 @@ class SampleWebTestCase(TestCase):
 
         response = self.client.get(reverse('library_index'))
         self.assertEqual(response.status_code, 200)
-        model.parse(data=smart_text(response.content), format='rdfa')
+        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html")
 
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
@@ -395,7 +395,7 @@ class TestRDFaLibrary(TestCase):
         lib_body = smart_str(lib_response.content)
         self.assertNotEqual(len(lib_body), 0)
 
-        model.parse(data=lib_body, format='rdfa', publicID='http://localhost'+url)
+        model.parse(data=lib_body, format="rdfa", media_type="text/html", publicID='http://localhost'+url)
 
         # http://jumpgate.caltech.edu/wiki/LibraryOntology#affiliation>
         self.check_literal_object(model, ['Bob'], p=libraryOntology['affiliation'])

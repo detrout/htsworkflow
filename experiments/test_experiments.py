@@ -108,7 +108,7 @@ class ExperimentsTestCases(TestCase):
 
         response = self.client.get(reverse('flowcell_index'))
         self.assertEqual(response.status_code, 200)
-        model.parse(data=smart_text(response.content), format='rdfa')
+        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html")
 
         add_default_schemas(model)
         inference = Infer(model)
@@ -458,7 +458,7 @@ class ExperimentsTestCases(TestCase):
         if status is not None: self.assertTrue(status)
 
         ns = urljoin('http://localhost', url)
-        model.parse(data=smart_text(response.content), format='rdfa', publicID=ns)
+        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html", publicID=ns)
 
         # find good lanes
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -649,7 +649,7 @@ class TestSequencer(TestCase):
         if status is not None:
             self.assertTrue(status)
 
-        model.parse(data=smart_text(response.content), format='rdfa')
+        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html")
 
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
@@ -666,7 +666,7 @@ class TestSequencer(TestCase):
         if status is not None:
             self.assertTrue(status)
 
-        model.parse(data=smart_text(response.content), format='rdfa')
+        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html")
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
 
