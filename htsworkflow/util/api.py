@@ -6,14 +6,11 @@ import base64
 import six
 from six.moves import configparser
 import random
+import requests
 import logging
 
-import json
-
 import os
-from optparse import OptionGroup
 from six.moves import urllib
-from six import ensure_binary
 
 LOGGER = logging.getLogger(__name__)
 
@@ -127,21 +124,16 @@ def retrieve_info(url, apidata):
     """
     Return a dictionary from the HTSworkflow API
     """
-    try:
-        apipayload = ensure_binary(urllib.parse.urlencode(apidata))
-        web = urllib.request.urlopen(url, apipayload)
-    except urllib.error.URLError as e:
-        if hasattr(e, 'code') and e.code == 404:
-            LOGGER.info("%s was not found" % (url,))
-            return None
-        else:
-            errmsg = 'URLError: %s' % (str(e))
-            raise IOError(errmsg)
+    web = requests.get(url, params=apidata)
 
-    contents = web.read()
-    headers = web.info()
+    if web.status_code != 200:
+        raise requests.HTTPError(
+            "Failed to access {} error {}".format(url, web.status_code))
 
-    return json.loads(contents)
+    result = web.json()
+    if "result" in result:
+        result = result["result"]
+    return result
 
 class HtswApi(object):
     def __init__(self, root_url, authdata):
