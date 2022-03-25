@@ -56,7 +56,7 @@ def make_auth_from_opts(opts, parser=None):
         else:
             raise RuntimeError("Need host, api id api key")
 
-    return {'apiid': opts.apiid, 'apikey': opts.apikey }
+    return {'apiid': opts.apiid, 'apikey': opts.apikey}
 
 
 def library_url(root_url, library_id):
