@@ -27,7 +27,7 @@ from samples.samples_factory import AffiliationFactory, HTSUserFactory, \
     LibraryFactory, LibraryTypeFactory, MultiplexIndexFactory
 from htsworkflow.auth import apidata
 from htsworkflow.util.ethelp import validate_xhtml
-from htsworkflow.util.rdfhelp import add_default_schemas
+from encoded_client.rdfhelp import add_default_schemas
 from htsworkflow.util.rdfinfer import Infer
 
 from htsworkflow.pipelines.test.simulate_runfolder import TESTDATA_DIR

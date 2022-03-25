@@ -13,14 +13,14 @@ from six.moves import urllib
 from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.namespace import OWL, RDF
 
-from htsworkflow.util.rdfns import (
+from encoded_client.rdfns import (
+    dafTermOntology,
     libraryOntology,
     submissionLog,
     submissionOntology
 )
-from htsworkflow.util.rdfhelp import dump_model
-from htsworkflow.util.rdfns import dafTermOntology
-from htsworkflow.util.hashfile import make_md5sum
+from encoded_client.rdfhelp import dump_model
+from encoded_client.hashfile import make_md5sum
 
 LOGGER = logging.getLogger(__name__)
 

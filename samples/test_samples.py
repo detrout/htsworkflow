@@ -29,9 +29,9 @@ from htsworkflow.auth import apidata
 from htsworkflow.util.conversion import str_or_none
 from htsworkflow.util.ethelp import validate_xhtml
 
-from htsworkflow.util.rdfhelp import add_default_schemas
+from encoded_client.rdfhelp import add_default_schemas
+from encoded_client.rdfns import libraryOntology
 from htsworkflow.util.rdfinfer import Infer
-from htsworkflow.util.rdfns import libraryOntology
 
 
 class LibraryAccessionTestCase(TestCase):

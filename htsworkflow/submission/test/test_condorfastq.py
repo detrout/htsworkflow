@@ -16,7 +16,7 @@ from django.conf import settings
 
 from htsworkflow.submission.condorfastq import CondorFastqExtract
 from htsworkflow.submission.results import ResultMap
-from htsworkflow.util.rdfhelp import \
+from encoded_client.rdfhelp import \
      add_default_schemas, dump_model
 from htsworkflow.util.rdfinfer import Infer
 

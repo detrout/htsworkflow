@@ -10,7 +10,7 @@ from rdflib import Graph, Namespace, URIRef
 from rdflib.namespace import RDF
 
 from htsworkflow.submission import daf, results
-from htsworkflow.util.rdfns import (
+from encoded_client.rdfns import (
      dafTermOntology,
      submissionLog,
      submissionOntology

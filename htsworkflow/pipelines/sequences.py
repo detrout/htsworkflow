@@ -11,7 +11,7 @@ import six
 from six.moves.urllib.parse import urljoin, urlparse
 
 from rdflib import BNode, Literal, Namespace, URIRef
-from htsworkflow.util.rdfhelp import (
+from encoded_client.rdfhelp import (
     dump_model,
     libraryOntology as libNS,
     RDF,

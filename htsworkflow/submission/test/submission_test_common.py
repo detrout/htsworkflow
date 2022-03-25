@@ -4,7 +4,7 @@ import logging
 import os
 import tempfile
 
-from htsworkflow.util.rdfhelp import get_turtle_header
+from encoded_client.rdfhelp import get_turtle_header
 S1_NAME = '1000-sample'
 S2_NAME = '2000-sample'
 SCOMBINED_NAME = 'directory'

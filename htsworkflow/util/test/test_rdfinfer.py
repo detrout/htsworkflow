@@ -1,11 +1,9 @@
 from unittest import TestCase
 
-from rdflib import ConjunctiveGraph, BNode, Literal, Namespace, URIRef
-from rdflib.plugins.sparql import prepareQuery
+from rdflib import ConjunctiveGraph, Literal, Namespace
 
-from htsworkflow.util.rdfhelp import \
-     add_default_schemas, load_string_into_model, dump_model
-from htsworkflow.util.rdfns import *
+from encoded_client.rdfhelp import add_default_schemas
+from encoded_client.rdfns import RDF, RDFS, DC
 from htsworkflow.util.rdfinfer import Infer
 
 from rdflib.namespace import FOAF

@@ -5,8 +5,8 @@ import sys
 from rdflib import ConjunctiveGraph, BNode, Literal, URIRef
 from rdflib.plugins.sparql import prepareQuery
 
-from htsworkflow.util.rdfns import *
-from htsworkflow.util.rdfhelp import SCHEMAS_URL
+from encoded_client.rdfns import *
+from encoded_client.rdfhelp import SCHEMAS_URL
 
 INFER_URL='http://jumpgate.caltech.edu/phony/infer'
 LOGGER = logging.getLogger(__name__)

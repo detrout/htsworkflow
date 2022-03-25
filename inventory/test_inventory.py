@@ -16,7 +16,7 @@ from .models import Item, Vendor
 from .inventory_factory import ItemFactory, LongTermStorageFactory
 from samples.samples_factory import HTSUserFactory, LibraryFactory
 from experiments.experiments_factory import FlowCellFactory
-from htsworkflow.util.rdfns import inventoryOntology, libraryOntology
+from encoded_client.rdfns import inventoryOntology, libraryOntology
 
 def localhostNode(url):
     return URIRef('http://localhost%s' % (url,))

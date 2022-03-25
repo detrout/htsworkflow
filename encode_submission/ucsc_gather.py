@@ -22,7 +22,7 @@ if not 'DJANGO_SETTINGS_MODULE' in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
 
 from htsworkflow.util import api
-from htsworkflow.util.rdfns import \
+from encoded_client.rdfns import \
      dafTermOntology, \
      submissionOntology
 from htsworkflow.submission.daf import \

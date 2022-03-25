@@ -17,8 +17,8 @@ from htsworkflow.pipelines import qseq2fastq
 from htsworkflow.pipelines import srf2fastq
 from htsworkflow.pipelines import desplit_fastq
 from htsworkflow.submission.fastqname import FastqName
-from htsworkflow.util.rdfhelp import dump_model, strip_namespace
-from htsworkflow.util.rdfns import *
+from encoded_client.rdfhelp import dump_model, strip_namespace
+from encoded_client.rdfns import *
 from htsworkflow.util.conversion import parse_flowcell_id
 
 from django.conf import settings

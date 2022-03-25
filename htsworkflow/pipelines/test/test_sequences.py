@@ -9,7 +9,7 @@ from rdflib import Graph, Namespace, URIRef
 from rdflib.namespace import RDF
 
 from htsworkflow.pipelines import sequences
-from htsworkflow.util.rdfns import libraryOntology
+from encoded_client.rdfns import libraryOntology
 
 class SequenceFileTests(TestCase):
     """
