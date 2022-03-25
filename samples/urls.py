@@ -13,7 +13,7 @@ from samples.views import (
 )
 
 urlpatterns = [
-    # View livrary list
+    # View library list
     url(r'^$', library, name='library_index'),
     url(r'^not_run/$', library_not_run, name='library_not_run'),
     url(r'^(?P<lib_id>\w+)/$', library_detail, name='library_detail'),
