@@ -74,7 +74,7 @@ def library_url(root_url, library_id):
     http://localhost/samples/library/12345/json
 
     """
-    url_fragment = '/samples/library/%s/json' % (library_id,)
+    url_fragment = '/library/%s/json' % (library_id,)
     url = urllib.parse.urljoin(root_url, url_fragment)
 
     return url
@@ -115,7 +115,7 @@ def lanes_for_user_url(root_url, username):
     http://localhost/lanes_for/diane/json
 
     """
-    url_fragment = '/lanes_for/%s/json' % (username,)
+    url_fragment = '/experiments/lanes_for/%s/json' % (username,)
     url = urllib.parse.urljoin(root_url, url_fragment)
 
     return url
