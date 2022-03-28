@@ -49,10 +49,10 @@ class LibraryAccessionTestCase(TestCase):
         library = LibraryFactory()
         acc = LibraryAccessionFactory(library_id=library.id)
 
-        self.assertEqual(acc.url[:len(acc.agency.homepage)],
-                          acc.agency.homepage)
-        self.assertEqual(acc.url[len(acc.agency.homepage):],
-                          '/library/'+acc.accession)
+        self.assertEqual(acc.url[: len(acc.agency.homepage)], acc.agency.homepage)
+        self.assertEqual(
+            acc.url[len(acc.agency.homepage) :], "/library/" + acc.accession
+        )
 
     def test_have_accession(self):
         library = LibraryFactory()
@@ -72,36 +72,37 @@ class LibraryAccessionTestCase(TestCase):
         }"""
         accessions = []
         for row in model.query(body):
-            accessions.append(str(row['accession']))
+            accessions.append(str(row["accession"]))
         self.assertEqual(len(accessions), 1)
         self.assertEqual(accessions[0], acc.url)
 
 
 class LibraryTestCase(TestCase):
     def testOrganism(self):
-        human = SpeciesFactory(common_name='human')
-        self.assertEqual(human.common_name, 'human')
+        human = SpeciesFactory(common_name="human")
+        self.assertEqual(human.common_name, "human")
         library = LibraryFactory(library_species=human)
-        self.assertEqual(library.organism(), 'human')
+        self.assertEqual(library.organism(), "human")
 
     def testAddingOneAffiliation(self):
-        affiliation = AffiliationFactory.create(name='Alice')
+        affiliation = AffiliationFactory.create(name="Alice")
         library = LibraryFactory()
         library.affiliations.add(affiliation)
 
         self.assertEqual(len(library.affiliations.all()), 1)
-        self.assertEqual(library.affiliation(), 'Alice (contact name)')
+        self.assertEqual(library.affiliation(), "Alice (contact name)")
 
     def testMultipleAffiliations(self):
-        alice = AffiliationFactory.create(name='Alice')
-        bob = AffiliationFactory.create(name='Bob')
+        alice = AffiliationFactory.create(name="Alice")
+        bob = AffiliationFactory.create(name="Bob")
 
         library = LibraryFactory()
         library.affiliations.add(alice, bob)
 
         self.assertEqual(len(library.affiliations.all()), 2)
-        self.assertEqual(library.affiliation(),
-                         'Alice (contact name), Bob (contact name)')
+        self.assertEqual(
+            library.affiliation(), "Alice (contact name), Bob (contact name)"
+        )
 
 
 class SampleWebTestCase(TestCase):
@@ -109,6 +110,7 @@ class SampleWebTestCase(TestCase):
     Test returning data from our database in rest like ways.
     (like returning json objects)
     """
+
     def setUp(self):
         logging.disable(logging.WARNING)
 
@@ -120,7 +122,7 @@ class SampleWebTestCase(TestCase):
         lib_dict = library_dict(library.id)
         url = reverse("library_json", args=(library.id,))
         lib_response = self.client.get(url, apidata)
-        lib_json = json.loads(smart_text(lib_response.content))['result']
+        lib_json = json.loads(smart_text(lib_response.content))["result"]
 
         for d in [lib_dict, lib_json]:
             # amplified_from_sample is a link to the library table,
@@ -128,29 +130,32 @@ class SampleWebTestCase(TestCase):
             # the embedded primary key.
             # It gets slightly confusing on how to implement sending the right id
             # since amplified_from_sample can be null
-            #self.assertEqual(d['amplified_from_sample'], lib.amplified_from_sample)
-            self.assertEqual(d['antibody_id'], library.antibody_id)
-            self.assertEqual(d['cell_line_id'], library.cell_line_id)
-            self.assertEqual(d['cell_line'], str_or_none(library.cell_line))
-            self.assertEqual(d['experiment_type'], library.experiment_type.name)
-            self.assertEqual(d['experiment_type_id'], library.experiment_type_id)
-            self.assertEqual(d['gel_cut_size'], library.gel_cut_size)
-            self.assertEqual(d['hidden'], library.hidden)
-            self.assertEqual(d['id'], library.id)
-            self.assertEqual(d['insert_size'], library.insert_size)
-            self.assertEqual(d['library_name'], library.library_name)
-            self.assertEqual(d['library_species'], library.library_species.scientific_name)
-            self.assertEqual(d['library_species_id'], library.library_species_id)
-            self.assertEqual(d['library_type_id'], library.library_type_id)
-            self.assertTrue(d['library_type'].startswith('library type'))
-            self.assertEqual(d['made_for'], library.made_for)
-            self.assertEqual(d['made_by'], library.made_by)
-            self.assertEqual(d['notes'], library.notes)
-            self.assertEqual(d['replicate'], library.replicate)
-            self.assertEqual(d['stopping_point'], library.stopping_point)
-            self.assertEqual(d['successful_pM'], library.successful_pM)
-            self.assertEqual(d['undiluted_concentration'],
-                             str(library.undiluted_concentration))
+            # self.assertEqual(d['amplified_from_sample'], lib.amplified_from_sample)
+            self.assertEqual(d["antibody_id"], library.antibody_id)
+            self.assertEqual(d["cell_line_id"], library.cell_line_id)
+            self.assertEqual(d["cell_line"], str_or_none(library.cell_line))
+            self.assertEqual(d["experiment_type"], library.experiment_type.name)
+            self.assertEqual(d["experiment_type_id"], library.experiment_type_id)
+            self.assertEqual(d["gel_cut_size"], library.gel_cut_size)
+            self.assertEqual(d["hidden"], library.hidden)
+            self.assertEqual(d["id"], library.id)
+            self.assertEqual(d["insert_size"], library.insert_size)
+            self.assertEqual(d["library_name"], library.library_name)
+            self.assertEqual(
+                d["library_species"], library.library_species.scientific_name
+            )
+            self.assertEqual(d["library_species_id"], library.library_species_id)
+            self.assertEqual(d["library_type_id"], library.library_type_id)
+            self.assertTrue(d["library_type"].startswith("library type"))
+            self.assertEqual(d["made_for"], library.made_for)
+            self.assertEqual(d["made_by"], library.made_by)
+            self.assertEqual(d["notes"], library.notes)
+            self.assertEqual(d["replicate"], library.replicate)
+            self.assertEqual(d["stopping_point"], library.stopping_point)
+            self.assertEqual(d["successful_pM"], library.successful_pM)
+            self.assertEqual(
+                d["undiluted_concentration"], str(library.undiluted_concentration)
+            )
 
     def test_invalid_library_json(self):
         """
@@ -171,23 +176,24 @@ class SampleWebTestCase(TestCase):
         """
         library = LibraryFactory.create()
 
-        url = reverse('library_json', args=(library.id,))
+        url = reverse("library_json", args=(library.id,))
         response = self.client.get(url, apidata)
         self.assertEqual(response.status_code, 200)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
     def test_1_not_run(self):
-        """Create library that was not run, make sure it shows up in non_run filter
-        """
+        """Create library that was not run, make sure it shows up in non_run filter"""
         library = LibraryFactory.create()
-        url = reverse('library_not_run')
-        self.assertEqual(url, '/library/not_run/')
+        url = reverse("library_not_run")
+        self.assertEqual(url, "/library/not_run/")
         response = self.client.get(url)
         self.assertTrue(library.id in smart_str(response.content))
 
         model = ConjunctiveGraph()
-        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html")
+        model.parse(
+            data=smart_text(response.content), format="rdfa", media_type="text/html"
+        )
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
@@ -198,20 +204,21 @@ class SampleWebTestCase(TestCase):
         }"""
         results = []
         for r in model.query(body):
-            results.append(r['library_id'])
+            results.append(r["library_id"])
 
         self.assertEqual(len(results), 1)
 
     def test_0_not_run(self):
-        """Create a library that was run, so it won't show up with not_run filter
-        """
+        """Create a library that was run, so it won't show up with not_run filter"""
         lane = LaneFactory()
         library = lane.library
-        url = reverse('library_not_run')
+        url = reverse("library_not_run")
         response = self.client.get(url)
 
         model = ConjunctiveGraph()
-        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html")
+        model.parse(
+            data=smart_text(response.content), format="rdfa", media_type="text/html"
+        )
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
@@ -222,7 +229,7 @@ class SampleWebTestCase(TestCase):
         }"""
         results = []
         for r in model.query(body):
-            results.append(r['library_id'])
+            results.append(r["library_id"])
 
         self.assertEqual(len(results), 0)
 
@@ -233,7 +240,9 @@ class SampleWebTestCase(TestCase):
 
         response = self.client.get(library.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html")
+        model.parse(
+            data=smart_text(response.content), format="rdfa", media_type="text/html"
+        )
 
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
@@ -249,14 +258,10 @@ class SampleWebTestCase(TestCase):
 
         count = 0
         for r in model.query(body):
-            self.assertEqual(r['library_id'].toPython(),
-                             library.id)
-            self.assertEqual(r['name'].toPython(),
-                             library.library_name)
-            self.assertEqual(r['gel_cut'].toPython(),
-                             library.gel_cut_size)
-            self.assertEqual(r['made_by'].toPython(),
-                             library.made_by)
+            self.assertEqual(r["library_id"].toPython(), library.id)
+            self.assertEqual(r["name"].toPython(), library.library_name)
+            self.assertEqual(r["gel_cut"].toPython(), library.gel_cut_size)
+            self.assertEqual(r["made_by"].toPython(), library.made_by)
             count += 1
 
         # make sure there was actually data
@@ -277,14 +282,16 @@ class SampleWebTestCase(TestCase):
         add_default_schemas(model)
         inference = Infer(model)
 
-        response = self.client.get(reverse('library_index'))
+        response = self.client.get(reverse("library_index"))
         self.assertEqual(response.status_code, 200)
-        model.parse(data=smart_text(response.content), format="rdfa", media_type="text/html")
+        model.parse(
+            data=smart_text(response.content), format="rdfa", media_type="text/html"
+        )
 
         errmsgs = list(inference.run_validation())
         self.assertEqual(len(errmsgs), 0)
 
-        body =  """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
 
         select ?library ?library_id ?name ?species ?species_name
@@ -295,7 +302,7 @@ class SampleWebTestCase(TestCase):
                       ?species libns:species_name ?species_name . }
            OPTIONAL { ?library libns:name ?name . }
         }"""
-        bindings = set(['library', 'library_id', 'name', 'species', 'species_name'])
+        bindings = set(["library", "library_id", "name", "species", "species_name"])
         count = 0
         for r in model.query(body):
             count += 1
@@ -309,25 +316,30 @@ class SampleWebTestCase(TestCase):
         if state is not None:
             self.assertTrue(state)
 
-    @skipUnless(hasattr(TestCase.client_class, 'force_login'), 'Django missing client.force_login')
+    @skipUnless(
+        hasattr(TestCase.client_class, "force_login"),
+        "Django missing client.force_login",
+    )
     def test_login(self):
-        '''Test login header on library page changes when the user logins'''
-        user = HTSUserFactory(username='user')
+        """Test login header on library page changes when the user logins"""
+        user = HTSUserFactory(username="user")
 
         # not logged in
-        response = self.client.get(reverse('library_index'))
+        response = self.client.get(reverse("library_index"))
         tree = html.fromstring(response.content)
-        login_url = tree.xpath('//div[@id="user-tools"]/a')[0].attrib['href']
-        self.assertTrue(login_url.startswith(reverse('login')), 'url={}'.format(login_url))
+        login_url = tree.xpath('//div[@id="user-tools"]/a')[0].attrib["href"]
+        self.assertTrue(
+            login_url.startswith(reverse("login")), "url={}".format(login_url)
+        )
 
         # login
         self.client.force_login(user)
 
         # does the banner change?
-        response = self.client.get(reverse('library_index'))
+        response = self.client.get(reverse("library_index"))
         tree = html.fromstring(response.content)
-        logout_url = tree.xpath('//div[@id="user-tools"]/a')[-1].attrib['href']
-        self.assertTrue(logout_url.startswith(reverse('logout')))
+        logout_url = tree.xpath('//div[@id="user-tools"]/a')[-1].attrib["href"]
+        self.assertTrue(logout_url.startswith(reverse("logout")))
 
 
 # The django test runner flushes the database between test suites not cases,
@@ -341,29 +353,29 @@ def create_db(obj):
 
     Library.objects.all().delete()
     obj.library_10001 = Library(
-        id = "10001",
-        library_name = 'C2C12 named poorly',
-        library_species = obj.species_human,
-        experiment_type = obj.experiment_rna_seq,
-        creation_date = datetime.datetime.now(),
-        made_for = 'scientist unit 2007',
-        made_by = 'microfludics system 7321',
-        stopping_point = '2A',
-        undiluted_concentration = '5.01',
-        hidden = False,
+        id="10001",
+        library_name="C2C12 named poorly",
+        library_species=obj.species_human,
+        experiment_type=obj.experiment_rna_seq,
+        creation_date=datetime.datetime.now(),
+        made_for="scientist unit 2007",
+        made_by="microfludics system 7321",
+        stopping_point="2A",
+        undiluted_concentration="5.01",
+        hidden=False,
     )
     obj.library_10001.save()
     obj.library_10002 = Library(
-        id = "10002",
-        library_name = 'Worm named poorly',
-        library_species = obj.species_human,
-        experiment_type = obj.experiment_rna_seq,
-        creation_date = datetime.datetime.now(),
-        made_for = 'scientist unit 2007',
-        made_by = 'microfludics system 7321',
-        stopping_point = '2A',
-        undiluted_concentration = '5.01',
-        hidden = False,
+        id="10002",
+        library_name="Worm named poorly",
+        library_species=obj.species_human,
+        experiment_type=obj.experiment_rna_seq,
+        creation_date=datetime.datetime.now(),
+        made_for="scientist unit 2007",
+        made_by="microfludics system 7321",
+        stopping_point="2A",
+        undiluted_concentration="5.01",
+        hidden=False,
     )
     obj.library_10002.save()
 
@@ -375,81 +387,100 @@ class TestRDFaLibrary(TestCase):
     def test_parse_rdfa(self):
         model = Graph()
 
-        bob = AffiliationFactory.create(name='Bob')
+        bob = AffiliationFactory.create(name="Bob")
 
         lib_object = LibraryFactory()
         lib_object.affiliations.add(bob)
         fc = FlowCellFactory()
         lanes = []
-        for i in range(1,3):
+        for i in range(1, 3):
             # mark even lanes as failed.
-            lanes.append(LaneFactory(flowcell=fc,
-                                     lane_number=i,
-                                     library=lib_object,
-                                     status = 0 if i % 2 == 0 else None
-            ))
-        url = reverse('library_detail', args=(lib_object.id,))
+            lanes.append(
+                LaneFactory(
+                    flowcell=fc,
+                    lane_number=i,
+                    library=lib_object,
+                    status=0 if i % 2 == 0 else None,
+                )
+            )
+        url = reverse("library_detail", args=(lib_object.id,))
         ## request = self.request.get(url)
         ## lib_response = library(request)
         lib_response = self.client.get(url)
         lib_body = smart_str(lib_response.content)
         self.assertNotEqual(len(lib_body), 0)
 
-        model.parse(data=lib_body, format="rdfa", media_type="text/html", publicID='http://localhost'+url)
+        model.parse(
+            data=lib_body,
+            format="rdfa",
+            media_type="text/html",
+            publicID="http://localhost" + url,
+        )
 
         # http://jumpgate.caltech.edu/wiki/LibraryOntology#affiliation>
-        self.check_literal_object(model, ['Bob'], p=libraryOntology['affiliation'])
-        self.check_literal_object(model,
-                                  ['experiment type name'],
-                                  p=libraryOntology['experiment_type'])
-        self.check_literal_object(model, [400], p=libraryOntology['gel_cut'])
-        self.check_literal_object(model,
-                                  ['microfluidics bot 7321'],
-                                  p=libraryOntology['made_by'])
-        self.check_literal_object(model,
-                                  [lib_object.library_name],
-                                  p=libraryOntology['name'])
-        self.check_literal_object(model,
-                                  [lib_object.library_species.scientific_name],
-                                  p=libraryOntology['species_name'])
+        self.check_literal_object(model, ["Bob"], p=libraryOntology["affiliation"])
+        self.check_literal_object(
+            model, ["experiment type name"], p=libraryOntology["experiment_type"]
+        )
+        self.check_literal_object(model, [400], p=libraryOntology["gel_cut"])
+        self.check_literal_object(
+            model, ["microfluidics bot 7321"], p=libraryOntology["made_by"]
+        )
+        self.check_literal_object(
+            model, [lib_object.library_name], p=libraryOntology["name"]
+        )
+        self.check_literal_object(
+            model,
+            [lib_object.library_species.scientific_name],
+            p=libraryOntology["species_name"],
+        )
 
-        library_url = 'http://localhost/library/{}/'.format(lib_object.id)
-        lane_url = 'http://localhost/lane/{}'
+        library_url = "http://localhost/library/{}/".format(lib_object.id)
+        lane_url = "http://localhost/lane/{}"
         for uri, term, expected in [
-                (library_url, libraryOntology['has_lane'], lane_url.format(lanes[0].id)),
-                (library_url, libraryOntology['has_failed_lane'], lane_url.format(lanes[1].id))]:
+            (library_url, libraryOntology["has_lane"], lane_url.format(lanes[0].id)),
+            (
+                library_url,
+                libraryOntology["has_failed_lane"],
+                lane_url.format(lanes[1].id),
+            ),
+        ]:
             triples = list(model.triples((URIRef(uri), term, None)))
             self.assertEqual(len(triples), 1)
             self.assertEqual(triples[0][2], URIRef(expected))
 
-        for uri, expected in [(lane_url.format(lanes[0].id), ''),
-                              (lane_url.format(lanes[1].id), 'Failed')]:
+        for uri, expected in [
+            (lane_url.format(lanes[0].id), ""),
+            (lane_url.format(lanes[1].id), "Failed"),
+        ]:
             triples = list(
-                model.triples((
-                    URIRef(uri),
-                    libraryOntology['status'],
-                    None)))
+                model.triples((URIRef(uri), libraryOntology["status"], None))
+            )
             self.assertEqual(len(triples), 1)
             self.assertEqual(triples[0][2].toPython(), expected)
 
     def check_literal_object(self, model, values, s=None, p=None, o=None):
-        statements = list(model.triples((s,p,o)))
-        self.assertEqual(len(statements), len(values),
-                        "Couln't find %s %s %s" % (s,p,o))
+        statements = list(model.triples((s, p, o)))
+        self.assertEqual(
+            len(statements), len(values), "Couln't find %s %s %s" % (s, p, o)
+        )
         for stmt in statements:
             obj = stmt[2]
             self.assertIn(obj.value, values)
 
     def check_uri_object(self, model, values, s=None, p=None, o=None):
-        statements = list(model.triples((s,p,o)))
-        self.assertEqual(len(statements), len(values),
-                        "Couln't find %s %s %s" % (s,p,o))
+        statements = list(model.triples((s, p, o)))
+        self.assertEqual(
+            len(statements), len(values), "Couln't find %s %s %s" % (s, p, o)
+        )
         for stmt in statements:
             subject = stmt[0]
             self.assertIn(str(subject.value), values)
 
+
 def suite():
     from unittest import TestSuite, defaultTestLoader
+
     suite = TestSuite()
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(LibraryAccessionTestCase))
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(LibraryTestCase))
@@ -457,6 +488,8 @@ def suite():
     suite.addTests(defaultTestLoader.loadTestsFromTestCase(TestRDFaLibrary))
     return suite
 
+
 if __name__ == "__main__":
     from unittest import main
+
     main(defaultTest="suite")
