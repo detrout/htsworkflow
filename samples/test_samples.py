@@ -182,7 +182,7 @@ class SampleWebTestCase(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
-    def test_1_not_run(self):
+    def test_1_not_run_rdfa(self):
         """Create library that was not run, make sure it shows up in non_run filter"""
         library = LibraryFactory.create()
         url = reverse("library_not_run")
@@ -208,7 +208,7 @@ class SampleWebTestCase(TestCase):
 
         self.assertEqual(len(results), 1)
 
-    def test_0_not_run(self):
+    def test_0_not_run_rdfa(self):
         """Create a library that was run, so it won't show up with not_run filter"""
         lane = LaneFactory()
         library = lane.library
