@@ -10,8 +10,7 @@ htsworkflow.kdev4
 .kateproject.d/
 .kdev4/
 .noseids
-RELEASE-VERSION
 .ropeproject
 .tox
 fctracker.db
-
+htsworkflow/_version.py
