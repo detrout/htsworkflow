@@ -49,9 +49,9 @@ class LibraryAccessionTestCase(TestCase):
         library = LibraryFactory()
         acc = LibraryAccessionFactory(library_id=library.id)
 
-        self.assertEqual(acc.url[: len(acc.agency.homepage)], acc.agency.homepage)
+        self.assertEqual(acc.url[:len(acc.agency.homepage)], acc.agency.homepage)
         self.assertEqual(
-            acc.url[len(acc.agency.homepage) :], "/library/" + acc.accession
+            acc.url[len(acc.agency.homepage):], "/library/" + acc.accession
         )
 
     def test_have_accession(self):
