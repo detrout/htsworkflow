@@ -118,7 +118,8 @@ class SampleWebTestCase(TestCase):
         logging.disable(logging.NOTSET)
 
     def test_library_dict(self):
-        library = LibraryFactory.create()
+        lane = LaneFactory(status=None)
+        library = lane.library
         lib_dict = library_dict(library.id)
         url = reverse("library_json", args=(library.id,))
         lib_response = self.client.get(url, apidata)
@@ -156,6 +157,8 @@ class SampleWebTestCase(TestCase):
             self.assertEqual(
                 d["undiluted_concentration"], str(library.undiluted_concentration)
             )
+            self.assertEqual(len(d["lane_set"]), 1)
+            self.assertEqual(d["lane_set"][0]["status"], "")
 
     def test_invalid_library_json(self):
         """
