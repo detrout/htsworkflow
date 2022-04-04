@@ -8,8 +8,7 @@ Lane #{{ lane.lane_number }} : ({{ lane.library.id }}) {{ lane.library.library_n
 {% endfor %}
 
 The raw data should be available at the following link when the
-pipeline finishes, probably in about {{ finish_low.days }} to {{ finish_high.days }} 
-days from {{ now|date:"D, M d Y" }}
+pipeline finishes, probably tomorrow.
 
 https://jumpgate.caltech.edu/runfolders/{{ flowcell.sequencer}}
 
