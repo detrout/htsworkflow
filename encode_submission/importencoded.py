@@ -63,6 +63,7 @@ def load_data(session, graph, duplicates):
     session.commit()
     return duplicates
 
+
 def load_dump_file(session, filename, collisions):
     logger.info("Parsing %s", filename)
     with open(filename, 'r') as instream:
@@ -86,6 +87,7 @@ def stream_load(session, collisions):
     data = response.json()
     load_data(session, data['@graph'], collisions)
     response.close()
+
 
 def main(cmdline=None):
     parser = argparse.ArgumentParser()
