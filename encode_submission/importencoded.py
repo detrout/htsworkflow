@@ -1,13 +1,12 @@
 import argparse
 import logging
-import collections
 import json
 import pprint
 
 logger = logging.getLogger('ImportEncoded')
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, String, create_engine
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import sessionmaker
 
