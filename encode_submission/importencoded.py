@@ -2,6 +2,7 @@ import argparse
 import logging
 import json
 import pprint
+from encoded_client import encoded
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, create_engine
@@ -71,7 +72,7 @@ def load_dump_file(session, filename, collisions):
     logging.info("Loading")
     load_data(session, graph, collisions)
 
-from htsworkflow.submission import encoded
+
 def stream_load(session, collisions):
     server = encoded.ENCODED('www.encodeproject.org')
     server.load_netrc()
