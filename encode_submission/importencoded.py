@@ -3,14 +3,15 @@ import logging
 import json
 import pprint
 
-logger = logging.getLogger('ImportEncoded')
-
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, create_engine
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
+
+logger = logging.getLogger('ImportEncoded')
+
 
 class Item(Base):
     __tablename__ = 'item'
