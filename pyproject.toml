@@ -17,8 +17,9 @@ envlist=py{38,39,310,311}-django{111}-{sqlite}
 skip_missing_interpreters=True
 
 [testenv]
-commands=python -Wall manage.py test
+commands=python -Wall manage.py test -v 2
 setenv =
+  PYTHONWARNINGS=all
   sqlite: DJANGO_SETTINGS_MODULE=htsworkflow.settings.sqlite
   psql: DJANGO_SETTINGS_MODULE=htsworkflow.settings.psql
 deps=
