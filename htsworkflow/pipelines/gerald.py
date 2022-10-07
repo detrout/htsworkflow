@@ -2,7 +2,6 @@
 """
 from __future__ import print_function, unicode_literals
 
-import collections
 from datetime import datetime, date
 import logging
 import os

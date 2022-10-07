@@ -10,12 +10,10 @@ import os
 import re
 import stat
 import sys
-import types
 
-from htsworkflow.pipelines import ElementTree, LANE_LIST
+from htsworkflow.pipelines import ElementTree
 from htsworkflow.pipelines.samplekey import SampleKey
 from htsworkflow.pipelines.genomemap import GenomeMap
-from htsworkflow.util.ethelp import indent, flatten
 from htsworkflow.util.opener import autoopen
 
 LOGGER = logging.getLogger(__name__)

@@ -5,8 +5,6 @@ import os
 import shutil
 import logging
 
-from collections import namedtuple
-
 LOGGER = logging.getLogger(__name__)
 
 class ResultMap(MutableMapping):
