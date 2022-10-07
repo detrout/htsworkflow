@@ -50,12 +50,14 @@ class bigWigInfo:
             self.filename = filename
 
     def scan_file(self, filename):
-        cmd = ['bigWigInfo', 
+        cmd = ['bigWigInfo',
                filename]
         try:
             p = Popen(cmd, stdout=PIPE)
             stdout, _ = p.communicate()
-            for line in stdout.split(os.linesep):
+            for line in stdout.split(os.linesep.encode("ascii")):
+                # output from Popen is in bytes
+                line = line.decode("utf-8")
                 if len(line) > 0:
                     term, value = line.split(': ')
                     if term in ('isCompressed', 'isSwapped'):
@@ -67,7 +69,3 @@ class bigWigInfo:
         except OSError as e:
             LOGGER.error("Exception %s trying to run: %s", str(e), ' '.join(cmd))
             sys.exit(-1)
-
-                
-                
-
