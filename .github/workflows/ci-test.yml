@@ -1,0 +1,30 @@
+name: "Test Runner"
+on:
+  push:
+    paths:
+      - "experiments/*"
+      - "htsworkflow/*"
+      - "inventory/*"
+      - "labels/*"
+      - "samples/*"
+      - "pyproject.toml"
+      - "setup.cfg"
+      - "test/*"
+      - ".github/workflows/ci-test.yml"
+
+jobs:
+  run-tests:
+    runs-on: "ubuntu-latest"
+    steps:
+      - run: echo "This job is now running on ${{ runner.os }}"
+      - run: echo "The repository is ${{ github.repository }} on branch  ${{ github.ref }}"
+      - run : sudo apt -y install python3-lxml python3-pandas python3-keyring python3-jsonschema python3-requests python3-six python3-tz python3-rdflib
+      - name: "Check out repository"
+        uses: actions/checkout@v2
+      - run: echo "Checkout successful"
+      - name: Run tests
+        run: |
+          python --version
+          pip install tox
+          tox
+      - run: echo "The job status was ${{ job.status }}"

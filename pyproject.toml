@@ -13,7 +13,7 @@ write_to = "htsworkflow/_version.py"
 legacy_tox_ini = """
 [tox]
 
-envlist=py{39}-django{111}-{sqlite}
+envlist=py{38,39,310,311}-django{111}-{sqlite}
 skip_missing_interpreters=True
 
 [testenv]
