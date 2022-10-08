@@ -7,6 +7,7 @@ import logging
 
 LOGGER = logging.getLogger(__name__)
 
+
 class ResultMap(MutableMapping):
     """Store list of results
     """
@@ -44,7 +45,7 @@ class ResultMap(MutableMapping):
                 lib_path = os.path.join(basepath, lib_path)
             self[lib_id] = lib_path
 
-    def make_tree_from(self, source_path, destpath = None, link=True):
+    def make_tree_from(self, source_path, destpath=None, link=True):
         """Create a tree using data files from source path.
         """
         if destpath is None:
@@ -82,6 +83,7 @@ class ResultMap(MutableMapping):
                     LOGGER.info(
                         'LINK {0} to {1}'.format(source_pathname,
                                                  target_pathname))
+
 
 def read_result_list(filename):
     """

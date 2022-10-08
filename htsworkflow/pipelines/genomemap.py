@@ -32,7 +32,7 @@ class GenomeMap(collections.MutableMapping):
         """Build map from a genome directory"""
         genome = genome_dir.split(os.path.sep)[-1]
         vld_files = glob(os.path.join(genome_dir, '*.vld'))
-        vld = [ vldInfo(f, os.path.islink(f)) for f in vld_files ]
+        vld = [vldInfo(f, os.path.islink(f)) for f in vld_files]
         self.build_map_from_dir(genome, vld)
 
     def build_map_from_dir(self, genome_name, vld_list):
@@ -72,6 +72,7 @@ class GenomeMap(collections.MutableMapping):
             name = filenames[contig]
             self._contigs[name] = genome + '/' + name
 
+
 def guess_genome(contig_sizes):
     """Guess what genome we're using"""
     # guess genome names
@@ -84,8 +85,8 @@ def guess_genome(contig_sizes):
                'chrI': {230218: 'sacCer3',
                         15072421: 'elegans190'},
                '1': {60348388: 'danRe6'},
-               'chr2L': { 23011544: 'dm3',
-                          49364326: 'Anopheles_gambiae'},
+               'chr2L': {23011544: 'dm3',
+                         49364326: 'Anopheles_gambiae'},
 
                }
 
