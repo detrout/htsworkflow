@@ -154,8 +154,7 @@ class ElandLane(ResultLane):
             stream = autoopen(pathname, 'rt')
             if self.eland_type == ELAND_SINGLE:
                 result = self._update_eland_result(stream)
-            elif self.eland_type == ELAND_MULTI or \
-                 self.eland_type == ELAND_EXTENDED:
+            elif self.eland_type in (ELAND_MULTI, ELAND_EXTENDED):
                 result = self._update_eland_multi(stream)
             elif self.eland_type == ELAND_EXPORT:
                 result = self._update_eland_export(stream)
