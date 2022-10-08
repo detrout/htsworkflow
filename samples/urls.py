@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.conf.urls import url
 
 from samples.views import (
-    library,
+    library_index,
     library_not_run,
     library_detail,
     library_json,
@@ -14,7 +14,7 @@ from samples.views import (
 
 urlpatterns = [
     # View library list
-    url(r'^$', library, name='library_index'),
+    url(r'^$', library_index, name='library_index'),
     url(r'^not_run/$', library_not_run, name='library_not_run'),
     url(r'^(?P<lib_id>\w+)/$', library_detail, name='library_detail'),
     url(r"^(?P<library_id>\w+)/json$", library_json, name='library_json'),

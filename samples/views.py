@@ -35,7 +35,7 @@ SAMPLES_CONTEXT_DEFAULTS = {
 LOGGER = logging.getLogger(__name__)
 
 
-def library(request, todo_only=False):
+def library_index(request, todo_only=False):
     filters = {'hidden__exact': 0}
     if todo_only:
         filters['lane'] = None
@@ -57,7 +57,7 @@ def library(request, todo_only=False):
 
 
 def library_not_run(request):
-    return library(request, todo_only=True)
+    return library_index(request, todo_only=True)
 
 
 def library_detail(request, lib_id):
