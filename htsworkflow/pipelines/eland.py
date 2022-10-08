@@ -287,7 +287,6 @@ class ElandLane(ResultLane):
             match_fragment = match.split(':')
             if len(match_fragment) == 2:
                 chromo = match_fragment[0]
-                pos = match_fragment[1]
 
             fasta = self.genome_map.get(chromo, chromo)
             assert fasta is not None
