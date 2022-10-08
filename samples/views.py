@@ -60,15 +60,15 @@ def library_not_run(request):
     return library_index(request, todo_only=True)
 
 
-def library_detail(request, lib_id):
+def library_detail(request, library_id):
     """
     Display information about all the flowcells a library has been run on.
     """
-    lib = get_object_or_404(Library, id=lib_id)
+    library = get_object_or_404(Library, id=library_id)
 
     flowcell_list = []
     flowcell_run_results = {}  # aka flowcells we're looking at
-    for lane in lib.lane_set.all():
+    for lane in library.lane_set.all():
         fc = lane.flowcell
         flowcell_id, id = parse_flowcell_id(fc.flowcell_id)
         if flowcell_id not in flowcell_run_results:
@@ -79,14 +79,14 @@ def library_detail(request, lib_id):
     lane_summary_list = []
     eland_results = []
     for fc, lane_number in flowcell_list:
-        lane_summary, err_list = _summary_stats(fc, lane_number, lib_id)
+        lane_summary, err_list = _summary_stats(fc, lane_number, library_id)
         lane_summary_list.extend(lane_summary)
 
         eland_results.extend(_make_eland_results(fc, lane_number, flowcell_run_results))
 
     context = {
         'page_name': 'Library Details',
-        'lib': lib,
+        'lib': library,
         'eland_results': eland_results,
         'lane_summary_list': lane_summary_list,
     }
@@ -365,9 +365,9 @@ def _files(flowcell_id, lane):
     return '(' + '|'.join(output) + ')'
 
 
-def library_id_to_admin_url(request, lib_id):
-    lib = get_object_or_404(Library, id=lib_id)
-    return HttpResponseRedirect('/admin/samples/library/%s' % (lib.id,))
+def library_id_to_admin_url(request, library_id):
+    library = get_object_or_404(Library, id=library_id)
+    return HttpResponseRedirect('/admin/samples/library/%s' % (library.id,))
 
 
 def library_dict(library_id):
@@ -376,13 +376,12 @@ def library_dict(library_id):
     return None if nothing was found
     """
     try:
-        lib = Library.objects.get(id=library_id)
-    except Library.DoesNotExist as e:
+        library = Library.objects.get(id=library_id)
+    except Library.DoesNotExist:
         return None
 
-    #lane_info = lane_information(lib.lane_set)
     lane_info = []
-    for lane in lib.lane_set.all():
+    for lane in library.lane_set.all():
         lane_info.append({'flowcell': lane.flowcell.flowcell_id,
                           'lane_number': lane.lane_number,
                           'lane_id': lane.id,
@@ -393,38 +392,38 @@ def library_dict(library_id):
 
     info = {
         # 'affiliations'?
-        # 'aligned_reads': lib.aligned_reads,
-        #'amplified_into_sample': lib.amplified_into_sample, # into is a colleciton...
-        #'amplified_from_sample_id': lib.amplified_from_sample,
-        #'antibody_name': lib.antibody_name(), # we have no antibodies.
-        'antibody_id': lib.antibody_id,
-        'cell_line_id': lib.cell_line_id,
-        'cell_line': str_or_none(lib.cell_line),
-        'experiment_type': lib.experiment_type.name,
-        'experiment_type_id': lib.experiment_type_id,
-        'gel_cut_size': lib.gel_cut_size,
-        'hidden': lib.hidden,
-        'id': lib.id,
-        'insert_size': lib.insert_size,
+        # 'aligned_reads': library.aligned_reads,
+        #'amplified_into_sample': library.amplified_into_sample, # into is a colleciton...
+        #'amplified_from_sample_id': library.amplified_from_sample,
+        #'antibody_name': library.antibody_name(), # we have no antibodies.
+        'antibody_id': library.antibody_id,
+        'cell_line_id': library.cell_line_id,
+        'cell_line': str_or_none(library.cell_line),
+        'experiment_type': library.experiment_type.name,
+        'experiment_type_id': library.experiment_type_id,
+        'gel_cut_size': library.gel_cut_size,
+        'hidden': library.hidden,
+        'id': library.id,
+        'insert_size': library.insert_size,
         'lane_set': lane_info,
-        'library_id': lib.id,
-        'library_name': lib.library_name,
-        'library_species': lib.library_species.scientific_name,
-        'library_species_id': lib.library_species_id,
-        #'library_type': lib.library_type.name,
-        'library_type_id': lib.library_type_id,
-        'made_for': lib.made_for,
-        'made_by': lib.made_by,
-        'notes': lib.notes,
-        'replicate': lib.replicate,
-        'stopping_point': lib.stopping_point,
-        'successful_pM': str_or_none(lib.successful_pM),
-        'undiluted_concentration': str_or_none(lib.undiluted_concentration)
+        'library_id': library.id,
+        'library_name': library.library_name,
+        'library_species': library.library_species.scientific_name,
+        'library_species_id': library.library_species_id,
+        #'library_type': library.library_type.name,
+        'library_type_id': library.library_type_id,
+        'made_for': library.made_for,
+        'made_by': library.made_by,
+        'notes': library.notes,
+        'replicate': library.replicate,
+        'stopping_point': library.stopping_point,
+        'successful_pM': str_or_none(library.successful_pM),
+        'undiluted_concentration': str_or_none(library.undiluted_concentration)
         }
-    if lib.library_type_id is None:
+    if library.library_type_id is None:
         info['library_type'] = None
     else:
-        info['library_type'] = lib.library_type.name
+        info['library_type'] = library.library_type.name
     return info
 
 
@@ -436,11 +435,11 @@ def library_json(request, library_id):
     require_api_key(request)
     # what validation should we do on library_id?
 
-    lib = library_dict(library_id)
-    if lib is None:
+    library = library_dict(library_id)
+    if library is None:
         raise Http404
 
-    return JsonResponse({'result': lib})
+    return JsonResponse({'result': library})
 
 
 @csrf_exempt
