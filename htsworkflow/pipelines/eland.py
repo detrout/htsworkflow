@@ -817,7 +817,7 @@ class ElandMatches(MutableMapping):
         return self.file_sets[key]
 
     def __setitem__(self, key, value):
-        if not isintance(value, set):
+        if not isinstance(value, set):
             raise ValueError("Expected set for value")
         self.file_sets[key] = value
 
