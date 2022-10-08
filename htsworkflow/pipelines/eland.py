@@ -707,8 +707,8 @@ class ELAND(MutableMapping):
         # I didn't want to clutter up my constructor
         # but I needed to persist the sample_name/lane_id for
         # runfolder summary_report
-        names = [ os.path.split(p)[1] for p in pathnames]
-        LOGGER.info("Adding eland files %s" %(",".join(names),))
+        names = [os.path.split(p)[1] for p in pathnames]
+        LOGGER.info("Adding eland files {}".format(",".join(names)))
         basedir = os.path.split(pathnames[0])[0]
         gs_template = "{0}_*_L{1:03}_genomesize.xml"
         genomesize = glob(
