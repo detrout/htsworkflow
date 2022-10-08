@@ -20,9 +20,9 @@ class ResultMap(MutableMapping):
             yield item
 
     def __len__(self):
-        l = len(self.results)
-        assert l == len(self.results_order)
-        return l
+        length = len(self.results)
+        assert length == len(self.results_order)
+        return length
 
     def __setitem__(self, key, value):
         self.results_order.append(key)

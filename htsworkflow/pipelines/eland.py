@@ -544,15 +544,15 @@ class SequenceLane(ResultLane):
         """
         Determine if we have a scarf or fastq sequence file
         """
-        f = open(pathname,'rt')
-        l = f.readline()
-        f.close()
+        with open(pathname, "rt") as f:
+            line = f.readline()
 
-        if l[0] == '@':
-            # fastq starts with a @
-            self.sequence_type = SequenceLane.FASTQ_TYPE
-        else:
-            self.sequence_type = SequenceLane.SCARF_TYPE
+            if line[0] == '@':
+                # fastq starts with a @
+                self.sequence_type = SequenceLane.FASTQ_TYPE
+            else:
+                self.sequence_type = SequenceLane.SCARF_TYPE
+
         return self.sequence_type
 
     def _update(self):
@@ -571,10 +571,9 @@ class SequenceLane(ResultLane):
 
         LOGGER.info("summarizing results for %s" % (pathname))
         lines = 0
-        f = open(pathname, 'rt')
-        for l in f:
-            lines += 1
-        f.close()
+        with open(pathname, 'rt') as f:
+            for line in f:
+                lines += 1
 
         if self.sequence_type == SequenceLane.SCARF_TYPE:
             self._reads = lines
