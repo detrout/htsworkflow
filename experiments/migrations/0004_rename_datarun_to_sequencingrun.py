@@ -5,6 +5,7 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    atomic = False
 
     dependencies = [
         ('experiments', '0003_migrate_fcid_status'),
