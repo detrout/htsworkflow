@@ -3,11 +3,13 @@
 from glob import glob
 import os
 import collections
+from collections.abc import MutableMapping
 from htsworkflow.pipelines import ElementTree
 
 vldInfo = collections.namedtuple('vldInfo', 'name is_link')
 
-class GenomeMap(collections.MutableMapping):
+
+class GenomeMap(MutableMapping):
     def __init__(self, items=None):
         self._contigs = {}
         if items is not None:

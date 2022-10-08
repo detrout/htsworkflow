@@ -2,6 +2,7 @@
 """
 from __future__ import print_function, unicode_literals
 
+from collections.abc import MutableMapping
 from datetime import datetime, date
 import logging
 import os
@@ -354,7 +355,8 @@ class LaneParametersHiSeq(LaneParameters):
         return self.__get_attribute('USE_BASES1')
     use_bases = property(_get_use_bases)
 
-class LaneSpecificRunParameters(collections.MutableMapping):
+
+class LaneSpecificRunParameters(MutableMapping):
     """
     Provide access to LaneSpecificRunParameters
     """

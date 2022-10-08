@@ -3,7 +3,8 @@ Analyze ELAND files
 """
 from __future__ import print_function
 
-import collections
+from collections import namedtuple
+from collections.abc import MutableMapping, Mapping
 from glob import glob
 import logging
 import os
@@ -439,7 +440,7 @@ class ElandLane(ResultLane):
                 LOGGER.warning("ElandLane unrecognized tag %s" % (element.tag,))
 
 
-class MatchCodes(collections.MutableMapping):
+class MatchCodes(MutableMapping):
     """Mapping to hold match counts -
     supports combining two match count sets together
     """
@@ -450,7 +451,7 @@ class MatchCodes(collections.MutableMapping):
                             }
 
         if initializer is not None:
-            if not isinstance(initializer, collections.Mapping):
+            if not isinstance(initializer, Mapping):
                 raise ValueError("Expected dictionary like class")
             for key in initializer:
                 if key not in self.match_codes:
@@ -487,7 +488,7 @@ class MatchCodes(collections.MutableMapping):
         return newobj
 
 
-class MappedReads(collections.MutableMapping):
+class MappedReads(MutableMapping):
     """Mapping to hold mapped reads -
     supports combining two mapped read sets together
     """
@@ -495,7 +496,7 @@ class MappedReads(collections.MutableMapping):
         self.mapped_reads = {}
 
         if initializer is not None:
-            if not isinstance(initializer, collections.Mapping):
+            if not isinstance(initializer, Mapping):
                 raise ValueError("Expected dictionary like class")
             for key in initializer:
                 self[key] = self.setdefault(key, 0) + initializer[key]
@@ -623,8 +624,8 @@ class SequenceLane(ResultLane):
             else:
                 LOGGER.warning("SequenceLane unrecognized tag %s" % (element.tag,))
 
-class ELAND(collections.MutableMapping):
 
+class ELAND(MutableMapping):
     """
     Summarize information from eland files
     """
@@ -749,7 +750,7 @@ def eland(gerald_dir, gerald=None, genome_maps=None):
     return e
 
 
-class ElandMatches(collections.MutableMapping):
+class ElandMatches(MutableMapping):
     def __init__(self, eland_container):
         # the order in patterns determines the preference for what
         # will be found.
@@ -768,7 +769,7 @@ class ElandMatches(collections.MutableMapping):
 
         hiPrefix = sample + hiIndex + hiLane + hiRead + part
         gaPrefix = sample + gaLane + gaRead
-        P = collections.namedtuple('Patterns', 'pattern counter priority')
+        P = namedtuple('Patterns', 'pattern counter priority')
         self.patterns = [
             P(hiPrefix + '_export.txt' + ext, MAPPED, 6),
             P(gaPrefix + '_eland_result.txt' + ext, MAPPED, 5),
