@@ -86,9 +86,9 @@ class ElandLane(ResultLane):
     """
     XML_VERSION = 2
     LANE = "ElandLane"
-    MATCH_COUNTS_RE = re.compile("([\d]+):([\d]+):([\d]+)")
-    DESCRIPTOR_MISMATCH_RE = re.compile("[AGCT]")
-    DESCRIPTOR_INDEL_RE = re.compile("^[\dAGCT]$")
+    MATCH_COUNTS_RE = re.compile(r"([\d]+):([\d]+):([\d]+)")
+    DESCRIPTOR_MISMATCH_RE = re.compile(r"[AGCT]")
+    DESCRIPTOR_INDEL_RE = re.compile(r"^[\dAGCT]$")
     SCORE_UNRECOGNIZED = 0
     SCORE_QC = 1
     SCORE_READ = 2
@@ -757,14 +757,14 @@ class ElandMatches(collections.MutableMapping):
         MAPPED = eland_container.update_result_with_eland
         SEQUENCE = eland_container.update_result_with_sequence
 
-        sample = '(?P<sample>[^_]+)'
-        hiIndex = '_(?P<index>(NoIndex|[AGCT])+)'
-        hiLane = '_L(?P<lane>[\d]+)'
-        gaLane = '_(?P<lane>[\d]+)'
-        hiRead = '_R(?P<read>[\d]+)'
-        gaRead = '(_(?P<read>[\d])+)?'
-        part = '_(?P<part>[\d]+)'
-        ext = '(?P<extention>(\.bz2|\.gz)?)'
+        sample = r"(?P<sample>[^_]+)"
+        hiIndex = r"_(?P<index>(NoIndex|[AGCT])+)"
+        hiLane = r"_L(?P<lane>[\d]+)"
+        gaLane = r"_(?P<lane>[\d]+)"
+        hiRead = r"_R(?P<read>[\d]+)"
+        gaRead = r"(_(?P<read>[\d])+)?"
+        part = r"_(?P<part>[\d]+)"
+        ext = r"(?P<extention>(\.bz2|\.gz)?)"
 
         hiPrefix = sample + hiIndex + hiLane + hiRead + part
         gaPrefix = sample + gaLane + gaRead
