@@ -1,7 +1,5 @@
 from django.urls import include, path
 from django.contrib import admin
-admin.autodiscover()
-
 
 from experiments.views import (
     FlowCellListView,
