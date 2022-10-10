@@ -31,7 +31,7 @@ class InventoryTestCase(TestCase):
     def test_item(self):
         item = ItemFactory()
         self.assertTrue(len(item.uuid), 32)
-        url = '/inventory/{}/'.format(item.uuid)
+        url = reverse("item_summary_by_uuid", args=(item.uuid,))
         self.assertTrue(self.client.login(username=self.user.username,
                                           password=self.password))
         response = self.client.get(url)

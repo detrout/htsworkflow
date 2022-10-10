@@ -11,7 +11,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path("", index),
+    path("", index, name="flowcell_index"),
     # url(r'^liblist$', 'htsworkflow.frontend.experiments.views.test_Libs'),
     # url(r'^(?P<run_folder>.+)/$', 'gaworkflow.frontend.experiments.views.detail'),
     path("config/<fc_id>/json", flowcell_json, name="flowcell_config_json"),

@@ -426,7 +426,7 @@ class ExperimentsTestCases(TestCase):
 
         result_files = flowcell.sequencingrun_set.all()[0].datafile_set.all()
         for f in result_files:
-            url = '/experiments/file/%s' % ( f.random_key,)
+            url = reverse("read_result_file", args=(f.random_key,))
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             mimetype = f.file_type.mimetype
@@ -523,7 +523,7 @@ class TestEmailNotify(TestCase):
         self.fc = FlowCellFactory.create()
         self.lane = LaneFactory(flowcell=self.fc, lane_number=1, library=self.library)
 
-        self.url = '/experiments/started/{}/'.format(self.fc.id)
+        self.url = reverse("started_email", args=(self.fc.id,))
 
     def tearDown(self):
         # with django 1.10 running against postgresql I had to delete these
@@ -640,7 +640,7 @@ class TestSequencer(TestCase):
         add_default_schemas(model)
         inference = Infer(model)
 
-        url ='/flowcell/FC12150/'
+        url = reverse("flowcell_detail", args=('FC12150',))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         status = validate_xhtml(response.content)
@@ -657,7 +657,7 @@ class TestSequencer(TestCase):
         add_default_schemas(model)
         inference = Infer(model)
 
-        url = '/lane/{}'.format(self.lane.id)
+        url = reverse("flowcell_lane_detail", args=(self.lane.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         status = validate_xhtml(smart_bytes(response.content))
