@@ -115,7 +115,7 @@ class InventoryTestCase(TestCase):
 
         # step two link the flowcell
         flowcell_id = '33THRAAXX'
-        flowcell = FlowCellFactory(flowcell_id=flowcell_id +' (failed)')
+        flowcell = FlowCellFactory(flowcell_id=flowcell_id + ' (failed)')
         link_url = reverse('link_flowcell_and_device',
                            args=(flowcell.flowcell_id, item.barcode_id))
         link_response = self.client.get(link_url)
@@ -126,7 +126,6 @@ class InventoryTestCase(TestCase):
         flowcell_url = reverse('flowcell_detail',
                                kwargs={'flowcell_id': flowcell_id})
         self.assertTrue(flowcells[0].endswith(flowcell_url))
-
 
     def get_flowcells_from_content(self, url, rootNode, diskNode):
         model = Graph()
