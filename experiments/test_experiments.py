@@ -424,8 +424,6 @@ class ExperimentsTestCases(TestCase):
         flowcell = FlowCell.objects.get(flowcell_id=flowcell_id)
         flowcell.update_sequencing_runs()
 
-        #self.client.login(username='supertest', password='BJOKL5kAj6aFZ6A5')
-
         result_files = flowcell.sequencingrun_set.all()[0].datafile_set.all()
         for f in result_files:
             url = '/experiments/file/%s' % ( f.random_key,)
