@@ -9,19 +9,10 @@ from samples.models import Library
 from experiments.models import FlowCell
 from bcmagic.models import Printer
 
+import uuid
+
+
 LOGGER = logging.getLogger(__name__)
-
-try:
-    import uuid
-except ImportError as e:
-    # Some systems are using python 2.4, which doesn't have uuid
-    # this is a stub
-    LOGGER.warning('Real uuid is not available, initializing fake uuid module')
-
-    class uuid:
-        def uuid1(self):
-            self.hex = None
-            return self
 
 
 def _assign_uuid(sender, instance, **kwargs):
@@ -69,6 +60,7 @@ class Location(models.Model):
             return "%s: %s" % (self.name, self.location_description[0:16]+"...")
         else:
             return "%s: %s" % (self.name, self.location_description)
+
 
 post_init.connect(_assign_uuid, sender=Location)
 
