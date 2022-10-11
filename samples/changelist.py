@@ -25,10 +25,10 @@ class HTSChangeList(ChangeList):
             'search_fields': search_fields, #search_fields
             'list_select_related': None, # list_select_related,
             'list_per_page': list_per_page, #list_per_page
+            'list_max_show_all': 20000,  # list_max_show_all
             'list_editable': None, # list_editable
             'model_admin': model_admin,  # model_admin
             'sortable_by': None,
-            'list_max_show_all': 20000,  # list_max_show_all
         }
         super(HTSChangeList, self).__init__(**args)
 
