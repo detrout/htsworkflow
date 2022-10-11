@@ -1,6 +1,6 @@
 """Standardize reading and writing fastq submission names.
 """
-import collections
+from collections.abc import Mapping
 import re
 PAIRED_TEMPLATE = '{lib_id}_{flowcell}_c{cycle}_l{lane}_r{read}.fastq{compression_extension}'
 SINGLE_TEMPLATE = '{lib_id}_{flowcell}_c{cycle}_l{lane}.fastq{compression_extension}'
@@ -9,7 +9,7 @@ FASTQ_RE = re.compile(
     '(?P<lib_id>[^_]+)_(?P<flowcell>[^_]+)_'\
     'c(?P<cycle>[\d]+)_l(?P<lane>[\d]+)(_r(?P<read>[\d]))?\.fastq(?P<compression_extension>.[\w]+)?')
 
-class FastqName(collections.Mapping):
+class FastqName(Mapping):
     """Utility class to convert to the standardized submission fastq name.
     """
     def __init__(self, is_paired=None, **kwargs):
