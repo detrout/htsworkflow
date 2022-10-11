@@ -8,16 +8,14 @@ INTERNAL_IPS = ('127.0.0.1',)
 ALLOWED_HOSTS = ("localhost", "127.0.0.1", "::1")
 
 DATABASES = {
-    #'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': os.path.join(settings.BASE_DIR, '..', 'fctracker.db'),
-    #}
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'felcat.caltech.edu',
-        'USER': 'diane',
-        'NAME': 'htsworkflow-django1.11',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(PROJECT_ROOT, "fctracker.db"),
     }
-
+#    "default": {
+#        "ENGINE": "django.db.backends.postgresql_psycopg2",
+#        "HOST": "felcat.caltech.edu",
+#        "USER": "diane",
+#        "NAME": "htsworkflow-django1.11",
+#    }
 }
-
