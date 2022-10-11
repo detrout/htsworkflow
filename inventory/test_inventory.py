@@ -8,7 +8,7 @@ from django.conf import settings
 
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 
 from rdflib import Graph, Literal, URIRef
 
@@ -36,7 +36,7 @@ class InventoryTestCase(TestCase):
                                           password=self.password))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        content = smart_text(response.content)
+        content = smart_str(response.content)
 
         model = Graph()
         model.parse(data=content, format="rdfa", media_type="text/html", publicID=url)
@@ -133,7 +133,7 @@ class InventoryTestCase(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        content = smart_text(response.content)
+        content = smart_str(response.content)
         model.parse(data=content, format="rdfa", media_type="text/html", publicID=rootNode)
         targets = model.objects(diskNode, libraryOntology['flowcell_id'])
         flowcells = [ str(x) for x in targets]

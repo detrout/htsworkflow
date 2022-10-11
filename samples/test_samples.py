@@ -8,7 +8,7 @@ from unittest import skipUnless
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.test import TestCase, RequestFactory
-from django.utils.encoding import smart_text, smart_str, smart_bytes
+from django.utils.encoding import smart_str, smart_bytes
 
 from rdflib import ConjunctiveGraph, Graph, URIRef
 
@@ -58,7 +58,7 @@ class LibraryAccessionTestCase(TestCase):
         library = LibraryFactory()
         acc = LibraryAccessionFactory(library_id=library.id)
         lib_response = self.client.get(library.get_absolute_url())
-        lib_content = smart_text(lib_response.content)
+        lib_content = smart_str(lib_response.content)
 
         model = Graph()
         model.parse(data=lib_content, format="rdfa", media_type="text/html")
@@ -123,7 +123,7 @@ class SampleWebTestCase(TestCase):
         lib_dict = library_dict(library.id)
         url = reverse("library_json", args=(library.id,))
         lib_response = self.client.get(url, apidata)
-        lib_json = json.loads(smart_text(lib_response.content))["result"]
+        lib_json = json.loads(smart_str(lib_response.content))["result"]
 
         for d in [lib_dict, lib_json]:
             # amplified_from_sample is a link to the library table,
@@ -195,7 +195,7 @@ class SampleWebTestCase(TestCase):
 
         model = ConjunctiveGraph()
         model.parse(
-            data=smart_text(response.content), format="rdfa", media_type="text/html"
+            data=smart_str(response.content), format="rdfa", media_type="text/html"
         )
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
@@ -220,7 +220,7 @@ class SampleWebTestCase(TestCase):
 
         model = ConjunctiveGraph()
         model.parse(
-            data=smart_text(response.content), format="rdfa", media_type="text/html"
+            data=smart_str(response.content), format="rdfa", media_type="text/html"
         )
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         prefix libns: <http://jumpgate.caltech.edu/wiki/LibraryOntology#>
@@ -244,7 +244,7 @@ class SampleWebTestCase(TestCase):
         response = self.client.get(library.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         model.parse(
-            data=smart_text(response.content), format="rdfa", media_type="text/html"
+            data=smart_str(response.content), format="rdfa", media_type="text/html"
         )
 
         body = """prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -288,7 +288,7 @@ class SampleWebTestCase(TestCase):
         response = self.client.get(reverse("library_index"))
         self.assertEqual(response.status_code, 200)
         model.parse(
-            data=smart_text(response.content), format="rdfa", media_type="text/html"
+            data=smart_str(response.content), format="rdfa", media_type="text/html"
         )
 
         errmsgs = list(inference.run_validation())

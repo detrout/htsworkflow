@@ -6,7 +6,7 @@ from six.moves import StringIO
 import json
 
 from django.test import TestCase
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 
 from samples.samples_factory import LibraryFactory, LibraryTypeFactory, \
     MultiplexIndexFactory
@@ -31,7 +31,7 @@ class RetrieveTestCases(TestCase):
         flowcell_request = self.client.get('/experiments/config/FC12150/json',
                                            apidata)
         self.assertEqual(flowcell_request.status_code, 200)
-        flowcell_info = json.loads(smart_text(flowcell_request.content))['result']
+        flowcell_info = json.loads(smart_str(flowcell_request.content))['result']
 
         options = getCombinedOptions(['-f','FC12150','-g',os.getcwd()])
         genome_map = {library.library_species.scientific_name: '/tmp/build' }
@@ -69,7 +69,7 @@ class RetrieveTestCases(TestCase):
         url = '/experiments/config/%s/json' % (fcid,)
         flowcell_request = self.client.get(url, apidata)
         self.assertEqual(flowcell_request.status_code, 200)
-        flowcell_info = json.loads(smart_text(flowcell_request.content))['result']
+        flowcell_info = json.loads(smart_str(flowcell_request.content))['result']
 
         options = getCombinedOptions(['-f',fcid,'-g',os.getcwd(),])
 
