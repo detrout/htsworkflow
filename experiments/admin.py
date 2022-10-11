@@ -1,7 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from itertools import chain
-
 from django.contrib import admin
 from django.forms import ModelForm
 from django.forms.fields import CharField
