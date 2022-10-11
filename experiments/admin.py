@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.forms import ModelForm
 from django.forms.fields import CharField
 from django.forms.widgets import TextInput, Select
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import escape, conditional_escape
 
 from .models import (
@@ -183,7 +183,7 @@ class SequencerSelect(Select):
         cssclass = "strikeout" if option_value in disabled_sequencers else ''
         return u'<option class="%s" value="%s"%s>%s</option>' % (
             cssclass, escape(option_value), selected_html,
-            conditional_escape(force_text(option_label)))
+            conditional_escape(force_str(option_label)))
 
 
 @admin.register(Sequencer)
