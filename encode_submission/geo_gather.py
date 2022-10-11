@@ -23,26 +23,24 @@ from htsworkflow.submission.condorfastq import CondorFastqExtract
 
 logger = logging.getLogger(__name__)
 
+
 def main(cmdline=None):
     parser = make_parser()
     opts, args = parser.parse_args(cmdline)
     submission_uri = None
 
     if opts.debug:
-        logging.basicConfig(level = logging.DEBUG )
+        logging.basicConfig(level=logging.DEBUG)
     elif opts.verbose:
-        logging.basicConfig(level = logging.INFO )
+        logging.basicConfig(level=logging.INFO)
     else:
-        logging.basicConfig(level = logging.WARNING )
-
-    apidata = api.make_auth_from_opts(opts, parser)
+        logging.basicConfig(level=logging.WARNING)
 
     model = get_model(opts.model, opts.db_path)
     mapper = None
     if opts.name:
         mapper = GEOSubmission(opts.name,  model, host=opts.host)
         submission_uri = get_submission_uri(opts.name)
-
 
     if opts.load_rdf is not None:
         if submission_uri is None:
@@ -91,24 +89,24 @@ def make_parser():
     model.add_option('--db-path', default=None,
                      help="set rdf database path")
     model.add_option('--model', default=None,
-      help="Load model database")
+                     help="Load model database")
     model.add_option('--load-rdf', default=None,
-      help="load rdf statements into model")
+                     help="load rdf statements into model")
     model.add_option('--sparql', default=None, help="execute sparql query")
     model.add_option('--print-rdf', action="store_true", default=False,
-      help="print ending model state")
+                     help="print ending model state")
     parser.add_option_group(model)
     # commands
     commands = OptionGroup(parser, 'commands')
     commands.add_option('--make-tree-from',
-                      help="create directories & link data files",
-                      default=None)
+                        help="create directories & link data files",
+                        default=None)
     commands.add_option('--fastq', default=False, action="store_true",
                         help="generate scripts for making fastq files")
     commands.add_option('--scan-submission', default=False, action="store_true",
-                      help="Import metadata for submission into our model")
+                        help="Import metadata for submission into our model")
     commands.add_option('--make-soft', help='make the soft file', default=False,
-                      action="store_true")
+                        action="store_true")
 
     parser.add_option_group(commands)
 
