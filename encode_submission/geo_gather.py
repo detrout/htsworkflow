@@ -1,25 +1,9 @@
 #!/usr/bin/env python
 from __future__ import print_function, unicode_literals
 
-from ConfigParser import SafeConfigParser
-import fnmatch
-from glob import glob
-import json
 import logging
-import netrc
 from optparse import OptionParser, OptionGroup
 import os
-from pprint import pprint, pformat
-import shlex
-from six.moves import StringIO
-import stat
-import sys
-import time
-import types
-from zipfile import ZipFile
-
-import RDF
-
 
 
 if 'DJANGO_SETTINGS_MODULE' not in os.environ:
@@ -28,13 +12,10 @@ if 'DJANGO_SETTINGS_MODULE' not in os.environ:
 
 from htsworkflow.util import api
 from htsworkflow.util.rdfhelp import \
-     dafTermOntology, \
-     fromTypedNode, \
      get_model, \
      get_serializer, \
      load_into_model, \
-     sparql_query, \
-     submissionOntology
+     sparql_query
 from htsworkflow.submission.daf import get_submission_uri
 from htsworkflow.submission.results import ResultMap
 from htsworkflow.submission.geo import GEOSubmission
