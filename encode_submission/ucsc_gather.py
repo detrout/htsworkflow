@@ -18,7 +18,7 @@ import time
 import types
 from zipfile import ZipFile
 
-if not 'DJANGO_SETTINGS_MODULE' in os.environ:
+if 'DJANGO_SETTINGS_MODULE' not in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
 
 from htsworkflow.util import api

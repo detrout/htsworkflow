@@ -16,7 +16,7 @@ from htsworkflow.util.rdfhelp import get_model, dump_model
 from django.conf import settings
 from django.template import Context, loader
 
-if not 'DJANGO_SETTINGS_MODULE' in os.environ:
+if 'DJANGO_SETTINGS_MODULE' not in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
 
 LOGGER = logging.getLogger(__name__)
