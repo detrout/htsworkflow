@@ -49,6 +49,7 @@ def library_index(request, todo_only=False):
                         )
 
     context = {'cl': fcl,
+               "opts": fcl.opts,
                'library_list': fcl.result_list,
                'title': 'Library Index',
                'todo_only': todo_only}

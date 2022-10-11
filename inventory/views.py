@@ -147,6 +147,7 @@ def all_index(request):
 
     context_dict = {
         'item_changelist': item_changelist,
+        "opts": item_changelist.opts,
         'page_name': 'Inventory Index'
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
@@ -170,6 +171,7 @@ def index(request):
 
     context_dict = {
         'item_changelist': item_changelist,
+        "opts": item_changelist.opts,
         'page_name': 'Inventory Index'
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)
@@ -197,6 +199,7 @@ def itemtype_index(request, name):
 
     context_dict = {
         'item_changelist': item_changelist,
+        "opts": item_changelist.opts,
         'page_name': 'Inventory Index'
     }
     context_dict.update(INVENTORY_CONTEXT_DEFAULTS)

@@ -219,6 +219,6 @@ def lanes_for(request, username=None):
                         extra_filters=query
                         )
 
-    context = {'lanes': fcl, 'title': 'Lane Index'}
+    context = {"lanes": fcl, "opts": fcl.opts, "title": "Lane Index"}
 
     return render(request, 'samples/lanes_for.html', context)
