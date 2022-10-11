@@ -26,7 +26,7 @@
     {% block filters %}
     {% if item_changelist.has_filters %}
     <div id="changelist-filter">
-      <h2 >{% trans 'Filter' %}</h2>
+      <h2 >{% translate 'Filter' %}</h2>
       {% for spec in item_changelist.filter_specs %}
          {% admin_list_filter cl spec %}
          {% endfor %}
