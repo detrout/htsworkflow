@@ -1,7 +1,7 @@
 {% extends "base_site.html" %}
 {% load i18n %}
 
-{% block additional_css %}{% load staticfiles %}{{ block.super }}
+{% block additional_css %}{% load static %}{{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% static "css/base.css" %}"/>
 <link rel="stylesheet" type="text/css" href="{% static "css/login.css" %}"/>
 {% endblock %}
