@@ -32,7 +32,7 @@ DEBUG = False
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [join(DJANGO_ROOT, 'templates'),],
+        'DIRS': [join(DJANGO_ROOT, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
