@@ -15,15 +15,15 @@ from .views import (
 
 urlpatterns = [
     # DATA
-    path(r"^data/items/$", data_items),
+    path("data/items/", data_items),
     # REMOTE LINKING
     path(
-        r"^lts/link/(?P<flowcell>.+)/(?P<serial>.+)/$",
+        r"lts/link/<flowcell>/<serial>)/",
         link_flowcell_and_device,
         name="link_flowcell_and_device",
     ),
     # INDEX
-    path("^it/<name>$", itemtype_index, name="itemtype_index"),
+    path("it/<name>", itemtype_index, name="itemtype_index"),
     re_path(
         r"^(?P<uuid>[a-fA-F0-9]{32})/$",
         item_summary_by_uuid,
