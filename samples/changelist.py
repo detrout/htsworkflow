@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import django
 from django.contrib.admin.views.main import ChangeList
 
+
 class HTSChangeList(ChangeList):
     def __init__(self, request, model, list_filter, search_fields,
                  list_per_page, model_admin, extra_filters=None):
@@ -26,6 +27,7 @@ class HTSChangeList(ChangeList):
             'list_per_page': list_per_page, #list_per_page
             'list_editable': None, # list_editable
             'model_admin': model_admin,  # model_admin
+            'sortable_by': None,
             'list_max_show_all': 20000,  # list_max_show_all
         }
         super(HTSChangeList, self).__init__(**args)
