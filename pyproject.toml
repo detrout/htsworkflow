@@ -23,7 +23,7 @@ setenv =
   sqlite: DJANGO_SETTINGS_MODULE=htsworkflow.settings.sqlite
   psql: DJANGO_SETTINGS_MODULE=htsworkflow.settings.psql
 deps=
-  django2_0: Django>=2,<2.1
+  django2_1: Django>=2.1,<2.2
 extras =
   test
 """
