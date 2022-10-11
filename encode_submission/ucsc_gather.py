@@ -1,21 +1,12 @@
 #!/usr/bin/env python
 from __future__ import print_function, unicode_literals
 
-from six.moves.configparser import SafeConfigParser
-import fnmatch
-from glob import glob
-import json
 import logging
 import netrc
 from optparse import OptionParser, OptionGroup
 import os
-from pprint import pprint, pformat
-import shlex
-from six.moves import StringIO
 import stat
 import sys
-import time
-import types
 from zipfile import ZipFile
 
 if 'DJANGO_SETTINGS_MODULE' not in os.environ:
@@ -23,11 +14,9 @@ if 'DJANGO_SETTINGS_MODULE' not in os.environ:
 
 from htsworkflow.util import api
 from encoded_client.rdfns import \
-     dafTermOntology, \
      submissionOntology
 from htsworkflow.submission.daf import \
      UCSCSubmission, \
-     MetadataLookupException, \
      get_submission_uri
 from htsworkflow.submission.results import ResultMap
 from htsworkflow.submission.condorfastq import CondorFastqExtract
