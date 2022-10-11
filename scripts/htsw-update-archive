@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 
 import logging
 import os
@@ -130,7 +130,7 @@ def configure_opts(opts):
     if opts.config is not None:
         config_path = [opts.config]
     # parse options from config file
-    config_file = SafeConfigParser()
+    config_file = ConfigParser()
     config_file.read(config_path)
 
     # load defaults from config file if not overriden by the command line
