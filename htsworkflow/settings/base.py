@@ -25,6 +25,11 @@ INI_OPTIONS = config_helper.HTSWConfig()
 SECRET_KEY = INI_OPTIONS.setdefaultsecret('frontend', 'secret_key')
 DEFAULT_API_KEY = INI_OPTIONS.setdefaultsecret('frontend', 'api')
 
+# Default primary key field type.
+# See https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-DEFAULT_AUTO_FIELD
+# when changing
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 # Override in settings_local
 DEBUG = False
