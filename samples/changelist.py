@@ -30,6 +30,10 @@ class HTSChangeList(ChangeList):
             'model_admin': model_admin,  # model_admin
             'sortable_by': None,
         }
+
+        if django.VERSION[0] >= 4:
+            args["search_help_text"] = None
+
         super(HTSChangeList, self).__init__(**args)
 
         self.is_popup = False
