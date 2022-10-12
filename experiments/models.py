@@ -17,7 +17,11 @@ from samples.models import Library, HTSUser
 from htsworkflow.util.conversion import parse_flowcell_id
 from htsworkflow.pipelines import runfolder
 
-import zoneinfo
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo
+
 
 LOGGER = logging.getLogger(__name__)
 default_pM = 5
@@ -243,7 +247,7 @@ class FlowCell(models.Model):
             run.runfolder_name = run_xml_data.runfolder_name
             run.cycle_start = run_xml_data.image_analysis.start
             run.cycle_stop = run_xml_data.image_analysis.stop
-            TZ = zoneinfo.ZoneInfo(settings.TIME_ZONE)
+            TZ = ZoneInfo(settings.TIME_ZONE)
             run.run_start_time = datetime.datetime(
                 year=run_xml_data.image_analysis.date.year,
                 month=run_xml_data.image_analysis.date.month,
