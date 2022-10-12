@@ -1,6 +1,6 @@
 """Parse UCSC DAF File
 """
-import collections
+from collections.abc import Iterable
 import logging
 import os
 from pprint import pformat
@@ -260,7 +260,7 @@ class UCSCSubmission(object):
         else:
             self.model = get_model()
 
-        if isinstance(daf_file, collections.Iterable):
+        if isinstance(daf_file, Iterable):
             # its some kind of stream
             self.daf = daf_file.read()
         else:
