@@ -13,7 +13,7 @@ write_to = "htsworkflow/_version.py"
 legacy_tox_ini = """
 [tox]
 
-envlist=py{38,39,310,311}-django{40}-{sqlite}
+envlist=py{38,39,310,311}-django{32,40,41}-{sqlite}
 skip_missing_interpreters=True
 
 [testenv]
@@ -23,6 +23,7 @@ setenv =
   sqlite: DJANGO_SETTINGS_MODULE=htsworkflow.settings.sqlite
   psql: DJANGO_SETTINGS_MODULE=htsworkflow.settings.psql
 deps=
+  django41: Django>=4.1,<4.2
   django40: Django>=4.0,<4.1
   django32: Django>=3.2,<3.3
 extras =
