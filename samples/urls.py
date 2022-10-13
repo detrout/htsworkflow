@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 
-from django.conf.urls import url
+from django.urls import path
 
 from samples.views import (
-    library,
+    library_index,
     library_not_run,
     library_detail,
     library_json,
@@ -14,11 +14,11 @@ from samples.views import (
 
 urlpatterns = [
     # View library list
-    url(r'^$', library, name='library_index'),
-    url(r'^not_run/$', library_not_run, name='library_not_run'),
-    url(r'^(?P<lib_id>\w+)/$', library_detail, name='library_detail'),
-    url(r"^(?P<library_id>\w+)/json$", library_json, name='library_json'),
-    url(r"^species/(?P<species_id>\w+)/json$", species_json, name='species_json'),
-    url(r"^species/(?P<species_id>\w+)$", species, name='species'),
-    url(r"^antibody/$", antibodies, name='antibodies'),
+    path("", library_index, name="library_index"),
+    path("not_run/", library_not_run, name="library_not_run"),
+    path("<library_id>/", library_detail, name="library_detail"),
+    path("<library_id>/json", library_json, name="library_json"),
+    path("species/<species_id>/json", species_json, name="species_json"),
+    path("species/<species_id>", species, name="species"),
+    path("antibody/", antibodies, name="antibodies"),
 ]

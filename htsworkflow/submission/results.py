@@ -1,13 +1,12 @@
 """Help collect and process results for submission
 """
-from collections import MutableMapping
+from collections.abc import MutableMapping
 import os
 import shutil
 import logging
 
-from collections import namedtuple
-
 LOGGER = logging.getLogger(__name__)
+
 
 class ResultMap(MutableMapping):
     """Store list of results
@@ -21,9 +20,9 @@ class ResultMap(MutableMapping):
             yield item
 
     def __len__(self):
-        l = len(self.results)
-        assert l == len(self.results_order)
-        return l
+        length = len(self.results)
+        assert length == len(self.results_order)
+        return length
 
     def __setitem__(self, key, value):
         self.results_order.append(key)
@@ -46,7 +45,7 @@ class ResultMap(MutableMapping):
                 lib_path = os.path.join(basepath, lib_path)
             self[lib_id] = lib_path
 
-    def make_tree_from(self, source_path, destpath = None, link=True):
+    def make_tree_from(self, source_path, destpath=None, link=True):
         """Create a tree using data files from source path.
         """
         if destpath is None:
@@ -84,6 +83,7 @@ class ResultMap(MutableMapping):
                     LOGGER.info(
                         'LINK {0} to {1}'.format(source_pathname,
                                                  target_pathname))
+
 
 def read_result_list(filename):
     """

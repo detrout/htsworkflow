@@ -1,7 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% load staticfiles %}{% static "css/dashboard.css" %}"/>{% endblock %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% load static %}{% static "css/dashboard.css" %}"/>{% endblock %}
 
 {% block coltype %}colMS{% endblock %}
 
@@ -17,11 +17,11 @@
 <caption>Frequently Used</caption>
 <tr>
 <th scope="row"><a href="{% url 'admin:samples_library_changelist' %}">Libraries</a></th>
-<td><a href="{% url 'admin:samples_library_add' %}" class="addlink">{% trans 'Add' %}</a></td>
+<td><a href="{% url 'admin:samples_library_add' %}" class="addlink">{% translate 'Add' %}</a></td>
 </tr>
 <tr>
 <th scope="row"><a href="{% url 'admin:experiments_flowcell_changelist' %}">Flowcells</a></th>
-<td><a href="{% url 'admin:experiments_flowcell_add' %}" class="addlink">{% trans 'Add' %}</a></td>
+<td><a href="{% url 'admin:experiments_flowcell_add' %}" class="addlink">{% translate 'Add' %}</a></td>
 </tr>
 </table></div>
 
@@ -30,11 +30,11 @@
 <caption>Label Printing</caption>
 <tr>
 <th scope="row"><a href="{% url 'admin:labels_labelcontent_changelist' %}">Label Contents</a></th>
-<td><a href="{% url 'admin:labels_labelcontent_add' %}" class="addlink">{% trans 'Add' %}</a></td>
+<td><a href="{% url 'admin:labels_labelcontent_add' %}" class="addlink">{% translate 'Add' %}</a></td>
 </tr>
 <tr>
 <th scope="row"><a href="{% url 'admin:labels_labeltemplate_changelist' %}">Label Templates</a></th>
-<td><a href="{% url 'admin:labels_labeltemplate_add' %}" class="addlink">{% trans 'Add' %}</a></td>
+<td><a href="{% url 'admin:labels_labeltemplate_add' %}" class="addlink">{% translate 'Add' %}</a></td>
 </tr>
 </table></div><BR>
 
@@ -52,7 +52,7 @@
             {% endif %}
 
             {% if model.perms.add %}
-                <td><a href="{{ model.admin_url }}add/" class="addlink">{% trans 'Add' %}</a></td>
+                <td><a href="{{ model.admin_url }}add/" class="addlink">{% translate 'Add' %}</a></td>
             {% else %}
                 <td>&nbsp;</td>
             {% endif %}
@@ -62,7 +62,7 @@
         </div>
     {% endfor %}
 {% else %}
-    <p>{% trans "You don't have permission to edit anything." %}</p>
+    <p>{% translate "You don't have permission to edit anything." %}</p>
 {% endif %}
 </div>
 {% endblock %}
@@ -70,12 +70,12 @@
 {% block sidebar %}
 <div id="content-related">
     <div class="module" id="recent-actions-module">
-        <h2>{% trans 'Recent Actions' %}</h2>
-        <h3>{% trans 'My Actions' %}</h3>
+        <h2>{% translate 'Recent Actions' %}</h2>
+        <h3>{% translate 'My Actions' %}</h3>
             {% load log %}
             {% get_admin_log 10 as admin_log for_user user %}
             {% if not admin_log %}
-            <p>{% trans 'None available' %}</p>
+            <p>{% translate 'None available' %}</p>
             {% else %}
             <ul class="actionlist">
             {% for entry in admin_log %}
@@ -87,9 +87,9 @@
                 {% endif %}
                 <br/>
                 {% if entry.content_type %}
-                    <span class="mini quiet">{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}</span>
+                    <span class="mini quiet">{% filter capfirst %}{% translate entry.content_type.name %}{% endfilter %}</span>
                 {% else %}
-                    <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                    <span class="mini quiet">{% translate 'Unknown content' %}</span>
                 {% endif %}
             </li>
             {% endfor %}

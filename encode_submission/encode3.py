@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 INDENTED = "  " + os.linesep
 
 import django
-if not 'DJANGO_SETTINGS_MODULE' in os.environ:
+if 'DJANGO_SETTINGS_MODULE' not in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings.local'
 
 def main(cmdline=None):

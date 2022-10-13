@@ -17,7 +17,7 @@
     <title>{% block title %}{{ app_name }} - {{ page_name }}{% endblock %}</title>
 
 {% block additional_css %}
-    {% load staticfiles %}
+    {% load static %}
     {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "css/rtl.css" %}{% endblock %}" />{% endif %}
     {% block extrastyle %}{% endblock %}
     {% block extrahead %}{% endblock %}
@@ -41,23 +41,23 @@
         <div id="user-tools">
         {% if user.is_authenticated %}
             {% block welcome-msg %}
-                {% trans 'Welcome,' %}
+                {% translate 'Welcome,' %}
                 <strong>{% firstof user.get_short_name user.username %}</strong>.
             {% endblock %}
             {% block userlinks %}
                 {% if user.is_active and user.is_staff %}
                     {% url "django.admindocs.docroot" as docsroot %}
                     {% if docsroot %}
-                        <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                        <a href="{{ docsroot }}">{% translate 'Documentation' %}</a> /
                     {% endif %}
                 {% endif %}
                 {% if user.has_usable_password %}
-                <a href="{% url 'password_change' %}">{% trans 'Change password' %}</a> /
+                <a href="{% url 'password_change' %}">{% translate 'Change password' %}</a> /
                 {% endif %}
-                <a href="{% url 'logout' %}">{% trans 'Log out' %}</a>
+                <a href="{% url 'logout' %}">{% translate 'Log out' %}</a>
             {% endblock %}
         {% else %}
-            <a href="{% url 'login' %}">{% trans 'Log in' %}</a>
+            <a href="{% url 'login' %}">{% translate 'Log in' %}</a>
         {% endif %}
         </div>
         {% endblock usertools %}

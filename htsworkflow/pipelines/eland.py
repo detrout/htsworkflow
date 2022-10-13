@@ -3,19 +3,18 @@ Analyze ELAND files
 """
 from __future__ import print_function
 
-import collections
+from collections import namedtuple
+from collections.abc import MutableMapping, Mapping
 from glob import glob
 import logging
 import os
 import re
 import stat
 import sys
-import types
 
-from htsworkflow.pipelines import ElementTree, LANE_LIST
+from htsworkflow.pipelines import ElementTree
 from htsworkflow.pipelines.samplekey import SampleKey
 from htsworkflow.pipelines.genomemap import GenomeMap
-from htsworkflow.util.ethelp import indent, flatten
 from htsworkflow.util.opener import autoopen
 
 LOGGER = logging.getLogger(__name__)
@@ -37,6 +36,7 @@ ELAND_SINGLE = 0
 ELAND_MULTI = 1
 ELAND_EXTENDED = 2
 ELAND_EXPORT = 3
+
 
 class ResultLane(object):
     """
@@ -80,15 +80,16 @@ class ResultLane(object):
 
         return '<ResultLane(' + ",".join(name) + ')>'
 
+
 class ElandLane(ResultLane):
     """
     Process an eland result file
     """
     XML_VERSION = 2
     LANE = "ElandLane"
-    MATCH_COUNTS_RE = re.compile("([\d]+):([\d]+):([\d]+)")
-    DESCRIPTOR_MISMATCH_RE = re.compile("[AGCT]")
-    DESCRIPTOR_INDEL_RE = re.compile("^[\dAGCT]$")
+    MATCH_COUNTS_RE = re.compile(r"([\d]+):([\d]+):([\d]+)")
+    DESCRIPTOR_MISMATCH_RE = re.compile(r"[AGCT]")
+    DESCRIPTOR_INDEL_RE = re.compile(r"^[\dAGCT]$")
     SCORE_UNRECOGNIZED = 0
     SCORE_QC = 1
     SCORE_READ = 2
@@ -114,22 +115,22 @@ class ElandLane(ResultLane):
         name.append('S%s' % (self.sample_name,))
 
         reads = str(self._reads) if self._reads is not None else 'Uncounted'
-        return '<ElandLane(' + ",".join(name) + ' = '+ reads + ')>'
+        return '<ElandLane(' + ",".join(name) + ' = ' + reads + ')>'
 
     def _guess_eland_type(self, pathname):
         if self.eland_type is None:
-          # attempt autodetect eland file type
-          pathn, name = os.path.split(pathname)
-          if re.search('result', name):
-            self.eland_type = ELAND_SINGLE
-          elif re.search('multi', name):
-            self.eland_type = ELAND_MULTI
-          elif re.search('extended', name):
-            self.eland_type = ELAND_EXTENDED
-          elif re.search('export', name):
-            self.eland_type = ELAND_EXPORT
-          else:
-            self.eland_type = ELAND_SINGLE
+            # attempt autodetect eland file type
+            pathn, name = os.path.split(pathname)
+            if re.search('result', name):
+                self.eland_type = ELAND_SINGLE
+            elif re.search('multi', name):
+                self.eland_type = ELAND_MULTI
+            elif re.search('extended', name):
+                self.eland_type = ELAND_EXTENDED
+            elif re.search('export', name):
+                self.eland_type = ELAND_EXPORT
+            else:
+                self.eland_type = ELAND_SINGLE
 
     def _update(self):
         """
@@ -153,8 +154,7 @@ class ElandLane(ResultLane):
             stream = autoopen(pathname, 'rt')
             if self.eland_type == ELAND_SINGLE:
                 result = self._update_eland_result(stream)
-            elif self.eland_type == ELAND_MULTI or \
-                 self.eland_type == ELAND_EXTENDED:
+            elif self.eland_type in (ELAND_MULTI, ELAND_EXTENDED):
                 result = self._update_eland_multi(stream)
             elif self.eland_type == ELAND_EXPORT:
                 result = self._update_eland_export(stream)
@@ -207,7 +207,7 @@ class ElandLane(ResultLane):
                 # or in a different version of eland, it just leaves
                 # that column blank, and only outputs 3 fields.
                 if len(fields) < 4 or fields[LOCATION_INDEX] == '-':
-                  continue
+                    continue
 
                 self._count_mapped_multireads(mapped_reads, fields[LOCATION_INDEX])
 
@@ -217,7 +217,7 @@ class ElandLane(ResultLane):
         """Summarize a gerald export file."""
         MATCH_INDEX = 10
         LOCATION_INDEX = 10
-        DESCRIPTOR_INDEX= 13
+        DESCRIPTOR_INDEX = 13
         reads = 0
         mapped_reads = MappedReads()
         match_codes = MatchCodes()
@@ -241,7 +241,6 @@ class ElandLane(ResultLane):
                 match_codes[code] += 1
 
         return match_codes, mapped_reads, reads
-
 
     def _score_mapped_mismatches(self, match, match_codes):
         """Update match_codes with eland map counts, or failure code.
@@ -281,19 +280,16 @@ class ElandLane(ResultLane):
 
             return ElandLane.SCORE_READ
 
-
     def _count_mapped_multireads(self, mapped_reads, match_string):
         chromo = None
         for match in match_string.split(','):
             match_fragment = match.split(':')
             if len(match_fragment) == 2:
                 chromo = match_fragment[0]
-                pos = match_fragment[1]
 
             fasta = self.genome_map.get(chromo, chromo)
             assert fasta is not None
             mapped_reads[fasta] = mapped_reads.setdefault(fasta, 0) + 1
-
 
     def _count_mapped_export(self, mapped_reads, match_string, descriptor):
         """Count a read as defined in an export file
@@ -317,7 +313,6 @@ class ElandLane(ResultLane):
             return 'U1'
         else:
             return 'U2'
-
 
     def _get_mapped_reads(self):
         if self._mapped_reads is None:
@@ -348,7 +343,7 @@ class ElandLane(ResultLane):
             self._update()
         return self._match_codes['QC']
     qc_failed = property(_get_qc_failed,
-                        doc="total reads that didn't match the target genome.")
+                         doc="total reads that didn't match the target genome.")
 
     def _get_qc_failed_percent(self):
         return float(self.qc_failed)/self.reads * 100
@@ -357,9 +352,9 @@ class ElandLane(ResultLane):
 
     def _get_unique_reads(self):
         if self._mapped_reads is None:
-           self._update()
+            self._update()
         sum = 0
-        for code in ['U0','U1','U2']:
+        for code in ['U0', 'U1', 'U2']:
             sum += self._match_codes[code]
         return sum
     unique_reads = property(_get_unique_reads,
@@ -367,9 +362,9 @@ class ElandLane(ResultLane):
 
     def _get_repeat_reads(self):
         if self._mapped_reads is None:
-           self._update()
+            self._update()
         sum = 0
-        for code in ['R0','R1','R2']:
+        for code in ['R0', 'R1', 'R2']:
             sum += self._match_codes[code]
         return sum
     repeat_reads = property(_get_repeat_reads,
@@ -390,17 +385,17 @@ class ElandLane(ResultLane):
         for k, v in self.genome_map.items():
             item = ElementTree.SubElement(
                 genome_map, GENOME_ITEM,
-                {'name':k, 'value':str(v)})
+                {'name': k, 'value': str(v)})
         mapped_reads = ElementTree.SubElement(lane, MAPPED_READS)
         for k, v in self.mapped_reads.items():
             item = ElementTree.SubElement(
                 mapped_reads, MAPPED_ITEM,
-                {'name':k, 'value':str(v)})
+                {'name': k, 'value': str(v)})
         match_codes = ElementTree.SubElement(lane, MATCH_CODES)
         for k, v in self.match_codes.items():
             item = ElementTree.SubElement(
                 match_codes, MATCH_ITEM,
-                {'name':k, 'value':str(v)})
+                {'name': k, 'value': str(v)})
         reads = ElementTree.SubElement(lane, READS)
         reads.text = str(self.reads)
 
@@ -443,18 +438,18 @@ class ElandLane(ResultLane):
                 LOGGER.warning("ElandLane unrecognized tag %s" % (element.tag,))
 
 
-class MatchCodes(collections.MutableMapping):
+class MatchCodes(MutableMapping):
     """Mapping to hold match counts -
     supports combining two match count sets together
     """
     def __init__(self, initializer=None):
-        self.match_codes = {'NM':0, 'QC':0, 'RM':0,
-                            'U0':0, 'U1':0, 'U2':0,
-                            'R0':0, 'R1':0, 'R2':0,
+        self.match_codes = {'NM': 0, 'QC': 0, 'RM': 0,
+                            'U0': 0, 'U1': 0, 'U2': 0,
+                            'R0': 0, 'R1': 0, 'R2': 0,
                             }
 
         if initializer is not None:
-            if not isinstance(initializer, collections.Mapping):
+            if not isinstance(initializer, Mapping):
                 raise ValueError("Expected dictionary like class")
             for key in initializer:
                 if key not in self.match_codes:
@@ -491,7 +486,7 @@ class MatchCodes(collections.MutableMapping):
         return newobj
 
 
-class MappedReads(collections.MutableMapping):
+class MappedReads(MutableMapping):
     """Mapping to hold mapped reads -
     supports combining two mapped read sets together
     """
@@ -499,7 +494,7 @@ class MappedReads(collections.MutableMapping):
         self.mapped_reads = {}
 
         if initializer is not None:
-            if not isinstance(initializer, collections.Mapping):
+            if not isinstance(initializer, Mapping):
                 raise ValueError("Expected dictionary like class")
             for key in initializer:
                 self[key] = self.setdefault(key, 0) + initializer[key]
@@ -529,15 +524,16 @@ class MappedReads(collections.MutableMapping):
 
         return newobj
 
+
 class SequenceLane(ResultLane):
-    XML_VERSION=1
+    XML_VERSION = 1
     LANE = 'SequenceLane'
     SEQUENCE_TYPE = 'SequenceType'
 
     NONE_TYPE = None
     SCARF_TYPE = 1
     FASTQ_TYPE = 2
-    SEQUENCE_DESCRIPTION = { NONE_TYPE: 'None', SCARF_TYPE: 'SCARF', FASTQ_TYPE: 'FASTQ' }
+    SEQUENCE_DESCRIPTION = {NONE_TYPE: 'None', SCARF_TYPE: 'SCARF', FASTQ_TYPE: 'FASTQ'}
 
     def __init__(self, pathnames=None, sample=None, lane_id=None, end=None,
                  xml=None):
@@ -548,15 +544,15 @@ class SequenceLane(ResultLane):
         """
         Determine if we have a scarf or fastq sequence file
         """
-        f = open(pathname,'rt')
-        l = f.readline()
-        f.close()
+        with open(pathname, "rt") as f:
+            line = f.readline()
 
-        if l[0] == '@':
-            # fastq starts with a @
-            self.sequence_type = SequenceLane.FASTQ_TYPE
-        else:
-            self.sequence_type = SequenceLane.SCARF_TYPE
+            if line[0] == '@':
+                # fastq starts with a @
+                self.sequence_type = SequenceLane.FASTQ_TYPE
+            else:
+                self.sequence_type = SequenceLane.SCARF_TYPE
+
         return self.sequence_type
 
     def _update(self):
@@ -575,10 +571,9 @@ class SequenceLane(ResultLane):
 
         LOGGER.info("summarizing results for %s" % (pathname))
         lines = 0
-        f = open(pathname, 'rt')
-        for l in f:
-            lines += 1
-        f.close()
+        with open(pathname, 'rt') as f:
+            for line in f:
+                lines += 1
 
         if self.sequence_type == SequenceLane.SCARF_TYPE:
             self._reads = lines
@@ -609,7 +604,7 @@ class SequenceLane(ResultLane):
     def set_elements(self, tree):
         if tree.tag != SequenceLane.LANE:
             raise ValueError('Exptecting %s' % (SequenceLane.LANE,))
-        lookup_sequence_type = dict([ (v,k) for k,v in SequenceLane.SEQUENCE_DESCRIPTION.items()])
+        lookup_sequence_type = dict([(v,k) for k,v in SequenceLane.SEQUENCE_DESCRIPTION.items()])
 
         for element in tree:
             tag = element.tag.lower()
@@ -626,7 +621,8 @@ class SequenceLane(ResultLane):
             else:
                 LOGGER.warning("SequenceLane unrecognized tag %s" % (element.tag,))
 
-class ELAND(collections.MutableMapping):
+
+class ELAND(MutableMapping):
     """
     Summarize information from eland files
     """
@@ -672,7 +668,8 @@ class ELAND(collections.MutableMapping):
         if not search.iswild:
             yield self[search]
         for key in self.keys():
-            if key.matches(search): yield key
+            if key.matches(search):
+                yield key
 
     def get_elements(self):
         root = ElementTree.Element(ELAND.ELAND,
@@ -702,21 +699,19 @@ class ELAND(collections.MutableMapping):
             key = SampleKey(lane=lane_id, read=end+1, sample=sample)
             self.results[key] = lane
 
-
     def update_result_with_eland(self, gerald, key, pathnames,
                                  genome_maps):
         # yes the lane_id is also being computed in ElandLane._update
         # I didn't want to clutter up my constructor
         # but I needed to persist the sample_name/lane_id for
         # runfolder summary_report
-        names = [ os.path.split(p)[1] for p in pathnames]
-        LOGGER.info("Adding eland files %s" %(",".join(names),))
+        names = [os.path.split(p)[1] for p in pathnames]
+        LOGGER.info("Adding eland files {}".format(",".join(names)))
         basedir = os.path.split(pathnames[0])[0]
         gs_template = "{0}_*_L{1:03}_genomesize.xml"
         genomesize = glob(
             os.path.join(basedir,
                          gs_template.format(key.sample, key.lane)))
-
 
         genome_map = GenomeMap()
         if genome_maps is not None:
@@ -752,7 +747,7 @@ def eland(gerald_dir, gerald=None, genome_maps=None):
     return e
 
 
-class ElandMatches(collections.MutableMapping):
+class ElandMatches(MutableMapping):
     def __init__(self, eland_container):
         # the order in patterns determines the preference for what
         # will be found.
@@ -760,20 +755,20 @@ class ElandMatches(collections.MutableMapping):
         MAPPED = eland_container.update_result_with_eland
         SEQUENCE = eland_container.update_result_with_sequence
 
-        sample = '(?P<sample>[^_]+)'
-        hiIndex = '_(?P<index>(NoIndex|[AGCT])+)'
-        hiLane = '_L(?P<lane>[\d]+)'
-        gaLane = '_(?P<lane>[\d]+)'
-        hiRead = '_R(?P<read>[\d]+)'
-        gaRead = '(_(?P<read>[\d])+)?'
-        part = '_(?P<part>[\d]+)'
-        ext = '(?P<extention>(\.bz2|\.gz)?)'
+        sample = r"(?P<sample>[^_]+)"
+        hiIndex = r"_(?P<index>(NoIndex|[AGCT])+)"
+        hiLane = r"_L(?P<lane>[\d]+)"
+        gaLane = r"_(?P<lane>[\d]+)"
+        hiRead = r"_R(?P<read>[\d]+)"
+        gaRead = r"(_(?P<read>[\d])+)?"
+        part = r"_(?P<part>[\d]+)"
+        ext = r"(?P<extention>(\.bz2|\.gz)?)"
 
         hiPrefix = sample + hiIndex + hiLane + hiRead + part
         gaPrefix = sample + gaLane + gaRead
-        P = collections.namedtuple('Patterns', 'pattern counter priority')
+        P = namedtuple('Patterns', 'pattern counter priority')
         self.patterns = [
-            P(hiPrefix +'_export.txt' + ext, MAPPED, 6),
+            P(hiPrefix + '_export.txt' + ext, MAPPED, 6),
             P(gaPrefix + '_eland_result.txt' + ext, MAPPED, 5),
             P(gaPrefix + '_eland_extended.txt' + ext, MAPPED, 4),
             P(gaPrefix + '_eland_multi.txt' + ext, MAPPED, 3),
@@ -803,10 +798,10 @@ class ElandMatches(collections.MutableMapping):
                     self.file_sets[key].add(m)
 
     def count(self, key, gerald=None, genome_maps=None):
-        #previous sig: gerald, e.results, lane_id, end, pathnames, genome_maps
+        # previous sig: gerald, e.results, lane_id, end, pathnames, genome_maps
         counter = self.file_counter[key]
         file_set = self.file_sets[key]
-        filenames = [ f.filename for f in file_set ]
+        filenames = [f.filename for f in file_set]
         return counter(gerald, key,
                        filenames, genome_maps)
 
@@ -820,12 +815,13 @@ class ElandMatches(collections.MutableMapping):
         return self.file_sets[key]
 
     def __setitem__(self, key, value):
-        if not isintance(value, set):
+        if not isinstance(value, set):
             raise ValueError("Expected set for value")
         self.file_sets[key] = value
 
     def __delitem__(self, key):
         del self.file_sets[key]
+
 
 class ElandMatch(object):
     def __init__(self, pathname, counter,
@@ -866,10 +862,14 @@ class ElandMatch(object):
 
     def __repr__(self):
         name = []
-        if self.sample is not None: name.append(self.sample)
-        if self._lane is not None: name.append('L%s' % (self.lane,))
-        if self._read is not None: name.append('R%s' % (self.read,))
-        if self._part is not None: name.append('P%s' % (self.part,))
+        if self.sample is not None:
+            name.append(self.sample)
+        if self._lane is not None:
+            name.append('L%s' % (self.lane,))
+        if self._read is not None:
+            name.append('R%s' % (self.read,))
+        if self._part is not None:
+            name.append('P%s' % (self.part,))
         return '<ElandMatch(' + "_".join(name) + ')>'
 
 

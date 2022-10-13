@@ -12,58 +12,59 @@
     {% block filters %}
     {% if lanes.has_filters %}
     <div id="changelist-filter">
-      <h2 >{% trans 'Filter' %}</h2>
+      <h2 >{% translate 'Filter' %}</h2>
       {% for spec in lanes.filter_specs %}
          {% admin_list_filter lanes spec %}
-         {% endfor %}
-       </div>
-       {% endif %}
-       {% endblock %}
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endblock %}
 
   
- {% block pagination %}{% pagination lanes %}{% endblock %}
+  {% block pagination %}{% pagination lanes %}{% endblock %}
 
-{% block body %}
-<table >
-  <thead >
-    <tr >
-      <td >Run Date</td>
-      <td >Flowcell Type</td>
-      <td >Cycles</td>
-      <td >Flowcell ID</td>
-      <td >Lane</td>
-      <td >Library ID</td>
-      <td >Library Name</td>
-  </tr>
-  </thead>
-  <tbody >
-    {% for lane in lanes.queryset %}
-    <tr >
-      <td >
-        {{ lane.flowcell.run_date|date:"Y-M-d" }}
-      </td>
-      <td >
-        {{ lane.flowcell.flowcell_type }}
-      </td>
-      <td >
-        {{ lane.flowcell.read_length }}
-      </td>
-      <td >
-        {{ lane.flowcell.flowcell_id }}
-      </td>
-      <td >
-        {{ lane.lane_number }}
-      </td>
-      <td >
-        <a href="/library/{{ lane.library_id }}">{{ lane.library_id }}</a>
-      </td>
-      <td >
-        <a href="/library/{{ lane.library_id }}">{{ lane.library.library_name }}</a>
-      </td>
-   </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  {% block body %}
+  <table >
+    <thead >
+      <tr >
+        <td >Run Date</td>
+        <td >Flowcell Type</td>
+        <td >Cycles</td>
+        <td >Flowcell ID</td>
+        <td >Lane</td>
+        <td >Library ID</td>
+        <td >Library Name</td>
+    </tr>
+    </thead>
+    <tbody >
+      {% for lane in lanes.queryset %}
+      <tr >
+        <td >
+          {{ lane.flowcell.run_date|date:"Y-M-d" }}
+        </td>
+        <td >
+          {{ lane.flowcell.flowcell_type }}
+        </td>
+        <td >
+          {{ lane.flowcell.read_length }}
+        </td>
+        <td >
+          {{ lane.flowcell.flowcell_id }}
+        </td>
+        <td >
+          {{ lane.lane_number }}
+        </td>
+        <td >
+          <a href="/library/{{ lane.library_id }}">{{ lane.library_id }}</a>
+        </td>
+        <td >
+          <a href="/library/{{ lane.library_id }}">{{ lane.library.library_name }}</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% endblock %}
 </div>
-{% endblock %}
 {% endblock %}

@@ -8,7 +8,7 @@ from django.conf import settings
 
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 
 from rdflib import Graph, Literal, URIRef
 
@@ -31,12 +31,12 @@ class InventoryTestCase(TestCase):
     def test_item(self):
         item = ItemFactory()
         self.assertTrue(len(item.uuid), 32)
-        url = '/inventory/{}/'.format(item.uuid)
+        url = reverse("item_summary_by_uuid", args=(item.uuid,))
         self.assertTrue(self.client.login(username=self.user.username,
                                           password=self.password))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        content = smart_text(response.content)
+        content = smart_str(response.content)
 
         model = Graph()
         model.parse(data=content, format="rdfa", media_type="text/html", publicID=url)
@@ -115,7 +115,7 @@ class InventoryTestCase(TestCase):
 
         # step two link the flowcell
         flowcell_id = '33THRAAXX'
-        flowcell = FlowCellFactory(flowcell_id=flowcell_id +' (failed)')
+        flowcell = FlowCellFactory(flowcell_id=flowcell_id + ' (failed)')
         link_url = reverse('link_flowcell_and_device',
                            args=(flowcell.flowcell_id, item.barcode_id))
         link_response = self.client.get(link_url)
@@ -127,14 +127,13 @@ class InventoryTestCase(TestCase):
                                kwargs={'flowcell_id': flowcell_id})
         self.assertTrue(flowcells[0].endswith(flowcell_url))
 
-
     def get_flowcells_from_content(self, url, rootNode, diskNode):
         model = Graph()
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        content = smart_text(response.content)
+        content = smart_str(response.content)
         model.parse(data=content, format="rdfa", media_type="text/html", publicID=rootNode)
         targets = model.objects(diskNode, libraryOntology['flowcell_id'])
         flowcells = [ str(x) for x in targets]

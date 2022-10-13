@@ -1,33 +1,22 @@
 #!/usr/bin/env python
 from __future__ import print_function, unicode_literals
 
-from six.moves.configparser import SafeConfigParser
-import fnmatch
-from glob import glob
-import json
 import logging
 import netrc
 from optparse import OptionParser, OptionGroup
 import os
-from pprint import pprint, pformat
-import shlex
-from six.moves import StringIO
 import stat
 import sys
-import time
-import types
 from zipfile import ZipFile
 
-if not 'DJANGO_SETTINGS_MODULE' in os.environ:
+if 'DJANGO_SETTINGS_MODULE' not in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'htsworkflow.settings'
 
 from htsworkflow.util import api
 from encoded_client.rdfns import \
-     dafTermOntology, \
      submissionOntology
 from htsworkflow.submission.daf import \
      UCSCSubmission, \
-     MetadataLookupException, \
      get_submission_uri
 from htsworkflow.submission.results import ResultMap
 from htsworkflow.submission.condorfastq import CondorFastqExtract
@@ -36,6 +25,7 @@ logger = logging.getLogger('ucsc_gather')
 
 TAR = '/bin/tar'
 LFTP = '/usr/bin/lftp'
+
 
 def main(cmdline=None):
     parser = make_parser()
@@ -48,13 +38,11 @@ def main(cmdline=None):
     LFTP = opts.lftp
 
     if opts.debug:
-        logging.basicConfig(level = logging.DEBUG )
+        logging.basicConfig(level=logging.DEBUG)
     elif opts.verbose:
-        logging.basicConfig(level = logging.INFO )
+        logging.basicConfig(level=logging.INFO)
     else:
-        logging.basicConfig(level = logging.WARNING )
-
-    apidata = api.make_auth_from_opts(opts, parser)
+        logging.basicConfig(level=logging.WARNING)
 
     model = get_model(opts.model, opts.db_path)
     mapper = None
@@ -63,7 +51,6 @@ def main(cmdline=None):
         if opts.library_url is not None:
             mapper.library_url = opts.library_url
         submission_uri = get_submission_uri(opts.name)
-
 
     if opts.load_rdf is not None:
         if submission_uri is None:
@@ -122,12 +109,12 @@ def make_parser():
     model.add_option('--db-path', default=None,
                      help="set rdf database path")
     model.add_option('--model', default=None,
-      help="Load model database")
+                     help="Load model database")
     model.add_option('--load-rdf', default=None,
-      help="load rdf statements into model")
+                     help="load rdf statements into model")
     model.add_option('--sparql', default=None, help="execute sparql query")
     model.add_option('--print-rdf', action="store_true", default=False,
-      help="print ending model state")
+                     help="print ending model state")
     model.add_option('--tar', default=TAR,
                      help="override path to tar command")
     model.add_option('--lftp', default=LFTP,
@@ -136,16 +123,16 @@ def make_parser():
     # commands
     commands = OptionGroup(parser, 'commands')
     commands.add_option('--make-tree-from',
-                      help="create directories & link data files",
-                      default=None)
+                        help="create directories & link data files",
+                        default=None)
     commands.add_option('--fastq', default=False, action="store_true",
                         help="generate scripts for making fastq files")
     commands.add_option('--scan-submission', default=False, action="store_true",
-                      help="Import metadata for submission into our model")
+                        help="Import metadata for submission into our model")
     commands.add_option('--link-daf', default=False, action="store_true",
                         help="link daf into submission directories")
     commands.add_option('--make-ddf', help='make the ddfs', default=False,
-                      action="store_true")
+                        action="store_true")
     commands.add_option('--zip-ddf', default=False, action='store_true',
                         help='zip up just the metadata')
 
@@ -180,9 +167,9 @@ def make_all_ddfs(view_map, library_result_map, daf_name, make_condor=True, forc
         if not force and os.path.exists(dag_filename):
             logger.warning("%s exists, please delete" % (dag_filename,))
         else:
-            f = open(dag_filename,'w')
-            f.write( os.linesep.join(dag_fragment))
-            f.write( os.linesep )
+            f = open(dag_filename, 'w')
+            f.write(os.linesep.join(dag_fragment))
+            f.write(os.linesep)
             f.close()
 
 
@@ -230,7 +217,7 @@ ORDER BY  ?submitView"""
     ddf_name = make_ddf_name(names[0].toPython())
     if outdir is not None:
         outfile = os.path.join(outdir, ddf_name)
-        output = open(outfile,'w')
+        output = open(outfile, 'w')
     else:
         outfile = 'stdout:'
         output = sys.stdout
@@ -255,7 +242,7 @@ ORDER BY  ?submitView"""
             if value is None or value == 'None':
                 logger.warning("{0}: {1} was None".format(outfile, variable_name))
             if variable_name in ('files', 'md5sum'):
-                current.setdefault(variable_name,[]).append(value)
+                current.setdefault(variable_name, []).append(value)
             else:
                 current[variable_name] = value
 
@@ -329,7 +316,7 @@ queue
     for f in files:
         pathname = os.path.join(outdir, f)
         if not os.path.exists(pathname):
-            raise RuntimeError("Missing %s from %s" % (f,outdir))
+            raise RuntimeError("Missing %s from %s" % (f, outdir))
 
     context = {'archivename': make_submission_name(name),
                'filelist': " ".join(files),
@@ -338,7 +325,7 @@ queue
                'tar': TAR}
 
     condor_script = os.path.join(outdir, make_condor_name(name, 'archive'))
-    condor_stream = open(condor_script,'w')
+    condor_stream = open(condor_script, 'w')
     condor_stream.write(script % context)
     condor_stream.close()
     return condor_script
@@ -374,10 +361,10 @@ queue
                'lftp': LFTP}
 
     condor_script = os.path.join(outdir, make_condor_name(name, 'upload'))
-    condor_stream = open(condor_script,'w')
+    condor_stream = open(condor_script, 'w')
     condor_stream.write(script % context)
     condor_stream.close()
-    os.chmod(condor_script, stat.S_IREAD|stat.S_IWRITE)
+    os.chmod(condor_script, stat.S_IREAD | stat.S_IWRITE)
 
     return condor_script
 
@@ -435,6 +422,7 @@ def validate_filelist(files):
     for f in files:
         if not os.path.exists(f):
             raise RuntimeError("%s does not exist" % (f,))
+
 
 if __name__ == "__main__":
     main()

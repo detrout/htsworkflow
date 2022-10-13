@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import django
 from django.contrib.admin.views.main import ChangeList
 
+
 class HTSChangeList(ChangeList):
     def __init__(self, request, model, list_filter, search_fields,
                  list_per_page, model_admin, extra_filters=None):
@@ -24,10 +25,15 @@ class HTSChangeList(ChangeList):
             'search_fields': search_fields, #search_fields
             'list_select_related': None, # list_select_related,
             'list_per_page': list_per_page, #list_per_page
+            'list_max_show_all': 20000,  # list_max_show_all
             'list_editable': None, # list_editable
             'model_admin': model_admin,  # model_admin
-            'list_max_show_all': 20000,  # list_max_show_all
+            'sortable_by': None,
         }
+
+        if django.VERSION[0] >= 4:
+            args["search_help_text"] = None
+
         super(HTSChangeList, self).__init__(**args)
 
         self.is_popup = False

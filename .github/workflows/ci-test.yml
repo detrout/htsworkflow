@@ -15,14 +15,21 @@ on:
 jobs:
   run-tests:
     runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
     steps:
       - run: echo "This job is now running on ${{ runner.os }}"
-      - run: echo "The repository is ${{ github.repository }} on branch  ${{ github.ref }}"
+      - run: echo "The repository is ${{github.repository}} on branch ${{github.ref}}"
       - run : sudo apt -y install python3-lxml python3-pandas python3-keyring python3-jsonschema python3-requests python3-six python3-tz python3-rdflib
       - name: "Check out repository"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - run: echo "Checkout successful"
-      - name: Run tests
+      - name: "Set up Python ${{matrix.python-version}}"
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{matrix.python-version}}
+      - name: "Run tests"
         run: |
           python --version
           pip install tox

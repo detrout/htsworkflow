@@ -3,7 +3,7 @@
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
-<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
 &rsaquo; <a href="{% url 'admin:app_list' app_label='experiments' %}">sequencing runs</a>
 &rsaquo; <a href="{% url 'admin:experiments_flowcell_changelist' %}">Flow Cells</a>
 &rsaquo; <a href="{% url 'admin:experiments_flowcell_change' flowcell.pk %}">{{title}}</a>
