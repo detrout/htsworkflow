@@ -14,3 +14,4 @@ htsworkflow.kdev4
 .tox
 fctracker.db
 htsworkflow/_version.py
+RELEASE-VERSION
