@@ -19,3 +19,5 @@ DATABASES = {
 #        "NAME": "htsworkflow-django1.11",
 #    }
 }
+
+INSTALLED_APPS.append("django_extensions")
