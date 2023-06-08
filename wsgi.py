@@ -13,7 +13,7 @@ WSGIAPP = os.path.join(os.path.dirname(__file__))
 
 sys.path.append(WSGIAPP)
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "htsworkflow.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "htsworkflow.settings.production")
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
