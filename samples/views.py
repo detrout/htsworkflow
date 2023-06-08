@@ -415,6 +415,7 @@ def library_dict(library_id):
         'library_type_id': library.library_type_id,
         'made_for': library.made_for,
         'made_by': library.made_by,
+        'multiplex_index': library.index_sequence_text(),
         'notes': library.notes,
         'replicate': library.replicate,
         'stopping_point': library.stopping_point,
