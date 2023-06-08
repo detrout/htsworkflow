@@ -336,9 +336,9 @@ class Library(models.Model):
                 else:
                     seq = seq0 + '-' + seq1
             else:
-                raise RuntimeError("Too many - seperated sequences")
+                seq = "Err: Too many - in {}".format(multiplex_term)
             if seq is None:
-                seq = 'Err: index not found'
+                seq = 'Err: index "{}" not found.'.format(multiplex_term)
             sequences[key] = seq
         return sequences
 
