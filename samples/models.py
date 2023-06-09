@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import logging
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.db.models.signals import post_save
 from django.db import connection
@@ -219,6 +220,15 @@ class MultiplexIndex(models.Model):
         unique_together = ('adapter_type', 'multiplex_id')
 
 
+def validate_multiplex_index(value):
+    for element in value.split(","):
+        fields = element.split("-")
+        if len(fields) > 2:
+            raise ValidationError(
+                "MultiplexIndex ids can only be a comma sperated list of value or "
+                "value-value. {} seems invalid".format(element))
+
+
 class Library(models.Model):
     id = models.CharField(max_length=10, primary_key=True)
     library_name = models.CharField(max_length=100, unique=True)
@@ -243,7 +253,8 @@ class Library(models.Model):
                                      on_delete=models.CASCADE)
     multiplex_id = models.CharField(max_length=255,
                                     blank=True, null=True,
-                                    verbose_name="Index ID")
+                                    verbose_name="Index ID",
+                                    validators=[validate_multiplex_index])
     creation_date = models.DateField(blank=True, null=True)
     made_for = models.CharField(max_length=50, blank=True,
                                 verbose_name='ChIP/DNA/RNA Made By')

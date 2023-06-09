@@ -14,7 +14,9 @@ from rdflib import ConjunctiveGraph, Graph, URIRef
 
 from lxml import html
 
-from .models import Affiliation, ExperimentType, Species, Library
+from .models import (
+    Affiliation, ExperimentType, Species, Library, validate_multiplex_index
+)
 from .views import library_dict
 from .samples_factory import (
     AffiliationFactory,
@@ -103,6 +105,17 @@ class LibraryTestCase(TestCase):
         self.assertEqual(
             library.affiliation(), "Alice (contact name), Bob (contact name)"
         )
+
+    def test_validate_multiplex_index(self):
+        validate_multiplex_index("i7")
+        validate_multiplex_index("i7,i5")
+        validate_multiplex_index("i7-i5,abcd-efgh")
+        self.assertRaises(
+            ValidationError, validate_multiplex_index, "this-is-not-allowed")
+
+        library = LibraryFactory()
+        library.multiplex_id = "this-is-not-allowed"
+        self.assertRaises(ValidationError, library.clean_fields)
 
 
 class SampleWebTestCase(TestCase):
